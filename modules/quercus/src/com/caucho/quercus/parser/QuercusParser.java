@@ -4543,9 +4543,8 @@ public class QuercusParser {
   private int parseIdentifier(int ch)
     throws IOException
   {
-    for (; Character.isWhitespace(ch); ch = read()) {
-    }
-    
+    ch = ignoreWhiteSpace(ch);
+
     if (isIdentifierStart(ch)) {
       _sb.setLength(0);
       _sb.append((char) ch);
@@ -4565,15 +4564,32 @@ public class QuercusParser {
   private int parseNamespaceIdentifier(int ch)
     throws IOException
   {
-    for (; Character.isWhitespace(ch); ch = read()) {
+    ch = ignoreWhiteSpace(ch);
+
+    if (ch == '/') {
+        if ((ch = read()) == '*')
+            ch = ignoreMultiLineComment(ch);
+       else if (ch == '/')
+            ch = ignoreSingleLineComment(ch);
     }
+    
+    ch = ignoreWhiteSpace(ch);
     
     if (isNamespaceIdentifierStart(ch)) {
       _sb.setLength(0);
       _sb.append((char) ch);
 
-      for (ch = read(); isNamespaceIdentifierPart(ch); ch = read()) {
-        _sb.append((char) ch);
+      for (ch = read(); ch >= 0; ch = read()) {
+          if (ch == '/') {
+                if ((ch = read()) == '*')
+                    ch = ignoreMultiLineComment(ch);
+                else if (ch == '/')
+                    ch = ignoreSingleLineComment(ch);
+            }
+          else if(isNamespaceIdentifierPart(ch))
+            _sb.append((char) ch);
+          else
+              break;
       }
 
       _peek = ch;
@@ -5306,6 +5322,37 @@ public class QuercusParser {
               || ch >= '0' && ch <= '9'
               || ch == '_'
               || Character.isLetterOrDigit(ch));
+  }
+
+  private int ignoreWhiteSpace(int ch)
+    throws IOException
+  {
+      for (; Character.isWhitespace(ch); ch = read()) { }
+      return ch;
+  }
+
+  private int ignoreMultiLineComment(int ch)
+    throws IOException
+  {
+      do {
+          if (ch == '*') {
+              if ((ch = read()) == '/')
+                  return read();
+          }
+      } while ((ch = read()) >= 0);
+
+      return 0;
+  }
+
+  private int ignoreSingleLineComment(int ch)
+    throws IOException
+  {
+      do {
+          if (ch == '\r' || ch == '\n')
+              return ch;
+      } while ((ch = read()) >= 0);
+      
+     return 0;
   }
 
   private int parseOctalEscape(int ch)
