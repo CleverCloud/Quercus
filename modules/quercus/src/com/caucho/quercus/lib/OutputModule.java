@@ -170,7 +170,7 @@ public class OutputModule extends AbstractQuercusModule
     if (ob != null) {
       Value result = ob.getContents();
 
-      ob.clean();
+      ob_end_clean(env);
 
       return result;
     }
