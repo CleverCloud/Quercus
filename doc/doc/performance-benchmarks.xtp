@@ -1,0 +1,116 @@
+<document>
+  <header>
+    <product>resin</product>
+    <version>Resin 3.1</version>
+    <title>Resin Benchmarks</title>
+    <description>
+      <p>This document describes our performance benchmarks. 
+        As always, no artificial benchmark can replace measuring your own
+        application with your own configuration and load.</p>
+    </description>
+  </header>
+  <body>
+    <s1 title="Resin v. Apache">
+      <p>Resin is an excellent web server for both static pages
+        and for load-balancing to multiple backend application servers.
+        For a web-tier server, static page performance and load-balance
+        performance are both important, as is the ability to
+        <a href="proxy-cache.xtp">proxy cache</a> pages. The following benchmarks
+        give a quick comparison between Resin and Apache as web-tier servers:
+        both are very close in performance, although Resin is slightly faster
+        than Apache in most of these cases.</p>
+      
+      <p>These results were benchmarked with Resin 3.1.0 and
+        Apache 2.2.3 with a pair of Debian Linux machines using
+        a 1G ethernet. Resin's proxy cache was disabled to match Apache's
+        default no proxy-cache configuration, but no other special configurations
+        were applied to either server.</p>
+      
+      <p>The first set of benchmarks compare static page serving using a 1k page
+        to simulate small image files and a 64k page to simulate
+        normal web pages. For the small pages, Resin was about 5% faster
+        than Apache, and for large pages, the two are essentially identical.</p>
+      
+      <deftable title="Static Pages">
+        <tr>
+          <th></th>
+          <th>Resin (ops per second)</th>
+          <th>Apache (ops per second)</th>
+        </tr>
+        <tr>
+          <th>1k html (1 client, 1 keepalive)</th>
+          <td>3,537 OPS</td>
+          <td>3,287 OPS</td>
+        </tr>
+        <tr>
+          <th>1k html (10 client, 4 keepalive)</th>
+          <td>19,568 OPS</td>
+          <td>16,466 OPS</td>
+        </tr>
+        <tr>
+          <th>64k html (1 client, 1 keepalive)</th>
+          <td>874 OPS</td>
+          <td>859 OPS</td>
+        </tr>
+        <tr>
+          <th>64k html (10 client, 4 keepalive)</th>
+          <td>1,800 OPS</td>
+          <td>1,804 OPS</td>
+        </tr>
+      </deftable>
+      
+      <p>The second set of benchmarks compare load balancing of JSP pages
+        to a backend Resin server.  Both a 1k page and a 64k page were simulated.
+        For comparison, the performance of Resin serving the same JSP
+        page as a standalone HTTP server is also provided.  Again, for small pages
+        Resin is about 5-10% faster than Apache and is essentially identical for
+        larger pages.</p>
+      <deftable title="Load Balancing for Resin JSP">
+        <tr>
+          <th></th>
+          <th>Resin Load Balancing</th>
+          <th>Apache Load Balancing</th>
+          <th>Resin Standalone</th>
+        </tr>
+        <tr>
+          <th>1k jsp (1 client, 1 keepalive)</th>
+          <td>2,269 OPS</td>
+          <td>1,989 OPS</td>
+          <td>3,903 OPS</td>
+        </tr>
+        <tr>
+          <th>1k jsp (10 client, 4 keepalive)</th>
+          <td>14,119 OPS</td>
+          <td>10,351 OPS</td>
+          <td>26,620 OPS</td>
+        </tr>
+        <tr>
+          <th>64k jsp (1 client, 1 keepalive)</th>
+          <td>579 OPS</td>
+          <td>604 OPS</td>
+          <td>826 OPS</td>
+        </tr>
+        <tr>
+          <th>64k jsp (10 client, 4 keepalive)</th>
+          <td>1,668 OPS</td>
+          <td>1,661 OPS</td>
+          <td>1,799 OPS</td>
+        </tr>
+      </deftable>
+      <s2 title="Caveats">
+        <p>As always, no artificial benchmark can replace measuring your own
+          application with your own configuration and load.
+          In most cases, other considerations like the application
+          performance and database performance will dominate the performance (although
+          <a href="proxy-cache.xtp">proxy caching</a> can make slow
+          applications run as fast as static pages.)  These numbers in particular
+          are a trivial tests with a simple load.  They do measure the maximum
+          performance of the web server, so they are valuable information, but
+          they are very different from a benchmark of a complete application.</p>
+        <p>Warnings aside, these results do indicate that many sites should
+          seriously consider using Resin as their web-tier load-balancing
+          server. (After benchmarking your own application, of course.)</p>
+      </s2>
+    </s1>
+  </body>
+</document>

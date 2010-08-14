@@ -1,0 +1,266 @@
+<?php
+/**
+ * Provides the most important status information about the Resin server.
+ *
+ * @author Sam
+ */
+
+require_once "WEB-INF/php/inc.php";
+
+if (! admin_init()) {
+  return;
+}
+
+$webapp = $g_mbean_server->lookup($_GET['id']);
+
+$request = quercus_servlet_request();
+$is_secure = $request->isSecure();
+$user = quercus_get_request()->getUserPrincipal();
+$action = $_POST['action'];
+
+if (! $action) {
+}
+else if ($is_secure) {
+  if ($action == 'deploy') {
+    $client = @new Java("com.caucho.server.admin.WebAppDeployClient");
+    $vfs = java_class("com.caucho.vfs.Vfs");
+
+    $path = $vfs->lookup($_FILES['warfile']['tmp_name']);
+    $tag = $client->createTag("default", 
+                              $_REQUEST['host'], 
+                              $_REQUEST['url'], 
+                              NULL);
+    $user = $request->getRemoteUser();
+
+    $attributes = array($client->USER_ATTRIBUTE => $user,
+                        "client", "resin-admin");
+
+    $client->deployJarContents($tag, $path, $attributes);
+  }
+  else if ($_POST['name'] == $_GET['id']) {
+    if ($action == 'start') {
+      $webapp->start();
+
+      echo "<div class='warn'>Starting '${_GET['id']}' by $user</div>";
+    }
+    else if ($action == 'stop') {
+      $webapp->stop();
+
+      echo "<div class='warn'>Stopping '${_GET['id']}' by $user</div>";
+    }
+    else if ($action == 'restart') {
+      $webapp->restart();
+
+      echo "<div class='warn'>Restarting '${_GET['id']}' by $user</div>";
+    }
+  }
+}
+
+if ($webapp) {
+  display_webapp($g_mbean_server, $webapp);
+}
+else {
+  display_webapp_summary($g_mbean_server);
+}
+
+/**
+ * single-page webapp
+ */
+function display_webapp($mbean_server, $webapp)
+{
+  global $is_secure;
+
+  $session = $webapp->SessionManager;
+  
+  echo <<<END
+<h2>WebApp</h2>
+
+<table class="data">
+  <tr>
+    <th>Web-App</th>
+    <th>State</th>
+    <th>Active</th>
+    <th>Sessions</th>
+    <th>Uptime</th>
+    <th colspan='2'>500</th>
+  </tr>
+END;
+
+  echo "<tr class='" . row_style($count++) . "'>\n";
+  echo " <td class='item'>\n";
+
+  $context_path = empty($webapp->ContextPath) ? "/" : $webapp->ContextPath;
+
+  echo $context_path;
+
+  echo " </td>";
+
+  echo "  <td class='" . format_state_class($webapp->State) . "'>\n";
+  echo  $webapp->State;
+  echo "  </td>\n";
+  echo "  <td>" . $webapp->RequestCount . "</td>\n";
+  echo "  <td>" . $session->SessionActiveCount . "</td>\n";
+  echo "  <td class='" . format_ago_class($webapp->StartTime) . "'>\n";
+  echo "    " . format_ago($webapp->StartTime) . "\n";
+  echo "   </td>\n";
+
+        format_ago_td_pair($webapp->Status500CountTotal,
+                           $webapp->Status500LastTime);
+
+  echo "</tr>\n";
+  echo "</table>";
+
+  echo "<h3>Actions</h3>\n";
+
+  if ($is_secure) {
+    $disabled = "";
+  }
+  else {
+    $disabled = "disabled='true'";
+    echo "<div class='warn'>Actions can only be performed over a secure connection (SSL)</div>";
+  }
+
+  $name = $webapp->mbean_name;
+
+  echo "<form method='POST' style='display:inline'>\n";
+  echo "<input type='hidden' name='action' value='start'>\n";
+  echo "<input type='hidden' name='name' value='$name'>\n";
+  echo "<input type='submit' name='submit' value='start' $disabled>\n";
+  echo "</form>";
+
+  echo "<form method='POST' style='display:inline'>\n";
+  echo "<input type='hidden' name='action' value='stop'>\n";
+  echo "<input type='hidden' name='name' value='$name'>\n";
+  echo "<input type='submit' name='submit' value='stop' $disabled>\n";
+  echo "</form>";
+
+  echo "<form method='POST' style='display:inline'>";
+  echo "<input type='hidden' name='action' value='restart'>";
+  echo "<input type='hidden' name='name' value='$name'>\n";
+  echo "<input type='submit' name='submit' value='restart' $disabled>";
+  echo "</form>";
+
+  echo "<h2>MBeans</h2>\n";
+
+  $exp = mbean_explode($name);
+  $beans = $mbean_server->query("resin:*,Host=" . $exp['Host']
+                                 . ",WebApp=" . $exp['name']);
+
+  display_jmx($mbean_server, $beans);
+}
+
+/**
+ * summary of all the webapps
+ */
+function display_webapp_summary($g_mbean_server)
+{
+  global $is_secure;
+?><top>
+  <test-file/>
+</top>
+
+
+<!-- Applications -->
+<h2>WebApps</h2>
+
+<table class="data">
+  <tr>
+    <th>Web-App</th>
+    <th>State</th>
+    <th>Active</th>
+    <th>Sessions</th>
+    <th>Uptime</th>
+    <th colspan='2'>500</th>
+  </tr>
+<?php
+
+if ($g_mbean_server) {
+  $hosts = $g_mbean_server->query("resin:*,type=Host");
+}
+
+usort($hosts, "sort_host");
+
+foreach ($hosts as $host) {
+  $hostName = empty($host->HostName) ? "default" : $host->HostName;
+?>
+
+  <tr title='<?= $hostObjectName ?>'><td class='group' colspan='7'><?= $host->URL ?></td></tr>
+<?php
+
+$webapps = $host->WebApps;
+
+usort($webapps, "sort_webapp");
+$count = 0;
+foreach ($webapps as $webapp) {
+
+  $session = $webapp->SessionManager;
+?>
+
+  <tr class='<?= row_style($count++) ?>'>
+    <td class='item'>
+<?php
+$context_path = empty($webapp->ContextPath) ? "/" : $webapp->ContextPath;
+
+if ($webApp->RepositoryTag) {
+  $context_path .= "<br/>&nbsp;&nbsp;(tag: {$webapp->RepositoryTag})";
+}
+
+$object_name = $webapp->mbean_name;
+
+echo "<a href='index.php?q=webapp&id=" . $object_name . "'>" . $context_path . "</a>";
+?>       
+    </td>
+    <td class='<?= format_state_class($webapp->State) ?>'>
+       <?= $webapp->State ?>
+    </td>
+    <td><?= $webapp->RequestCount ?></td>
+    <td><?= $session->SessionActiveCount ?></td>
+    <td class='<?= format_ago_class($webapp->StartTime) ?>'>
+      <?= format_ago($webapp->StartTime) ?>
+    </td>
+    <?php
+        format_ago_td_pair($webapp->Status500CountTotal,
+                           $webapp->Status500LastTime);
+    ?>
+  </tr>
+<?php
+  } // webapps
+} // hosts
+?>
+
+</table>
+
+<h2>Deploy new webapp</h2>
+<?php 
+if ($is_secure) {
+?>
+
+<table>
+<form method='POST' enctype="multipart/form-data">
+  <input type='hidden' name='action' value='deploy'/>
+  <tr>
+    <th>Virtual Host</th>
+    <th>URL</th>
+    <th>.war file</th>
+  </tr>
+  <tr>
+    <td><input type='text' name='host' value='default'/></td>
+    <td>/<input type='text' name='url' value=''/></td>
+    <td><input type='file' name='warfile'/></td>
+    <td><input type='submit' value='Deploy'/></td>
+  </tr>
+</form>
+<?php
+}
+else {
+?>
+<span class='warn' style="font-size: 110%">Insecure connection:</span>
+Online webapp deploy is only available over connections secured with SSL.
+<?php
+}
+?>
+
+</table>
+<?php
+} // summary
+?>

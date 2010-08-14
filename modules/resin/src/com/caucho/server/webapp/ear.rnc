@@ -1,0 +1,54 @@
+default namespace j2ee = "http://java.sun.com/xml/ns/j2ee"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+include "classpath:com/caucho/config/cfg/j2ee.rnc"
+
+start = j2ee_application
+
+j2ee_alt-dd = element alt-dd { string }
+
+j2ee_application = element application {
+  attribute version { string },
+
+  attribute xsi:schemaLocation { string },
+
+  j2ee_description-Group,
+
+  j2ee_module+,
+
+  j2ee_security-role*,
+}
+
+## path to rar connector
+j2ee_connector = element { j2ee_path }
+
+## the context root of the web application
+j2ee_context-root = element { string }
+
+## path to ejb jar
+j2ee_ejb = element { j2ee_path }
+
+## path to application client module
+j2ee_java = element { j2ee_path }
+
+j2ee_module = element module {
+  (j2ee_connector
+
+  | j2ee_ejb
+
+  | j2ee_java
+
+  | j2ee_web),
+
+  j2ee_alt-dd?
+}
+
+j2ee_web = element web {
+  j2ee_web-uri,
+
+  j2ee_context-root
+}
+
+

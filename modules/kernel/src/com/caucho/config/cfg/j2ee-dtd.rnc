@@ -1,0 +1,312 @@
+
+j2ee-dtd_any = text | (attribute * {string} | element * { j2ee_any })*
+
+j2ee-dtd_boolean =
+  "true"
+  | "false"
+  | "yes"
+  | "no"
+
+j2ee-dtd_description = element description {
+  attribute xml:lang { string }?,
+
+  string
+}
+
+j2ee-dtd_description-Group =
+  j2ee-dtd_description*,
+
+  j2ee-dtd_display-name?,
+
+  j2ee-dtd_icon?
+
+j2ee-dtd_dewey-version = string
+
+j2ee-dtd_display-name = element display-name {
+  attribute xml:lang { string }?,
+
+  string
+}
+
+j2ee-dtd_ejb-link = element ejb-link {
+  string
+}
+
+j2ee-dtd_ejb-local-ref = element ejb-local-ref {
+  attribute id { string }?,
+
+  j2ee-dtd_description*,
+
+  j2ee-dtd_ejb-ref-name,
+
+  j2ee-dtd_ejb-ref-type,
+
+  j2ee-dtd_local-home,
+
+  j2ee-dtd_local,
+
+  j2ee-dtd_ejb-link?
+}
+
+j2ee-dtd_ejb-ref = element ejb-ref {
+  attribute id { string }?,
+
+  j2ee-dtd_description*,
+
+  j2ee-dtd_ejb-ref-name,
+
+  j2ee-dtd_ejb-ref-type,
+
+  j2ee-dtd_home,
+
+  j2ee-dtd_remote,
+
+  j2ee-dtd_ejb-link?
+}
+
+j2ee-dtd_ejb-ref-name = element ejb-ref-name {
+  j2ee-dtd_jndi-name
+}
+
+j2ee-dtd_ejb-ref-type = element ejb-ref-type {
+  "Entity" | "Session"
+}
+
+j2ee-dtd_env-entry = element env-entry {
+  attribute id { string }?,
+
+  j2ee-dtd_description*,
+
+  j2ee-dtd_env-entry-name,
+
+  j2ee-dtd_env-entry-type,
+
+  j2ee-dtd_env-entry-value?
+}
+
+j2ee-dtd_env-entry-name = element env-entry-name {
+  j2ee-dtd_jndi-name
+}
+
+j2ee-dtd_env-entry-type = element env-entry-type {
+  "java.lang.Boolean"
+  | "java.lang.Byte"
+  | "java.lang.Character"
+  | "java.lang.String"
+  | "java.lang.Short"
+  | "java.lang.Integer"
+  | "java.lang.Long"
+  | "java.lang.Float"
+  | "java.lang.Double"
+}
+
+j2ee-dtd_env-entry-value = element env-entry-value {
+  string
+}
+
+j2ee-dtd_fully-qualified-class = string
+
+j2ee-dtd_home = element home {
+  j2ee-dtd_fully-qualified-class
+}
+
+j2ee-dtd_icon = element icon {
+  attribute id { string }?,
+
+  attribute xml:lang { string }?,
+
+  element small-icon { j2ee-dtd_path }?,
+
+  element large-icon { j2ee-dtd_path }?
+}
+
+j2ee-dtd_init-param = element init-param {
+  j2ee-dtd_param-value-Type
+}
+
+j2ee-dtd_java-identifier = string
+
+j2ee-dtd_jndi-environment-refs-Group =
+  j2ee-dtd_env-entry*,
+
+  j2ee-dtd_ejb-ref*,
+
+  j2ee-dtd_ejb-local-ref*,
+
+  j2ee-dtd_service-ref-Group,
+
+  j2ee-dtd_resource-ref*,
+
+  j2ee-dtd_resource-env-ref*,
+
+  j2ee-dtd_message-destination-ref*
+
+j2ee-dtd_jndi-name = string
+
+j2ee-dtd_local = element local {
+  j2ee-dtd_fully-qualified-class
+}
+
+j2ee-dtd_local-home = element local-home {
+  j2ee-dtd_fully-qualified-class
+}
+
+j2ee-dtd_message-destination = element message-destination {
+  attribute id { string }?,
+
+  j2ee-dtd_description-Group,
+
+  j2ee-dtd_message-destination-name
+}
+
+j2ee-dtd_message-destination-link = element message-destination-link {
+  j2ee-dtd_fully-qualified-class
+}
+
+j2ee-dtd_message-destination-name = element message-destination-name {
+  string
+}
+
+j2ee-dtd_message-destination-ref = element message-destination-ref {
+  attribute id { string }?,
+
+  j2ee-dtd_description*,
+
+  j2ee-dtd_message-destination-ref-name,
+
+  j2ee-dtd_message-destination-type,
+
+  j2ee-dtd_message-destination-usage,
+
+  j2ee-dtd_message-destination-link?
+}
+
+j2ee-dtd_message-destination-ref-name = element message-destination-ref-name {
+  j2ee-dtd_jndi-name
+}
+
+j2ee-dtd_message-destination-type = element message-destination-type {
+  j2ee-dtd_fully-qualified-class
+}
+
+j2ee-dtd_message-destination-usage = element message-destination-usage {
+  "Consumes"
+  | "Produces"
+  | "ConsumesProduces"
+}
+
+j2ee-dtd_param-name = element param-name {
+  j2ee-dtd_string
+}
+
+j2ee-dtd_param-value = element param-value {
+  string
+}
+
+j2ee-dtd_param-value-Type =
+  j2ee-dtd_description*,
+
+  j2ee-dtd_param-name,
+
+  j2ee-dtd_param-value
+
+j2ee-dtd_path = string
+
+j2ee-dtd_remote = element remote {
+  j2ee-dtd_fully-qualified-class
+}
+
+j2ee-dtd_res-auth = element res-auth {
+  "Application" | "Container"
+}
+
+j2ee-dtd_res-sharing-scope = element res-sharing-scope {
+  "Shareable" | "Unshareable"
+}
+
+j2ee-dtd_res-type = element res-type {
+  j2ee-dtd_fully-qualified-class
+}
+
+j2ee-dtd_resource-env-ref = element resource-env-ref {
+  attribute id { string }?,
+
+  j2ee-dtd_description*,
+
+  j2ee-dtd_resource-env-ref-name,
+
+  j2ee-dtd_resource-env-ref-type
+}
+
+j2ee-dtd_resource-env-ref-name = element resource-env-ref-name {
+  j2ee-dtd_jndi-name
+}
+
+j2ee-dtd_resource-env-ref-type = element resource-env-ref-type {
+  j2ee-dtd_fully-qualified-class
+}
+
+j2ee-dtd_resource-ref = element resource-ref {
+  attribute id { string }?,
+
+  j2ee-dtd_description*,
+
+  j2ee-dtd_res-ref-name,
+
+  j2ee-dtd_res-type,
+
+  j2ee-dtd_res-auth,
+
+  j2ee-dtd_res-sharing-scope?
+}
+
+j2ee-dtd_res-ref-name = element res-ref-name {
+  j2ee-dtd_jndi-name
+}
+
+j2ee-dtd_role-name = element role-name {
+  string
+}
+
+j2ee-dtd_role-link = element role-link {
+  string
+}
+
+j2ee-dtd_run-as = element run-as {
+  attribute id { string }?,
+
+  j2ee-dtd_description*,
+
+  j2ee-dtd_role-name
+}
+
+j2ee-dtd_security-role = element security-role {
+  attribute id { string }?,
+
+  j2ee-dtd_description*,
+
+  j2ee-dtd_role-name,
+
+  j2ee-dtd_role-link?
+}
+
+j2ee-dtd_security-role-ref = element security-role-ref {
+  attribute id { string }?,
+
+  j2ee-dtd_description*,
+
+  j2ee-dtd_role-name,
+
+  j2ee-dtd_role-link?
+}
+
+j2ee-dtd_service-ref = element service-ref { empty }
+
+j2ee-dtd_service-ref-Group =
+  j2ee-dtd_service-ref*
+
+j2ee-dtd_string = string
+
+j2ee-dtd_true-false = "true" | "false"
+
+j2ee-dtd_war-path = string

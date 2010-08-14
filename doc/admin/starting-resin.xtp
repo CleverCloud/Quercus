@@ -1,0 +1,248 @@
+<document>
+  <header>
+    <product>resin</product>
+    <version>Resin 4.0</version>
+    <title>Resin Installation Quick Start</title>
+
+    <description>
+<p>You can start using Resin by simply expanding the archive, and
+starting Resin with a Java command line.</p>
+    </description>
+  </header>
+
+  <body>
+    <localtoc/>
+
+<s1 name="quickstart" title="Quick Start for the Impatient">
+
+<p>The Resin web server starts  listening to HTTP requests on
+port 8080 and listens on port 6800
+for <a href="clustering-overview.xtp">load balancer</a>
+or cluster messages.  Resin can then be
+used for development or evaluation.  The steps are:</p>
+
+<ol>
+<li>Install JDK 1.6 or later.
+
+<ul>
+  <li>On Unix, set the JAVA_HOME variable or
+      link /usr/java to the java home.</li>
+  <li>On Windows, check to make sure the JDK
+      installation sets JAVA_HOME correctly.</li>
+</ul></li>
+
+<li>unzip/untar the Resin download.  It will unzip into resin-4.0.x/.
+
+<ul>
+  <li>resin-4.0.x is resin.home, the location of the Resin distribution.</li>
+  <li>For now, it is also ${resin.root}, the location of your content.
+Soon, you will want to move ${resin.root} to
+something like <var>/var/www</var>.</li>
+</ul></li>
+
+<li>On Unix, execute use ./configure; make; make install</li>
+
+<li>Start in development mode <var>java -jar resin-4.0.x/lib/resin.jar</var></li>
+
+<li>Browse <code>http://localhost:8080</code></li>
+</ol>
+
+<s2 title="Adding Content">
+
+<p>Once you've made sure Resin is working, you'll want to add some content
+to the default web site:</p>
+
+<ol>
+<li>Add PHP files like <var>resin-4.0.x/hosts/default/webapps/ROOT/hello.php</var>.
+
+<ul><li>The URL in your browser will
+  be <code>http://localhost:8080/hello.php</code></li></ul></li>
+
+<li>Add JSP files like <var>resin-4.0.x/hosts/default/webapps/ROOT/hello.jsp</var>.
+
+<ul><li>The URL in your browser will
+  be <code>http://localhost:8080/hello.jsp</code></li></ul></li>
+
+<li>Add servlets like <var>resin-4.0.x/hosts/default/webapps/ROOT/WEB-INF/classes/test/HelloServlet.java</var>
+<ul><li>
+Create a file <var>resin-4.0.x/hosts/default/webapps/hello/WEB-INF/resin-web.xml</var> to
+configure the servlet.</li>
+</ul></li>
+
+<li>Add .war files like <var>resin-4.0.x/hosts/default/webapps/hello.war</var>.
+
+<ul><li>The URL in your browser is
+<code>http://localhost:8080/hello</code></li></ul></li>
+
+<li>Create web-apps directly like
+<var>resin-4.0.x/hosts/default/webapps/hello/index.php</var>
+
+The URL in your browser is <code>http://localhost:8080/hello</code>.
+<ul><li>
+Create a file <var>resin-4.0.x/hosts/default/webapps/hello/WEB-INF/resin-web.xml</var> to
+configure the 'hello' web application.</li>
+</ul></li>
+</ol>
+
+</s2>
+
+<s2 title="Virtual Hosts">
+
+<p>You can easily create <a href="http-virtual-hosts.xtp">virtual hosts</a>
+by creating content in the <var>resin.root/hosts</var> directory:</p>
+
+<ol>
+
+<li>Add a hello.php to <var>resin-4.0.x/hosts/localhost/webapps/ROOT/hello.php</var>
+</li>
+
+</ol>
+
+</s2>
+
+<s2 title="Permanent content locations">
+
+<p>Eventually, you'll want to move your content and configuration
+into a more permanent location:</p>
+
+<ol>
+
+<li>Create a permanent resin.root:
+
+<ul>
+<li>Virtual hosts go in <var>/var/www/hosts/www.foo.com/webapps/ROOT</var></li>
+<li>Run <var>java -jar resin-4.0.x/lib/resin.jar --root-directory /var/www</var></li>
+<li>You can also set &lt;<a config-tag="root-directory"/>> in the &lt;<a config-tag="cluster"/>> to configure the resin root.</li>
+</ul>
+</li>
+
+<li>If needed, modify the Resin configuration in <var>resin-4.0.x/conf/resin.xml</var>
+
+<ul>
+<li>You can copy resin.xml to somewhere like <var>/etc/resin/resin.xml</var></li>
+<li>Run <var>java -jar resin-4.0.x/lib/resin.jar --conf /etc/resin/resin.xml</var></li>
+</ul>
+</li>
+
+</ol>
+
+</s2>
+
+<s2 title="Running Resin as a daemon">
+
+<p>In a deployment environment, Resin will run as a background daemon.
+The previous steps ran Resin in the foreground, which is convenient
+for development since the logging output goes to the console.
+When running as a daemon, Resin detaches from the console and continues
+running until told to stop.</p>
+
+<ol>
+<li>Start resin with <var>java -jar resin-4.0.x/lib/resin.jar start</var></li>
+<li>Stop resin with <var>java -jar resin-4.0.x/lib/resin.jar stop</var></li>
+<li>Restart resin with <var>java -jar resin-4.0.x/lib/resin.jar restart</var></li>
+</ol>
+
+</s2>
+
+<p>Until you're ready to deploy the server, those are all the
+steps needed to get started with Resin.</p>
+
+</s1>
+
+<s1 title="Preconditions">
+
+<p>Resin 4.0 needs Java before it can run.  It needs JDK 1.6 or a later JDK.</p>
+
+<p>Sun's JDK for Windows, Solaris, and Linux can be found at
+<a href="http://java.sun.com">http://java.sun.com</a>.  Sun also has
+links to some other ports of the JDK.</p>
+
+</s1>
+
+<s1 title="Resin Web Server">
+
+<p>The easiest and fastest Resin configuration uses the Resin as the primary or
+only web server.  This configuration provides a Java HTTP server. We recommend
+you start with this before trying any other configuration.</p>
+
+<figure src="httpd.gif"/>
+
+<p>The server listens at port 8080 in the default configuration and
+can be changed to the HTTP port 80 during deployment.</p>
+
+<s2 title="Windows">
+
+<ol>
+<li>Install JDK 1.6 or later.</li>
+<li>Check that the environemnt variable JAVA_HOME is set to the JDK location, e.g. "c:\j2sdk1.6.0_01"</li>
+<li>Unzip resin-4.0.x.zip</li>
+<li>Define the environment variable RESIN_HOME to the location of
+Resin, for example "c:\resin-4.0.x"</li>
+<li>Execute <var>java -jar resin-4.0.x/lib/resin.jar</var></li>
+<li>Browse http://localhost:8080</li>
+</ol>
+</s2>
+
+<s2 title="Unix (including MacOS-X)">
+
+<ol>
+<li>Install JDK 1.6 or later and link /usr/java to the Java home or define the environment variable JAVA_HOME.</li>
+<li>tar -vzxf resin-4.0.x.tar.gz</li>
+<li>cd resin-4.0.x</li>
+<li>./configure</li>
+<li>make</li>
+<li>make install</li>
+<li>Execute <var>java -jar resin-4.0.x/lib/resin.jar</var></li>
+<li>Browse http://localhost:8080</li>
+</ol>
+
+</s2>
+
+<p>For more details, see the <a href="http-server.xtp">Resin Web Server</a>
+configuration page.</p>
+
+</s1>
+
+<s1 title="Resin with Apache">
+
+<p>If you are already using Apache for your web server, you can use Resin with
+Apache.  This configuration uses Apache to serve html, images, PHP, or Perl,
+and Resin to serve JSPs and Servlets.</p>
+
+<p>The Apache configuration uses two pieces: a C program extending
+Apache (<var>mod_caucho</var>) and Java program supporting servlets and
+JSP (<var>srun</var>.)  The two pieces communicate with a special high-speed
+protocol.</p>
+
+<figure src="apache_srun.gif"/>
+
+<p>To configure Apache with Resin, you must
+configure both Apache and Resin.  The Resin
+configuration is identical to Resin's httpd configuration.  The Apache
+configuration tells Apache how to find Resin.</p>
+
+<ol>
+<li>On Unix only, compile mod_caucho.so using <code>./configure --with-apache; make</code></li>
+<li>Make any needed Apache httpd.conf changes</li>
+<li>Make any needed Resin resin.xml changes</li>
+<li>Restart Apache</li>
+<li>Start Resin with <code>resin-4.x.x/bin/resin.sh</code> on Unix or
+<code>resin-4.x.x/resin.exe</code> on Windows.</li>
+</ol>
+
+<p>On Unix, you'll run configure using <code>--with-apache</code> and then <code>make</code>:
+</p>
+
+<example>
+unix&gt; ./configure --with-apache=/usr/local/apache
+unix&gt; make
+unix&gt; make install
+</example>
+
+
+<p>For more details, see the <a href="starting-resin-apache.xtp">Resin with Apache</a>
+configuration page.</p>
+
+</s1>
+</body>
+</document>

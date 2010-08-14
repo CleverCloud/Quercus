@@ -1,0 +1,315 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin J2EE common Relax-NG Schema</title>
+    <version>Resin 3.0</version>
+    <description>
+      <p>The formal definition for the Resin common J2EE definitions.</p>
+    </description>
+  </header>
+
+  <body>
+    <summary/>
+
+<s1 title="Relax-NG Schema">
+
+<def title="com/caucho/server/resin/resin-j2ee.rnc">
+default namespace r = "http://caucho.com/ns/resin"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+r_any = text | (attribute * {string} | element * { r_any })*
+
+r_boolean =
+  "true"
+  | "false"
+  | "yes"
+  | "no"
+
+r_deployment-extension = element deployment-extension {
+  attribute namespace { string },
+
+  attribute mustUnderstand { r_boolean }?,
+
+  r_extension-element*
+}
+
+r_description = element description {
+  attribute xml:lang { string }?,
+
+  string
+}
+
+r_description-Group =
+  (r_description*,
+
+   r_display-name?,
+
+   r_icon?)
+
+r_dewey-version = string
+
+r_display-name = element display-name {
+  attribute xml:lang { string }?,
+
+  string
+}
+
+r_ejb-link = element ejb-link {
+  string
+}
+
+r_ejb-local-ref = element ejb-local-ref {
+  r_description*,
+
+  r_ejb-ref-name,
+
+  r_ejb-ref-type,
+
+  r_local-home,
+
+  r_local,
+
+  r_ejb-link?,
+
+  r_deployment-extension*
+}
+
+r_ejb-ref = element ejb-ref {
+  r_description*,
+
+  r_ejb-ref-name,
+
+  r_ejb-ref-type,
+
+  r_home,
+
+  r_remote,
+
+  r_ejb-link?,
+
+  r_deployment-extension*
+}
+
+r_ejb-ref-name = element ejb-ref-name {
+  r_jndi-name-Type
+}
+
+r_ejb-ref-type = element ejb-ref-type {
+  "Entity" | "Session"
+}
+
+r_env-entry = element env-entry {
+  r_description*,
+
+  r_env-entry-name,
+
+  r_env-entry-type,
+
+  r_env-entry-value?
+}
+
+r_env-entry-name =
+  attribute env-entry-name { r_jndi-name-Type }
+  | element env-entry-name { r_jndi-name-Type }
+
+r_env-entry-type =
+  attribute env-entry-type { r_env-entry-type-Type }
+  | element env-entry-type { r_env-entry-type-Type }
+
+r_env-entry-type-Type = 
+  "java.lang.Boolean"
+  | "java.lang.Byte"
+  | "java.lang.Character"
+  | "java.lang.String"
+  | "java.lang.Short"
+  | "java.lang.Integer"
+  | "java.lang.Long"
+  | "java.lang.Float"
+  | "java.lang.Double"
+
+r_env-entry-value =
+  attribute env-entry-value { string }
+  | element env-entry-value { string }
+
+r_extension-element = element extension-element {
+  r_any
+}
+
+r_fully-qualified-class = string
+
+r_home = element home {
+  r_fully-qualified-class
+}
+
+r_icon = element icon {
+  attribute xml:lang { string }?,
+
+  element small-icon { r_path }?,
+
+  element large-icon { r_path }?
+}
+
+r_java-identifier = string
+
+r_jndi-name-Type = string
+
+r_local = element local {
+  r_fully-qualified-class
+}
+
+r_local-home = element local-home {
+  r_fully-qualified-class
+}
+
+r_message-destination = element message-destination {
+  r_description*,
+
+  r_display-name*,
+
+  r_icon*,
+
+  r_message-destination-name,
+
+  r_deployment-extension*
+}
+
+r_message-destination-link = element message-destination-link {
+  r_fully-qualified-class
+}
+
+r_message-destination-name = element message-destination-name {
+  string
+}
+
+r_message-destination-ref = element message-destination-ref {
+  r_description*,
+
+  r_message-destination-ref-name,
+
+  r_message-destination-ref-type,
+
+  r_message-destination-ref-usage,
+
+  r_message-destination-link?,
+
+  r_deployment-extension*
+}
+
+r_message-destination-ref-name = element message-destination-ref-name {
+  r_jndi-name
+}
+
+r_message-destination-type = element message-destination-type {
+  r_fully-qualified-class
+}
+
+r_message-destination-usage = element message-destination-usage {
+  "Consumes"
+  | "Produces"
+  | "ConsumesProduces"
+}
+
+r_param-name = element param-name {
+  r_string
+}
+
+r_param-value = element param-value {
+  string
+}
+
+r_param-value-Type =
+  r_description*,
+
+  r_param-name,
+
+  r_param-value
+
+r_path = string
+
+r_remote = element remote {
+  r_fully-qualified-class
+}
+
+r_res-auth = element res-auth {
+  "Application" | "Container"
+}
+
+r_res-sharing-scope = element res-sharing-scope {
+  "Shareable" | "Unshareable"
+}
+
+r_res-type = element res-type {
+  r_fully-qualified-class
+}
+
+r_resource-env-ref = element resource-env-ref {
+  r_description*,
+
+  r_resource-env-ref-name,
+
+  r_resource-env-ref-type,
+
+  r_deployment-extension*
+}
+
+r_resource-env-ref-name = element resource-env-ref-name {
+  r_jndi-name
+}
+
+r_resource-env-ref-type = element resource-env-ref-type {
+  r_fully-qualified-class
+}
+
+r_resource-ref = element resource-ref {
+  r_description*,
+
+  r_resource-ref-name,
+
+  r_res-type,
+
+  r_res-auth,
+
+  r_res-sharing-scope?,
+
+  r_deployment-extension*
+}
+
+r_resource-ref-name = element resource-ref-name {
+  r_jndi-name
+}
+
+r_role-name =
+  attribute role-name { string }
+  | element role-name { string }
+
+r_role-link = element role-link {
+  string
+}
+
+r_run-as = element run-as {
+  r_description*,
+
+  r_role-name,
+
+  r_role-link?
+}
+
+r_security-role = element security-role {
+  r_description*,
+
+  r_role-name
+}
+
+r_string = string
+
+r_true-false = "true" | "false"
+
+r_war-path = string
+</def>
+
+</s1>
+
+  </body>
+</document>

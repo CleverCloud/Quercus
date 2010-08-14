@@ -1,0 +1,6 @@
+Main-Class: com.caucho.server.bootstrap.ResinBoot
+Class-Path: resin.jar jta-101.jar isorelax.jar jsdk-24.jar jmx-12.jar jca-15.jar jstl-11.jar
+Extension-Name: com.caucho.server.bootstrap
+Implementation-Vendor: Caucho Technology, Inc.
+Implementation-Version: 3.0.1
+

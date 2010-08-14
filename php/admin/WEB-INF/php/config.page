@@ -1,0 +1,515 @@
+<?php
+/**
+ * Configuration information
+ *
+ * @author Sam
+ */
+
+require_once "WEB-INF/php/inc.php";
+
+if (! admin_init()) {
+  return;
+}
+
+echo "<p>";
+echo "<ul class='tabs'>";
+$count = 0;
+$sections = array('environment', 'cluster', 'webapps', 'database');
+
+foreach ($sections as $name) {
+  $count++;
+
+  echo "<li id='tab_" . $name . "'";
+  if ($count == 1)
+    echo " class='selected'";
+  else
+    echo " class=''";
+  echo ">\n";
+
+  echo "<a href='#' onclick=\"";
+  foreach ($sections as $subname) {
+    if ($subname == $name) {
+      echo "sel('tab_" . $subname . "');";
+      echo "show('s_" . $subname . "');";
+    }
+    else {
+      echo "unsel('tab_" . $subname . "');";
+      echo "hide('s_" . $subname . "');";
+    }
+  }
+  echo "\">" . $name  . "</a></li>";
+}
+echo "</ul>\n";
+
+?>
+
+<div id='s_environment'>
+<h2>Server: <?= $g_server->Id ? $g_server->Id : "default" ?></h2>
+<div class='section'>
+<table class="data">
+  <tr title="The server id used when starting this instance of Resin, the value of '-server'.">
+    <th>Server id:</th>
+    <td><?= $g_server->Id ? $g_server->Id : '""' ?></td>
+  </tr>
+
+  <tr title="The configuration file used when starting this instance of Resin, the value of '-conf'.">
+    <th>Version:</th>
+    <td><?= $g_resin->Version ?></td>
+  </tr>
+
+  <tr title="The configuration file used when starting this instance of Resin, the value of '-conf'.">
+    <th>Config file:</th>
+    <td><?= $g_resin->ConfigFile ?></td>
+  </tr>
+
+  <tr title="The Resin home directory used when starting this instance of Resin. This is the location of the Resin program files.">
+  <th>Resin home:</th>
+    <td><?= $g_resin->ResinHome ?></td>
+  </tr>
+
+  <tr title="The resin root directory used when starting this instance of Resin. This is the root directory of the web server files.">
+    <th>Resin root:</th>
+    <td><?= $g_resin->RootDirectory ?></td>
+  </tr>
+  </table>
+<?php
+
+   echo "<h3>Environment</h3>\n";
+
+   $env = $g_server->Environment;
+
+   echo "<table class='data'>\n"
+   echo "<tr><td class='item' valign='top'>classpath ";
+   echo "<a id='s_classpath' href=\"javascript:show('classpath');show('h_classpath');hide('s_classpath')\">[show]</a> ";
+   echo "<a id='h_classpath' href=\"javascript:hide('classpath');show('s_classpath');hide('h_classpath');\" style='display:none'>[hide]</a>";
+   echo "</td>";
+   echo "<td>";
+   echo "<pre id='classpath' style='display:none'>";
+   foreach ($env->ClassPath as $item) {
+     echo $item . "\n";
+   }
+   echo "</pre>";
+   echo "</td></tr></table>";
+?>
+</div> <!-- section -->
+</div> <!-- environment -->
+
+<!--
+   - XML cluster configuration
+  -->
+  
+<div id='s_cluster' style='display:none'>
+<h2>Cluster/Server</h2>
+
+<!-- XML config -->
+<?php
+
+echo "<pre><code>\n";
+echo "&lt;resin xmlns=\"http://caucho.com/ns/resin\"\n";
+echo "       xmlns:resin=\"urn:java:com.caucho.resin\">\n";
+
+display_config_cluster($g_server);
+
+echo "&lt;/resin>\n";
+
+echo "</code></pre>\n";
+?>
+</div> <!-- cluster -->
+
+<!--
+   - webapps configuration
+  -->
+
+<div id='s_webapps' style='display:none'>
+<!-- cluster ports -->
+
+<?php
+$cluster = $g_server->Cluster;
+
+$cluster_name = empty($cluster->Name) ? "default" : $cluster->Name;
+
+echo "<h2>Cluster: $cluster_name</h2>";
+echo "<div class='section'>";
+
+$servers = $cluster->Servers;
+
+?>
+<!-- host data -->
+
+<?php
+
+$hosts = $g_mbean_server->query("resin:*,type=Host");
+
+usort($hosts, "sort_host");
+
+foreach ($hosts as $host) {
+
+  $hostName = empty($host->HostName) ? "default" : $host->HostName;
+?>
+
+  <h2>Host <?= $host->URL ?></h2>
+  <div class='section'>
+
+  <table class='data'>
+  <tr>
+    <td class='item'>root-directory</td>
+    <td><?= $host->RootDirectory ?></td>
+  </tr>
+  </table>
+
+<?php
+
+echo "<h3>WebApps</h3>\n";
+
+$webapps = $host->WebApps;
+
+usort($webapps, "sort_webapp");
+$count = 0;
+foreach ($webapps as $webapp) {
+  $session = $webapp->SessionManager;
+  $persistent_store = $session->PersistentStore;
+?>
+
+  <p />
+  <table class='data' width='100%'>
+  <tr><td class='group' colspan='2'>
+       <?= empty($webapp->ContextPath) ? "/" : $webapp->ContextPath ?>
+    </td>
+  <tr>
+    <td class='item' width='25%'>root-directory</td>
+    <td>
+       <?= $webapp->RootDirectory ?>
+    </td>
+  </tr>
+
+  <tr>
+    <td class='item'>session-timeout</td>
+    <td>
+       <?= $session->SessionTimeout / 1000 ?>s
+    </td>
+  </tr>
+
+  <tr>
+    <td class='item'>session-max</td>
+    <td>
+       <?= $session->SessionMax ?>
+    </td>
+  </tr>
+
+<?php if ($persistent_store) { ?>
+
+  <tr>
+    <td class='item'>persistent-store</td>
+    <td>
+       <?= $persistent_store->StoreType ?>
+    </td>
+  </tr>
+
+  <tr>
+    <td class='item'>save-mode</td>
+    <td>
+       <?= $session->SaveMode ?>
+    </td>
+  </tr>
+
+<?php } // persistent
+  echo "</table>";
+
+   } // webapps
+   echo "</div>";
+ } // hosts
+ echo "</div>";
+
+?>
+
+</div> <!-- webapps -->
+
+<!--
+   - database configuration
+  -->
+
+<div id='s_database' style='display:none'>
+
+<?php
+
+$databases = $g_mbean_server->query("resin:type=Database,*");
+
+foreach ($databases as $db) {
+  echo "<h2>";
+  echo $db->ObjectName;
+  echo "</h2>\n";
+
+  echo "<pre>";
+  print_database_config($db);
+  echo "</pre>";
+}
+
+echo "</div>";
+
+function display_config_cluster($g_server)
+{
+  $cluster = $g_server->Cluster;
+
+  if (! $cluster)
+    return;
+
+  echo "\n";
+  echo "  &lt;cluster id=\"" . $cluster->Id . "\">\n";
+
+  foreach ($cluster->Servers as $server) {
+    echo "\n";
+
+    display_cluster_server($server);
+  }
+
+  echo "  &lt;/cluster>\n";
+}
+
+function display_cluster_server($server)
+{
+  global $g_server;
+
+  if ($server->Name == $g_server->Name) {
+    echo "    &lt;!--\n";
+    echo "       - current server '" . $server->Name . "'\n";
+    echo "      -->\n";
+  }
+
+  echo "    &lt;server id=\"" . $server->Name . "\""; 
+  echo " address=\"" . $server->Address . "\"";
+  echo " port=\"" . $server->Port . "\"";
+  echo ">\n";
+  echo "      &lt;!--";
+  echo " index=" . $server->ClusterIndex;
+  if ($server->TriadServer) {
+    echo " triad=true";
+  }
+  if ($server->SelfServer) {
+    echo " self=true";
+  }
+  echo " -->\n";
+
+  echo "\n";
+  echo "      &lt;load-balance-connect-timeout>";
+  echo display_timeout($server->ConnectTimeout);
+  echo "&lt;/load-balance-connect-timeout>\n";
+
+  echo "      &lt;load-balance-idle-time>";
+  echo display_timeout($server->IdleTime);
+  echo "&lt;/load-balance-idle-time>\n";
+
+  echo "      &lt;load-balance-recover-time>";
+  echo display_timeout($server->RecoverTime);
+  echo "&lt;/load-balance-recover-time>\n";
+
+  echo "      &lt;load-balance-socket-timeout>";
+  echo display_timeout($server->SocketTimeout);
+  echo "&lt;/load-balance-socket-timeout>\n";
+
+  echo "      &lt;load-balance-warmup-time>";
+  echo display_timeout($server->WarmupTime);
+  echo "&lt;/load-balance-warmup-time>\n";
+
+  echo "      &lt;load-balance-weight>";
+  echo $server->Weight;
+  echo "&lt;/load-balance-weight>\n";
+
+  if ($server == $g_server) {
+    display_server($g_server);
+  }
+
+  echo "    &lt;/server>\n";
+}
+
+function display_server($server)
+{
+  global $g_mbean_server;
+
+  echo "\n";
+
+  $thread_pool = $server->ThreadPool;
+
+  echo "      &lt;bind-ports-after-start>";
+  echo ($server->BindPortsAfterStart ? "true" : "false");
+  echo "&lt;/bind-ports-after-start>\n";
+
+  echo "      &lt;development-mode-error-page>";
+  echo ($server->DevelopmentModeErrorPage ? "true" : "false");
+  echo "&lt;/development-mode-error-page>\n";
+
+  echo "      &lt;memory-free-min>";
+  echo $server->MemoryFreeMin;
+  echo "&lt;/memory-free-min>\n";
+
+  echo "      &lt;perm-gen-free-min>";
+  echo $server->PermGenFreeMin;
+  echo "&lt;/perm-gen-free-min>\n";
+
+  echo "      &lt;select-manager-enable>";
+  echo ($server->SelectManagerEnable ? "true" : "false");
+  echo "&lt;/select-manager-enable>\n";
+
+  echo "      &lt;server-header>";
+  echo $server->ServerHeader;
+  echo "&lt;/server-header>\n";
+
+  echo "      &lt;shutdown-wait-max>";
+  echo display_timeout($server->ShutdownWaitMax);
+  echo "&lt;/shutdown-wait-max>\n";
+
+  echo "      &lt;stage>";
+  echo $server->Stage;
+  echo "&lt;/stage>\n";
+
+  echo "      &lt;thread-max>";
+  echo $thread_pool->ThreadMax;
+  echo "&lt;/thread-max>\n";
+
+  echo "      &lt;thread-idle-max>";
+  echo $thread_pool->ThreadIdleMax;
+  echo "&lt;/thread-idle-max>\n";
+
+  echo "      &lt;thread-idle-min>";
+  echo $thread_pool->ThreadIdleMin;
+  echo "&lt;/thread-idle-min>\n";
+
+  echo "      &lt;thread-executor-max>";
+  echo $thread_pool->ThreadExecutorMax;
+  echo "&lt;/thread-executor-max>\n";
+
+  echo "      &lt;thread-priority-min>";
+  echo $thread_pool->ThreadPriorityMin;
+  echo "&lt;/thread-priority-min>\n";
+
+  echo "      &lt;url-length-max>";
+  echo $server->UrlLengthMax;
+  echo "&lt;/url-length-max>\n";
+
+  $runtime = $g_mbean_server->lookup("java.lang:type=Runtime");
+
+  echo "\n";
+  foreach ($runtime->InputArguments as $jvm_arg) {
+    echo "      &lt;jvm-arg>";
+    echo $jvm_arg;
+    echo "&lt;/jvm-arg>\n";
+  }
+
+  foreach ($server->Ports as $port) {
+    display_port($port);
+  }
+}
+
+function display_port($port)
+{
+  $name = $port->ProtocolName;
+
+  if ($name == "server")
+    $name = "cluster-port";
+
+  echo "\n";
+  echo "      &lt;" . $name;
+  echo " address=\"" . $port->Address . "\"";
+  echo " port=\"" . $port->Port . "\"";
+  echo ">\n";
+
+  echo "        &lt;accept-listen-backlog>";
+  echo $port->AcceptListenBacklog;
+  echo "&lt;/accept-listen-backlog>\n";
+
+  echo "        &lt;accept-thread-max>";
+  echo $port->AcceptThreadMax;
+  echo "&lt;/accept-thread-max>\n";
+
+  echo "        &lt;connection-max>";
+  echo $port->ConnectionMax;
+  echo "&lt;/connection-max>\n";
+
+  echo "        &lt;keepalive-connection-time-max>";
+  echo display_timeout($port->KeepaliveConnectionTimeMax);
+  echo "&lt;/keepalive-connection-time-max>\n";
+
+  echo "        &lt;keepalive-max>";
+  echo $port->KeepaliveMax;
+  echo "&lt;/keepalive-max>\n";
+
+  echo "        &lt;keepalive-select-max>";
+  echo $port->KeepaliveSelectMax;
+  echo "&lt;/keepalive-select-max>\n";
+
+  echo "        &lt;keepalive-timeout>";
+  echo display_timeout($port->KeepaliveTimeout);
+  echo "&lt;/keepalive-timeout>\n";
+
+  echo "        &lt;socket-timeout>";
+  echo display_timeout($port->SocketTimeout);
+  echo "&lt;/socket-timeout>\n";
+
+  echo "        &lt;suspend-time-max>";
+  echo display_timeout($port->SuspendTimeMax);
+  echo "&lt;/suspent-time-max>\n";
+
+  echo "      &lt;/" . $name;
+  echo ">\n";
+}
+
+function print_database_config($db)
+{
+  echo "&lt;database name=\"" . $db->Name . "\">\n";
+
+  foreach ($db->Drivers as $driver) {
+    echo "  &lt;driver"
+    echo " url=\"";
+    echo $driver->getUrl();
+    echo "\"\n";
+    echo "          class=\"";
+    echo $driver->getClassName();
+    echo "\">\n";
+
+    foreach ($driver->Properties as $key => $value) {
+      echo "    &lt;" . $key . ">" . $value . "&lt;/" . $key . "/>\n";
+    }
+
+    echo "  &lt;/driver>\n\n";
+  }
+
+  echo "  &lt;spy>";
+  echo $db->Spy ? "true" : "false";
+  echo "&lt;/spy>\n\n";
+
+  echo "  &lt;max-connections>";
+  echo $db->MaxConnections;
+  echo "&lt;/max-connections>\n";
+
+  echo "  &lt;max-idle-count>";
+  echo $db->MaxIdleCount;
+  echo "&lt;/max-idle-count>\n";
+
+  echo "  &lt;max-create-connections>";
+  echo $db->MaxCreateConnections;
+  echo "&lt;/max-create-connections>\n";
+
+  echo "  &lt;max-overflow-connections>";
+  echo $db->MaxOverflowConnections;
+  echo "&lt;/max-overflow-connections>\n";
+
+  echo "\n";
+
+  echo "  &lt;max-idle-time>";
+  echo display_timeout($db->MaxIdleTime);
+  echo "&lt;/max-idle-time>\n";
+
+  echo "  &lt;max-active-time>";
+  echo display_timeout($db->MaxActiveTime);
+  echo "&lt;/max-active-time>\n";
+
+  echo "  &lt;max-pool-time>";
+  echo display_timeout($db->MaxPoolTime);
+  echo "&lt;/max-pool-time>\n";
+
+  echo "  &lt;connection-wait-time>";
+  echo display_timeout($db->ConnectionWaitTime);
+  echo "&lt;/connection-wait-time>\n";
+
+  echo "&lt;/database>\n";
+}
+?>

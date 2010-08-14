@@ -1,0 +1,35 @@
+<document>
+<header>
+  <product>resin</product>
+  <title>resin.xml: top-level configuration</title>
+  <version>Resin 4.0</version>
+
+  <description>
+
+    <p>
+      The top-level &lt;resin> tag contains any &lt;<a
+      config-tag="cluster"/>&gt; defined for a deployment.  It also
+      provides a resources for class-loaders, logging and shared
+      resources.
+    </p>
+
+  </description>
+</header>
+<body>
+<reference-legend/>
+
+<localtoc/>
+
+<include-defun name="cluster"/>
+<include-defun name="cluster-default"/>
+<include-defun name="environment-system-properties"/>
+<include-defun name="resin"/>
+<include-defun name="resin-data-directory"/>
+<include-defun name="resin:AdminAuthenticator"/>
+<include-defun name="root-directory"/>
+<include-defun name="security-manager"/>
+<include-defun name="security-provider"/>
+<include-defun name="stat-service"/>
+
+</body>
+</document>

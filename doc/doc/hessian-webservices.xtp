@@ -1,0 +1,20 @@
+<document>
+<header>
+<product>resin</product>
+<title>Web Services - Burlap and Hessian</title>
+<type>contents</type>
+
+<description>
+<p>Burlap and Hessian are simple protocols for connecting web
+services.  Burlap is XML-based, and Hessian is binary.</p>
+
+<p>Because they are small protocols, J2ME devices like cell-phones can
+use them to connect to Resin servers.  Because they are powerful, they
+can be used for EJB services.</p>
+</description>
+</header>
+
+<body>
+<summary/>
+</body>
+</document>

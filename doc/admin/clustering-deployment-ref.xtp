@@ -1,0 +1,597 @@
+<!-- XXX: Not sure how this could get integrated into reference.xtp -->
+<document>
+<header>
+<title>Ant/Maven Reference for Clustered Deployment</title>
+<version>Resin 4.0</version>
+<description>
+<p>
+This page details the ANT and Maven APIs for clustered deployment in Resin.
+</p>
+</description>
+</header>
+<body>
+<!--  
+  XXX: Does this need additional details on how to set-up jar files, repositories, etc 
+-->
+<s1 title="Ant Tasks for Clustered Deployment">
+<s2 title="Common Properties for All Tasks">
+<table>
+<tr>
+<th>Parameter Name</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>server</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>The IP or address of the Resin server</td>
+</tr>
+<tr>
+<td>port</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>The port of the Resin server's HTTP port</td>
+</tr>
+<tr>
+<td>user</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>The user to use when logging into the Resin server</td>
+</tr>
+<tr>
+<td>password</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>The password to use when logging into the Resin server</td>
+</tr>
+<tr>
+<td>commitMessage</td>
+<td>No</td>
+<td>N/A</td>
+<td>The commit message to log for any changes to the application repository</td>
+</tr>
+</table>
+</s2>
+<s2 title="resin-upload-war (com.caucho.ant.ResinUploadWar)">
+<table>
+<tr>
+<th>Parameter Name</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>warFile</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>The war file to upload to the Resin server</td>
+</tr>
+<tr>
+<td>stage</td>
+<td>No</td>
+<td>"default"</td>
+<td>The stage to use for the deployed application</td>
+</tr>
+<tr>
+<td>virtualHost</td>
+<td>No</td>
+<td>"default"</td>
+<td>The virtual host to use for the deployed application</td>
+</tr>
+<tr>
+<td>contextRoot</td>
+<td>No</td>
+<td>/[war file prefix]</td>
+<td>The context root of the deployed application</td>
+</tr>
+<tr>
+<td>version</td>
+<td>No</td>
+<td>N/A</td>
+<td>The version to use for the deployed application</td>
+</tr>
+<tr>
+<td>archive</td>
+<td>No</td>
+<td>false</td>
+<td>
+When set to true, an archive tag is set in addition to the main tag.
+Can also be an explicit tag.
+</td>
+</tr>
+<tr>
+<td>writeHead</td>
+<td>No</td>
+<td>true</td>
+<td>When set to true and using versioning, a "head" tag is also	set.</td>
+</tr>
+</table>
+</s2>
+<s2 title="resin-copy-tag (com.caucho.ant.ResinCopyTag)">
+<table>
+<tr>
+<th>Parameter Name</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>stage</td>
+<td>No</td>
+<td>"default"</td>
+<td>The stage of the target tag</td>
+</tr>
+<tr>
+<td>virtualHost</td>
+<td>No</td>
+<td>"default"</td>
+<td>The virtual host of the target tag</td>
+</tr>
+<tr>
+<td>contextRoot</td>
+<td>Yes (if tag not given)</td>
+<td>N/A</td>
+<td>The context root of the target tag</td>
+</tr>
+<tr>
+<td>version</td>
+<td>No</td>
+<td>N/A</td>
+<td>The version of the target tag</td>
+</tr>
+<tr>
+<td>sourceStage</td>
+<td>No</td>
+<td>"default"</td>
+<td>The stage of the source tag</td>
+</tr>
+<tr>
+<td>sourceVirtualHost</td>
+<td>No</td>
+<td>"default"</td>
+<td>The virtual host of the source tag</td>
+</tr>
+<tr>
+<td>sourceContextRoot</td>
+<td>Yes (if sourceTag not given)</td>
+<td>N/A</td>
+<td>The context root of the source tag</td>
+</tr>
+<tr>
+<td>sourceVersion</td>
+<td>No</td>
+<td>N/A</td>
+<td>The version of the source tag</td>
+</tr>
+<tr>
+<td>tag</td>
+<td>Yes (if contextRoot not given)</td>
+<td>N/A</td>
+<td>An explicit target tag</td>
+</tr>
+<tr>
+<td>sourceTag</td>
+<td>Yes (if sourceContextRoot not given)</td>
+<td>N/A</td>
+<td>An explicit source tag</td>
+</tr>
+</table>
+</s2>
+<s2 title="resin-delete-tag (com.caucho.ant.ResinDeleteTag)">
+<table>
+<tr>
+<th>Parameter Name</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>stage</td>
+<td>No</td>
+<td>"default"</td>
+<td>The stage of the tag to be deleted</td>
+</tr>
+<tr>
+<td>resin.virtualHost</td>
+<td>No</td>
+<td>"default"</td>
+<td>The virtual host of the tag to be deleted</td>
+</tr>
+<tr>
+<td>contextRoot</td>
+<td>Yes (if tag not given)</td>
+<td>N/A</td>
+<td>The context root of the tag to be deleted</td>
+</tr>
+<tr>
+<td>version</td>
+<td>No</td>
+<td>N/A</td>
+<td>The version of the tag to be deleted</td>
+</tr>
+<tr>
+<td>tag</td>
+<td>Yes (if contextRoot not given)</td>
+<td>N/A</td>
+<td>An explicit tag to be deleted</td>
+</tr>
+</table>
+</s2>
+<s2 title="resin-query-tags (com.caucho.ant.ResinQueryTags)">
+<table>
+<tr>
+<th>Parameter Name</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>stage</td>
+<td>
+Yes (At least one pattern (either stage, virtualHost, contextRoot, 
+version, or pattern) must be given
+</td>
+<td>"default"</td>
+<td>The query pattern for the stage portion of tags in the repository</td>
+</tr>
+<tr>
+<td>virtualHost</td>
+<td>
+Yes (At least one pattern (either stage, virtualHost, contextRoot, version, or 
+pattern) must be given
+</td>
+<td>"default"</td>
+<td>The query pattern for the virtual host portion of tags in the repository</td>
+</tr>
+<tr>
+<td>contextRoot</td>
+<td>
+Yes (At least one pattern (either stage, virtualHost,
+contextRoot, version, or pattern) must be given
+</td>
+<td>".*"</td>
+<td>The query pattern for the context root portion of tags in the repository</td>
+</tr>
+<tr>
+<td>version</td>
+<td>
+Yes (At least one pattern (either stage, virtualHost,
+contextRoot, version, or pattern) must be given
+</td>
+<td>N/A</td>
+<td>The query pattern for the version portion of tags in the repository</td>
+</tr>
+<tr>
+<td>pattern</td>
+<td>
+Yes (At least one pattern (either stage, virtualHost,
+contextRoot, version, or pattern) must be given
+</td>
+<td>N/A</td>
+<td>An explicit query pattern for entire tags in the repository</td>
+</tr>
+</table>
+</s2>
+</s1>
+<s1 title="Maven Mojos for Clustered Deployment">
+<s2 title="Common Properties for All Mojos">
+<table>
+<tr>
+<th>Parameter Name</th>
+<th>System Property</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>server</td>
+<td>resin.server</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>The IP or address of the Resin server</td>
+</tr>
+<tr>
+<td>port</td>
+<td>resin.port</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>The port of the Resin server's HTTP port</td>
+</tr>
+<tr>
+<td>user</td>
+<td>resin.user</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>The user to use when logging into the Resin server</td>
+</tr>
+<tr>
+<td>password</td>
+<td>resin.password</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>The password to use when logging into the Resin server</td>
+</tr>
+<tr>
+<td>commitMessage</td>
+<td>resin.commitMessage</td>
+<td>No</td>
+<td>N/A</td>
+<td>The commit message to log for any changes to the application repository</td>
+</tr>
+</table>
+</s2>
+<s2 title="resin:upload-war">
+<table>
+<tr>
+<th>Parameter Name</th>
+<th>System Property</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>warFile</td>
+<td>resin.warFile</td>
+<td>Yes</td>
+<td>
+${project.build.directory}/${project.build.finalName}.war 
+(the war file produced for the project)
+</td>
+<td>The war file to upload to the Resin server</td>
+</tr>
+<tr>
+<td>stage</td>
+<td>resin.stage</td>
+<td>No</td>
+<td>"default"</td>
+<td>The stage to use for the deployed application</td>
+</tr>
+<tr>
+<td>virtualHost</td>
+<td>resin.virtualHost</td>
+<td>No</td>
+<td>"default"</td>
+<td>The virtual host to use for the deployed application</td>
+</tr>
+<tr>
+<td>contextRoot</td>
+<td>resin.contextRoot</td>
+<td>Yes</td>
+<td>
+/${project.build.finalName}
+<br/>
+(the "final name" of the project)
+</td>
+<td>The context root of the deployed application</td>
+</tr>
+<tr>
+<td>version</td>
+<td>resin.version</td>
+<td>No</td>
+<td>N/A</td>
+<td>The version to use for the deployed application</td>
+</tr>
+<tr>
+<td>archive</td>
+<td>resin.archive</td>
+<td>No</td>
+<td>false</td>
+<td>
+When set to true, an archive tag is set in addition to the
+main tag. Can also be an explicit tag.
+</td>
+</tr>
+<tr>
+<td>writeHead</td>
+<td>resin.writeHead</td>
+<td>No</td>
+<td>true</td>
+<td>When set to true and using versioning, a "head" tag is also set.</td>
+</tr>
+</table>
+</s2>
+<s2 title="resin:copy-tag">
+<table>
+<tr>
+<th>Parameter Name</th>
+<th>System Property</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>stage</td>
+<td>resin.stage</td>
+<td>No</td>
+<td>"default"</td>
+<td>The stage of the target tag</td>
+</tr>
+<tr>
+<td>virtualHost</td>
+<td>resin.virtualHost</td>
+<td>No</td>
+<td>"default"</td>
+<td>The virtual host of the target tag</td>
+</tr>
+<tr>
+<td>contextRoot</td>
+<td>resin.contextRoot</td>
+<td>Yes (if tag not given)</td>
+<td>
+/${project.build.finalName}
+<br />
+(the "final name" of the project)
+</td>
+<td>The context root of the target tag</td>
+</tr>
+<tr>
+<td>version</td>
+<td>resin.version</td>
+<td>No</td>
+<td>N/A</td>
+<td>The version of the target tag</td>
+</tr>
+<tr>
+<td>sourceStage</td>
+<td>resin.sourceStage</td>
+<td>No</td>
+<td>"default"</td>
+<td>The stage of the source tag</td>
+</tr>
+<tr>
+<td>sourceVirtualHost</td>
+<td>resin.sourceVirtualHost</td>
+<td>No</td>
+<td>"default"</td>
+<td>The virtual host of the source tag</td>
+</tr>
+<tr>
+<td>sourceContextRoot</td>
+<td>resin.sourceContextRoot</td>
+<td>Yes (if sourceTag not given)</td>
+<td>N/A</td>
+<td>The context root of the source tag</td>
+</tr>
+<tr>
+<td>sourceVersion</td>
+<td>resin.sourceVersion</td>
+<td>No</td>
+<td>N/A</td>
+<td>The version of the source tag</td>
+</tr>
+<tr>
+<td>tag</td>
+<td>resin.tag</td>
+<td>Yes (if contextRoot not given)</td>
+<td>N/A</td>
+<td>An explicit target tag</td>
+</tr>
+<tr>
+<td>sourceTag</td>
+<td>resin.sourceTag</td>
+<td>Yes (if sourceContextRoot not given)</td>
+<td>N/A</td>
+<td>An explicit source tag</td>
+</tr>
+</table>
+</s2>
+<s2 title="resin:delete-tag">
+<table>
+<tr>
+<th>Parameter Name</th>
+<th>System Property</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>stage</td>
+<td>resin.stage</td>
+<td>No</td>
+<td>"default"</td>
+<td>The stage of the tag to be deleted</td>
+</tr>
+<tr>
+<td>virtualHost</td>
+<td>resin.virtualHost</td>
+<td>No</td>
+<td>"default"</td>
+<td>The virtual host of the tag to be deleted</td>
+</tr>
+<tr>
+<td>contextRoot</td>
+<td>resin.contextRoot</td>
+<td>Yes (if tag not given)</td>
+<td>
+/${project.build.finalName}
+<br/>
+(the "final name" of the project)
+</td>
+<td>The context root of the tag to be deleted</td>
+</tr>
+<tr>
+<td>version</td>
+<td>resin.version</td>
+<td>No</td>
+<td>N/A</td>
+<td>The version of the tag to be deleted</td>
+</tr>
+<tr>
+<td>tag</td>
+<td>resin.tag</td>
+<td>Yes (if contextRoot not given)</td>
+<td>N/A</td>
+<td>An explicit tag to be deleted</td>
+</tr>
+</table>
+</s2>
+<s2 title="resin:query-tags">
+<table>
+<tr>
+<th>Parameter Name</th>
+<th>System Property</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>stage</td>
+<td>resin.stage</td>
+<td>
+Yes (At least one pattern (either stage, virtualHost,
+contextRoot, version, or pattern) must be given
+</td>
+<td>"default"</td>
+<td>The query pattern for the stage portion of tags in the repository</td>
+</tr>
+<tr>
+<td>virtualHost</td>
+<td>resin.virtualHost</td>
+<td>
+Yes (At least one pattern (either stage, virtualHost,
+contextRoot, version, or pattern) must be given
+</td>
+<td>"default"</td>
+<td>The query pattern for the virtual host portion of tags in the repository</td>
+</tr>
+<tr>
+<td>contextRoot</td>
+<td>resin.contextRoot</td>
+<td>
+Yes (At least one pattern (either stage, virtualHost,
+contextRoot, version, or pattern) must be given
+</td>
+<td>
+/${project.build.finalName}
+<br />
+(the "final name" of the project)
+</td>
+<td>The query pattern for the context root portion of tags in the repository</td>
+</tr>
+<tr>
+<td>version</td>
+<td>resin.version</td>
+<td>
+Yes (At least one pattern (either stage, virtualHost,
+contextRoot, version, or pattern) must be given
+</td>
+<td>N/A</td>
+<td>The query pattern for the version portion of tags in the repository</td>
+</tr>
+<tr>
+<td>pattern</td>
+<td>resin.pattern</td>
+<td>
+Yes (At least one pattern (either stage, virtualHost,
+contextRoot, version, or pattern) must be given
+</td>
+<td>N/A</td>
+<td>An explicit query pattern for entire tags in the repository</td>
+</tr>
+</table>
+</s2>
+</s1>
+</body>
+</document>

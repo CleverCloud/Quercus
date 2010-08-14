@@ -1,0 +1,36 @@
+diff -rupN ../resin-pro-4.0.8_orig/modules/c/src/resin/Makefile.in ./modules/c/src/resin/Makefile.in
+--- ../resin-pro-4.0.8_orig/modules/c/src/resin/Makefile.in	2010-07-02 01:40:53.000000000 +0200
++++ ./modules/c/src/resin/Makefile.in	2010-07-23 13:52:17.000000000 +0200
+@@ -5,7 +5,7 @@ OS=@OS@
+ SO=@SO@
+ CPU=@CPU@
+ LDFLAGS=@LDFLAGS@
+-LDFLAGS_SHLIB=@LDFLAGS_SHLIB@
++LDFLAGS_SHLIB=@LDFLAGS_SHLIB@ -mimpure-text
+ PROXY_LIBS=@PROXY_LIBS@
+ APACHE_INC=@APACHE_INC@
+ resin_conf=@apache_conf@
+diff -rupN ../resin-pro-4.0.8_orig/modules/c/src/resin_os/Makefile.in ./modules/c/src/resin_os/Makefile.in
+--- ../resin-pro-4.0.8_orig/modules/c/src/resin_os/Makefile.in	2010-07-02 01:40:21.000000000 +0200
++++ ./modules/c/src/resin_os/Makefile.in	2010-07-23 13:52:33.000000000 +0200
+@@ -5,7 +5,7 @@ OS=@OS@
+ SO=@SO@
+ CPU=@CPU@
+ LDFLAGS=@LDFLAGS@
+-LDFLAGS_SHLIB=@LDFLAGS_SHLIB@
++LDFLAGS_SHLIB=@LDFLAGS_SHLIB@ -mimpure-text
+ PROXY_LIBS=@PROXY_LIBS@
+ APACHE_INC=@APACHE_INC@
+ resin_conf=@apache_conf@
+diff -rupN ../resin-pro-4.0.8_orig/modules/c/src/resinssl/Makefile.in ./modules/c/src/resinssl/Makefile.in
+--- ../resin-pro-4.0.8_orig/modules/c/src/resinssl/Makefile.in	2010-07-02 01:40:54.000000000 +0200
++++ ./modules/c/src/resinssl/Makefile.in	2010-07-23 13:52:50.000000000 +0200
+@@ -6,7 +6,7 @@ OS=@OS@
+ SO=@SO@
+ CPU=@CPU@
+ LDFLAGS=@LDFLAGS@
+-LDFLAGS_SHLIB=@LDFLAGS_SHLIB@
++LDFLAGS_SHLIB=@LDFLAGS_SHLIB@ -mimpure-text
+ PROXY_LIBS=@PROXY_LIBS@ @SSL_LIBS@
+ APACHE_INC=@APACHE_INC@
+ resin_conf=@apache_conf@

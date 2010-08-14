@@ -1,0 +1,85 @@
+default namespace local = ""
+
+start = jca10_connector
+
+jca10_authentication-mechanism = element authentication-mechanism {
+  jca10_description?,
+
+  element authentication-mechanism-type { string },
+
+  element credential-interface { string }
+}
+
+jca10_config-property = element config-property {
+  jca10_description?,
+
+  element config-property-name { string },
+
+  element config-property-type { string },
+
+  element config-property-value { string }?
+}
+
+jca10_connector = element connector {
+  jca10_display-name?,
+
+  jca10_description?,
+
+  jca10_icon?,
+
+  element vendor-name { string },
+
+  element spec-version { string },
+
+  element eis-type { string },
+
+  element version { string },
+
+  jca10_license?,
+
+  jca10_resourceadapter
+}
+
+jca10_description = element description { string }
+
+jca10_display-name = element display-name { string }
+
+jca10_icon = element icon {
+  element small-icon { string }?,
+
+  element large-icon { string }?
+}
+
+jca10_license = element license {
+  jca10_description?,
+
+  element license-required { string }?
+}
+
+jca10_resourceadapter = element resourceadapter {
+  element managedconnectionfactory-class { string },
+
+  element connectionfactory-interface { string },
+
+  element connectionfactory-impl-class { string },
+
+  element connection-interface { string },
+
+  element connection-impl-class { string },
+
+  element transaction-support { string },
+
+  jca10_config-property*,
+
+  jca10_authentication-mechanism*,
+
+  element reauthentication-support { string },
+
+  jca10_security-permission*
+}
+
+jca10_security-permission = element security-permission {
+  jca10_description?,
+
+  element security-permission-spec { string }
+}

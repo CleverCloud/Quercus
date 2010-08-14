@@ -1,0 +1,503 @@
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.1">
+  <tlib-version>1.2</tlib-version>
+  <short-name>f</short-name>
+
+  <uri>http://java.sun.com/jsf/core</uri>
+
+  <!-- f:actionListener -->
+  <tag>
+    <name>actionListener</name>
+    <tag-class>com.caucho.jsf.taglib.ActionListenerTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>type</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.event.ActionListener</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:attribute -->
+  <tag>
+    <name>attribute</name>
+    <tag-class>com.caucho.jsf.taglib.AttributeTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>value</name>
+      <required>true</required>
+      <deferred-value><type>Object</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:convertDateTime -->
+  <tag>
+    <name>convertDateTime</name>
+    <tag-class>com.caucho.jsf.taglib.ConvertDateTimeTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>dateStyle</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>locale</name>
+      <deferred-value><type>Object</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>pattern</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>timeStyle</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>timeZone</name>
+      <deferred-value><type>Object</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>type</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.convert.DateTimeConverter</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:convertNumber -->
+  <tag>
+    <name>convertNumber</name>
+    <tag-class>com.caucho.jsf.taglib.ConvertNumberTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.convert.NumberConverter</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>currencyCode</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>currencySymbol</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>groupingUsed</name>
+      <deferred-value><type>Boolean</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>integerOnly</name>
+      <deferred-value><type>Boolean</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>locale</name>
+      <deferred-value><type>java.util.Locale</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>maxFractionDigits</name>
+      <deferred-value><type>Integer</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>maxIntegerDigits</name>
+      <deferred-value><type>Integer</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>minFractionDigits</name>
+      <deferred-value><type>Integer</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>minIntegerDigits</name>
+      <deferred-value><type>Integer</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>pattern</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>type</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:converter -->
+  <tag>
+    <name>converter</name>
+    <tag-class>com.caucho.jsf.taglib.ConvertByIdTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.convert.Converter</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>converterId</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:facet -->
+  <tag>
+    <name>facet</name>
+    <tag-class>javax.faces.webapp.FacetTag</tag-class>
+    <body-content>JSP</body-content>
+
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:loadBundle -->
+  <tag>
+    <name>loadBundle</name>
+    <tag-class>com.caucho.jsf.taglib.LoadBundleTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>var</name>
+      <required>true</required>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>basename</name>
+      <required>true</required>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:param -->
+  <tag>
+    <name>param</name>
+    <tag-class>com.caucho.jsf.taglib.ParamTag</tag-class>
+    <body-content>JSP</body-content>
+
+    <attribute>
+      <name>id</name>
+    </attribute>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.component.UIComponent</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>name</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>value</name>
+      <deferred-value><type>Object</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:phaseListener -->
+  <tag>
+    <name>phaseListener</name>
+    <tag-class>com.caucho.jsf.taglib.PhaseListenerTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.event.PhaseListener</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>type</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:selectItem -->
+  <tag>
+    <name>selectItem</name>
+    <tag-class>com.caucho.jsf.taglib.FacesSelectItemTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>id</name>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+
+    <attribute>
+      <name>itemDisabled</name>
+      <deferred-value><type>Boolean</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>itemLabel</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>itemValue</name>
+      <deferred-value><type>Object</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value>
+	<type>javax.faces.component.UIComponent</type>
+      </deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>itemDescription</name>
+      <deferred-value><type>java.lang.String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>escape</name>
+      <deferred-value><type>java.lang.String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>value</name>
+      <deferred-value><type>javax.faces.model.SelectItem</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:selectItems -->
+  <tag>
+    <name>selectItems</name>
+    <tag-class>com.caucho.jsf.taglib.FacesSelectItemsTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>id</name>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.component.UIComponent</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>value</name>
+      <deferred-value><type>Object</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:setPropertyActionListener -->
+  <tag>
+    <name>setPropertyActionListener</name>
+    <tag-class>com.caucho.jsf.taglib.SetPropertyActionListenerTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>value</name>
+      <required>true</required>
+      <deferred-value><type>java.lang.Object</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>target</name>
+      <required>true</required>
+      <deferred-value><type>java.lang.Object</type></deferred-value>
+    </attribute>
+  </tag>
+  
+  <!-- f:subview -->
+  <tag>
+    <name>subview</name>
+    <tag-class>com.caucho.jsf.taglib.SubViewTag</tag-class>
+    <body-content>JSP</body-content>
+
+    <attribute>
+      <name>id</name>
+    </attribute>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.component.UIComponent</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>rendered</name>
+      <deferred-value><type>Boolean</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:verbatim -->
+  <tag>
+    <name>verbatim</name>
+    <tag-class>com.caucho.jsf.taglib.VerbatimTag</tag-class>
+    <body-content>JSP</body-content>
+
+    <attribute>
+      <name>escape</name>
+      <deferred-value><type>Boolean</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>rendered</name>
+      <deferred-value><type>Boolean</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:view -->
+  <tag>
+    <name>view</name>
+    <tag-class>com.caucho.jsf.taglib.FacesViewTag</tag-class>
+    <body-content>JSP</body-content>
+
+    <attribute>
+      <name>locale</name>
+      <deferred-value><type>java.lang.Object</type></deferred-value>
+    </attribute>
+    
+    <attribute>
+      <name>renderKitId</name>
+      <deferred-value><type>java.lang.String</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>beforePhase</name>
+      <deferred-method>
+           <method-signature>void beforePhase(javax.faces.event.PhaseEvent)</method-signature>
+      </deferred-method>
+    </attribute>
+
+    <attribute>
+      <name>afterPhase</name>
+      <deferred-method>
+           <method-signature>void afterPhase(javax.faces.event.PhaseEvent)</method-signature>
+      </deferred-method>
+    </attribute>
+
+  </tag>
+
+  <!-- f:validateDoubleRange -->
+  <tag>
+    <name>validateDoubleRange</name>
+    <tag-class>com.caucho.jsf.taglib.ValidateDoubleRangeTag</tag-class>
+    <body-content>JSP</body-content>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.validator.DoubleRangeValidator</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>maximum</name>
+      <deferred-value><type>Double</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>minimum</name>
+      <deferred-value><type>Double</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:validateLength -->
+  <tag>
+    <name>validateLength</name>
+    <tag-class>com.caucho.jsf.taglib.ValidateLengthTag</tag-class>
+    <body-content>JSP</body-content>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.validator.LengthValidator</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>maximum</name>
+      <deferred-value><type>Integer</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>minimum</name>
+      <deferred-value><type>Integer</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:validateLongRange -->
+  <tag>
+    <name>validateLongRange</name>
+    <tag-class>com.caucho.jsf.taglib.ValidateLongRangeTag</tag-class>
+    <body-content>JSP</body-content>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.validator.LongRangeValidator</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>maximum</name>
+      <deferred-value><type>Long</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>minimum</name>
+      <deferred-value><type>Long</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:validator -->
+  <tag>
+    <name>validator</name>
+    <tag-class>com.caucho.jsf.taglib.ValidateByIdTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.validator.Validator</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>validatorId</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+  </tag>
+
+  <!-- f:valueChangeListener -->
+  <tag>
+    <name>valueChangeListener</name>
+    <tag-class>com.caucho.jsf.taglib.ValueChangeListenerTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+      <name>binding</name>
+      <deferred-value><type>javax.faces.event.ValueChangeListener</type></deferred-value>
+    </attribute>
+
+    <attribute>
+      <name>type</name>
+      <deferred-value><type>String</type></deferred-value>
+    </attribute>
+  </tag>
+</taglib>

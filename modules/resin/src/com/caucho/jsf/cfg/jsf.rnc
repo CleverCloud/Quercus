@@ -1,0 +1,14 @@
+namespace jsf_old = "http://java.sun.com/JSF/Configuration"
+
+include "jsf-11.rnc"
+include "jsf-12.rnc"
+include "jsf-20.rnc"
+
+start = jsf11_faces-config | jsf12_faces-config | jsf20_faces-config | jsf_misc-faces-config
+
+jsf_misc-faces-config = element jsf_old:faces-config {
+  jsf_any-Group
+}
+
+jsf_any-Group = text | (attribute * {string} | element * { jsf_any-Group })*
+

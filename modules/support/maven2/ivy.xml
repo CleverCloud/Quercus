@@ -1,0 +1,9 @@
+<ivy-module version="2.0">
+  <info organisation="com.caucho" module="resin-support" revision="@VERSION@">
+    <license name="GPL"/>
+  </info>
+
+  <dependencies>
+    <dependency org="com.caucho" name="resin" rev="@VERSION@"/>
+  </dependencies>
+</ivy-module>  

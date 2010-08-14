@@ -1,0 +1,20 @@
+<document>
+<header>
+  <product>resin</product>
+  <title>Log</title>
+  <description>
+  <p>Resin can perform access logging, specify where JDK
+  logging interface messages go, and redirect the stderr and
+  stdout for your applications.</p>
+  </description>
+</header>
+
+<body>
+<reference-legend/>
+<localtoc/>
+<include-defun name="log"/> 
+<include-defun name="log-handler"/> 
+<include-defun name="log format string"/> 
+
+</body>
+</document>

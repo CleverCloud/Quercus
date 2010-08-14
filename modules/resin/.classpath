@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ejb"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hessian"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jstl"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jta"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/kernel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/quercus"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/servlet16"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/webbeans"/>
+	<classpathentry kind="lib" path="/Users/scottferguson/ws/resin/lib/webservices-api.jar"/>
+	<classpathentry kind="lib" path="/Users/scottferguson/ws/resin/lib/webservices-extra-api.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jpa"/>
+	<classpathentry kind="lib" path="/Users/scottferguson/ws/resin/lib/jsf-api.jar"/>
+	<classpathentry kind="lib" path="/Users/scottferguson/ws/resin/lib/jsf-impl.jar"/>
+	<classpathentry kind="lib" path="/Users/scottferguson/ws/resin/lib/jsr88.jar"/>
+	<classpathentry kind="lib" path="/Users/scottferguson/ws/resin/lib/jsr173_1.0_api.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jca"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jms"/>
+	<classpathentry kind="lib" path="/Users/scottferguson/ws/resin/lib/javamail-141.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jcache"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

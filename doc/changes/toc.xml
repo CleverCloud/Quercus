@@ -1,0 +1,24 @@
+<navigation threaded="true" section="Resin : Changes : " comment="true">
+  <item title="Changes" link="index.xtp">
+    <item link="release-notes.xtp" title="Release Notes">
+      <item link="resin-4.0.9.xtp" title="Resin 4.0.9"/>
+      <item link="resin-4.0.8.xtp" title="Resin 4.0.8"/>
+      <item link="resin-4.0.7.xtp" title="Resin 4.0.7"/>
+      <item link="resin-4.0.6.xtp" title="Resin 4.0.6"/>
+      <item link="resin-4.0.5.xtp" title="Resin 4.0.5"/>
+      <item link="resin-4.0.4.xtp" title="Resin 4.0.4"/>
+      <item link="resin-4.0.3.xtp" title="Resin 4.0.3"/>
+      <item link="resin-4.0.2.xtp" title="Resin 4.0.2"/>
+      <item link="resin-4.0.1.xtp" title="Resin 4.0.1"/>
+      <item link="resin-4.0.0.xtp" title="Resin 4.0.0"/>
+    </item>
+
+    <item link="change-logs.xtp" title="Change Logs">
+      <item link="changes.xtp" title="Resin 4.0 Changes"/>
+      <item link="changes-3.xtp" title="Resin 3.0 Changes"/>
+      <item link="changes-2.xtp" title="Resin-2.1 Changes"/>
+      <item link="changes-ee.xtp" title="Resin-EE Changes"/>
+      <item link="changes-1.xtp" title="Old Changes"/>
+    </item>
+  </item>
+</navigation>

@@ -1,0 +1,170 @@
+<?php
+/**
+ * Provides the most important status information about the Resin server.
+ */
+
+require_once "WEB-INF/php/inc.php";
+
+if (! admin_init()) {
+  return;
+}
+
+$mbean_server = $g_mbean_server;
+$resin = $g_resin;
+$server = $g_server;
+
+if ($g_mbean_server)
+  $stat = $g_mbean_server->lookup("resin:type=StatService");
+
+echo "<h1>Postmortem Analysis</h1>\n";
+  
+if (! $stat) {
+  ?>
+  <p>Postmortem analysis requires Resin Professional and
+  a &lt;resin:StatService/> and &lt;resin:LogService/> defined in
+  the resin.xml.</p>
+  <?php
+  
+    return;
+}
+
+$index = $g_server->SelfServer->ClusterIndex;
+$si = sprintf("%02d", $index);
+
+$now = time();
+$start = $now - 7 * 24 * 3600;
+
+$restart_list = $stat->getStartTimes($index, $start * 1000, $now * 1000);
+
+if (empty($restart_list)) {
+  echo "<p>No server restarts have been found in the last 7 days.</p>";
+  return;
+}
+
+sort($restart_list);
+
+$form_time = $_REQUEST['time'];
+
+if (in_array($form_time, $restart_list)) {
+  $restart_ms = $form_time;
+}
+else {
+  $restart_ms = $restart_list[count($restart_list) - 1];
+}  
+$restart_time = floor($restart_ms / 1000);
+
+echo "<h2>Restart at " . date("Y-m-d H:i", $restart_time) . "</h2>\n";
+
+echo "<form name='restarts' method='POST' action='" . $g_next_url . "'>";
+echo "<select name='time' onchange='document.forms.restarts.submit();'>\n";
+foreach ($restart_list as $time_ms) {
+  $time = floor($time_ms / 1000);
+  
+  echo "<option value='$time_ms'"
+  if ($time_ms == $restart_ms)
+    echo " selected";
+  echo ">";
+  echo date("Y-m-d H:i", $time);
+}
+echo "</select>\n";
+echo "</form>";
+
+echo "<h2>Graphs</h2>\n";
+
+$period = 60 * 60;
+$end = $restart_time;
+$start = $end - $period;
+
+$height = 150;
+
+echo "<table>";
+
+echo "<tr><th>Request Count<th>Request Time";
+echo "<tr valign='top'><td>";
+stat_graph("request", 300, $height, $start, $end,
+           array("$si|Resin|Request|Http Request Count"));
+echo "<td>";
+stat_graph("request_time", 300, $height, $start, $end,
+           array("$si|Resin|Request|Http Request Time",
+                 "$si|Resin|Request|Http Request Time Max"));
+
+echo "<tr><th>Database Query Active<th>Database Query Time";
+echo "<tr valign='top'><td>";
+stat_graph("database", 300, $height, $start, $end,
+           array("$si|Resin|Database|Query Active Max"));
+
+echo "<td>";
+stat_graph("database_time", 300, $height, $start, $end,
+           array("$si|Resin|Database|Query Time",
+                 "$si|Resin|Database|Query Time Max"));
+
+echo "<tr><th>Thread<th>CPU";
+echo "<tr valign='top'><td>";
+stat_graph("thread", 300, $height, $start, $end,
+           array("$si|JVM|Thread|JVM Thread Count",
+                 "$si|Resin|Thread|Thread Count",
+                 "$si|Resin|Thread|Thread Active Count",
+                 "$si|Resin|Thread|Thread Task Queue",
+                 "$si|Resin|Thread|Thread Priority Queue",
+                 "$si|Resin|Thread|Thread Overflow Count"));
+
+echo "<td>";
+stat_graph("cpu", 300, $height, $start, $end,
+           array("$si|OS|CPU|CPU Active"));
+
+echo "<tr><th>Memory<th>GC Time";
+echo "<tr valign='top'><td>";
+stat_graph("memory", 300, $height, $start, $end,
+           array("$si|JVM|Memory|Heap Memory Used",
+                 "$si|JVM|Memory|Heap Memory Free",
+                 "$si|JVM|Memory|Tenured Memory Used",
+                 "$si|JVM|Memory|PermGen Memory Used"));
+
+echo "<td>";
+stat_graph_regexp("memory_gc", 300, $height, $start, $end,
+                  "/$si\|JVM\|Memory\|GC Time/");
+
+echo "</table>";
+
+
+$log_mbean = $mbean_server->lookup("resin:type=LogService");
+
+if ($log_mbean) {
+  //
+  // startup
+  //
+  $messages = $log_mbean->findMessages(($restart_time - 60 * 60) * 1000,
+                                       ($restart_time - 2) * 1000);
+
+  if (! empty($messages)) {
+    echo "<h2>Log Messages</h2>\n";
+
+    echo "<table class='data'>\n";
+
+    $messages = array_reverse($messages);
+
+    echo "<tbody class='scroll'>\n";
+
+    // mark the start time
+    echo "<tr class='warning'>";
+    echo "  <td class='date'>";
+    echo strftime("%Y-%m-%d %H:%M:%S", $restart_time);
+    echo "</td>";
+    echo "  <td class='level'></td>";
+    echo "  <td class='message'>Start Time</td>";
+    echo "</tr>";
+
+    foreach ($messages as $message) {
+      echo "<tr class='{$message->level}'>";
+      echo "  <td class='date'>";
+      echo strftime("%Y-%m-%d %H:%M:%S", $message->timestamp / 1000);
+      echo "</td>";
+      echo "  <td class='level'>{$message->level}</td>";
+      echo "  <td class='message'>" . htmlspecialchars(wordwrap($message->message, 90)) . "</td>";
+      echo "</tr>";
+    }
+
+    echo "</tbody>\n";
+    echo "</table>\n";
+  }
+}

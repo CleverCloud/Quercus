@@ -1,0 +1,26 @@
+<document>
+<header>
+  <title>server: Server tag configuration</title>
+  <version>Resin 4.0</version>
+
+  <description>
+
+  <p>The &lt;server> tag configures a JVM instance in a cluster.  It
+configures HTTP and cluster sockets, keepalives and timeouts, thread pooling,
+load balancing, and JVM arguments.</p>
+
+  </description>
+</header>
+<body>
+<reference-legend/>
+
+<localtoc/>
+
+<include-defun name="jvm-arg"/>
+<include-defun name="jvm-classpath"/>
+<include-defun name="server"/>
+<include-defun name="server-default"/>
+<include-defun name="shutdown-wait-max"/>
+
+</body>
+</document>

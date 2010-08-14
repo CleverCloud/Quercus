@@ -1,0 +1,6 @@
+bam=com.caucho.log.HmtpHandler
+event=com.caucho.log.EventHandler
+jms=com.caucho.log.JmsHandler
+mail=com.caucho.log.MailHandler
+syslog=com.caucho.log.SyslogHandler
+

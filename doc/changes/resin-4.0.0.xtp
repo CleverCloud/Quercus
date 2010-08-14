@@ -1,0 +1,256 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 4.0.0 Release Notes</title>
+    <description>
+      <ul>
+        <li>Resin 10,000</li>
+        <li>Java Injection (JSR-299, CanDI)</li>
+        <li>Distributed Deployment</li>
+        <li>Distributed Caching</li>
+        <li>Dynamic Server Deployment</li>
+        <li>Clustered Session Refactor</li>
+        <li>Distributed JMX</li>
+        <li>Eclipse plugin</li>
+        <li>Maven Jar Project Repository</li>
+        <li>Rewrite redesign</li>
+        <li>FastCGI support</li>
+        <li>Security Redesign</li>
+        <li>Management services</li>
+        <li>JMS</li>
+        <li>BAM updates and refactoring</li>
+        <li>Win32 OpenSSL</li>
+        <li>Quercus: PHP on the JVM</li>
+        <li>PHP on Google Application Engine</li>
+      </ul>
+    </description>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 4.0.x">
+
+<p>Resin 4.0.x is now the development branch.  Due to the addition of
+new features, it may be more unstable than the production branch.</p>
+
+<p>The 3.1.x branch is the stable branch.</p>
+
+</s1>
+
+<s1 title="Resin 10,000">
+
+<p>Resin's concurrent connections has been tested up to 10,000
+simultaneous keepalive connections.  Since the CPU usage of that test was only
+1.0, the actual upper limit would be even larger than 10k.</p>
+
+</s1>
+
+<s1 title="Java Injection (JSR-299, CanDI)">
+
+<p>Resin's configuration and dependency injection is based on the
+JSR-299 (CanDI) draft specification.  Applications can use Java Injection
+to create and configure custom components, including configuration of
+third party libraries.</p>
+
+</s1>
+
+<s1 title="Distributed Deployment">
+
+<p>New .war versions can be deployed to a distributed cluster.  All servers
+in the cluster will receive the new .war updates.  Updates are incremental,
+with only changed files requiring new uploads.  Plugins for distributed
+.war are available for eclipse, ant, and maven.</p>
+
+<p>Resin's distributed deployment uses the git file format for
+transactional reliability, and uses BAM/HMTP for distributed communication.</p>
+
+</s1>
+
+<s1 title="Distributed Caching">
+
+<p>Clustered caching is now available using the JCache API, which is a
+java.util.Map extension.  All servers in a cluster will receive updates
+for cache updates.</p>
+
+<p>The clustered caching uses BAM/HMTP to communicate cache updates.</p>
+
+</s1>
+
+<s1 title="Dynamic Server Deployment">
+
+<p>Resin 4.0 now lets you add and remove servers dynamically.  You'll add
+the new server in the /resin-admin or through JMX, and start the server
+normally.</p>
+
+</s1>
+
+<s1 title="Clustered Session Refactor">
+
+<p>Distributed sessions now use the new distributed caching capabilities
+to share changes across all servers in the cluster.</p>
+
+</s1>
+
+<s1 title="Distributed JMX">
+
+<p>The internal, distributed JMX implementation now uses BAM/HMTP
+to communicate JMX attributes and actions.</p>
+
+</s1>
+
+<s1 title="Eclipse Plugin">
+
+<p>The eclipse plugin has been rewritten to include remote distribution
+of .war files, and improve remote control of Resin instances..</p>
+
+</s1>
+
+<s1 title="Maven Project jar Repository">
+
+<p>Project and library jar files may now be placed in
+a <code>project-jars</code> directory, and selected using a WEB-INF/pom.xml
+in Maven project syntax.  Resin will resolve the jars  in the project-jars
+directory based on the pom.xml, selecting appropriate versions, and
+avoiding duplicate jar deployment.</p>
+
+</s1>
+
+
+<s1 title="rewrite redesign">
+
+<p>Resin's rewrite rules have been improved to allow easier customization and
+configuration based on  CanDI style configuration.</p>
+
+<example>
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+  xmlns:resin="urn:java:com.caucho.resin">
+
+  &lt;resin:FastCgiProxy regexp="^/fcgi" address="localhost:9000"/>
+  &lt;resin:HttpProxy regexp="^/http" address="localhost:8080"/>
+  
+  &lt;resin:Dispatch regexp="(\.php|\.js|\.gif|\.png)$"/>
+  &lt;resin:Dispatch regexp="^" target="/index.php"/>
+  
+&lt;/web-app>
+</example>
+
+</s1>
+
+<s1 title="fastcgi support">
+
+<p>Resin now supports fast cgi as a front-end protocol, allowing it to
+be used with servers like nginx and IIS fastcgi support.</p>
+
+<example title="Example: resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+    xmlns:resin="urn:java:com.caucho.resin">
+
+    &lt;cluster id="">
+      &lt;server id="">
+        &lt;resin:FastCgiPort port="9000"/>
+	...
+      &lt;/server>
+
+      ...
+    &lt;/cluster>
+	
+&lt;/resin>
+</example>
+
+</s1>
+
+<s1 title="security redesign">
+
+<p>Resin's security rules have been improved to allow easier customization and
+configuration based on  CanDI style configuration.</p>
+
+<example title="Example: resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+  xmlns:resin="urn:java:com.caucho.resin">
+
+  &lt;resin:XmlAuthenticator>
+    &lt;user name="harry" password="..."/>
+  &lt;/resin:XmlAuthenticator>
+
+  &lt;resin:BasicLogin/>
+
+  &lt;resin:Allow url-pattern="/secure/*">
+    &lt;resin:IfUserInRole role="user"/>
+  &lt;/resin:Allow>
+  
+&lt;/web-app>
+</example>
+
+</s1>
+
+<s1 title="Services">
+
+<p>Resin's management services have been reconfigured to use CanDI style
+configuration.</p>
+
+<example title="Example: resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+  xmlns:resin="urn:java:com.caucho.resin">
+
+  &lt;cluster id="app">
+    &lt;resin:DeployService/>
+    &lt;resin:JmxService/>
+    &lt;resin:LogService/>
+    &lt;resin:StatService/>
+    &lt;resin:XaLogService/>
+    ...
+  &lt;/cluster>
+
+&lt;/resin>
+</example>
+
+</s1>
+
+<s1 title="JMS">
+
+<p>JMS configuration now uses CanDI style configuration.</p>
+
+<example title="Example: resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+  xmlns:resin="urn:java:com.caucho.resin">
+
+  &lt;resin:JmsConnectionFactory/>
+  &lt;resin:MemoryQueue name="test"/>
+
+&lt;/web-app>
+</example>
+
+</s1>
+
+<s1 title="BAM updates and refactoring">
+
+<p>Resin now uses BAM/HMTP for all internal messaging, including the
+distributed caching, dynamic servers, and distributed deployment.</p>
+
+</s1>
+
+<s1 title="Win32 OpenSSL">
+
+<p>Win32 openssl version is compiled against <a href="http://www.slproweb.com/products/Win32OpenSSL.html">Shining Light's 0.9.8k</a></p>
+<p>Win64 openssl version is compiled against Shining Lights 0.9.8k</p>
+
+</s1>
+
+<s1 title="Quercus: PHP on the JVM">
+
+<p>Quercus continues to improve, with significant performance improvements
+and many compatibility bug fixes.</p>
+
+</s1>
+
+<s1 title="PHP on Google Application Engine">
+
+<p>An GoogleQuercusServlet has been created to support Quercus on the
+Google Application Engine.</p>
+
+</s1>
+
+</body>
+</document>

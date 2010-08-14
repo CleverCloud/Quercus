@@ -1,0 +1,5 @@
+<ivy-module>
+  <info organisation="com.caucho" module="resin-javaee" revision="@VERSION@">
+    <license name="GPL"/>
+  </info>
+</ivy-module>

@@ -1,0 +1,21 @@
+<ivy-module version="2.0">
+  <info organisation="caucho" module="resin"/>
+
+  <dependencies>
+    <dependency org="com.caucho"
+                name="resin"
+                rev="latest.integration"
+                transitive="false"/>
+
+    <dependency org="com.caucho"
+                name="resin-util"
+                rev="latest.integration"
+                transitive="false"/>
+
+    <dependency org="org.terracotta"
+                name="terracotta"
+                rev="2.5.1"
+                transitive="false"/>
+  </dependencies>
+</ivy-module>
+  

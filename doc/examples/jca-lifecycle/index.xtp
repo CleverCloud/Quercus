@@ -1,0 +1,135 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>A Resource with JCA Lifecycle</title>
+    <type>tutorial</type>
+    <description>
+      <p>
+      Resources can receive lifecycle events by implementing 
+      javax.resource.spi.ResourceAdapter.
+      </p>
+    </description>
+ <tutorial-startpage>demo.jsp</tutorial-startpage>
+  </header>
+
+  <body>
+<summary/>
+<s1 title="ResourceAdapter">
+
+<p>Many resources can take advantage of the lifecycle events provided
+by the Java Connector Architecture (JCA).  In Resin, any resource
+which implements <code>javax.resource.spi.ResourceAdapter</code> will automatically
+receive the JCA resource events and have access to the JCA
+capabilities. Resources will generally want to implement the
+<code>start(ctx)</code> and <code>stop()</code> methods.</p>
+
+<p>The <code>start</code> method is called when the environment is
+started.  In the case of a web-app, this will be before any servlet is
+initialized, but after all the resources have been added to JNDI.</p>
+
+<p>The <code>ctx</code> argument provides some capabilities including
+timers, and work management.  This demo will not use those capabilities.</p>
+
+<p>The <code>stop</code> method is called when the environment closes,
+e.g. when the web-app is destroyed.</p>
+
+<p>The complete lifecycle looks like the following:</p>
+
+<ol>
+<li>The environment is created (server, host, web-app, etc.)
+</li><li>The resources are created and configured:
+<ol>
+<li><code>new test.TestResource()</code> is called from that environment
+</li><li>The configuration setters configure the resource (see <a href="config|init">Bean-style initialization</a>).
+</li><li>The <code>init()</code> method is called if available (part of Bean-style initialization)</li></ol>
+</li><li>The resources are started
+<ol>
+<li>The <code>start(ctx)</code> method is called for the ResourceAdapters
+</li></ol>
+</li><li>The load-on-startup servlets start (for web-app only)
+</li><li>Requests are now allowed for the environment.
+</li><li>The environment starts shutting down (web-app, host, server)
+</li><li>The <code>stop()</code> method is called for any ResourceAdapters
+</li></ol>
+
+<p>The <code>javax.resource.spi.ResourceAdapter</code> has a few more
+methods which our resource does not need.  To avoid cluttering up
+the example, our resource extends from
+<code>com.caucho.jca.AbstractResourceAdapter</code>, which provides
+stubs for those methods.</p>
+
+<example title="TestResource.java">
+package test;
+
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ResourceAdapterInternalException;
+
+import com.caucho.jca.AbstractResourceAdapter;
+
+public class TestResource extends AbstractResourceAdapter {
+  private String _status = "new";
+
+  /**
+   * Called when the resource adapter starts.
+   */
+  public void start(BootstrapContext ctx)
+    throws ResourceAdapterInternalException
+  {
+    _status = "started";
+  }
+  
+  /**
+   * Called when the resource adapter stops.
+   */
+  public void stop()
+    throws ResourceAdapterInternalException
+  {
+    _status = "stopped";
+  }
+
+  public String toString()
+  {
+    return "TestResource[" + _status + "]";
+  }
+}
+</example>
+
+<p>The web.xml configuration is identical to any other resource
+configuration.  Resin detects that <code>TestResource</code> has
+implemented <code>ResourceAdapter</code> and adds the capabilities.</p>
+
+<example title="web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;resource jndi-name="jca/test" type="test.TestResource"&gt;
+  &lt;/resource&gt;
+&lt;/web-app&gt;
+</example>
+
+<p>The demonstration page is simple.  It just looks up the resource in
+JNDI and displays it.  Because the <code>toString()</code> method
+contains the <code>_status</code> value, we actually
+see something useful.</p>
+
+<example title="demo.jsp">
+&lt;%@ page import='javax.naming.InitialContext' %&gt;
+&lt;%= new InitialContext().lookup("java:comp/env/jca/test") %&gt;
+</example>
+<results>
+TestResult[started]
+</results>
+
+</s1>
+
+<s1 title="Compatibility">
+
+<p>Because the <code>ResourceAdapter</code> interface is part of the
+JCA spec, you can write ResourceAdapters in a portable manner.  So if
+you were forced to use another application server for some reason, you
+could still use your architecture and your resource.  (The
+configuration on the other app server would probably be more
+cumbersome and involve creating rar files and XML configuration, but
+that's why you're using Resin.)
+
+</p></s1>
+  </body>
+</document>

@@ -1,0 +1,315 @@
+<document>
+  <header>
+    <product>resin</product>
+    <version>Resin 3.2</version>
+    <title>Resin Web Server</title>
+    <description>
+      <p>This document describes how to install and run Resin
+        "standalone" (without Apache or IIS).</p>
+      <p>Resin provides a reliable, fast Web server which can also
+        be used as a load balancer. In our benchmarks, it serves static
+        pages faster than Apache. For most sites, Resin is ideal 
+        because of its performance, security and reliability.</p>
+    </description>
+  </header>
+  <body>
+    <localtoc/>
+
+<s1><figure src="httpd.gif"/></s1>
+
+<s1 title="Unix (including Linux and MacOS-X)">
+
+<s2 title="Getting Started">
+
+<p>The following steps will start Resin for development:</p>
+
+<ol>
+<li>Install JDK 1.5 or later and link <var>/usr/java</var> to your Java home or
+set environment variable <var>JAVA_HOME</var>.</li>
+<li><code>tar -vzxf resin-3.2.0.tar.gz</code> in <var>/usr/local/share</var></li>
+<li>(Optional) Link <var>/usr/local/share/resin</var> to the <var>resin-3.2.0</var> directory.</li>
+<li>./configure; make; make install
+  <ul><li>some <a href="starting-resin-command-line-ref.xtp">./configure options</a> are available</li></ul>
+  </li>
+<li>Run <code>java -jar resin/lib/resin.jar</code>
+<ul><li>Or run <code>resin/bin/resin.sh</code></li></ul>
+</li>
+<li>Browse <var>http://localhost:8080</var></li>
+</ol>
+
+<example title="Successful Foreground Startup Output">
+unix&gt; java -jar resin/lib/resin.jar
+Resin Professional 3.2.0 (built Wed, 06 Aug 2008 12:49:30 PDT)
+Copyright(c) 1998-2008 Caucho Technology.  All rights reserved.
+
+  001111.license - 1 Resin server Hogwarts School
+
+Starting Resin on Thu, 07 Aug 2008 19:11:52 -0700 (PDT)
+
+[21:22:21.282] Proxy Cache disk-size=1024M memory-size=8M
+[21:22:21.477] Server[id=,cluster=app-tier] starting
+[21:22:21.477] 
+[21:22:21.477] Mac OS X 10.4.7 ppc
+[21:22:21.477] Java 1.5.0_06-64, 32, mixed mode, sharing, MacRoman, en, "Apple Computer, Inc."
+[21:22:21.477] resin.home = /usr/local/share/resin
+[21:22:21.478] resin.root = /var/www
+[21:22:21.478] 
+[21:22:21.492] Loaded Socket JNI library.
+[21:22:21.595] hmux listening to localhost:6800
+[21:22:21.696] http listening to *:8080
+[21:22:21.842] Host[] starting
+[21:22:22.089] WebApp[] starting
+</example>
+
+</s2>
+
+<s2 name="deploy" title="Deployment Directories">
+
+<p>When deploying, it's a good idea to create a bit of structure to
+make Resin and website upgrades easier and more maintainable.</p>
+
+<ol>
+<li>Create a user to run Resin (e.g. <var>resin</var> or another non-root user)</li>
+<li>Link <var>/usr/local/share/resin</var> to the current Resin directory. This is <var>$RESIN_HOME</var>.</li>
+<li>Create a deployment root, e.g. <var>/var/www</var>, owned by
+the resin user. This is <var>$RESIN_ROOT</var>.</li>
+<li>Put the modified <var>resin.xml</var> in <var>/etc/resin/resin.conf</var></li>
+<li>Put the site documents in <var>/var/www/hosts/default/webapps/ROOT</var>.</li>
+<li>Put any .war files in <var>/var/www/hosts/default/webapps</var>.</li>
+<li>Put any virtual hosts in <var>/var/www/hosts/www.foo.com</var>.</li>
+<li>Output logs will appear in <var>/var/www/log</var>.</li>
+<li>Create a startup script and configure the server to start it
+when the machine reboots.</li>
+</ol>
+
+</s2>
+
+<s2 name="script" title="Startup Script">
+
+<p>You can create your own startup script which will start and stop
+the <a href="#Running Resin">ResinWatchdog</a>, and will pass any <a href="#command-line">command-line arguments</a>.  The script
+might typically do a number of things:</p>
+
+<ol>
+<li>Configure the location of Java in <var>JAVA_HOME</var></li>
+<li>Configure the location of Resin in <var>RESIN_HOME</var></li>
+<li>Configure your web site directory in <var>RESIN_ROOT</var></li>
+<li>Select a server and pid file if you have multiple Resin servers.</li>
+<li>Start and stop the <a href="#Running Resin">ResinWatchdog</a>.</li>
+</ol>
+
+<p>The start script might look like:</p>
+
+<example title="Example start.sh script">
+#!/bin/sh
+
+JAVA_HOME=/usr/java
+RESIN_HOME=/usr/local/share/resin
+RESIN_ROOT=/var/www
+
+java=$JAVA_HOME/bin/java
+
+export JAVA_HOME
+export RESIN_HOME
+export RESIN_ROOT
+
+$java -jar $RESIN_HOME/lib/resin.jar \
+      -root-directory $RESIN_ROOT \
+      -conf /etc/resin/resin.xml \
+      -server a \
+       $*
+</example>
+
+<p>This script would be called as <code>./start.sh start</code> to start
+and <code>./start.sh stop</code> to stop.</p>
+
+<p>The <code>-server</code> argument is only
+necessary if you have multiple servers (JVM instances) either
+on different machines or the same machine.
+The <a href="clustering-overview.xtp">load balancing</a> and
+<a href="deploy-ref.xtp#session-config">distributed sessions</a> pages describe when
+you might use <code>-server</code>.</p>
+
+<!--
+<p>More information on deploying on Unix is available on the
+<a href="linux-boot.xtp">Linux boot</a> documentation.</p>
+-->
+
+</s2>
+
+</s1>
+
+<s1 title="Windows">
+
+<s2 title="Getting Started">
+
+<ol>
+<li>Install JDK 1.5 or later.</li>
+<li>Make sure the JDK installation set the environment variable <var>JAVA_HOME</var> correctly</li>
+<li>Unzip resin-3.2.0.zip</li>
+<li>Run <code>java -jar resin-3.2.0/lib/resin.jar</code></li>
+<li>Or execute <var>resin-3.2.0/resin.exe</var></li>
+<li>Browse <var>http://localhost:8080</var></li>
+</ol>
+
+<example title="Starting on Win32">
+C:\win32&gt; resin-3.2.0\bin\resin.exe
+Resin 3.2.0 (built Wed Aug 06 18:21:13 PST 2008)
+Copyright(c) 1998-2008 Caucho Technology.  All rights reserved.
+
+Starting Resin on Thu, 07 Aug 2008 19:11:52 -0500 (EST)
+[19:11:56.479] ServletServer[] starting
+[19:11:57.000] Host[] starting
+[19:11:58.312] Application[http://localhost:8380/doc] starting
+[19:12:11.872] Application[http://localhost:8380/quercus] starting
+
+...
+
+[19:12:12.803]http listening to *:8380
+[19:12:12.933]hmux listening to *:6802
+</example>
+
+</s2>
+
+<s2 title="Deploying as a Windows Service">
+
+<p>The Resin Web Server can be installed as an Windows service.</p>
+
+<p>To install the service, use</p>
+
+<example>
+C:\&gt; resin-3.2.x\resin.exe -install -conf conf/myconf.xml \
+                              -user MyResinUser -password mypassword
+</example>
+
+<p>To remove the service, use</p>
+
+<example>
+C:\&gt; resin-3.2.x\resin.exe -remove
+</example>
+
+<p>You will either need to reboot the machine or start the service
+from the Control&#160;Panel/Services panel to start the server.  On a
+machine reboot, Windows will automatically start the web server.</p>
+
+<p>You can also start and stop the service from the command-line:</p>
+
+<example>
+C:\&gt; net start resin
+...
+C:\&gt; net stop resin
+</example>
+
+<p>Resin's <var>-install</var> saves the command-line arguments and starts the service
+with those arguments. You can look view them in the control panel, under
+the executable string.</p>
+
+<p>With multiple named servers, you can use <var>-install-as foo</var> to specify
+the service name.</p>
+
+<example>
+C:\&gt; resin-3.2.x\resin.exe -install-as ResinA \
+                              -conf conf/myconf.conf \
+                              -server a
+C:\&gt; net start ResinA
+</example>
+
+</s2>
+</s1>
+
+<s1 title="Running Resin">
+<s2 title="Processes Overview">
+<p>Resin runs as multiple processes that begin with the following JVM command:</p>
+
+<example>
+unix> java -jar /usr/local/share/resin/lib/resin.jar \
+           -conf /etc/resin/resin.xml \
+           start
+</example>
+
+<p>The <var>-jar</var> argument tells java to run the Main-Class defined
+in resin.jar's manifest. The <var>-conf</var> argument specifies the 
+path to your Resin configuration file. Lastly, Resin accepts <var>start</var>,
+<var>stop</var>, and <var>restart</var> arguments which are passed to the <a href="#The Watchdog Process">watchdog
+process</a>. An additional command-line option, <var>-server</var> is used
+in <a href="clustering-overview.xtp">load-balanced deployments</a>.</p>
+
+<p>JDK 1.5 includes a
+<a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/share/jps.html">jps</a>
+command which will show the pids of any java processes.</p>
+
+<example title="Example jps Process List">
+unix&gt; jps
+2098 Jps
+2064 ResinWatchdogManager
+2097 Resin
+</example>
+
+<p>When running as a daemon (eg, <code>resin.sh start</code>)
+<var>ResinWatchdogManager</var> is the watchdog and <var>Resin</var>
+is the actual Resin instance. When running Resin as a foreground process,
+the process list displays <var>resin.jar</var>, which acts as the watchdog.</p>
+
+<p>The first process that starts is the actual startup program,
+<code>java -jar resin.jar</code>. It passes command-line arguments to
+the second process, the ResinWatchdogManager. This watchdog process takes care of
+starting the actual Resin process(es). ResinWatchdogManager monitors the state
+of Resin and restarts it if necessary, improving reliability.</p>
+
+<figure src="startup-watchdog.png"/>
+
+</s2>
+
+<s2 title="The Watchdog Process">
+<p>The ResinWatchdogManager is the parent process, providing automatic restarting
+Resin in cases of failure, and providing a single point of control for
+the <var>start</var>, <var>stop</var> and <var>restart</var> of all Resin
+processes. It is responsible for launching
+Resin with the correct JVM arguments and environment options such as starting
+Resin as the specified user, e.g. for &lt;<a config-tag="user-name"/>&gt; on unix.</p>
+
+<p>ResinWatchdogManager watches Resin via a Socket connection. When
+the watchdog socket closes, Resin shuts itself down gracefully. The 
+watchdog closes the socket on a <var>stop</var> or <var>restart</var>
+or if the watchdog itself is killed. If Resin exits for any reason,
+the watchdog will automatically start a new Resin process. This socket connection
+approach avoids the need for any signals or actual killing of Resin from the watchdog,
+and also makes it easy to stop all the Resins if necessary by just killing
+the watchdog.</p>
+
+<p>The ResinWatchdogManager doesn't actually kill Resin or even check Resin's status,
+it just checks to see if Resin is alive or not. So if the JVM were to completely
+lock up, the watchdog would still think Resin was okay and would take no action.</p>
+</s2>
+
+<s2 title="Resin Processes">
+<p>If Resin detects a major error (like running out of memory) or if the resin.xml changes,
+it will exit and the watchdog would start a new Resin instance. Reasons a Resin instance
+might exit include:</p>
+
+<ul>
+  <li>resin.xml changes</li>
+  <li>out of memory error</li>
+  <li>detected deadlocks</li>
+  <li>segv and other severe errors</li>
+</ul>
+
+<p>Because the watchdog is always managing Resin processes, if you ever
+need to stop Resin with <var>kill</var>, you must kill the watchdog. Just killing
+the Resin process results in the watchdog restarting it automatically.</p>
+</s2>
+
+<s2 title="Logging">
+
+<p>The watchdog will log to <var>log/watchdog-manager.log</var>.
+The Resin standard out/err is <var>log/jvm-servername.log</var>.
+ResinWatchdogManager is responsible for creating both of these log files,
+so <var>jvm-servername.log</var> is not really under the control of the Resin instance.
+This makes it somewhat more reliable in case of JVM deadlocks, etc.</p>
+</s2>
+
+</s1>
+
+  </body>
+
+</document>

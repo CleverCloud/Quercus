@@ -1,0 +1,1012 @@
+AC_INIT(src/c/plugin/apache/mod_caucho.c)
+AC_PREFIX_DEFAULT(`pwd`)
+AC_CONFIG_AUX_DIR(src/automake)	
+
+dnl Get os info
+AC_CANONICAL_SYSTEM
+
+AM_INIT_AUTOMAKE(resin, 3.0.4)
+
+FULL_VERSION="Resin $VERSION -- `date`"
+AC_SUBST(FULL_VERSION)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_LD
+
+dnl Checks for poll.h
+AC_CHECK_HEADER(sys/poll.h, [ CFLAGS="$CFLAGS -DPOLL" ])
+
+AC_PROG_LIBTOOL			    
+#
+# libtool stuff
+#  
+if test -z "${LTFLAGS}"; then
+  LTFLAGS="--silent"
+fi
+	
+LIBTOOL_SCRIPT="`pwd`/libtool"
+LIBTOOL="${LIBTOOL_SCRIPT} ${LTFLAGS}"    
+libtoolversion=`${SHELL} ${LIBTOOL_SCRIPT} --version`
+case $libtoolversion in
+     *1.4*)
+       SH_LIBTOOL="${LIBTOOL_SCRIPT}"
+       SHLTCFLAGS="-prefer-pic"
+       LTCFLAGS="-prefer-non-pic -static"
+       ;;
+     *)
+       SH_LIBTOOL="${SHELL} ${LIBTOOL_SCRIPT} ${LTFLAGS}"
+       SHLTCFLAGS=""
+       LTCFLAGS=""
+       ;;
+esac
+
+AC_SUBST(LTFLAGS)	
+AC_SUBST(LIBTOOL_SCRIPT)	
+AC_SUBST(LIBTOOL)	
+AC_SUBST(SH_LIBTOOL)	
+AC_SUBST(LTCFLAGS)	
+     
+INCLUDES=""
+plugins=common
+AC_SUBST(plugins)
+dnl should be unnecessary
+AC_SUBST(LD)
+	
+#
+# --enable-64bit
+#
+AC_ARG_ENABLE(64bit,
+[  --enable-64bit    Enable 64 bit],
+[case "${enableval}" in
+ yes) b64=true ;;
+ no)  b64="" ;;
+ *) AC_MSG_ERROR(bad value ${enableval} for --enable-64bit) ;;
+ esac],[b64=""])
+
+if test -n "${b64}"; then
+   CFLAGS="$CFLAGS -DB64"
+fi   
+
+#
+# --with-apache-src
+#
+AC_ARG_WITH(apache-src,
+[  --with-apache-src=DIR  Apache src static compilation
+], [
+apache_src=${withval}
+
+if test -d "${apache_src}/modules"; then
+  a=b
+elif test -d "${apache_src}/src/modules"; then
+  apache_src=${apache_src}/src
+else
+  AC_MSG_ERROR([Can't find valid Apache source ${apache_src}])
+fi
+
+echo "using Apache source in ${apache_src}"
+
+mkdir ${apache_src}/modules/caucho 2> /dev/null
+cp src/c/plugin/common/*.c ${apache_src}/modules/caucho
+cp src/c/plugin/common/*.h ${apache_src}/modules/caucho
+cp src/c/plugin/apache/*.c ${apache_src}/modules/caucho
+
+cat > ${apache_src}/modules/caucho/Makefile.tmpl <<'END'
+LIB=libcaucho.a
+OBJS=mod_caucho.o stream.o config.o registry.o memory.o
+
+OBJS_PIC=mod_caucho.lo stream.lo config.lo registry.lo memory.lo
+
+$(OBJS) $(OBJS_PIC): Makefile
+
+all: lib
+
+lib: $(LIB)
+
+libcaucho.a: $(OBJS)
+	rm -f $@
+	ar cr $@ $(OBJS)
+	$(RANLIB) $@
+
+libcaucho.o: $(OBJS)
+	$(LD) $(LDFLAGS) -r -o $@ $(OBJS)
+
+libcaucho.so: $(OBJS_PIC)
+	rm -f $@
+	$(LD_SHLIB) $(LDFLAGS_SHLIB) -o $@ $(OBJS_PIC) $(LIBS_SHLIB) 
+
+.SUFFIXES: .o .lo
+
+.c.o:
+	$(CC) -c $(INCLUDES) $(CFLAGS) $<
+
+.c.lo:
+	$(CC) -c $(INCLUDES) $(CFLAGS) $(CFLAGS_SHLIB) $< && mv $*.o $*.lo
+
+# DO NOT REMOVE
+mod_caucho.o: cse.h
+mod_caucho.lo: cse.h
+stream.o: cse.h
+stream.lo: cse.h
+config.o: cse.h
+config.lo: cse.h
+registry.o: cse.h
+registry.lo: cse.h
+memory.o: cse.h
+memory.lo: cse.h
+
+END
+
+cat > ${apache_src}/modules/caucho/Makefile.libdir <<'END'
+# dummy
+END
+
+#grep caucho ${apache_src}/src/Configuration.tmpl >/dev/null 2>/dev/null
+#if test "$?" -ne 0; then
+#  cat >> ${apache_src}/src/Configuration.tmpl <<'END'
+## mod_caucho incorporates Resin into Apache.
+#
+## AddModule modules/caucho/libcaucho.a
+#END
+#fi
+
+])
+#
+# --with-apache
+#
+AC_ARG_WITH(apache,
+[  --with-apache=DIR  the Apache root directory
+], [
+apache_dir=${withval}
+
+if test "${apache_dir}" = "yes"; then
+  apache_dir=/usr/local/apache
+fi
+
+apache=1
+])
+
+#
+# --with-apxs
+#
+AC_ARG_WITH(apxs,
+[  --with-apxs=PATH  the Apache configuration utility
+], [
+apxs=${withval}
+
+if test "${apxs}" = "yes"; then
+  apxs=
+fi
+
+apache=1
+])
+
+#
+# --with-apache-eapi
+#
+AC_ARG_WITH(apache-eapi,
+[  --with-apache-eapi=DIR  Apache eapi support
+], [
+apache_eapi=${withval}
+])
+
+#
+# --with-apache-include
+#
+AC_ARG_WITH(apache-include,
+[  --with-apache-include=DIR  the Apache include directory
+], [
+apache_include=${withval}
+
+if test "${apache_include}" = "yes"; then
+    apache_include=
+fi
+
+apache=1
+])
+
+#
+# --with-apache-libexec
+#
+AC_ARG_WITH(apache-libexec,
+[  --with-apache-libexec=DIR  the Apache module directory
+], [
+apache_libexec=${withval}
+
+if test "${apache_libexec}" = "yes"; then
+    apache_libexec=
+fi
+
+apache=1
+])
+
+#
+# --with-apache-conf
+#
+AC_ARG_WITH(apache-conf,
+[  --with-apache-conf=DIR  the Apache configuration
+], [
+apache_conf=${withval}
+
+if test "${apache_conf}" = "yes"; then
+    apache_conf=
+fi
+
+apache=1
+])
+
+apache_cflags=
+
+#
+# --with-apache-cflags
+#
+AC_ARG_WITH(apache-cflags,
+[  --with-apache-cflags=flags  flags for compiling mod_caucho
+], [
+apache_cflags=${withval}
+
+apache=1
+])
+
+#
+# check that apxs is okay
+#
+if test -n "${apxs}"; then
+  ${apxs} -q PREFIX >/dev/null 2>/dev/null
+  if test "$?" -ne 0; then
+    AC_MSG_ERROR(bad apxs ${apxs})
+  fi
+fi
+
+if test -z "${apxs}" -a -x "${apache_bin}/apxs"; then
+  apxs=${apache_bin}/apxs 
+elif test -z "${apxs}" -a -x "${apache_dir}/bin/apxs"; then
+  apxs=${apache_dir}/bin/apxs 
+elif test -z "${apxs}" -a -x "${apache_dir}/sbin/apxs"; then
+  apxs=${apache_dir}/sbin/apxs 
+elif test -z "${apxs}" -a -x "/sbin/apxs"; then
+  apxs=/sbin/apxs 
+elif test -z "${apxs}" -a -x "/usr/sbin/apxs"; then
+  apxs=/usr/sbin/apxs 
+fi
+
+#
+# heuristics for finding the Apache include directory
+#
+if test -z "${apache_include}" -a -n "${apxs}"; then
+  apache_include=`${apxs} -q INCLUDEDIR`
+fi
+
+if test -z "${apache_include}" -a -r "${apache_dir}/include/httpd.h"; then
+  apache_include=${apache_dir}/include
+fi
+
+APACHE_INC="-I${apache_include}"
+#
+# deal with stronghold
+#
+if test -z "${apache_include}" -a -r "${apache_dir}/src/include/httpd.h"; then
+  apache_include=${apache_dir}/src/include
+
+  APACHE_INC="-I${apache_dir}/src/include"
+  APACHE_INC="-I${apache_dir}/ssl/include $APACHE_INC"
+  APACHE_INC="-I${apache_dir}/src/os/unix $APACHE_INC"
+fi
+
+if test -n "$apache" -a ! -r ${apache_include}/httpd.h; then
+  AC_MSG_ERROR([Can't find Apache include directory ${apache_include}])
+fi
+
+#
+# heuristics for finding the Apache bin directory
+#
+if test -n "${apache_bin}"; then
+  a=b
+elif test -x "${apxs}"; then
+  apache_bin=`${apxs} -q SBINDIR`
+elif test -n "${apache_dir}"; then
+  apache_bin="${apache_dir}/bin"
+fi
+
+if test -z "${apache_bin}"; then
+ a=b;
+elif test -x "${apache_bin}/httpd"; then
+ apache_exe="${apache_bin}/httpd"   	
+elif test -x "${apache_bin}/httpd2"; then
+ apache_exe="${apache_bin}/httpd2"   	
+else
+  AC_MSG_ERROR([Can't find Apache binary in directory ${apache_bin}])
+fi
+
+#
+# heuristics for finding the Apache module directory
+#
+if test -z "${apache_libexec}" -a -n "${apxs}"; then
+  apache_libexec=`${apxs} -q LIBEXECDIR`
+fi
+
+if test -z "${apache_libexec}" -a -d "${apache_dir}/libexec"; then
+  apache_libexec=${apache_dir}/libexec
+fi
+
+if test -z "${apache_libexec}" -a -d "${apache_dir}/modules"; then
+  apache_libexec=${apache_dir}/modules
+fi
+
+if test -n "$apache" -a ! -d "${apache_libexec}"; then
+  AC_MSG_ERROR([Can't find Apache module directory ${apache_libexec}])
+fi
+
+#
+# Heuristics for finding the Apache configuration directory
+#
+
+if test -z "${apache_conf}" -a -n "${apxs}"; then
+  apache_confdir=`${apxs} -q SYSCONFDIR`
+  
+  if test -r "${apache_confdir}"/httpd.conf; then
+    apache_conf=${apache_confdir}/httpd.conf
+  elif test -r "${apache_confdir}"/apache.conf; then
+    apache_conf=${apache_confdir}/apache.conf
+  elif test -r "${apache_confdir}"/httpsd.conf; then
+    apache_conf=${apache_confdir}/httpsd.conf
+  fi
+fi
+
+if test -z "${apache_conf}" -a -r "${apache_dir}/conf/httpd.conf"; then
+  apache_conf=${apache_dir}/conf/httpd.conf
+fi
+
+if test -z "${apache_conf}" -a -r "${apache_dir}/etc/httpd.conf"; then
+  apache_conf=${apache_dir}/etc/httpd.conf
+fi
+
+if test -n "$apache" -a ! -r "${apache_conf}"; then
+  AC_MSG_ERROR([Can't find Apache module configuration ${apache_conf}])
+fi
+#
+# Apache CFLAGS
+#
+
+if test -z "$apache_cflags" -a -n "${apxs}"; then
+   apache_cflags=`${apxs} -q CFLAGS`
+fi
+
+if test -z "$apache_cflags" -a -x "${apache_exe}"; then
+   flags=`${apache_exe} -V | grep EAPI`
+   if test -n "$flags"; then
+     apache_cflags=-DEAPI
+   fi
+fi
+
+if test -z "$apache_dir" -a -x "${apxs}"; then
+   apache_dir=`${apxs} -q PREFIX`
+fi
+
+#
+# check for apr
+#
+if test -x "${apxs}"; then
+   apr_bin=`${apxs} -q APR_BINDIR 2> /dev/null`
+   if test -x "${apr_bin}/apr-config"; then
+     apr_inc=`"${apr_bin}/apr-config" --includes`
+     APACHE_INC="${APACHE_INC} ${apr_inc}"
+   fi
+fi
+
+AC_SUBST(APACHE_INC)
+AC_SUBST(apache_libexec)
+AC_SUBST(apache_conf)
+AC_SUBST(apache_dir)
+AC_SUBST(apache_cflags)
+#
+# fill in compilation stuff
+#
+SO=so
+
+is_gcc=`${CC} -v 2>&1 | grep gcc`
+is_gnu_ld=`${LD} -v 2>&1 | grep GNU`
+
+#
+# Use apxs if it's available
+#
+if test -z "${LD_SHLIB}"; then
+  if test -n "${apxs}"; then
+    CFLAGS_SHLIB=`${apxs} -q CFLAGS_SHLIB`
+    LD_SHLIB=`${apxs} -q LD_SHLIB`
+    LDFLAGS_SHLIB=`${apxs} -q LDFLAGS_SHLIB`
+    LIBS_SHLIB=`${apxs} -q LIBS_SHLIB`
+
+    echo "Using shared library flags from ${apxs}"
+  fi
+fi
+
+#
+# fill in based on known configurations
+#
+if test -z "${LD_SHLIB}"; then
+  LD_SHLIB=${LD}	
+  CFLAGS_SHLIB="-fpic"
+  LDFLAGS_SHLIB="-shared"
+
+  case "$target_os" in
+    linux*)
+	LD_SHLIB=${CC}
+	
+	if test -n "$b64"; then
+  	  CFLAGS="$CFLAGS -m64"
+	  LDFLAGS_SHLIB="-shared -fPIC"
+   	fi
+	;;
+	
+    solaris*)
+	if test -n "$is_gcc"; then
+	    CFLAGS_SHLIB="-fPIC"
+	    
+	   if test -n "$b64"; then
+  	     CFLAGS="$CFLAGS -m64"
+   	   fi
+	else
+	    CFLAGS_SHLIB="-KPIC"
+	    
+	   if test -n "$b64"; then
+  	     CFLAGS="$CFLAGS -xarch=v9"
+   	   fi
+	fi
+
+	if test -n "$is_gnu_ld"; then
+	    LDFLAGS_SHLIB="-shared"
+        else
+	    LDFLAGS_SHLIB="-G"
+	fi
+
+
+	;;
+
+    darwin*)
+        CFLAGS_SHLIB="-DSHARED_MODULE"
+	LD_SHLIB=${CC}
+ 	LDFLAGS_SHLIB="-bundle -undefined suppress -flat_namespace"
+        ;;
+
+    *aix*)
+	if test -z "$is_gcc"; then
+	   CFLAGS_SHLIB="-bexpall"
+	else
+	    CFLAGS_SHLIB="-fpic"
+	fi
+	LDFLAGS_SHLIB=""
+	;;
+
+    *hpux*)
+	if test -z "$is_gcc"; then
+	    CFLAGS_SHLIB="+z"
+	else
+	    CFLAGS_SHLIB="-fpic"
+	fi
+	LDFLAGS_SHLIB="-b"
+	;;
+  esac
+fi
+
+if test -z "$apache"; then
+  a=b
+elif test -r "${apache_include}/apr_thread_mutex.h"; then
+  echo "Using Apache 2.0 configuration ${apache_conf}"
+
+  plugins="$plugins apache2"
+elif test -n "${apache_include}/ap.h"; then
+  echo "Using Apache configuration ${apache_conf}"
+
+  plugins="$plugins apache"
+else
+  AC_MSG_ERROR([Can't find valid Apache directory ${apache_inc}])
+fi
+
+if test -n "$apache_cflags"; then
+  echo "Using Apache CFLAGS: $apache_cflags"
+fi
+
+#
+# Using Perl if it's available.
+#
+PERL=`which perl`
+if test -z "${LD_SHLIB}"; then
+  if test -z "${LD_SHLIB}" -a "x`$PERL -V:dlsrc 2>/dev/null | grep dlopen`" != "x"; then
+    PCC="`$PERL -V:cc | cut -d\' -f2`"
+    if test "${PCC}" = "${CC}"; then
+      CFLAGS_SHLIB="`$PERL -V:cccdlflags | cut -d\' -f2`"
+      LDFLAGS_SHLIB="`$PERL -V:lddlflags | cut -d\' -f2`"
+      LD_SHLIB="`$PERL -V:ld | cut -d\' -f2`"
+ 
+      has_clflags=1
+
+      echo "Using shared library flags from Perl"
+    fi
+  fi
+fi
+
+#if test -z "${LD_SHLIB}"; then
+#  AC_MSG_ERROR([Can't determine compilation flags.]);
+#fi
+
+#
+# OS which can handle the Resin launcher
+#
+resin_plugin=
+
+case "$target_cpu" in
+  i?86)
+	CPU=i386
+	resin_plugin="resin resinssl"
+	;;
+
+  sparc*)
+	if test -n "${b64}"; then
+  	  CPU=sparcv9
+	else
+  	  CPU=sparc
+	fi
+	resin_plugin="resin resinssl"
+	;;
+
+  *)
+	CPU=$target_cpu
+	;;
+esac
+
+case "$target_os" in
+  linux*)
+	jni_os=linux
+        PROXY_LIBS='-lpthread'
+	;;
+
+  solaris*)
+	jni_os=solaris
+	CFLAGS="$CFLAGS -D__SOLARIS__"
+	PROXY_LIBS='-lnsl -lsocket -lthread'
+	;;
+
+  *freebsd*)
+	PROXY_LIBS='-lc_r'
+        jni_os=freebsd
+	;;
+
+  *darwin*)
+	LD=gcc
+	SO=jnilib
+	resin_plugin="resin resinssl"
+	;;
+
+  *hpux*)
+	if test -r "$JAVA_HOME/include/hpux/jni_md.h"; then
+	  jni_os=hpux
+        else
+	  jni_os=hp-ux
+        fi
+	;;
+esac
+
+AC_SUBST(CPU)
+AC_SUBST(OS)
+AC_SUBST(SO)
+AC_SUBST(CFLAGS)
+AC_SUBST(CFLAGS_SHLIB)
+AC_SUBST(LD_SHLIB)
+AC_SUBST(LDFLAGS_SHLIB)
+AC_SUBST(LIBS_SHLIB)
+AC_SUBST(PROXY_LIBS)
+AC_SUBST(SSL_LIBS)
+#
+# --with-java-home
+#
+AC_ARG_WITH(java-home,
+[  --with-java-home=DIR  java home
+], [
+JAVA_HOME=${withval}
+])
+
+echo $ac_n "checking for JAVA_HOME... $ac_c"
+
+if test -z "$JAVA_HOME"; then
+  java=`which java 2>/dev/null`
+  if test $? = "0"; then
+    while test -h "$java"
+    do
+      head=`dirname $java`
+      tail=`/bin/ls -l $java | awk '{ print $NF; }'`
+      if test -f "$tail"; then
+        java=$tail
+      else
+        java=$head/$tail
+      fi
+    done
+
+    javabin=`dirname $java`
+    JAVA_HOME=`cd $javabin/..; pwd`
+
+    # we're in $JAVA_HOME/jre
+    if test -f "$JAVA_HOME/lib/rt.jar"; then
+      JAVA_HOME=`cd $JAVA_HOME/..; pwd`
+    elif test -d "/usr/java"; then
+      JAVA_HOME=/usr/java
+    elif test -f "/System/Library/Frameworks/JavaVM.framework"; then
+      JAVA_HOME="/System/Library/Frameworks/JavaVM.framework"
+    fi
+  elif test -d "/usr/java"; then
+    JAVA_HOME=/usr/java
+  elif test -f "/System/Library/Frameworks/JavaVM.framework"; then
+    JAVA_HOME="/System/Library/Frameworks/JavaVM.framework"
+  fi
+fi
+
+echo $JAVA_HOME
+
+if test ! -d "$JAVA_HOME"; then
+  AC_MSG_ERROR([Can't find valid JAVA_HOME ${JAVA_HOME}])
+fi
+
+AC_SUBST(JAVA_HOME)
+#
+# --with-jni-include
+#
+AC_ARG_WITH(jni-include,
+[  --with-jni-include="-Idir -Idir"  jni include string
+], [
+JNI_INCLUDE=${withval}
+JNI="yes"
+])
+	
+#
+# --enable-jni
+#
+AC_ARG_ENABLE(jni,
+[  --enable-jni    Turn on jni],
+[case "${enableval}" in
+ yes) JNI=true ;;
+ no)  JNI="" ;;
+ *) AC_MSG_ERROR(bad value ${enableval} for --enable-jni) ;;
+ esac],[JNI=""])
+
+if test -n "$JNI_INCLUDE"; then
+  JNI=yes
+elif test -r "$JAVA_HOME/include/jni_md.h"; then
+  JNI_INCLUDE="-I$JAVA_HOME/include"
+  JNI=yes
+  echo "checking for JNI in $JAVA_HOME/include ... found"
+elif test -r "$JAVA_HOME/include/$jni_os/jni_md.h"; then
+  JNI_INCLUDE="-I$JAVA_HOME/include -I$JAVA_HOME/include/$jni_os"
+  JNI=yes
+  echo "checking for JNI in $JAVA_HOME/include/$jni_os ... found"
+elif test -r "/System/Library/Frameworks/JavaVM.framework/Headers/jni_md.h"; then
+  # Darwin
+  echo "checking for JNI in /System/Library/Frameworks/JavaVM.framework/Headers ... found"
+  JNI_INCLUDE="-I/System/Library/Frameworks/JavaVM.framework/Headers"
+  JNI=yes
+else
+  JNI=""
+  AC_MSG_WARN([Can't find JNI directory ${JAVA_HOME}/include/$jni_os])
+fi
+
+if test -n "$JNI"; then
+  plugins="$plugins $resin_plugin"
+fi
+
+AC_SUBST(JNI)
+AC_SUBST(JNI_INCLUDE)
+#
+# Resin home
+#
+resin_home=`pwd`
+AC_SUBST(resin_home)
+
+
+#
+# Resin HardCore(tm) configuration
+#
+LINUX_SRC=
+smp=
+#
+# --with-linux-src
+#
+AC_ARG_WITH(linux-src,
+[  --with-linux-src=DIR  Linux src dir
+], [
+LINUX_SRC=${withval}
+hardcore=1
+if test "${LINUX_SRC}" = "yes"; then
+    LINUX_SRC=
+fi
+])
+#
+# --with-hardcore
+#
+AC_ARG_WITH(hardcore,
+[  --with-hardcore=DIR  Linux src dir
+], [
+LINUX_SRC=${withval}
+hardcore=1
+
+if test "${LINUX_SRC}" = "yes"; then
+    LINUX_SRC=
+fi
+])
+#
+# --with-hardcore-cflags
+#
+AC_ARG_WITH(hardcore-cflags,
+[  --with-hardcore-cflags=flags  Linux src dir
+], [
+HARDCORE_CFLAGS=${withval}
+hardcore=1
+])
+#
+# --enable-linux-smp
+#
+AC_ARG_ENABLE(linux-smp,
+[  --enable-linux-smp    Compile with smp],
+[case "${enableval}" in
+ yes) smp=1 ;;
+ no)  smp="" ;;
+ *) AC_MSG_ERROR(bad value ${enableval} for --enable-linux-smp) ;;
+ esac],[smp=""])
+#
+# looking for proper hardcore stuff
+#
+#hardcore=""
+#
+if test -n "$hardcore"; then
+  kver=`uname -r`
+
+  if test -n "$LINUX_SRC"; then
+    zz=m
+  elif test -r "/usr/src/linux-$kver/include/linux/version.h"; then
+    LINUX_SRC="/usr/src/linux-$kver/include"
+  elif test -r "/usr/src/linux-2.4/include/linux/version.h"; then
+    LINUX_SRC="/usr/src/linux-2.4/include"
+  elif test -r "/usr/src/linux/include/linux/version.h"; then
+    LINUX_SRC="/usr/src/linux/include"
+  else
+    LINUX_SRC="/usr/src/linux-2.4/include"
+  fi
+
+  if test ! -r "$LINUX_SRC/linux/version.h"; then
+    AC_MSG_ERROR(HardCore can't find valid Linux source at \"${LINUX_SRC}\")
+  fi
+
+  cat /proc/version | grep SMP > /dev/null
+  if test -n "$smp"; then
+    zz=m
+  elif test ! $?; then
+    smp=1
+    HARDCORE_CFLAGS="$HARDCORE_CFLAGS -DSMP"
+  fi
+
+  plugins="$plugins hardcore"
+
+  echo "Using Linux src for Resin HardCore ... ${LINUX_SRC}"
+
+  if test -n "$smp"; then
+    echo "Resin HardCore(tm) using SMP"
+  fi
+fi
+
+AC_SUBST(LINUX_SRC)
+AC_SUBST(HARDCORE_CFLAGS)
+	
+#
+# --enable-ssl
+#
+AC_ARG_ENABLE(ssl,
+[  --enable-ssl    Turn on ssl],
+[case "${enableval}" in
+ yes) ENABLE_SSL=true ;;
+ no)  ENABLE_SSL="false" ;;
+ *) AC_MSG_ERROR(bad value ${enableval} for --enable-ssl) ;;
+ esac],[ENABLE_SSL=""])
+
+#
+# --with-openssl
+#
+AC_ARG_WITH(openssl,
+[  --with-openssl=DIR  Openssl directory
+], [
+OPENSSL=${withval}
+])
+
+#
+# --with-openssl-include
+#
+AC_ARG_WITH(openssl-include,
+[  --with-openssl-include=DIR  Openssl include directory
+], [
+OPENSSL_INCLUDE=${withval}
+
+if test ! -r "${OPENSSL_INCLUDE}/openssl/ssl23.h"; then
+  AC_MSG_ERROR([Can't find valid OpenSSL include ${OPENSSL_INCLUDE}])
+fi
+])
+
+#
+# --with-openssl-lib
+#
+AC_ARG_WITH(openssl-lib,
+[  --with-openssl-lib=DIR  Openssl lib directory
+], [
+OPENSSL_LIB=${withval}
+
+if test ! -r "${OPENSSL_LIB}/libssl.a" -a \
+        ! -r "${OPENSSL_LIB}/libssl.dylib" -a \
+	! -r "${OPENSSL_LIB}/libssl.so"; then
+  AC_MSG_ERROR([Can't find valid OpenSSL library ${OPENSSL_LIB}])
+fi
+])
+
+if test "${ENABLE_SSL}" = false; then	
+  foo=bar
+elif test -n "${OPENSSL_INCLUDE}"; then
+  foo=bar
+elif test -r ${OPENSSL}/include/openssl/ssl23.h; then
+  OPENSSL_INCLUDE=${OPENSSL}/include
+elif test -r /usr/include/openssl/ssl23.h; then
+  OPENSSL_INCLUDE=/usr/include
+elif test -r /usr/local/include/openssl/ssl23.h; then
+  OPENSSL_INCLUDE=/usr/local/include
+elif test -r /usr/local/ssl/include/openssl/ssl23.h; then
+  OPENSSL_INCLUDE=/usr/local/ssl/include
+fi
+
+if test "${ENABLE_SSL}" = false; then	
+  foo=bar
+elif test -n "${OPENSSL_LIB}"; then
+  SSL_LIBS="${SSL_LIBS} -lssl -lcrypto"
+elif test -r /lib/libssl.so; then
+  OPENSSL_LIB=/lib
+  SSL_LIBS="${SSL_LIBS} -lssl -lcrypto"
+elif test -r /usr/lib/libssl.so; then
+  OPENSSL_LIB=/usr/lib
+  SSL_LIBS="${SSL_LIBS} -lssl -lcrypto"
+elif test -r /usr/local/ssl/lib/libssl.so; then
+  OPENSSL_LIB=/usr/local/ssl/lib
+  SSL_LIBS="${SSL_LIBS} -lssl -lcrypto"
+elif test -r /usr/lib/libssl.dylib; then
+  OPENSSL_LIB=/usr/lib
+  SSL_LIBS="${SSL_LIBS} -lssl -lcrypto"
+elif test -r ${OPENSSL}/lib/libssl.a; then
+  OPENSSL_LIB=${OPENSSL}/lib
+  SSL_LIBS="${SSL_LIBS} ${OPENSSL_LIB}/libssl.a ${OPENSSL_LIB}/libcrypto.a"
+elif test -r /usr/local/ssl/lib/libssl.a; then
+  OPENSSL_LIB=/usr/local/ssl/lib
+  SSL_LIBS="${SSL_LIBS} ${OPENSSL_LIB}/libssl.a ${OPENSSL_LIB}/libcrypto.a"
+elif test -r /usr/local/lib/libssl.a; then
+  OPENSSL_LIB=/usr/local/lib
+  SSL_LIBS="${SSL_LIBS} ${OPENSSL_LIB}/libssl.a ${OPENSSL_LIB}/libcrypto.a"
+elif test -r /usr/lib/libssl.a; then
+  OPENSSL_LIB=/usr/lib
+  SSL_LIBS="${SSL_LIBS} ${OPENSSL_LIB}/libssl.a ${OPENSSL_LIB}/libcrypto.a"
+fi
+
+SSL_OBJ=ssl_stub.o
+
+if test "${ENABLE_SSL}" = false; then	
+  foo=bar
+elif test -z "${OPENSSL_INCLUDE}"; then
+  foo=bar
+elif test ! -r "${OPENSSL_LIB}/libssl.a" -a ! -r "${OPENSSL_LIB}/libssl.dylib"; then
+  AC_MSG_ERROR([Can't find valid OpenSSL library in ${OPENSSL_LIB}])
+elif test ! -r "${OPENSSL_INCLUDE}/openssl/ssl23.h"; then
+  AC_MSG_ERROR([Can't find valid OpenSSL include in ${OPENSSL_INCLUDE}])
+else
+  echo "Using openssl include in ... ${OPENSSL_INCLUDE}"
+  echo "Using openssl lib in ... ${OPENSSL_LIB}"
+  echo "Using openssl libraries in ... ${SSL_LIBS}"
+
+  if test -x "${apache_dir}/bin/httpd"; then
+    apache_ssl=`${apache_dir}/bin/httpd -l 2>&1 | grep ssl`
+    if test -n "$apache_ssl"; then
+      CFLAGS="$CFLAGS -DOPENSSL"
+      echo "Enabling ssl for mod_caucho" 
+    fi
+  fi
+
+  if test -r "${OPENSSL_INCLUDE}/openssl/engine.h"; then
+    CFLAGS_OPENSSL="$OPENSSL_CFLAGS -DSSL_ENGINE"
+  fi
+
+  if test -n "${OPENSSL_INCLUDE}"; then
+    INCLUDES="$INCLUDES -I${OPENSSL_INCLUDE}"
+  fi
+  SSL_OBJ=ssl.o
+  LDFLAGS_SHLIB="${LDFLAGS_SHLIB} -L${OPENSSL_LIB}"
+  # PROXY_LIBS="$PROXY_LIBS ${OPENSSL_LIB}/libssl.a ${OPENSSL_LIB}/libcrypto.a"
+fi
+
+if test -d /usr/kerberos/include; then
+   INCLUDES="$INCLUDES -I/usr/kerberos/include"
+fi
+
+#
+# test the open ssl
+#  		
+if test -n "${OPENSSL_INCLUDE}"; then	
+cat >conftest.$ac_ext <<_ACEOF
+#include <openssl/ssl.h>
+#include <openssl/rsa.h>       
+#include <openssl/err.h>
+
+int main(int argc, char **argv)
+{
+  SSLeay_add_ssl_algorithms();
+  SSL_load_error_strings();
+  
+#if OPENSSL_VERSION_NUMBER >= 0x00907000L
+    if (0)
+      ERR_print_errors_cb(0, 0);
+#endif
+
+  return 0;
+}
+_ACEOF
+
+${CC} -o conftest ${CFLAGS_OPENSSL} ${CFLAGS} ${INCLUDES} conftest.$ac_ext -L${OPENSSL_LIB} ${SSL_LIBS}
+
+if test "$?" != 0; then
+  AC_MSG_ERROR(Can't compile SSL.  Check compilation flags: ${CFLAGS_OPENSSL} ${CFLAGS} ${INCLUDES} -L${OPENSSL_LIB} ${SSL_LIBS})
+  exit;
+fi  
+
+./conftest
+
+if test "$?" != 0; then
+  AC_MSG_ERROR(Can't execute SSL.  Check that load version in the library path: ${LD_LIBRARY_PATH} matches the expected version. })
+  exit;
+fi  
+	
+rm -f conftest conftest.$ac_ext
+fi   
+
+AC_SUBST(INCLUDES)
+AC_SUBST(CFLAGS_OPENSSL)
+AC_SUBST(SSL_OBJ)
+
+PERL="perl"
+#
+# --with-perl
+#
+AC_ARG_WITH(perl,
+[  --with-perl=DIR  Perl binary location
+], [
+PERL=${withval}
+])
+
+AC_SUBST(PERL)
+
+#
+# --enable-debug
+#
+AC_ARG_ENABLE(debug,
+[  --enable-debug    Turn on debugging],
+[case "${enableval}" in
+ yes) debug=true ;;
+ no)  debug=false ;;
+ *) AC_MSG_ERROR(bad value ${enableval} for --enable-debug) ;;
+ esac],[debug=false])
+
+if test "$debug" = true; then
+  CFLAGS="$CFLAGS -DDEBUG -Wall"
+  HARDCORE_CFLAGS="$HARDCORE_CFLAGS -DDEBUG"
+fi
+
+AC_OUTPUT([
+Makefile
+bin/wrapper.pl
+src/c/plugin/Makefile
+src/c/plugin/common/Makefile
+src/c/plugin/apache/Makefile
+src/c/plugin/apache2/Makefile
+src/c/plugin/resin/Makefile
+src/c/plugin/resinssl/Makefile
+contrib/init.resin
+], [])
+
+chmod +x bin/wrapper.pl

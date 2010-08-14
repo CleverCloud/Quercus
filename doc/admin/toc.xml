@@ -1,0 +1,180 @@
+<navigation threaded="true">
+  
+  <item link="index.xtp" title="admin">
+    
+    <item link="starting-resin.xtp" title="Starting Resin">
+      
+      <item link="starting-resin-install.xtp" title="Installation"
+            description="Install Resin on Unix, Windows, and Mac OS X"/>
+
+      <item link="starting-resin-command-line.xtp" title="Command Line"
+            description="Command line arguments to the Resin server"
+            reference="starting-resin-command-line-ref.xtp"/>
+      <!--
+      <item link="starting-resin-server-stages.xtp" title="Server Stages"/>
+      -->
+      
+      <item link="starting-resin-watchdog.xtp" title="Watchdog"
+            description="Resin's watchdog process manages Resin servers and checks status for reliability."
+            reference="starting-resin-watchdog-ref.xtp"/>
+
+      <item link="starting-resin-apache.xtp" title="Apache HTTPd"
+            description="Using Apache HTTPd with Resin"
+            reference="starting-resin-apache-ref.xtp"/>
+
+      <item link="starting-resin-iis-7.xtp" title="IIS 7 Plugin"
+            description="Using Microsoft IIS 7 with Resin"
+            reference="starting-resin-iis-7-ref.xtp"/>
+
+    </item>
+
+    <item link="migration.xtp" title="Migrating"
+          description="Migrating to Resin 4.0"/>
+
+    <item link="deploy.xtp" title="Deployment"
+          description="Deploying applications and .war files to a Resin server."
+          reference="deploy-ref.xtp">
+      <!--
+      <item link="deploy-file-system.xtp" title="File System Deploy"
+            description="Using the webapps/ directory for deployment"/>
+      -->
+    
+      <item link="deploy-git-overview.xtp" title=".git overview"
+            description="Overview of the clustered .git deployment"/>
+    
+      <item link="deploy-tool-reference.xtp" title="deploy tools"
+            description="ant and maven deployment tool reference"/>
+    
+      <item link="deploy-pomegranate.xtp" title="pomegranate"
+            description="The Pomegranate module system"/>
+    
+    </item>
+    
+    <item link="config.xtp" title="Configuration"
+        description="Configuration principles for the Resin Server">
+
+      <item link="config-overview.xtp" title="Overview"
+            description="Overview of Resin configuration"
+            reference="config-overview-ref.xtp"/>
+
+      <item link="config-candi.xtp" title="CanDI"
+            description="XML configuration for Dependency Injection services"/>
+
+      <item link="config-el.xtp" title="EL"
+            description="EL expressions used in configuration"
+            reference="config-el-ref.xtp"/>
+    </item>
+
+    <item link="database.xtp" title="Database"
+          description="Configuration of the Resin database pool"
+          reference="database-ref.xtp"/>
+
+    <item link="logging.xtp" title="Logging"
+          description="java.util logging configuration in Resin"
+          reference="logging-ref.xtp">
+      
+      <!--
+      <item link="logging-loggers.xtp" .../>
+
+      <item link="logging-rollover.xtp" .../>
+      -->
+      
+    </item>
+
+    <item link="http.xtp" title="HTTP">
+      <item link="http-server.xtp" title="HTTP server"
+            description="Resin's built-in, high performance HTTP server"
+            reference="http-server-ref.xtp"/>
+
+       <item link="http-virtual-hosts.xtp" title="Virtual Hosts"
+             description="HTTP Virtual Host configuration for multi-host sites"
+             reference="http-virtual-hosts-ref.xtp"/>
+
+       <item link="http-rewrite.xtp" title="Rewrite"
+             description="Resin's URL rewriting capability, replacing mod_rewrited sites"
+             reference="http-rewrite-ref.xtp"/>
+
+       <item link="http-proxy-cache.xtp" title="Proxy Cache"
+             description="Resin's built-in proxy cache"
+             reference="http-proxy-cache-ref.xtp"/>
+
+       <!--
+       <item link="http-10k.xtp" title="Resin 10k"/>
+       
+       -->
+           
+    </item>
+    
+    <item link="security.xtp" title="Security"
+          description="Security and authentication configuration">
+
+      <item link="security-overview.xtp" title="Overview"
+          description="Overview of security concepts"/>
+
+      <item link="security-authenticators.xtp" title="authenticators"
+            description="Authenticators for Resin server"/>
+
+      <item link="security-authentication-method.xtp" 
+            title="authentication method"
+            description="Authenticators for Resin server"/>
+
+      <item link="security-authorization.xtp" title="authorization"
+            description="Authenticators for Resin server"/>
+
+      <item link="security-ssl.xtp" title="SSL"
+        description="Integrating OpenSSL and JSSE"/>
+
+      <!--
+      <item link="security-authentication.xtp" title="Overview"
+      
+      -->
+      
+    </item>
+
+    <item link="scheduled-tasks.xtp" title="Scheduled tasks"
+          description="Scheduled tasks"/>
+    
+    <item link="clustering.xtp" title="Clustering"
+          description="Clustering and load balancing of multiple coordinated Resin servers">  
+      <item link="clustering-overview.xtp" title="Overview"
+        description="Overview of Resin's clustering, load-balancing, elastic-computing and distributed caching features"/>
+      <item link="clustering-ref.xtp" title="Clustering Tags Reference"
+        description="Resin clustering and load-balancing tags reference"/>
+      <item link="clustering-deployment-ref.xtp" title="Clustered Deployment Reference"
+        description="ANT and Maven clustered deployment API reference"/>
+    </item>
+    
+    <item link="resin-admin.xtp" title="resin-admin"
+          description="Resin monitoring and administration">
+    
+      <item link="resin-admin-console.xtp" title="console"
+            description="The web-based Resin administration console"/>
+
+      <!--
+      <item link="resin-admin-rest.xtp" title="rest"
+      -->
+      
+    </item>
+    
+    <item link="advanced.xtp" title="Advanced"
+          description="Advanced and technical concepts">
+    
+      <item link="advanced-classloaders.xtp" title="classloaders"
+            description="Resin classloader architecture"/>
+
+      <!-- XXX: http?
+      <item link="advanced-gzip.xtp" title="gzip"
+            description="gzip configuration"/>
+      -->
+      
+      <item link="advanced-jmx.xtp" title="jmx"
+            description="JMX management"/>
+      
+    </item>
+
+    <item link="reference.xtp" title="reference"/>
+    
+  </item>
+    
+  
+</navigation>

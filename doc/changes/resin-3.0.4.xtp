@@ -1,0 +1,316 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.4 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="Overview">
+
+<p>Any bug you find in 3.0.4 should be reported in the
+<a href="http://www.caucho.com/quercus/bugtrack">bugtrack</a>.</p>
+
+<p>Because of the large number of changes from Resin 2.1 to Resin 3.0,
+developers should stress
+test their application with Resin 3.0.4 thoroughly before deploying
+it.</p>
+
+</s1>
+
+<s1 title="Thread Pooling">
+
+<p>The thread pooling and connection management has changed
+dramatically for Resin 3.0.4.  With the exception of the new
+&lt;thread-pool&gt; configuration, this should be invisible for most
+users except as a gain in scalability.</p>
+
+<p>Performance for static files is now essentially the same as
+Apache 2.</p>
+
+<p>The new thread model now better supports large number of
+simultaneous connections, e.g. 300 and 500 simultaneous
+open sockets.</p>
+
+<p>The single thread pool is shared across all of Resin, so the
+configuration is in &lt;resin&gt; and outside of &lt;server&gt;.</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;thread-pool&gt;
+    &lt;!-- Maximum number of threads. --&gt;
+    &lt;thread-max&gt;200&lt;/thread-max&gt;
+
+    &lt;!-- Minimum number of spare threads. --&gt;
+    &lt;spare-thread-min&gt;25&lt;/spare-thread-min&gt;
+  &lt;/thread-pool&gt;
+
+  &lt;server&gt;
+    ...
+  &lt;/server&gt;
+&lt;/resin&gt;
+</example>
+
+<p>The old &lt;connection-pool&gt; has been deprecated and will be removed
+in Resin 3.0.5.</p>
+
+</s1>
+
+<s1 title="Amber">
+
+<p><a href="../doc/amber.xtp">Amber</a> is Resin's new persistence manager,
+currently in development.  We have added some <a href="../tutorial/amber-basic/">sample tutorials</a> as a preview.  Since the tutorials are direct
+translations of the old CMP tutorials, you can compare the two
+persistence methods directly.</p>
+
+<p>We are very excited about the Amber direction and believe it will
+avoid the complexity of J2EE/EJB for 80% of projects, reducing
+development time and engineering cost.</p>
+
+<p>Amber will likely eventually provide facades
+for Hibernate and JDO 2.0 when that is available.  During development,
+we'll only be supporting Amber's native API.</p>
+
+<p>Amber currently uses <a href="http://www.hibernate.org">Hibernate's</a> configuration files
+and its API model resembles Hibernate, but uses JDBC more directly.
+Amber's <a href="doc|amber-lifecycle.xtp">lifecycle</a> is patterned after
+JDO, using bytecode enhancement to make the JDO state changes possible.</p>
+
+<p>Amber's JDBC use appears in its queries.  Here's an example:</p>
+
+<example>
+AmberConnection aConn = ...;
+
+ResultSet rs = aConn.query("SELECT course FROM example.Course course");
+
+while (rs.next()) {
+  course = (Course) rs.getObject(1);
+
+  out.println(course.getName() + " is taught by " +
+              course.getTeacher() + "&lt;br&gt;");
+}
+</example>
+
+<example title="directly using query results">
+AmberConnection aConn = ...;
+
+ResultSet rs = aConn.query("SELECT course.name, course.teacher" +
+                           " FROM example.Course course" +
+                           " ORDER BY course.name");
+
+while (rs.next()) {
+  out.println(rs.getString(1) + " is taught by " +
+              rs.getString(2) + "&lt;br&gt;");
+}
+</example>
+
+</s1>
+
+<s1 title="Persistent Sessions">
+
+<p>
+Persistent session support for JDBC has been enhanced to take
+advantage of clustering and sticky sessions.  Each session now has a
+preferred owning server which reduces the overhead of the session
+persistence, and removes the need for always-load-session.
+</p>
+
+<p>Because of these enhancements, we now recomment jdbc-store
+over tcp-store for most configurations.
+</p>
+
+<p>The changes affect the configuration files.  Because the jdbc store
+is now cluster-aware, it needs to be configured in the &lt;cluster&gt;
+and merely enabled in the &lt;session-config&gt;.  A typical
+configuration will look like the following:</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;server&gt;
+    &lt;cluster&gt;
+      &lt;srun id="a" port='6810' index='1'/&gt;
+      &lt;srun id="b" port='6811' index='2'/&gt;
+
+      &lt;cluster-store type="jdbc"&gt;
+        &lt;init&gt;
+          &lt;data-source&gt;jdbc/session&lt;/data-source&gt;
+        &lt;/init&gt;
+      &lt;/cluster-store&gt;
+    &lt;/cluster&gt;
+
+    &lt;web-app-default&gt;
+      &lt;session-config&gt;
+         &lt;cluster-store/&gt;
+      &lt;/session-config&gt;
+    &lt;/web-app-default&gt;
+
+    ...
+  &lt;/server&gt;
+&lt;/resin&gt;
+</example>
+
+</s1>
+
+<s1 title="Virtual Host deployment">
+
+<p>Virtual hosts can now be deployed like .war files.  Virtual hosts
+do need to a .jar extension.  The &lt;host-deploy&gt; configures the
+virtual host deployment.</p>
+
+<p>Because there is no standard for virtual host deployment, Resin
+allows the flexibility to configure the layout as the site needs.  We
+recommend using a pattern following Resin's virtual hosts, the host
+root-directory contains doc/, webapps/ and log/.</p>
+
+<example>
+&lt;server&gt;
+  &lt;host-deploy path="host-deploy"&gt;
+
+    &lt;host-default&gt;
+      &lt;document-directory&gt;doc&lt;/document-directory&gt;
+
+      &lt;web-app-deploy path="webapps"/&gt;
+    &lt;/host-default&gt;
+
+  &lt;/host-deploy&gt;
+&lt;/server&gt;
+</example>
+
+</s1>
+
+<s1 title="Servlet 2.4 and JSP 2.0">
+
+<p>Because both Servlet 2.4 and JSP 2.0 are still in draft stage,
+Resin's support is considered beta.  However, we don't expect
+the specs are likely to change much from the current draft to the
+final draft.</p>
+
+</s1>
+
+<s1 title="Smaller Changes">
+
+<s2 title="Internationalized Domain Names">
+
+<p>Resin now supports RFC3490 for internationalized domain names,
+the standard for encoding of virtual hosts in non-ascii character sets.
+The support should be transparent to users.
+</p>
+
+</s2>
+
+<s2 title="log handlers">
+
+<p>java.util.logging configuration can now add custom handlers.</p>
+
+<example>
+&lt;log name="qa.test"&gt;
+   &lt;handler resin:type="qa.MyHandler(file:/tmp/caucho/qa/t${1+2}.log)"/&gt;
+&lt;/log&gt;
+</example>
+
+</s2>
+
+<s2 title="syslog handler">
+
+<p>Resin now supports a custom syslog handler for Unix.  Log messages
+will be sent by the C syslog() call.</p>
+
+<example>
+&lt;log name="test.foo" level="warning"&gt;
+  &lt;handler resin:type="com.caucho.log.SyslogHandler"&gt;
+    &lt;facility&gt;daemon&lt;facility&gt;
+    &lt;severity&gt;warning&lt;severity&gt;
+  &lt;/handler&gt;
+&lt;/log&gt;
+</example>
+
+</s2>
+
+<s2 title="web-app-deploy contains web-app-default">
+
+<p>The &lt;web-app-deploy&gt; configuration can now include a
+&lt;web-app-default&gt; that is only applied to the expanded .war files.
+Applications can use the &lt;web-app-default&gt; and the \${app.name} to
+add new configuration files.</p>
+
+<p>The following allows a WEB-INF/foo.xml configuration file
+to configure a foo.war.</p>
+
+<example>
+&lt;web-app-deploy path="webapps"&gt;
+  &lt;web-app-default&gt;
+    &lt;config-file&gt;WEB-INF/\${app.name}.xml&lt;/config-file&gt;
+  &lt;/web-app-default&gt;
+&lt;/web-app-deploy&gt;
+</example>
+
+</s2>
+
+<s2 title="PreparedStatement caching">
+
+<p>Resin's database pool can now support PreparedStatement
+caching.</p>
+
+<example>
+&lt;database&gt;
+  &lt;jndi-name&gt;test&lt;/jndi-name&gt;
+  &lt;driver type="test.jdbc.TestDriver"&gt;
+    &lt;url&gt;jdbc:test:foo&lt;/url&gt;
+  &lt;/driver&gt;
+
+  &lt;prepared-statement-cache-size&gt;8&lt;/prepared-statement-cache-size&gt;
+&lt;/database&gt;
+</example>
+
+</s2>
+
+<s2 title="web-app shutdown changes">
+
+<p>Webapps now wait for active request to complete before closing.
+The time to wait is controlled by shutdown-wait-max.</p>
+
+<example>
+&lt;web-app-default&gt;
+
+  &lt;shutdown-wait-max&gt;10s&lt;/shutdown-wait-max&gt;
+
+&lt;/web-app-default&gt;
+</example>
+
+</s2>
+
+<s2 title="JNI enhancements">
+
+<p>Resin has increased its use of JNI for performance.  These changes
+will be invisible for most users, but if there are bugs, they
+may produce some surprising effects when
+using getResource() and getResourceAsStream().</p>
+
+</s2>
+
+<s2 title="JavaMail configuration">
+
+<p>JavaMail is now configurable with &lt;resource&gt;.</p>
+
+<example>
+&lt;resource jndi-name='mail/foo' type='javax.mail.Session'&gt;
+  &lt;init mail.host='localhost'/&gt;
+&lt;/resource&gt;
+</example>
+
+</s2>
+
+<s2 title="Licensing">
+
+<p>Resin now displays the current license on startup.  Customers who
+have purchased license should contact sales@caucho.com for their
+license files.</p>
+
+</s2>
+
+</s1>
+
+</body>
+</document>

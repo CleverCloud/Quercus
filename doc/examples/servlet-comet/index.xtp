@@ -1,0 +1,333 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Server-Push Servlet</title>
+    <description>
+<p>Resin's server-push (Comet) servlet API enables streaming communication such
+as reverse AJAX dynamic updates for browser/JavaScript applications.  The API
+encapsulates of the threading and communications issues between the
+request threads and the rest of the application.
+</p>
+
+</description>
+    <type>tutorial</type>
+    <tutorial-startpage>comet.html</tutorial-startpage>
+  </header>
+
+  <body>
+
+<s1>
+
+<p>Resin's server-push (Comet) API lets server application push new data to
+the client as it becomes available.  Administration and monitoring
+applications need to continually update the client when new information
+becomes available to the server.
+</p>
+
+<figure src="cometcomm.png"/>
+
+<p>The architecture in the picture uses two HTTP streams to the server
+application, one for normal client-server requests, and a second
+unidirectional stream to send updates from the server to the client.
+In this example, we're using a browser with JavaScript, but the same
+architecture applies to a more sophisticated Flash monitoring
+application sending Hessian packets to update the monitoring display.</p>
+
+</s1>
+
+<localtoc/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <td><viewfile-link file="WEB-INF/resin-web.xml"/></td>
+  <td>resin-web.xml configuration</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/beans.xml"/></td>
+  <td>Java Injection beans.xml marker for class scanning</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/TestCometServlet.java"/></td>
+  <td>The Comet servlet.</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classe/example/TimerService.java"/></td>
+  <td>Application service for timer/comet events.</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classe/example/CometState.java"/></td>
+  <td>The application's Comet controller state.</td>
+</tr>
+<tr>
+  <td><viewfile-link file="comet.html"/></td>
+  <td>Main HTML page linking comet servlet.</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="Example Overview">
+
+<p>The example updates a comet.html page every two seconds with new data.
+In this case, just an updated counter.</p>
+
+<p>The components of the Comet/AJAX application look like:</p>
+
+<ul>
+<li>Protocol: JavaScript function calls with a trivial argument.</li>
+<li>Client:
+  <ul>
+  <li>View: HTML updated by JavaScript AJAX</li>
+  <li>Controller: call server with an &lt;iframe></li>
+  </ul>
+</li>
+<li>Server:
+  <ul>
+  <li>Service: TimerService manages the comet connections and wakes them
+with new data.</li>
+  <li>Servlet: TestCometServlet generates &lt;script> protocol tags from
+new data from the TimerService on each <code>resume</code>.</li>
+  <li>State: CometState encapsulates both the item's state (the timer count),
+and the <a href="http://caucho.com/resin-javadoc/com/caucho/servlet/comet/CometController.html">CometController</a> needed to wake the servlet and
+pass updated data.</li>
+  </ul>
+</li>
+</ul>
+
+</s1>
+
+<s1 title="Streaming Protocol: &lt;script> tags">
+
+<p>The comet HTTP stream is a sequence of &lt;script> tags
+containing JavaScript commands to update the browser's display.
+Because the browser executes the script as part of its
+progressive rendering, the user will see the updates immediately without
+waiting for the entire HTTP request to complete.</p>
+
+<p>In our example, the packet is a JavaScript
+<code>comet_update(data)</code> call, which updates the text field with
+new data.  Here's an example of the packet stream:</p>
+
+<example title="Update JavaScript packets">
+&lt;script type="text/javascript">
+window.parent.comet_update(1);
+&lt;/script>
+
+&lt;!-- 2 second delay -->
+
+&lt;script type="text/javascript">
+window.parent.comet_update(2);
+&lt;/script>
+
+&lt;!-- 2 second delay -->
+
+&lt;script type="text/javascript">
+window.parent.comet_update(3);
+&lt;/script>
+</example>
+
+<p>More sophisticated comet applications will use
+a <a href="http://hessian.caucho.com/doc/metaprotocol-taxonomy.xtp#Dynamic-Typed%20Metaprotocols">dynamic-typed protocol</a> to update the client.
+Browser-based applications could use JSON to update the client and
+Flash-based applications might use Hessian.  In all cases, the protocol
+must be kept simple and designed for the client's requirements.  Design
+separate, simple protocols for Flash and JavaScript browsers, rather than
+trying to create some complicated general protocol.
+</p>
+
+</s1>
+
+<s1 title="Browser Client">
+
+<p>The JavaScript command stream updates a parent HTML file which defines
+the JavaScript commands and launches the Comet servlet request with an
+&lt;iframe> tag.  Our <code>comet_update</code> function finds the
+HTML tag with <code>id="content"</code> and updates its HTML content
+with the new data from the server.</p>
+
+<example title="comet.html">
+&lt;html>
+&lt;body>
+
+Server Data:
+&lt;span id="content">server data will be shown here&lt;/span>
+
+&lt;script type="text/javascript">
+function comet_update(value) {
+  document.getElementById('content').innerHTML = value;
+};
+&lt;/script>
+
+&lt;iframe src="comet"
+        style="width:1px;height:1px;position:absolute;top:-1000px">&lt;/iframe>
+
+&lt;/body>
+&lt;/html>
+</example>
+
+</s1>
+
+<s1 title="AsyncContext">
+
+<p>The <a href="http://caucho.com/resin-javadoc/javax/servlet/AsyncContext.html">AsyncContext</a> is the Servlet 3.0 encapsulation
+of control and communication from the application's service to the
+Comet servlet.  Applications may safely pass the <code>AsyncContext</code>
+to different threads, wake the servlet with <code>dispatch()</code>, and send
+data with the request returned by <code>getAttribute</code>.</p>
+
+<p>In the example, the <code>TimerService</code> passes the updated
+count to the servlet by calling
+<code>setAttribute("caucho.count", count)</code>, and wakes the servlet
+by calling <code>dispatch()</code>.  When the servlet resumes, it will
+retrieve the count using <code>request.getAttribute("caucho.count")</code>.
+Note, applications must only use the thread-safe
+<code>AsyncContext</code> in other threads.  As with other servlets, the
+<code>ServletRequest</code>, <code>ServletResponse</code>, writers and
+output stream can only be used by the servlet thread itself, never by
+any other threads.</p>
+
+<example title="javax.servlet.AsyncContext">
+package javax.servlet;
+
+public interface AsyncContext;
+{
+  public ServletRequest getRequest();
+  public ServletResponse getResponse();
+
+  public boolean hasOriginalRequestAndResponse();
+
+  public void complete();
+  
+  public void dispatch();
+  public void dispatch(String path);
+  public void dispatch(ServletContext context, String path);
+
+  public void start(Runnable run);
+}
+</example>
+
+</s1>
+
+<s1 title="Comet Servlet">
+
+<p>The comet servlet has three major responsibilities:</p>
+
+<ol>
+<li>Process the initial request (<code>service</code>).</li>
+<li>Register the <code>AsyncContext</code> with the service (<code>service</code>).</li>
+<li>Send streaming data as it becomes available (<code>resume</code>).</li>
+</ol>
+
+<p>
+Like other servlets, only the comet servlet
+may use the <code>ServletRequest</code>, <code>ServletResponse</code> or any
+output writer or stream.  No other thread may use these servlet objects,
+and the application must never store these objects in fields or objects
+accessible by other threads.  Even in a comet servlet, the servlet objects
+are not thread-safe.  Other services and threads must use
+the <code>AsyncContext</code> to communicate with the servlet.</p>
+
+<p><b>Process the initial request:</b> our servlet just calls
+<code>setContentType("text/html")</code>, since it's a trivial example.
+A real application would do necessary database lookups and possibly
+send more complicated data to the client.</p>
+
+<p><b>Register the <code>AsyncContext</code>:</b>
+our servlet registers the controller with the timer service by calling
+<code>addCometState</code>. In general, the application state object will
+contain the <code>CometController</code> as part of the registration
+process.</p>
+
+<p><b>Send streaming data:</b>.  The <code>TimerService</code> will set new
+data in the <code>"comet.count"</code> attribute and <code>dispatch()</code>
+the controller.  When the servlet executes the <code>resume()</code> method,
+it will retrieve the data, and send the next packet to the client.</p>
+
+<example title="example/TestCometServlet.java">
+package example;
+
+import java.io.*;
+
+import javax.servlet.http.*;
+import javax.servlet.*;
+import javax.inject.Current;
+
+public class TestComet extends GenericCometServlet {
+  @Current private TimerService _timerService;
+
+  @Override
+  public void service(ServletRequest request,
+                      ServletResponse response)
+    throws IOException, ServletException
+  {
+    HttpServletRequest req = (HttpServletRequest) request;
+    HttpServletResponse res = (HttpServletResponse) response;
+
+    AsyncContext async = request.getAsyncContext();
+
+    if (async != null) {
+      resume(request, response, async);
+      return;
+    }
+
+    res.setContentType("text/html");
+
+    async = request.startAsync();
+
+    TestState state = new TestState(async);
+
+    _timerService.addCometState(state);
+  }
+  
+  private void resume(ServletRequest request,
+                      ServletResponse response,
+                      AsyncContext async)
+    throws IOException, ServletException
+  {
+    HttpServletRequest req = (HttpServletRequest) request;
+    HttpServletResponse res = (HttpServletResponse) response;
+
+    PrintWriter out = res.getWriter();
+
+    String count = req.getAttribute("comet.count");
+
+    out.print("&lt;script type='text/javascript'>");
+    out.print("comet_update(" + count + ");");
+    out.print("&lt;/script>");
+  }
+}
+</example>
+
+<p>The connection can close for a number of reasons.  The service might call
+<code>AsyncContext.complete()</code> which will also close the connection.
+Finally, the client may close the connection itself.</p>
+
+<p>The sequence of calls for the example looks like the following:</p>
+
+<ol>
+<li><code>servlet.service()</code> is called for the initial request</li>
+<li><code>_service.addCometState()</code> registers with the <code>TimerService</code></li>
+<li>after the <code>service()</code> completes, Resin suspends the servlet.</li>
+<li>The <code>TimerService</code> detects an event, in this case the timer event.</li>
+<li>The <code>TimerService</code> calls <code>request.setAttribute()</code> to send new data.</li>
+<li>The <code>TimerService</code> calls <code>async.dispatch()</code> to wake the servlet.</li>
+<li><code>servlet.resume()</code> processes the data and sends the next packet.</li>
+<li>After the <code>resume()</code> completes, Resin suspends the servlet again and we repeat as after step #3.</li>
+<li>After the 10th data, the <code>TimerService</code> calls <code>controller.close()</code>, closing the servlet connection.</li>
+</ol>
+
+<s2 title="Comet Servlet State Machine">
+
+<p>The sequence of comet servlet calls looks like the following state
+machine.  After the initial request, the servlet spends most of its
+time suspended, waiting for the <code>TimerService</code> to call
+<code>complete()</code>.</p>
+
+<figure src="cometstate.png"/>
+
+</s2>
+</s1>
+
+  </body>
+</document>

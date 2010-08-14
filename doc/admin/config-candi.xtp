@@ -1,0 +1,2610 @@
+<document>
+<header>
+<title>Injection-Based Resource Configuration (CanDI)</title>
+<description>
+
+<p>Resin's configuration uses a powerful, general dependency
+injection system (CanDI) to configure servlets, Resin resources, databases,
+application components, third-party libraries and drivers.  By understanding
+a few rules matching the XML to the configured resources, an administrator
+can have full control over the application server behavior.</p>
+
+<p>Because of the importance of verifying and debugging configuration,
+Resin's configuration is stateless, meaning that the XML files fully
+describe the configuration of the system.  Resin avoids hidden state
+by avoiding deployment tools and internal, hidden database configuration.</p>
+
+</description>
+</header>
+<body>
+
+<localtoc/>
+
+<s1 title="Overview">
+
+<p>Because Resin's configuration (CanDI) creates and updates Java objects,
+each XML tag exactly matches either a Java class or a Java property.
+For security and rewrite rules, the JavaDoc helps document the
+configuration.  Your own application's configuration can use its
+JavaDoc to describe the XML tags, and Resin's configuration files
+like the META-INF/resin-web.xml to customize your application.</p>
+
+<ul>
+<li>
+  <b>Selecting drivers and services:</b> by specifying the Java class,
+  like choosing a JDBC database driver, or application services.  The
+  Java classes should be self-documented in the application's JavaDoc.
+</li>
+<li>
+  <b>Configuring properties:</b> with XML values for each important
+  property of the Java class, like setting URLs, timeouts, and
+  connection limited.  More complicated configuration is supported
+  allowing configuration similar to domain-specific languages, for
+  example Resin's rewrite rules and security configuration.
+</li>
+<li>
+  <b>Registration for the application:</b> the application looks up
+  configured resources either through Java Injection or in JNDI.  The
+  application will already have defined names and binding types for
+  the XML configuration to use.
+</li>
+<li>
+  <b>Linking references:</b> in some more complicated applications,
+  the configuration can link resources and services together using the
+  JSP expression language, specifying resources by name like
+  #{myResource}.
+</li>  
+</ul>
+
+</s1>
+
+<s1 title="XML configuration">
+
+<p>Services, drivers, and third-party libraries are registered and
+configured using the standard Resin configuration files
+resin.xml or resin-web.xml files as well as the META-INF/beans.xml.
+Application services and libraryes are treated as first-class
+components just like Resin-internal resources, because Resin's own
+configuration uses the same CanDI configuration.  Even standard JavaEE
+configuration like servlets, JSP .tld files, and EJBs are configured
+with CanDI.</p>
+
+<p>The configuration in Resin is smaller than some other dependency
+frameworks because only components which need customization need to be
+in the XML.  If your application is using Java Injection internally,
+most of the wiring occurs automatically through Java code annotations
+instead of being configured in XML.  The annotation focus makes the
+Java code self-describing, and also simplifies the management by
+shrinking the needed XML.</p>
+
+<p>The XML-configuration lets you customize your application for a
+particular environment, e.g. setting configuration parameters.  For example,
+Resin's <code>&lt;database></code> needs to select a database driver and
+configure the URL, user and password of the database as well as configuring
+connection pooling parameters.  Some application services will also need
+configuration.</p>
+
+<p>In addition, the XML-configuration documents the services
+you've enabled.  For heavyweight services, this documentation is critical,
+while lightweight components do not need this extra housekeeping overhead.</p>
+
+<s2 title="Component overview">
+
+<def title="Component/Bean configuration template">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+         xmlns:mypkg="urn:java:com.mycom.mypkg">
+	   
+  &lt;mypkg:MyBean>
+    [class annotations, service, and registration]
+    
+    [bean constructor args]
+    
+    [property configuration]
+    
+    [method annotation configuration]
+  &lt;/mypkg:MyBean>
+  
+&lt;/web-app>
+</def>
+
+<ol>
+<li>The Bean/Component name and package is the Java class which implements
+the resource you're configuring, either your own application class, or a
+library class.</li>
+<li>The class annotations register up the bean using a binding-type, or
+a name and may register the bean as a service, like a servlet, or EJB or
+remote service.</li>
+<li>The optional bean constructor args are needed for some specialized
+beans.  The application or library JavaDocs will document if you need to
+use the constructor.</li>
+<li>The properties configure the bean, like setting a database's url or
+max-connections.  Each XML tag represents a bean property, and matches
+exactly with the bean's JavaDoc.</li>
+<li>The optional and rare method annotations are for special cases
+like aspect-oriented interception.  Typically, these annotations are
+configured by the library developers.</li>
+</ol>
+
+</s2>
+</s1>
+
+<s1 title="Service and component registration">
+
+<p>The <code>&lt;my:MyBean></code> tags register
+application classes with Resin.
+The default scope of a <code>&lt;my:MyBean></code> is <code>@Dependent</code>.
+A <code>&lt;my:MyBean></code> will create a new instance each time it's
+injected or referenced.</p>
+
+<example title="Example: bean and component META-INF/beans.xml">
+&lt;beans xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:ee="urn:java:ee"
+        xmlns:example="urn:java:example">
+
+  &lt;example:MyService>
+    &lt;ee:ApplicationScoped/>
+  &lt;/example:MyService>
+
+  &lt;example:MyComponent>
+  &lt;/example:MyComponent>
+
+&lt;/beans>
+</example>
+
+<p>The <code>&lt;my:MyBean></code> tags can configure fields and
+annotations:</p>
+
+<deftable title="XML annotations">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>&lt;ee:Named></td>
+  <td>the <a javadoc="javax.inject.Named">@javax.inject.Named</a> annotations for EL naming</td>
+</tr>
+<tr>
+  <td>&lt;ee:Qualifier></td>
+  <td>any <a javadoc="javax.inject.Qualifier">@javax.inject.Qualifier</a> annotations for
+  injection</td>
+</tr>
+<tr>
+  <td>my:myField</td>
+  <td>optional configuration, using bean-style assignment</td>
+</tr>
+<tr>
+  <td>&lt;ee:SessionScoped></td>
+  <td>specifies scope of the instances: request, conversation, session, application, or singleton</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="References and EL Expressions">
+
+<p>Some services and components need a name because they're used as a
+JSP or JSF reference, or because the configuration needs a reference
+to the component.  Resin configuration files can use EL expressions to
+get references to resources, beans, system properties, and calculate
+generatal expressions based on those values.  Because all Resin's
+resources are added to the CanDI registry automatically, application
+components have access to anything they need.</p>
+
+<p>Both the JSP immediate syntax and deferred syntax are
+supported (<code>${...}</code> vs <code>#{...}</code>).  Currently,
+there is no distinction between the two, but the deferred syntax
+is preferred, because CanDI initializes beans lazily to handle
+circular references.</p>
+
+<example title="Example: circular references in resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+       xmlns:ee="urn:java:ee">
+       xmlns:qa="urn:java:qa">
+
+  &lt;qa:FooBean>
+    &lt;ee:Named>a&lt;/ee:Named>
+    &lt;qa:bar>#{b}&lt;/qa:bar>
+  &lt;/qa:FooBean>
+
+  &lt;qa:FooBean>
+    &lt;ee:Named>b&lt;/ee:Named>
+    &lt;qa:bar>#{a}&lt;/qa:bar>
+  &lt;/qa:FooBean>
+
+&lt;/web-app>
+</example>
+
+<p>You can also use beans as factories in the EL expressions, because
+Resin's EL implementation allows method expressions.  If the bean's
+create method is named <code>create()</code>, the EL
+expression will look something like <code>#{foo.create()}</code>.</p>
+
+</s1>
+
+<s1 title="Property configuration">
+
+<p>Resin's Java Injection configuration uses the standard JavaBeans
+patterns to configure properties.  Resin uses the same mechanism for all of
+its own configuration parsing, including every JavaEE configuration file, the
+resin-web.xml and the resin.xml itself.  So your application will have
+all the configuration flexibility it needs.</p>
+
+<p>Since the component beans can use Java
+Injections, injected components are typically not configured in
+the resin-web.conf, avoiding the need for tags like <code>&lt;ref></code>.</p>
+
+<example title="Example: Hello.java">
+package example;
+
+public class Hello {
+  public void setGreeting(String greeting);
+}
+</example>
+
+<p>The basic example sets a <code>greeting</code> property of a hello, world
+bean.  Resin will
+apply the configuration to the instance as part of the creation process.</p>
+
+<example title="Example: META-INF/beans.xml configuring a singleton">
+&lt;beans xmlns="http://java.sun.com/xml/ns/javaee"
+       xmlns:example="urn:java:example">
+
+  &lt;example:Hello>
+    &lt;example:greeting>Hello, World&lt;/example:greeting>
+  &lt;/example:Hello>
+
+&lt;/beans>
+</example>
+
+<s2 title="primitive conversions">
+
+<p>Resin automatically converts XML values to the Java property types
+for most primitive values.  For other primitive types, it also supports
+the JavaBeans <code>PropertyEditor</code> and custom converters.</p>
+
+<deftable title="Built-in String Converters">
+<tr>
+  <th>Type</th>
+  <th>Examples</th>
+</tr>
+<tr>
+  <td>String</td>
+  <td>hello, world</td>
+</tr>
+<tr>
+  <td>boolean</td>
+  <td>true, false</td>
+</tr>
+<tr>
+  <td>numbers</td>
+  <td>3, -4, 3.14, 9.3e-20</td>
+</tr>
+<tr>
+  <td>char</td>
+  <td>a, b</td>
+</tr>
+<tr>
+  <td>String[]</td>
+  <td>foo, bar, baz</td>
+</tr>
+<tr>
+  <td>Class</td>
+  <td>com.foo.MyBean</td>
+</tr>
+<tr>
+  <td>Path</td>
+  <td>file:/var/data/file</td>
+</tr>
+<tr>
+  <td>File</td>
+  <td>/var/data/file</td>
+</tr>
+<tr>
+  <td>URL</td>
+  <td>http://hessian.caucho.com/test</td>
+</tr>
+<tr>
+  <td>Pattern</td>
+  <td>a+[bcd]*</td>
+</tr>
+<tr>
+  <td>Date</td>
+  <td>2009-07-14 10:13</td>
+</tr>
+<tr>
+  <td>Properties</td>
+  <td>a=value</td>
+</tr>
+<tr>
+  <td>Enumeration</td>
+  <td>RED, BLUE</td>
+</tr>
+</deftable>
+
+<s3 title="enumerations">
+
+<p>Enumerations are automatically converted from their
+string representation.</p>
+
+</s3>
+
+</s2>
+
+<s2 title="compound types">
+
+<p>Full sub-bean configuration is also available when a service needs
+a more complicated configuration than primitives allow.  The service
+class can add sub-beans as properties and the sub-beans themselves are
+configured recursively using Resin's configuration.  Since all JavaEE
+configuration files like the web.xml and the *.tld files are
+configured using Resin's recursive sub-bean configuration, your
+application has full access to a powerful recursive configuration.</p>
+
+<p>A sophisticated application can use Resin's sub-bean configuration
+to create a full domain-specific language, allowing extensive user
+control of the application.</p>
+
+<s3 title="custom sub-beans">
+
+<example title="Example: sub-bean configuration example">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;example:Theater xmlns:example="urn:java:example">
+    &lt;example:name>Balboa&lt;/example:name>
+
+    &lt;example:movie title="The Princess Bride"/>
+
+    &lt;example:movie title="The Maltese Falcon"/>
+  &lt;/example:Theater>
+
+&lt;/web-app>
+</example>
+
+<p>In this example, the <code>Theater</code> is configured with
+multiple <code>Movie</code> classes, each added with the
+<code>addMovie</code> method.</p>
+
+<example title="Example: Theater.java">
+public class Theater {
+  public void setName(String name);
+
+  public void addMovie(Movie movie)
+}
+</example>
+
+<example title="Example: Movie.java">
+public class Movie {
+  public void setTitle(String title);
+}
+</example>
+
+</s3>
+
+<s3 title="list">
+
+<p>Setters taking a <code>List</code> or array argument can be configured
+with list values.</p>
+
+<p>List items are specified directly with &lt;value> elements.  There is
+no extra &lt;list> element required.  The &lt;list> element is only used
+when creating a sub-list or sub-element (see below.)</p>
+
+<example title="Example: MyBean.setValues(List)">
+&lt;my-bean>
+  &lt;values>
+    &lt;value>a&lt;/value>
+    &lt;value>b&lt;/value>
+    &lt;value>c&lt;/value>
+  &lt;/values>
+&lt;/my-bean>
+</example>
+
+<example title="Example: MyBean.setValues(String [])">
+&lt;my-bean>
+  &lt;values>
+    &lt;value>a&lt;/value>
+    &lt;value>b&lt;/value>
+    &lt;value>c&lt;/value>
+  &lt;/values>
+&lt;/my-bean>
+</example>
+
+<p>In the following example, the argument is an object, so we need
+a &lt;list> element to tell Resin to create a list.  The object
+created will be an <code>ArrayList</code>.</p>
+<example title="Example: MyBean.setValues(Object)">
+&lt;my-bean>
+  &lt;values>
+    &lt;list>
+      &lt;value>a&lt;/value>
+      &lt;value>b&lt;/value>
+      &lt;value>c&lt;/value>
+    &lt;/list>
+  &lt;/values>
+&lt;/my-bean>
+</example>
+
+<p>Resin can always use the <code>addXXX</code> pattern to add
+a variable number of items.  Normally, the <code>addXXX</code> pattern
+is easier and more maintainable than the <code>addList</code> pattern.
+In particular, validation of the item values is quicker and more accurate
+with <code>addXXX</code>.</p>
+
+<example title="Example: MyBean.addValue(String)">
+&lt;my-bean>
+  &lt;value>a&lt;/value>
+  &lt;value>b&lt;/value>
+  &lt;value>c&lt;/value>
+&lt;/my-bean>
+</example>
+
+</s3>
+
+<s3 title="map">
+
+<p>Generic maps can use an &lt;entry> syntax to define property values.</p>
+
+<example title="Example: MyBean.setValues(Map)">
+&lt;my-bean>
+  &lt;values>
+    &lt;entry key="a" value="one"/>
+    &lt;entry key="b" value="two"/>
+    &lt;entry key="c" value="three"/>
+  &lt;/values>
+&lt;/my-bean>
+</example>
+
+</s3>
+
+</s2>
+
+</s1>
+
+<s1 title="Constructors">
+
+<p>Some beans require constructor configuration because the service or
+library designer prefers constructors to method configuration.
+Resin's configuration can support these constructor beans with the
+<code>&lt;new></code> syntax.</p>
+
+<example title="Example: MyBean configuration">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+            xmlns:example="urn:java:example">
+	    
+  &lt;example:MyBean>
+    &lt;new>
+      &lt;value>first arg&lt;value>
+      &lt;value>second arg&lt;value>
+    &lt;/new>
+  &lt;/example:MyBean>
+
+&lt;/web-app>
+</example>
+
+<example title="Example: MyBean with constructor">
+public class MyBean {
+  public MyBean(String a, String b)
+  {
+    ...
+  }
+}
+</example>
+
+<s2 title="Single constructor">
+
+<p>As a convenience, Resin provides short form of the constructor
+configuration if there's only a single argument.  You can either omit
+the &lt;value> and just use the &lt;new> tag, or you can even omit the
+&lt;new> tag entirely.</p>
+
+<example title="Example: MyBean short form">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+            xmlns:example="urn:java:example">
+	    
+  &lt;example:MyBean>
+    &lt;new>single arg&lt;/new>
+  &lt;/example:MyBean>
+
+&lt;/web-app>
+</example>
+
+<example title="Example: MyBean ultra-short form">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+            xmlns:example="urn:java:example">
+	    
+  &lt;example:MyBean>single arg&lt;example:MyBean>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="valueOf">
+
+<p>For classes which implement a static <code>valueOf(String)</code> method,
+Resin will automatically convert to the given type using
+the <code>valueOf</code> method.</p>
+
+<example title="Example: MyBean with valueOf">
+public class MyBean {
+  ...
+
+  public static MyBean valueOf(String text)
+  {
+    MyBean bean = new MyBean();
+    bean.setTextValue(text);
+    bean.init();
+    return bean;
+  }
+}
+</example>
+
+</s2>
+
+<s2 title="setValue">
+
+<p>For objects with a <code>setValue</code> or <code>addText</code> method
+and a zero-argument constructor, Resin-CanDI will convert using the
+following steps:</p>
+
+<ol>
+<li>Create the object</li>
+<li>Inject any dependencies</li>
+<li>Call <code>setValue</code> or <code>setText</code> with the string</li>
+<li>Call any @PostConstruct</li>
+<li>Return the configured bean</li>
+</ol>
+
+</s2>
+
+</s1>
+
+<s1 title="Custom Services">
+
+<p>Some of your application's beans will be configured as custom
+services, like Java servlets or Hessian services, using CanDI to
+configure a service annotation.  These custom services combine your own
+Java code with Resin capabilities, usually to expose them as external web
+services.
+</p>
+
+<deftable title="Custom Service Configuration">
+<tr>
+  <th>Annotation</th>
+  <th>Description</th>
+  <th>Sample</th>
+</tr>
+
+<tr>
+  <td>
+    <a href="http://caucho.com/resin-4.0-javadoc/com/caucho/remote/BamService.html">@BamService</a>
+  </td>
+  <td>BAM service</td>
+  <td>
+<def>
+&lt;mypkg:MyBean>
+  &lt;resin:BamService name="my-service"/>
+&lt;/mypkg:MyBean>
+</def>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <a href="http://caucho.com/resin-4.0-javadoc/com/caucho/remote/HessianClient.html">@HessianClient</a>
+  </td>
+  <td>Hessian client proxy</td>
+  <td>
+<def>
+&lt;mypkg:MyApi>
+  &lt;resin:HessianClient
+               url="http://localhost:8080/test"/>
+&lt;/mypkg:MyApi>
+</def>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <a href="http://caucho.com/resin-4.0-javadoc/com/caucho/remote/HessianService.html">@HessianService</a>
+  </td>
+  <td>Hessian service</td>
+  <td>
+<def>
+&lt;mypkg:MyBean>
+  &lt;resin:HessianService urlPattern="/test"/>
+&lt;/mypkg:MyBean>
+</def>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <a href="http://caucho.com/resin-4.0-javadoc/com/caucho/jms/JmsListener.html">@JmsListener</a>
+  </td>
+  <td>JMS based EJB message driven bean</td>
+  <td>
+<def>
+&lt;mypkg:MyBean>
+  &lt;resin:JmsListener destination="my_queue"/>
+&lt;/mypkg:MyBean>
+</def>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <a href="http://caucho.com/resin-4.0-javadoc/javax/ejb/MessageDriven.html">@MessageDriven</a>
+  </td>
+  <td>EJB message driven bean</td>
+  <td>
+<def>
+&lt;mypkg:MyBean>
+  &lt;ee:MessageDriven>
+    &lt;ee:activationConfig
+               propertyName="destination"
+               propertyValue="my_queue"/>
+  &lt;/ee:MessageDriven>
+&lt;/mypkg:MyBean>
+</def>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <a href="http://caucho.com/resin-4.0-javadoc/javax/ejb/Startup.html">@Startup</a>
+  </td>
+  <td>Start on initialization</td>
+  <td>
+<def>
+&lt;mypkg:MyBean>
+  &lt;ee:Startup/>
+&lt;/mypkg:MyBean>
+</def>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <a href="http://caucho.com/resin-4.0-javadoc/javax/ejb/Stateful.html">@Stateful</a>
+  </td>
+  <td>EJB stateful session bean</td>
+  <td>
+<def>
+&lt;mypkg:MyBean>
+  &lt;ee:Stateful/>
+&lt;/mypkg:MyBean>
+</def>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <a href="http://caucho.com/resin-4.0-javadoc/javax/ejb/Stateless.html">@Stateless</a>
+  </td>
+  <td>EJB stateless session bean</td>
+  <td>
+<def>
+&lt;mypkg:MyBean>
+  &lt;ee:Stateless/>
+&lt;/mypkg:MyBean>
+</def>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <a href="http://caucho.com/resin-4.0-javadoc/javax/servlet/annotation/WebServlet.html">@WebServlet</a>
+  </td>
+  <td>Servlet mapping</td>
+  <td>
+<def>
+&lt;mypkg:MyServlet>
+  &lt;ee:WebServlet value="/test"/>
+&lt;/mypkg:MyServlet>
+</def>
+  </td>
+</tr>
+
+</deftable>
+
+</s1>
+
+<s1 title="Resin CanDI">
+
+<p>Resin is designed around the Java Contexts and Dependency Injection
+ specification (Java CanDI, JSR-299), an inversion-of-control framework
+ used for all configuration
+and resources including servlets, EJBs, messaging,
+remoting, and databases.  Applications can take advantage of Java
+Injection using standard annotations and interfaces.</p>
+
+<p>Since Resin-CanDI is used for servlets, Java objects
+and EJBs, any application
+bean can use EJB annotations like @TransactionAttribute or CanDI
+@InterceptionTypes or event @Observes capabilities, in addition to the
+dependency injection and IoC configuration.</p>
+
+<p>The dependency injection framework is type-safe, meaning the registry
+is organized around Java types, not a flat namespace, which gives more
+power and flexibility for component assembly.
+Since injection is annotation-based, most components can avoid XML
+configuration, while XML is still available for components.</p>
+
+</s1>
+
+<s1 title="Overview">
+
+<p>Resin's Java Injection support is integrated
+with EJB 3.1 Lite and the core components like Servlets, Filters and remote objects.
+This integration means plain Java beans can use EJB annotations
+and interception, EJBs can use Java Injection annotations, and both kinds of
+beans can be configured directly from the <code>resin-web.xml</code>
+or discovered by classpath scanning.</p>
+
+<p>So it's best to think of Java Injection as a set of orthogonal
+capabilities that
+are available to any registered bean.  The basic capability types are:</p>
+
+<ul>
+<li>
+  <b>Lifecycle model:</b> Java, <code>@Stateless</code>, <code>@Stateful</code>,
+or <code>@MessageDriven</code>.
+Resin-managed objects like Servlets and Filters are Java model beans.</li>
+
+<li>
+  <b>Dependency injection:</b> injection annotations from <code>javax.inject</code>: <code>@Default</code>, <code>@Named</code>, <code>@Qualifier</code>, <code>@EJB</code>, <code>@PersistenceUnit</code>, etc are
+available to all beans.</li>
+
+<li>
+  <b>Registration:</b> all beans are registered in a unified typed-namespace
+registry (i.e. the registration half of dependency injection.)</li>
+<li><b>Lifecycle events:</b> the <code>@PostConstruct</code> and <code>@PreDestroy</code></li>
+
+<li>
+  <b>Predefined aspects:</b> the <code>@TransactionAttribute</code>, <code>@RunAs</code>, <code>@RolesAllowed</code>, etc. annotations are
+available to all beans.</li>
+
+<li>
+  <b>Custom interceptors:</b> EJB-style <code>@AroundInvoke</code>, and <code>@Interceptors</code>, as well
+as Java Injection <code>@Interceptor</code>, <code>@InterceptorBindingType</code>, and <code>@Decorator</code> are available to all beans.</li>
+
+<li>
+  <b>Event handling:</b> the Java Injection <code>javax.enterprise.event</code>, <code>@Observes</code> capability is available to all beans.</li>
+</ul>
+</s1>
+
+<s1 title="XML configuration">
+
+<p>You can register your components and services with Resin using the
+resin.xml or resin-web.xml files as well as the META-INF/beans.xml
+and WEB-INF/beans.xml.
+Since the Java Injection registry is integrated
+with Resin, your services be treated as first-class components along with
+the Resin resources.  Although most components will not need XML, there
+are a few advantages for the small number of services which do use XML.</p>
+
+<p>The XML-configuration lets you customize your application for a
+particular environment, e.g. setting configuration parameters.  For example,
+Resin's <code>&lt;database></code> needs to select a database driver and
+configure the URL, user and password of the database as well as configuring
+connection pooling parameters.  Some application services will also need
+configuration.</p>
+
+<p>In addition, the XML-configuration documents the services
+you've enabled.  For heavyweight services, this documentation is critical,
+while lightweight components do not need this extra housekeeping overhead.</p>
+
+<s2 title="bean and component registration">
+
+<p>The <code>&lt;my:MyBean></code> tags register
+application classes with Resin.
+The default scope of a <code>&lt;my:MyBean></code> is <code>@Dependent</code>.
+A <code>&lt;my:MyBean></code> will create a new instance each time it's
+injected or referenced.</p>
+
+<example title="Example: bean and component META-INF/beans.xml">
+&lt;beans xmlns="http://java.sun.com/xml/ns/javaee"
+   xmlns:example="urn:java:example">
+
+  &lt;example:MyService>
+    &lt;ee:ApplicationScoped/>
+  &lt;/example:MyService>
+
+  &lt;example:MyComponent>
+  &lt;/example:MyComponent>
+
+&lt;/beans>
+</example>
+
+<p>The <code>&lt;my:MyBean></code> tags can configure fields and
+annotations:</p>
+
+<deftable title="XML annotations">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>&lt;ee:Named></td>
+  <td>the <code>@javax.inject.Name</code> annotations for EL naming</td>
+</tr>
+<tr>
+  <td>&lt;ee:Qualifier></td>
+  <td>any <code>@javax.inject.Qualifier</code> annotations for
+  injection</td>
+</tr>
+<tr>
+  <td>my:myField</td>
+  <td>optional configuration, using bean-style assignment</td>
+</tr>
+<tr>
+  <td>&lt;ee:SessionScoped></td>
+  <td>specifies scope of the instances: request, conversation, session, application, or singleton</td>
+</tr>
+</deftable>
+
+</s2>
+
+<s2 title="Bean property configuration">
+
+<p>Resin's Java Injection configuration uses the standard JavaBeans
+patterns to configure properties.  Resin uses the same mechanism for all of
+its own configuration parsing, including every JavaEE configuration file, the
+resin-web.xml and the resin.xml itself.  So your application will have
+all the configuration flexibility it needs.</p>
+
+<p>Since the component beans can use Java
+Injections, injected components are typically not configured in
+the resin-web.conf, avoiding the need for tags like <code>&lt;ref></code>.</p>
+
+<example title="Example: Hello.java">
+package example;
+
+public class Hello {
+  private String _greeting = "default";
+
+  public void setGreeting(String greeting) { _greeting = greeting; }
+  public String getGreeting() { return _greeting; }
+}
+</example>
+
+<p>The basic example sets a <code>greeting</code> property of a hello, world
+bean.  Resin will
+apply the configuration to the instance as part of the creation process.</p>
+
+<example title="Example: META-INF/beans.xml configuring a singleton">
+&lt;beans xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:example="urn:java:example">
+
+  &lt;example:Hello>
+    &lt;example:greeting>Hello, World&lt;/example:greeting>
+  &lt;/example:Hello>
+
+&lt;/beans>
+</example>
+
+<p>Resin's configuration uses 5 basic bean patterns, extending the JavaBeans
+conventions.  It can configure literal values like string and integers as
+well as configuring other beans.  Any component bean configured by Resin
+has full access to <code>@Qualifier</code> injection as well as
+the standard <code>@PostConstruct</code> annotations.  Sub-beans are
+not automatically registered with Java Inection, i.e. they act like the
+servlet configuration.</p>
+
+<p>(Currently the patterns are name-based like JavaBeans, since Resin
+was designed before annotations.  We may add configuration annotations
+in the future.</p>
+
+<example title="Example: Bean configuration patterns">
+  public void setFoo(String data);
+
+  public void setFoo(Movie data);
+
+  public void addFoo(Movie data);
+
+  public Movie createFoo();
+
+  public void setText(String data);
+</example>
+
+<ol>
+<li><code>setFoo(String)</code> configures a standard JavaBeans-style
+literal.</li>
+<li><code>setFoo(Movie)</code> creates a new instance of <code>Movie</code> and recursively configures it.</li>
+<li><code>addFoo(Movie)</code> also creates a new instance of <code>Movie</code> and recursively configures it.  <code>addFoo</code> is an easy way of
+configuring lists.</li>
+<li><code>Movie createFoo()</code> lets the bean create
+the <code>Movie</code> instance.  Many beans can
+use <code>createFoo</code> with inner classes to
+handle complex configuration.</li>
+<li><code>setText</code> is called with the text contents of
+the XML.  Value-style beans will use this.  (somewhat rare).</li>
+</ol>
+
+<p>As mentioned above, Resin uses these 5 patterns to handle all of the
+JavaEE configuration files.  In particular, the <code>createFoo</code>
+pattern returning inner classes is very handy for some complicated
+configuration cases, and for cases where a sub-tag needs information about
+the parent.</p>
+
+<example title="Example: sub-bean configuration example">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;example:Theater xmlns:example="urn:java:example">
+    &lt;example:name>Balboa&lt;/example:name>
+
+    &lt;example:movie title="The Princess Bride"/>
+
+    &lt;example:movie title="The Maltese Falcon"/>
+  &lt;/example:Theater>
+
+&lt;/web-app>
+</example>
+
+<p>In this example, the <code>Theater</code> classes uses
+an inner <code>Movie</code> class to illustrate the use of
+the <code>create</code> pattern.</p>
+
+<example title="Example: Theater.java">
+public class Theater {
+  String _name;
+
+  ArrayList&lt;Movie> _movies = new ArrayList&lt;Movie>();
+
+  public void setName(String name) { _name = name; }
+
+  public Movie createMovie()
+  {
+    return new Movie(this);
+  }
+
+  public void addMovie(Movie movie)
+  {
+    _movies.add(movie);
+  }
+
+  public static class Movie {
+    private Theater _theater;
+    private String _title;
+
+    Movie(Theater theater)
+    {
+      _theater = theater;
+    }
+
+    public void setTitle(String title) { _title = title; }
+  }
+}
+</example>
+
+</s2>
+
+<s2 title="Base configuration: string conversions">
+
+<p>Java Injection provides a number of built-in string conversion types as well
+as supporting JavaBeans <code>PropertyEditor</code> and custom converters.</p>
+
+<deftable title="Built-in String Converters">
+<tr>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>boolean, Boolean</td>
+  <td>Java boolean</td>
+</tr>
+<tr>
+  <td>byte, Byte</td>
+  <td>Java byte</td>
+</tr>
+<tr>
+  <td>short, Short</td>
+  <td>Java short</td>
+</tr>
+<tr>
+  <td>int, Integer</td>
+  <td>Java integer</td>
+</tr>
+<tr>
+  <td>long, Long</td>
+  <td>Java long</td>
+</tr>
+<tr>
+  <td>float, Float</td>
+  <td>Java float</td>
+</tr>
+<tr>
+  <td>double, Double</td>
+  <td>Java double</td>
+</tr>
+<tr>
+  <td>char, Character</td>
+  <td>Java char</td>
+</tr>
+<tr>
+  <td>String[]</td>
+  <td>String array separated by commas</td>
+</tr>
+<tr>
+  <td>Class</td>
+  <td>Java classes</td>
+</tr>
+<tr>
+  <td>Path</td>
+  <td>Resin VFS Paths</td>
+</tr>
+<tr>
+  <td>File</td>
+  <td>java.io.File</td>
+</tr>
+<tr>
+  <td>URL</td>
+  <td>java.net.URL</td>
+</tr>
+<tr>
+  <td>Pattern</td>
+  <td>java.util.regex.Pattern</td>
+</tr>
+<tr>
+  <td>Locale</td>
+  <td>java.util.Locale</td>
+</tr>
+<tr>
+  <td>Date</td>
+  <td>java.util.Date</td>
+</tr>
+<tr>
+  <td>Properties</td>
+  <td>java.util.Properties</td>
+</tr>
+<tr>
+  <td>RawString</td>
+  <td>com.caucho.config.type.RawString</td>
+</tr>
+</deftable>
+
+<s3 title="enumerations">
+
+<p>Enumerations are automatically converted from their
+string representation.</p>
+
+</s3>
+
+<s3 title="String constructor">
+
+<p>Resin-CanDI will automatically convert a string to an object if the
+object has a single String argument constructor.</p>
+
+<example title="Example: MyBean with constructor">
+public class MyBean {
+  public MyBean(String value)
+  {
+    ...
+  }
+}
+</example>
+
+</s3>
+
+<s3 title="valueOf">
+
+<p>For classes which implement a static <code>valueOf(String)</code> method,
+Resin will automatically convert to the given type using
+the <code>valueOf</code> method.</p>
+
+<example title="Example: MyBean with valueOf">
+public class MyBean {
+  ...
+
+  public static MyBean valueOf(String text)
+  {
+    MyBean bean = new MyBean();
+    bean.setTextValue(text);
+    bean.init();
+    return bean;
+  }
+}
+</example>
+
+</s3>
+
+<s3 title="setValue">
+
+<p>For objects with a <code>setValue</code> or <code>addText</code> method
+and a zero-argument constructor, Resin-IoC will convert using the
+following steps:</p>
+
+<ol>
+<li>Create the object</li>
+<li>Inject any dependencies</li>
+<li>Call <code>setValue</code> or <code>setText</code> with the string</li>
+<li>Call any @PostConstruct</li>
+<li>Return the configured bean</li>
+</ol>
+
+</s3>
+
+</s2>
+
+<s2 title="Compound types">
+
+<s3 title="list">
+
+<p>Setters taking a <code>List</code> or array argument can be configured
+with list values.</p>
+
+<p>List items are specified directly with &lt;value> elements.  There is
+no extra &lt;list> element required.  The &lt;list> element is only used
+when creating a sub-list or sub-element (see below.)</p>
+
+<example title="Example: MyBean.setValues(List)">
+&lt;my-bean>
+  &lt;values>
+    &lt;value>a&lt;/value>
+    &lt;value>b&lt;/value>
+    &lt;value>c&lt;/value>
+  &lt;/values>
+&lt;/my-bean>
+</example>
+
+<example title="Example: MyBean.setValues(String [])">
+&lt;my-bean>
+  &lt;values>
+    &lt;value>a&lt;/value>
+    &lt;value>b&lt;/value>
+    &lt;value>c&lt;/value>
+  &lt;/values>
+&lt;/my-bean>
+</example>
+
+<p>In the following example, the argument is an object, so we need
+a &lt;list> element to tell Resin to create a list.  The object
+created will be an <code>ArrayList</code>.</p>
+<example title="Example: MyBean.setValues(Object)">
+&lt;my-bean>
+  &lt;values>
+    &lt;list>
+      &lt;value>a&lt;/value>
+      &lt;value>b&lt;/value>
+      &lt;value>c&lt;/value>
+    &lt;/list>
+  &lt;/values>
+&lt;/my-bean>
+</example>
+
+<p>Resin-CanDI can always use the <code>addXXX</code> pattern to add
+a variable number of items.  Normally, the <code>addXXX</code> pattern
+is easier and more maintainable than the <code>addList</code> pattern.
+In particular, validation of the item values is quicker and more accurate
+with <code>addXXX</code>.</p>
+
+<example title="Example: MyBean.addValue(String)">
+&lt;my-bean>
+  &lt;value>a&lt;/value>
+  &lt;value>b&lt;/value>
+  &lt;value>c&lt;/value>
+&lt;/my-bean>
+</example>
+
+</s3>
+
+<s3 title="map">
+
+<p>Generic maps can use an &lt;entry> syntax to define property values.</p>
+
+<example title="Example: MyBean.setValues(Map)">
+&lt;my-bean>
+  &lt;values>
+    &lt;entry key="a" value="one"/>
+    &lt;entry key="b" value="two"/>
+    &lt;entry key="c" value="three"/>
+  &lt;/values>
+&lt;/my-bean>
+</example>
+
+</s3>
+
+</s2>
+
+<s2 title="References and EL Expressions">
+
+<p>Resin-CanDI configuration files can use EL expressions to get references
+to resources, beans, system properties, and calculate generatal expressions
+based on those values.  Since all Resin's resources are added to
+the WebBeans registry automatically, application components have access to
+anything they need.</p>
+
+<p>Both the JSP immediate syntax and deferred syntax are
+supported (${...} vs #{...}).  Currently, there is no distinction
+between the two, but the deferred syntax is preferred, since Resin-IoC
+initializes beans lazily to handle circular references.</p>
+
+<example title="Example: circular references in resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+  xmlns:ee="urn:java:ee"
+  xmlns:qa="urn:java:qa">
+
+  &lt;qa:FooBean ee:Named="a">
+    &lt;bar>#{b}&lt;/bar>
+  &lt;/qa:FooBean>
+
+  &lt;qa:BarBean ee:Named="b">
+    &lt;foo>#{a}&lt;/foo>
+  &lt;/qa:BarBean>
+
+&lt;/web-app>
+</example>
+
+<p>Because Resin's EL implementation allows method expressions, you can
+use beans as factories in the EL expressions.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="IoC annotations">
+
+<defun title="@EJB">
+
+<p>@EJB requests the injection of an EJB session bean.</p>
+
+<def title="@EJB">
+@Target({TYPE, METHOD, FIELD})
+public @interface EJB {
+  String name() default "";
+  Class beanInterface() default Object.class;
+  String beanName() default "";
+  String mappedName() default "";
+}
+</def>
+
+</defun>
+
+<defun title="@PersistenceContext">
+
+<p>@PersistenceContext requests the injection of a JPA PersistenceContext.</p>
+
+<example>
+@PersistenceContext(unitName="test")
+EntityManager _em;
+</example>
+
+<def title="@PersistenceContext">
+package javax.persistence;
+
+@Target({TYPE, METHOD, FIELD})
+public @interface PersistenceUnit {
+  String name() default "";
+  String unitName() default "";
+  PersistenceContextType type() default TRANSACTION;
+  PersistenceProperty[] properties() default {};
+}
+</def>
+
+</defun>
+
+<defun title="@PersistenceUnit">
+
+<p>@PersistenceUnit requests the injection of a JPA PersistenceUnit.</p>
+
+<example>
+@PersistenceUnit(unitName="test")
+EntityManagerFactory _emf;
+</example>
+
+<def title="@PersistenceUnit">
+package javax.persistence;
+
+@Target({TYPE, METHOD, FIELD})
+public @interface PersistenceUnit {
+  String name() default "";
+  String unitName() default "";
+}
+</def>
+
+</defun>
+
+<defun title="@PostConstruct">
+
+<p>javax.annotation.PostConstruct tells the assembler to call a method
+after the bean has been built, but before it is active.</p>
+
+<def title="@PostConstruct">
+package javax.annotation;
+
+@Target(value={PACKAGE,TYPE})
+public @interface PostConstruct {
+}
+</def>
+
+</defun>
+
+<defun title="@PreDestroy">
+
+<p>javax.annotation.PreDestroy tells the container to call the annotated
+method before it is destroyed.</p>
+
+<def title="@PreDestroy">
+package javax.annotation;
+
+@Target(value={PACKAGE,TYPE})
+public @interface PreDestroy {
+}
+</def>
+</defun>
+
+<defun title="@Resource">
+
+<p>@Resource tells the assembler to retrieve a resource an assign it
+to a field or property.  Typically, the resource will be stored in JNDI.</p>
+
+<deftable title="Known types">
+<tr>
+  <td>DataSource</td>
+  <td>Configured by &lt;<a config-tag="database">database</a>&gt;</td>
+</tr>
+<tr>
+  <td>UserTransaction</td>
+  <td>User XA interface provided by Resin</td>
+</tr>
+<tr>
+  <td>Executor</td>
+  <td>JDK 1.5 thread pool interface (see java.util.concurrent)</td>
+</tr>
+</deftable>
+
+<def title="@Resource">
+package javax.annotation;
+
+@Target({TYPE, METHOD, FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Resource {
+  String name() default "";
+
+  Class&lt;?> type() default Object.class;
+  AuthenticationType authenticationType() default CONTAINER;
+  boolean shareable() default true;
+  String mappedName() default "";
+  String description() default "";
+}
+</def>
+
+</defun>
+
+</s1>
+
+<s1 title="Bean Configuration">
+
+<p>Resin configures beans using bean-style (setter injection)
+patterns, supporting the Inversion-of-Control design pattern.
+A "bean" is any plain-old Java object which follows standard
+configuration patterns.  Because Resin can find the bean-style setters
+from looking at the class, it can configure those setters in a
+configuration file like the web.xml.</p>
+
+<p>Resin's configuration follows the <em>Assembly Line</em>
+or <em>Dependency Injection</em> pattern.</p>
+
+</s1>
+
+<s1 title="Overview">
+
+<p>The Assembly Line pattern gives configuration responsibility to the
+container where it belongs, while keeping the application code independent
+of the container.  Bean-style configuration setters for simple properties
+form the foundation for the Assembly Line pattern.  If an application
+follows the bean patterns, it can be configuration in any container following
+the Assembly Line (setter injection) pattern.</p>
+
+<p>We strongly recommend following the Assembly Line pattern throughout
+an application, even if your application does not use Resin to configure
+itself.  Following the Assembly Line pattern makes application code
+easier to understand, maintain, configure and test.</p>
+
+<figure src="assembler-eg1.gif"/>
+
+</s1>
+
+<s1 title="Property Configuration: setXXX">
+
+<p>The bean configuration form the foundation of the Assembly
+Line pattern.  Since most applications already follow the bean patterns,
+they get property configuration with no changes.</p>
+
+
+<p>Each configuration parameter <var>foo</var> has a corresponding setter method
+<code>setFoo</code> with a single argument for the value.  Resin
+looks at the class using Java's reflection to find the <code>setFoo</code>
+method.</p>
+        
+<example title="Bean-style configuration for a single value setter">
+&lt;init&gt;
+  &lt;greeting&gt;Hello, World!&lt;/greeting&gt;
+  &lt;another-greeting&gt;Hello, Mom!&lt;/another-greeting&gt;
+&lt;/init&gt;
+</example>
+
+<example title="Bean-style java code for a single value setter">
+public class MyBean {
+  private String _greeting;
+  private String _anotherGreeting;
+
+  public void setGreeting(String greeting) 
+  {
+    _greeting = greeting;
+  }
+
+  public void setAnotherGreeting(String anotherGreeting) 
+  {
+    _anotherGreeting = anotherGreeting;
+  }
+}
+</example>
+
+<s2 title="Type conversion">
+
+<p>A setter can have a parameter that has a type other than
+<code>String</code>. Resin will perform any type conversion
+necessary, so you can use integers and doubles as well as strings.</p>
+
+<example title="Bean-style configuration for type conversion">
+&lt;init&gt;
+  &lt;host&gt;www.gryffindor.com&lt;/host&gt;
+  &lt;port&gt;80&lt;/port&gt;
+&lt;/init&gt;
+</example>
+
+<example title="Bean-style java code for type conversion">
+public class MyBean {
+  private String _host;
+  private int _port;
+
+  public void setHost(String host) 
+  {
+    _host = host;
+  }
+
+  public void setPort(int port) 
+  {
+    _port = port;
+  }
+}
+</example>
+
+</s2>
+
+<s2 title="Compatibility">
+
+<p>Property configuration is very portable.  Any serious configuration system
+will configure bean-style properties.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Setter Injection: setXXX">
+
+<p>Setter injection connects resources following the same
+bean-style setter pattern.  Where bean properties configure simple
+values like strings and integers, setter injection configures
+other resources like databases and application components.</p>
+
+<p>Resin uses JNDI to store the intermediate resources, e.g. storing
+a database in java:comp/env/jdbc/test.  The configuration file
+specifies the JNDI resource using the JSP expression language and
+jndi.</p>
+
+<example title="Configuration for Setter Injection">
+&lt;init&gt;
+  &lt;data-source&gt;\${jndi("jdbc/test")}&lt;data-source&gt;
+&lt;/init&gt;
+</example>
+
+<example title="Setter Injection for a DataSource">
+public class MyBean {
+  private DataSource _dataSource;
+
+  public void setDataSource(DataSource ds)
+  {
+    _dataSource = ds;
+  }
+}
+</example>
+
+<s2 title="Compatibility">
+
+<p>Setter injection is portable to containers which
+support dependency injection.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Container Properties: addXXX">
+
+<p>Resources often act as containers for lists of values and map values.
+The <code>addXXX</code> pattern adds multiple values for a single property.
+</p>
+
+<p>A setter method <code>addFoo</code> allows multiple values to be
+specified from the configuration.</p>
+
+<example title="Bean-style configuration for setting multiple values">
+&lt;init&gt;
+  &lt;greeting&gt;Hello, World!&lt;/greeting&gt;
+  &lt;greeting&gt;Hello, Mom!&lt;/greeting&gt;
+&lt;/init&gt;
+</example>
+
+<example title="Bean-style java code for setting multiple values">
+public class MyBean {
+  private LinkedList _greetings = new LinkedList();
+
+  public void addGreeting(String greeting) 
+  {
+    _greetings.add(greeting);
+  }
+
+}
+</example>
+
+</s1>
+
+<s1 title="Validation and Assembly: @PostConstruct">
+
+<p>Well-written resources will validate their configuration and may
+perform additional assembly tasks.  Resin calls methods marked with the
+@PostConstruct annotation after all the setter methods have been called.</p>
+
+<example title="Bean-style @PostConstruct">
+import javax.annotation.PostConstruct;
+
+public class MyBean {
+  private String _language;
+  private String _country;
+  Locale locale;
+
+  public void setLanguage(String language) 
+  {
+    _language = language;
+  }
+
+  public void setCountry(int country) 
+  {
+    _country = country;
+  }
+
+  @PostConstruct
+  public void init()
+  {
+    locale = new Locale(language, country);
+  }
+}
+</example>
+
+<s2 title="Validation Exceptions">
+<p>If an exception is thrown from any of the methods in the bean,
+Resin will attach a file name and line number that correspond to the
+configuration file.</p>
+
+<example title="Bean-style exceptions">
+import java.util.Locale;
+import javax.annotation.PostConstruct;
+
+public class MyBean {
+  private String _language;
+  private String _country;
+  Locale _locale;
+
+  public void setLanguage(String language) 
+    throws Exception
+  {
+    if (language.length() != 2)
+      throw new Exception("'language' must be a two-character string");
+    _language = language;
+  }
+
+  public void setCountry(int country) 
+    throws Exception
+  {
+    if (country.length() != 2)
+      throw new Exception("'country' must be a two-character string");
+    _country = country;
+  }
+
+  @PostConstruct
+  public void init() 
+  {
+    if (_country == null)
+      throw new Exception("'country' is required");
+    if (_language == null)
+      throw new Exception("'language' is required");
+
+    _locale = new Locale(language,country);
+  }
+}
+</example>
+
+<results>
+500 Servlet Exception
+
+WEB-INF/web.xml:9: java.lang.Exception: 'country' must be a two-character string
+</results>
+</s2>
+</s1>
+
+<s1 title="Nested Beans: createXXX">
+
+<p>Beans can be nested, allowing a bean to have setters that have
+other sub-beans as the type.</p>
+
+<example title="Bean-style configuration for sub-beans">
+&lt;init&gt;
+  &lt;table&gt;
+    &lt;name&gt;Foo&lt;/name&gt;
+    &lt;timestamp-field&gt;tstamp&lt;/timestamp-field&gt;
+  &lt;/table&gt;
+
+  &lt;table name="Bar" timestamp-field="ts"/&gt;
+&lt;/init&gt;
+</example>
+
+<example title="Bean-style java code for sub-beans">
+import javax.annotation.PostConstruct;
+import javax.sql.*;
+
+// a class to periodically clean old log records from the database
+public class LogCleaner {
+  List _logTables = new LinkedList();
+
+  // the createXXX method is optional, and allows use something other than
+  // the default constructor for a sub-bean
+  public LogTable createTable()
+  {
+    return new LogTable();
+  }
+
+  // you could also use setTable(LogTable logTable)
+  public void addTable(LogTable logTable)
+  {
+    _logTables.add(logTable);
+  }
+
+  public class LogTable {
+    String _name;
+    String _timestampField;
+
+    public void setName(String name)
+    {
+      _name = name;
+    }
+
+    public void setTimestampField(String timestampField)
+    {
+      _timestampField = timestampField;
+    }
+
+    @PostConstruct
+    public void init()
+        throws Exception
+    {
+      if (_name == null)
+        throw new Exception("'name' is required");
+      if (_timestampField == null)
+        throw new Exception("'timestamp-field' is required");
+    }
+
+    public void cleanTable(DataSource pool)
+    {
+      Connection conn = null;
+      try {
+        conn = pool.getConnection();
+        ...
+      } catch (SQLException e) {
+        throw new ServletException(e);
+      } finally {
+        try {
+          if (conn != null)
+            conn.close();
+        } catch (SQLException e) {
+        }
+      }
+    }
+  }
+
+  ...
+ 
+}
+</example>
+</s1>
+
+<s1 title="Setting with the body text">
+<p>The <code>addText()</code> method will capture the body of the tag
+for a bean setter.</p>
+
+<example title="Bean-style configuration for setting with the body text">
+&lt;init&gt;
+  &lt;message&gt;This is the message&lt;/message&gt;
+&lt;/init&gt;
+</example>
+
+<example title="Bean-style java code for setting with the body text">
+public class MyBean {
+  Message _msg;
+
+  public Message createMessage() { return new Message(); }
+
+  public void setMessage(Message msg) { _msg = msg; }
+
+  public class Message {
+    String _text;
+    public void addText(String text) { _text = text; }
+    public String getText() { return _text; }
+  }
+}
+</example>
+
+</s1>
+
+<s1 title="Returning a different object">
+
+<p>There are some unusual cases where the configured bean is just a
+configuration object and you want to return a different bean.  The
+bean can implement a method <code>Object replaceObject()</code> to return a
+different object. Called after the @PostConstruct. </p>
+
+</s1>
+
+<s1 title="Inline custom Beans">
+
+<example title="Inline custom beans">
+&lt;beans xmlns="http://caucho.com/ns/resin"
+  xmlns:resin="urn:java:com.caucho.resin"
+  xmlns:example="urn:java:com.foo.example">
+
+&lt;example:MessageBean resin:JndiName="env/message"&gt;
+  &lt;message&gt;This is message 1&lt;/message&gt;
+  &lt;message&gt;This is message 2&lt;/message&gt;
+  &lt;message>
+     &lt;example:CustomMessage/>
+   &lt;/message>
+&lt;/example:MessageBean>
+
+&lt;/beans>
+</example>
+
+<example title="MessageBean.java">
+package example;
+
+import java.util.*;
+
+public class MessageBean {
+  List _msgs = new LinkedList();
+
+  public void addMessage(Message msg) 
+  { 
+    _msgs.add(msg); 
+    System.out.println("MessageBean.addMessage(): " + msg);
+  }
+
+  // this never get's called, because MessageBean has no parent
+  public void setParent(Object obj) 
+  { 
+    System.out.println("MessageBean.setParent(): " + obj);
+  }
+
+}
+</example>
+<example title="Message.java">
+package example;
+
+public class Message {
+  String _text;
+  public void addText(String text) 
+  { 
+    _text = text; 
+    System.out.println("Message.addText(): " + text);
+  }
+
+  public void setParent(Object obj) 
+  { 
+    System.out.println("Message.setParent(): " + obj);
+  }
+
+  public String toString()
+  {
+    return super.toString() + ": " + _text;
+  }
+}
+</example>
+<example title="Message.java">
+package example;
+
+public class CustomMessage extends Message {
+  public void addText(String text) 
+  { 
+    _text = text; 
+    System.out.println("CustomMessage.addText(): " + text);
+  }
+
+  public void setParent(Object obj) 
+  { 
+    System.out.println("CustomMessage.setParent(): " + obj);
+  }
+}
+</example>
+
+<results>
+Message.setParent(): example.MessageBean@ffb35e
+Message.addText(): This is message 1
+MessageBean.addMessage(): example.Message@1591b4d: This is message 1
+Message.setParent(): example.MessageBean@ffb35e
+Message.addText(): This is message 2
+MessageBean.addMessage(): example.Message@10f965e: This is message 2
+CustomMessage.setParent(): example.MessageBean@ffb35e
+CustomMessage.addText(): This is message 3
+MessageBean.addMessage(): example.CustomMessage@12164ea: This is message 3
+</results>
+
+<p>In practice, it may make more sense to use <code>createSubBean</code> or
+<code>addSubBean</code> to set a parent-child relationship for beans, instead
+of <code>setParent</code>.  The possible issue with addSubBean is that
+@PostConstruct methods are called before addSubBean.  The possible issue with
+createSubBean is that it's
+not possible to use a &lt;mypkg:MySubBean> with createSubBean.  So the setParent is
+useful when the @PostConstruct method needs the parent, and you need to use
+&lt;mypkg:MySubBean>.</p>
+
+</s1>
+
+<s1 name="xml" title="Configuring beans from XML files">
+<p>
+The facilities provided by Resin make it very easy to 
+read XML files.  Java classes that follow the java bean pattern 
+are defined to match the schema of the xml file.
+</p>
+
+<example title="rss-example.xml">
+&lt;rss version="0.91"&gt;
+  &lt;channel&gt;
+    &lt;title&gt;Hogwarts&lt;/title&gt; 
+    &lt;link&gt;http://hogwarts.com&lt;/link&gt; 
+    &lt;description&gt;Hogwart's News&lt;/description&gt;
+    &lt;image&gt;
+      &lt;title&gt;Hogwarts&lt;/title&gt; 
+      &lt;url&gt;http://hogwarts.com/images/logo.gif&lt;/url&gt; 
+      &lt;link&gt;http://hogwarts.com&lt;/link&gt; 
+      &lt;width&gt;88&lt;/width&gt; 
+      &lt;height&gt;31&lt;/height&gt; 
+      &lt;description&gt;Hogwart's News&lt;/description&gt; 
+    &lt;/image&gt;
+    &lt;item&gt;
+      &lt;title&gt;New Course Additions&lt;/title&gt;
+      &lt;link&gt;http://hogwarts.com/news/00123.html&lt;/link&gt;
+      &lt;description&gt;New course's are now available at Hogwart's.&lt;/description&gt;
+    &lt;/item&gt;
+    &lt;item&gt;
+      &lt;title&gt;Dumbledore is back!&lt;/title&gt;
+      &lt;link&gt;http://hogwarts.com/news/00122.html&lt;/link&gt;
+      &lt;description&gt;
+        After a short hiatus, Professor Dumbledore is back as 
+        Headmaster of Hogwart's.
+      &lt;/description&gt;
+    &lt;/item&gt;
+  &lt;/channel&gt;
+&lt;/rss&gt;
+</example>
+
+<example title="example/rss/Rss.java">
+package example.rss;
+
+import java.util.ArrayList;
+
+public class Rss {
+  private String _version;
+  private ArrayList&lt;Channel&gt; _channels = new ArrayList&lt;Channel&gt;;
+
+  public void setVersion(String version)
+  {
+    _version = version;
+  }
+
+  public String getVersion()
+  {
+    return _version;
+  }
+
+  public void addChannel(Channel channel)
+  {
+    _channels.add(channel);
+  }
+
+  public ArrayList&lt;Channel&gt; getChannels()
+  {
+    return _channels;
+  }
+}
+
+</example>
+
+<example title="example/rss/Channel.java">
+package example.rss;
+
+import java.util.ArrayList;
+
+public class Channel {
+  private String _title;
+  private String _link;
+  private String _description;
+  private String _language;
+  private Image _image;
+  private ArrayList&lt;Item&gt; _items = new ArrayList&lt;Item&gt;;
+
+  public void setTitle(String title)
+  {
+    _title = title;
+  }
+
+  public String getTitle()
+  {
+    return _title;
+  }
+
+  public void setLink(String link)
+  {
+    _link = link;
+  }
+
+  public String getLink()
+  {
+    return _link;
+  }
+
+  public void setDescription(String description)
+  {
+    _description = description;
+  }
+
+  public String getDescription()
+  {
+    return _description;
+  }
+
+  public void setImage(Image image)
+  {
+    _image = image;
+  }
+
+  public Image getImage()
+  {
+    return _image;
+  }
+
+  public void addItem(Item item)
+  {
+    _items.add(item);
+  }
+
+  public ArrayList&lt;Items&gt; getItems()
+  {
+    return _items;
+  }
+}
+</example>
+
+<example title="example/rss/Image.java">
+package example.rss;
+
+public class Image {
+  private String _title;
+  private String _url;
+  private String _link;
+  private int _width;
+  private String _height;
+  private String _description;
+
+  public void setTitle(String title)
+  {
+    _title = title;
+  }
+
+  public String getTitle()
+  {
+    return _title;
+  }
+
+  public void setLink(String link)
+  {
+    _link = link;
+  }
+
+  public String getLink()
+  {
+    return _link;
+  }
+
+  public void setWidth(int width)
+  {
+    _width = width;
+  }
+
+  public int getWidth()
+  {
+    return _width;
+  }
+
+  public void setHeigth(int height)
+  {
+    _height = height;
+  }
+
+  public int getHeight()
+  {
+    return _height;
+  }
+
+  public void setDescription(String description)
+  {
+    _description = description;
+  }
+
+  public String getDescription()
+  {
+    return _description;
+  }
+}
+</example>
+
+<example title="example/rss/Item.java">
+package example.rss;
+
+public class Item {
+  private String _title;
+  private String _link;
+  private String _description;
+
+  public void setTitle(String title)
+  {
+    _title = title;
+  }
+
+  public String getTitle()
+  {
+    return _title;
+  }
+
+  public void setLink(String link)
+  {
+    _link = link;
+  }
+
+  public String getLink()
+  {
+    return _link;
+  }
+
+  public void setDescription(String description)
+  {
+    _description = description;
+  }
+
+  public String getDescription()
+  {
+    return _description;
+  }
+}
+</example>
+
+<s2 title="NodeBuilder">
+
+<p>
+<a javadoc="com.caucho.config.NodeBuilder"/> is used to configure 
+beans from an xml file.
+</p>
+
+<example title="NodeBuilder constructs beans from rss-example.xml">
+  import com.caucho.config.NodeBuilder;
+  import com.caucho.vfs.Path;
+
+  ...
+
+  Rss rss = new Rss();
+  NodeBuilder builder = new NodeBuilder();
+
+  Path rssPath = new Path("WEB-INF/rss-example.xml");
+
+  builder.configure(rss,rssPath);
+</example>
+</s2>
+
+<s2 title="RNC validation">
+
+<example title="RNC validation">
+  import com.caucho.config.NodeBuilder;
+  import com.caucho.vfs.Path;
+
+  ...
+
+  Rss rss = new Rss();
+  NodeBuilder builder = new NodeBuilder();
+
+  Path rssPath = new Path("WEB-INF/rss-example.xml");
+  <b>Path schemaPath = new Path("WEB-INF/rss.rnc")</b>
+
+  <b>builder.setCompactSchema(schemaPath);</b>
+
+  builder.configure(rss,rssPath);
+</example>
+
+</s2>
+
+<s2 name="import" title="resin:import">
+<p>
+resin:import is used to read configuration information from another file.
+</p>
+
+<example title="rss-example.xml">
+&lt;rss version="0.91"&gt;
+ &lt;resin:import&gt;
+   &lt;fileset dir="channels/"&gt;
+     &lt;include name="*.xml"/&gt;
+   &lt;/fileset&gt;
+  &lt;/resin:import&gt;
+</example>
+
+<example title="channels/hogwarts.xml">
+&lt;channel&gt;
+  &lt;title&gt;Hogwarts&lt;/title&gt; 
+  &lt;link&gt;http://hogwarts.com&lt;/link&gt; 
+  &lt;description&gt;Hogwart's News&lt;/description&gt;
+  &lt;image&gt;
+    &lt;title&gt;Hogwarts&lt;/title&gt; 
+    &lt;url&gt;http://hogwarts.com/images/logo.gif&lt;/url&gt; 
+    &lt;link&gt;http://hogwarts.com&lt;/link&gt; 
+    &lt;width&gt;88&lt;/width&gt; 
+    &lt;height&gt;31&lt;/height&gt; 
+    &lt;description&gt;Hogwart's News&lt;/description&gt; 
+  &lt;/image&gt;
+  &lt;item&gt;
+    &lt;title&gt;New Course Additions&lt;/title&gt;
+    &lt;link&gt;http://hogwarts.com/news/00123.html&lt;/link&gt;
+    &lt;description&gt;New course's are now available at Hogwart's.&lt;/description&gt;
+  &lt;/item&gt;
+  &lt;item&gt;
+    &lt;title&gt;Dumbledore is back!&lt;/title&gt;
+    &lt;link&gt;http://hogwarts.com/news/00122.html&lt;/link&gt;
+    &lt;description&gt;
+      After a short hiatus, Professor Dumbledore is back as 
+      Headmaster of Hogwart's.
+    &lt;/description&gt;
+  &lt;/item&gt;
+&lt;/channel&gt;
+</example>
+
+<s3 title="See also">
+<ul>
+<li><a href="config-el-ref.xtp#resin:import">resin:import</a>
+</li><li><a href="../examples/ioc-injection/index.xtp">Dependency Injection Tutorial</a>
+</li></ul>
+</s3>
+</s2> <!-- import -->
+
+</s1> <!-- xml -->
+
+<s1 title="Administration">
+
+<deftable title="Administration">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.admin.JmsService">&lt;resin:JmxService></a></td>
+  <td>Enables cluster-wide JMX administration.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.admin.LogService">&lt;resin:LogService></a></td>
+  <td>Stores high-priority log messages in a database.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.admin.PingMailer">&lt;resin:PingMailer></a></td>
+  <td>Mails a notification when a ping check fails.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.admin.PingThread">&lt;resin:PingThread></a></td>
+  <td>Checks status of Resin sutomatically.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.admin.StatService">&lt;resin:StatService></a></td>
+  <td>Gathers timed runtime status of Resin for graphing.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.admin.XaLogService">&lt;resin:XaLogService></a></td>
+  <td>Transaction log service.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.admin.RemoteAdminService">&lt;resin:RemoteAdminService></a></td>
+  <td>Enables administration by remote agents, like an eclipse console.</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="Clustered Caching (JCache)">
+
+<deftable title="Caches">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.distcache.ByteStreamCache">&lt;resin:ByteStreamCache></a></td>
+  <td>Distributed cache of InputStream/OutputStream byte streams across a cluster pod.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.distcache.ClusterCache">&lt;resin:ClusterCache></a></td>
+  <td>JCache-style distributed object cache across a cluster pod (java.util.Map).</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.distcache.GlobalCache">&lt;resin:GlobalCache></a></td>
+  <td>JCache-style distributed object cache across the entire Resin system.</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="JMS">
+
+<deftable title="JMS">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.jms.JmsConnectionFactory">&lt;resin:JmsConnectionFactory></a></td>
+  <td>Combined Queue and Topic ConnectionFactory.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.jms.ClusterQueue">&lt;resin:ClusterQueue></a></td>
+  <td>Clustered queue.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.jms.FileQueue">&lt;resin:FileQueue></a></td>
+  <td>Filesystem based queue.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.jms.FileTopic">&lt;resin:FileTopic></a></td>
+  <td>Filesystem based topic.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.jms.MemoryQueue">&lt;resin:MemoryQueue></a></td>
+  <td>Memory based queue.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.jms.MemoryTopic">&lt;resin:MemoryTopic></a></td>
+  <td>Memory based topic.</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="Protocols">
+
+<deftable title="Protocols">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.protocols.FastCgiPort">&lt;resin:FastCgiPort></a></td>
+  <td>FastCGI requests, e.g. from nginx.</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="Rewrite">
+
+<deftable title="Dispatch rules">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.Dispatch">&lt;resin:Dispatch></a></td>
+  <td>Normal servlet dispatching with optional <em>target</em> rewriting.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.FastCgiProxy">&lt;resin:FastCgiProxy></a></td>
+  <td>Proxies the request to a backend server using FastCGI as a proxy protocol.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.Forbidden">&lt;resin:Forbidden></a></td>
+  <td>Send a HTTP forbidden response.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.Forward">&lt;resin:Forward></a></td>
+  <td>Forwards to the new URL using RequestDispatcher.forward with the <em>target</em> URL.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.HttpProxy">&lt;resin:HttpProxy></a></td>
+  <td>Proxies the request to a backend server using HTTP as a proxy protocol.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.LoadBalance">&lt;resin:LoadBalance></a></td>
+  <td>Load balance to a cluster of backend Resin servers.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.Redirect">&lt;resin:Redirect></a></td>
+  <td>Send a HTTP redirect to a new URL specified by <em>target</em>.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.SendError">&lt;resin:SendError></a></td>
+  <td>Send a HTTP error response.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.AbstractTargetDispatchRule">AbstractTargetDispatchRule</a></td>
+  <td>Base class for custom dispatch rules.</td>
+</tr>
+</deftable>
+
+<deftable title="Rewrite filters">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.SetHeader">&lt;resin:SetHeader></a></td>
+  <td>Sets a response header.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.SetRequestSecure">&lt;resin:SetRequestSecure></a></td>
+  <td>Marks the request as secure.</td>
+</tr>
+<tr>
+  <td>&lt;mypkg:MyFilter></td>
+  <td>Servlet filters.</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="Repository">
+
+<deftable title="Repository">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.server/repository.PorjectJarRepository">&lt;resin:ProjectJarRepository></a></td>
+  <td>Maven-style library jar management for webapps.</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="Request Conditions">
+
+<deftable title="Basic conditions">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfAuthType">&lt;resin:IfAuthType></a></td>
+  <td>Checks for the authentication type, request.getAuthType().</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfCookie">&lt;resin:IfCookie></a></td>
+  <td>Checks for the presence of a named HTTP cookie from request.getCookies().</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfCron">&lt;resin:IfCron></a></td>
+  <td>Matches if the current time is in an active range configured by cron-style times.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfFileExists">&lt;resin:IfFileExists></a></td>
+  <td>Matches if the URL corresponds to an actual file.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfHeader">&lt;resin:IfHeader></a></td>
+  <td>Tests for a HTTP header and value match.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfLocale">&lt;resin:IfLocale></a></td>
+  <td>Tests for a Locale match from the HTTP request.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfLocalPort">&lt;resin:IfLocalPort></a></td>
+  <td>Compares the local port of the request, request.getLocalPort().</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfMethod">&lt;resin:IfMethod></a></td>
+  <td>Compares the HTTP method, request.getMethod().</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfNetwork">&lt;resin:IfNetwork></a></td>
+  <td>Compares the remote IP address to a network pattern like 192.168/16.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfQueryParam">&lt;resin:IfQueryParam></a></td>
+  <td>Tests for a HTTP query parameger, request.getParameter().</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfRemoteAddr">&lt;resin:IfRemoteAddr></a></td>
+  <td>Tests against the remote IP address, request.getRemoteAddr().</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfRemoteUser">&lt;resin:IfRemoteUser></a></td>
+  <td>Tests against the remote user, request.getRemoteUser().</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfSecure">&lt;resin:IfSecure></a></td>
+  <td>True for SSL requests, i.e. if request.isSecure() is true.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.IfUserInRole">&lt;resin:IfUserInRole></a></td>
+  <td>Tests is the user is in the servlet security role.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.RequestPredicate">RequestPredicate</a></td>
+  <td>Interface for custom request predicates.</td>
+</tr>
+</deftable>
+
+<deftable title="Combining conditions">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.And">&lt;resin:And></a></td>
+  <td>Matches if all children match.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.Or">&lt;resin:Or></a></td>
+  <td>Matches if any children match.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.Not">&lt;resin:Not></a></td>
+  <td>Matches if the child does not match.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.NotAnd">&lt;resin:NotAnd></a></td>
+  <td>Matches if any child does not match.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.rewrite.NotOr">&lt;resin:NotOr></a></td>
+  <td>Matches if all the children do not match.</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="Scheduling">
+
+<deftable title="Scheduling">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.resources.ScheduledTask">&lt;resin:ScheduledTask></a></td>
+  <td>cron-style task scheduling.</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="Security">
+
+<deftable title="Authenticators">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.AdminAuthenticator">&lt;resin:AdminAuthenticator></a></td>
+  <td>Resin administration authentication (same syntax as XmlAuthenticator).</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.DatabaseAuthenticator">&lt;resin:DatabaseAuthenticator></a></td>
+  <td>Authentication using a JDBC database schema.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.JaasAuthenticator">&lt;resin:JaasAuthenticator></a></td>
+  <td>Java authentication service authenticator.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.LdapAuthenticator">&lt;resin:LdapAuthenticator></a></td>
+  <td>LDAP authentication using JNDI.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.PropertiesAuthenticator">&lt;resin:PropertiesAuthenticator></a></td>
+  <td>.properties file authentication.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.XmlAuthenticator">&lt;resin:XmlAuthenticator></a></td>
+  <td>.xml file authentication.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.AbstractAuthenticator">AbstractAuthenticator</a></td>
+  <td>Abstract class for custom authentication.</td>
+</tr>
+</deftable>
+
+<deftable title="Single Signon">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.ClusterSingleSignon">&lt;resin:ClusterSingleSignon></a></td>
+  <td>Cluster-based single signon.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.MemorySingleSignon">&lt;resin:MemorySingleSignon></a></td>
+  <td>Memory-based single signon.</td>
+</tr>
+</deftable>
+
+<deftable title="Login managers">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.BasicLogin">&lt;resin:BasicLogin></a></td>
+  <td>HTTP basic authentication.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.DigestLogin">&lt;resin:DigestLogin></a></td>
+  <td>HTTP digest authentication.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.FormLogin">&lt;resin:FormLogin></a></td>
+  <td>Servlet form authentication.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.AbstractLogin">AbstractLogin</a></td>
+  <td>Abstract class for custom login.</td>
+</tr>
+</deftable>
+
+
+<deftable title="Authorization rules">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.Allow">&lt;resin:Allow></a></td>
+  <td>Allows access to a URL pattern.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.Deny">&lt;resin:Deny></a></td>
+  <td>Denies access to a URL pattern.</td>
+</tr>
+</deftable>
+
+<deftable title="Permission Mapping">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.XmlRoleMap">&lt;resin:XmlRoleMap></a></td>
+  <td>Role to group permission mapping.</td>
+</tr>
+<tr>
+  <td><a javadoc="com.caucho.security.AbstractRoleMap">AbstractRoleMap</a></td>
+  <td>Abstract class for custom role to group permission mapping.</td>
+</tr>
+</deftable>
+
+</s1>
+
+</body>
+</document>

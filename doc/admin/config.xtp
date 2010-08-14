@@ -1,0 +1,21 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Tags</title>
+    <type>contents</type>
+    <description>
+      <p>
+        Resin uses a tag-based xml configuration file, usually as
+        <var>resin.xml</var>, for declaring all available options. In
+        addition, Resin supports EL variables, expressions and control
+        structures.
+      </p>
+    </description>
+    
+  </header>
+
+  <body>
+
+    <summary/>
+  </body>
+</document>

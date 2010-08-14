@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://caucho.com/eclipse">
+      Caucho Technology&apos;s Eclipse Plugin Update Site
+   </description>
+   <feature url="features/com.caucho.resin.eclipse_4.0.2.jar" id="com.caucho.resin.eclipse" version="4.0.2">
+      <category name="Caucho Resin"/>
+   </feature>
+   <category-def name="Caucho Resin" label="Caucho Resin">
+      <description>
+         This category contains plugins for the Caucho Resin Java Application Server
+      </description>
+   </category-def>
+</site>

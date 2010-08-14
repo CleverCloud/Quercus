@@ -1,0 +1,9 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <!--
+     - Instantiates the resource.
+     -
+     - The resource start(ctx) method will start a thread which
+     - increments a counter periodically.
+    -->
+  <resource jndi-name="jca/work" type="example.WorkResource"/>
+</web-app>

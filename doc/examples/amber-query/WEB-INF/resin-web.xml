@@ -1,0 +1,14 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <!--
+     - configuration for the Persistence manager
+    -->
+  <ejb-server data-source="jdbc/resin" create-database-schema="true"/>
+
+  <!--
+     - configuration for the client.
+    -->
+  <servlet servlet-name="query" servlet-class="example.QueryServlet">
+  </servlet>
+
+  <servlet-mapping url-pattern="/query" servlet-name="query"/>
+</web-app>

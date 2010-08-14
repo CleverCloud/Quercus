@@ -1,0 +1,25 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+
+  <!--
+     - Configures the movie finder singleton with some movies.
+    -->
+  <example:MovieFinderImpl xmlns:example="urn:java:example">
+    <movie director="Jackson" title="LOTR: Fellowship of the Ring"/>
+    <movie director="Jackson" title="LOTR: The Two Towers"/>
+    <movie director="Jackson" title="LOTR: Return of the King"/>
+
+    <movie director="Lucas" title="Star Wars"/>
+
+    <movie director="Gilliam" title="Monty Python's Holy Grail"/>
+    <movie director="Gilliam" title="Brazil"/>
+  </example:MovieFinderImpl>
+
+  <!--
+     - Configures the movie servlet with the lister.
+    -->
+  <servlet servlet-name="movies"
+           servlet-class="example.MovieServlet">
+  </servlet>
+
+  <servlet-mapping url-pattern="/movies" servlet-name="movies"/>
+</web-app>

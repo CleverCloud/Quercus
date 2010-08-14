@@ -1,0 +1,13 @@
+<%-- 
+  private.jspf 
+
+  It is necessary to mark certain pages as private pages, meaning they
+  should never be seen by anyone except the current user.  This
+  information is used by the browser and any intervening cache's to
+  make sure that only the current user will see the page.
+
+  This applies to any pages that contain private data.
+  --%>
+<%
+  response.addHeader("Cache-Control","private");
+%>

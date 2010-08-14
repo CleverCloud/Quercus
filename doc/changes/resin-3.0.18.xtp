@@ -1,0 +1,105 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.18 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="Quercus">
+
+<p>Quercus now runs <a href="http://wiki.caucho.com/Quercus:_Drupal">Drupal</a>
+and <a href="http://wiki.caucho.com/Quercus:_Mediawiki">MediaWiki</a>.
+The Caucho forum has some <a href="http://forum.caucho.com/node/16">
+performance results</a>, with Quercus as 3-4 times faster than Apache/mod_php.
+</p>
+
+<p>New modules include:</p>
+<ul>
+<li>mcrypt
+</li><li>sessions
+</li><li>PDF (partial)
+</li><li>SimpleXML
+</li><li>Zip
+</li><li>Zlib
+</li><li>MHash
+</li><li>Bcmath
+</li></ul>
+
+</s1>
+
+<s1 title="rewrite-dispatch">
+
+<p><a href="http://wiki.caucho.com/rewrite-dispatch">rewrite-dispatch</a> now accepts &lt;moved-permanently&gt;.</p>
+
+</s1>
+
+<s1 title="JMX System Notifications">
+
+<p>Application resources can now listen for <a href="http://wiki.caucho.com/Lifecycle_notification">Lifecycle Notification</a> events using JMX,
+configured in the resin.conf (or using JMX directly.)</p>
+
+</s1>
+
+<s1 title="JNI">
+
+<p>./configure fixes for 64-bit linux.</p>
+
+<p>win32 does not support SNDTIMEO/RCVTIMEO, so select() needed to be added again.</p>
+
+<p>solaris/linux issues with the blocking reads in conjunction with EINTR have been addressed.
+
+</p></s1>
+
+<s1 title="HttpProxyServlet">
+
+<p>Implementation of
+<a href="http://wiki.caucho.com/HttpProxyServlet">HttpProxyServlet</a>
+has been improved, in particular related to redirects.
+
+</p></s1>
+
+<s1 title="JSP">
+
+<p>The default app-default.xml does not read .tld files on web-app
+startup, only on the first JSP invocation.  This will improve startup times,
+but may cause issues with applications like JSF which expect all .tld files
+to be read.</p>
+
+</s1>
+
+<s1 title="caching/persistent-sessions">
+
+<p>More work on simplifying the backend for caching and persistent sessions.
+The fragment implementation has been simplified again, several locking bugs have been addressed, and performance has been improved.</p>
+
+</s1>
+
+<s1 title="mod_caucho/plugins">
+
+<p>Fixes for manual dispatching of Apache/mod_caucho.  If no ResinConfigServer
+directive exists, mod_caucho dispatch is manual.</p>
+
+<p>Fixes for virtual host dispatch issues to Apache/mod_caucho.</p>
+
+<p>Multiple ./configure fixes for Apache under different operating systems.</p>
+
+</s1>
+
+<s1 title="change log">
+
+<p>Also, many smaller bugs are listed in the <a href="changes.xtp">change log</a>.
+
+</p></s1>
+
+<s1 title="Special Thanks">
+
+<p>Special thanks to Stefano Bagnara for amazing work finding a huge
+number of Quercus bugs.</p>
+
+</s1>
+
+</body>
+</document>

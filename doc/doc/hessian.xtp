@@ -1,0 +1,18 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Protocols</title>
+    <type>contents</type>
+    <description>
+        <p>Hessian and Burlap are compact binary and XML protocols for
+applications needing performance without protocol complexity.
+Hessian is a small binary protocol. Burlap is a matching XML protocol.
+Providing a web service is as simple as creating a servlet.
+Using a service is as simple as a JDK Proxy interface.</p>
+    </description>
+  </header>
+
+  <body>
+    <summary/>
+  </body>
+</document>

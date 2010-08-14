@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/kernel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/servlet16"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jms"/>
+	<classpathentry kind="lib" path="/Users/scottferguson/ws/resin/modules/ext/javamail-141.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

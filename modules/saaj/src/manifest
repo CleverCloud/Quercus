@@ -1,0 +1,6 @@
+Extension-Name: javax.xml.rpc
+Specification-Vendor: Sun Microsystems, Inc
+Specification-Version: 2.4
+Implementation-Vendor-Id: com.caucho
+Implementation-Vendor: Caucho Technology, Inc
+Implementation-Version: 1.1

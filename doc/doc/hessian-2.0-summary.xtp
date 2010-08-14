@@ -1,0 +1,212 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Hessian 2.0 Draft Specification</title>
+    <date>Jul 8, 2006</date>
+    <description>
+      <p>Hessian is a compact binary protocol for connecting web
+      services.</p>
+
+      <p>Because Hessian is a small protocol, J2ME devices like cell-phones can use
+      it to connect to Resin servers.  Because it's powerful, it can be used
+      for EJB services.</p>
+    </description>
+  </header>
+
+  <body>
+    <localtoc/>
+
+<s1 title="Design Goals">
+
+<p>Hessian 2 is a compaction of the Hessian protocol.  All
+Hessian 1 codes are understood by Hessian 2.  The extended codes
+provide compact formats for common values, e.g. storing an
+integer zero as a single byte instead of Hessian 1's 5 bytes.</p>
+
+<p>The <a href="http://www.caucho.com/hessian">Hessian home page</a>
+contains the latest information about Hessian.</p>
+
+<p>Unlike older binary protocols, Hessian is both self-describing
+and portable across languages.  The wire protocol for web
+services should be invisible to application writers.  Wire protocols
+should not require external schema or IDL.</p>
+
+<p>Given the EJB environment, the Hessian protocol has the
+following requirements:</p>
+
+<ul>
+<li>It must not require external IDL or schema definitions; it should be
+invisible to application writers.</li>
+<li>It must have sufficient power to serialize Java.</li>
+<li>It must allow non-Java clients to use web services.</li>
+<li>It must allow web services to deployed as a Servlet.</li>
+<li>It must be simple so it can be effectively tested.</li>
+<li>It must be as fast as possible.</li>
+<li>It should support transaction contexts.</li>
+</ul>
+
+</s1>
+
+<s1 title="Formal Definitions">
+
+<def title="Serialization Grammar">
+        # starting production
+top     ::= object
+
+        # 8-bit binary data split into 64k chunks
+binary  ::= ('b' b16 b8 binary-data)* 'B' b16 b8 binary-data
+        ::= [x20-x2f] binary-data    # binary data of length 0-15
+
+boolean ::= 'T'
+        ::= 'F'
+
+        # time in UTC encoded as 64-bit long milliseconds since epoch
+date    ::= 'd' b64 b56 b48 b40 b32 b24 b16 b8
+
+        # 64-bit IEEE double
+double  ::= 'D' b64 b56 b48 b40 b32 b24 b16 b8
+        ::= x67                   # 0.0
+        ::= x68                   # 1.0
+        ::= x69 b8                # byte cast to double (-128.0 to 127.0)
+        ::= x6a b16 b8            # short cast to double (-32768.0 to 32767.0)
+        ::= x6b b32 b24 b16 b8    # 32-bit float cast to double
+
+        # 32-bit signed integer
+int     ::= 'I' b32 b24 b16 b8
+        ::= [x80-xbf]             # -x10 to x3f
+        ::= [xc0-xcf] b8          # -x800 to x7ff
+        ::= [xd0-xd7] b16 b8      # -x40000 to x3ffff
+
+        # list/vector length 
+length  ::= 'l' b32 b24 b16 b8
+        ::= x6e int
+
+        # list/vector
+list    ::= 'V' type? length? object* 'z'
+        ::= 'v' int int object*   # type-ref, length
+
+        # 64-bit signed long integer
+long    ::= 'L' b64 b56 b48 b40 b32 b24 b16 b8
+        ::= [xd8-xef]             # -x08 to x0f
+        ::= [xf0-xff] b8          # -x800 to x7ff
+        ::= [x38-x3f] b16 b8      # -x40000 to x3ffff
+        ::= x77 b32 b24 b16 b8    # 32-bit integer cast to long
+
+        # map/object
+map     ::= 'M' type? (object object)* 'z'  # key, value map pairs
+        ::= 'O' type int string*  # Object definition - length and fields
+        ::= 'o' int object*       # Object instance - type-ref
+
+null    ::= 'N'
+
+        # main production for object serialization
+object  ::= null
+        ::= binary
+        ::= boolean
+        ::= date
+        ::= double
+        ::= int
+        ::= list
+        ::= map
+        ::= long
+        ::= ref
+        ::= string
+
+        # Object reference (e.g. circular trees and graphs)
+ref     ::= 'R' b32 b24 b16 b8    # reference to nth map/list in stream
+        ::= x4a b8                # reference to 1-255th map/list
+        ::= x4b b16 b8            # reference to 1-65535th map/list
+
+        # UTF-8 encoded character string split into 64k chunks
+string  ::= ('s' b16 b8 string-data)* 'S' b16 b8 string-data
+        ::= [x00-x1f] string-data    # string of length 0 to 31
+
+        # map/list types for OO languages
+type    ::= 't' b16 b8 type-string   # type name
+        ::= x75 int                  # type reference
+</def>
+
+<def title="RPC/Messaging Grammar">
+top     ::= call
+        ::= reply
+
+        # RPC-style call
+call    ::= 'c' x02 x00 header* method object* 'z'
+
+fault   ::= 'f' (object object)* 'z'
+
+        # message header for security/transactional context
+header  ::= 'H' b16 b8 header-string object
+
+        # RPC method name (possibly mangled for overloading)
+method  ::= 'm' b16 b8 method-string
+
+        # unidirectional message or RPC reply
+reply   ::= 'r' x02 x00 header* object 'z'  # successful message/reply
+        ::= 'r' x02 x00 header* fault 'z'   # exception/fault reply
+</def>
+
+<def title="Bytecode Encoding">
+x00 - x1f    # utf-8 string length 0-32
+x20 - x2f    # binary data length 0-16
+x30 - x37    # reserved
+x38 - x3f    # long from -x40000 to x3ffff
+x40 - x41    # reserved
+x42          # 8-bit binary data final chunk ('B')
+x43          # reserved ('C' streaming call)
+x44          # 64-bit IEEE encoded double ('D')
+x45          # reserved ('E' envelope)
+x46          # boolean false ('F')
+x47          # reserved
+x48          # reserved ('H' header)
+x49          # 32-bit signed integer ('I')
+x4a          # reference to 1-256th map/list
+x4b          # reference to 1-65536th map/list
+x4c          # 64-bit signed long integer ('L')
+x4d          # map with optional type ('M')
+x4e          # null ('N')
+x4f          # object definition ('O')
+x50          # reserved ('P' streaming message/post)
+x51          # reserved
+x52          # reference to map/list - integer ('R')
+x53          # utf-8 string final chunk ('S')
+x54          # boolean true ('T')
+x55          # reserved
+x56          # list/vector ('V')
+x57 - x62    # reserved
+x62          # 8-bit binary data non-final chunk ('b')
+x63          # reserved ('c' call for RPC)
+x64          # UTC time encoded as 64-bit long milliseconds since 
+             #  epoch ('d')
+x65          # reserved
+x66          # reserved ('f' for fault for RPC)
+x67          # double 0.0
+x68          # double 1.0
+x69          # double represented as byte (-128.0 to 127.0)
+x6a          # double represented as short (-32768.0 to 327676.0)
+x6b          # double represented as float
+x6c          # list/vector length ('l')
+x6d          # reserved ('m' method for RPC call)
+x6e          # list/vector compact length
+x6f          # object instance ('o')
+x70          # reserved ('p' - message/post)
+x71          # reserved
+x72          # reserved ('r' reply for message/RPC)
+x73          # utf-8 string non-final chunk ('s')
+x74          # map/list type ('t')
+x75          # type-ref
+x76          # compact vector ('v')
+x77          # long encoded as 32-bit int
+x78 - x79    # reserved
+x7a          # list/map terminator ('z')
+x7b - x7f    # reserved
+x80 - xbf    # one-octet compact int (-x10 to x3f, x90 is 0)
+xc0 - xcf    # two-octet compact int (-x800 to x3ff)
+xd0 - xd7    # three-octet compact int (-x40000 to x3ffff)
+xd8 - xef    # one-octet compact long (-x8 to x10, xe0 is 0)
+xf0 - xff    # two-octet compact long (-x800 to x3ff, xf8 is 0)
+</def>
+
+</s1>
+
+</body></document>

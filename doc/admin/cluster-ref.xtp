@@ -1,0 +1,52 @@
+<document>
+<header>
+  <title>cluster: Cluster tag configuration</title>
+  <version>Resin 4.0</version>
+
+  <description>
+
+  <p>Each &lt;cluster> contains a set of <a href="http-virtual-hosts.xtp">virtual
+hosts</a> served by a collection of &lt;<a href="#server">server</a>&gt;s.  The cluster provides
+<a href="clustering-overview.xtp">load-balancing and distributed sessions</a> for scalability
+and reliability.</p>
+
+  </description>
+</header>
+<body>
+<reference-legend/>
+
+<localtoc/>
+
+
+<include-defun name="access-log"/> 
+<include-defun name="cache"/> 
+<include-defun name="cluster"/> 
+<include-defun name="cluster-default"/> 
+<include-defun name="connection-error-page"/> 
+<include-defun name="development-mode-error-page"/> 
+<include-defun name="error-page"/> 
+<include-defun name="host"/> 
+<include-defun name="host-default"/> 
+<include-defun name="host-deploy"/> 
+<include-defun name="ignore-client-disconnect"/> 
+<include-defun name="invocation-cache-size"/> 
+<include-defun name="invocation-cache-max-url-length"/> 
+<include-defun name="max-uri-length"/> 
+<include-defun name="cluster:ping"/> 
+<include-defun name="resin:JmxService"/>
+<include-defun name="resin:LogService"/>
+<include-defun name="resin:XaLogService"/>
+<include-defun name="root-directory"/> 
+<include-defun name="server"/> 
+<include-defun name="server-default"/> 
+<include-defun name="server-header"/> 
+<include-defun name="session-cookie"/> 
+<include-defun name="session-sticky-disable"/> 
+<include-defun name="session-url-prefix"/> 
+<include-defun name="ssl-session-cookie"/> 
+<include-defun name="url-character-encoding"/> 
+<include-defun name="web-app"/> 
+<include-defun name="web-app-default"/> 
+
+</body>
+</document>

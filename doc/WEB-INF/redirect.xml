@@ -1,0 +1,924 @@
+<web-app xmlns="http://caucho.com/ns/resin"
+         xmlns:resin="urn:java:com.caucho.resin">
+  <resin:Redirect regexp="/php"  
+                  target="${app.contextPath}/quercus"/>
+
+  <resin:Redirect regexp="/soa/tutorial/soa-flickr"
+                  target="${app.contextPath}/tutorial/rest-flickr"/>
+
+  <resin:Redirect regexp="/.*/tutorial" 
+                  target="${app.contextPath}/tutorial"/>
+    
+  <resin:Redirect regexp="/quercus/.*" 
+                  target="${app.contextPath}/doc/quercus.xtp"/>
+
+  <resin:Redirect regexp="/doc/quercus-java-interface.xtp" 
+                  target="${app.contextPath}/doc/quercus-java-integration.xtp"/>
+
+  <resin:Redirect regexp="/doc/quercus-getting-started.xtp"
+                  target="${app.contextPath}/doc/quercus-overview.xtp"/>
+
+  <!-- admin -->
+
+  <resin:Redirect regexp="^/admin/candi.xtp" 
+                  target="${app.contextPath}/admin/config-candi.xtp"/>
+
+  <resin:Redirect regexp="^/admin/cluster-tags.xtp" 
+                  target="${app.contextPath}/admin/cluster-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/config-control.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/config-database.xtp"
+                  target="${app.contextPath}/admin/database-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/config-env.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/config-log.xtp"
+                  target="${app.contextPath}/admin/logging-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/config-sessions.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/db-thirdparty.xtp"
+                  target="http://wiki.caucho.com/"/>
+
+  <resin:Redirect regexp="^/admin/deployment.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/admin/dynamic-servers.xtp"
+                  target="${app.contextPath}/admin/clustering-overview.xtp"/>
+
+  <resin:Redirect regexp="^/admin/el-var.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/env-tags.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/guide-admin.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/admin/host-tags.xtp"
+                  target="${app.contextPath}/admin/http-virtual-hosts-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/index-tags.xtp"
+                  target="${app.contextPath}/admin/reference.xtp"/>
+
+  <resin:Redirect regexp="^/admin/ioc-bean.xtp"
+                  target="${app.contextPath}/admin/config-candi.xtp"/>
+
+  <resin:Redirect regexp="^/admin/jar-repository.xtp"
+                  target="${app.contextPath}/admin/deploy-pomegranate.xtp"/>
+
+  <resin:Redirect regexp="^/admin/jmx.xtp"
+                  target="${app.contextPath}/admin/advanced-jmx.xtp"/>
+
+  <resin:Redirect regexp="^/admin/load-balancing.xtp"
+                  target="${app.contextPath}/admin/clustering-overview.xtp"/>
+
+  <resin:Redirect regexp="^/admin/port-tags.xtp"
+                  target="${app.contextPath}/admin/http-server-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/project-jars.xtp"
+                  target="${app.contextPath}/admin/deploy-pomegranate.xtp"/>
+
+  <resin:Redirect regexp="^/admin/proxy-cache.xtp"
+                  target="${app.contextPath}/admin/http-proxy-cache.xtp"/>
+
+  <resin:Redirect regexp="^/admin/quick/index.xtp"
+                  target="${app.contextPath}/admin/starting-resin.xtp"/>
+
+  <resin:Redirect regexp="^/admin/resin-admin.xtp'"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/admin/resin-clustering.xtp"
+                  target="${app.contextPath}/admin/clustering.xtp"/>
+
+  <resin:Redirect regexp="^/admin/resin/index.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/admin/resin-ioc.xtp"
+                  target="${app.contextPath}/admin/config-candi.xtp"/>
+
+  <resin:Redirect regexp="^/admin/resin-security.xtp"
+                  target="${app.contextPath}/admin/security-overview.xtp"/>
+
+  <resin:Redirect regexp="^/admin/resin-tags.xtp"
+                  target="${app.contextPath}/admin/config-overview-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/resin-watchdog.xtp"
+                  target="${app.contextPath}/admin/starting-resin-watchdog.xtp"/>
+
+  <resin:Redirect regexp="^/admin/resin-web-server.xtp"
+                  target="${app.contextPath}/admin/http-server.xtp"/>
+
+  <resin:Redirect regexp="^/admin/resin.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/admin/resources.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/rewrite-tags.xtp"
+                  target="${app.contextPath}/admin/http-rewrite-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/rewrite.xtp"
+                  target="${app.contextPath}/admin/http-rewrite.xtp"/>
+
+  <resin:Redirect regexp="^/admin/scheduling.xtp"
+                  target="${app.contextPath}/admin/scheduled-tasks.xtp"/>
+
+  <resin:Redirect regexp="^/admin/securitymanager.xtp"
+                  target="${app.contextPath}/admin/security-overview.xtp"/>
+
+  <resin:Redirect regexp="^/admin/ssl.xtp"
+                  target="${app.contextPath}/admin/security-ssl.xtp"/>
+
+  <resin:Redirect regexp="^/admin/virtual-host.xtp"
+                  target="${app.contextPath}/admin/http-virtual-hosts.xtp"/>
+
+  <resin:Redirect regexp="^/admin/watchdog.xtp"
+                  target="${app.contextPath}/admin/starting-resin-watchdog.xtp"/>
+
+  <resin:Redirect regexp="^/admin/webapp-deploy.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/admin/webapp-overview.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/admin/webapp-tags.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/webapp.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/app-config.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <!-- changes -->
+
+  <resin:Redirect regexp="^/changes/changes-31.xtp"
+                  target="${app.contextPath}/changes/changes-3.xtp"/>
+
+  <resin:Redirect regexp="^/changes/resin-3.1.4.xtp"
+                  target="${app.contextPath}/changes/changes-3.xtp"/>
+
+  <resin:Redirect regexp="^/changes/resin-4.0.3.xtp"
+                  target="${app.contextPath}/changes/changes.xtp"/>
+
+  <resin:Redirect regexp="^/changes.xtp"
+                  target="${app.contextPath}/changes/changes.xtp"/>
+
+  <resin:Redirect regexp="^/change.xtp"
+                  target="${app.contextPath}/changes/changes.xtp"/>
+
+  <!-- doc -->
+
+  <resin:Redirect regexp="^/doc/amber-table.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp\#jpa-persistence"/>
+
+  <resin:Redirect regexp="^/doc/amber.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp\#jpa-persistence"/>
+
+  <resin:Redirect regexp="^/doc/authentication.xtp"
+                  target="${app.contextPath}/admin/security-overview.xtp"/>
+
+  <resin:Redirect regexp="^/doc/balance.xtp"
+                  target="${app.contextPath}/admin/clustering-overview.xtp"/>
+
+  <resin:Redirect regexp="^/doc/candi.xtp"
+                  target="${app.contextPath}/admin/config-candi.xtp"/>
+
+  <resin:Redirect regexp="^/doc/cluster-tags.xtp"
+                  target="${app.contextPath}/admin/cluster-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/cluster.xtp"
+                  target="${app.contextPath}/admin/clustering.xtp"/>
+
+  <resin:Redirect regexp="^/doc/config-cmdline.xtp"
+                  target="${app.contextPath}/admin/starting-resin-command-line.xtp"/>
+
+  <resin:Redirect regexp="^/doc/config-control.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/config-database.xtp"
+                  target="${app.contextPath}/admin/database-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/config-el.xtp"
+                  target="${app.contextPath}/admin/config-el.xtp"/>
+
+  <resin:Redirect regexp="^/doc/config-env.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/config-log.xtp"
+                  target="${app.contextPath}/admin/logging-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/config-servlet.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/config-sessions.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/config.xtp"
+                  target="${app.contextPath}/admin/config.xtp"/>
+
+  <resin:Redirect regexp="^/doc/control.xtp"
+                  target="${app.contextPath}/admin/config-el.xtp"/>
+
+  <resin:Redirect regexp="^/doc/database-tags.xtp"
+                  target="${app.contextPath}/admin/database-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/db-scrapbook.xtp"
+                  target="http://wiki.caucho.com"/>
+
+  <resin:Redirect regexp="^/doc/db-thirdparty.xtp"
+                  target="http://wiki.caucho.com"/>
+
+  <resin:Redirect regexp="^/doc/doc/cluster-tags.xtp"
+                  target="${app.contextPath}/admin/cluster-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/el-var.xtp"
+                  target="${app.contextPath}/admin/config-el.xtp"/>
+
+  <resin:Redirect regexp="^/doc/env-tags.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/guide-admin.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/hessian.xtp"
+                  target="${app.contextPath}/examples/remoting.xtp"/>
+
+  <resin:Redirect regexp="^/doc/hmpp.xtp"
+                  target="${app.contextPath}/examples/remoting.xtp"/>
+
+  <resin:Redirect regexp="^/doc/hmtp.xtp"
+                  target="${app.contextPath}/examples/remoting.xtp"/>
+
+  <resin:Redirect regexp="^/doc/host-tags.xtp"
+                  target="${app.contextPath}/admin/http-virtual-hosts-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/index.xtp"
+                  target="${app.contextPath}/"/>
+
+  <resin:Redirect regexp="^/doc/install-3rd-party.xtp"
+                  target="http://wiki.caucho.com"/>
+
+  <resin:Redirect regexp="^/doc/install-scrapbook.xtp"
+                  target="${app.contextPath}/admin/starting-resin.xtp"/>
+
+  <resin:Redirect regexp="^/doc/install.xtp"
+                  target="${app.contextPath}/admin/starting-resin.xtp"/>
+
+  <resin:Redirect regexp="^/doc/ioc-annotations.xtp"
+                  target="${app.contextPath}/admin/config-candi.xtp"/>
+
+  <resin:Redirect regexp="^/doc/ioc-bean-patterns.xtp"
+                  target="${app.contextPath}/admin/config-candi.xtp"/>
+
+  <resin:Redirect regexp="^/doc/ioc-bean.xtp"
+                  target="${app.contextPath}/admin/config-candi.xtp"/>
+
+  <resin:Redirect regexp="^/doc/isp.xtp"
+                  target="${app.contextPath}/admin/starting-resin-watchdog.xtp"/>
+
+  <resin:Redirect regexp="^/doc/jaxb-annotations.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/jmx-servlet.xtp"
+                  target="${app.contextPath}/admin/advanced-jmx.xtp"/>
+
+  <resin:Redirect regexp="^/doc/jmx.xtp"
+                  target="${app.contextPath}/admin/advanced-jmx.xtp"/>
+
+  <resin:Redirect regexp="^/doc/jsf.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/jsp-actions.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/jsp-applications.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/jsp-directives.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/jsp-el.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/jsp-intro.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/jsp-templates.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/jsp-variables.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/jsp.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/jstl.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/jvm-tuning.xtp"
+                  target="${app.contextPath}/admin/starting-resin-command-line.xtp"/>
+
+  <resin:Redirect regexp="^/doc/linux-boot.xtp"
+                  target="${app.contextPath}/admin/starting-resin-command-line.xtp"/>
+
+  <resin:Redirect regexp="^/doc/proxy-cache.xtp"
+                  target="${app.contextPath}/admin/http-proxy-cache.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin-admin.xtp"
+                  target="${app.contextPath}/admin/resin-admin-console.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin-clustering.xtp"
+                  target="${app.contextPath}/admin/clustering.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin-comet.xtp"
+                  target="${app.contextPath}/admin/http-server.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin/doc/proxy-cache.xtp"
+                  target="${app.contextPath}/admin/http-proxy-cache.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin/doc/resin-ioc.xtp"
+                  target="${app.contextPath}/admin/config-candi.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin/doc/servlet.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin-ioc.xtp"
+                  target="${app.contextPath}/admin/config-candi.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin-remoting.xtp"
+                  target="${app.contextPath}/examples/remoting.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin-security.xtp"
+                  target="${app.contextPath}/admin/security-overview.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin-watchdog.xtp"
+                  target="${app.contextPath}/admin/starting-resin-watchdog.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin-web-server.xtp"
+                  target="${app.contextPath}/admin/http-server.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/resources.xtp"
+                  target="${app.contextPath}/admin/config-el.xtp"/>
+
+  <resin:Redirect regexp="^/doc/rewrite-tags.xtp"
+                  target="${app.contextPath}/admin/http-rewrite-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/rewrite.xtp"
+                  target="${app.contextPath}/admin/http-rewrite.xtp"/>
+
+  <resin:Redirect regexp="^/doc/security-digest.xtp"
+                  target="${app.contextPath}/admin/security-overview.xtp"/>
+
+  <resin:Redirect regexp="^/doc/securitymanager.xtp"
+                  target="${app.contextPath}/admin/security-overview.xtp"/>
+
+  <resin:Redirect regexp="^/doc/security.xtp"
+                  target="${app.contextPath}/admin/security-overview.xtp"/>
+
+  <resin:Redirect regexp="^/doc/servlet.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/doc/session-tags.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/ssl.xtp"
+                  target="${app.contextPath}/admin/security-ssl.xtp"/>
+
+  <resin:Redirect regexp="^/doc/starting.xtp"
+                  target="${app.contextPath}/admin/starting-resin.xtp"/>
+
+  <resin:Redirect regexp="^/doc/tags.xtp"
+                  target="${app.contextPath}/admin/reference.xtp"/>
+
+  <resin:Redirect regexp="^/doc/tcp-sessions.xtp"
+                  target="${app.contextPath}/admin/clustering-overview.xtp"/>
+
+  <resin:Redirect regexp="^/doc/virtual-host.xtp"
+                  target="${app.contextPath}/admin/http-virtual-hosts.xtp"/>
+
+  <resin:Redirect regexp="^/doc/watchdog.xtp"
+                  target="${app.contextPath}/admin/starting-resin-watchdog.xtp"/>
+
+  <resin:Redirect regexp="^/doc/webapp-overview.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/doc/webapp-deploy.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/doc/webapp-tags.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/webapp.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/doc/webbeans-annotations.xtp"
+                  target="${app.contextPath}/admin/config-candi.xtp"/>
+
+  <resin:Redirect regexp="^/faq/classloader.xtp"
+                  target="${app.contextPath}/admin/advanced-classloaders.xtp"/>
+
+  <resin:Redirect regexp="^/faq/config.xtp"
+                  target="${app.contextPath}/admin/config.xtp"/>
+
+  <resin:Redirect regexp="^/faq/debug.xtp"
+                  target="${app.contextPath}/admin/starting-resin.xtp"/>
+
+  <resin:Redirect regexp="^/faq/index.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/faq/install.xtp"
+                  target="${app.contextPath}/admin/starting-resin.xtp"/>
+
+  <resin:Redirect regexp="^/faq/servlet.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/faq/ssl.xtp"
+                  target="${app.contextPath}/admin/security-ssl.xtp"/>
+
+  <resin:Redirect regexp="^/ide-jbuilder.xtp"
+                  target="http://wiki.caucho.com"/>
+
+  <resin:Redirect regexp="^/install/cluster-tags.xtp"
+                  target="${app.contextPath}/admin/cluster-ref.xtp"/>
+
+  <resin:Redirect regexp="^/install/configure.xtp"
+                  target="${app.contextPath}/admin/config.xtp"/>
+
+  <resin:Redirect regexp="^/install/host-tags.xtp"
+                  target="${app.contextPath}/admin/http-virtual-hosts-ref.xtp"/>
+
+  <resin:Redirect regexp="^/install/index.xtp"
+                  target="${app.contextPath}/admin/starting-resin.xtp"/>
+
+  <resin:Redirect regexp="^/install/install.xtp"
+                  target="${app.contextPath}/admin/starting-resin.xtp"/>
+
+  <resin:Redirect regexp="^/install/overview.xtp"
+                  target="${app.contextPath}/admin/starting-resin.xtp"/>
+
+  <resin:Redirect regexp="^/install/virtual-host.xtp"
+                  target="${app.contextPath}/admin/http-virtual-hosts.xtp"/>
+
+  <resin:Redirect regexp="^/install/webapp-tags.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/java_tut/cache.xtp"
+                  target="${app.contextPath}/admin/http-proxy-cache.xtp"/>
+
+  <resin:Redirect regexp="^/java_tut/conf-basic.xtp"
+                  target="${app.contextPath}/admin/config.xtp"/>
+
+  <resin:Redirect regexp="^/java_tut/form.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/java_tut/index.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/java_tut/isp.xtp"
+                  target="${app.contextPath}/admin/starting-resin-watchdog.xtp"/>
+
+  <resin:Redirect regexp="^/java_tut/jndi-appconfig.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/java_tut/linux-boot.xtp"
+                  target="${app.contextPath}/admin/starting-resin-command-line.xtp"/>
+
+  <resin:Redirect regexp="^/java_tut/multipart.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/java_tut/run-at.xtp"
+                  target="${app.contextPath}/admin/scheduled-tasks.xtp"/>
+
+  <resin:Redirect regexp="^/java_tut/tcp-sessions.xtp"
+                  target="${app.contextPath}/admin/clustering-overview.xtp"/>
+
+  <resin:Redirect regexp="^/jms.xtp"
+                  target="${app.contextPath}/examples/jms.xtp"/>
+
+  <resin:Redirect regexp="^/ref/admin.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/app-config.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/ref/balance.xtp"
+                  target="${app.contextPath}/admin/clustering-overview.xtp"/>
+
+  <resin:Redirect regexp="^/ref/basic-config.xtp"
+                  target="${app.contextPath}/admin/config.xtp"/>
+
+  <resin:Redirect regexp="^/ref/caching.xtp"
+                  target="${app.contextPath}/admin/http-proxy-cache.xtp"/>
+
+  <resin:Redirect regexp="^/ref/config-index.xtp"
+                  target="${app.contextPath}/admin/reference.xtp"/>
+
+  <resin:Redirect regexp="^/ref/config.xtp"
+                  target="${app.contextPath}/admin/config.xtp"/>
+
+  <resin:Redirect regexp="^/ref/cse-apache-unix.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/ref/cse-apache-win.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/ref/db-config.xtp"
+                  target="${app.contextPath}/admin/database-ref.xtp"/>
+
+  <resin:Redirect regexp="^/ref/ejb-orion.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/ref/ejb-weblogic.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/reference/cluster-tags.xtp"
+                  target="${app.contextPath}/admin/cluster-ref.xtp"/>
+
+  <resin:Redirect regexp="^/reference/config-log.xtp"
+                  target="${app.contextPath}/admin/logging-ref.xtp"/>
+
+  <resin:Redirect regexp="^/reference/control.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp"/>
+
+  <resin:Redirect regexp="^/reference/database-tags.xtp"
+                  target="${app.contextPath}/admin/database-ref.xtp"/>
+
+  <resin:Redirect regexp="^/reference/env-tags.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp"/>
+
+  <resin:Redirect regexp="^/reference/host-tags.xtp"
+                  target="${app.contextPath}/admin/http-virtual-hosts-ref.xtp"/>
+
+  <resin:Redirect regexp="^/reference/index-tags.xtp"
+                  target="${app.contextPath}/admin/reference.xtp"/>
+
+  <resin:Redirect regexp="^/reference/index.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/reference/init.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/reference/port-tags.xtp"
+                  target="${app.contextPath}/admin/http-server.xtp"/>
+
+  <resin:Redirect regexp="^/reference/resin-messaging.xtp"
+                  target="${app.contextPath}/examples/jms.xtp"/>
+
+  <resin:Redirect regexp="^/reference/resin-tags.xtp"
+                  target="${app.contextPath}/admin/cluster-ref.xtp"/>
+
+  <resin:Redirect regexp="^/reference/resources.xtp"
+                  target="${app.contextPath}/admin/config-el-ref.xtp"/>
+
+  <resin:Redirect regexp="^/reference/security-digest.xtp"
+                  target="${app.contextPath}/admin/security-overview.xtp"/>
+
+  <resin:Redirect regexp="^/reference/server-tags.xtp"
+                  target="${app.contextPath}/admin/http-server.xtp"/>
+
+  <resin:Redirect regexp="^/reference/session-tags.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/reference/ssl.xtp"
+                  target="${app.contextPath}/admin/security-ssl.xtp"/>
+
+  <resin:Redirect regexp="^/reference/webapp-tags.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/ref/file-config.xtp"
+                  target="${app.contextPath}/admin/config.xtp"/>
+
+  <resin:Redirect regexp="^/ref/http-config.xtp"
+                  target="${app.contextPath}/admin/http-server-ref.xtp"/>
+
+  <resin:Redirect regexp="^/ref/httpd.xtp"
+                  target="${app.contextPath}/admin/http-server.xtp"/>
+
+  <resin:Redirect regexp="^/ref/ide.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/ref/index.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/javascript.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/ref/jndi.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/ref/jsp-applications.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/ref/jsp-directives.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/ref/jsp.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/ref/log-config.xtp"
+                  target="${app.contextPath}/admin/logging-ref.xtp"/>
+
+  <resin:Redirect regexp="^/ref/port-config.xtp"
+                  target="${app.contextPath}/admin/http-server-ref.xtp"/>
+
+  <resin:Redirect regexp="^/ref/resin-config.xtp"
+                  target="${app.contextPath}/admin/config-overview-ref.xtp"/>
+
+  <resin:Redirect regexp="^/ref/security.xtp"
+                  target="${app.contextPath}/admin/security-overview.xtp"/>
+
+  <resin:Redirect regexp="^/ref/servlet-config.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/ref/sessions.xtp"
+                  target="${app.contextPath}/admin/deploy-ref.xtp"/>
+
+  <resin:Redirect regexp="^/ref/ssl-quick.xtp"
+                  target="${app.contextPath}/admin/security-ssl.xtp"/>
+
+  <resin:Redirect regexp="^/ref/starting.xtp"
+                  target="${app.contextPath}/admin/starting-resin.xtp"/>
+
+  <resin:Redirect regexp="^/ref/taglib.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/ref/topics.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/virtual-host.xtp"
+                  target="${app.contextPath}/admin/http-virtual-hosts.xtp"/>
+
+  <resin:Redirect regexp="^/ref/webdav.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/xml/parsing.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/xml/xpath-find.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/xml.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/xpath-fun.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/xpath.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/xsl/index.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/xsl/xpath-find.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/xsl/xsl-api.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/xsl.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/xtp.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/resin-config.xtp"
+                  target="${app.contextPath}/admin/config.xtp"/>
+
+  <resin:Redirect regexp="^/resin-ioc.xtp"
+                  target="${app.contextPath}/admin/config-candi.xtp"/>
+
+  <resin:Redirect regexp="^/rewrite.xtp"
+                  target="${app.contextPath}/admin/http-rewrite.xtp"/>
+
+  <resin:Redirect regexp="^/starting.xtp"
+                  target="${app.contextPath}/admin/starting-resin.xtp"/>
+
+  <!-- misc -->
+
+  <resin:Redirect regexp="^/config/env.xtp"
+                  target="${app.contextPath}/"/>
+
+  <resin:Redirect regexp="^/db-config.xtp"
+                  target="${app.contextPath}/"/>
+
+  <resin:Redirect regexp="^/tutorial/index.xtp"
+                  target="${app.contextPath}/"/>
+
+  <resin:Redirect regexp="^/xml/ref.xtp"
+                  target="${app.contextPath}/"/>
+
+  <!-- XXX -->
+
+  <resin:Redirect regexp="^/admin/amber.xtp" 
+                  target="${app.contextPath}/admin/config-el-ref.xtp\#jpa-persistence"/>
+
+  <resin:Redirect regexp="^/admin/file-system-deploy.xtp"
+                  target="${app.contextPath}/admin/deploy.xtp"/>
+
+  <resin:Redirect regexp="^/admin/hmtp.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/admin/install-3rd-party.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/admin/install-apache.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/admin/install-iis.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/admin/jsp.xtp"
+                  target="${app.contextPath}/examples/index.xtp"/>
+
+  <resin:Redirect regexp="^/admin/jstl.xtp"
+                  target="${app.contextPath}/examples/index.xtp"/>
+
+  <resin:Redirect regexp="^/admin/jvm-tuning.xtp"
+                  target="${app.contextPath}/admin/starting-resin-command-line.xtp"/>
+
+  <resin:Redirect regexp="^/admin/performance-benchmarks.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/admin/performance-faq.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/admin/performance.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/admin/resin-ejb.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/admin/resin-messaging.xtp"
+                  target="${app.contextPath}/examples/jms.xtp"/>
+
+  <resin:Redirect regexp="^/admin/resin-remoting.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/admin/server-tags.xtp"
+                  target="${app.contextPath}/admin/http-server-ref.xtp"/>
+
+  <resin:Redirect regexp="^/admin/server.xtp"
+                  target="${app.contextPath}/admin/http-server.xtp"/>
+
+  <resin:Redirect regexp="^/admin/servlet.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/admin/troubleshoot-technique.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/admin/troubleshoot.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/bam.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/burlap-1.0-spec.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/burlap-notes.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/burlap.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/commontasks.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/ejb-annotations.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/ejb.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/filter-library.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/filters.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/groovy.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/init.xtp"
+                  target="${app.contextPath}/"/>
+
+  <resin:Redirect regexp="^/doc/install-apache.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/doc/install-iis.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/doc/messaging.xtp"
+                  target="${app.contextPath}/examples/jms.xtp"/>
+
+  <resin:Redirect regexp="^/doc/quercus-java-integration.xtp"
+                  target="${app.contextPath}/examples/quercus.xtp"/>
+
+  <resin:Redirect regexp="^/doc/quercus-module-status.xtp"
+                  target="${app.contextPath}/examples/quercus.xtp"/>
+
+  <resin:Redirect regexp="^/doc/quercus-overview.xtp"
+                  target="${app.contextPath}/examples/quercus.xtp"/>
+
+  <resin:Redirect regexp="^/doc/quercus-security.xtp"
+                  target="${app.contextPath}/examples/quercus.xtp"/>
+
+  <resin:Redirect regexp="^/doc/quercus.xtp"
+                  target="${app.contextPath}/examples/quercus.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resin/doc/filters.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/resin/doc/jsp.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/resin-ejb.xtp"
+                  target="${app.contextPath}/"/>
+
+  <resin:Redirect regexp="^/doc/resin-embedding.xtp"
+                  target="${app.contextPath}/examples/"/>
+
+  <resin:Redirect regexp="^/doc/resin-messaging.xtp"
+                  target="${app.contextPath}/examples/jms.xtp"/>
+
+  <resin:Redirect regexp="^/doc/resource-rmi.xtp"
+                  target="${app.contextPath}/examples/remoting.xtp"/>
+
+  <resin:Redirect regexp="^/doc/schema.xtp"
+                  target="${app.contextPath}/admin/reference.xtp"/>
+
+  <resin:Redirect regexp="^/doc/server-tags.xtp"
+                  target="${app.contextPath}/admin/http-server-ref.xtp"/>
+
+  <resin:Redirect regexp="^/doc/server.xtp"
+                  target="${app.contextPath}/admin/http-server.xtp"/>
+
+  <resin:Redirect regexp="^/doc/servlet-library.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/soa-rmi.xtp"
+                  target="${app.contextPath}/examples/remoting.xtp"/>
+
+  <resin:Redirect regexp="^/doc/soa.xtp"
+                  target="${app.contextPath}/examples/remoting.xtp"/>
+
+  <resin:Redirect regexp="^/doc/troubleshoot-technique.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/troubleshoot.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/tuning.xtp"
+                  target="${app.contextPath}/admin/starting-resin-command-line.xtp"/>
+
+  <resin:Redirect regexp="^/doc/xml-intro.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/xml.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/xpath-fun.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/xpath.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/xslt-filter.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/doc/xslt-fun.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/install/install-3rd-party.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/java_tut/plugin-dispatch.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/ref/cse-iis.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/ref/cse-netscape.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/ref/cse-oreilly-website.xtp"
+                  target="${app.contextPath}/admin/starting-resin-apache.xtp"/>
+
+  <resin:Redirect regexp="^/ref/filter-config.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+  <resin:Redirect regexp="^/ref/filter-library.xtp"
+                  target="${app.contextPath}/admin/"/>
+
+
+</web-app>
+

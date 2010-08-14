@@ -1,0 +1,27 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 4.0.8 Release Notes</title>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 4.0.8 Overview">
+
+<p>Resin 4.0.8 has completed the CDI implementation for the
+JavaEE Web Profile</p>
+
+<p>The current list of completed Web Profile components is:</p>
+
+<ul>
+<li>Servlet
+<li>JSP
+<li>CDI
+</ul>
+
+</s1>
+
+</body>
+</document>

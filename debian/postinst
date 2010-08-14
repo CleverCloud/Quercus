@@ -1,0 +1,20 @@
+#!/bin/sh -e
+
+if [ -x "/etc/init.d/resin" ]; then
+	update-rc.d resin defaults 90 10 >/dev/null
+	if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+		invoke-rc.d resin start || exit $?
+	else
+		/etc/init.d/resin start || exit $?
+	fi
+fi
+
+echo 
+echo "-----------------------------------------------------------------------"
+echo 
+echo 
+echo " You have installed Resin Open Source.  If you would like to upgrade to"
+echo " Resin Professional, please visit http://caucho.com"
+echo 
+echo 
+echo "-----------------------------------------------------------------------"

@@ -1,0 +1,185 @@
+
+default namespace javaee = "http://java.sun.com/xml/ns/javaee"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+include "classpath:com/caucho/config/cfg/javaee.rnc"
+
+javaee_generic-boolean = string
+javaee_variable = string
+
+## XXX: jsf-cardemo has out of order
+
+jsp21_attribute = element attribute {
+  attribute id { string }?
+
+  & jsp21_description*
+
+  & element name { javaee_java-identifier }
+
+  & element required { javaee_generic-boolean }?
+
+  & ((element rtexprvalue { javaee_generic-boolean }?
+
+      & element type { javaee_fully-qualified-class }?
+
+      & (jsp21_deferred-value | jsp21_deferred-method)?)
+
+     | element fragment { javaee_generic-boolean }?)
+}
+
+jsp21_body-content = element body-content {
+  "tagdependent"
+  | "JSP"
+  | "empty"
+  | "scriptless"
+}
+
+jsp21_deferred-method = element deferred-method {
+  attribute id { string }?,
+
+  element method-signature { string }?
+}
+
+jsp21_deferred-value = element deferred-value {
+  attribute id { string }?,
+
+  element type { javaee_fully-qualified-class }?
+}
+
+jsp21_description = element description { string }*
+
+jsp21_display-name = element display-name { string }*
+
+jsp21_extension-Type =
+  (attribute id { string }?,
+
+   attribute namespace { string },
+
+   jsp21_extension-element+)
+
+jsp21_extension-element = element extension-element {
+  attribute id { string }?
+}
+
+jsp21_function = element function {
+  attribute id { string }?,
+
+  javaee_description-Group,
+
+  element name { string },
+
+  element function-class { javaee_fully-qualified-class },
+
+  element function-signature { string },
+
+  element example { string }?,
+
+  element function-extension { jsp21_extension-Type }*
+}
+
+jsp21_listener = element listener {
+  attribute id { string }?,
+
+  javaee_description-Group,
+
+  element listener-class { javaee_fully-qualified-class }
+}
+
+## XXX: jsf-cardemo has out of order tags
+jsp21_tag = element tag {
+  attribute id { string }?
+
+  & javaee_description-Group
+
+  & element name { string }
+
+  & element tag-class { javaee_fully-qualified-class }
+
+  & element tei-class { javaee_fully-qualified-class }?
+
+  & jsp21_body-content?
+
+  & jsp21_variable*
+
+  & jsp21_attribute*
+
+  & element dynamic-attributes { javaee_generic-boolean }?
+
+  & element example { string }?
+
+  & element tag-extension { jsp21_extension-Type }*
+}
+
+jsp21_tag-file = element tag-file {
+  attribute id { string }?,
+
+  javaee_description-Group,
+
+  element name { string },
+
+  element path { javaee_path },
+
+  element example { string }?,
+
+  element tag-extension { jsp21_extension-Type }*
+}
+
+## XXX: short-name is required by the schema, but the TCK has
+## tags without the short-name
+## jsf-cardemo has description out of order
+
+jsp21_taglib = element taglib {
+  attribute version { "2.1" }
+
+  & attribute xsi:schemaLocation { string }?
+
+  & javaee_description-Group
+
+  & element tlib-version { javaee_dewey-version }
+
+  & element jsp-version { javaee_dewey-version }?
+
+  & element short-name { string }?
+
+  & element uri { string }?
+
+  & jsp21_validator?
+
+  & jsp21_listener*
+
+  & jsp21_tag*
+
+  & jsp21_tag-file*
+
+  & jsp21_function*
+
+  & element taglib-extension { jsp21_extension-Type }*
+}
+
+jsp21_validator = element validator {
+  attribute id { string }?,
+
+  jsp21_description*,
+
+  element validator-class { javaee_fully-qualified-class },
+
+  javaee_init-param*
+}
+
+jsp21_variable = element variable {
+  attribute id { string }?,
+
+  jsp21_description*,
+
+  ( element name-given { javaee_java-identifier }
+  | element name-from-attribute { javaee_java-identifier }),
+
+  element variable-class { javaee_fully-qualified-class }?,
+
+  element declare { javaee_generic-boolean }?,
+
+  element scope { "AT_BEGIN" | "NESTED" | "AT_END" }?
+}
+

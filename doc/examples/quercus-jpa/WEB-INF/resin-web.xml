@@ -1,0 +1,24 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <!--
+     - Amber configuration.
+    -->
+    <!--
+  <database jndi-name="jdbc/recipes">
+    <driver type="com.caucho.db.jca.ConnectionFactory">
+      <url>resin:WEB-INF/db</url>
+      <remove-on-error/>
+    </driver>
+  </database>
+  -->
+
+  <database jndi-name="jdbc/recipes">
+    <driver type="org.postgresql.Driver">
+      <url>jdbc:postgresql://localhost/test</url>
+      <user>ferg</user>
+    </driver>
+    <xa>true</xa>
+    <spy/>
+  </database>
+
+  <ejb-server data-source="jdbc/recipes" create-database-schema="true"/>
+</web-app>

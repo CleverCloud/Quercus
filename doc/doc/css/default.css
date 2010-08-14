@@ -1,0 +1,414 @@
+/* brown #4c2004 */
+/* yellow (hover) #ffcc33 */
+/* hr #fab41d */
+/* red #98012e;  */
+body {
+  border : solid;
+  border-width : 0px;
+  font-family : serif;
+}
+
+.breadcrumb {
+/*  color : #003366; */
+  font-family : Verdana, Helvetica, Arial, sans-serif;
+  font-size : 80%;
+}
+
+.topnav {
+  font-family : Verdana, Helvetica, Arial, sans-serif;
+  font-size : 80%;
+}
+
+.left {
+  font-family : Verdana, Helvetica, Arial, sans-serif;
+}
+
+a {
+  text-decoration : none;
+  color : #4c2004;
+}
+
+a:hover {
+  color : #ffcc33;
+}
+
+a:hover,visited {
+  color : #ffcc33;
+}
+
+a.topnav:hover {
+  color : #ffcc33;
+}
+
+a.topnav:hover,visited {
+  color : #ffcc33;
+}
+
+a.topnav {
+  text-decoration : none;
+  color : #4c2004;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+a.leftnav {
+  text-decoration : none;
+  color : #4c2004;
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+  font-size : 80%;
+}
+/*
+a.leftnav:visited {
+  text-decoration : none;
+  color : #12037a;
+}
+
+a.leftnav:hover {
+  color : #ffcc33;
+}
+
+a.leftnav:hover,visited {
+  color : #ffcc33;
+}
+*/
+
+code {
+  font-family : monospace;
+}
+
+hr {
+  border : 0;
+  height : 1px;
+/*  background : #999; */
+  background : #fab41d;
+  margin : 0.2em 0em;
+}
+
+/* sections */
+
+h1.title {
+  margin : 0em 0.5em;
+  border-bottom : 0;
+  border-color : 
+
+  font-family : Helvetica, Arial, sans-serif;
+  font-variant : normal;
+
+  color : #990033;
+}
+
+h1 {
+  margin-right : 1em;
+  border-bottom : 1px solid #fab41d;
+
+  font-family : Helvetica, Arial, sans-serif;
+  font-size : 170%;
+
+  color : #003366;
+}
+
+h2 {
+  font-family : Helvetica, Arial, sans-serif;
+  font-weight : normal;
+
+  color : #003366;
+}
+
+/* background-color : #ccccdd; */
+h2.section {
+  font-family : Helvetica, Arial, sans-serif;
+  font-weight : normal;
+
+  color : #003366;
+  padding : 2px;
+}
+
+h3 {
+  font-family : Helvetical, Arial, sans-serif;
+  color : #6699cc;
+}
+
+h4 {
+  font-family : Arial, Helvetica, sans-serif;
+  font-variant : small-caps;
+}
+
+/* background : #b9cef7; */
+div.section-title {
+  font-size : 150%;
+  margin : 1.0em 0em;
+  padding : 0.2em;
+}
+
+.leftnav {
+/*  background : #b9cef7; */
+/*  bgcolor : #b9cef7; */
+}
+
+.desc {
+  margin : 0 1em 0em 3em;
+}
+
+.faqdesc {
+  font-style: italic;
+}
+
+.egpad {
+  padding : 0.5em 1em;
+  margin : 0;
+}
+
+.side {
+  background : #ccddff;
+  padding : 0.5em;
+  font-size : larger;
+  float : right;
+  width : 30%;
+}
+
+.leftside {
+  background : #ccddff;
+  padding : 0.5em;
+  font-size : larger;
+  float : left;
+  width : 30%;
+}
+
+.glossary {
+  background : #ccddff;
+}
+
+.plainside {
+  float : right;
+  width : 30%;
+}
+
+/* boxes */
+
+/* background : #cac7d9 vs #ccccff */
+/* 204, 213, 221 */
+/* background : #ccccdd; */
+.toc {
+  margin : 1em 2em;
+  width : 90%;
+  border : solid #999;
+  border-width : 1px;
+  font-size : 90%;
+  font-family : Helvetica, Arial, sans-serif;
+}
+
+div.s3 {
+  padding : 0em 1em;
+}
+
+/* background: #e5d1ac; */
+div.example {
+  margin : 1em 2em;
+  padding : 0em 1em;
+  width : 87.5%;
+  border : solid #999;
+  border-width : 1px;
+  background : #e5d1ac;
+  color : black;
+  font-family : monospace;
+  font-size : .9em;
+}
+
+div.results {
+  margin : 1em 2em;
+  padding : 0em 1em;
+  width : 87.5%;
+  border : solid #999 1px;
+  color : black;
+  font-family : monospace;
+  font-size : .9em;
+}
+
+div.definition {
+  margin : 1em 2em;
+  padding : 0em 1em;
+  width : 87.5%;
+  border : solid #999;
+  border-width : 1px;
+  background : #f1f1f2;
+  color : black;
+  font-family : monospace;
+  font-size : .9em;
+}
+
+.def-caption {
+  margin-left : 1.3em;
+  font-style: bold;
+  font-family: Helvetica, Arial, sans-serif;
+  color : #666666;
+  text-align : left;
+  font-size : 120%
+}
+
+.caption {
+  margin-left : 1.3em;
+  font-style: bold;
+  font-family: Helvetica, Arial, sans-serif;
+  color : #990033;
+  text-align : left;
+  font-size : 120%
+}
+
+/* blue body #12037a: HSV: 248, 90, 48 */
+/* red body #98012e: HSV: 342, 99, 60 */
+
+table.deftable {
+  margin : 1em 0em 1em 1.6em;
+  border : solid, 1px;
+  width : 90%;
+  border-collapse: collapse;
+}
+
+caption {
+  padding : 0.3em 0em;
+  font-style: bold;
+  font-family: Helvetica, Arial, Helvetica, sans-serif;
+  color : #990033;
+  text-align : left;
+  font-size : 120%
+}
+
+table.deftable th {
+  text-align : left;
+  background : white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-variant : small-caps;
+  font-weight : normal;
+  font-size : 85%;
+  border-top : 1px solid  #fab41d;
+  border-bottom : 1px solid #fab41d;
+
+  color : #666;
+  padding : 0.3em 0.3em;
+}
+
+table.deftable td {
+  padding : 0.1em 0.3em;
+}
+
+table.deftable tr.a {
+  background : #eee;
+}
+
+table.deftable tr.b {
+  background : #f8f8f8;
+}
+
+td.leftnav ul {
+  width: 170px;
+}
+
+/* XXX: netscape ignores
+caption {
+  font-size : 10em;
+}
+*/
+
+/*
+.example {
+  background : #ffeecc;
+  color : black;
+  font-family : monospace;
+  font-size : .9em;
+}
+*/
+
+.example-smaller {
+  background : #ffeecc;
+  color : black;
+  font-family : monospace;
+  font-size : smaller;
+}
+
+span.example {
+  background : #ffeecc;
+  font-family : monospace;
+  color : black;
+  font-size : .9em;
+}
+
+.egcolor {
+  background : #ffeecc;
+  color : black;
+}
+
+.screenshot {
+  background : silver;
+  color : black;
+}
+
+.green {
+  color : black;
+  background : #99ffdd; /* 00ffdd, bbff99, ddffcc, ccffee, ffccdd */
+}
+
+.eg-em {
+/*  color : #0044cc; */
+  color : #003399;
+/* aa00ff, ff0055; 0044cc, 8800cc, cc0044, 0055ff */
+}
+
+.badexample {
+  color : red;
+}
+
+.result {
+  background : #ffccdd;
+  color : black;
+  font-family : monospace;
+  font-size : .9em;
+}
+
+.warn {
+  color : #ff0055;
+}
+
+.todo {
+  color: green;
+}
+
+code {
+  font-family : monospace;
+}
+
+.meta {
+  font-style : italic;
+  color : #003399;
+}
+
+ul.leftnav {
+  list-style : none;
+  padding-left : 1em;
+  margin : 0;
+  list-style-position : outside;
+}
+
+ul.leftnav li.selected {
+  list-style : disc;
+}
+
+ul.none {
+  list-style : none
+}
+
+dl.atoc-top {
+  margin : 0;
+}
+
+dl.atoc-1 {
+    padding : 5px;
+    margin : 0.5em;
+}
+
+dl.atoc-top > dt {
+    font-size : large;
+    font-style : bold;
+    background : #ccddff;
+    padding : 5px;
+    margin : 0.5em;
+}
+

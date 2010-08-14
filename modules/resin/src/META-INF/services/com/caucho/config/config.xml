@@ -1,0 +1,183 @@
+<config xmlns="http://caucho.com/ns/resin">
+  <namespace name="">
+    <bean name="authenticator"
+          class="com.caucho.config.types.Authenticator"/>
+
+    <bean name="bean"
+          class="com.caucho.webbeans.cfg.BeanConfig"/>
+
+    <bean name="case-insensitive"
+          class="com.caucho.vfs.CaseInsensitive"/>
+
+    <bean name="character-encoding"
+          class="com.caucho.i18n.CharacterEncoding"/>
+
+    <bean name="class-loader"
+          class="com.caucho.loader.ClassLoaderConfig"/>
+
+    <bean name="classpath"
+          class="com.caucho.loader.ClasspathConfig"/>
+
+    <bean name="class-update-interval"
+          class="com.caucho.loader.DependencyCheckInterval"/>
+
+    <bean name="component"
+          class="com.caucho.webbeans.cfg.WbComponentConfig"/>
+
+    <bean name="connector"
+          class="com.caucho.jca.ConnectorResource"/>
+
+    <bean name="database"
+          class="com.caucho.sql.DBPool"/>
+
+    <bean name="database-default"
+          class="com.caucho.sql.DatabaseConfig"/>
+
+    <bean name="dependency"
+          class="com.caucho.make.DependencyConfig"/>
+
+    <bean name="dependency-check-interval"
+          class="com.caucho.loader.DependencyCheckInterval"/>
+
+    <bean name="ejb-local-ref"
+          class="com.caucho.config.types.EjbLocalRef"/>
+
+    <bean name="ejb-ref"
+          class="com.caucho.config.types.EjbRef"/>
+
+    <bean name="ejb-server"
+          class="com.caucho.ejb.EJBServer"/>
+
+    <bean name="ejb-message-bean"
+          class="com.caucho.ejb.cfg.MessageBeanConfig"/>
+
+    <bean name="ejb-stateless-bean"
+          class="com.caucho.ejb.cfg.StatelessBeanConfig"/>
+
+    <bean name="ejb-stateful-bean"
+          class="com.caucho.ejb.cfg.StatefulBeanConfig"/>
+
+    <bean name="env-entry"
+          class="com.caucho.config.types.EnvEntry"/>
+
+    <bean name="java"
+          class="com.caucho.java.JavacConfig"/>
+
+    <bean name="javac"
+          class="com.caucho.java.JavacConfig"/>
+
+    <bean name="jndi-link"
+          class="com.caucho.naming.LinkProxy"/>
+
+    <bean name="jms-connection-factory"
+          class="com.caucho.jms.cfg.JmsConnectionFactoryConfig"/>
+
+    <bean name="jms-queue"
+          class="com.caucho.jms.cfg.JmsQueueConfig"/>
+    
+    <bean name="jms-topic"
+          class="com.caucho.jms.cfg.JmsTopicConfig"/>
+
+    <bean name="log"
+          class="com.caucho.log.LogConfig"/>
+
+    <bean name="logger"
+          class="com.caucho.log.LoggerConfig"/>
+
+    <bean name="mbean"
+          class="com.caucho.jmx.MBeanConfig"/>
+
+    <bean name="message-destination-ref"
+          class="com.caucho.config.types.MessageDestinationRef"/>
+
+    <bean name="persistent-store"
+          class="com.caucho.server.cluster.PersistentStoreConfig"/>
+
+    <bean name="persistence-manager"
+          class="com.caucho.amber.cfg.PersistenceManager"/>
+    
+    <bean name="persistence-unit-ref"
+          class="com.caucho.config.types.PersistenceUnitRef"/>
+
+    <bean name="reference"
+          class="com.caucho.config.types.ReferenceConfig"/>
+
+    <bean name="resource"
+          class="com.caucho.jca.Resource"/>
+
+    <bean name="rar-deploy"
+          class="com.caucho.jca.ResourceDeploy"/>
+    
+    <bean name="resource-default"
+          class="com.caucho.jca.ResourceDefault"/>
+    
+    <bean name="resource-deploy"
+          class="com.caucho.jca.ResourceDeploy"/>
+
+    <bean name="resource-env-ref"
+          class="com.caucho.config.types.ResourceEnvRef"/>
+
+    <bean name="resource-manager"
+          class="com.caucho.jca.ResourceManagerConfig"/>
+
+    <bean name="resource-ref"
+          class="com.caucho.config.types.ResourceRef"/>
+
+    <bean name="security-role-ref"
+          class="com.caucho.config.types.SecurityRoleRef"/>
+
+    <bean name="servlet-classloader-hack"
+          class="com.caucho.loader.ServletClassloaderHack"/>
+
+    <bean name="stderr-log"
+          class="com.caucho.log.StderrLog"/>
+
+    <bean name="stdout-log"
+          class="com.caucho.log.StdoutLog"/>
+
+    <bean name="system-property"
+          class="com.caucho.loader.SystemProperty"/>
+
+    <bean name="temp-dir"
+          class="com.caucho.java.TempDir"/>
+    
+    <bean name="temporary-directory"
+          class="com.caucho.java.TempDir"/>
+
+    <bean name="web-service-client"
+          class="com.caucho.soa.client.WebServiceClient"/>
+    
+    <bean name="work-dir"
+          class="com.caucho.java.WorkDir"/>
+	  
+    <bean name="work-directory"
+          class="com.caucho.java.WorkDir"/>
+  </namespace>
+
+  <namespace name="http://caucho.com/ns/resin/core">
+    <bean name="bean"
+          class="com.caucho.webbeans.cfg.BeanConfig"/>
+
+    <bean name="choose"
+          class="com.caucho.config.core.ResinChoose"/>
+
+    <bean name="if"
+          class="com.caucho.config.core.ResinIf"/>
+
+    <bean name="import"
+          class="com.caucho.config.core.ResinImport"/>
+
+    <bean name="log"
+          class="com.caucho.config.core.ResinLog"/>
+
+    <bean name="mbean"
+          class="com.caucho.jmx.MBeanConfig"/>
+
+    <bean name="message"
+          class="com.caucho.config.core.ResinLog"/>
+
+    <bean name="set"
+          class="com.caucho.config.core.ResinSet"/>
+  </namespace>
+</config>
+

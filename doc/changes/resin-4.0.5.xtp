@@ -1,0 +1,90 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 4.0.5 Release Notes</title>
+    <description>
+<ul>
+<li>JSP for JavaEE 6 Web Profile passes TCK</li>
+<li>Hibernate second level cache</li>
+<li>@TransactionScoped</li>
+<li>Windows setup.exe/resin.exe refactor</li>
+<li>java.util.logging Handler integration with CDI</li>
+<li>distributed session store bugs</li>
+</ul>
+
+    </description>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 4.0.5 Overview">
+
+<ul>
+<li>JSP for JavaEE 6 Web Profile passes TCK</li>
+<li>Hibernate second level cache</li>
+<li>@TransactionScoped</li>
+<li>Windows setup.exe/resin.exe refactor</li>
+<li>java.util.logging Handler integration with CDI</li>
+<li>distributed session store bugs</li>
+</ul>
+
+</s1>
+
+<s1 title="JavaEE 6 Web Profile TCK progress">
+
+<p>4.0.5 now passes the JSP TCK of the Web Profile,
+joining the Servlet TCK passed in 4.0.4.</p>
+
+</s1>
+
+<s1 title="Hibernate Second Level Cache">
+
+<example title="persistence.xml">
+&lt;persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence">
+  &lt;persistence-unit name="test">
+    &lt;provider>org.hibernate.ejb.HibernatePersistence&lt;/provider>
+    &lt;jta-data-source>jdbc/mysql&lt;/jta-data-source>
+
+    &lt;properties>
+      &lt;property name="hibernate.cache.use_second_level_cache"
+                value="true"/>
+                
+      &lt;property name="hibernate.cache.provider_class"
+                value="com.caucho.hibernate.ResinCacheProvider"/>
+
+    &lt;/properties>
+  &lt;/persistence-unit>
+&lt;/persistence>
+</example>
+
+</s1>
+
+<s1 title="@TransactionScoped">
+
+<p>Resin's CDI now supports @com.caucho.config.TransactionScoped, which
+gives your beans a lifecycle exactly matching a transaction.</p>
+
+</s1>
+
+<s1 title="CDI and logging integration">
+
+<p>Custom java.util logging handlers can now be configured by CDI.</p>
+
+<example title="SocketHandler">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+   xmlns:logging="urn:java:java.util.logging">
+
+  &lt;logger name="com.foo" level="fine">
+    &lt;logging:SocketHandler host="my-host" port="8000"/>
+  &lt;logger>
+  
+  ...
+&lt;/resin>
+</example>
+
+</s1>
+
+</body>
+</document>

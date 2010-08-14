@@ -1,0 +1,818 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin Environment Relax-NG Schema</title>
+    <version>Resin 3.0</version>
+    <description>
+      <p>The formal definition for the Resin environment configuration.</p>
+    </description>
+  </header>
+
+  <body>
+    <summary/>
+
+<s1 title="Relax-NG Schema">
+
+<def title="com/caucho/server/resin/env.rnc">
+namespace local = ""
+namespace L = ""
+default namespace r = "http://caucho.com/ns/resin"
+
+namespace rcore = "http://caucho.com/ns/resin/core"
+
+include "../resin/resin-j2ee.rnc"
+
+r_boolean-Type =
+  "true"
+  | "false"
+  | "yes"
+  | "no"
+
+r_jndi = string
+r_int = string
+r_period = string
+r_kbytes = string
+
+r_path-Type =  string
+r_int-Type = string
+r_period-Type = string
+r_kbytes-Type = string
+r_jndi-Type = string
+r_class-Type = string
+
+r_any-Group = text | (attribute * {string} | element * { r_any-Group })*
+
+## The basic environment tags
+r_env-Basis =
+  r_authenticator*
+
+  &amp; r_case-insensitive?
+
+  &amp; r_character-encoding?
+
+  &amp; r_cluster?
+
+  &amp; r_cluster-definition*
+
+  &amp; r_connector*
+
+  &amp; r_ejb-server*
+
+  &amp; r_env-entry*
+
+  &amp; r_database*
+
+  &amp; r_dependency*
+
+  &amp; r_dependency-check-interval?
+
+  &amp; r_grant*
+
+  &amp; rcore_import*
+
+  &amp; rcore_include*
+
+  &amp; r_javac?
+
+  &amp; r_jndi-link*
+
+  &amp; r_log*
+
+  &amp; r_reference*
+
+  &amp; r_resource*
+
+  &amp; r_resource-deploy*
+
+  &amp; r_stderr-log?
+
+  &amp; r_stdout-log?
+
+  &amp; r_system-property*
+
+  &amp; r_temp-dir?
+
+  &amp; r_work-dir?
+
+  &amp; rcore_log*
+
+  &amp; rcore_set*
+
+  &amp; rcore_include*
+
+## The environment, including control structures
+r_env-Flow =
+  r_env-Basis
+
+  &amp; element rcore:env { r_class-loader-Group, r_env-Flow }*
+
+  &amp; element rcore:if { rcore_if-Args, r_env-Flow }*
+
+  &amp; element rcore:choose {
+      element rcore:when { rcore_when-Args, r_env-Flow }+,
+      element rcore:otherwise { r_env-Flow }?
+    }*
+
+## The environment contents
+r_env-Content = r_env-Flow
+
+r_authenticator = element authenticator {
+  r_jndi-name?,
+
+  r_type,
+
+  r_init?
+}
+
+r_arg = element arg { r_any-Group }
+
+r_case-insensitive =
+  attribute case-insensitive { r_boolean-Type }
+  | element case-insensitive { r_boolean-Type }
+
+r_character-encoding =
+  attribute character-encoding { string }
+  | element character-encoding { string }
+
+r_class = attribute class { string } | element class { string }
+
+r_class-loader = element class-loader {
+  r_simple-loader*
+
+  &amp; r_library-loader*
+
+  &amp; r_compiling-loader*
+
+  &amp; r_enhancer*
+
+  &amp; r_make-loader*
+
+  &amp; r_servlet-hack?
+
+  &amp; r_tree-loader*
+}
+
+r_class-loader-Group =
+  r_class-loader?
+
+r_cluster = element cluster {
+  r_cluster-ref
+
+  | (attribute id { string }?
+
+     &amp; (r_cluster-port* | r_cluster-group*)
+
+     &amp; r_cluster-store?)
+}
+
+r_cluster-definition = element cluster-definition {
+  attribute id { string },
+
+  (r_cluster-port* | r_cluster-group*)
+}
+
+r_cluster-group = element group {
+  r_cluster-port*
+}
+
+r_cluster-ref =
+  (attribute cluster-ref { string } | element cluster-ref { string })
+
+r_cluster-store = element cluster-store {
+  r_jndi-name?
+
+  &amp; ((attribute path { string } | element path { string })
+
+    | ((attribute type { string} | element type { string })
+
+      &amp; r_init*)
+    )
+
+  &amp; (attribute always-load { string } | element always-load { string })?
+
+  &amp; (attribute always-save { string } | element always-save { string })?
+}
+
+r_cluster-port-Content =
+  (attribute id { string }
+   | attribute server-id { string }
+   | element server-id { string })?
+
+  &amp; (attribute backup { string } | element backup { string })?
+
+  &amp; (attribute dead-time { r_period } | element dead-time { r_period })?
+
+  &amp; (attribute host { string } | element host { string })?
+
+  &amp; (attribute index { string } | element index { string })?
+
+  &amp; (attribute live-time { r_period } | element live-time { r_period })?
+
+  &amp; (r_openssl | r_jsse-ssl)?
+
+  &amp; (attribute port { string } | element port { string })
+
+  &amp; (attribute protocol { string } | element protocol { string })?
+
+  &amp; (attribute socket-listen-backlog { r_int-Type }
+     | element socket-listen-backlog { r_int-Type })?
+
+  &amp; (attribute tcp-no-delay { r_boolean-Type }
+     | element tcp-no-delay { r_boolean-Type })?
+
+  &amp; (attribute timeout { r_period } | element tcp-no-delay { r_period })?
+
+r_cluster-port =
+  element port { r_cluster-port-Content }
+  | element srun { r_cluster-port-Content }
+
+r_compiling-loader = element compiling-loader {
+  r_path
+
+  &amp; (attribute args { string }
+     | element args { string })*
+
+  &amp; (attribute batch { string }
+     | element batch { string })?
+
+  &amp; (attribute encoding { string }
+     | element encoding { string })?
+
+  &amp; (attribute require-source { r_boolean-Type }
+     | element require-source { r_boolean-Type })?
+
+  &amp; (attribute source { r_path-Type }
+     | element source { r_path-Type })?
+
+  &amp; (attribute source-extension { string }
+     | element source-extension { string })?
+
+  &amp; (attribute compiler { string }
+     | element compiler { string })?
+}
+
+r_connection-factory = element connection-factory {
+  r_jndi-name
+
+  &amp; r_type?
+
+  &amp; r_init?
+
+  &amp; (attribute local-transaction-optimization { r_boolean-Type }
+     | element local-transaction-optimization { r_boolean-Type })?
+
+  &amp; (attribute shareable { r_boolean-Type }
+     | element shareable { r_boolean-Type })?
+}
+
+r_connector = element connector {
+  r_type,
+
+  r_resource-adapter?,
+
+  (r_connection-factory*
+
+   &amp; r_connector-message-listener*
+
+   &amp; r_connector-resource*)
+}
+
+r_connector-message-listener = element message-listener {
+  r_type?,
+
+  r_init?,
+
+  r_endpoint-factory
+}
+
+r_connector-resource = element resource {
+  r_jndi-name?,
+
+  r_type?,
+
+  r_init?
+}
+
+r_database = element database {
+  r_jndi-name
+
+  &amp; r_driver+
+
+  &amp; (attribute user { string }
+     | element user { string })?
+
+  &amp; (attribute password { string }
+     | element password { string })?
+
+  &amp; (attribute connection-wait-time { r_period }
+     | element connection-wait-time { r_period })?
+
+  &amp; (attribute max-active-time { r_period }
+     | element max-active-time { r_period })?
+
+  &amp; (attribute max-connections { r_int }
+     | element max-connections { r_int })?
+
+  &amp; (attribute max-create-connections { r_int }
+     | element max-create-connections { r_int })?
+
+  &amp; (attribute max-idle-time { r_period }
+     | element max-idle-time { r_period })?
+
+  &amp; (attribute max-overflow-connections { r_int }
+     | element max-overflow-connections { r_int })?
+
+  &amp; (attribute max-pool-time { r_period }
+     | element max-pool-time { r_period })?
+
+  &amp; (attribute ping { r_boolean-Type }
+     | element ping { r_boolean-Type })?
+
+  &amp; (attribute ping-table { string }
+     | element ping-table { string })?
+
+  &amp; (attribute ping-query { string }
+     | element ping-query { string })?
+
+  &amp; (attribute ping-interval { r_period }
+     | element ping-interval { r_period })?
+
+  &amp; (attribute prepared-statement-cache-size { r_int }
+     | element prepared-statement-cache-size { r_int })?
+
+  &amp; (attribute save-allocation-stack-trace { r_boolean-Type }
+     | element save-allocation-stack-trace { r_boolean-Type })?
+
+  &amp; (attribute spy { r_boolean-Type }
+     | element spy { r_boolean-Type })?
+
+  &amp; (attribute transaction-timeout { r_period }
+     | element transaction-timeout { r_period })?
+
+  &amp; (attribute xa { r_boolean-Type }
+     | element xa { r_boolean-Type })?
+}
+
+r_data-source =
+  attribute data-source { string }
+  | element data-source { string }
+
+r_dependency = element dependency {
+  (attribute path { string }
+   | element path { string })
+}
+
+r_dependency-check-interval =
+  attribute dependency-check-interval { r_period }
+  | element dependency-check-interval { r_period }
+
+r_driver = element (driver|backup-driver) {
+  (r_type,
+
+   r_any-Group?)
+
+  | r_data-source
+}
+
+r_endpoint-factory = element endpoint-factory {
+  r_type,
+
+  r_init?
+}
+
+rcore_env-Args =
+  r_class-loader?
+
+r_ejb-server = element ejb-server {
+  r_jndi-name?
+
+  &amp; (attribute auto-compile { r_boolean-Type }
+     | element auto-compile { r_boolean-Type })?
+
+  &amp; (attribute ejb-descriptor { string }
+     | element ejb-descriptor { string })?
+
+  &amp; (attribute create-database-schema { r_boolean-Type }
+     | element create-database-schema { r_boolean-Type })?
+
+  &amp; (attribute cache-size { r_int }
+     | element cache-size { r_int })?
+
+  &amp; (attribute cache-timeout { r_period }
+     | element cache-timeout { r_period })?
+
+  &amp; (attribute data-source { r_jndi }
+     | element data-source { r_jndi })?
+
+  &amp; (attribute config-directory { r_path-Type }
+     | element config-directory { r_path-Type })?
+
+  &amp; (attribute ejb-jar { r_path-Type }
+     | element ejb-jar { r_path-Type })*
+
+  &amp; (attribute forbid-jvm-call { r_boolean-Type }
+     | element forbid-jvm-call { r_boolean-Type })?
+
+  &amp; (attribute jdbc-isolation { string }
+     | element jdbc-isolation { string })?
+
+  &amp; (attribute resin-isolation { string }
+     | element resin-isolation { string })?
+
+  &amp; (attribute startup-mode { string }
+     | element startup-mode { string })?
+
+  &amp; (attribute transaction-timeout { r_period }
+     | element transaction-timeout { r_period })?
+
+  &amp; (attribute validate-database-schema { r_boolean-Type }
+     | element validate-database-schema { r_boolean-Type })?
+
+  &amp; (attribute jms-connection-factory { string }
+     | element jms-connection-factory { string })?
+}
+
+r_encoding =
+  attribute encoding { string }
+  | element encoding { string }
+
+r_enhancer = element enhancer {
+  r_resin-type,
+
+  r_any-Group*
+}
+
+r_enhancing-loader = element enhancing-loader {
+  r_path
+
+  &amp; r_enhancer*
+}
+
+r_fileset = element fileset {
+  (attribute dir { r_path-Type }
+   | element dir { r_path-Type })
+
+  &amp; r_fileset-exclude*
+
+  &amp; r_fileset-include*
+}
+
+r_fileset-exclude = element exclude {
+  attribute name { string }
+  | element name { string }
+}
+
+r_fileset-include = element include {
+  attribute name { string }
+  | element name { string }
+}
+
+r_formatter = element formatter {
+  r_resin-type,
+
+  r_any-Group
+}
+
+r_grant = element grant {
+  r_permission*
+}
+
+r_handback =
+  attribute handback { string }
+  | element handback {
+      r_resin-type,
+      r_any-Group
+    }
+
+r_handler = element handler {
+  r_resin-type,
+
+  r_any-Group
+}
+
+rcore_if-Args =
+  attribute test { string }
+
+rcore_include =
+  element rcore:include {
+    attribute path { string }
+    | attribute href { string }
+  }
+  | element resin:include {
+    attribute path { string }
+    | attribute href { string }
+  }
+
+rcore_import = element rcore:import {
+  ((attribute path { string }
+    | element path { string })
+
+   | r_fileset)
+
+  &amp; (attribute optional { string }
+     | element optional { string })?
+}
+
+r_init = element init {
+  r_any-Group
+}
+
+r_init-param-Content = 
+  r_description*,
+
+  (((attribute param-name { string } | element param-name { string }),
+    (attribute param-value { string } | element param-value { string }))
+   | attribute * { string }
+   | element * - (param-name | param-value | r_description) { string })*
+
+r_init-param = element init-param {
+  r_init-param-Content
+}
+
+r_javac = element javac {
+  (attribute compiler { string }
+   | element compiler { string })
+
+   &amp; (attribute args { string }
+      | element args { string })?
+
+   &amp; (attribute encoding { string }
+      | element encoding { string })?
+}
+
+r_jndi-link = element jndi-link {
+  r_jndi-name
+
+  &amp; (attribute factory { string }
+     | element factory { string })?
+
+  &amp; (attribute foreign-name { string }
+     | element foreign-name { string })?
+
+  &amp; r_init-param*
+}
+
+r_jndi-name =
+  attribute jndi-name { string }
+  | element jndi-name { string }
+
+r_jsse-ssl = element jsse-ssl {
+  (attribute key-store-file { string }
+   | element key-store-file { string })
+
+  &amp; (attribute password { string }
+     | element password { string })
+
+  &amp; (attribute key-store-type { string }
+     | element key-store-type { string })?
+
+  &amp; (attribute ssl-context { string }
+     | element ssl-context { string })?
+
+  &amp; (attribute key-manager-factory { string }
+     | element key-manager-factory { string })?
+}
+
+r_openssl = element openssl {
+  (attribute certificate-file { string }
+   | element certificate-file { string })
+
+  &amp; (attribute password { string }
+     | element password { string })
+
+  &amp; (attribute ca-certificate-file { string }
+     | element ca-certificate-file { string })?
+
+  &amp; (attribute ca-certificate-path { string }
+     | element ca-certificate-path { string })?
+
+  &amp; (attribute certificate-chain-file { string }
+     | element certificate-chain-file { string })?
+
+  &amp; (attribute certificate-key-file { string }
+     | element certificate-key-file { string })?
+
+  &amp; (attribute cipher-suite { string }
+     | element cipher-suite { string })?
+
+  &amp; (attribute protocol { string }
+     | element protocol { string })?
+
+  &amp; (attribute session-cache { r_boolean-Type }
+     | element session-cache { r_boolean-Type })?
+
+  &amp; (attribute session-cache-timeout { r_period }
+     | element session-cache-timeout { r_period } )?
+
+  &amp; r_verify-client?
+
+  &amp; (attribute verify-depth { r_int }
+     | element verify-depth { r_int })?
+}
+
+r_library-loader = element library-loader {
+  r_path
+
+  | r_fileset
+}
+
+rcore_log = element rcore:log {
+  string
+}
+
+r_log = element log {
+  r_logger-Content?
+
+  &amp; r_logger*
+
+  &amp; (r_handler | r_log-Content)
+
+  &amp; (r_formatter
+     | (attribute format { string }
+        | element format { string }))?
+}
+
+r_log-Content =
+  (attribute path { r_path-Type }
+   | element path { r_path-Type })
+
+  &amp; (attribute archive-format { string }
+     | element archive-format { string })?
+
+  &amp; (attribute rollover-period { r_period }
+     | element rollover-period { r_period })?
+
+  &amp; (attribute rollover-size { r_kbytes }
+     | element rollover-size { r_kbytes })?
+
+  &amp; (attribute rollover-count { r_kbytes }
+     | element rollover-count { r_kbytes })?
+
+  &amp; (attribute timestamp { string }
+     | element timestamp { string })?
+
+
+r_logger = element logger {
+  r_logger-Content
+}
+
+r_logger-Content =
+  (attribute name { string }
+   | element name { string })
+
+  &amp; (attribute level { string }
+     | element level { string })?
+
+  &amp; (attribute use-parent-handlers { r_boolean-Type }
+     | element use-parent-handlers { r_boolean-Type })?
+
+r_make-loader = element make-loader { r_any-Group }
+
+r_mbean = element mbean {
+  r_name,
+
+  (r_type,
+
+   r_arg*)?,
+
+  (r_init*
+
+   &amp; r_mbean-listener*)
+}
+
+r_mbean-name = 
+  attribute mbean-name { string }
+  | element mbean-name { string }
+
+r_mbean-interface = 
+  attribute mbean-interface { string }
+  | element mbean-interface { string }
+
+r_mbean-listener = element mbean-listener {
+  r_mbean-name,
+
+  r_handback*
+}
+
+r_name =
+  attribute name { string }
+  | element name { string }
+
+r_path =
+  attribute path { r_path-Type }
+  | element path { r_path-Type }
+
+r_permission = element permission {
+  r_type,
+
+  r_arg*
+}
+
+r_reference = element reference {
+  r_jndi-name,
+
+  (attribute factory { string  } | element factory { string }),
+
+  r_init-param*
+}
+
+r_resin-type =
+  attribute rcore:type { string }
+  | attribute resin:type { string }
+
+r_resource = element resource {
+  (r_jndi-name?
+
+   &amp; r_mbean-name?
+
+   &amp; r_mbean-interface?),
+
+  (r_type,
+
+   r_arg*)?,
+
+  (r_init*
+
+   &amp; (attribute local-transaction-optimization { r_boolean-Type }
+      | element local-transaction-optimization { r_boolean-Type })?
+
+   &amp; r_mbean-listener*
+
+   &amp; (attribute shareable { r_boolean-Type }
+      | element shareable { r_boolean-Type })?
+  )
+}
+
+r_resource-adapter = element resource-adapter {
+  r_jndi-name?,
+
+  r_init?
+}
+
+r_resource-deploy = element resource-deploy {
+  (attribute path { string }
+   | element path { string })
+
+  &amp; (attribute expand-path { string }
+     | element expand-path { string })?
+}
+
+r_servlet-hack =
+  attribute servlet-hack { r_boolean-Type }
+  | element servlet-hack { r_boolean-Type }
+
+rcore_set = element rcore:set {
+  attribute * { string }+
+}
+  
+r_simple-loader = element simple-loader {
+  r_path,
+
+  (attribute prefix { string }
+   | element prefix {string})?
+}
+
+r_stderr-log = element stderr-log {
+  r_log-Content
+}
+
+r_stdout-log = element stdout-log {
+  r_log-Content
+}
+
+r_system-property = element system-property {
+  (attribute * { string })+
+}
+
+r_temp-dir =
+  attribute temp-dir { r_path-Type }
+  | element temp-dir { r_path-Type }
+
+r_tree-loader = element tree-loader {
+  r_path
+}
+
+r_type =
+  attribute type { string }
+  | element type { string }
+
+r_verify-client =
+  attribute verify-client { r_verify-client-Type }
+  | element verify-client { r_verify-client-Type }
+
+r_verify-client-Type =
+  "optional-no-ca"
+  | "optional"
+  | "require"
+
+rcore_when-Args =
+  attribute test { string }
+
+r_work-dir =
+  attribute work-dir { r_path-Type }
+  | element work-dir { r_path-Type }
+</def>
+</s1>
+
+  </body>
+</document>

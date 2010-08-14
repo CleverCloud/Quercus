@@ -1,0 +1,32 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.17 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="java configuration variable">
+
+<p>Added java configuration variable to test for JDK capabilities.</p>
+
+<p>Added $\{java.isJava5()} to test for JDK 5 capabilities.</p>
+
+</s1>
+
+<s1 title="Quercus">
+
+<s2 title="Module Apache">
+
+<p>Added: apache_note, apache_request_headers, virtual, getallheaders</p>
+
+<p>Stubbed: apache_child_terminate, apache_reset_timeout</p>
+
+</s2>
+
+</s1>
+
+</body>
+</document>

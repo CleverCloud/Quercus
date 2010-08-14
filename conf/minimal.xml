@@ -1,0 +1,27 @@
+<!--
+   - Minimal configuration for starting server using an apache-style
+   - document tree in /var/www/htdocs.
+   -
+   - unix> java -jar lib/resin.jar -root-directory /var/www \
+   -            -conf conf/minimal.xml
+   -
+   - resin.root is /var/www, documents are in /var/www/htdocs.
+  -->
+
+<resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="urn:java:com.caucho.resin">
+
+  <cluster-default>
+    <resin:import path="${__DIR__}/app-default.xml"/>
+  </cluster-default>
+
+  <cluster id="">
+    <server id="">
+      <http port="8080"/>
+    </server>
+
+    <host id="" root-directory=".">
+      <web-app id="/" root-directory="htdocs"/>
+    </host>
+  </cluster>
+</resin>

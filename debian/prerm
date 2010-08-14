@@ -1,0 +1,10 @@
+#!/bin/sh -e
+
+if [ -x "/etc/init.d/resin" ]; then
+	update-rc.d -f resin remove
+	if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+		invoke-rc.d resin stop || exit $?
+	else
+		/etc/init.d/resin stop || exit $?
+	fi
+fi

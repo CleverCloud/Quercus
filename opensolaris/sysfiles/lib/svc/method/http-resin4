@@ -1,0 +1,105 @@
+#!/sbin/sh
+
+. /lib/svc/share/smf_include.sh
+
+
+case "$1" in
+start)
+	cmd="start";
+	;;
+
+stop)
+	cmd="stop";
+	;;
+status)
+	cmd="status";
+	;;
+*)
+	echo "Usage: $0 {start|stop|status}"
+	exit $SMF_EXIT_ERR_CONFIG
+	;;
+esac
+
+
+JAVA_HOME=/usr/java
+JAVA=/usr/bin/java
+
+RESIN_HOME="/usr/local/resin/"
+
+RESIN_ROOT_DIRECTORY="/var/resin"
+RESIN_CONF_DIRECTORY="/etc/resin"
+RESIN_LOG_DIRECTORY="/var/log/resin"
+
+
+
+
+#SERVER="-server app-a"
+RESIN_ROOT="-root-directory $RESIN_ROOT_DIRECTORY"
+RESIN_CONF="-conf $RESIN_CONF_DIRECTORY/resin.xml"
+RESIN_LOG="-log-directory $RESIN_LOG_DIRECTORY"
+
+ARGS="$RESIN_CONF $RESIN_LOG $RESIN_ROOT $SERVER"
+
+export JAVA_HOME RESIN_HOME
+
+
+$JAVA -jar $RESIN_HOME/lib/resin.jar $ARGS $cmd 2>&1
+
+if [ $? -ne 0 ]; then
+    echo "Resin4 failed to start. Check the logs $RESIN_LOG_DIRECTORY/* for more information, if any."
+    exit $SMF_EXIT_ERR_FATAL
+fi
+
+exit $SMF_EXIT_OK
+
+
+
+#case "$1" in
+#  start)
+#    $JAVA -jar $RESIN_HOME/lib/resin.jar $ARGS start 1>/dev/null 2>/dev/null
+#    exit $?
+#    ;;
+#  stop)
+#    $JAVA -jar $RESIN_HOME/lib/resin.jar $ARGS shutdown 1>/dev/null 2>/dev/null
+#    exit $?
+#    ;;
+#  status)
+#    $JAVA -jar $RESIN_HOME/lib/resin.jar $ARGS status
+#    exit $?
+#    ;;
+#  	  su $USER -c """$JAVA -jar $RESIN_HOME/lib/resin.jar $ARGS start""" 1>/dev/null 2>/dev/null
+#	else
+#	    errors=`$JAVA -jar $RESIN_HOME/lib/resin.jar $ARGS start 2>&1`
+#	    if [ $? != 0 ]; then
+#		log_daemon_msg $errors
+#	    fi
+#	fi
+#
+#	log_end_msg $?
+#	;;
+#  stop)
+#	log_daemon_msg "Stopping resin"
+#	if test -n "$USER"; then
+#  	  su $USER -c """$JAVA -jar $RESIN_HOME/lib/resin.jar $ARGS shutdown""" 1>/dev/null 2>/dev/null
+#	else
+#	    errors=`$JAVA -jar $RESIN_HOME/lib/resin.jar $ARGS shutdown 2>&1`
+#	    if [ $? != 0 ]; then
+#		log_daemon_msg $errors
+#	    fi
+#	fi
+#
+#	log_end_msg $?
+#	;;
+#  status)
+#        $JAVA -jar $RESIN_HOME/lib/resin.jar $ARGS status
+#	;;
+#  restart)
+#	$0 stop
+#	$0 start
+#	;;
+#  *)
+#	echo "Usage: $0 {start|stop|status|restart}"
+#	exit 1
+#esac
+#
+#exit 0

@@ -1,0 +1,45 @@
+<html>
+<body>
+The JavaScript compiler package.  The Parser class in
+com.caucho.es.parser.Parser is the primary public entry.
+
+<p>The public classes are Parser, Script, and ScriptClosure.  Parser is
+the main entry to the compiler.  Script contains a compiled script.
+ScriptClosure lets programs execute the global script and then call
+back into the JavaScript. The other classes are public only because
+JavaScript gets compiled to Java.  The generated Java classes need to
+access the JavaScript libraries.
+
+<p>The script must first be compiled to a Script object, then
+executed.  The following example gives the bare-bones script invocation.
+
+<pre><code>
+Parser parser = new Parser();
+Script script = parser.parse("foo.js");
+script.execute(null, null);
+</code></pre>
+
+<p>You can make Java objects available to the Script by adding them to
+a HashMap.  For example, the File object.  The running script will
+see these objects as properties of the Global object.  If you set the
+'out' object, the script can use 'writeln("foo")' to write to 'out'.
+
+<pre><code>
+HashMap map = new HashMap();
+map.put("File", Pwd.lookup());
+map.put("out", System.out);
+map.put("myObject", myObject);
+
+script.execute(map, null);
+</code></pre>
+
+<p>You can also make any Java object be the global prototype.
+Essentially, the effect is similar to the HashMap technique, but
+it's a little simpler.
+
+<p>The Script object is threadsafe. It's safe to execute the same script
+in multiple threads.
+
+<p>The ScriptClosure object, of course, is not threadsafe.
+</body>
+</html>

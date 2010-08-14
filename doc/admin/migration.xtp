@@ -1,0 +1,52 @@
+<document>
+<header>
+  <product>resin</product>
+  <title>Migrating to Resin 4.0</title>
+  <description>
+    Resin 4.0 introduced a number of new features and capabilities over
+    earlier versions of Resin. Along with these changes, configuration and
+    some operating semantics changed. Certain configuration was deprecated
+    and should be removed or rewritten using newer constructs.
+  </description>
+</header>
+<body>
+  <s1 title="Migrating from Resin 3.0 to Resin 4.0">
+    <p>
+      The Caucho Wiki features a full <a href="http://wiki.caucho.com/Migrating_from_Resin_3.0_to_Resin_4.0">migration document</a> for those upgrading from 
+      Resin 3.0.
+    </p>
+  </s1>
+  <s1 title="Migrating from WebLogic">
+    <p>
+      The Caucho Wiki features <a href="http://wiki.caucho.com/Migrating_from_WebLogic_to_Resin">migration document</a> for those transitioning from WebLogic
+      to Resin.
+    </p>
+  </s1>
+  <s1 title="Deprecated configuration">
+    <p> The following is a list of deprecated tags in Resin 4.0 that should
+      no longer be used:
+    </p>
+    <ul>
+      <li>&lt;accept-buffer-size> (see <a config-tag="accept-listen-backlog"/>)</li>
+      <li>&lt;authenticator> (see <a config-tag="resin:PropertiesAuthenticator"/>, <a config-tag="resin:JaasAuthenticator"/>, <a config-tag="resin:DatabaseAuthenticator"/>, <a config-tag="resin:XmlAuthenticator"/>)</li>
+      <li>&lt;ejb-stateful-bean> (Stateful EJBs are configured via <a href="config-candi.xtp">CDI</a>)</li>
+      <li>&lt;ejb-stateless-bean> (Stateless EJBs are configured via <a href="config-candi.xtp">CDI</a>)</li>
+      <li>&lt;jms-connection-factory> (see <a config-tag="resin:JmsConnectionFactory"/>)</li>
+      <li>&lt;jmx-service> (see <a config-tag="resin:JmxService"/>)</li>
+      <li>&lt;log> (see <a config-tag="log-handler"/>)</li>
+      <li>&lt;log-service> (see <a config-tag="resin:LogService"/>)</li>
+      <li>&lt;min-free-memory> (see <a config-tag="memory-free-min"/>)</li>
+      <li>&lt;management> (see <a config-tag="resin:JmxService"/>, <a config-tag="resin:LogService"/>, <a config-tag="resin:XaLogService"/>, <a config-tag="resin:AdminAuthenticator"/>)</li>
+      <li>&lt;persistent-store> (No longer necessary. See <a href="clustering.xtp">clustering</a>.)</li>
+      <li>&lt;request-timeout> (see <a config-tag="socket-timeout"/>)</li>
+      <li>&lt;resin:IfRemoteAddr> (see <a config-tag="resin:IfNetwork"/>)</li>
+      <li>&lt;scheduled-task> (see <a config-tag="resin:ScheduledTask"/>)</li>
+      <li>&lt;stat-service> (see <a config-tag="resin:StatService"/>)</li>
+      <li>&lt;thread-keepalive> (removed)</li>
+      <li>&lt;xa-log-service> (see <a config-tag="resin:XaLogService"/>)</li>
+      <li>resin:type attribute (see <a href="config-candi.xtp">CanDI documentation</a>)</li>
+      <li>uri: convention (see <a href="config-candi.xtp">CanDI documentation</a>)</li>
+    </ul>
+  </s1>
+</body>
+</document>

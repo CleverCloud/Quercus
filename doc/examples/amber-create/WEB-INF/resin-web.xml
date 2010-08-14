@@ -1,0 +1,16 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <!--
+     - Amber Configuration.
+    -->
+  <ejb-server data-source="jdbc/resin" create-database-schema="true">
+  </ejb-server>
+
+
+  <!--
+     - configuration for the client.
+    -->
+  <servlet servlet-name="create" servlet-class="example.CreateServlet">
+  </servlet>
+
+  <servlet-mapping url-pattern="/create" servlet-name="create"/>
+</web-app>

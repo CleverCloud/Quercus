@@ -1,0 +1,36 @@
+default namespace r = "http://caucho.com/ns/resin"
+namespace l = ""
+
+include "classpath:com/caucho/config/cfg/env.rnc"
+include "classpath:com/caucho/config/cfg/resin-j2ee.rnc"
+include "../webapp/resin-web-xml-content.rnc"
+
+resin_application-client = element application-client {
+  attribute id { string }?
+
+  & attribute version { string }?
+
+  & attribute xsi:schemaLocation { string }?
+
+  & r_description-Group
+
+  & r_env-Group
+
+  & r_env-entry*
+
+  & r_ejb-ref*
+
+  & r_service-ref-Group
+
+  & r_resource-ref*
+
+  & r_resource-env-ref*
+
+  & r_message-destination-ref*
+
+  & element callback-handler { r_fully-qualified-class }?
+
+  & r_message-destination*
+
+  & r_web-service-client*
+}

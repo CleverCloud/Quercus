@@ -1,0 +1,285 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>JSF - Java Server Faces</title>
+    <version>Resin 3.2</version>
+    <description>
+
+      <p>As of Resin version 3.1.6 Resin supports JSF 1.2.
+        JSF specification defines a base set components for capturing user
+        input and displaying output. Resin implements the spec from the ground
+        up to take advantage of Resin's unique, high performance features. The
+        two most notable features that make Resin's JSF fast are use of
+        serialization mechanism implemented in Hessian protocol for JSF state
+        handling and a fast-jsf mode of JSP generation.
+      </p>
+
+      <p>Along with the features orientated at performance advantage Resin's JSF
+        offers integration with Web Beans (JSR 299). If you are using JSF's
+        managed bean facility you can go straight to minimizing the amount of
+        XML configuration by using Web Beans defined ways instead (will be shown
+        below).
+      </p>
+
+    </description>
+  </header>
+
+  <body>
+    <summary/>
+
+    <s1 title="JSF State Management with Hessian">
+      <p>A JSF page may produce state that depending on the functionality of
+        the page can be quite large as in the number of components and in the
+        sheer volume of data associated with them. When serialized for sending
+        to the client or replicating across servers in the cluster smaller state
+        will produce numerous benefits ranging from more efficient use of
+        bandwidth to lower memory requirements and lower CPU usage.
+      </p>
+
+      <p>To achieve smaller size Resin's JSF State Management uses Hessian
+        Serialization for packaging objects composing JSF state into
+        a network-transferable object. As opposed to Java Serialization Hessian
+        takes advantage of a more compact storage scheme specified for Hessian Protocol.
+      </p>
+    </s1>
+
+    <s1 title="Fast JSF">
+
+      <p>While adhering to the JSF Spec Resin takes advantage of its custom
+        built
+        JSP code generator that is capable of recognizing JSF tags and, when
+        UIComponent can be inferred, creating an instance of the component
+        instead of creating an instance of the tag,
+        and plugging the component instance directly into the Component Tree.
+
+        This is what the JSP code generated in Fast JSF mode might look like:
+      </p>
+
+      <example title="Fast-JSF JSP Generated Code">
+HtmlOutputText _jsp_comp_1
+  = Utils.add(jsf_context, request, response, HtmlOutputTest.class);
+_jsp_comp_1.setValueExpression("value", _value_expr_0);
+      </example>
+
+      <p>as opposed to the code generated in regular mode:</p>
+
+      <example title="Regular JSP Generated Code">
+_jsp_HtmlOutputTextTag_1 = new HtmlOutputTextTag();
+_jsp_HtmlOutputTextTag_1.setPageContext(pageContext);
+_jsp_HtmlOutputTextTag_1.setParent((javax.servlet.jsp.tagext.Tag) _jsp_FacesViewTag_0);
+_jsp_HtmlOutputTextTag_1.setJspId("jsp2");
+_jsp_HtmlOutputTextTag_1.setValue(pageContext.createExpr(_value_expr_0,
+                                    "#{msgs.title}", java.lang.Object.class));
+_jsp_HtmlOutputTextTag_1.doStartTag();
+_jsp_HtmlOutputTextTag_1.doEndTag();
+      </example>
+
+      <p>As you can see from the above Resin will produce code that creates
+        less objects, easing the load on JVM Garbage Collection, and making fewer calls,
+        easing the load on CPU during page creation.
+      </p>
+
+      <s2 title="Setting Resin's Fast JSF">
+        <p>Setting mode to Fast JSF is done via using a fast-jsf flag in
+          WEB-INF/resin-web.xml as in the code below:
+        </p>
+
+        <example title="Fast-JSF resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;jsp fast-jsf='true'/&gt;
+&lt;/web-app&gt;
+        </example>
+
+        <p>Resin will automatically infer correct UIComponent type for all
+          Actions
+          supplied with Resin which includes all JSF 1.2 standard Actions
+          from http://java.sun.com/jsf/html and http://java.sun.com/core spaces.
+          Enabling custom components to take advantage of fast-jsf takes
+          creating
+          a mapping file that will be located by Resin at application startup.
+          The file might look like the following:
+        </p>
+        <example title="ftld for custom Actions">
+&lt;jsf-taglib xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;uri&gt;http://java.sun.com/jsf/html&lt;/uri&gt;
+
+  &lt;jsf-tag&gt;
+    &lt;name&gt;column&lt;/name&gt;
+    &lt;component-class&gt;javax.faces.component.html.HtmlColumn&lt;/component-class&gt;
+  &lt;/jsf-tag&gt;
+  ...
+  &lt;jsf-tag&gt;
+    &lt;name&gt;commandButton&lt;/name&gt;
+    &lt;component-class&gt;javax.faces.component.html.HtmlCommandButton&lt;/component-class&gt;
+  &lt;/jsf-tag&gt;
+&lt;jsf-taglib&gt;
+        </example>
+        <p>The mapping file needs to have <code>ftld</code> extension. Resin will look for
+          files with ftld extension on web application's classpath.
+          E.g. <code>org/ajax4jsf/taglib/ajax4jsf.ftld</code>
+        </p>
+        <p>The children of the <code>jsf-taglib</code> tag do the following</p>
+        <ul>
+          <li>Element <code>uri</code> maps to the taglib uri from the corresponding <code>.tld</code>
+            file
+          </li>
+          <li>Element <code>jsf-tag</code> defines a mapping by binding a tag <code>name</code> to
+            <code>component-class</code>
+          </li>
+        </ul>
+      </s2>
+      <p>If you run into a case where supplying an <code>.ftld</code> and setting
+        <code>fast-jsf</code> to true does not work for your library
+        please provide feedback asking in the <a href="http://forum.caucho.com">forums</a>
+      or <a href="http://maillist.caucho.com/">mailing list</a>.
+         A fallback to to non fast-jsf mode is always available via setting
+         the value of fast-jsf to false.
+      </p>
+    </s1>
+
+    <s1 title="JSF with Web Beans (JSR 299)">
+      <p>Web Beans can significantly reduce XML configuration required for your
+        web application. By using annotations from <code>javax.webbeans</code> package a Java
+        Bean
+        can be turned into a Web Bean by supplying it with a @Component
+        annotation
+        like so:
+      </p>
+      <example title="Use @Component to make Java Bean a WebBean">
+package example;
+
+import javax.webbeans.*;
+@Component
+public class FooBean {
+}
+      </example>
+      <p>Annotations
+        <code>@Named</code>
+        and one of<code>@ApplicationScoped</code>,
+        <code>@ConversionScoped</code>
+        ,
+        <code>@SessionScoped</code>,<code>@RequestScoped</code>,
+        <code>@Dependant</code>
+        (parent's scope) will give
+        the Web Bean a name and scope:
+      </p>
+      <example
+        title="Use @Named and @SessionScope to name a WebBean and specify its scope">
+package example;
+
+import javax.webbeans.*;
+
+@Component
+@Named("foo")
+@SessionScoped
+
+public class FooBean {
+}
+      </example>
+
+      <p>
+        The following block of annotation
+        <code>@Component @Named("foo")
+          @SessionScoped
+        </code>
+        atop of a bean is equivalent to the XML
+        fragment below that would need to be placed into faces-config.xml
+      </p>
+      <example>
+&lt;managed-bean&gt;
+&lt;managed-bean-name&gt;quiz&lt;/managed-bean-name&gt;
+&lt;managed-bean-class&gt;com.corejsf.QuizBean&lt;/managed-bean-class&gt;
+&lt;managed-bean-scope&gt;session&lt;/managed-bean-scope&gt;
+&lt;/managed-bean&gt;
+      </example>
+      <p>
+       Don't forget to place an emtpy web-beans.xml file into your classpath under
+        <code>META-INF</code> directory to enable Web Beans for the context.
+       <example title="e.g. WEB-INF/classes/META-INF/web-beans.xml">
+&lt;web-beans xmlns="http://caucho.com/ns/resin"/&gt;
+       </example>
+      </p>
+      <p>
+        Web Beans has become a technology integrated into Resin's core and will
+        work well with other Caucho's technologies. You can learn more about Web
+        Beans and Resin at
+        <a href="resin-ioc.xtp">Resin IOC</a>
+      </p>
+    </s1>
+
+    <s1 title="JSF Developer Aid">
+      <p>
+        Since version 3.2.0 resin offers JSF Developer Aid that allows to quickly
+        introspect state of a Component Tree captured at the end of each
+        phase and displayed in a tabbed view. The EL Experessions
+        displayed in the view are navigable to screens that display backing data.
+      </p>
+      <p>
+        Alone with the state, the Aid displays information for all request headers and
+        parameters, and, attributes set on request, session and application.
+      </p>
+    </s1>
+    <s1>
+    <s2 title="Enabling the JSF Developer Aid">
+      <p>
+      To enable the Aid place a line <code>&lt;jsf enable-developer-aid='true'/></code>
+      into <code>resin-web.xml</code> file.
+      </p>
+      <example title="WEB-INF/resin-web.xml">
+&lt;web-app xmlns='http://caucho.com/ns/resin'>
+  &lt;jsf enable-developer-aid='true'/>
+&lt;/web-app>
+      </example>
+      <p>
+      Once the Aid is enabled a <em>JSF Dev Aid</em> link will appear in the right
+      bottom corner of a page as on the picture below.
+      </p>
+      <figure src="jsf-dev-aid-link.png"/>
+      <p>
+        If desired, the position of the link can be changed via a <code>developer-aid-link-style</code>
+        parameter in resin-web.xml file.
+
+        <example title="Link position">
+&lt;web-app xmlns='http://caucho.com/ns/resin'>
+  &lt;jsf enable-developer-aid='true' developer-aid-link-style='position:absolute; bottom:1; right:1'/>
+&lt;/web-app>
+        </example>
+      </p>
+    </s2>
+
+    <s2 title="Aid's main page">
+      <p>
+      The main page lists available views and controls that allow saving the information
+      into a binary file or loading from a file saved earlier.
+      Persisted to a file, captured state may be shared with other developers, attached to QA bug reports and so on.
+      </p>
+      <figure src="jsf-dev-aid.png"/>
+    </s2>
+
+    <s2 title="Aid's Request Info page">
+       <p>
+         Request Info page will show headers and parameters contained in HTTP request.
+       </p>
+      <figure src="jsf-dev-aid-request-info.png"/>
+    </s2>
+
+    <s2 title="Aid's View States">
+     <p>
+       The aid captures state of the <code>UIViewRoot</code> at the end of each
+       phase and offers it in a tabbed view. Alone with it, the aid captures attributes 
+       set on request, session and application.
+     </p>
+     <figure src="jsf-dev-aid-view.png"/>
+    </s2>
+
+    <s2 title="Aid's EL Expression Display">
+      <p>
+       Expressions encoutered during introspection of a Component Tree
+        become links and navigate to a page that display result
+        of evaluation of that expression.
+      </p>
+      <figure src="jsf-dev-aid-el-obj.png"/>
+    </s2>
+    </s1>
+  </body>
+</document>

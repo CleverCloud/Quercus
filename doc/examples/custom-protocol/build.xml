@@ -1,0 +1,109 @@
+<project name="magic8ball" default="usage" basedir=".">
+
+<property environment="env"/> 
+<!--
+<property name="build.compiler" value="jikes"/> 
+-->
+<property name="build.compiler.emacs" value="true"/> 
+
+<target name="usage">
+<echo>
+You must define RESIN_HOME.
+Once you do that, try "ant deploy" and then add this to your resin.conf:
+
+  &lt;server&gt;
+
+    ...
+
+    &lt;!-- The magic8ball port --&gt;
+    &lt;port id='' host='*' port='8888'&gt;
+      &lt;protocol-factory resin:type="example.Magic8BallProtocol"/&gt;
+    &lt;/port&gt;
+
+
+TARGETS
+=========
+
+o usage                 this usage information
+
+o deploy                deploy jar in $RESIN_HOME/lib
+
+o dist                  make distribution jar
+
+o compile               compile the magic8ball java files
+
+
+
+o clean
+
+</echo>
+</target>
+
+
+<path id="compile.classpath">
+  <fileset dir="${env.RESIN_HOME}/lib">
+    <include name="**/*.jar" />
+  </fileset>
+</path>
+
+<property name="srcdir" value="${basedir}/src"/>
+
+<property name="builddir" value="${basedir}/build"/>
+<property name="compiledir" value="${builddir}/classes"/>
+<property name="distfile" value="${builddir}/${ant.project.name}.jar"/>
+
+<target name="init">
+  <fail 
+    unless="env.RESIN_HOME"
+    message="Environment variable RESIN_HOME must be set."/>
+  <tstamp/>
+</target>
+
+<target name="compile" depends="init">
+  <mkdir dir="${compiledir}"/>
+
+  <!-- compile .java from ${srcdir}  -->
+  <javac classpathref="compile.classpath"
+    destdir="${compiledir}"
+    debug="true">
+
+    <src path="${srcdir}"/>
+  </javac>
+
+  <!-- copy *.html from src/ -->
+  <copy todir="${builddir}/classes"
+        preservelastmodified="true">
+    <fileset dir="${srcdir}">
+      <include name="**/*.html"/>
+    </fileset>
+  </copy>
+</target>
+
+<target name="dist" depends="compile">
+  <mkdir dir="${builddir}"/>
+
+  <!-- jar the files in ${compiledir} -->
+  <jar 
+    basedir="${compiledir}"
+    destfile="${distfile}"
+    compress="no"
+    index="true"/>
+</target>
+
+<target name="deploy" depends="dist">
+  <copy 
+    file="${distfile}" 
+    todir="${env.RESIN_HOME}/lib"
+    preservelastmodified="true"/>
+</target>
+
+<target name="clean" depends="init">
+  <delete includeEmptyDirs="true" quiet="true">
+    <fileset dir="${builddir}"/>
+  </delete>
+  <delete includeEmptyDirs="true" quiet="false">
+    <fileset dir="${builddir}"/>
+  </delete>
+</target>
+
+</project>

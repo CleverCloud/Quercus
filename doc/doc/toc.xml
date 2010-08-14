@@ -1,0 +1,128 @@
+<navigation threaded="true">
+  <item link="index.xtp" title="Resin 4.0">
+    <!--
+       - Amber
+    <item link="amber.xtp" title="Amber"/>
+      -->
+
+    <!--
+       - BAM
+      -->
+    <item link="bam.xtp" title="BAM"/>
+    
+    <!--
+       - Caching
+      -->
+    <item link="proxy-cache.xtp" title="Caching"/>
+
+    <!--
+       - EJB
+      -->
+    <item link="resin-ejb.xtp" title="EJB 3.0"/>
+      
+    <!--
+       - Embedding
+      -->
+    <item link="resin-embedding.xtp" title="Embedding"
+          description="embedding Resin in an Application or for unit testing"/>
+    
+    <!--
+       - Filters
+      -->
+    <item link="filters.xtp" title="Filters"/>
+    
+    <!--
+       - Hessian
+      -->
+    <item link="hessian.xtp" title="Hessian">
+      <item link="hessian-overview.xtp" title="Hessian"/>
+      <item link="hessian-1.0-spec.xtp" title="Hessian 1.0 spec"/>
+      <item link="hessian-2.0-spec.xtp" title="Hessian 2.0 draft spec"/>
+      <item link="hessian-java-binding-draft-spec.xtp" title="Java Binding"/>
+      <item link="burlap.xtp" title="Burlap"/>
+      <!--
+      <item link="hessian-messaging.xtp" title="Hessian Messaging"/>
+        -->
+    </item>
+
+    <!--
+       - IoC
+      -->
+	  
+    <item link="resin-ioc.xtp" title="CanDI"
+          description="Java Injection/CanDI (JSR-299)"/>
+
+    <!--
+       - JSF
+    <item link="jsf.xtp" title="JSF"/>
+      -->
+    
+    <!--
+       - JSP
+      -->
+    <item link="jsp.xtp" title="JSP">
+      <item link="jsp-intro.xtp" title="Introduction"/>
+
+      <item link="jsp-compile.xtp" title="Compilation"/>
+      <item link="jsp-el.xtp" title="EL"/>
+      <item link="jstl.xtp" title="JSTL"/>
+      <item link="jsp-directives.xtp" title="Directives"/>
+      <item link="jsp-variables.xtp" title="Variables"/>
+      <item link="jsp-actions.xtp" title="Actions"/>
+      <item link="jsp-applications.xtp" title="Applications"/>
+      <item link="tld-schema.xtp" title="Schema for JSP-2.0 .tld files"/>
+      <item link="jsp-velocity.xtp" title="Velocity syntax"/>
+
+      <item link="jsp-templates.xtp" title="JSP Templates"/>
+    </item>
+    
+    <item link="config-log.xtp" title="Logging"
+          description="access log, java.util.logging, and stdout" />
+    
+    <item link="resin-messaging.xtp" title="Messaging"
+          description="JMS, JCA, Message Driven Beans and Queues"/>
+     
+    <!--
+    <item link="portlet/index.xtp" title="Portlets" atoc-descend="true"/>
+    -->
+    
+    <!--
+       - Performance
+    <item link="performance.xtp" title="Performance">
+      <item link="performance-benchmarks.xtp" title="Benchmarks"/>
+      <item link="jvm-tuning.xtp" title="JVM Tuning"/>
+      <item link="performance-faq.xtp" title="Performance FAQ"/>
+      <item link="performance-scrapbook.xtp" title="Performance Scrapbook"/>
+      <item link="tuning.xtp" title="Tuning"/>
+    </item>
+      -->
+
+    <!--
+       - Quercus
+      -->
+    <item link="quercus.xtp" title="Quercus/PHP">
+      <item title="Security" link="quercus-security.xtp"
+            description="Quercus gains security advantages from the JVM platform"/>
+      <item title="Module Status" link="quercus-module-status.xtp"/>
+    </item>
+      
+    <item link="resin-remoting.xtp" title="Remoting"
+          description="exposing Java services as HTTP/Web protocols"/>
+    
+    <!--
+       - Security
+      -->
+	    
+    <item link="resin-security.xtp" title="Security"/>
+    
+    <!--
+       - Server Push
+      -->
+    <item link="resin-comet.xtp" title="Server Push"/>
+    
+    <!--
+       - Servlet
+      -->
+    <item link="servlet.xtp" title="Servlets"/>
+  </item>
+</navigation>

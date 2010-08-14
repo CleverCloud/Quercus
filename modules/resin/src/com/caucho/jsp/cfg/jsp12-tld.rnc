@@ -1,0 +1,232 @@
+
+default namespace local = ""
+namespace local = ""
+namespace jsp12 = "http://java.sun.com/JSP/TagLibraryDescriptor"
+
+j2ee_dewey-version = string
+j2ee_fully-qualified-class = string
+j2ee_generic-boolean = string
+j2ee_java-identifier = string
+j2ee_path = string
+j2ee_variable = string
+
+jsp12_attribute = element attribute {
+  element name { j2ee_java-identifier },
+
+  element required { j2ee_generic-boolean }?,
+
+  element rtexprvalue { j2ee_generic-boolean }?,
+  element type { j2ee_fully-qualified-class }?,
+
+  jsp12_description?
+}
+
+jsp12_ns_attribute = element jsp12:attribute {
+  element jsp12:name { j2ee_java-identifier },
+
+  element jsp12:required { j2ee_generic-boolean }?,
+
+  element jsp12:rtexprvalue { j2ee_generic-boolean }?,
+  element jsp12:type { j2ee_fully-qualified-class }?,
+
+  jsp12_ns_description?
+}
+
+jsp12_body-content = element body-content {
+  "tagdependent"
+  | "JSP"
+  | "empty"
+}
+
+jsp12_ns_body-content = element jsp12:body-content {
+  "tagdependent"
+  | "JSP"
+  | "empty"
+}
+
+jsp12_description = element description { string }
+
+jsp12_ns_description = element jsp12:description { string }
+
+jsp12_display-name = element display-name { string }
+
+jsp12_ns_display-name = element jsp12:display-name { string }
+
+jsp12_example = element example { string }
+
+jsp12_ns_example = element jsp12:example { string }
+
+jsp12_icon = element icon { string }
+
+jsp12_ns_icon = element jsp12:icon { string }
+
+jsp12_init-param = element init-param {
+  element param-name { string },
+
+  element param-value { string },
+
+  jsp12_description?
+}
+
+jsp12_ns_init-param = element jsp12:init-param {
+  element jsp12:param-name { string },
+
+  element jsp12:param-value { string },
+
+  jsp12_ns_description?
+}
+
+jsp12_large-icon = element large-icon { string }
+
+jsp12_ns_large-icon = element jsp12:large-icon { string }
+
+jsp12_listener = element listener {
+  element listener-class { j2ee_fully-qualified-class }
+}
+
+jsp12_ns_listener = element jsp12:listener {
+  element jsp12:listener-class { j2ee_fully-qualified-class }
+}
+
+jsp12_small-icon = element small-icon { string }
+
+jsp12_ns_small-icon = element jsp12:small-icon { string }
+
+jsp12_tag = element tag {
+  element name { string },
+
+  element tag-class { j2ee_fully-qualified-class },
+
+  element tei-class { j2ee_fully-qualified-class }?,
+
+  jsp12_body-content?,
+
+  jsp12_display-name?,
+
+  jsp12_small-icon?,
+
+  jsp12_large-icon?,
+
+  jsp12_description?,
+
+  jsp12_variable*,
+
+  jsp12_attribute*,
+
+  jsp12_example?
+}
+
+jsp12_ns_tag = element jsp12:tag {
+  element jsp12:name { string },
+
+  element jsp12:tag-class { j2ee_fully-qualified-class },
+
+  element jsp12:tei-class { j2ee_fully-qualified-class }?,
+
+  jsp12_ns_body-content?,
+
+  jsp12_ns_display-name?,
+
+  jsp12_ns_small-icon?,
+
+  jsp12_ns_large-icon?,
+
+  jsp12_ns_description?,
+
+  jsp12_ns_variable*,
+
+  jsp12_ns_attribute*,
+
+  jsp12_ns_example?
+}
+
+jsp12_taglib = element (taglib|jsp12:taglib) {
+  element tlib-version { j2ee_dewey-version },
+
+  element jsp-version { "1.2" },
+
+  element short-name { string },
+
+  element uri { string }?,
+
+  jsp12_display-name?,
+
+  jsp12_small-icon?,
+
+  jsp12_large-icon?,
+
+  jsp12_description?,
+
+  jsp12_validator?,
+
+  jsp12_listener*,
+
+  jsp12_tag+
+}
+
+jsp12_ns_taglib = element jsp12:taglib {
+  element jsp12:tlib-version { j2ee_dewey-version },
+
+  element jsp12:jsp-version { "1.2" },
+
+  element jsp12:short-name { string },
+
+  element jsp12:uri { string }?,
+
+  jsp12_ns_display-name?,
+
+  jsp12_ns_small-icon?,
+
+  jsp12_ns_large-icon?,
+
+  jsp12_ns_description?,
+
+  jsp12_ns_validator?,
+
+  jsp12_ns_listener*,
+
+  jsp12_ns_tag+
+}
+
+jsp12_validator = element validator {
+  element validator-class { j2ee_fully-qualified-class },
+
+  jsp12_init-param*,
+
+  jsp12_description?
+}
+
+jsp12_ns_validator = element jsp12:validator {
+  element jsp12:validator-class { j2ee_fully-qualified-class },
+
+  jsp12_ns_init-param*,
+
+  jsp12_ns_description?
+}
+
+jsp12_variable = element variable {
+  ( element name-given { j2ee_java-identifier }
+  | element name-from-attribute { j2ee_java-identifier }),
+
+  element variable-class { j2ee_fully-qualified-class }?,
+
+  element declare { j2ee_generic-boolean }?,
+
+  element scope { "AT_BEGIN" | "NESTED" | "AT_END" }?,
+
+  jsp12_description?
+}
+
+jsp12_ns_variable = element jsp12:variable {
+  ( element jsp12:name-given { j2ee_java-identifier }
+  | element jsp12:name-from-attribute { j2ee_java-identifier }),
+
+  element jsp12:variable-class { j2ee_fully-qualified-class }?,
+
+  element jsp12:declare { j2ee_generic-boolean }?,
+
+  element jsp12:scope { "AT_BEGIN" | "NESTED" | "AT_END" }?,
+
+  jsp12_ns_description?
+}
+

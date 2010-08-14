@@ -1,0 +1,2 @@
+activemq=org.apache.activemq.command.ActiveMQQueue
+activemq.temp=org.apache.activemq.command.ActiveMQTempQueue

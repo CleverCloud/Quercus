@@ -1,0 +1,314 @@
+default namespace j2ee13 = ""
+namespace local = ""
+
+j2ee13_any = text | (attribute * {string} | element * { j2ee13_any })*
+
+j2ee13_boolean =
+  "true"
+  | "false"
+  | "yes"
+  | "no"
+
+j2ee13_description = element description {
+  attribute xml:lang { string }?,
+
+  string
+}
+
+j2ee13_description-Group =
+  j2ee13_description*,
+
+  j2ee13_display-name?,
+
+  j2ee13_icon?
+
+j2ee13_dewey-version = string
+
+j2ee13_display-name = element display-name {
+  attribute xml:lang { string }?,
+
+  string
+}
+
+j2ee13_ejb-link = element ejb-link {
+  string
+}
+
+j2ee13_ejb-local-ref = element ejb-local-ref {
+  attribute id { string }?,
+
+  j2ee13_description*,
+
+  j2ee13_ejb-ref-name,
+
+  j2ee13_ejb-ref-type,
+
+  j2ee13_local-home,
+
+  j2ee13_local,
+
+  j2ee13_ejb-link?
+}
+
+j2ee13_ejb-ref = element ejb-ref {
+  attribute id { string }?,
+
+  j2ee13_description*,
+
+  j2ee13_ejb-ref-name,
+
+  j2ee13_ejb-ref-type,
+
+  j2ee13_home,
+
+  j2ee13_remote,
+
+  j2ee13_ejb-link?
+}
+
+j2ee13_ejb-ref-name = element ejb-ref-name {
+  j2ee13_jndi-name
+}
+
+j2ee13_ejb-ref-type = element ejb-ref-type {
+  "Entity" | "Session"
+}
+
+j2ee13_env-entry = element env-entry {
+  attribute id { string }?,
+
+  j2ee13_description*,
+
+  j2ee13_env-entry-name,
+
+  j2ee13_env-entry-type,
+
+  j2ee13_env-entry-value?
+}
+
+j2ee13_env-entry-name = element env-entry-name {
+  j2ee13_jndi-name
+}
+
+j2ee13_env-entry-type = element env-entry-type {
+  "java.lang.Boolean"
+  | "java.lang.Byte"
+  | "java.lang.Character"
+  | "java.lang.String"
+  | "java.lang.Short"
+  | "java.lang.Integer"
+  | "java.lang.Long"
+  | "java.lang.Float"
+  | "java.lang.Double"
+}
+
+j2ee13_env-entry-value = element env-entry-value {
+  string
+}
+
+j2ee13_fully-qualified-class = string
+
+j2ee13_home = element home {
+  j2ee13_fully-qualified-class
+}
+
+j2ee13_icon = element icon {
+  attribute id { string }?,
+
+  attribute xml:lang { string }?,
+
+  element small-icon { j2ee13_path }?,
+
+  element large-icon { j2ee13_path }?
+}
+
+j2ee13_init-param = element init-param {
+  j2ee13_param-value-Type
+}
+
+j2ee13_java-identifier = string
+
+j2ee13_jndi-environment-refs-Group =
+  j2ee13_env-entry*,
+
+  j2ee13_ejb-ref*,
+
+  j2ee13_ejb-local-ref*,
+
+  j2ee13_service-ref-Group,
+
+  j2ee13_resource-ref*,
+
+  j2ee13_resource-env-ref*,
+
+  j2ee13_message-destination-ref*
+
+j2ee13_jndi-name = string
+
+j2ee13_local = element local {
+  j2ee13_fully-qualified-class
+}
+
+j2ee13_local-home = element local-home {
+  j2ee13_fully-qualified-class
+}
+
+j2ee13_message-destination = element message-destination {
+  attribute id { string }?,
+
+  j2ee13_description-Group,
+
+  j2ee13_message-destination-name
+}
+
+j2ee13_message-destination-link = element message-destination-link {
+  j2ee13_fully-qualified-class
+}
+
+j2ee13_message-destination-name = element message-destination-name {
+  string
+}
+
+j2ee13_message-destination-ref = element message-destination-ref {
+  attribute id { string }?,
+
+  j2ee13_description*,
+
+  j2ee13_message-destination-ref-name,
+
+  j2ee13_message-destination-type,
+
+  j2ee13_message-destination-usage,
+
+  j2ee13_message-destination-link?
+}
+
+j2ee13_message-destination-ref-name = element message-destination-ref-name {
+  j2ee13_jndi-name
+}
+
+j2ee13_message-destination-type = element message-destination-type {
+  j2ee13_fully-qualified-class
+}
+
+j2ee13_message-destination-usage = element message-destination-usage {
+  "Consumes"
+  | "Produces"
+  | "ConsumesProduces"
+}
+
+j2ee13_param-name = element param-name {
+  j2ee13_string
+}
+
+j2ee13_param-value = element param-value {
+  string
+}
+
+j2ee13_param-value-Type =
+  j2ee13_description*,
+
+  j2ee13_param-name,
+
+  j2ee13_param-value
+
+j2ee13_path = string
+
+j2ee13_remote = element remote {
+  j2ee13_fully-qualified-class
+}
+
+j2ee13_res-auth = element res-auth {
+  "Application" | "Container"
+}
+
+j2ee13_res-sharing-scope = element res-sharing-scope {
+  "Shareable" | "Unshareable"
+}
+
+j2ee13_res-type = element res-type {
+  j2ee13_fully-qualified-class
+}
+
+j2ee13_resource-env-ref = element resource-env-ref {
+  attribute id { string }?,
+
+  j2ee13_description*,
+
+  j2ee13_resource-env-ref-name,
+
+  j2ee13_resource-env-ref-type
+}
+
+j2ee13_resource-env-ref-name = element resource-env-ref-name {
+  j2ee13_jndi-name
+}
+
+j2ee13_resource-env-ref-type = element resource-env-ref-type {
+  j2ee13_fully-qualified-class
+}
+
+j2ee13_resource-ref = element resource-ref {
+  attribute id { string }?,
+
+  j2ee13_description*,
+
+  j2ee13_res-ref-name,
+
+  j2ee13_res-type,
+
+  j2ee13_res-auth,
+
+  j2ee13_res-sharing-scope?
+}
+
+j2ee13_res-ref-name = element res-ref-name {
+  j2ee13_jndi-name
+}
+
+j2ee13_role-name = element role-name {
+  string
+}
+
+j2ee13_role-link = element role-link {
+  string
+}
+
+j2ee13_run-as = element run-as {
+  attribute id { string }?,
+
+  j2ee13_description*,
+
+  j2ee13_role-name
+}
+
+j2ee13_security-role = element security-role {
+  attribute id { string }?,
+
+  j2ee13_description*,
+
+  j2ee13_role-name,
+
+  j2ee13_role-link?
+}
+
+j2ee13_security-role-ref = element security-role-ref {
+  attribute id { string }?,
+
+  j2ee13_description*,
+
+  j2ee13_role-name,
+
+  j2ee13_role-link?
+}
+
+j2ee13_service-ref = element service-ref { empty }
+
+j2ee13_service-ref-Group =
+  j2ee13_service-ref*
+
+j2ee13_string = string
+
+j2ee13_true-false = "true" | "false"
+
+j2ee13_war-path = string

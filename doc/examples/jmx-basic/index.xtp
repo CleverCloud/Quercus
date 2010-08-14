@@ -1,0 +1,172 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Simple JMX-managed Resource</title>
+    <type>tutorial</type>
+    <description>
+      <p>
+      Resources can be JMX managed by exposing a management interface
+      and registering as an MBean.
+      </p>
+    </description>
+ <tutorial-startpage>index.jsp</tutorial-startpage>
+  </header>
+
+<body>
+
+<summary/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <td><viewfile-link file="WEB-INF/web.xml"/></td>
+  <td>Configures the JMX-managed bean</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/Basic.java"/></td>
+  <td>The resource bean implementation.</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/BasicMBean.java"/></td>
+  <td>The management interface for the bean.</td>
+</tr>
+<tr>
+  <td><viewfile-link file="index.jsp"/></td>
+  <td>Using the managed bean.</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="JMX Resource">
+
+<p>Any resource in Resin can be managed by JMX by implementing
+an MBean interface and by specifying an MBean name.  The interface
+exposes the resource's methods to be managed.</p>
+
+<s2 title="The Basic resource">
+
+<p>The <code>Basic</code> bean is the example resource implementation.
+It exposes its managed interface by implementing a <code>BasicMBean</code>
+interface.  The <code>xxxMBean</code> naming convention lets JMX determine
+which interface to use for management.  The MBean interface will expose
+the Data attribute to JMX.</p>
+
+<example title="Basic.java">
+package example;
+
+public class Basic implements BasicMBean {
+  private String _data = "default";
+
+  public void setData(String data)
+  {
+    _data = data;
+  }
+
+  public String getData()
+  {
+    return _data;
+  }
+}
+</example>
+
+<p><code>BasicMBean</code> is the bean's management interface.
+It exposes a single attribute, Data, as a getter/setter pair.
+The name of the interface is important.  Since the resource is named
+<code>Basic</code>, the MBean interface will be
+named <code>BasicMBean</code>.</p>
+
+<example title="BasicMBean.java">
+package example;
+
+public interface BasicMBean {
+  public void setData(String data);
+
+  public String getData();
+}
+</example>
+
+</s2>
+
+<s2 title="MBean names">
+
+<p>MBeans are stored in the MBean server using
+an <code>ObjectName</code> as its key.  Essentially, the MBean server
+stores the managed beans in a map using the mbean name as a key.</p>
+
+<p>The mbean name consists of a set of &lt;name,value&gt; properties
+and a "domain" used like a namespace.  The properties allow for
+querying related mbeans.  For example, you could request for
+all mbeans with "J2EEType=Servlet", which would return all the
+managed servlets.</p>
+
+<p>The example uses the name "example:name=basic".
+"example" is the domain and the bean's single property is "name" with
+a value of "basic".  By convention, an mbean would normally also have
+a "type" property, but this example is using a name as simple as possible.</p>
+
+</s2>
+
+<s2 title="web.xml configuration">
+
+<p>The web.xml (or resin.conf) configures the resource with the
+&lt;resource&gt; tag just as with
+<a href="doc|ioc-bean.xtp">other resources</a>.  The resources is
+registered as an MBean by specifying an <var>mbean-name</var>.
+</p>
+
+<example title="web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;resource mbean-name="example:name=basic" type="example.Basic"&gt;
+    &lt;init&gt;
+      &lt;data&gt;An Example Resource&lt;/data&gt;
+    &lt;/init&gt;
+  &lt;/resource&gt;
+&lt;/web-app&gt;
+</example>
+
+<deftable>
+<tr><th>tag</th><th>description
+</th></tr><tr><td>resource</td><td>defines the resource
+</td></tr><tr><td>mbean-name</td><td>the MBean name of the resource
+</td></tr><tr><td>type</td><td>the class name of the resource bean
+</td></tr><tr><td>init</td><td>Any bean-style configuration goes here
+</td></tr><tr><td>data</td><td>The example bean's <code>setData</code> parameter.
+</td></tr></deftable>
+
+</s2>
+
+<s2 title="Using the resource proxy">
+
+<p>Resin's JMX implementation provides a proxy to
+managed object using the interface for an API.  You can, of course,
+use the standard JMX interface, the proxy interface is much easier to
+use.</p>
+
+<example title="index.jsp">
+&lt;%@ page import='com.caucho.jmx.Jmx, example.BasicMBean' %&gt;
+&lt;%
+BasicMBean basic = (BasicMBean) Jmx.find("example:name=basic");
+
+out.println("data: " + basic.getData());
+%&gt;
+</example>
+<results>
+data: An example resource
+</results>
+
+</s2>
+
+</s1>
+
+<s1 title="Compatibility">
+
+<p>The resource's code is completely compatible with other JMX
+implementations.  The proxy interface, however, is unique to Resin.
+If you choose, you can use the JMX API to access the resource.
+The configuration, of course, is Resin-dependent.</p>
+
+</s1>
+
+  </body>
+</document>

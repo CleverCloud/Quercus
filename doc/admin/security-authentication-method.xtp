@@ -1,0 +1,56 @@
+<document>
+<header>
+<product>resin</product>
+<title>Resin Login Managers</title>
+<description>
+<p>
+The following are details on the login managers that can be used with Resin, along with 
+example code to utilize as a starting point for your applications:  
+</p>
+</description>
+</header>
+<body>
+<localtoc/>
+<include-defun name="resin:BasicLogin"/>
+<include-defun name="resin:DigestLogin"/>
+<include-defun name="resin:FormLogin"/>
+<!-- 
+XXX: This really needs further clarification or some external references
+<s2 title="Custom Login Manager">
+<p>The Login is primarily responsible for extracting the credentials
+from the request (typically username and password) and passing those
+to the ServletAuthenticator.</p>
+<p>The Servlet API calls the Login in two contexts: directly from
+<code>ServletRequest.getUserPrincipal()</code>, and during 
+security checking.   When called from the Servlet API, the login class
+can't change the response.  In other words, if an application
+calls getUserPrincipal(), the Login class can't return a forbidden
+error page.  When the servlet engine calls authenticate(), the login class
+can return an error page (or forward internally.)</p>
+<p>Normally, Login implementations will defer the actual authentication
+to a ServletAuthenticator class.  That way, both "basic" and "form" login
+can use the same JdbcAuthenticator.  Some applications, like SSL
+client certificate login, may want to combine the Login and authentication
+into one class.</p>
+<p>Login instances are configured through bean introspection.  Adding
+a public <code>setFoo(String foo)</code> method will be configured with
+the following login-config:</p>
+<example title="WEB-INF/resin-web.xml CustomLogin">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+          xmlns:resin="urn:java:com.caucho.resin">
+          xmlns:foo="urn:java:com.foo">
+     
+  &lt;foo:CustomLogin>
+    &lt;foo:foo&gt;bar&lt;/foo:foo&gt;
+  &lt;/foo:CustomLogin>
+
+  &lt;resin:XmlAuthenticator>
+    ...
+  &lt;/resin:XmlAuthenticator>
+
+&lt;/web-app>  
+</example>
+</s2>
+-->
+</body>
+</document>

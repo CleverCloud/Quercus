@@ -1,0 +1,4 @@
+include "web-xml-content.rnc"
+
+start = j2ee_web-app | javaee_web-app
+

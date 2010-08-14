@@ -1,0 +1,124 @@
+<?php
+/**
+ * JMX display
+ */
+
+require_once "WEB-INF/php/inc.php";
+
+if (! admin_init($query)) {
+  return;
+}
+
+$mbean_list = $g_mbean_server->query("*:*");
+
+$mbean_group = jmx_partition($mbean_list, array(":domain:"));
+
+$group_array = array(":domain:", "type");
+
+$data_id = 0;
+ksort($mbean_group);
+foreach ($mbean_group as $group_name => $group_mbeans) {
+  echo "<h1>" . $group_name . "</h1>\n";
+
+  display_jmx($mbean_server, $group_mbeans);
+/*
+  $type_partition = jmx_partition($group_mbeans, array("type"));
+  ksort($type_partition);
+
+  echo "<table class='data'>";
+  
+  foreach ($type_partition as $type_name => $type_mbeans) {
+    echo "<tr><td class='group' colspan='2'>$type_name</td></tr>\n";
+
+    foreach ($type_mbeans as $mbean) {
+      $attr_list = $mbean->mbean_info->attributes;
+      sort($attr_list);
+      
+      $attr_names = null;
+      
+      foreach ($attr_list as $attr) {
+        $attr_names[] = $attr->name;
+      }
+      sort($attr_names);
+
+      $start_id = ++$data_id;
+
+      $s = "show('h$start_id');hide('s$start_id');";
+      $h = "hide('h$start_id');show('s$start_id');";
+
+      for ($i = 0; $i < count($attr_names); $i++) {
+        $s .= "show('jmx" . ($i + $start_id) . "');";
+        $h .= "hide('jmx" . ($i + $start_id) . "');";
+      }
+      
+      echo "<tr><td class='item' colspan='2'>";
+      echo "<a id='s$start_id' href=\"javascript:$s\">[show]</a>\n";
+      echo "<a id='h$start_id' href=\"javascript:$h\" style='display:none'>[hide]</a>\n";
+      echo jmx_short_name($mbean->mbean_name, $group_array);
+      echo "</td></tr>\n";
+
+      $row = 0;
+
+      foreach ($attr_names as $attr_name) {
+        $id = "jmx" . $data_id++;
+      
+        echo "<tr id='$id' style='display:none'>";
+	echo "<td>" . $attr_name . "</td>";
+
+	$v = $mbean->$attr_name;
+
+	echo "<td>";
+	
+	display_jmx_data($v);
+
+  	echo "</td>\n";
+        echo "</tr>";
+      }
+    }
+  }
+  
+  echo "</table>";
+*/
+}
+
+// var_dump($mbean_group);
+//usort($a, "jmx_order");
+
+//var_dump($a);
+
+function jmx_order($a, $b)
+{
+  $name_a = $a->mbean_name;
+  $name_b = $b->mbean_name;
+
+  $exp_a = mbean_explode($name_a);
+  $exp_b = mbean_explode($name_b);
+
+  $cmp = strcmp($exp_a['type'], $exp_b['type']);
+  
+  if ($cmp != 0) {
+    return $cmp;
+  }
+  
+  return strcmp($name_a, $name_b);
+}
+
+function jmx_partition_type($mbean_list)
+{
+  $env = null;
+
+  foreach ($mbean_list as $mbean) {
+    $exp = mbean_explode($mbean->mbean_name);
+
+    $type = $exp['type'];
+      
+    $env[$type][] = $mbean;
+
+  }
+  
+  ksort($env);
+
+  return $env;
+}
+
+?>

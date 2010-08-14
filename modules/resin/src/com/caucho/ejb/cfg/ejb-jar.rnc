@@ -1,0 +1,5 @@
+include "ejb14-jar.rnc"
+include "ejb15-jar.rnc"
+include "ejb16-jar.rnc"
+
+start = ejb16_ejb-jar | ejb15_ejb-jar | ejb14_ejb-jar

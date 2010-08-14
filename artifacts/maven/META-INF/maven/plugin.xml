@@ -1,0 +1,27 @@
+<plugin>
+  <description></description>
+  <groupId>com.caucho</groupId>
+  <artifactId>resin-maven-plugin</artifactId>
+  <version>@VERSION@</version>
+  <goalPrefix>resin</goalPrefix>
+  <isolatedRealm>false</isolatedRealm>
+  <inheritedByDefault>true</inheritedByDefault>
+  <mojos>
+    <mojo>
+      <goal>run</goal>
+      <description>Runs an embedded Resin instance</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <implementation>com.caucho.maven.MavenRun</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters/>
+    </mojo>
+  </mojos>
+  <dependencies/>
+</plugin>

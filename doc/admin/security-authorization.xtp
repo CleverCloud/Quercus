@@ -1,0 +1,17 @@
+<document>
+<header>
+<product>resin</product>
+<title>Resin Authorization</title>
+<description></description>
+</header>
+<body>
+<localtoc/>
+<include-defun name="resin:Allow"/>
+<include-defun name="resin:Deny"/>
+<include-defun name="resin:IfUserInRole"/>
+<include-defun name="resin:IfNetwork"/>
+<include-defun name="resin:IfSecure"/>
+<include-defun name="ServletRequestPredicate"/>
+<!-- XXX: The rest of the tags must be properly documented (a large number) -->
+</body>
+</document>

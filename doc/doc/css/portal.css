@@ -1,0 +1,64 @@
+.code {
+  font-family : monospace;
+}
+
+div.portlet-frame {
+  border-style : double;
+  border-width : 4px;
+}
+
+div.portlet-header {
+}
+
+div.portlet-content {
+}
+
+div.portlet-footer {
+}
+
+div.TreeWidget ul {
+  font-size : small;
+  list-style: inside;
+  margin-left : .5em;
+  padding-left : 0 ;
+}
+
+div.TreeWidget li {
+  margin-left : 0 ;
+  padding-left: 0;
+}
+
+div.TreeWidget * ul {
+  margin-left : 1em ;
+  padding-left : 0 ;
+}
+
+div.TreeWidget * li {
+  margin-left : 0 ;
+  padding-left: 0;
+}
+
+div.TreeWidget * li.unopen {
+  list-style-type: disc;
+  list-style-image: treeWidgetUnopen.png;
+}
+
+div.TreeWidget * li.open {
+  list-style-type: circle;
+  list-style-image: treeWidgetUnopen.png;
+}
+
+div.TreeWidget * li.noopen {
+  list-style-type: square;
+  list-style-image: treeWidgetNoopen.png;
+}
+
+div.TreeWidget * li.unsel {
+}
+
+div.TreeWidget * li.sel {
+  background :  yellow;
+}
+
+div.TreeWidget * li.nosel {
+}

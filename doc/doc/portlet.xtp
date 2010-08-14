@@ -1,0 +1,29 @@
+<document>
+<header>
+<product>resin</product>
+<title>Portlet</title> 
+<type>contents</type>
+<description>
+<p>BETA</p>
+
+<p>Portlets form a design pattern where a <em>Portal</em> servlet combines one
+or more component <em>Portlets</em> into a web page.  Because the portlets
+are written as components, they can be cleanly written and tested.  
+Applications which currently use many servlet includes might be more cleanly
+written as portlet applications.</p>
+
+<p>The Portal part of the pattern is a servlet which manages the
+portlets.  In the Hello World example, the servlet is a simple "invoker" which
+calls a single portlet to render the page.  Many applications will
+write their own Portal servlets, using Resin's generic portal
+library to handle the Portlet API.</p>
+
+<p>This implementation is currently in development, API's may change 
+somewhat and some functionality has not yet been implemented.</p>
+</description>
+</header>
+
+<body>
+<summary/>
+</body>
+</document>

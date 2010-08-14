@@ -1,0 +1,426 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Accessing External REST Services with Resin</title>
+    <description>
+      <p>
+      Resin offers simplified access to external REST-based services.
+      This example shows how to access a subset of the flickr<sup><small>TM</small></sup> API.
+      </p>
+    </description>
+    <type>tutorial</type>
+<!--
+    <tutorial-startpage>demo.jsp</tutorial-startpage>
+-->
+  </header>
+
+  <body>
+    <localtoc/>
+
+<s1>
+<p>
+Resin's Service-Oriented Architecture (SOA) allows not only easier deployment
+of web services via SOAP, REST, and Hessian, but also simplified client access 
+to external services.  Traditionally, using REST services as a client required
+developers to write potentially complex libraries.  URL construction and 
+parsing returned XML data can often be clumsy and time-consuming to do manually.
+</p>
+<p>
+Resin's SOA and JAXB simplify these tasks.  This tutorial shows an example for
+a subset of the flickr<sup><small>TM</small></sup> API.
+</p>
+</s1>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr><td><viewfile-link file="WEB-INF/classes/example/FlickrAPI.java"/>
+    </td><td>Interface for the hello service.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/FlickrImpl.java"/>
+    </td><td>The main service implementation.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/data/FlickrResponse.java"/>
+    </td><td>The response object that wraps specialized responses.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/data/FlickrPayload.java"/>
+    </td><td>The payload of a response.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/data/FlickrError.java"/>
+    </td><td>An error payload.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/data/FlickrGroups.java"/>
+    </td><td>A payload of group information.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/data/FlickrPerson.java"/>
+    </td><td>A payload of profile information.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/data/FlickrPhotos.java"/>
+    </td><td>A payload of photo information.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/data/FlickrUser.java"/>
+    </td><td>A payload of user information.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/data/jaxb.index"/>
+    </td><td>Lists the classes to be used by JAXB 
+</td></tr><tr><td><viewfile-link file="WEB-INF/resin-web.xml"/>
+    </td><td>Configures the environment
+</td></tr><tr><td><viewfile-link file="demo.jsp"/>
+    </td><td>Client JSP
+</td></tr></deftable>
+</s1>
+
+<s1 title="Writing a REST Client">
+<p>
+Many companies now offer web services externally to be used as components
+in third-party applications.  These services often have REST, SOAP, and/or
+XML-RPC interfaces.  SOAP and XML-RPC are standards and have somewhat 
+well-defined access methods for clients.  REST on the other hand is about
+being able to use the properties of HTTP to design a custom interface.  Thus
+clients are often difficult to write because each service requires 
+specialization.  Unlike the case of SOAP where WSDLs allow automated 
+construction of client stubs, REST-based services essentially defy 
+standardization.  While Resin's SOA does not offer automated client 
+construction, it does make the task easier.  
+</p>
+<p>
+The example in this tutorial shows how to access a subset of the
+flickr<sup><small>TM</small></sup> image sharing service API.  This API is
+well-designed and consistent which allows very clean client construction.
+</p>
+</s1>
+
+<s1 title="REST Client Architecture">
+<p></p>
+<figure src="rest-client.png"/>
+<p>
+The REST client architecture in Resin can be thought of as a stack.  At the
+top of the stack is the client, which calls methods on a proxy.  That proxy
+then constructs the calls to the external REST service.  Complex objects that
+are sent to the service use JAXB to marshal from Java objects to XML.  The
+request is then processed by the service and a response is sent.  The response
+is unmarshalled from XML to Java using JAXB and returned to the client by
+the proxy.
+</p>
+</s1>
+
+<s1 title="REST Bindings">
+<p>
+A REST interface can be thought of as a binding between an HTTP request
+and a method invocation.  All the portions of the HTTP request (the path
+information, the query, headers, and POSTed data) can be used to construct
+the method call.
+</p>
+<p>
+In the case of the flickr<sup><small>TM</small></sup> API, the method 
+binding is straightforward and uses the query data almost exclusively.  For 
+example, there is a method, <code>flickr.people.findByUsername</code>, that 
+takes two arguments, an <code>api_key</code> and a <code>username</code>.  The
+<code>api_key</code> allows flickr<sup><small>TM</small></sup> to track 
+and manage usage while the <code>username</code> is used to find a user's id.
+The method name and these two arguments are used to construct a URL to 
+perform the REST operation: 
+<url>http://api.flickr.com/services/rest/?method=flickr.people.findByUsername&amp;api_key=XXX&amp;username=foo</url>.  
+</p>
+<p>
+The data returned by the service uses a simple XML format.  In this case,
+the service might return the following:
+</p>
+<example>
+&lt;?xml version="1.0" encoding="utf-8" ?>
+&lt;rsp stat="ok">
+  &lt;user nsid="12345678901@N01">
+    &lt;username>foo&lt;/username> 
+  &lt;/user>
+&lt;/rsp>
+</example>
+<p>
+The next section shows how to construct a Java client interface to 
+construct these URLs and decode the responses.
+</p>
+</s1>
+
+<s1 title="Annotated Client Interface">
+
+<p>
+An annotated Java class or interface is used to access a REST service 
+as a client.  In this example, only JAX-WS annotations are used, so those
+developers already familiar with JAX-WS can leverage their experience to
+construct certain types of REST interfaces.
+</p>
+<example title="FlickrAPI.java">
+package example;
+
+import javax.jws.*;
+import example.data.*;
+
+public interface FlickrAPI
+{
+  @WebMethod(operationName="flickr.people.findByEmail")
+  public FlickrResponse
+  findByEmail(@WebParam(name="api_key") String api_key,
+              @WebParam(name="find_email") String find_email);
+
+  @WebMethod(operationName="flickr.people.findByUsername")
+  public FlickrResponse
+  findByUsername(@WebParam(name="api_key") String api_key,
+                 @WebParam(name="username") String username);
+
+  @WebMethod(operationName="flickr.people.getInfo")
+  public FlickrResponse
+  getInfo(@WebParam(name="api_key") String api_key,
+          @WebParam(name="user_id") String user_id);
+
+  @WebMethod(operationName="flickr.people.getPublicGroups")
+  public FlickrResponse
+  getPublicGroups(@WebParam(name="api_key") String api_key,
+                  @WebParam(name="user_id") String user_id);
+
+  @WebMethod(operationName="flickr.people.getPublicPhotos")
+  public FlickrResponse
+  getPublicPhotos(@WebParam(name="api_key") String api_key,
+                  @WebParam(name="user_id") String user_id,
+                  @WebParam(name="extras") String extras,
+                  @WebParam(name="per_page") int per_page,
+                  @WebParam(name="page") int page);
+}
+</example>
+
+<p>
+In this interface, there are five methods, each annotated with @WebMethod.
+The <code>operationName</code> field is overloaded here to give the REST
+method name.  The method parameters are all annotated with @WebParam.  The
+<code>name</code> field gives a key name for the argument.  Resin uses this
+interface to construct URLs sent to a service.  By default, the method name
+is sent in the query using "method" as the key.  This is customizable using
+the annotations @RestMethod and @RestService, but for this example, no
+customization is needed.
+</p>
+
+<p>
+When a client calls one of the methods in the interface above, Resin
+automatically constructs a URL, makes the request, and decodes the response.
+Notice that the return value of all the methods above is FlickrResponse.
+This class is a JAXB-annotated class that wraps all the responses sent from
+the service.  The next section shows how to construct the JAXB-annotated
+classes for easy access to response data.
+</p>
+
+</s1>
+
+<s1 title="JAXB-Annotated Response Classes">
+<p>
+Even though flickr<sup><small>TM</small></sup> uses a custom XML format
+for responses, it is easy to construct simple JAXB-annotated classes for
+these responses, even without schema!  First notice that the responses all
+have a wrapper element, <code>&lt;rsp></code>.  This wrapper is represented
+by a FlickrResponse object in this example.
+</p>
+<example title="FlickrResponse.java">
+package example.data;
+
+import javax.xml.bind.annotation.*;
+
+@XmlRootElement(name="rsp")
+public class FlickrResponse {
+  @XmlAttribute public String stat = "ok";
+  @XmlAnyElement(lax=true) public FlickrPayload payload;
+
+  public String toString()
+  {
+    return "FlickrResponse[stat=" + stat + ", payload=" + payload + "]";
+  }
+}
+</example>
+<p>
+Notice the @XmlRootElement annotation on the class.  This annotation sets the
+the element name to <code>rsp</code>.  Next, there is a status field which
+is an attribute in the element.  JAXB simply uses the field name in this case
+to set the attribute when the @XmlAttribute annotation is present.  Finally,
+the payload is annotated with @XmlAnyElement.  This annotation is
+necessary since <code>FlickrPayload</code> is an interface.  @XmlAnyElement
+allows the marshalling of an interface or abstract class.  The <code>lax</code>
+property allows JAXB to use known classes to unmarshal an interface or
+class.  How to let JAXB know about such class is covered at the next
+section.
+</p>
+<p>
+FlickrPayload is an empty interface, used only for typing in this example.
+FlickrUser implements FlickrPayload and is the response payload used by the 
+<code>flickr.people.findByEmail</code> and
+<code>flickr.people.findByUsername</code> methods.  The XML response from
+the section "REST Bindings" above corresponds to this class.
+</p>
+<example title="FlickrUser.java">
+package example.data;
+
+import javax.xml.bind.annotation.*;
+
+@XmlRootElement(name="user")
+public class FlickrUser implements FlickrPayload {
+  @XmlAttribute public String nsid;
+  @XmlElement public String username;
+
+  public String toString()
+  {
+    return "FlickrUser[nsid=" + nsid + ", username=" + username + "]";
+  }
+}
+</example>
+<p>
+The <code>FlickrUser</code> class is somewhat simpler than
+the <code>FlickrResponse</code> example above in that it only has a root
+element, <code>&lt;user></code>, a single
+attribute, <code>nsid</code>, and a single child element, 
+<code>&lt;username></code>.  The attribute and child element here are both
+simply strings.  <code>FlickrPhotos</code> is a more complex class with
+a variable number of child elements.
+</p>
+<example title="FlickrPhotos.java">
+package example.data;
+
+import java.util.*;
+import javax.xml.bind.annotation.*;
+
+@XmlRootElement(name="photos")
+public class FlickrPhotos implements FlickrPayload {
+  @XmlAttribute public int page;
+  @XmlAttribute public int pages;
+  @XmlAttribute public int perpage;
+  @XmlAttribute public int total;
+
+  @XmlElement(name="photo") public List&lt;Photo> photos = new ArrayList&lt;Photo>();
+
+  public static class Photo {
+    @XmlAttribute public String id;
+    @XmlAttribute public String owner;
+    @XmlAttribute public String secret;
+    @XmlAttribute public int server;
+    @XmlAttribute public String title;
+    @XmlAttribute public int ispublic;
+    @XmlAttribute public int isfriend;
+    @XmlAttribute public int isfamily;
+
+    public String toString()
+    {
+      return "Photo[id=" + id + ", " +
+                   "owner=" + owner + ", " +
+                   "secret=" + secret + ", " +
+                   "server=" + server + ", " +
+                   "title=" + title + ", " +
+                   "ispublic=" + ispublic + ", " +
+                   "isfriend =" + isfriend + ", " +
+                   "isfamily=" + isfamily + "]";
+    }
+  }
+
+  public String toString()
+  {
+    StringBuilder sb = new StringBuilder();
+    sb.append("FlickrPhotos[page=" + page + ", ");
+    sb.append(             "pages=" + pages + ", ");
+    sb.append(             "perpage=" + perpage + ", ");
+    sb.append(             "total=" + total + ", ");
+    sb.append(             "photos=(");
+
+    for (Photo photo : photos) {
+      sb.append(photo.toString());
+      sb.append(' ');
+    }
+
+    sb.append(")]");
+
+    return sb.toString();
+  }
+}
+</example>
+<p>
+Here there are four attributes of the root element and a list of child
+elements representing the photos.  Each photo has a set of attributes
+as well.  By default, JAXB serializes lists as unadorned sequences of
+elements.  For example, a FlickrPhotos object with two photos might have
+the following XML:
+</p>
+<example title="">
+&lt;rsp stat="ok">
+  &lt;photos total="2" perpage="10" pages="1" page="1">
+    &lt;photo isfamily="0" isfriend="0" ispublic="1" title="Our wedding"
+           server="2" secret="x123456" owner="12345678901@N01" id="3041"/>
+
+    &lt;photo isfamily="0" isfriend="1" ispublic="0" title="Best friends"
+           server="1" secret="y123456" owner="12345678901@N01" id="3042"/>
+  &lt;/photos>
+&lt;/rsp>
+</example>
+<p>
+The remaining payload classes, <code>FlickrError</code>, 
+<code>FlickrGroups</code>, and <code>FlickrPerson</code>, are annotated
+similarly.
+</p>
+</s1>
+
+<s1 title="Client configuration">
+
+<p>
+A REST client is configured using the &lt;web-service-client> tag, just like
+with SOAP and Hessian clients.  The only difference is that the URL must
+use the "rest:" prefix.  The Resin SOA connects to the service using the
+given URL and places a proxy instance into JNDI.  Any clients may access
+the service then by doing a JNDI lookup, then calling methods on the returned
+object.
+</p>
+
+<example title="resin-web.xml">
+&lt;web-service-client jndi-name="rest/flickr">
+  &lt;url>rest:${webApp.url}/flickr/rest/&lt;/url>
+  &lt;interface>example.FlickrAPI&lt;/interface>
+  &lt;jaxb-package>example.data&lt;/jaxb-package>
+&lt;/web-service-client>
+</example>
+
+<p>
+Notice the &lt;jaxb-package> tag.  In order for JAXB to marshal and
+unmarshal objects, it must know all the classes it might encounter.
+There are two ways to inform JAXB about the classes: either by a list of
+package names or an explicit list of classes.  In this example, all of the
+classes that JAXB will use are in the package <code>example.data</code>,
+so the &lt;jaxb-package> tag is the easiest way.  The &lt;jaxb-package>
+tag may be used multiple times to add classes from several packages.
+(It is also possible to use multiple &lt;jaxb-class> tags to list the
+classes explicitly.)
+</p>
+
+<p>
+Simply listing a &lt;jaxb-package> may not be appropriate in all cases.  
+In fact in this example, notice that FlickrPayload is simply an empty
+interface and is not JAXB-annotated.  Thus JAXB should load only those
+classes in the <code>example.data</code> package that are annotated. 
+The JAXB standard specifies that a file named "jaxb.index" will be read 
+by JAXB whenever a package is given.  This file should be placed in the
+package directory.  The list of classes should be relative to the package,
+without a .java or .class suffix, and should be separated by newlines.
+For this example, the jaxb.index is the following:
+</p>
+
+<example title="jaxb.index">
+FlickrError
+FlickrGroups
+FlickrPerson
+FlickrPhotos
+FlickrResponse
+FlickrUser
+</example>
+</s1>
+
+<s1 title="Testing the interface">
+<p>
+An example implementation of the service is provided here for testing
+purposes only.  It returns sample data upon receiving REST requests and 
+does not actually store or display images.  Because setting up a REST
+service is covered in another tutorial, only the client side of the REST
+connection is explained fully here.
+</p>
+
+<p>
+The demonstration JSP simply looks up the proxy interface in JNDI, then
+calls the methods with sample queries.  The calls and their results are
+printed.
+</p>
+
+<p>
+<i>flickr is a trademark of Yahoo! Inc.</i>
+</p>
+</s1>
+
+  </body>
+</document>

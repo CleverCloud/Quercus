@@ -1,0 +1,404 @@
+<document>
+<properties>
+  <title>Creating and Contributing a Module to the Caucho Modules Repository</title>
+</properties>
+<body>
+
+<section name="Creating and Contributing a Module to the Caucho Modules Repository">
+
+<subsection name="Become a contributor">
+  <h4>Contact Caucho to setup an account</h4>
+
+  <ul>
+    <li>
+      Choose a groupId to represent you.  You cannot use "com.caucho" or
+      "com.caucho.modules" as your groupId.  Your groupId will be used for
+      all modules that you create.
+    </li>
+    <li>
+      Choose an artifactId for each module.
+    </li>
+    <li>
+      Email caucho with your proposed groupId and artifactId, and the staff at Caucho will
+      setup an account that allows you to publish your module to the
+      repository at <a href="http://modules.caucho.com/m2">http://modules.caucho.com/m2</a>.
+    </li>
+    <li>
+      It is recommended that modules use the LGPL or the Apache 2.0 license.
+    </li>
+  </ul>
+
+  <h4>Setup maven with your credentials</h4>
+
+  <p>Enter your credentials in ~/.m2/settings.xml</p>
+
+  <source>
+<b>~/.m2/settings.xml</b>
+
+&lt;settings xmlns="http://maven.apache.org/POM/4.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  &lt;servers>
+    &lt;server>
+      &lt;id>modules.caucho.com&lt;/id>
+      &lt;username>XXX&lt;/username>
+
+      &lt;filePermissions>664&lt;/filePermissions>
+      &lt;directoryPermissions>775&lt;/directoryPermissions>
+
+    &lt;/server>
+  &lt;/servers>
+
+&lt;/settings>
+  </source>
+
+</subsection> <!-- become a contributor -->
+
+<subsection name="Choose your module name and functionality">
+  <p>
+    For each new module you wish to add, contact Caucho with a description
+    of the module and a proposed artifactId.  Caucho staff will work with
+    you to confirm the desirability of the module functionality and
+    make suggestions regarding implementation details.
+  </p>
+
+  <h4>Choosing an artifactId</h4>
+
+  <p>
+    The first portion of the artifactId  should be reflective of the
+    general functionality of the module, according to the following table.
+  </p>
+  <table>
+    <tr>
+      <th>Prefix</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td>resin-XXX</td>
+      <td>
+        The <code>resin-</code> prefix for an artifactId is the general prefix
+        appropriate if none of the following more specialised prefixes apply.
+      </td>
+    </tr>
+    <tr>
+      <td>quercus-XXX</td>
+      <td>
+        The <code>quercus-</code> prefix for an artifactId is appropriate for
+        libraries or applications that are aimed at Quercus, the Java implementation 
+        of PHP.  quercus- modules may be (but often are not) dependent in the
+        com.caucho.quercus namespace, but will typically not be dependent on other
+        com.caucho.** classes.
+        Documentation for extending Quercus with new functionality 
+        is available at <a href="http://quercus.caucho.com">http://quercus.caucho.com</a>.
+      </td>
+    </tr>
+    <tr>
+      <td>bam-XXX</td>
+      <td>
+        The <code>bam-</code> prefix for an artifactId is appropriate for
+        libraries or applications that are aimed at BAM. 
+        Documentation about BAM is available
+        at <a href="http://caucho.com/resin">http://caucho.com/resin</a>.
+      </td>
+    </tr>
+    <tr>
+      <td>hessian-XXX</td>
+      <td>
+        The <code>hessian-</code> prefix for an artifactId is appropriate for
+        libraries that are aimed at Hessian. 
+        A common use case is the provision of serialization/deserialization wrapper
+        classes for legacy classes in third-party libraries that do not
+        provide default constructors.
+        Documentation for extending Hessian with new functionality 
+        is available at <a href="http://hessian.caucho.com">http://hessian.caucho.com</a>.
+      </td>
+    </tr>
+  </table>
+
+  <h4>Module types</h4>
+
+  <p>
+    Modules for Resin come in different flavors.  The kind of module
+    determines how the module is deployed to the Resin server.  The following
+    list is not normative, in that it does not indicate a naming scheme or require
+    any change to your project depending on the type of module.  However it is
+    useful to understand which category your module belongs in.
+  </p>
+
+  <table>
+    <tr>
+      <th>Module type</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td>Web application library</td>
+      <td>
+        A web application library is a <b>jar</b> file that is typically saved in
+        the <code>WEB-INF/lib</code> directory for a web application.
+        It will contain things like Servlets, Filters, and general library
+        code that is then available to the web application.
+      </td>
+    </tr>
+    <tr>
+      <td>Web application</td>
+      <td>
+        A web application is a <b>war</b> file that is typically saved in
+        the <code>$RESIN_HOME/webapps</code> directory of a Resin server.
+        It might be an example web application, or a functional web
+        application that is meant as a starting point for the user to customise.
+      </td>
+    </tr>
+    <tr>
+      <td>Server library</td>
+      <td>
+        A server library is a <b>jar</b> file that is saved in
+        the <code>$RESIN_HOME/lib</code> directory of a Resin server.
+        It provides functionality to all of the applications in the server.
+        Typically a web application library is a better choice.  Server
+        libraries do not accomodate web applications with different version
+        requirements of the library, and code often hasto be "classloader aware" to
+        function properly as a server library.  A server library does have the
+        advantage of saving memory when it is used by multiple web applications.
+      </td>
+    </tr>
+    <tr>
+
+    <td>Server extension</td>
+    <td>
+      A server extension is a <b>jar</b> file that is saved in
+      the <code>$RESIN_HOME/lib</code> directory of a Resin server.
+      It is typically fairly low level and effects or enhances the entire
+      server/jvm.  Configuration for a server extension is accomplished in the
+      resin.xml file.
+    </td>
+  </tr>
+</table>
+
+</subsection>
+
+<subsection name="Create your module layout with maven">
+  <p>
+  Modules use Maven as their build system, and follow the Maven conventions for file layout.
+  A caucho-module-parent parent POM is provided at modules.caucho.com/m2 and provides 
+  base functionality for all modules.
+  </p>
+
+  <h4>Create a pom.xml file</h4>
+
+  <p>
+    The pom file is the main Maven configuration file, Maven documentation is
+    available <a href="http://maven.apache.org/pom.html">here</a>.
+    Module pom files specify <code>caucho-module-parent</code> as a parent,
+    which provides a number of default settings.
+  </p>
+
+  <p>
+    Here is an example pom.xml file to get you started:
+  </p>
+
+  <source>
+<b>$PROJECT_ROOT/pom.xml</b>
+
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+&lt;modelVersion>4.0.0&lt;/modelVersion>
+
+&lt;parent>
+  t;groupId>com.caucho.modules&lt;/groupId>
+    &lt;artifactId>caucho-module-parent&lt;/artifactId>
+  &lt;version>1.0.0&lt;/version>
+  &lt;/parent>
+
+  &lt;groupId>com.hogwarts&lt;/groupId>
+  &lt;artifactId>resin-helloworld&lt;/artifactId>
+  &lt;name>resin-helloworld&lt;/name>
+  &lt;version>1.0.0&lt;/version>
+  &lt;packaging>jar&lt;/packaging>
+  
+  &lt;description>A HelloWorldServlet.&lt;/description>
+      
+  &lt;organization>
+    &lt;name>Hogwarts, Inc&lt;/name>
+    &lt;url>http://hogwarts.com&lt;/url>
+  t;/organization>
+
+  &lt;issueManagement>
+    &lt;system>Mantis&lt;/system>
+    &lt;url>http://bugs.hogwarts.com&lt;/url>
+  &lt;/issueManagement>
+
+  &lt;scm>   
+    &lt;connection>svn:svn://svn.hogwarts.com/resin-helloworld/trunk&lt;/connection>
+  &lt;/scm>
+  
+  &lt;repositories>
+    &lt;repository>
+      &lt;id>com.caucho.modules&lt;/id>
+      &lt;name>com.caucho.modules&lt;/name>
+      &lt;url>http://modules.caucho.com/m2&lt;/url>
+    &lt;/repository>
+  &lt;/repositories>
+ 
+  &lt;dependencies>
+    &lt;dependency>
+      &lt;groupId>com.caucho&lt;/groupId>
+      &lt;artifactId>resin&lt;/artifactId>
+      &lt;version>3.2.0&lt;/version>
+      &lt;scope>provided&lt;/scope>
+    &lt;/dependency>
+  &lt;/dependencies>
+&lt;/project>
+  </source>
+
+  <p>
+    A web application will specify <code>&lt;packaging>war&lt;packaging></code>.
+  </p>
+
+  <h4>Create source files</h4>
+  <p>
+    Source files are placed in the <code>src/main/java/</code> directory:
+  </p>
+  <source>
+<b>$PROJECT_ROOT/src/main/java/com/hogwarts/helloworld/HelloWorldServlet.java</b>
+
+package com.hogwarts.helloworld;
+
+import javax.servlet.*;
+import java.io.*;
+
+public class HelloWorldServlet
+  extends GenericServlet
+{
+  ...
+}
+  </source>
+
+  <h4>Create site documentation</h4>
+  <p>
+    The main documentation page is placed in <code>src/site/xdoc/index.xml</code>
+    or  <code>src/site/apt/index.apt</code>.
+    A guide to creating documentation in a Maven project is available on the
+    <a href="http://maven.apache.org/guides/mini/guide-site.html">Maven site</a>.
+  </p>
+  <source>
+<b>$PROJECT_ROOT/src/site/xdoc/index.xml</b>
+
+&lt;document>
+  &lt;properties>
+    &lt;title>Installation&lt;/title>
+  &lt;/properties>
+
+  &lt;body>
+      
+    &lt;section name="About">
+      &lt;p>     
+        This module is a web application library that provides a HelloWorldServlet.
+      &lt;/p>
+    &lt;/section>
+  
+    &lt;section name="Installation">
+      ...
+      &lt;subsection name="...">
+        ...
+      &lt;/subsection>
+    &lt;/section>
+  
+  &lt;/body>
+&lt;/document>
+    </source>
+
+  <h4>Create a change log</h4>
+
+  <p>
+    A change log is maintained in 
+    <code>src/changes/changes.xml</code>, see the <a href="">Maven documentation</a>
+    for formatting details.
+  </p>
+  <source>
+<b>$PROJECT/ROOT/src/changes/changes.xml</b>
+
+&lt;document>
+  &lt;properties>
+    &lt;title>Changes&lt;/title>
+  &lt;/properties>
+  &lt;body>
+    &lt;release version="1.0.0" date="2008-06" description="First release">
+      &lt;action dev="harry" type="add">
+        Initial implementation.
+      &lt;/action>
+    &lt;/release>
+  &lt;/body>
+&lt;/document>
+  </source>
+
+</subsection>
+
+<subsection name="Build the module">
+<p>
+To build the module, run <code>mvn package</code>.  A jar (or war) file will 
+be placed in <code>target/resin-helloworld-1.0.0.jar</code>.
+</p>
+<p>
+To build the documentation, run <code>mvn site</code>.  The file
+<code>target/site/index.html</code> can be opened in a browser to view
+the resulting documentation.
+</p>
+</subsection>
+
+<subsection name="Thoroughly test the module">
+  <P>
+    TODO
+  </P>
+</subsection>
+
+<subsection name="Deploy the module to modules.caucho.com">
+  <p>
+    Because your module has the caucho-module-parent as a parent, the ability
+    to deploy the module to
+    <a href="http://modules.caucho.com/m2">http://modules.caucho.com/m2</a>
+    and the documentation to
+    <a href="http://modules.caucho.com/doc">http://modules.caucho.com/doc</a>
+    is available with standard Maven commands.
+  </p>
+
+  <ol>
+    <li>
+      <p>
+        Deploy the module to modules.caucho.com/m2
+      </p>
+      <source>
+mvn deploy
+      </source>
+      <p>
+        A successful deployment can be confirmed by visiting
+        <a href="http://modules.caucho.com/m2">http://modules.caucho.com/m2</a>.
+      </p>
+    </li>
+    <li>
+      <p>
+        Deploy the documentation to modules.caucho.com/doc
+      </p>
+      <source>
+mvn site
+mvn site:deploy
+      </source>
+      <p>
+        A successful deployment of the documentation can be confirmed by visiting
+        <a href="http://modules.caucho.com/doc">http://modules.caucho.com/doc</a>.
+      </p>
+    </li>
+  </ol>
+</subsection>
+
+<subsection name="Publish an announcement about the availability of your module">
+<p>
+TODO
+</p>
+</subsection>
+
+</section>
+</body>
+</document>
+

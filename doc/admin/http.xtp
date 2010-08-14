@@ -1,0 +1,15 @@
+<document>
+<header>
+<title>HTTP</title>
+<description>
+<p>Description and configuration of Resin's high-performance HTTP
+web server.
+</p>
+</description>
+</header>
+
+  <body>
+
+    <summary/>
+  </body>
+</document>

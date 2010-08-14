@@ -1,0 +1,420 @@
+<project name="resin-migrate" default="all" basedir=".">
+<!--
+temporary script to migrate old cvsroot `src' to new layout 'build'
+-->
+
+  <property name="src" value="${basedir}/.."/>  <!-- original cvsroot -->
+  <property name="build" value="${basedir}" />  <!-- new root -->
+
+  <target name="init">
+    <tstamp/>
+    <echo>
+Scott, 
+
+this is a throwaway script.  It copies files out of the old cvs tree
+and creates a new one here.  
+
+Do it once, then delete migrate.xml and make changes by hand.
+
+KNOWN ISSUES not migrated:
+--------------------------
+
+- merge old resin-ee manifest into src/resin/manifest
+- there is something wrong with the manifest's - get Class-Path errors on
+  startup (all manifests are in src/{module_name}/manifest)
+
+- separate out cache code and put it in pro
+- license module is currently in open src version - that needs to change
+- hessian and burlap jars should be made by `dist'
+- migrate resin and resin-ee changelog's to sourceforge/changelog.xtp.  
+- resin-javadoc, and quercus (I can do these)
+- resin-doc not complete (I'll do this) ( changelog, installed('resin-ee') )
+- the dist/* are made, but I haven't checked them over much
+- `unix' target is not done (see below)
+- update README and LICENSE
+
+NOTES on build.xml
+------------------
+
+The build is done in-place.  
+So you can install a resin binary package, and then install the 
+source overtop of it.
+
+When you build with
+'ant' or 'ant ejb30' the jars are immediately replaced.
+
+'ant dist' builds distribution (.tar.gz etc) in dist/
+It defaults to a 'version' like s040909
+To build a release distribution:
+
+$ ant distclean
+$ ant -Dversion=3.0.10 dist
+
+src/{module_name} compiles to build/{module_name}/...
+
+EVERYTHING lives in a module except :
+
+LICENSE 
+README
+doc/index.jsp
+
+Every module that ends up as a .jar has a manifest named
+src/{module_name}/manifest
+
+unix
+----------
+
+This is incomplete and untested - look for XXX: in build.xml
+
+The intention is that the c source code lives in src/c
+
+The directory src/unix contains the source files and ancillary
+files for the configure script.
+
+The `unix' target results in the installation of
+unix/configure
+unix/Makefile
+unix/src/ ... necessary source for Makefile
+
+note that it's not in the root directory.  Unix users do this:
+$ cd unix
+$ ./configure ; make ; make install
+
+Presumably, for the pro version, a completely different configure script
+is used and the one here is not.
+That would live in pro/unix/
+
+
+win32
+-----
+
+The build script will copy win32 apache dll's into win32/apache-?.?
+if win32binaries is defined.
+
+The idea is that that is a local decision, so you put it in local.properties:
+win32binaries=c:/resinwin32binaries
+
+win32binaries/
+  httpd.exe
+  setup.exe
+  apache-1.3/
+      mod_caucho.dll
+  apache-2.0/
+      mod_caucho.dll
+  isapi_srun.dll
+  resin.dll
+  resinssl.dll
+  libssl32.dll
+  libeay32.dll
+  LICENSE.openssl
+
+If win32binaries is not set as a property:
+  - no copy is made 
+  - win32/ is not deleted by `ant distclean'.
+
+NOTE: Windows users no longer uses bin/ directory:
+
+win32> win32/httpd.exe
+
+ext
+---
+
+Extension libraries isorelax.jar and retroweaver.jar live in
+src/ext/*.jar
+
+These should be in cvs.  I know you don't like binaries in cvs but they are
+small and it is a pain in the ass to fetch them and copy them in.
+
+    </echo>
+
+  </target>
+
+  <target name="prepare" depends="init">
+    <mkdir dir="${build}" />
+  </target>
+
+  <target name="ejb" depends="prepare">
+    <copy todir="${build}/src/ejb" preservelastmodified="true">
+      <fileset dir="${src}/ejb/src">
+      </fileset>
+    </copy>
+    <echo file="${build}/src/ejb/manifest"/>
+  </target>
+
+  <target name="ejb30" depends="prepare">
+    <copy todir="${build}/src/ejb30" preservelastmodified="true">
+      <fileset dir="${src}/ejb30/src">
+      </fileset>
+    </copy>
+    <echo file="${build}/src/ejb30/manifest"/>
+  </target>
+
+  <target name="j2eedeploy" depends="prepare">
+    <copy todir="${build}/src/j2eedeploy">
+      <fileset dir="${src}/j2eedeploy/src">
+      </fileset>
+      <fileset dir="${src}/j2eedeploy">
+        <include name="manifest"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jaxrpc" depends="prepare">
+    <copy todir="${build}/src/jaxrpc">
+      <fileset dir="${src}/jaxrpc/src">
+      </fileset>
+      <fileset dir="${src}/jaxrpc">
+        <include name="manifest"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jca" depends="prepare">
+    <copy todir="${build}/src/jca" preservelastmodified="true">
+      <fileset dir="${src}/jca/src">
+      </fileset>
+      <fileset dir="${src}/jca">
+        <include name="manifest"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jdk15compat" depends="prepare">
+    <copy todir="${build}/src/jdk15compat">
+      <fileset dir="${src}/jdk15compat/src">
+      </fileset>
+    </copy>
+    <echo file="${build}/src/jdk15compat/manifest"/>
+  </target>
+
+  <target name="jms" depends="prepare">
+    <copy todir="${build}/src/jms" preservelastmodified="true">
+      <fileset dir="${src}/jms/src">
+      </fileset>
+      <fileset dir="${src}/jms">
+        <include name="manifest"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jmx" depends="prepare">
+    <copy todir="${build}/src/jmx" preservelastmodified="true">
+      <fileset dir="${src}/jmx/src">
+      </fileset>
+      <fileset dir="${src}/jmx">
+        <include name="manifest"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jsdk" depends="prepare">
+    <copy todir="${build}/src/jsdk">
+      <fileset dir="${src}/jsdk/src">
+        <exclude name="Makefile"/>
+      </fileset>
+      <fileset dir="${src}/jsdk">
+        <include name="manifest"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jstl" depends="prepare">
+    <copy todir="${build}/src/jstl" preservelastmodified="true">
+      <fileset dir="${src}/jstl/src">
+      </fileset>
+      <fileset dir="${src}/jstl">
+        <include name="manifest"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="license" depends="prepare">
+    <copy todir="${build}/src/license" preservelastmodified="true">
+      <fileset dir="${src}/license/src">
+      </fileset>
+    </copy>
+    <echo file="${build}/src/license/manifest"/>
+  </target>
+
+  <target name="portlet" depends="prepare">
+    <copy todir="${build}/src/portlet" preservelastmodified="true">
+      <fileset dir="${src}/portlet/src">
+      </fileset>
+      <fileset dir="${src}/portlet">
+        <include name="manifest"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="resin" depends="prepare">
+    <copy todir="${build}/src/resin" preservelastmodified="true">
+      <fileset dir="${src}/resin/src">
+        <include name="com/**"/>
+      </fileset>
+    </copy>
+    <copy todir="${build}/src/resin/META-INF" preservelastmodified="true">
+      <fileset dir="${src}/resin/resin-meta">
+        <include name="services/**"/>
+      </fileset>
+    </copy>
+    <copy file="${src}/resin/resin.manifest"
+          tofile="${build}/src/resin/manifest" 
+          preservelastmodified="true">
+    </copy>
+
+    <move file="${build}/src/resin/com/caucho/RawVersion.tmpl"
+          tofile="${build}/src/resin/com/caucho/Version.tmpl"
+          preservelastmodified="true"/>
+          
+  </target>
+
+  <target name="resinee" depends="prepare">
+    <copy todir="${build}/src/resin" preservelastmodified="true">
+      <fileset dir="${src}/resin-ee/src">
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="saaj" depends="prepare">
+    <copy todir="${build}/src/saaj">
+      <fileset dir="${src}/saaj/src">
+      </fileset>
+      <fileset dir="${src}/saaj">
+        <include name="manifest"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="webutil" depends="prepare">
+    <copy todir="${build}/src/webutil" preservelastmodified="true">
+      <fileset dir="${src}/webutil/src">
+        <exclude name="Makefile"/>
+        <exclude name="Makefile.in"/>
+      </fileset>
+    </copy>
+    <echo file="${build}/src/webutil/manifest"/>
+  </target>
+
+  <target name="jta" depends="prepare">
+    <copy todir="${build}/src/jta" preservelastmodified="true">
+      <fileset dir="${src}/xa/src">
+      </fileset>
+    </copy>
+    <echo file="${build}/src/jta/manifest"/>
+  </target>
+
+  <target name="resin-deploy" depends="prepare">
+    <mkdir dir="${build}/src/deploy"/>
+    <copy file="${src}/resin/deploy-manifest.mf" 
+          tofile="${build}/src/deploy/manifest" 
+          preservelastmodified="true">
+    </copy>
+  </target>
+
+  <target name="unix" depends="prepare">
+    <mkdir dir="${build}/src/c"/>
+    <mkdir dir="${build}/src/unix"/>
+
+    <copy todir="${build}/src/c" preservelastmodified="true">
+      <fileset dir="${src}/resin/src/c">
+        <include name="plugin/apache/mod_caucho.c"/>
+        <include name="plugin/apache2/mod_caucho.c"/>
+        <include name="plugin/common/config.c"/>
+        <include name="plugin/common/memory.c"/>
+        <include name="plugin/common/registry.c"/>
+        <include name="plugin/common/stream.c"/>
+        <include name="plugin/resin/java.c"/>
+        <include name="plugin/resin/jni_vfs.c"/>
+        <include name="plugin/resin/memory.c"/>
+        <include name="plugin/resin/std.c"/>
+        <include name="plugin/resinssl/ssl.c"/>
+        <include name="plugin/resinssl/ssl_stub.c"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${build}/src/unix" preservelastmodified="true">
+      <fileset dir="${src}/resin/src">
+        <include name="automake/**"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${build}/src/unix" preservelastmodified="true">
+      <fileset dir="${src}/resin">
+        <include name="configure.in"/>
+        <include name="ltconfig"/>
+        <include name="ltmain.sh"/>
+        <include name="mkinstalldirs"/>
+      </fileset>
+    </copy>
+
+    <copy file="${src}/resin/Makefile.in.dist" 
+          tofile="${build}/src/unix/Makefile.in" 
+          preservelastmodified="true"/>
+  </target>
+
+  <target name="resin-doc">
+    <copy todir="${build}/src/doc" preservelastmodified="true">
+      <fileset dir="${src}/resin-doc/doc">
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="common" depends="prepare">
+    <copy todir="${build}" preservelastmodified="true">
+      <fileset dir="${src}/resin">
+        <include name="README"/>
+        <include name="LICENSE"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${build}/src/conf"/>
+    <copy todir="${build}/src/conf" preservelastmodified="true">
+      <fileset dir="${src}/resin/conf">
+        <include name="resin.conf"/>
+        <include name="app-default.xml"/>
+      </fileset>
+    </copy>
+  </target>
+
+
+  <target name="all" 
+          depends="prepare, ejb, ejb30, j2eedeploy, jaxrpc, jca, jdk15compat, jms, jmx, jsdk, jstl, license, portlet, resin, resinee, saaj, webutil, jta, resin-deploy, unix, common, resin-doc">
+  </target>
+
+  <target name="clean">
+    <delete dir="${build}/build"/>
+    <delete dir="${build}/dist"/>
+    <delete dir="${build}/lib"/>
+    <delete dir="${build}/logs"/>
+    <delete dir="${build}/bin"/>
+    <delete dir="${build}/doc/WEB-INF"/>
+    <delete dir="${build}/cache"/>
+
+    <delete dir="${build}/src/ejb"/>
+    <delete dir="${build}/src/ejb30"/>
+    <delete dir="${build}/src/j2eedeploy"/>
+    <delete dir="${build}/src/jaxrpc"/>
+    <delete dir="${build}/src/jca"/>
+    <delete dir="${build}/src/jdk15compat"/>
+    <delete dir="${build}/src/jms"/>
+    <delete dir="${build}/src/jmx"/>
+    <delete dir="${build}/src/jsdk"/>
+    <delete dir="${build}/src/jstl"/>
+    <delete dir="${build}/src/jta"/>
+    <delete dir="${build}/src/license"/>
+    <delete dir="${build}/src/portlet"/>
+    <delete dir="${build}/src/resin"/>
+    <delete dir="${build}/src/saaj"/>
+    <delete dir="${build}/src/webutil"/>
+    <delete dir="${build}/src/resin-deploy"/>
+    <delete dir="${build}/src/resin-doc"/>
+    <delete file="${build}/README"/>
+    <delete file="${build}/LICENSE"/>
+
+    <delete dir="${build}/src/doc"/>
+    <delete dir="${build}/src/c"/>
+    <delete dir="${build}/src/unix"/>
+    <delete dir="${build}/src/conf"/>
+  </target>
+
+</project>
+

@@ -1,0 +1,22 @@
+<document>
+<header>
+  <product>resin</product>
+  <title>Proxy Cache Configuration Reference</title>
+  <version>Resin 4.0</version>
+
+  <description>
+
+  <p>Proxy Cache Configuration Reference</p>
+  </description>
+</header>
+
+<body>
+<reference-legend/>
+
+<localtoc/>
+
+<include-defun name="cache-mapping"/>
+<include-defun name="cache"/>
+</body>
+
+</document>

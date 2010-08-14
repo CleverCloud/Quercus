@@ -1,0 +1,268 @@
+<document>
+  <header>
+    <title>Scheduled Task</title>
+    <type>contents</type>
+    <description>
+    <p>Resin's &lt;resin:ScheduledTask> capability lets you schedule
+      events using a flexible cron-style trigger.  The task can be
+      any <code>Runnable</code> bean, a method specified by EL, or
+      a URL.</p>
+    </description>
+  </header>
+
+  <body>
+
+<localtoc/>
+
+<s1 title="&lt;resin:ScheduledTask>"> version="Resin 4.0.0">
+
+<p>&lt;resin:ScheduledTask> schedules a job to be executed at specific times
+or after specific delays.  The times can be specified by a cron syntax or
+by a simple delay parameter.  The job can be either a <code>Runnable</code>
+bean, a method specified by an EL expression, or a URL.</p>
+
+<p>When specified as an Java Injection bean, the bean task
+has full IoC capabilities,
+including injection, @TransactionAttribute aspects, interception and
+@Observes.</p>
+
+<deftable title="&lt;resin:ScheduledTask> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>the classname of the singleton bean to create</td>
+</tr>
+<tr>
+  <td>cron</td>
+  <td>a cron-style scheduling description</td>
+</tr>
+<tr>
+  <td>delay</td>
+  <td>a simple delay-based execution</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC initialization for the bean</td>
+</tr>
+<tr>
+  <td>mbean-name</td>
+  <td>optional MBean name for JMX registration</td>
+</tr>
+<tr>
+  <td>method</td>
+  <td>EL expression for a method to be invoked as the task</td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>optional IoC name for registering the task</td>
+</tr>
+<tr>
+  <td>period</td>
+  <td>how often the task should be invoked in simple mode</td>
+</tr>
+<tr>
+  <td>task</td>
+  <td>alternate task assignment for predefined beans</td>
+</tr>
+</deftable>
+
+<s2 title="Java Injection bean job configuration">
+
+<p>The most common and flexible job configuration uses standard IoC
+bean-style configuration.  The bean must implement <code>Runnable</code>.
+The <var>&lt;task></var> element specifies the bean, using standard
+Java injection syntax as described
+in <a href="candi.xtp">Java Injection</a> configuration.</p>
+
+<example title="Example: 5min cron bean task">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+      xmlns:resin="urn:java:com.caucho.resin">
+
+  &lt;resin:ScheduledTask>
+    &lt;cron>*/5&lt;/cron>
+    &lt;task>
+      &lt;qa:MyTask xmlns:qa="urn:java:com.caucho.resin"/>
+    &lt;/task>
+  &lt;/ScheduledTask>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="task reference job configuration">
+
+<p>The task bean can also be passed to the &lt;scheduled-task> using
+a Resin-IoC EL reference.  The name of the task bean would be defined
+previously, either in a &lt;bean> or &lt;component> or picked up by classpath
+scanning.  Like the bean-style job configuration, the reference bean must
+implement <code>Runnable</code>.</p>
+
+<example title="Example: midnight cron bean task">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+         xmlns:resin="urn:java:com.caucho.resin">
+
+  &lt;resin:ScheduledTask task="#{taskBean}">
+    &lt;cron>0 0 *&lt;/cron>
+  &lt;/resin:ScheduledTask>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="method reference job configuration">
+
+<p>&lt;scheduled-task> can execute a method on a defined bean as the
+scheduler's task.  The method is specified using EL reference syntax.
+At each trigger time, &lt;scheduled-task> will invoke the EL method
+expression.</p>
+
+<p>In the following example, the task invokes <code>myMethod()</code>
+on the <var>myBean</var> singleton every 1 hour.</p>
+
+<example title="Example: 1h period method task">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+  xmlns:resin="urn:java:com.caucho.resin"
+  xmlns:qa="urn:java:qa">
+
+  &lt;qa:MyBean>
+    &lt;Named>myBean&lt;/Named>
+  &lt;/qa:MyBean>
+
+  &lt;resin:ScheduledTask method="#{myBean.myMethod}">
+    &lt;resin:delay>10m&lt;/resin:delay>
+    &lt;resin:period>1h&lt;/resin:period>
+  &lt;/resin:ScheduledTask>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="url job configuration">
+
+<p>In a &lt;web-app>, the &lt;scheduled-task> can invoke a servlet URL
+at the trigger times.  The task uses the servlet <code>RequestDispatcher</code>
+and forwards to the specified URL.  The URL is relative to the &lt;web-app>
+which contains the &lt;scheduled-task.</p>
+
+<example title="Example: sunday cron url task">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+  xmlns:resin="urn:java:com.caucho.config">
+
+  &lt;resin:ScheduledTask url="/cron.php">
+    &lt;resin:cron>0 15 * * 0&lt;/resin:cron>
+  &lt;/resin:ScheduledTask>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="cron trigger syntax">
+
+<p>Some ascii art from the <a href="http://en.wikipedia.org/wiki/Crontab">wikipedia
+cron entry</a></p>
+
+<def title="cron fields">
+# +---------------- minute (0 - 59)
+# |  +------------- hour (0 - 23)
+# |  |  +---------- day of month (1 - 31)
+# |  |  |  +------- month (1 - 12)
+# |  |  |  |  +---- day of week (0 - 6) (Sunday=0 or 7)
+# |  |  |  |  |
+  *  *  *  *  *
+</def>
+
+<deftable title="cron patterns">
+<tr>
+  <th>Pattern</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>*</td>
+  <td>matches all time periods</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td>matches the specific time, e.g. 15 for minutes</td>
+</tr>
+<tr>
+  <td>15,45</td>
+  <td>matches a list of times, e.g. every :15 and :45</td>
+</tr>
+<tr>
+  <td>*/5</td>
+  <td>matches every <var>n</var> times, e.g. every 5 minutes</td>
+</tr>
+<tr>
+  <td>1-5</td>
+  <td>matches a range of times, e.g. mon, tue, wed, thu, fri (1-5)</td>
+</tr>
+</deftable>
+
+<p>Each field specifies a range of times to be executed.  The patterns
+allowed are:</p>
+
+<deftable title="example ranges">
+<tr>
+  <th>range</th>
+  <th>explanation (using minutes as example)</th>
+</tr>
+<tr>
+  <td>*</td>
+  <td>run every minute</td>
+</tr>
+<tr>
+  <td>*/5</td>
+  <td>run every 5 minutes</td>
+</tr>
+<tr>
+  <td>0,5,50</td>
+  <td>run at :00, :05, :50 every hour</td>
+</tr>
+  <tr><td>0-4</td>
+  <td>run at :00, :01, :02, :03, :04</td>
+</tr>
+<tr>
+  <td>0-30/2</td>
+  <td>run every 2 minutes for the first half hour</td>
+</tr>
+</deftable>
+
+<p>The minutes field is always required, and the hours, days, and
+months fields are optional.</p>
+
+<deftable title="example times">
+<tr>
+  <th>range</th>
+  <th>explanation</th>
+</tr>
+<tr>
+  <td>0 */3</td>
+  <td>run every 3 hours</td>
+</tr>
+<tr>
+  <td>15 2 *</td>
+  <td>run every day at 0215 local time</td>
+</tr>
+<tr>
+  <td>0 0 */3</td>
+  <td>run every third day at midnight</td>
+</tr>
+<tr>
+  <td>15 0 * * 6</td>
+  <td>run every Saturday at 0015</td>
+</tr>
+</deftable>
+
+</s2>
+
+</s1>
+
+  </body>
+</document>

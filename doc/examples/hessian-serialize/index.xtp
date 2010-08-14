@@ -1,0 +1,227 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Hessian Serialization</title>
+    <description>
+      <p>Hessian 2.0 provides cross-language binary object serialization
+with efficiencies better than java.io serialization.  The compaction
+encodings added to Hessian 2.0 have improved an already-popular
+cross-platform binary web services protocol.  With these changes, Hessian
+2.0 now directly competes with java.io serialization in efficiency.</p>
+    </description>
+    <type>tutorial</type>
+    <tutorial-startpage>serialize</tutorial-startpage>
+  </header>
+
+  <body>
+
+    <summary/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/HessianSerializeServlet.java"/></td>
+  <td>Serialization Servlet</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/Car.java"/></td>
+  <td>Serialized class</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/Color.java"/></td>
+  <td>Enumeration for the car color</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/Model.java"/></td>
+  <td>Enumeration for the car model</td>
+</tr>
+</deftable>
+</s1>
+
+<s1 title="Overview">
+
+<p>In this simple example, we'll use Hessian 2.0 to serialize
+three Car objects to a byte array.  The serialized data could be saved in
+a persistent store, or sent as a message in a SOA or JMS application.
+Because Hessian 2.0 is cross-language, the message could be deserialized by a
+.NET or even a PHP application.</p>
+
+<p>The efficiency of Hessian 2.0 is about twice that of java.io
+serialization. This is a tiny example, of course, but does show that you can
+send compact, cross-language messages without having to use bloated
+XML solutions like SOAP.</p>
+
+<deftable>
+<tr>
+  <td>Hessian 2.0</td>
+  <td>139 bytes</td>
+</tr>
+<tr>
+  <td>java.io</td>
+  <td>287 bytes</td>
+</tr>
+<tr>
+  <td>Hessian 2.0 with Deflation</td>
+  <td>164 bytes</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="Model">
+
+<p>The example's model is a Car object with three fields: year, model, and
+color.  The model and color are enumeration types.</p>
+
+<example title="Car.java">
+package example;
+
+public class Car {
+  private int year;
+  private Model model;
+  private Color color;
+}
+</example>
+
+<example title="Car.java">
+package example;
+
+public enum Model {
+  CIVIC,
+  EDSEL,
+  MODEL_T,
+}
+</example>
+
+<example title="Color.java">
+package example;
+
+public enum Model {
+  BLACK,
+  GREEN,
+  BLUE,
+}
+</example>
+
+</s1>
+
+<s1 title="Hessian Serialization">
+
+<p>The Hessian serialization API resembles
+java.io <code>ObjectOutputStream</code> serialization.  The general steps
+are to create a <code>Hessian2Output</code>
+around any <code>OutputStream</code> and write data to the stream.
+In this example, we've encapsulated the object in a Hessian 2.0 message
+using <code>startMessage</code> and <code>completeMessage</code> to
+show how you would create a message for an SOA or JMS application.</p>
+
+<example title="Serialization">
+ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+Hessian2Output out = new Hessian2Output(bos);
+
+out.startMessage();
+      
+out.writeInt(2);
+
+Car car1 = new Car(Model.EDSEL, Color.GREEN, 1954);
+
+out.writeObject(car1);
+
+Car car2 = new Car(Model.MODEL_T, Color.BLACK, 1937);
+
+out.writeObject(car2);
+
+out.completeMessage();
+
+out.close();
+
+byte []data = bos.toByteArray();
+</example>
+
+<p>The deserialization is the same as serialization.
+Create an <code>Hessian2Input</code> around any <code>InputStream</code>
+and read data from the stream.</p>
+
+<example title="Deserialization">
+ByteArrayInputStream bin = new ByteArrayInputStream(data);
+
+Hessian2Input in = new Hessian2Input(bin);
+
+in.startMessage();
+
+ArrayList list = new ArrayList();
+
+int length = in.readInt();
+
+for (int i = 0; i &lt; length; i++) {
+  list.add(in.readObject());
+}
+
+in.completeMessage();
+
+in.close();
+bin.close();
+</example>
+
+</s1>
+
+<s1 title="Hessian Compression">
+
+<p>The <a href="http://caucho.com/resin-3.1/doc/hessian-2.0-spec.xtp">Hessian
+2.0 draft specification</a> has added support for envelopes around Hessian
+messages.  These envelopes can provide additional capabilities like
+compression, encryption, and message signatures.  The envelope can also
+be used to attach routing and reliability information to a message.  Since
+envelopes are nestable, each envelope can be simple and provide powerful
+capabilities when combined.  For example, a secure messaging system
+might compress, encrypt and then securely sign a message.</p>
+
+<p>The API for using envelopes is <code>wrap()</code> for writing a message
+and <code>unwrap()</code> for reading a message.  The application
+serialization code itself is identical, since the envelope just creates a
+<code>Hessian2Input</code> or <code>Hessian2Output</code> wrapper around
+the original stream.</p>
+
+<example title="Deflation">
+Deflation envelope = new Deflation();
+
+ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+Hessian2Output out = new Hessian2Output(bos);
+
+out = out.wrap(out);
+
+out.startMessage();
+
+Car car1 = new Car(Model.EDSEL, Color.GREEN, 1954);
+
+out.writeObject(car1);
+
+out.completeMessage();
+
+out.close();
+
+byte []data = bos.toByteArray();
+</example>
+
+<example title="Inflation">
+Deflation envelope = new Deflation();
+
+ByteArrayInputStream bin = new ByteArrayInputStream(data);
+
+Hessian2Input in = new Hessian2Input(bin);
+
+in = envelope.unwrap(in);
+
+in.startMessage();
+
+Object value = in.readObject();
+
+in.completeMessage();
+</example>
+
+</s1>
+
+  </body>
+</document>

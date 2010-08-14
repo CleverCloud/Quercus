@@ -1,0 +1,2187 @@
+<document>
+<header>
+<title>Resin Clustering</title>
+<description>
+
+<p>As traffic increases beyond a single server, Resin's clustering
+lets you add new machines to handle the load and simultaneously improves
+uptime and reliability by failing over requests from a downed or maintenance
+server to a backup transparently.
+</p>
+
+</description>
+</header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Persistent Sessions">
+
+<p>A session needs to stay on the same JVM that started it.
+Otherwise, each JVM would only see every second or third request and
+get confused.</p>
+
+<p>To make sure that sessions stay on the same JVM, Resin encodes the
+cookie with the host number.  In the previous example, the hosts would
+generate cookies like:</p>
+
+<deftable>
+<tr>
+  <th>index</th>
+  <th>cookie prefix</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><var>a</var>xxx</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><var>b</var>xxx</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><var>c</var>xxx</td>
+</tr>
+</deftable>
+
+<p>On the web-tier, Resin will decode the cookie and send it
+to the appropriate host.  So <var>bacX8ZwooOz</var> would go to app-b.</p>
+
+<p>In the infrequent case that app-b fails, Resin will send the
+request to app-a.  The user might lose the session but that's a minor
+problem compared to showing a connection failure error.</p>
+
+<p>The following example is a typical configuration for a distributed
+server using an external hardware load-balancer, i.e. where each Resin is
+acting as the HTTP server.  Each server will be started
+as <var>-server a</var> or <var>-server b</var> to grab its specific configuration.</p>
+
+<p>In this example, sessions will only be stored when the server shuts down,
+either for maintenance or with a new version of the server.  This is the most
+lightweight configuration, and doesn't affect performance significantly.
+If the hardware or the JVM crashes, however, the sessions will be lost.
+(If you want to save sessions for hardware or JVM crashes,
+remove the &lt;save-only-on-shutdown/&gt; flag.)</p>
+
+<example title="resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+&lt;cluster id="app-tier"&gt;
+  &lt;server-default>
+    &lt;http port='80'/&gt;
+  &lt;/server-default>
+
+  &lt;server id='app-a' address='192.168.0.1'/&gt;
+  &lt;server id='app-b' address='192.168.0.2'/&gt;
+  &lt;server id='app-c' address='192.168.0.3'/&gt;
+
+  &lt;web-app-default&gt;
+    &lt;!-- enable tcp-store for all hosts/web-apps --&gt;
+    &lt;session-config&gt;
+      &lt;use-persistent-store/&gt;
+      &lt;save-only-on-shutdown/&gt;
+    &lt;/session-config&gt;
+  &lt;/web-app-default&gt;
+
+  ...
+&lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<s2 title="Choosing a backend server">
+<p>
+Requests can be made to specific servers in the app-tier.  The web-tier uses
+the value of the jsessionid to maintain sticky sessions.  You can include an
+explicit jsessionid to force the web-tier to use a particular server in the app-tier.
+</p>
+
+<p>
+Resin uses the first character of the jsessionid to identify the backend server
+to use, starting with 'a' as the first backend server.  If wwww.example.com
+resolves to your web-tier, then you can use:
+</p>
+
+<ol>
+<li>http://www.example.com/proxooladmin;jsessionid=abc</li>
+<li>http://www.example.com/proxooladmin;jsessionid=bcd</li>
+<li>http://www.example.com/proxooladmin;jsessionid=cde</li>
+<li>http://www.example.com/proxooladmin;jsessionid=def</li>
+<li>http://www.example.com/proxooladmin;jsessionid=efg</li>
+<li>etc.</li>
+</ol>
+</s2>
+
+<s2 title="File Based">
+
+<p>For single-server configurations, the "cluster" store saves session
+data on disk, allowing for recovery after system restart or during
+development.</p>
+
+<p>Sessions are stored as files in the <var>resin-data</var>
+directory.  When the session changes, the updates will be written to
+the file.  After Resin loads an Application, it will load the stored
+sessions.</p>
+
+</s2>
+
+<s2 title="Distributed Sessions">
+
+<p>Distributed sessions are intrinsically more complicated than single-server
+sessions.  Single-server session can be implemented as a simple memory-based
+Hashtable.  Distributed sessions must communicate between machines to ensure
+the session state remains consistent.</p>
+
+<p>Load balancing with multiple machines either uses <var>sticky sessions</var> or
+<var>symmetrical sessions</var>.  Sticky sessions put more intelligence on the
+load balancer, and symmetrical sessions puts more intelligence on the JVMs.
+The choice of which to use depends on what kind of hardware you have,
+how many machines you're using and how you use sessions.</p>
+
+<p>Distributed sessions can use a database as a backing store, or they can
+distribute the backup among all the servers using TCP.</p>
+
+<s3 title="Symmetrical Sessions">
+
+<p>Symmetrical sessions happen with dumb load balancers like DNS
+round-robin.  A single session may bounce from machine A
+to machine B and back to machine B.  For JDBC sessions, the symmetrical
+session case needs the <var>always-load-session</var> attribute described below.
+Each request must load the most up-to-date version of the session.</p>
+
+<p>Distributed sessions in a symmetrical environment are required to make
+sessions work at all.  Otherwise the state will end up spread across the JVMs.
+However, because each request must update its session information, it is
+less efficient than sticky sessions.</p>
+
+</s3>
+
+<s3 title="Sticky Sessions">
+
+<p>Sticky sessions require more intelligence on the load-balancer, but
+are easier for the JVM.  Once a session starts, the load-balancer will
+always send it to the same JVM.  Resin's load balancing, for example, encodes
+the session id as 'aaaXXX' and 'baaXXX'.  The 'aaa' session will always go
+to JVM-a and 'baa' will always go to JVM-b.</p>
+
+<p>Distributed sessions with a sticky session environment add reliability.
+If JVM-a goes down, JVM-b can pick up the session without the user
+noticing any change.  In addition, distributed sticky sessions are more
+efficient.  The distributor only needs to update sessions when they change.
+So if you update the session once when the user logs in, the distributed
+sessions can be very efficient.</p>
+
+</s3>
+
+<s3 title="always-load-session">
+
+<p>Symmetrical sessions must use the 'always-load-session' flag to
+update each session data on each request.  always-load-session is only
+needed for jdbc-store sessions.  tcp-store sessions use a more-sophisticated
+protocol that eliminates the need for always-load-session, so tcp-store
+ignores the always-load-session flag.</p>
+
+<p>The <var>always-load-session</var> attribute forces sessions to check the store for
+each request.  By default, sessions are only loaded from persistent
+store when they are created.  In a configuration with multiple symmetric
+web servers, sessions can be loaded on each request to ensure consistency.</p>
+
+</s3>
+
+<s3 title="always-save-session">
+
+<p>By default, Resin only saves session data when you add new values
+to the session object, i.e. if the request calls <var>setAttribute</var>.
+This may be insufficient when storing large objects.  For example, if you
+change an internal field of a large object, Resin will not automatically
+detect that change and will not save the session object.</p>
+
+<p>With <var>always-save-session</var> Resin will always write the session
+to the store at the end of each request.  Although this is less efficient,
+it guarantees that updates will get stored in the backup after each
+request.</p>
+
+</s3>
+
+</s2>
+<!--
+<s2 title="Database Based">
+
+<p>Database backed sessions are the easiest to understand.  Session data
+gets serialized and stored in a database.  The data is loaded on the
+next request.</p>
+
+<p>For efficiency, the owning JVM keeps a cache of the session value, so
+it only needs to query the database when the session changes.  If another JVM
+stores a new session value, it will notify the owner of the change so
+the owner can update its cache.  Because of this notification, the database
+store is cluster-aware.</p>
+
+<p>In some cases, the database can become a bottleneck.
+By adding load to an already-loaded
+system, you may harm performance.  One way around that bottleneck is to use
+a small, quick database like MySQL for your session store and save the "Big
+Iron" database like Oracle for your core database needs.</p>
+
+<p>The database must be specified using a <var>&lt;database&gt;</var>.
+The database store will automatically create a <var>session</var> table.</p>
+
+<p>The JDBC store needs to know about the other servers in the cluster
+in order to efficiently update them when changes occur to the server.</p>
+
+<example title="JDBC store">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+&lt;cluster id="app-tier"&gt;
+  &lt;server-default>
+    &lt;http port="80"/>
+  &lt;/server-default>
+
+  &lt;server id="app-a" address="192.168.2.10" port="6800"/>
+  &lt;server id="app-b" address="192.168.2.11" port="6800"/>
+
+  &lt;database jndi-name="jdbc/session"&gt;
+    ...
+  &lt;/database&gt;
+
+  &lt;persistent-store type="jdbc"&gt;
+    &lt;init&gt;
+      &lt;data-source&gt;jdbc/session&lt;data-source&gt;
+    &lt;/init&gt;
+  &lt;/persistent-store&gt;
+  ...
+
+  &lt;web-app-default&gt;
+    &lt;session-config&gt;
+      &lt;use-persistent-store/&gt;
+    &lt;/session-config&gt;
+  &lt;/web-app-default&gt;
+  ...
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+<p>
+Each web-app which needs distributed sessions must enable
+the persistent store with a
+<a href="deploy-ref.xtp#session-config">use-persistent-store</a>
+tag in the session-config.</p>
+
+<deftable>
+<tr>
+  <td>data-source</td>
+  <td>data source name for the table</td>
+</tr>
+<tr>
+  <td>table-name</td>
+  <td>database table for the session data</td>
+</tr>
+<tr>
+  <td>blob-type</td>
+  <td>database type for a blob</td>
+</tr>
+<tr>
+  <td>max-idle-time</td>
+  <td>cleanup time</td>
+</tr>
+</deftable>
+
+<example>
+CREATE TABLE persistent_session (
+  id VARCHAR(64) NOT NULL,
+  data BLOB,
+  access_time int(11),
+  expire_interval int(11),
+  PRIMARY KEY(id)
+)
+</example>
+
+<p>The store is enabled with &lt;use-persistent-store&gt; in the session config.
+</p>
+
+<example>
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;session-config&gt;
+    &lt;use-persistent-store/&gt;
+    &lt;always-save-session/&gt;
+  &lt;/session-config&gt;
+&lt;/web-app&gt;
+</example>
+
+</s2>
+--> <!-- jdbc sessions -->
+
+<s2 title="Cluster Sessions">
+
+<p>The distributed cluster stores the sessions across the
+cluster servers.  In some configurations, the cluster store
+may be more efficient than the database store, in others the database
+store will be more efficient.</p>
+
+<p>With cluster sessions, each session has an owning JVM and a backup JVM.
+The session is always stored in both the owning JVM and the backup JVM.</p>
+
+<p>The cluster store is configured in the in the &lt;cluster&gt;.
+It uses the &lt;server&gt; hosts in the &lt;cluster&gt; to distribute
+the sessions.  The session store is enabled in the &lt;session-config&gt;
+with the &lt;use-persistent-store&gt;.</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  ...
+
+  &lt;cluster id="app-tier"&gt;
+    &lt;server id="app-a" host="192.168.0.1" port="6802"/>
+    &lt;server id="app-b" host="192.168.0.2" port="6802"/>
+
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+<p>The configuration is enabled in the <var>web-app</var>.</p>
+
+<example>
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;session-config&gt;
+    &lt;use-persistent-store>true&lt;/use-persistent-store&gt;
+  &lt;/session-config&gt;
+&lt;/web-app&gt;
+</example>
+
+<p>The &lt;server&gt; are treated as a cluster
+of server.  Each server uses the other servers as a backup.  When the session
+changes, the updates will be sent to the backup server.  When the server
+starts, it looks up old sessions in the other servers to update its
+own version of the persistent store.
+</p>
+
+<example title="Symmetric load-balanced servers">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+&lt;cluster id="app-tier"&gt;
+
+  &lt;server-default&gt;
+    &lt;http port='80'/&gt;
+  &lt;/server-default&gt;
+
+  &lt;server id="app-a" address="192.168.2.10" port="6802"/>
+  &lt;server id="app-b" address="192.168.2.11" port="6803"/>
+
+  &lt;host id=''&gt;
+  &lt;web-app id=''&gt;
+
+  &lt;session-config&gt;
+    &lt;use-persistent-store>true&lt;/use-persistent-store>
+  &lt;/session-config&gt;
+
+  &lt;/web-app&gt;
+  &lt;/host&gt;
+&lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+</s2>
+
+<s2 title="Clustered Distributed Sessions">
+<p>Resin's cluster protocol for distributed sessions can
+is an alternative to JDBC-based distributed sessions.  In some
+configurations, the cluster-stored sessions will be more efficient
+than JDBC-based sessions.
+Because sessions are always duplicated on separate servers, cluster
+sessions do not have a single point of failure.
+As the number of
+servers increases, JDBC-based sessions can start overloading the
+backing database.  With clustered sessions, each additional server
+shares the backup load, so the main scalability issue reduces to network
+bandwidth.  Like the JDBC-based sessions, the cluster store sessions
+uses sticky-session caching to avoid unnecessary network traffic.</p>
+</s2>
+
+<s2 title="Configuration">
+
+<p>The cluster configuration must tell each host the servers in the
+cluster
+and it must enable the persistent in the session configuration
+with <a href="../reference/session-tags.xtp#session-config">use-persistent-store</a>.
+Because session configuration is specific to a virtual host and a
+web-application, each web-app needs <var>use-persistent-store</var> enabled
+individually.  The <a href="deploy-ref.xtp#web-app-default">web-app-default</a>
+tag can be used to enable distributed sessions across an entire site.
+</p>
+
+<example title="resin.xml fragment">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  ...
+  
+  &lt;cluster id="app-tier"&gt;
+
+    &lt;server id="app-a" host="192.168.0.1"/>
+    &lt;server id="app-b" host="192.168.0.2"/>
+    &lt;server id="app-c" host="192.168.0.3"/>
+    &lt;server id="app-d" host="192.168.0.4"/>
+
+    ...
+    &lt;host id=""&gt;
+    &lt;web-app id='myapp'&gt;
+      ...
+      &lt;session-config&gt;
+        &lt;use-persistent-store/&gt;
+      &lt;/session-config&gt;
+    &lt;/web-app&gt;
+    &lt;/host&gt;
+  &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<p>Usually, hosts will share the same resin.xml.  Each host will be
+started with a different <var>-server xx</var> to select the correct
+block.  The startup will look like:</p>
+
+<example title="Starting Server&#160;C">
+resin-4.0.x&gt; java -jar lib/resin.jar -conf conf/resin.xml -server c start
+</example>
+
+<s3 title="always-save-session">
+
+<p>Resin's distributed sessions needs to know when a session has
+changed in order to save the new session value.  Although Resin can
+detect when an application calls <var>HttpSession.setAttribute</var>, it
+can't tell if an internal session value has changed.  The following
+Counter class shows the issue:</p>
+
+<example title="Counter.java">
+package test;
+
+public class Counter implements java.io.Serializable {
+  private int _count;
+
+  public int nextCount() { return _count++; }
+}
+</example>
+
+<p>Assuming a copy of the Counter is saved as a session attribute,
+Resin doesn't know if the application has called <var>nextCount</var>.  If it
+can't detect a change, Resin will not backup the new session, unless
+<var>always-save-session</var> is set.  When <var>always-save-session</var> is
+true, Resin will back up the session on every request.</p>
+
+<example>
+...
+&lt;web-app id="/foo"&gt;
+...
+&lt;session-config&gt;
+  &lt;use-persistent-store/&gt;
+  &lt;always-save-session/&gt;
+&lt;/session-config&gt;
+...
+&lt;/web-app&gt;
+</example>
+
+<!--
+<p>Like the JDBC-based sessions, Resin will ignore the
+<var>always-load-session</var> flag for cluster sessions.  Because the
+cluster protocol notifies servers of changes, <var>always-load-session</var> is
+not needed.</p>
+-->
+
+</s3>
+
+<s3 title="Serialization">
+
+<p>Resin's distributed sessions relies on Hessian serialization to save and
+restore sessions.  Application object must <var>implement
+java.io.Serializable</var> for distributed sessions to work.</p>
+
+</s3>
+
+</s2> <!-- clustered sessions -->
+
+<s2 title="Protocol Examples">
+
+<s3 title="Session Request">
+
+<p>To see how cluster sessions work, consider a case where
+the load balancer sends the request to a random host.  Server&#160;C owns the
+session but the load balancer gives the request to Server&#160;A.  In the
+following figure, the request modifies the session so it must be saved
+as well as loaded.</p>
+
+<figure src="srunc.gif"/>
+
+<p>The session id encodes the owning host.  The example session
+id, <var>ca8MbyA</var>, decodes to an server index of 3, mapping
+to Server&#160;C.  Resin determines the backup host from the cookie
+as well.
+Server&#160;A must know the owning host
+for every cookie so it can communicate with the owning srun.
+The example configuration defines all the sruns Server&#160;A needs to
+know about.  If Server&#160;C is unavailable, Server&#160;A can use its
+configuration knowledge to use Server&#160;D as a backup
+for <var>ca8MbyA</var> instead..</p>
+
+<p>When the request first accesses the session, Server&#160;A asks
+Server&#160;C for the serialized session data (<var>2:load</var>).
+Since Server&#160;A doesn't cache the session data, it must
+ask Server&#160;C for an update on each request.  For requests that
+only read the session, this TCP load is the only extra overhead,
+i.e. they can skip <var>3-5</var>.  The <var>always-save-session</var>
+flag, in contrast, will always force a write.</p>
+
+<p>At the end of the request, Server&#160;A writes any session
+updates to Server&#160;C (<var>3:store</var>). If always-save-session
+is false and the session doesn't change, this step can be skipped.
+Server&#160;A sends
+the new serialized session contents to Server&#160;C.  Server&#160;C saves
+the session on its local disk (<var>4:save</var>) and saves a backup
+to Server&#160;D (<var>5:backup</var>).</p>
+
+</s3>
+
+<s3 title="Sticky Session Request">
+
+<p>Smart load balancers that implement sticky sessions can improve
+cluster performance.  In the previous request, Resin's cluster
+sessions maintain consistency for dumb load balancers or twisted
+clients like the AOL browsers.  The cost is the additional network
+traffic for <var>2:load</var> and <var>3:store</var>.  Smart load-balancers
+can avoid the network traffic of <var>2</var> and <var>3</var>.</p>
+
+<figure src="same_srun.gif"/>
+
+<p>Server&#160;C decodes the session id, <var>caaMbyA</var>.  Since it owns
+the session, Server&#160;C gives the session to the servlet with no work
+and no network traffic.  For a read-only request, there's zero
+overhead for cluster sessions.  So even a semi-intelligent load
+balancer will gain a performance advantage.  Normal browsers will have
+zero overhead, and bogus AOL browsers will have the non-sticky
+session overhead.</p>
+
+<p>A session write saves the new serialized session to disk
+(<var>2:save</var>) and to Server&#160;D (<var>3:backup</var>).
+<var>always-save-session</var> will determine if Resin can take advantage
+of read-only sessions or must save the session on each request.</p>
+
+</s3>
+
+<s3 title="Disk copy">
+<p>Resin stores a disk copy of the session information, in the location
+specified by the <var>path</var>.  The disk copy serves two purposes.  The first is
+that it allows Resin to keep session information for a large number of
+sessions. An efficient memory cache keeps the most active sessions in memory
+and the disk holds all of the sessions without requiring large amounts of
+memory.  The second purpose of the disk copy is that the sessions are recovered
+from disk when the server is restarted.</p>
+</s3>
+
+<s3 title="Failover">
+
+<p>Since the session always has a current copy on two servers, the load
+balancer can direct requests to the next server in the ring.  The
+backup server is always ready to take control.  The failover will
+succeed even for dumb load balancers, as in the non-sticky-session
+case, because the srun hosts will use the backup as the new owning
+server.</p>
+
+<p>In the example, either Server&#160;C or Server&#160;D can stop and
+the sessions will use the backup.  Of course, the failover will work
+for scheduled downtime as well as server crashes.  A site could
+upgrade one server at a time with no observable downtime.</p>
+
+</s3>
+
+<s3 title="Recovery">
+
+<p>When Server&#160;C restarts, possibly with an upgraded version of Resin,
+it needs to use the most up-to-date version of the session; its
+file-saved session will probably be obsolete.  When a "new" session
+arrives, Server&#160;C loads the saved session from both the file and
+from Server&#160;D.  It will use the newest session as the current
+value.  Once it's loaded the "new" session, it will remain consistent
+as if the server had never stopped.</p>
+
+</s3>
+
+<s3 title="No Distributed Locking">
+
+<p>Resin's cluster sessions does not lock sessions.  For browser-based
+sessions, only one request will execute at a time.  Since browser
+sessions have no concurrently, there's no need for distributed
+locking.  However, it's a good idea to be aware of the lack of
+distributed locking.</p>
+
+</s3>
+
+</s2>
+
+</s1> <!-- persistent sessions -->
+<s1 title="Overview">
+<p>
+Adding a dynamic server to a cluster is a simple two-step process:
+</p>
+<ol>
+<li>Register the dynamic server with a triad server via JMX.</li>
+<li>Start the new dynamic server using the registration in the previous step.</li>
+</ol>
+</s1>
+
+<s1 title="Preliminaries">
+<p>
+Before adding a dynamic server, you must:
+</p>
+<ul>
+<li>Set up and start a cluster with a triad, e.g.
+<example title="Example: conf/resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+&lt;cluster id="app-tier">
+  ...
+  &lt;server id="triad-a" address="234.56.78.90" port="6800"/>
+  &lt;server id="triad-b" address="34.56.78.90" port="6800"/>
+  &lt;server id="triad-c" address="45.67.89.12" port="6800"/>
+</example>
+</li>
+<li>Install at least one admin password, usually in 
+<var>admin-users.xml</var></li>
+<li>Enable the RemoteAdminService for the cluster, e.g.
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+&lt;cluster id="app-tier">
+  ...
+  &lt;admin:RemoteAdminService xmlns:admin="urn:java:com.caucho.admin"/>
+  ...
+</example>
+</li>
+<li>Enable the dynamic servers for the cluster, e.g.
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+&lt;cluster id="app-tier">
+  ...
+  &lt;dynamic-server-enable>true&lt;/dynamic-server-enable>
+  ...
+</example></li>
+</ul>
+<p>
+Check the main <a href="clustering.xtp">Clustering</a> section for more
+information on this topic.
+</p>
+</s1>
+
+<s1 title="Registering a dynamic server">
+<p>
+For the first step of registration, you can use a JMX tool like jconsole or
+simply use the Resin administration web console.  We'll show how to do
+the latter method here.  For registration, you'll specify three values:
+</p>
+
+<deftable title="web-app deployment options">
+<tr>
+  <th>Name</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>Server id</td>
+  <td>Symbolic identifier of the new dynamic server.  
+      This is also specified when starting the new server.</td>
+</tr>
+<tr>
+  <td>IP</td>
+  <td>The IP address of the new dynamic server.  May also be host name.</td>
+</tr>
+<tr>
+  <td>Port</td>
+  <td>The server port of the new dynamic server.  Usually 6800.</td>
+</tr>
+</deftable>
+
+<p>
+With these three values, browse to the Resin administration application's
+"cluster" tab.  If you have enabled dynamic servers for your cluster, you 
+should see a form allowing you to register the server in the "Cluster Overview"
+table.
+</p>
+<figure src="dynamic-server-add.png"/>
+<p>
+Once you have entered the values and added the server, it should show up 
+in the table as a dead server because we haven't started it yet.  The
+dynamic server's registration will be propagated to all the servers in the
+cluster.
+</p>
+<figure src="dynamic-server-added.png"/>
+</s1>
+
+<s1 title="Starting a dynamic server">
+<p>
+Now that we've registered the dynamic server, we can start it
+and have it join the cluster.  In order for the new server to be
+recognized and accepted by the triad, it needs to start with the
+same resin.xml that the triad is using, the name of the cluster it is
+joining, and the values entered in the registration step.  These can
+all be specified on the command line when starting the server:
+</p>
+<example>
+dynamic-server> java -jar $RESIN_HOME/lib/resin.jar -conf /etc/resin/resin.xml \
+                     -dynamic-server app-tier:123.45.67.89:6800 start
+</example>
+<p>
+Specifying the configuration file allows the new server to configure
+itself using the &lt;server-default> options, to find the triad servers
+of the cluster it is joining, and to authenticate using the administration
+logins.  This command starts the server, which immediately contacts the
+triad to join the cluster. Once it has successfully joined, the "Cluster"
+tab of the administration application should look like this:
+</p>
+<figure src="dynamic-server-started.png"/>
+</s1>
+
+</body>
+</document>
+
+<document>
+<header>
+  <title>cluster: Cluster tag configuration</title>
+  <version>Resin 3.1</version>
+
+  <description>
+
+  <p>Each &lt;cluster> contains a set of <a href="virtual-host.xtp">virtual
+hosts</a> served by a collection of &lt;<a config-tag="server"/>&gt;s.  The cluster provides
+<a href="clustering-overview.xtp">load-balancing</a>
+and <a href="config-sessions.xtp">distributed sessions</a> for scalability
+and reliability.</p>
+
+  </description>
+</header>
+<body>
+
+<localtoc/>
+
+<s1 title="See Also">
+
+<ul>
+<li>See the <a href="config-ref.xtp">index</a> for a list of all the tags.</li>
+<li>See <a href="deploy-ref.xtp">Web Application</a> configuration for web.xml (Servlet) configuration.</li>
+<li>See the <a config-tag="server"/> tag for ports, threads, and JVM configuration.</li>
+<li>See <a href="config-env.xtp">Resource</a> configuration for resources: classloader, databases, connectors, and resources.</li>
+<li>See <a href="config-log.xtp">Log</a> configuration for access log configuration, java.util.logging, and stdout/stderr logging.</li>
+</ul>
+
+</s1>
+
+<defun title="&lt;access-log>">
+
+<p>&lt;access-log> configures a HTTP access log for all virtual hosts
+in the cluster.
+See <a href="http-virtual-hosts-ref.xtp#%3caccess-log%3d">access-log</a>
+in the &lt;host> tag for more information.</p>
+
+</defun>
+
+<defun title="&lt;cache>" version="Resin 3.1">
+<parents>cluster</parents>
+
+<p>&lt;cache> configures the proxy cache (requires Resin Professional).  The
+proxy cache improves performance by caching the output of servlets,
+jsp and php pages.  For database-heavy pages, this caching can improve
+performance and reduce database load by several orders of magnitude.</p>
+
+<p>The proxy cache uses a combination of a memory cache and a disk-based
+cache to save large amounts of data with little overhead.</p>
+
+<p>Management of the proxy cache uses the
+<a javadoc="com.caucho.management.server.ProxyCacheMXBean">ProxyCacheMXBean</a>.</p>
+
+<deftable title="&lt;cache> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr><td>path</td>
+    <td>Path to the persistent cache files.</td>
+    <td>cache/</td></tr>
+<tr><td>disk-size</td>
+    <td>Maximum size of the cache saved on disk.</td>
+    <td>1024M</td></tr>
+<tr><td>enable</td>
+    <td>Enables the proxy cache.</td>
+    <td>true</td></tr>
+<tr><td>enable-range</td>
+    <td>Enables support for the HTTP Range header.</td>
+    <td>true</td></tr>
+<tr><td>entries</td>
+    <td>Maximum number of pages stored in the cache.</td>
+    <td>8192</td></tr>
+<tr><td>max-entry-size</td>
+    <td>Largest page size allowed in the cache.</td>
+    <td>1M</td></tr>
+<tr><td>memory-size</td>
+    <td>Maximum heap memory used to cache blocks.</td>
+    <td>8M</td></tr>
+<tr><td>rewrite-vary-as-private</td>
+    <td>Rewrite Vary headers as Cache-Control: private to avoid browser
+and proxy-cache bugs (particularly IE).</td>
+    <td>false</td></tr>
+</deftable>
+
+<def title="&lt;cache> schema">
+element cache {
+  disk-size?
+  &amp; enable?
+  &amp; enable-range?
+  &amp; entries?
+  &amp; path?
+  &amp; max-entry-size?
+  &amp; memory-size?
+  &amp; rewrite-vary-as-private?
+}
+</def>
+
+<example title="Example: enabling proxy cache">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="web-tier"&gt;
+        &lt;cache entries="16384" disk-size="2G" memory-size="256M"/&gt;
+
+        &lt;server id="a" address="192.168.0.10"/&gt;
+
+        &lt;host host-name="www.foo.com"&gt;
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;cluster>" version="Resin 3.1">
+<parents>resin</parents>
+
+<p>&lt;cluster> configures a set of identically-configured servers.
+The cluster typically configures a set of &lt;server&gt;s, each with some
+ports, and a set of virtual &lt;host&gt;s.</p>
+
+<p>Only one &lt;cluster&gt; is active in any on server.  At runtime,
+the &lt;cluster&gt; is selected by the &lt;server&gt; with <var>id</var>
+matching the -server-id on the command line.</p>
+
+<deftable title="&lt;cluster> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>id</td>
+  <td>The cluster identifier.</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td><a href="host-tags.xtp#access-log">access-log</a></td>
+  <td>An access-log shared for all virtual hosts.</td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="#cache">cache</a></td>
+  <td>Proxy cache for HTTP-cacheable results.</td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="#connection-error-page">connection-error-page</a></td>
+  <td>IIS error page to use when isapi_srun to Resin connection fails</td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="host-tags.xtp#ear-default">ear-default</a></td>
+  <td>default values for deployed ear files</td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="#error-page">error-page</a></td>
+  <td>Custom error-page when virtual-hosts fail to match</td>
+  <td></td>
+</tr>
+<tr>
+  <td>host</td>
+  <td>Configures a virtual host</td>
+  <td></td>
+</tr>
+<tr>
+  <td>host-default</td>
+  <td>Configures defaults to apply to all virtual hosts</td>
+  <td></td>
+</tr>
+<tr>
+  <td>host-deploy</td>
+  <td>Automatic host deployment based on a deployment directory</td>
+  <td></td>
+</tr>
+<tr>
+  <td>ignore-client-disconnect</td>
+  <td>Ignores socket exceptions thrown because browser clients have prematurely disconnected</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>invocation-cache-size</td>
+  <td>Size of the system-wide URL to servlet invocation mapping cache</td>
+  <td>16384</td>
+</tr>
+<tr>
+  <td>invocation-cache-max-url-length</td>
+  <td>Maximum URL length saved in the invocation cache</td>
+  <td>256</td>
+</tr>
+<tr>
+  <td>machine</td>
+  <td>Configuration for grouping &lt;server> onto physical machines</td>
+  <td></td>
+</tr>
+<tr>
+  <td>persistent-store</td>
+  <td>Configures the distributed/persistent store</td>
+  <td></td>
+</tr>
+<tr>
+  <td>ping</td>
+  <td>Periodic checking of server URLs to verify server activity</td>
+  <td></td>
+</tr>
+<tr>
+  <td>redeploy-mode</td>
+  <td>"automatic" or "manual"</td>
+  <td>automatic</td>
+</tr>
+<tr>
+  <td><a href="config-ref.xtp#resin:choose">resin:choose</a></td>
+  <td>Conditional configuration based on EL expressions</td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="config-ref.xtp#resin:import">resin:import</a></td>
+  <td>Imports a custom cluster.xml files for a configuration management </td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="config-ref.xtp#resin:if">resin:if</a></td>
+  <td>Conditional configuration based on EL expressions</td>
+  <td></td>
+</tr>
+<tr>
+  <td>rewrite-dispatch</td>
+  <td>rewrites and dispatches URLs using regular expressions, similar to mod_rewrite</td>
+  <td></td>
+</tr>
+<tr>
+  <td>root-directory</td>
+  <td>The root filesystem directory for the cluster</td>
+  <td>${resin.root}</td>
+</tr>
+<tr>
+  <td><a href="server.xtp">server</a></td>
+  <td>Configures JVM instances (servers).  Each cluster needs at least one server</td>
+  <td></td>
+</tr>
+<tr>
+  <td>server-default</td>
+  <td>Configures defaults for all server instances</td>
+  <td></td>
+</tr>
+<tr>
+  <td>server-header</td>
+  <td>Configures the HTTP "Server: Resin/xxx" header</td>
+  <td>Resin/Version</td>
+</tr>
+<tr>
+  <td>session-cookie</td>
+  <td>Configures the servlet cookie name</td>
+  <td>JSESSIONID</td>
+</tr>
+<tr>
+  <td>session-sticky-disable</td>
+  <td>Disables sticky-sessions on the load balancer</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>url-character-encoding</td>
+  <td>Configures the character encoding for URLs</td>
+  <td>utf-8</td>
+</tr>
+<tr>
+  <td>url-length-max</td>
+  <td>Configures the maximum length of an allowed URL</td>
+  <td>8192</td>
+</tr>
+<tr>
+  <td>web-app-default</td>
+  <td>Configures defaults to apply to all web-apps in the cluster</td>
+  <td></td>
+</tr>
+</deftable>
+
+<def title="&lt;cluster> schema">
+element cluster {
+  attribute id { string }
+  &amp; <a href="config-ref.xtp">environment resources</a>
+  &amp; access-log?
+  &amp; cache?
+  &amp; connection-error-page?
+  &amp; ear-default*
+  &amp; error-page*
+  &amp; host*
+  &amp; host-default*
+  &amp; host-deploy*
+  &amp; ignore-client-disconnect?
+  &amp; invocation-cache-size?
+  &amp; invocation-cache-max-url-length?
+  &amp; machine*
+  &amp; persistent-store?
+  &amp; ping*
+  &amp; redeploy-mode?
+  &amp; resin:choose*
+  &amp; resin:import*
+  &amp; resin:if*
+  &amp; rewrite-dispatch?
+  &amp; root-directory?
+  &amp; server*
+  &amp; server-default*
+  &amp; server-header?
+  &amp; session-cookie?
+  &amp; session-sticky-disable?
+  &amp; url-character-encoding?
+  &amp; url-length-max?
+  &amp; web-app-default*
+}
+</def>
+
+<example title="Example: cluster-default">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="web-tier"&gt;
+        &lt;server-default&gt;
+            &lt;http port="8080"/&gt;
+        &lt;/server-default&gt;
+
+        &lt;server id="a" address="192.168.0.10"/&gt;
+        &lt;server id="b" address="192.168.0.11"/&gt;
+
+        &lt;host host-name="www.foo.com"&gt;
+          ...
+        &lt;/host&gt;
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<s2 title="rewrite-vary-as-private">
+
+<p>Because not all browsers understand the Vary header, Resin can rewrite
+Vary to a Cache-Control: private.  This rewriting will cache the page
+with the Vary in Resin's proxy cache, and also cache the page in the browser.
+Any other proxy caches, however, will not be able to cache the page.</p>
+
+<p>The underlying issue is a limitation of browsers such as IE.  When IE
+sees a Vary header it doesn't understand, it marks the page as uncacheable.
+Since IE only understands "Vary: User-Agent", this would mean IE would
+refuse to cache gzipped pages or "Vary: Cookie" pages.</p>
+
+<p>With the &lt;rewrite-vary-as-private> tag, IE will cache the page
+since it's rewritten as "Cache-Control: private" with no Vary at all.
+Resin will continue to cache the page as normal.</p>
+
+</s2>
+
+</defun>
+
+<defun title="&lt;cluster-default>" version="Resin 3.1">
+<parents>resin</parents>
+
+<p>&lt;cluster-default> defines default cluster configuration for all clusters in the &lt;resin&gt; server.</p>
+
+<example title="Example: cluster-default">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster-default&gt;
+        &lt;cache entries="16384" memory-size="64M"/&gt;
+    &lt;/cluster-default&gt;
+
+    &lt;cluster id="web-tier"&gt;
+        ...
+    &lt;/cluster&gt;
+
+    &lt;cluster id="app-tier"&gt;
+        ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;connection-error-page>" version="Resin 3.1">
+<parents>cluster</parents>
+
+<p>&lt;connection-error-page> specifies an error page to be used
+by IIS when it can't contact an app-tier Resin.  This directive
+only applies to IIS.</p>
+
+<def title="connection-error-page">
+element connection-error-page {
+  string
+}
+</def>
+
+</defun>
+
+<defun title="&lt;development-mode-error-page>" version="Resin 3.2.0">
+<parents>cluster</parents>
+
+<p>&lt;development-mode-error-page> enables browser error reporting
+with extra information.  Because it can expose internal data, it is not
+generally recommended in production systems.  (The information is generally
+coped to the log.</p>
+
+</defun>
+
+<defun title="&lt;ear-default>" version="Resin 3.1">
+<parents>cluster</parents>
+
+<p>&lt;ear-default> configures defaults for .ear resource,
+i.e. enterprise applications.</p>
+
+</defun>
+
+<defun title="&lt;error-page>" version="Resin 3.1">
+<parents>cluster</parents>
+
+<p>&lt;error-page> defines a web page to be displayed when an error occurs
+outside of a virtual host or web-app.
+Note, this is not a default error-page, i.e. if
+an error occurs inside a &lt;host&gt; or &lt;web-app&gt;, the error-page for
+that host or web-app will be used instead.</p>
+
+<p>See <a href="deploy-ref.xtp#error-page">webapp: error-page</a>.</p>
+
+<def title="&lt;error-page> schema">
+element error-page {
+  (error-code | exception-type)?
+  &amp; location?
+}
+</def>
+
+</defun>
+
+<defun title="&lt;host>" version="Resin 3.0">
+<parents>cluster</parents>
+
+<p>&lt;host> configures a virtual host.  Virtual hosts must be
+configured explicitly.</p>
+
+<ul>
+<li>See <a href="host-tags.xtp">host tags</a> for configuration details.</li>
+</ul>
+
+<deftable-childtags title="&lt;host> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr><td>id</td>
+    <td>primary host name</td>
+    <td>none</td></tr>
+<tr><td>regexp</td>
+    <td>Regular expression based host matching</td>
+    <td>none</td></tr>
+<tr><td>host-name</td>
+    <td>Canonical host name</td>
+    <td>none</td></tr>
+<tr><td>host-alias</td>
+    <td>Aliases matching the same host</td>
+    <td>none</td></tr>
+<tr><td>secure-host-name</td>
+    <td>Host to use for a redirect to SSL</td>
+    <td>none</td></tr>
+<tr><td>root-directory</td>
+    <td>Root directory for host files</td>
+    <td>parent directory</td></tr>
+<tr><td>startup-mode</td>
+    <td>'automatic', 'lazy', or 'manual', see <a href="deploy.xtp#startup-mode">Startup and Redeploy Mode</a></td>
+    <td>automatic</td></tr>
+</deftable-childtags>
+
+<example title="Example: explicit host">
+&lt;host host-name="www.foo.com"&gt;
+  &lt;host-alias&gt;foo.com&lt;/host-alias&gt;
+  &lt;host-alias&gt;web.foo.com&lt;/host-alias&gt;
+
+  &lt;root-directory&gt;/opt/www/www.foo.com&lt;/root-directory&gt;
+
+  &lt;web-app id="/" document-directory="webapps/ROOT"&gt;
+    
+  &lt;/web-app&gt;
+  ...
+&lt;/host&gt;
+</example>
+
+<example title="Example: regexp host">
+&lt;host regexp="([^.]+)\.foo\.com"&gt;
+  &lt;host-name&gt;${host.regexp[1]}.foo.com&lt;/host-name&gt;
+
+  &lt;root-directory&gt;/var/www/hosts/www.${host.regexp[1]}.com&lt;/root-directory&gt;
+
+  ...
+&lt;/host&gt;
+</example>
+
+<p>It is recommended that any &lt;host&gt; using a regexp include
+a &lt;host-name&gt; to set the canonical name for the host.</p>
+
+</defun>
+
+<defun title="&lt;host-default>" version="Resin 3.0">
+<parents>cluster</parents>
+
+<p>Defaults for a virtual host.</p>
+
+<p>The host-default can contain any of the host configuration tags.
+It will be used as defaults for any virtual host.</p>
+
+</defun>
+
+<defun title="&lt;host-deploy>" version="Resin 3.0.4">
+<parents>cluster</parents>
+
+<p>Configures a deploy directory for virtual host.</p>
+
+<p>The host-deploy will add an EL variable ${name}, referring to
+the name of the host jar file.</p>
+
+<deftable-childtags>
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr><td>path</td>
+    <td>path to the deploy directory</td>
+    <td>required</td></tr>
+<tr><td>expand-path</td>
+    <td>path to the expansion directory</td>
+    <td>path</td></tr>
+<tr><td>host-default</td>
+    <td>defaults for the expanded host</td></tr>
+<tr><td>host-name</td>
+    <td>the host name to match</td>
+    <td>${name}</td></tr>
+</deftable-childtags>
+
+</defun>
+
+<defun title="&lt;ignore-client-disconnect>" version="Resin 3.1">
+<parents>cluster</parents>
+<default>true</default>
+
+<p>ignore-client-disconnect configures whether Resin should ignore
+disconnection exceptions from the client, or if it should send those
+exceptions to the application.</p>
+
+<def title="&lt;ignore-client-disconnect> schema">
+element ignore-client-disconnect {
+  r_boolean-Type
+}
+</def>
+
+</defun>
+
+<defun title="&lt;invocation-cache-size>" version="Resin 3.1">
+<parents>cluster</parents>
+<default>8192</default>
+
+<p>Configures the number of entries in the invocation cache.
+The invocation cache is used to store pre-calculated servlet and filter
+chains from the URLs.  It's also used as the basis for proxy caching.</p>
+
+<def title="&lt;invocation-cache-size> schema">
+element invocation-cache-size {
+  r_int-Type
+}
+</def>
+
+</defun>
+
+<defun title="&lt;invocation-cache-max-url-length>" version="Resin 3.1">
+<parents>cluster</parents>
+<default>256</default>
+
+<p>Configures the longest entry cacheable in the invocation cache.
+It is used to avoid certain types of denial-of-service attacks.</p>
+
+<def title="&lt;invocation-cache-max-url-length> schema">
+element invocation-cache-max-url-length {
+  r_int-Type
+}
+</def>
+
+</defun>
+  
+<defun title="&lt;max-uri-length>" version="Resin 4.0.2">
+<parents>cluster</parents>
+<default>1024</default>
+
+<p>Sets limit on longest URIs that can be served by Resin.</p>
+
+<def title="&lt;max-uri-length> schema">
+element max-uri-length {
+  r_int-Type
+}
+</def>
+
+</defun>
+
+<defun title="&lt;persistent-store>" version="Resin 3.0.8">
+<parents>cluster</parents>
+
+<p>Defines the cluster-aware persistent store used for
+sharing distributed sessions.  The allowed types are "jdbc", "cluster"
+and "file".  The "file" type is only recommended in single-server
+configurations.</p>
+
+<p>The &lt;persistent-store&gt; configuration is in the &lt;server&gt; level
+because it needs to share update information across the
+active cluster and the &lt;cluster&gt; definition is at the &lt;server&gt; level.
+Sessions activate the persistent store with the &lt;use-persistent-store&gt;
+tag of the &lt;session-config&gt;.</p>
+
+<p>See <a href="clustering-overview.xtp">Persistent sessions</a> for more details.</p>
+
+<deftable title="&lt;persistent-store> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>init</td>
+  <td>initialization parameters for the persistent-store</td>
+  <td></td>
+</tr>
+<tr>
+  <td>type</td>
+  <td>cluster, jdbc, or file</td>
+  <td>required</td>
+</tr>
+</deftable>
+
+<def title="&lt;persistent-store> schema">
+element persistent-store {
+  type
+  &amp; init?
+}
+</def>
+
+<s2 name="cluster-store" title="cluster store">
+
+<p>The cluster store shares copies of the sessions on multiple servers.
+The original server is used as the primary, and is always more efficient
+than the backup servers.  In general, the cluster store is preferred because
+it is more scalable, and with the "triplicate" attribute, the
+most reliable..</p>
+
+<deftable title="cluster tags">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>always-load</td>
+  <td>Always load the value</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>always-save</td>
+  <td>Always save the value</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>max-idle-time</td>
+  <td>How long idle objects are stored (session-timeout will invalidate
+items earlier)</td>
+  <td>24h</td>
+</tr>
+<tr>
+  <td>path</td>
+  <td>Directory to store the objects</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>save-backup</td>
+  <td>Saves backup copies of all distributed objects (3.2.0).</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>triplicate</td>
+  <td>Saves three copies of all distributed objects (3.2.0).</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>wait-for-acknowledge</td>
+  <td>Requires the sending server to wait for all acks.</td>
+  <td>false</td>
+</tr>
+</deftable>
+
+<def title="cluster schema">
+element persistent-store {
+  type { "cluster "}
+
+  element init {
+    always-load?
+    &amp; always-save?
+    &amp; max-idle-time?
+    &amp; triplicate?
+    &amp; wait-for-acknowledge?
+  }
+}
+</def>
+
+<example title="Example: cluster store">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+&lt;cluster&gt;
+  &lt;server id="a" address="192.168.0.1" port="6800"/&gt;
+  &lt;server id="b" address="192.168.0.2" port="6800"/&gt;
+
+  &lt;persistent-store type="cluster"&gt;
+    &lt;init&gt;
+      &lt;triplicate&gt;true&lt;/triplicate&gt;
+    &lt;/init&gt;
+  &lt;/persistent-store&gt;
+
+  &lt;web-app-default&gt;
+    &lt;session-config use-persistent-store="true"/&gt;
+  &lt;/web-app-default&gt;
+&lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</s2>
+
+<s2 title="jdbc store">
+
+<p>The JDBC store saves sessions in a JDBC database.  Often, this will be
+a dedicated database to avoid overloading the main database.</p>
+
+<deftable title="jdbc store Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>always-load</td>
+  <td>Always load the value</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>always-save</td>
+  <td>Always save the value</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>blob-type</td>
+  <td>Schema type to store values</td>
+  <td>from JDBC meta info</td>
+</tr>
+<tr>
+  <td>data-source</td>
+  <td>The JDBC data source</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>table-name</td>
+  <td>Database table</td>
+  <td>persistent_session</td>
+</tr>
+<tr>
+  <td>max-idle-time</td>
+  <td>How long idle objects are stored</td>
+  <td>24h</td>
+</tr>
+</deftable>
+
+<example title="Example: jdbc-store">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+&lt;cluster&gt;
+  &lt;server id="a" address="192.168.0.1" port="6800"/&gt;
+  &lt;server id="b" address="192.168.0.2" port="6800"/&gt;
+
+  &lt;persistent-store type="jdbc"&gt;
+    &lt;init&gt;
+      &lt;data-source&gt;jdbc/session&lt;/data-source&gt;
+
+      &lt;max-idle-time&gt;24h&lt;/max-idle-time&gt;
+    &lt;/init&gt;
+  &lt;/persistent-store&gt;
+
+  &lt;web-app-default&gt;
+    &lt;session-config use-persistent-store="true"/&gt;
+  &lt;/web-app-default&gt;
+&lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</s2>
+
+<s2 title="file store">
+
+<p>The file store is a persistent store for development and testing or
+for single servers.  Since it is not aware of the clusters, it cannot
+implement true distributed objects.</p>
+
+<deftable title="file tags">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>always-load</td>
+  <td>Always load the value</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>always-save</td>
+  <td>Always save the value</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>max-idle-time</td>
+  <td>How long idle objects are stored</td>
+  <td>24h</td>
+</tr>
+<tr>
+  <td>path</td>
+  <td>Directory to store the sessions</td>
+  <td>required</td>
+</tr>
+</deftable>
+
+</s2>
+
+</defun>
+
+<defun title="&lt;ping>" occur="*" version="Resin 3.0">
+<parents>cluster</parents>
+
+<p>Starts a thread that periodically makes a request to the server, and
+restarts Resin if it fails.  This facility is used to increase server
+reliability - if there is a problem with the server (perhaps from a deadlock or
+an exhaustion of resources), the server is restarted.</p>
+
+<p>A failure occurs if a request to the url returns an HTTP status that is
+not 200.</p>
+
+<p>Since the local process is restarted, it does not make sense to specify a
+url that does not get serviced by the instance of Resin that has the ping
+configuration.  Most configurations use url's that specify 'localhost' as
+the host.</p>
+
+<p>This pinging only catches some problems because it's running in the
+same process as Resin itself.  If the entire JDK freezes, this
+thread will freeze as well.  Assuming the JDK doesn't freeze, the
+PingThread will catch errors like deadlocks.</p>
+
+<deftable title="&lt;ping> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>url</td>
+  <td>A url to ping.</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>sleep-time</td>
+  <td>Time to wait between pings.  The first ping is always 15m after the server starts, this is for subsequent pings.</td>
+  <td>15m</td>
+</tr>
+<tr>
+  <td>try-count</td>
+  <td>If a ping fails, number of times to retry before giving up and restarting</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>retry-time</td>
+  <td>time between retries</td>
+  <td>1s</td>
+</tr>
+<tr>
+  <td>socket-timeout</td>
+  <td>time to wait for server to start responding to the tcp connection before giving up</td>
+  <td>10s</td>
+</tr>
+</deftable>
+
+<example title="Example: resin.xml - simple usage of server ping">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core"&gt;
+    &lt;cluster id="app-tier"&gt;
+        &lt;ping url="http://localhost/"/&gt;
+        ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<example title="Example: resin.xml - configured usage of server ping">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core"&gt;
+    ...
+    &lt;cluster id="app-tier"&gt;
+        &lt;ping&gt;
+            &lt;url&gt;http://localhost:8080/index.jsp&lt;/url&gt;
+            &lt;url&gt;http://localhost:8080/webapp/index.jsp&lt;/url&gt;
+            &lt;url&gt;http://virtualhost/index.jsp&lt;/url&gt;
+            &lt;url&gt;http://localhost:443/index.jsp&lt;/url&gt;
+
+            &lt;sleep-time&gt;5m&lt;/sleep-time&gt;
+            &lt;try-count&gt;5&lt;/try-count&gt;
+    
+            &lt;!-- a very busy server --&gt;
+            &lt;socket-timeout&gt;30s&lt;/socket-timeout&gt;
+        &lt;/ping&gt;
+      ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<p>
+The class that corresponds to &lt;ping&gt; is 
+<a javadoc="com.caucho.server.admin.PingThread">PingThread</a>.  
+</p>
+
+<s2 title="Mail notification when ping fails">
+
+<p>A refinement of the ping facility sends an email when the server is
+restarted.</p>
+
+<example title="resin.xml - mail notification when ping fails">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core"&gt;
+  ...
+  &lt;cluster id="web-tier"&gt;
+    &lt;ping resin:type="com.caucho.server.admin.PingMailer"&gt;
+      &lt;url&gt;http://localhost:8080/index.jsp&lt;/url&gt;
+      &lt;url&gt;http://localhost:8080/webapp/index.jsp&lt;/url&gt;
+
+      &lt;mail-to&gt;fred@hogwarts.com&lt;/mail-to&gt;
+      &lt;mail-from&gt;resin@hogwarts.com&lt;/mail-from&gt;
+      &lt;mail-subject&gt;Resin ping has failed for server ${'${'}server.name}&lt;/mail-subject&gt;
+    &lt;/ping&gt;
+    ...
+  &lt;/server&gt;
+&lt;/resin&gt;
+</example>
+
+<p>
+The default behaviour for sending mail is to contact a SMTP server at host 127.0.0.1 (the localhost) on port 25.
+System properties are used to configure a different SMTP server.
+</p>
+
+<example title="resin.xml - smtp server configuration">
+  &lt;system-property mail.smtp.host="127.0.0.1"/&gt;
+  &lt;system-property mail.smtp.port="25"/&gt;
+</example>
+
+</s2>
+
+</defun>
+
+<defun title="Resource Tags" version="Resin 3.1">
+<parents>cluster</parents>
+
+<p>All <a href="config-ref.xtp">Environment tags</a> are
+available to the &lt;cluster&gt;.  For example,
+resources like &lt;database&gt;.</p>
+
+<example title="Example: cluster environment">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="app-tier"&gt;
+        &lt;database jndi-name="jdbc/test"&gt;
+            &lt;driver type="org.postgresql.Driver"&gt;
+                &lt;url&gt;jdbc:postgresql://localhost/test&lt;/url&gt;
+                &lt;user&gt;caucho&lt;/user&gt;
+            &lt;/driver&gt;
+        &lt;/database&gt;
+
+        &lt;server id="a" ...&gt;
+          ...
+
+        &lt;host host-name="www.foo.com"&gt;
+          ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;rewrite-dispatch>" version="Resin 3.1">
+<parents>cluster</parents>
+
+<p>&lt;rewrite-dispatch&gt; defines a set of rewriting rules for
+dispatching and forwarding URLs.  Applications can use these rules
+to redirect old URLs to their new replacements.</p>
+
+<p>See <a href="rewrite-tags.xtp">rewrite-dispatch</a> for more
+details.</p>
+
+<example title="rewrite-dispatch">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="web-tier"&gt;
+
+        &lt;rewrite-dispatch&gt;
+            &lt;redirect regexp="^http://www.foo.com"
+                      target="http://bar.com/foo"/&gt;
+        &lt;/rewrite-dispatch&gt;
+  
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;root-directory>" version="Resin 3.1">
+<parents>cluster</parents>
+<default>The root-directory of the &lt;resin&gt; tag.</default>
+
+<p>&lt;root-directory&gt; configures the root directory for files
+within the cluster.  All paths in the &lt;cluster&gt; will be relative
+to the root directory.</p>
+
+<def title="&lt;root-directory> schema">
+element root-directory {
+  r_path-Type
+}
+</def>
+
+<example title="Example: cluster root-directory">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="app-tier"&gt;
+        &lt;root-directory&gt;/var/www/app-tier&lt;/root-directory&gt;
+
+        &lt;server id="a" ...&gt;
+
+        &lt;host host-name="www.foo.com"&gt;
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;server>" version="Resin 3.1">
+<parents>cluster</parents>
+
+<p>The &lt;server> tag configures a JVM instance in
+the cluster.  Each &lt;server&gt; is uniquely identified by
+its <var>id</var> attribute.  The <var>id</var> will match
+the -server-id command line argument.</p>
+
+<p>See the full <a config-tag="server"/> configuration
+for more details of the &lt;server> tag and its children.</p>
+
+<p>The current server is managed with a
+<a javadoc="com.caucho.management.server.ServerMXBean">ServerMXBean</a>.
+The <g>ObjectName</g> is <var>resin:type=Server</var>.</p>
+
+<p>Peer servers are managed with 
+<a javadoc="com.caucho.management.server.ServerConnectorMXBean">ServerConnectorMXBean</a>. The ObjectName is <var>resin:type=ServerConnector,name=server-id</var>.</p>
+
+<deftable title="&lt;server> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>address</td>
+  <td>IP address of the cluster port</td>
+  <td>127.0.0.1</td>
+</tr>
+<tr>
+  <td>bind-ports-after-start</td>
+  <td>If true, listen to the ports only after all initialization has
+completed, allowing load-balance failover.</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>cluster-port</td>
+  <td>Configures the cluster port in detail, allowing for customization
+of timeouts, etc.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>group-name</td>
+  <td>Used by the watchdog to switch setgid before starting the Resin
+JVM instance for security.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>http</td>
+  <td>Adds a HTTP port (see <a href="port-tags.xtp">port tags</a>)</td>
+  <td></td>
+</tr>
+<tr>
+  <td>id</td>
+  <td>Unique server identifier</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>java-exe</td>
+  <td>The specific Java executable for the watchdog
+to launch the JVM</td>
+  <td>java</td>
+</tr>
+<tr>
+  <td>jvm-arg</td>
+  <td>Adds a JVM argument when the watchdog launches Resin.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jvm-classpath</td>
+  <td>Adds a JVM classpath when the watchdog launches Resin.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>keepalive-connection-time-max</td>
+  <td>The total time a connection can be used for requests and keepalives</td>
+  <td>10min</td>
+</tr>
+<tr>
+  <td>keepalive-max</td>
+  <td>The maximum keepalives enabled at one time.</td>
+  <td>128</td>
+</tr>
+<tr>
+  <td>keepalive-select-enable</td>
+  <td>Enables epoll/select for keepalive requests to reduce threads (unix only)</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>keepalive-timeout</td>
+  <td>Timeout for a keepalive to wait for a new request</td>
+  <td>15s</td>
+</tr>
+<tr>
+  <td>load-balance-connect-timeout</td>
+  <td>How long the load-balancer should wait for a connection to this server</td>
+  <td>5s</td>
+</tr>
+<tr>
+  <td>load-balance-idle-time</td>
+  <td>How long the load balancer can keep an idle socket open to this server (see keepalive-timeout)</td>
+  <td>keepalive-time - 2s</td>
+</tr>
+<tr>
+  <td>load-balance-recover-time</td>
+  <td>How long the load balancer should treat this server as dead after a failure before retrying</td>
+  <td>15s</td>
+</tr>
+<tr>
+  <td>load-balance-socket-timeout</td>
+  <td>timeout for the load balancer reading/writing to this server</td>
+  <td>65s</td>
+</tr>
+<tr>
+  <td>load-balance-warmup-time</td>
+  <td>Warmup time for the load-balancer to throttle requests before sending the full load</td>
+  <td>60s</td>
+</tr>
+<tr>
+  <td>load-balance-weight</td>
+  <td>relative weight used by the load balancer to send traffic to this server</td>
+  <td>100</td>
+</tr>
+<tr>
+  <td>memory-free-min</td>
+  <td>minimum memory allowed for the JVM before Resin forces a restart</td>
+  <td>1M</td>
+</tr>
+<tr>
+  <td>ping</td>
+  <td>Configures a periodic ping of the server to force restarts when non-responsive</td>
+  <td></td>
+</tr>
+<tr>
+  <td>port</td>
+  <td>Configures the cluster port (shortcut for &lt;cluster-port>)</td>
+  <td>6800</td>
+</tr>
+<tr>
+  <td>protocol</td>
+  <td>Adds a custom socket protocol, e.g. for IIOP or SNMP.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>shutdown-wait-max</td>
+  <td>The maximum of time to wait for a graceful Resin shutdown before forcing a close</td>
+  <td>60s</td>
+</tr>
+<tr>
+  <td>socket-timeout</td>
+  <td>The read/write timeout for the socket</td>
+  <td>65s</td>
+</tr>
+<tr>
+  <td>thread-max</td>
+  <td>The maximum number of threads managed by Resin (JVM threads will be larger because of non-Resin threads)</td>
+  <td>4096</td>
+</tr>
+<tr>
+  <td>thread-executor-thread-max</td>
+  <td>Limits the threads allocated to application ScheduledExecutors from Resin</td>
+  <td></td>
+</tr>
+<tr>
+  <td>thread-idle-max</td>
+  <td>Maximum number of idle threads in the thread pool</td>
+  <td>10</td>
+</tr>
+<tr>
+  <td>thread-idle-min</td>
+  <td>Minimum number of idle threads in the thread pool</td>
+  <td>5</td>
+</tr>
+<tr>
+  <td>user-name</td>
+  <td>The setuid user-name for the <a href="resin-watchdog.xtp">watchdog</a>
+when launching Resin for Unix security.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>watchdog-jvm-arg</td>
+  <td>Additional JVM arguments when launching the watchdog manager</td>
+  <td></td>
+</tr>
+<tr>
+  <td>watchdog-port</td>
+  <td>The port for the watchdog-manager to listen for start/stop/status
+requests</td>
+  <td>6700</td>
+</tr>
+</deftable>
+
+<def title="&lt;server> schema">
+element server {
+  attribute id { string }
+  &amp; address?
+  &amp; bind-ports-after-start?
+  &amp; cluster-port*
+  &amp; group-name?
+  &amp; http*
+  &amp; java-exe?
+  &amp; jvm-arg?
+  &amp; jvm-classpath?
+  &amp; keepalive-connection-time-max?
+  &amp; keepalive-max?
+  &amp; keepalive-select-enable?
+  &amp; keepalive-timeout?
+  &amp; load-balance-connect-timeout?
+  &amp; load-balance-idle-time?
+  &amp; load-balance-recover-time?
+  &amp; load-balance-socket-timeout?
+  &amp; load-balance-warmup-time?
+  &amp; load-balance-weight?
+  &amp; memory-free-min?
+  &amp; ping?
+  &amp; port?
+  &amp; protocol?
+  &amp; shutdown-wait-max?
+  &amp; socket-timeout?
+  &amp; thread-max?
+  &amp; thread-executor-task-max?
+  &amp; thread-idle-max?
+  &amp; thread-idle-min?
+  &amp; user-name?
+  &amp; watchdog-jvm-arg*
+  &amp; watchdog-port?
+}
+</def>
+
+<example title="Example: server">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="web-tier"&gt;
+        &lt;server id="a" address="192.168.0.10" port="6800"&gt;
+          &lt;http port="8080"/&gt;
+        &lt;/server&gt;
+
+        &lt;server id="b" address="192.168.0.11" port="6800"&gt;
+          &lt;http port="8080"/&gt;
+        &lt;/server&gt;
+
+        &lt;server id="c" address="192.168.0.12" port="6800"&gt;
+          &lt;http port="8080"/&gt;
+        &lt;/server&gt;
+
+        &lt;host id=""&gt;
+          ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;server-default>" version="Resin 3.1">
+<parents>cluster</parents>
+
+<p>Defines default values for all &lt;server&gt; instances. See
+<a config-tag="server"/> configuration for more details.</p>
+
+<example title="Example: server">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="web-tier"&gt;
+        &lt;server-default&gt;
+            &lt;server-port&gt;6800&lt;/server-port&gt;
+
+            &lt;http port="8080"/&gt;
+        &lt;/server-default&gt;
+
+        &lt;server id="a" address="192.168.0.10"/&gt;
+        &lt;server id="b" address="192.168.0.11"/&gt;
+        &lt;server id="c" address="192.168.0.12"/&gt;
+
+        &lt;host id=""&gt;
+          ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;server-header>" version="Resin 3.1">
+<parents>cluster</parents>
+<default>Resin/3.1.x</default>
+
+<p>Configures the HTTP Server: header which Resin sends back to any
+HTTP client.</p>
+
+<def title="&lt;server-header> schema">
+element server-header {
+  string
+}
+</def>
+
+<example title="server-header">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="web-tier"&gt;
+        &lt;server-header&gt;MyServer/1.0&lt;/server-header&gt;
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;session-cookie>" version="Resin 3.1">
+<parents>cluster</parents>
+<default>JSESSIONID</default>
+
+<p>Configures the cookie used for servlet sessions.</p>
+
+<def title="&lt;session-cookie> schema">
+element session-cookie {
+  string
+}
+</def>
+
+</defun>
+
+<defun title="&lt;session-sticky-disable>" version="Resin 3.1">
+<parents>cluster</parents>
+<default>false</default>
+
+<p>Disables sticky sessions from the load balancer.</p>
+
+<def title="&lt;session-sticky-disable> schema">
+element session-sticky-disable {
+  r_boolean-Type
+}
+</def>
+
+</defun>
+
+<defun title="&lt;session-url-prefix>" version="Resin 3.1">
+<parents>cluster</parents>
+<default>;jsessionid=</default>
+
+<p>Configures the URL prefix used for session rewriting.</p>
+
+<note>Session rewriting is discouraged as a potential security issue.</note>
+
+<def title="&lt;session-cookie> schema">
+element session-cookie {
+  string
+}
+</def>
+
+</defun>
+
+<defun title="&lt;ssl-session-cookie>" version="Resin 3.1">
+<parents>cluster</parents>
+<default>value of session-cookie</default>
+
+<p>Defines an alternative session cookie to be used for a SSL
+connection.  Having two separate cookies increases security.</p>
+
+<def title="&lt;session-cookie> schema">
+element ssl-session-cookie {
+  string
+}
+</def>
+
+<example title="Example: ssl-session-cookie">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="web-tier"&gt;
+        &lt;ssl-session-cookie&gt;SSLJSESSIONID&lt;/ssl-session-cookie&gt;
+        ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;url-character-encoding>" version="Resin 3.1">
+<parents>cluster</parents>
+<default>UTF-8</default>
+
+<p>Defines the character encoding for decoding URLs.</p>
+
+<p>The HTTP specification does not define the character-encoding for
+URLs, so the server must make assumptions about the encoding.</p>
+
+<def title="&lt;url-character-encoding> schema">
+element url-character-encoding {
+  string
+}
+</def>
+
+</defun>
+
+<defun title="&lt;web-app-default>" version="Resin 3.1">
+<parents>cluster</parents>
+
+<p>&lt;web-app-default&gt; defines default values for any <g>web-app</g> in
+the cluster.</p>
+
+<example title="Example: web-app-default">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="app-tier"&gt;
+
+        &lt;web-app-default&gt;
+            &lt;servlet servlet-name="resin-php"
+                     servlet-class="com.caucho.quercus.servlet.QuercusServlet"/&gt;
+
+            &lt;servlet-mapping url-pattern="*.php"
+                             servlet-name="resin-php"/&gt;
+        &lt;/web-app-default&gt;
+
+        &lt;host id=""&gt;
+          ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+</body>
+</document>

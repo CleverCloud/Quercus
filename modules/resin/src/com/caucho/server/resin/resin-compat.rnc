@@ -1,0 +1,150 @@
+default namespace r = "http://caucho.com/ns/resin"
+namespace rcore = "http://caucho.com/ns/resin/core"
+namespace local = ""
+namespace l = ""
+
+r_cluster-Compat = element cluster {
+  (attribute id { string }?
+     & r_cluster-port-Compat*)
+}
+
+r_cluster-port-Compat =
+  r_port
+
+  | r_srun-Compat
+
+r_keepalive-max =
+  attribute keepalive-max { string }
+  | element keepalive-max { string }
+
+r_keepalive-timeout =
+  attribute keepalive-timeout { string }
+  | element keepalive-timeout { string }
+
+r_min-free-memory =
+  attribute min-free-memory { string }
+  | element min-free-memory { string }
+
+## old-style <server>
+r_server-Compat = element server {
+  attribute id { string }?,
+
+  r_root-directory?,
+
+  r_server-Content-Compat
+}
+
+r_select-manager = element select-manager {
+  r_enable?
+}
+
+## <server> basic contents
+r_server-Basis-Compat =
+  r_env-Basis
+
+  & r_access-log?
+
+  & (attribute bind-ports-after-start { r_boolean-Type }
+     | element bind-ports-after-start { r_boolean-Type })?
+
+  & r_proxy-cache?
+
+  & (attribute connection-error-page { string }
+     | element connection-error-page { string })?
+
+  & r_cluster-Compat*
+
+  & r_ear-default*
+
+  & r_error-page*
+
+  & r_http*
+
+  & r_host*
+
+  & r_host-default*
+
+  & r_host-deploy*
+
+  & (attribute invocation-cache-size { r_kbytes-Type }
+     | element invocation-cache-size { r_kbytes-Type })?
+
+  & (attribute invocation-cache-max-url-length { r_int-Type }
+     | element invocation-cache-max-url-length { r_int-Type })?
+
+  & r_ignore-client-disconnect?
+
+  & r_keepalive-max?
+
+  & r_keepalive-timeout?
+
+  & r_persistent-store?
+
+  & r_ping*
+
+  & r_port*
+
+  & r_redeploy-check-interval?
+
+  & r_redeploy-mode?
+
+  & r_rewrite-dispatch?
+
+  & r_select-manager?
+
+  & (attribute server-header { string }
+     | element server-header { string })?
+
+  & r_session-cookie?
+
+  & r_ssl-session-cookie?
+
+  & r_session-url-prefix?
+
+  & r_url-character-encoding?
+
+  & r_web-app-default*
+
+## <server> flow control
+r_server-Flow-Compat =
+  r_server-Basis-Compat
+
+  & element rcore:env { rcore_env-Args, r_server-Flow-Compat }*
+
+  & element rcore:if { rcore_if-Args, r_server-Flow-Compat }*
+
+  & element rcore:choose {
+      element rcore:when { rcore_when-Args, r_server-Flow-Compat }+,
+      element rcore:otherwise { r_server-Flow-Compat }?
+    }*
+
+## complete <server> contents
+r_server-Content-Compat = r_server-Flow-Compat
+
+r_srun-Compat = element srun {
+  (attribute id { string }
+   | attribute server-id { string }
+   | element server-id { string })?
+
+  & (attribute index { string }
+    | element index { string })?
+
+  & (attribute backup { string }
+    | element backup { string })?
+
+  & r_port-Content
+}
+
+r_spare-thread-max =
+  attribute spare-thread-max { string }
+  | element spare-thread-max { string }
+
+r_spare-thread-min =
+  attribute spare-thread-min { string }
+  | element spare-thread-min { string }
+
+r_thread-pool = element thread-pool {
+  r_thread-max?
+
+  & r_spare-thread-min?
+}

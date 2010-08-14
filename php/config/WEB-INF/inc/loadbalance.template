@@ -1,0 +1,26 @@
+<?php
+
+function loadbalance_template_description()
+{
+  echo "Load balanced HTTP servers";
+}
+
+function loadbalance_template_print()
+{
+  echo "<resin xmlns=\"http://caucho.com/ns/resin\"\n";
+  echo "       xmlns:resin=\"http://caucho.com/ns/resin/core\">\n";
+
+  echo "\n";
+  echo "<cluster id='app-tier'>\n";
+  echo "</cluster>\n";
+  echo "\n";
+  
+  echo "<cluster id='web-tier'>\n";
+  echo "</cluster>\n";
+
+  echo "\n";
+
+  echo "</resin>";
+}
+
+?>

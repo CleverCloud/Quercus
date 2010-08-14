@@ -1,0 +1,9 @@
+<ivy>
+  <info organisation="com.caucho" module="resin-maven-plugin"/>
+
+  <dependencies>
+    <dependency org="com.caucho" name="resin" rev="@VERSION@"/>
+    <dependency org="org.apache.maven" name="maven-plugin-api" rev="2.0"/>
+    <dependency org="com.google.code.typica" name="typica" rev="1.6"/>
+  </dependencies>
+</ivy>

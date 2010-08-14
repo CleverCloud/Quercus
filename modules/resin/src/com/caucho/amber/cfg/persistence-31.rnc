@@ -1,0 +1,53 @@
+
+default namespace j2ee = "http://java.sun.com/xml/ns/persistence"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+start = pst31_persistence
+
+t_boolean = string
+t_class = string
+t_jndi = string
+
+pst31_persistence = element persistence {
+  attribute version { "2.0" },
+
+  attribute xsi:schemaLocation { string }?,
+
+  pst31_persistence-unit*
+}
+
+pst31_persistence-unit = element persistence-unit {
+  attribute name { string },
+
+  attribute transaction-type { "JTA" | "RESOURCE_LOCAL" }?,
+
+  element description { string }?,
+
+  element provider { string }?,
+
+  element jta-data-source { t_jndi }?,
+
+  element non-jta-data-source { t_jndi }?,
+
+  element mapping-file { string }*,
+
+  element jar-file { string }*,
+
+  element class { t_class }*,
+
+  element exclude-unlisted-classes { t_boolean }?,
+
+  element shared-cache-mode { string }?,
+
+  element validation-mode { string }?,
+
+  element properties {
+    element property {
+      attribute name { string },
+
+      attribute value { string }
+    }*
+  }?
+}

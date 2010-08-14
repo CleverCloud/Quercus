@@ -1,0 +1,410 @@
+default namespace j2ee = "http://java.sun.com/xml/ns/j2ee"
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+namespace l = ""
+
+include "classpath:com/caucho/config/cfg/j2ee.rnc"
+
+## j2ee_boolean = string
+## j2ee_string = string
+## j2ee_path = string
+j2ee_class = string
+## j2ee_java-identifier = string
+cmp-field-type-Type = string
+
+ejb14_abstract-schema-name = element abstract-schema-name { string }
+
+ejb14_activation-config-property = element activation-config-property {
+  element activation-config-property-name { string },
+  element activation-config-property-value { string }
+}
+
+ejb14_activation-config = element activation-config {
+  ejb14_description*,
+  ejb14_activation-config-property+,
+  ejb14_deployment-extension*
+}
+
+ejb14_assembly-descriptor = element assembly-descriptor {
+  j2ee_security-role*,
+
+  ejb14_method-permission*,
+  ejb14_container-transaction*,
+  ejb14_message-destination*,
+  ejb14_exclude-list?,
+  ejb14_deployment-extension*
+}
+
+ejb14_cmp-field = element cmp-field {
+  ejb14_description*,
+  element field-name { j2ee_java-identifier },
+  ejb14_deployment-extension*
+}
+
+ejb14_cmp-version = element cmp-version {
+  "1.x" | "2.x"
+}
+
+ejb14_cmr-field = element cmr-field {
+  ejb14_description*,
+  element cmr-field-name { j2ee_string },
+  element cmr-field-type { string }?,
+  ejb14_deployment-extension*
+}
+
+ejb14_container-transaction = element container-transaction {
+  ejb14_description*,
+  ejb14_method+,
+  element trans-attribute { "Bean" | "Container" }
+}
+
+ejb14_deployment-extension = element deployment-extension { string }
+
+ejb14_description = element description { string }
+
+ejb14_display-name = element display-name { string }
+
+ejb14_ejb-class = element ejb-class {
+  j2ee_class
+}
+
+ejb14_ejb-client-jar = element ejb-client-jar { string }
+
+ejb14_ejb_env =
+  j2ee_jndi-environment-refs-Group,
+
+  j2ee_security-role-ref*,
+
+  ejb14_security-identity?
+
+ejb14_ejb-jar = element ejb-jar {
+  attribute l:version { "2.1" },
+
+  attribute xsi:schemaLocation { string }?,
+
+  ejb14_description*,
+
+  ejb14_display-name*,
+
+  ejb14_icon*,
+
+  ejb14_enterprise-beans,
+
+  ejb14_relationships?,
+
+  ejb14_assembly-descriptor?,
+
+  ejb14_ejb-client-jar?,
+
+  ejb14_deployment-extension*
+}
+
+##ejb-ref = element ejb-ref { string }
+##ejb-local-ref = element ejb-local-ref { string }
+
+ejb14_ejb-name = element ejb-name {
+  string
+}
+
+ejb14_ejb-relation = element ejb-relation {
+  ejb14_description*,
+
+  element ejb-relation-name { string }?,
+
+  ejb14_ejb-relationship-role,
+
+  ejb14_ejb-relationship-role,
+
+  ejb14_deployment-extension*
+}
+
+ejb14_ejb-relationship-role = element ejb-relationship-role {
+  ejb14_description*,
+
+  element ejb-relationship-role-name { j2ee_string }?,
+
+  element multiplicity { "One" | "Many" },
+
+  element cascade-delete { empty }?,
+
+  ejb14_relationship-role-source,
+
+  ejb14_cmr-field?,
+
+  ejb14_deployment-extension*
+}
+
+ejb14_enterprise-beans = element enterprise-beans {
+  (ejb14_session
+  | ejb14_entity
+  | ejb14_message-driven)+
+}
+
+ejb14_entity = element entity {
+  attribute id { string }?,
+
+  ejb14_description*,
+
+  ejb14_display-name*,
+
+  ejb14_icon*,
+
+  ejb14_ejb-name,
+
+  (ejb14_home, ejb14_remote)?,
+
+  (ejb14_local-home, ejb14_local)?,
+
+  ejb14_ejb-class,
+
+  ejb14_persistence-type,
+
+  ejb14_prim-key-class,
+
+  ejb14_reentrant?,
+
+  ejb14_cmp-version?,
+
+  ejb14_abstract-schema-name?,
+
+  ejb14_cmp-field*,
+
+  ejb14_primkey-field?,
+
+  ejb14_ejb_env,
+
+  ejb14_security-identity?,
+
+  ejb14_query*,
+
+  ejb14_deployment-extension*
+}
+
+ejb14_exclude-list = element exclude-list {
+  ejb14_description*,
+
+  ejb14_method+
+}
+
+ejb14_home = element home {
+  j2ee_class
+}
+
+ejb14_icon = element icon {
+  string
+}
+
+ejb14_local = element local {
+  j2ee_class
+}
+
+ejb14_local-home = element local-home {
+  j2ee_class
+}
+
+ejb14_message-destination = element message-destination {
+  ejb14_description*,
+
+  ejb14_display-name*,
+
+  ejb14_icon*,
+
+  element message-destination-name { string },
+
+  ejb14_deployment-extension*
+}
+
+ejb14_message-destination-link
+  = element message-destination-link { j2ee_class }
+
+ejb14_message-destination-ref = element message-destination-ref {
+  ejb14_description*,
+
+  element message-destination-ref-name { string },
+
+  ejb14_message-destination-type,
+
+  element message-destination-usage {
+    "Consumes" | "Produces" | "ConsumesProduces"
+  },
+
+  element message-destination-link { string }?,
+
+  ejb14_deployment-extension*
+}
+
+ejb14_message-destination-type = element message-destination-type { string }
+
+ejb14_message-driven = element message-driven {
+  ejb14_description?,
+
+  ejb14_display-name?,
+
+  ejb14_icon?,
+
+  ejb14_ejb-name,
+
+  ejb14_ejb-class,
+
+  element messaging-type { j2ee_class }?,
+
+  ejb14_transaction-type,
+
+  ejb14_message-destination-type?,
+
+  ejb14_message-destination-link?,
+
+  ejb14_activation-config?,
+
+  ejb14_ejb_env,
+
+  ejb14_deployment-extension*
+}
+
+ejb14_method-intf = element method-intf {
+  "Home" 
+ | "Remote"
+ | "LocalHome"
+ | "Local"
+ | "ServiceEndpoint"
+}
+
+ejb14_method-name = element method-name {
+  string
+}
+
+ejb14_method-param = element method-param { string }
+
+ejb14_method-params = element method-params {
+  ejb14_method-param*
+}
+
+ejb14_method-permission = element method-permission {
+  ejb14_description*,
+
+  (j2ee_role-name+
+  | element unchecked { empty }),
+
+  ejb14_method*
+}
+
+ejb14_method = element method {
+  ejb14_description*,
+
+  ejb14_ejb-name,
+
+  ejb14_method-intf?,
+
+  ejb14_method-name,
+
+  ejb14_method-params?
+}
+  
+ejb14_persistence-type = element persistence-type {
+  "Container" | "Bean"
+}
+
+ejb14_prim-key-class = element prim-key-class {
+  j2ee_class
+}
+
+ejb14_primkey-field = element primkey-field { string }
+
+ejb14_query = element query {
+  ejb14_description*,
+
+  ejb14_query-method,
+
+  element result-type-mapping { "Local" | "Remote" }?,
+
+  element ejb-ql { string },
+
+  ejb14_deployment-extension*
+}
+
+ejb14_query-method = element query-method {
+  ejb14_method-name,
+
+  ejb14_method-params,
+
+  ejb14_deployment-extension*
+}
+
+ejb14_reentrant = element reentrant {
+  "True" | "False"
+}
+
+ejb14_relationship-role-source = element relationship-role-source {
+  ejb14_description*,
+
+  ejb14_ejb-name
+}
+
+ejb14_relationships = element relationships {
+  ejb14_description*,
+
+  ejb14_ejb-relation+,
+
+  ejb14_deployment-extension*
+}
+
+ejb14_remote = element remote {
+  j2ee_class
+}
+
+##resource-env-ref = element resource-env-ref { string }
+##resource-ref = element resource-ref { string }
+
+##role-name = element role-name { string }
+
+ejb14_security-identity = element security-identity {
+  ejb14_description*,
+
+  (element use-caller-identity { empty }
+
+  | j2ee_run-as)
+}
+
+##security-role-ref = element security-role-ref { string }
+
+##service-ref = element service-ref { string }
+
+ejb14_session = element session {
+  j2ee_description?,
+
+  j2ee_display-name?,
+
+  j2ee_icon?,
+
+  ejb14_ejb-name,
+
+  (ejb14_home, ejb14_remote)?,
+
+  (ejb14_local-home, ejb14_local)?,
+
+  element service-endpoint { j2ee_class }?,
+
+  ejb14_ejb-class,
+
+  element session-type { "Stateful" | "Stateless" },
+
+  ejb14_transaction-type,
+
+  ejb14_ejb_env,
+
+  j2ee_security-role-ref*,
+
+  ejb14_security-identity?
+}
+
+ejb14_trans-attribute = element trans-attribute {
+  "NotSupported" 
+ | "Supports"
+ | "Required"
+ | "RequiresNew"
+ | "Mandatory"
+ | "Never"
+}
+
+ejb14_transaction-type = element transaction-type { "Bean" | "Container" }
+
+  

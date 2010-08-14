@@ -1,0 +1,14 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <!--
+     - configuration for the JNDI server.
+    -->
+  <ejb-server data-source="jdbc/resin" create-database-schema="true">
+  </ejb-server>
+
+  <!--
+     - configuration for the client.
+    -->
+  <servlet servlet-name="many2many" servlet-class="example.ManyToManyServlet">
+  </servlet>
+  <servlet-mapping url-pattern="/many2many" servlet-name="many2many"/>
+</web-app>

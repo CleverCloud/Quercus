@@ -1,0 +1,6 @@
+Extension-Name: org.osgi
+Specification-Vendor: Sun Microsystems, Inc
+Specification-Version: 0.9
+Implementation-Vendor-Id: com.caucho
+Implementation-Vendor: Caucho Technology, Inc
+Implementation-Version: 3.2.0

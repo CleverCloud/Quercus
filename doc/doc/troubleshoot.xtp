@@ -1,0 +1,1116 @@
+<document>
+<header>
+<product>resin</product>
+<title>Troubleshooting</title>
+<description>
+
+<p>A list of symptoms and their possible resolution.</p>
+
+</description>
+</header>
+
+<body>
+<localtoc/>
+
+<s1 title="Symptoms">
+
+<s2 title="Resin stops responding">
+<ul>
+
+<li>There may be a thread deadlock problem, <a href="#thread-dump">obtain a thread dump</a>.
+
+</li><li>Enable <a href="#debug-log">full debug logging</a> and check
+the last log entries for hints about what the last thing to happen was.
+
+</li></ul>
+</s2>
+
+<s2 title="Resin keeps restarting">
+<ul>
+
+<li>Enable <a href="#debug-log">full debug logging</a> and check
+the entries for an explanation of why Resin thinks it should restart.
+
+</li></ul>
+</s2>
+
+<s2 name="memory-leaks" title="java.lang.OutOfMemoryError exception, application runs out of memory">
+
+<ul>
+
+<li>Use JVM startup arguments to 
+<a href="performance.xtp#memory">increase heap memory.</a>
+
+</li><li>Obtain a <a href="#heap-dump">heap dump</a> to
+determine which objects are not getting garbage collected.
+
+</li><li>Obtain a <a href="#thread-dump">thread dump</a> and
+check for unreleased threads that might be holding onto objects.
+
+</li></ul>
+
+<p>An OutOfMemoryError exception is usually an indication that heap memory is
+being used up.  Often this is from application code keeping references to
+objects that are no longer needed, and the garbage collector does not free
+them.  A heap dump can help determine which code and which kinds of objects are
+being held.</p>
+
+<p>
+If the heap dump or other monitoring tools reveal that the server and your
+appliciation(s) actually are not running out of heap memory then an
+OutOfMemoryError indicates that then the JVM is running out of virtual
+memory, i.e. an underlying malloc() call is failing.
+</p>
+
+<p>
+Often this situation is indicated by using OS tools to show memory usage, the
+JVM itself indicates it has heap memory but the OS tool shows that the process
+is using a very large amount of memory.  On Windows the task manager is used, on Unix <code>top</code> or <code>ps</code>.
+</p>
+
+<p>
+The only non-heap allocations by the JVM (and therefore Resin and your
+application) are the following:
+</p>
+
+<ul>
+
+<li>threads and particularly the thread stack takes up virtual memory
+
+</li><li>any JNI libraries might be calling malloc or mmap (or the windows
+equivalent of mmap) and taking virtual memory.  This includes many database
+drivers, and also some JNI code that Resin uses.
+
+</li><li>for .jar/.zip files (specifically ZipFile), the JDK allocates virtual
+memory.  If you have a large number of jars open, you can run into problems.
+It's conceivable that a getResourceAsStream for a jar file that wasn't closed
+would use up .jar memory.
+
+</li></ul>
+
+</s2>
+
+<s2 name="server-gets-slow" title="After a while the server starts to go very slow">
+<ul>
+
+<li>This may be a garbage collection issue.  If you have a memory leak, then an
+excessive number of objects may get created, causing the garbage collector to
+use up all of your CPU.  If you're running out of memory, then the JVM will
+slowly halt (and continually GC) until it dies.
+
+
+  <ul>
+
+  <li>Monitor <a href="#garbage-collection">garbage
+      collection</a>.
+
+  </li><li>Obtain a <a href="#heap-dump">heap dump</a> to
+      determine if objects are not getting garbage collected.
+  
+  </li><li>See <a href="performance.xtp#garbage-collection">Garbage
+      Collection</a> in the JVM Tuning section for more about garbage
+      collecting.
+
+  </li></ul>
+
+</li><li>This may be a runaway thread or a request that is tying up resources.  If a
+thread does not return from a request, Resin will not be able to reuse the
+thread and will have less threads to service new requests.
+
+  <ul>
+  <li>Obtain a <a href="#thread-dump">thread dump</a> and
+      check for unreleased threads that might be holding onto objects.
+  </li></ul>
+</li></ul>
+</s2> <!-- server-gets-slow -->
+
+<s2 name="cpu-spike" title="CPU spikes, excessive CPU usage">
+<ul>
+
+<li>Obtain a <a href="#thread-dump">thread dump</a> and
+check for threads that are caught in tight loops.
+
+</li><li>Check for <a href="#server-gets-slow">garbage collection</a> issues.
+
+</li></ul>
+
+</s2> <!-- cpu-spike -->
+
+<s2 title="Sessions become null, losing session">
+
+<s3 title="Debug logging">
+<p>
+A first step is to enable <a href="#debug-log">debug
+logging</a>.  In particular the headers submitted by the browser for a request
+can reveal the state of the JSESSIONID for a client, and logging will also show
+when Resin recognizes, creates, and/or invalidates a session.
+</p>
+
+</s3>
+
+<s3 title="Resin configuration for sessions">
+
+<p>Another possiblity is that the <a config-tag="session-max"/> setting is too
+low, and you are getting more users establishing sessions than you have
+configured Resin for.</p>
+
+<p>Yet another possibility is that the session is timing out, you can use the
+<a config-tag="session-timeout"/> tag to configure this.</p>
+
+<example>
+&lt;web-app id='/'&gt;
+  ...
+  &lt;session-config&gt;
+    &lt;!-- timeout after 120 minutes --&gt;
+    &lt;session-timeout&gt;120&lt;/session-timeout&gt;
+    &lt;!-- up to 4096 sessions at once --&gt;
+    &lt;session-max&gt;4096&lt;/session-max&gt;
+  &lt;/session-config&gt;
+  ...
+&lt;/web-app&gt;
+</example>
+</s3>
+
+
+<s3 title="Application reloading">
+
+<p>Whenever a java source file, web.xml, or resin.xml changes then Resin will
+restart the application.  If this happens, your current sessions will be lost
+unless you have configured a persistent session store.</p>
+
+</s3>
+
+<s3 title="Browser cookie limitations">
+
+<p>Some users have reported that if their application uses a lot of cookies,
+the browser will start to discard older cookies to make room for the new.  This
+may result in the browser discarding the cookie that Resin is using to keep
+track of the session.</p>
+
+<p>Internet Explorer users are particularily prone to encountering this problem.</p>
+
+<p>If your application uses a lot of cookies, the best solution is to reduce
+the number of cookies and size of cookie data.  Resin uses a single cookie with
+a relatively small amount of data for tracking the session id of the user.
+Information that the application stores in cookies can be stored in the
+HttpSession object instead.</p>
+
+<p>
+As a last resort, you may need to configure Resin
+to always use URL rewriting by setting <a config-tag="enable-cookies"/> to
+false.  However URL rewriting is not recommended because of security issues,
+the high probabilty that the application is missing calls to cause the
+rewriting on some pages, and because of the effect that rewriting has on the
+url.
+</p>
+
+<example>
+&lt;web-app id='/'&gt;
+  ...
+  &lt;session-config&gt;
+    &lt;enable-cookies&gt;false&lt;/enable-cookies&gt;
+    &lt;enable-url-rewriting&gt;true&lt;/enable-url-rewriting&gt;
+  &lt;/session-config&gt;
+  ...
+&lt;/web-app&gt;
+</example>
+
+</s3>
+
+<s3 title="Problems with cookie domains">
+
+<p>You may also lose your sessions if your cookie domains are incompatible.
+For example, if you have one server that uses cookie domain "hogwarts.com" and
+another that uses "qa.hogwarts.com", the cookie in the browser for
+"hogwarts.com" will interfere with sessions on "qa.hogwarts.com".  The solution
+is to change the cookie domain "hogwarts.com" to "www.hogwarts.com".</p>
+
+<p>You set the cookie domain in <a config-tag="session-config"/>.
+(Thanks Laura for providing this)</p>
+
+</s3>
+
+<s3 title="Conflicting cookie names">
+
+<p>If you are using Resin and another application server (such as Tomcat), you
+may encounter a conflict because both of them are using the same cookie name
+(usually JSESSIONID) for the session tracking cookie.</p>
+
+<p>Resin provides <a config-tag="session-cookie"/> and <a config-tag="ssl-session-cookie"/>
+to let you change the name of the cookie that Resin uses.</p>
+
+<example title="Change the name of the cookie used for session tracking">
+  &lt;cluster&gt;
+
+    ...
+
+    &lt;session-cookie&gt;RJESSESSIONID&lt;/session-cookie&gt;
+</example>
+</s3>
+
+<s3 title="URL rewriting">
+
+<p>If you forget to rewrite a URL, a user who requires rewriting will lose their
+session as soon as they follow that URL.</p>
+
+<p>Resin establishes an association between a session and a user's browser by
+establishing a unique id that is returned back with each new request.  This is
+accomplished in one of two ways: using cookies or URL rewriting.</p>
+
+<p>Resin first attempts to track the session of a user by sending the user's
+browser a cookie containing the unique session id. </p>
+
+<p>Sometimes Resin cannot establish a cookie, either because the user has
+disabled cookies in their browser or because the browser does not support them
+(as is the case with some HDML and WML browsers). If the cookie cannot be
+established then something called URL rewriting is used.</p>
+
+<p>In this case, Resin rewrites every URL that it submits to the user so that
+it contains a parameter named <var>_jsessionid</var>. Then for each incoming
+request the first thing it does is look for this parameter, and if it is
+available it knows a session has been established and it removes the parameter
+and uses it to find the users session object.</p>
+
+<p>Rewriting requires the cooperation of the developer.  The developer must
+encode every URL reference so that Resin has an opportunity to put in the
+<var>_jsessionid</var> parameter.</p>
+
+
+<example title="URL rewriting using JSTL">
+&lt;%@ taglib prefix='c' uri='http://java.sun.com/jstl/core' %&gt;
+
+Time to go &lt;a href="&lt;c:url value='home.jsp'/&gt;"&gt;Home&lt;/a&gt;!
+</example>
+
+<example title="URL rewriting using Java scriptlet">
+&lt;%
+String homeUrl = response.encodeURL("home.jsp");
+%&gt;
+
+&lt;%-- the presentation --%&gt;
+
+Time to go &lt;a href="&lt;%= homeUrl %&gt;"&gt;Home&lt;/a&gt;!
+</example>
+
+</s3>
+
+</s2> <!-- losing sessions -->
+<!--
+<s2 title="Unsupported major.minor version 48.0">
+
+<p>
+This error usually happens when a conflicting jar is found, see 
+<a href="#classpath">Clean up the classpath</a>
+</p>
+
+<p>
+If the classpath is completely cleaned up, as suggested in the
+link, then a jar or some other component of a jdk installation
+or older Resin installation is coming from somewhere else.
+</p>
+
+<p>
+There may be a problem with some jar in your JAVA_HOME tree, if
+you have added anything there.
+There may be a conflicting jar in WEB-INF/lib/ of your webapp.
+</p>
+
+<p>
+Another possibility is that you have not set JAVA_HOME, or if you
+have then some component of a conflicting jdk installation (javac
+for example, or the java executable itself) is getting used.
+</p>
+
+<p>
+If on windows, check for stray copies of java.exe outside of
+JAVA_HOME, for example in C:/WINDOWS/java.exe or anywhere else in
+your PATH.
+</p>
+
+</s2>
+-->
+<s2 title="Problems reading POST data">
+
+<p>
+A first step is to enable <a href="#debug-log">debug
+logging</a>.  Debug logging will show the request coming into to Resin, and
+provide some information on how Resin is dealing with the post.
+</p>
+
+<p>
+It is important to make sure the encoding is set properly before reading POST
+parameters.
+</p>
+
+<p>
+The browser will always send back parameters in the same encoding as
+the output page.  Since the request doesn't include the encoding (an oversight
+in the HTTP spec), the application code needs to make sure the encoding
+matches.
+</p>
+
+<p>
+So the first thing to do is to determine that encoding your form page has when
+it is sent to the browser.  Your application should always specify that.
+Having established that, you will know what encoding the browser is going to
+use for the POST.  (utf-8 is a natural choice for encoding here, I'm not sure
+why you would use anything else).
+</p>
+
+<p>
+Then before reading the POST parameters make sure you set the encoding to
+match.  You can call request.setCharacterEncoding(encoding) to do that.
+</p>
+
+</s2>
+</s1>
+
+<s1 title="Techniques">
+
+
+<!-- section  -->
+<s2 name="debug-log" title="Enable debug logging">
+
+<p>Resin provides a number of diagnostic messages using the JDK logging
+facility.  Full debug logging is enabled with an empty name (meaning match all
+names) and a level of 'all'.  Since this will produce many messages, it is
+useful to put the messages in a a seperate file.</p>
+
+<s3 title="Full debug logging of the server and all applications">
+
+<p>The following configuration creates a debug log for each day, and when a
+problem occurs the debug log is used to help find out what the problem is.
+Since the <a config-tag="log"/> entry is in <var>resin.xml</var>, the log will
+capture messages from the server itself and all applications.  The resulting
+log messages are found in the file <var>$RESIN_HOME/log/debug.log</var>.</p>
+
+<example title="Full debug logging of the server to $RESIN_HOME/log/debug.log">
+&lt;!-- resin.xml --&gt;
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;log-handler name="" level="all" path="log/debug.log"
+                  timestamp="[%H:%M:%S.%s] {%{thread}} "/>
+
+  &lt;logger name="" level="finer"/>
+
+&lt;/resin&gt;
+</example>
+
+<p>More specific areas can be targetted with appropriate values for
+<code>name</code>.  The documentation for <a config-tag="log"/> provides a
+table of useful values for <code>name</code>.
+
+</p></s3>
+
+<s3 title="Full debug logging of one web application">
+
+<p>Often you can narrow down the logging requirements to a single web
+application.  The log entry can be placed in
+<var>&lt;web-app-root&gt;/WEB-INF/web.xml</var> and only log messages from that
+web application will go to the log file.</p>
+
+<p>The following configuration creates a debug log for each day in <var>&lt;web-app-root&gt;/WEB-INF/work/debug.log</var>.</p>
+
+
+<example title="Full debug logging of one application to &lt;web-app-root&gt;/WEB-INF/work/debug.log">
+&lt;!-- &lt;web-app-root&gt;/WEB-INF/web.xml --&gt;
+
+&lt;web-app&gt;
+  ...
+  &lt;log name="" path="WEB-INF/work/debug.log" timestamp="[%H:%M:%S.%s] {%{thread}} "/>
+
+  &lt;logger name="" level="finer"/>
+  ...
+&lt;/web-app&gt;
+</example>
+</s3>
+
+</s2> <!-- debug-log -->
+
+<!-- section  -->
+
+<s2 name="thread-dump" title="Thread dump">
+
+<p>If an application seems stuck, or is running out of resources, a thread dump
+will reveal the state of the server.</p>
+
+<p>Java's thread dumps are a vital tool for server debugging.  Because
+servlets are intrinsically multithreaded, it is very possible to create
+deadlocks without realizing it, or to have runaway threads that
+consume resources and cause OutOfMemory exceptions.  That's
+especially true when you start adding third-party software like
+databases, EJB, and Corba ORBs.</p>
+
+<s3 title="Thread dump using JDK 5 tools">
+<p>
+<var>jps</var> and <var>jstack</var> are useful tools included in JDK 5, providing a
+quick command line method for obtaining stack traces of all current threads.
+</p>
+
+<example title="jps and jstack">
+<b># jps</b>
+12903 Jps
+20087 Resin
+<b># jstack 20087</b>
+Attaching to process ID 20087, please wait...
+Debugger attached successfully.
+Client compiler detected.
+JVM version is 1.5.0-beta2-b51
+Thread 12691: (state = BLOCKED)
+ - java.lang.Object.wait(long) (Compiled frame; information may be imprecise)
+ - com.caucho.util.ThreadPool.runTasks() @bci=111, line=474 (Compiled frame)
+ - com.caucho.util.ThreadPool.run() @bci=85, line=423 (Interpreted frame)
+ - java.lang.Thread.run() @bci=11, line=595 (Interpreted frame)
+
+
+Thread 12689: (state = BLOCKED)
+ - java.lang.Object.wait(long) (Compiled frame; information may be imprecise)
+ - com.caucho.util.ThreadPool.runTasks() @bci=111, line=474 (Compiled frame)
+ - com.caucho.util.ThreadPool.run() @bci=85, line=423 (Interpreted frame)
+ - java.lang.Thread.run() @bci=11, line=595 (Interpreted frame)
+
+...
+
+</example>
+
+</s3>
+
+<s3 title="Thread dump by sending a signal">
+
+<p>On Windows, ctrl-break may produce a thread dump.</p>
+
+<p>On Unix, "kill -QUIT" will produce a thread dump.</p>
+
+</s3>
+
+<s3 title="Thread dump if signalling doesn't work">
+
+<p>You get a thread dump without signalling the process by starting the JVM
+with some extra arguments to allow a debugger to attach.  You can then attach
+with the debugger at any time to get a thread dump.  This
+technique works on all operating systems.</p>
+
+<p>Here are some step by step instructions:</p>
+
+<ol>
+<li>Start Resin with some extra arguments that allow a debugger to attach:
+
+<example title="resin.xml for debugging">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="">
+
+  &lt;server-default>
+    &lt;jvm-arg>-Xdebug&lt;/jvm-arg>
+    &lt;jvm-arg>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5432&lt;/jvm-arg>
+  &lt;/server-default>
+
+  &lt;server id="" address="127.0.0.1" port="6800"/>
+    
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+</li><li>Wait until you believe the application is in a state of deadlock
+or has runaway threads.
+
+</li><li>In another terminal (window), use jdb to connect to the running instance of Resin:
+
+<example>
+$JAVA_HOME/bin/jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=5432
+</example>
+
+jdb will show something like:
+
+<example>
+Set uncaught java.lang.Throwable
+Set deferred uncaught java.lang.Throwable
+Initializing jdb ...
+&gt;
+</example>
+
+</li><li>Use the "suspend" command and then the "where all" command to get
+a thread dump:
+
+<example title="Example: jdbc suspend">
+&gt; suspend
+
+All threads suspended.
+&gt; where all
+
+tcpConnection-6862-3:
+
+ [1] java.lang.Object.wait (native method)
+ [2] com.caucho.server.TcpServer.accept (TcpServer.java:650)
+ [3] com.caucho.server.TcpConnection.accept
+(TcpConnection.java:208)
+ [4] com.caucho.server.TcpConnection.run (TcpConnection.java:131)
+ [5] java.lang.Thread.run (Thread.java:536)
+tcpConnection-543-2:
+ [1] java.lang.Object.wait (native method)
+ [2] com.caucho.server.TcpServer.accept (TcpServer.java:650)
+ [3] com.caucho.server.TcpConnection.accept
+(TcpConnection.java:208)
+ [4] com.caucho.server.TcpConnection.run (TcpConnection.java:131)
+ [5] java.lang.Thread.run (Thread.java:536)
+
+..
+</example>
+</li><li>Use the "resume" command to resume the process
+<example>
+&gt; resume
+</example>
+
+</li></ol>
+
+<p>Unix users (and Cygwin users on Windows) will recognize the
+opportunity to make a script:</p>
+<example title="resin-thread-dump.sh">
+#!/bin/sh
+echo -e "suspend\nwhere all\nresume\nquit" | $JAVA_HOME/bin/jdb -connect \
+  com.sun.jdi.SocketAttach:hostname=localhost,port=5432
+</example>
+
+<p>Although no rigorous benchmarking has been done, there appears to
+be little overhead or performance penalties involved in having the JVM
+start with the options that allow a debugger to attach.</p>
+</s3>
+
+<s3 title="Understanding the thread dump">
+
+<p>In any case, you'll eventually get a trace that looks something like the following (each JDK is slightly different):</p>
+
+<example>
+Full thread dump:
+
+"tcpConnection-8080-2" daemon waiting on monitor [0xbddff000..0xbddff8c4]
+        at java.lang.Object.wait(Native Method)
+        at com.caucho.server.TcpServer.accept(TcpServer.java:525)
+        at com.caucho.server.TcpConnection.accept(TcpConnection.java:190)
+        at com.caucho.server.TcpConnection.run(TcpConnection.java:136)
+        at java.lang.Thread.run(Thread.java:484)
+
+"tcpConnection-8080-1" daemon waiting on monitor [0xbdfff000..0xbdfff8c4]
+        at java.lang.Object.wait(Native Method)
+        at com.caucho.server.TcpServer.accept(TcpServer.java:525)
+        at com.caucho.server.TcpConnection.accept(TcpConnection.java:190)
+        at com.caucho.server.TcpConnection.run(TcpConnection.java:136)
+        at java.lang.Thread.run(Thread.java:484)
+
+"tcpConnection-8080-0" daemon waiting on monitor [0xbe1ff000..0xbe1ff8c4]
+        at java.lang.Object.wait(Native Method)
+        at com.caucho.server.TcpServer.accept(TcpServer.java:525)
+        at com.caucho.server.TcpConnection.accept(TcpConnection.java:190)
+        at com.caucho.server.TcpConnection.run(TcpConnection.java:136)
+        at java.lang.Thread.run(Thread.java:484)
+
+"tcp-accept-8080" runnable [0xbe7ff000..0xbe7ff8c4]
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:413)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:243)
+        at java.net.ServerSocket.accept(ServerSocket.java:222)
+        at com.caucho.server.TcpServer.run(TcpServer.java:415)
+        at java.lang.Thread.run(Thread.java:484)
+
+"resin-cron" daemon waiting on monitor [0xbe9ff000..0xbe9ff8c4]
+        at java.lang.Thread.sleep(Native Method)
+        at com.caucho.util.Cron$CronThread.run(Cron.java:195)
+
+"resin-alarm" daemon waiting on monitor [0xbebff000..0xbebff8c4]
+        at java.lang.Thread.sleep(Native Method)
+        at com.caucho.util.Alarm$AlarmThread.run(Alarm.java:268)
+
+"Signal Dispatcher" runnable [0..0]
+
+"Finalizer" daemon waiting on monitor [0xbf3ff000..0xbf3ff8c4]
+        at java.lang.Object.wait(Native Method)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:108)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:123)
+        at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:162)
+
+"Reference Handler" daemon waiting on monitor [0xbf5ff000..0xbf5ff8c4]
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:420)
+        at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:110)
+
+"main" waiting on monitor [0xbfffd000..0xbfffd210]
+        at java.lang.Thread.sleep(Native Method)
+        at com.caucho.server.http.ResinServer.waitForExit(ResinServer.java:674)
+        at com.caucho.server.http.ResinServer.main(ResinServer.java:821)
+        at com.caucho.server.http.HttpServer.main(HttpServer.java:95)
+</example>
+
+<p>Each thread is named.  Here are some of the common names:</p>
+
+<deftable>
+<tr><th>Thread Name</th><th>Description
+</th></tr><tr><td>tcp-accept-8080</td><td>Resin thread listening for new connections
+on port 8080.
+</td></tr><tr><td>tcpConnection-8080-3</td><td>Resin servlet thread handling 
+a connection from port 8080.
+</td></tr><tr><td>tcp-cron</td><td>Resin's run-at thread
+</td></tr><tr><td>tcp-alarm</td><td>Resin's alarm thread
+</td></tr></deftable>
+
+<p>There should be one tcp-accept-xxx thread for each &lt;http&gt; and
+&lt;srun&gt; that Resin's listening for.  The tcp-accept-xxx thread should
+almost always be in socketAccept.</p>
+
+<p>There should be several tcpConnection-xxx-n threads.  Each of these
+is the servlet thread.  On a busy server, these can appear anywhere in
+your code.  If several appear in one location, you've likely got some sort
+of deadlock or at least a slow lock.  Idle threads are either in tcpAccept or
+httpRequest or runnerRequest (for keepalive threads.)</p>
+
+<p>For deadlocks, you'll want to look at the "waiting on monitor" threads
+and any case where lots of threads are stuck at the same location.</p>
+</s3>
+
+</s2> <!-- thread-dump -->
+
+<s2 name="out-of-memory" title="Out of Memory and Garbage Collection">
+
+<p>Most memory problems are due to memory leaks in the application
+program.  For example, a cache or a vector that fills up with stale
+data, or a singleton or static variable which doesn't properly
+detect a web-app reload.  Some more exotic memory issues
+relate to running out of heap memory or virtual memory when using
+a large number of threads (&gt; 256).</p>
+
+<p>The steps to track down a memory problem are:</p>
+
+<ol>
+<li>Enable -J-verbosegc with the resin.sh start or resin.exe -install.
+The -verbosegc flag logs the garbage collection of the heap, which will
+let you know if you're running out of heap memory (the most common case).
+</li><li>Get a heap profiler or use the heap dump in the JVM.  JProfiler is an
+inexpensive commercial heap profiler.  Although the JVM's heap dump is
+not very user friendly, it's always available.  You should be using
+a heap profiler as part of your development process and certainly use one
+before any production launch.
+</li><li>With the heap profiler, find the 2-3 top memory users and fix those
+memory leaks.
+</li><li>Common application errors include:
+<ul>
+<li>ThreadLocal variables that are not properly cleared at the end of each request.
+</li><li>Singleton or static hash maps and caches, esp check for clearing web-app restarts.
+</li><li>Spawned threads which are not stopped on web-app restart.
+</li><li>web-app variables (like the "application" variable), stored in a static variable.
+</li></ul>
+</li><li>If the heap is clean, i.e. -verbosegc shows a steady heap, you'll need to
+look at non-heap memory:
+<ul>
+<li>Thread stack usage (-Xss2m).  Each thread takes up some non-heap memory.
+The default on some systems is 8 meg.  Because of 32-bit virtual memory limits of about 2G on some systems, even 256 threads with 8 meg stacks can chew up the virtual memory.  You can drop the stack size with the -Xss directive.
+</li><li>JNI memory.  If you're using JNI libraries or drivers that use JNI,
+it's possible that the JNI can allocate more memory than is available.
+</li><li>fork/exec and OS limits.  If the OS does not have enough available
+swap space, for example, the OS might refuse a "jikes" compilation.
+</li><li>NIO, memory mapping, and .jar files.  The JDK memory-maps .jar files.
+In some cases with very large numbers of jars, this can result in
+running out of virtual memory.  The same issue can appear for NIO memory mapping.
+</li></ul>
+</li><li>If all of these are eliminated, it might be a Resin bug.  However,
+you will need to have located the memory leak as Resin-related before
+any memory-related bug report, i.e. it's necessary to go through the
+above steps before reporting a bug.  Bug reports that complain
+about OutOfMemory errors, but have not even gotten a JDK memory
+dump are most likely application errors.  You must provide a
+heap dump when reporting any potential Resin memory problems.
+</li></ol>
+
+<s3 title="-verbosegc">
+
+<p>-verbosegc is a debugging output from the JVM.  It's very convenient
+for checking basic memory usage and garbage collection time.  
+It's a good idea to use -verbosegc for any production system.
+When starting Resin, you'll use -J-verbosegc.</p>
+
+<p>The specific output depends on the JVM, and looks something like
+the following:</p>
+
+<example title="-verbosegc output">
+[GC 9176K-&gt;8647K(9768K), 0.0014790 secs]
+[GC 9287K-&gt;8668K(9768K), 0.0011120 secs]
+[GC 9308K-&gt;8668K(9768K), 0.0007810 secs]
+</example>
+
+<p>The "(9768K)" is the most important number, showing that the
+maximum allocated heap is about 10 meg.  The other numbers show the
+actual heap used before and after garbage collection.</p>
+
+</s3>
+
+<s3 name="heap-dump" title="Check memory usage with a heap dump">
+
+<p>If an application gobbles up memory until it throws an OutOfMemory
+exception, or seems to be spending an excessive amount of time doing garbage
+collection, a heap dump can help track down the source of the problem.</p>
+
+<p>What you really need to do is get a good CPU and heap profile.
+The JDK has a simple one (but not very 
+user-friendly), so you don't absolutely need to buy a profiler.</p>
+
+<p>An alternative for simple heap monitoring (garbage collection issues), are
+the <a href="http://developer.sun.com/dev/coolstuff/jvmstat">jvmstat tools</a>.</p>
+
+<p>It's a standard java argument, so "java -Xrunhprof:help" will tell you how to start it.  For example, you could 
+start Resin (unix or windows) as</p>
+
+<example>
+&gt; resin.sh -J-Xrunhprof:heap=sites,cpu=samples
+</example>
+
+<p>(On Unix, Resin's startup script has a -cpuprof-ascii argument that sets it for you automatically.)</p>
+
+<p>Run a load against it for a decent amount of time (you can even use something like Apache's "ab" for 10 
+minutes), and then stop the server nicely.  i.e. you can't just kill it with ctrl-C, but you need to make it do a 
+clean exit.</p>
+
+<p>That will dump a java.hprof.txt.  Skip to the bottom to get the trace.</p>
+</s3>
+
+<s3 title="Understanding java.hprof.txt heap">
+
+<p>Assuming you're being cheap, and using the JDK's heap profiling instead of
+buying a profiler, you'll need a bit of help interpreting it.</p>
+
+<p>The following is an example of a heap dump running Resin.  Here's what you
+might see skipping down to the "SITES BEGIN" section.  (I did mention this is
+the cheap way of doing things.)  As with most profiling, you only want
+to pay attention to the top 20.  Everything else is in the noise.  Ignore it.
+</p>
+
+<example>
+SITES BEGIN (ordered by live bytes) Tue Jan  9 17:44:33 2001
+          percent         live       alloc'ed  stack class
+ rank   self  accum    bytes objs   bytes objs trace name
+    1 11.87% 11.87%   983520  120 1393320  170  2553 [B
+    2  9.89% 21.76%   819600  100 1286772  157  4070 [B
+    3  9.09% 30.85%   753756   23 3539376  108  4970 [L&lt;Unknown&gt;;
+    4  5.83% 36.68%   483564   59  778620   95  7180 [B
+    5  5.74% 42.42%   475368   58  745836   91  7178 [B
+    6  4.35% 46.77%   360624   44  696660   85  7182 [B
+    7  2.97% 49.74%   245880   30  450780   55  7176 [B
+    8  2.37% 52.11%   196704   24  352428   43  7254 [B
+    9  1.88% 53.99%   155724   19  262272   32  7174 [B
+   10  1.78% 55.77%   147528   18  245880   30  7137 [B
+   11  1.53% 57.30%   126988 1063 16973092 129113  3271 [C
+   12  1.34% 58.64%   110684 3953 20362832 727244  1213 sun/io/CharToByteISO8859_1
+   13  1.25% 59.88%   103320  738  141820 1013  5942 java/lang/Class
+   14  1.21% 61.10%   100548   49  221616  108  5003 [L&lt;Unknown&gt;;
+   15  1.21% 62.31%   100548   49  221616  108  5005 [L&lt;Unknown&gt;;
+   16  1.07% 63.38%    89080 1532 18393580 317347  1340 [B
+   17  0.79% 64.18%    65568    8   81960   10  8408 [B
+   18  0.79% 64.97%    65552    4   65552    4 27630 [C
+   19  0.70% 65.67%    58232   24 1110128  386  5038 [C
+   20  0.68% 66.35%    56200  450  116816  980  7186 [C
+</example>
+
+<p>There are two things to look for.  First, if any one class starts
+chewing up a large number in the "live objs" column, you'll need to
+take a look.  That might be a memory leak.</p>
+
+<p>Second, if some class has a huge number in the "alloc'ed objs" column,
+you may be wasting lots of garbage collection time that could be easily
+solved with some caching.</p>
+
+<p>The [C in the class name means a character array.
+To see what that really means, you'll need to look at the stack
+trace (3271):</p>
+
+<example>
+TRACE 3271:
+	java/lang/String.&lt;init&gt;(String.java:244)
+	com/caucho/util/CharBuffer.close(CharBuffer.java:714)
+	com/caucho/vfs/FilesystemPath.normalizePath(FilesystemPath.java:162)
+	com/caucho/vfs/FilesystemPath.schemeWalk(FilesystemPath.java:127)
+</example>
+
+<p>That's part of Resin's VFS code.  Maybe in the future it'll make sense
+to try to reduce that.
+
+</p><p>You can get a longer trace using the "-prof-depth 10" argument to Resin.
+(Or the corresponding depth in -Xrunhprof.)  That will often give more
+information.</p>
+
+</s3>
+
+<s3 title="Understanding java.hprof.txt CPU">
+
+<p>The CPU profiling is a little easier to read.  On some JDK's you'll need to
+run it with the JIT disabled.</p>
+
+<example>
+CPU SAMPLES BEGIN (total = 424614) Tue Jan  9 17:44:33 2001
+rank   self  accum   count trace method
+   1 21.36% 21.36%   90704  7266 com/caucho/server/http/VirtualHost.logAccess
+   2 10.84% 32.20%   46041  7269 java/net/SocketInputStream.socketRead
+   3  5.99% 38.19%   25428  1213 java/lang/Class.newInstance0
+   4  5.11% 43.31%   21715  7896 com/caucho/util/CharBuffer.toString
+   5  4.82% 48.13%   20463  1286 sun/io/CharToByteISO8859_1.convert
+   6  3.54% 51.66%   15018  1242 sun/io/CharToByteConverter.&lt;init&gt;
+   7  2.68% 54.35%   11388  7241 java/io/PrintWriter.&lt;init&gt;
+   8  2.47% 56.82%   10508  7748 com/caucho/server/http/Request.fillCookies
+   9  2.27% 59.09%    9650  1214 sun/io/ByteToCharConverter.&lt;init&gt;
+  10  1.85% 60.94%    7857  5097 java/lang/String.&lt;init&gt;
+  11  1.59% 62.53%    6754  1341 java/lang/String.substring
+  12  1.57% 64.10%    6650  1340 java/lang/String.getBytes
+  13  0.92% 65.02%    3907  7897 java/lang/String.&lt;init&gt;
+  14  0.76% 65.78%    3227  3259 com/caucho/vfs/FilePath.fsWalk
+  15  0.75% 66.53%    3195  7895 com/caucho/server/http/Request.fillCookie
+  16  0.71% 67.25%    3031  7321 java/lang/String.getBytes
+  17  0.71% 67.95%    2996  3270 com/caucho/util/CharBuffer.close
+  18  0.68% 68.63%    2892  3271 java/lang/String.&lt;init&gt;
+  19  0.66% 69.29%    2782  7318 com/caucho/vfs/FilePath.openWriteImpl
+  20  0.61% 69.90%    2604  7320 java/io/FileOutputStream.&lt;init&gt;
+</example>
+
+<p>You should only pay attention to the top 20 or so.  You'll
+probably need to ignore a few of the top 10, because they're just waiting
+for a user response.  The SocketInputStream.socketRead is an example.
+
+</p><p>You can use the trace number to get a call trace:</p>
+
+<example>
+TRACE 7266:
+	com/caucho/server/http/VirtualHost.logAccess(VirtualHost.java:487)
+	com/caucho/server/http/Application.logAccess(Application.java:1846)
+	com/caucho/server/http/Response.finish(Response.java:1345)
+	com/caucho/server/http/Request.finish(Request.java:416)
+</example>
+</s3>
+
+<s3 name="garbage-collection" title="Monitor garbage collection">
+
+<p>(thanks to Rob Lockstone for his comments)</p> 
+
+<p>
+Run Resin with the additional argument <var>-Xloggc:gc.log</var> where
+"gc.log" is the name of the log file which will be created in the root Resin
+directory, e.g. <code>/resin/gc.log</code>.
+</p>
+
+
+<p>Once the server has run under load for a while, or when problems start
+appearing, look in the gc.log file and search for "Full". They will happen
+fairly infrequently at first, and then towards the end of the file, they will
+become progressively more frequent until they are happening almost continuously
+(with little or no change in the size of the heap). Note that the "timestamp"
+in the first column is the number of seconds since the process started. </p>
+
+<p>Garbage collection logging will have a small imapct on performance but is
+invaluable in diagnosing garbe collection related problems.</p>
+
+<p>Possible reasons for excessive garbage collection are 
+<a href="#memory-leaks">memory leaks</a> and 
+<a href="#increase-memory">inadequate heap memory</a> 
+</p>
+
+</s3> <!-- garbage-collection -->
+
+<s3 name="increase-memory" title="Increase heap memory">
+
+<p>See <a href="jvm-tuning.xtp#memory">Performance : JVM Tuning : Memory</a>.</p>
+</s3> <!-- increase-memory -->
+
+</s2>
+
+<s2 name="classpath" title="Clean up the classpath">
+
+<p>Conflicts often arise with older or incompatible versions of classes.</p>
+
+<p>Starting Resin with an empty CLASSPATH environmental variable is a first
+step to eliminating these classes.</p>
+
+<example title="Starting Resin with an empty CLASSPATH">
+win&gt; set CLASSPATH=
+win&gt; bin/resin.exe
+
+unix.sh&gt; export CLASSPATH=""
+unix.sh&gt; bin/resin.sh
+</example>
+
+<p>If you have manually placed any jars in $RESIN_HOME/lib or you
+jdk directories, those are possible conflicts as well.</p>
+
+<p>If a new version of Resin s installed overtop of an older
+version of Resin (i.e. in the same directory), some old jars
+might be left.  It is best to give each version it's own directory.</p>
+
+<p>If the RESIN_HOME environment variable is not set, Resin may be
+picking up an older version.</p>
+
+<p>You can start resin.sh/resin.exe with the -verbose option to see the
+CLASSPATH that is being used when Resin is started.</p>
+
+</s2> <!-- classpath  -->
+
+<s2 name="tcpmon" title="Monitor the HTTP communication">
+
+<p>To monitor just the HTTP headers, the following debug logging can be
+enabled in $RESIN_HOME/resin.xml:</p>
+
+<example title="debug logging for HTTP headers">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+
+  ...
+
+  &lt;log-handler name='com.caucho.server.http' level='finer'
+                  path='log/http.log'/&gt;
+  &lt;log-handler name='com.caucho.server.connection' level='finer'
+                  path='log/http.log'/&gt;
+
+  ...
+
+&lt;/resin&gt;
+</example>
+
+<p>Intercepting and monitoring the raw data passed between a web browser and
+Resin can provide valuable insight.  This raw data reveals the headers and
+content that are submitted by the browser, and the headers and content that are
+returned by Resin.</p>
+
+<p>The <a href="http://ws.apache.org/axis">Apache Axis</a> jar includes a utility
+"tcpmon" that can be used to intercept and monitor the  communication between a
+browser and Resin.  Using tcpmon, you specify a "listen port" and a "target
+host" and a "target port".  For example, if you usually have Resin running on
+port 8080, you can start tcpmon with a "listen port" os 9090, and a target host
+of localhost and a target port of 8080.  Now you will use a url
+<code>http://localhost:9090</code> in your browser.  This causes your browser
+to use tcpmon.  tcpmon will log the request, pass it through to Resin (on port
+8080), and log the response before returning it to the browser.</p>
+
+</s2>
+
+<s2 name="external-compiler" title="Use an external compiler">
+
+<p>Resin's default is to use the `internal' compiler because it is the most
+likely to be available.  Sometimes the internal compiler will start to cause
+errors, causing exceptions or simply hanging and taking up a thread.  The
+solution is to change the compiler to `javac' in resin.xml:</p>
+
+<example title="Using the external javac java compiler">
+  &lt;javac compiler="javac" args=""/&gt;
+</example>
+
+<p>Jikes is another option for the compiler, as discussed in the documentation
+for <a config-tag="javac"/>.</p>
+</s2> <!-- external-compiler -->
+
+<s2 name="os-thread" title="Increase stack size to avoid thread limitations">
+
+<p>Each thread is allocated a stack, if the size of the stack is too large,
+then you may run out of memory when a higher number of threads is reached.
+Techniques to adress this are discussed in <a href="jvm-tuning.xtp#stack-size">JVM Tuning</a>.
+
+</p></s2> <!-- os-thread -->
+
+<s2 name="netstat" title="Use netstat to obtain an OS level view of current TCP/IP port usage">
+
+<p>
+The <code>netstat</code> utility is useful for obtaining information from the
+operating system about the current state of network usage.
+</p>
+
+<example>
+unix$ netstat -anp
+win&gt; netstat -an
+</example>
+
+<p>
+The -a indicates that both listening (waiting for a connection) and
+non-listening (active) sockets should be displayed.  The -n causes the 
+display of port numbers (i.e. 80) instead of port names (i.e. http).  The -p
+causes the display of the process that is using the socket.  Since the windows
+<code>netstat</code> is different than the Unix one, -p is not used on Windows.
+</p>
+
+<s3 title="Connection state">
+
+<p>
+The connection state is probably the most important information.  The man page
+for netstat has a full description of each state that is displayed.
+</p>
+
+<p>
+"LISTEN" or "LISTENING" is an indication that there is a process waiting for
+connections on the socket.
+</p>
+
+<p>
+</p>
+
+<p>
+"TIME_WAIT"  indicates that the socket is waiting after close to handle packets
+still in the network.  After a connection is closed, the socket is kept open by
+the operating system for a short period of time.  Even after the close is done,
+there may be some stray packets on the network that are destined for the
+connection.  The idea of TIME_WAIT is that it keeps the socket open long enough
+to catch those stray packets, so that they don't get erronously delivered to a
+new connection opened on the same socket.
+</p>
+</s3>
+
+
+<s3 title="Port usage">
+<p>
+If Resin is indicating that it cannot bind to a port, it may be an
+indication that another process is using the port.  <code>netstat</code> may
+help determine the process that is using the port.
+</p>
+
+<p>Since netstat produces a lot of information, it is helpful to filter the
+output to limit it to the port of interest.  The following example is for port
+80:
+</p>
+
+<example title="netstat -anp">
+unix$ netstat -anp | grep ":80" | less
+</example>
+
+</s3>
+
+</s2> <!-- netstat -->
+
+</s1>
+
+<s1 title="Common Problems">
+
+<s2 title="Specification version 1.3 of package javax.servlet, J2EE Specification, version 1.3 is not compatible with Resin Resin-3.0.x. Resin-3.0.x requires version 2.4." type="faq">
+<description>
+</description>
+
+<p>This error occurs when you have an old or conflicting jar containing the
+servlet api in your CLASSPATH.  The solution is to <a href="#classpath">clean up your classpath</a>.</p>
+
+</s2>
+
+<s2 title="class file has wrong version 48.0, should be 47.0" type="faq">
+<description>
+</description>
+
+<p>
+This error occurs when you have an old or conflicting jar 
+in your CLASSPATH.  The solution is to 
+<a href="#classpath">clean up your classpath</a>.
+</p>
+
+<p>
+If it is a Resin jar that is causing the error, you may have jars from a
+previous installation that are causing the error.  This occasionally occurs
+when people try to copy a new installation over an old one, and due to write
+permissions etc. some of the older jars are not replaced.
+</p>
+
+<p>
+If the cleaning of the CLASSPATH (above) does not work, you may need to
+completely remove Resin from
+your system and re-install. 
+</p>
+
+</s2>
+</s1>
+
+
+</body>
+</document>
+

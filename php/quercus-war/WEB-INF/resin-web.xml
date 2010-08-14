@@ -1,0 +1,14 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <servlet-mapping url-pattern="*.php"
+       servlet-class="com.caucho.quercus.servlet.QuercusServlet">
+       <init>
+          <!--
+          <php-ini>
+            <sendmail_from>my_email_address</sendmail_from>
+            <smtp_username>my_email_username</smtp_username>
+            <smtp_password>my_email_password</smtp_password>
+          </php-ini>
+          -->
+       </init>
+  </servlet-mapping>
+</web-app>

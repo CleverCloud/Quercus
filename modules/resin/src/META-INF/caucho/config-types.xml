@@ -1,0 +1,150 @@
+<config-types xmlns:resin="http://caucho.com/ns/resin/core">
+  <type-strategy
+    name="javax.sql.DataSource"
+    type="com.caucho.config.types.JndiTypeStrategy"/>
+
+  <type-strategy
+    name="java.io.File"
+    type="com.caucho.config.types.FileTypeStrategy"/>
+
+  <type-strategy
+     name="com.caucho.vfs.Path"
+     type="com.caucho.config.types.PathTypeStrategy"/>
+
+  <type-strategy
+    name="java.util.regex.Pattern"
+    type="com.caucho.config.types.PatternTypeStrategy"/>
+
+  <type-strategy
+     name="com.caucho.util.QDate"
+     type="com.caucho.config.types.QDateTypeStrategy"/>
+
+  <environment-attribute>
+    <authenticator>com.caucho.config.types.Authenticator</authenticator>
+
+    <bean>com.caucho.webbeans.cfg.BeanConfig</bean>
+
+    <case-insensitive>com.caucho.vfs.CaseInsensitive</case-insensitive>
+
+    <character-encoding>com.caucho.i18n.CharacterEncoding</character-encoding>
+
+    <class-loader>com.caucho.loader.ClassLoaderConfig</class-loader>
+
+    <classpath>com.caucho.loader.ClasspathConfig</classpath>
+
+    <class-update-interval>com.caucho.loader.DependencyCheckInterval</class-update-interval>
+
+    <component>com.caucho.webbeans.cfg.WbComponentConfig</component>
+
+    <connector>com.caucho.jca.ConnectorResource</connector>
+
+    <database>com.caucho.sql.DBPool</database>
+
+    <database-default>com.caucho.sql.DatabaseConfig</database-default>
+
+    <dependency>com.caucho.make.DependencyConfig</dependency>
+
+    <dependency-check-interval>com.caucho.loader.DependencyCheckInterval</dependency-check-interval>
+
+    <ejb-local-ref>com.caucho.config.types.EjbLocalRef</ejb-local-ref>
+
+    <ejb-ref>com.caucho.config.types.EjbRef</ejb-ref>
+
+    <ejb-server>com.caucho.ejb.EJBServer</ejb-server>
+
+    <ejb-message-bean>com.caucho.ejb.cfg.MessageBeanConfig</ejb-message-bean>
+
+    <ejb-stateless-bean>com.caucho.ejb.cfg.StatelessBeanConfig</ejb-stateless-bean>
+
+    <ejb-stateful-bean>com.caucho.ejb.cfg.StatefulBeanConfig</ejb-stateful-bean>
+
+    <env-entry>com.caucho.config.types.EnvEntry</env-entry>
+
+    <java>com.caucho.java.JavacConfig</java>
+
+    <javac>com.caucho.java.JavacConfig</javac>
+
+    <jndi-link>com.caucho.naming.LinkProxy</jndi-link>
+
+    <jms-connection-factory>com.caucho.jms.cfg.JmsConnectionFactoryConfig</jms-connection-factory>
+
+    <jms-queue>com.caucho.jms.cfg.JmsQueueConfig</jms-queue>
+    
+    <jms-topic>com.caucho.jms.cfg.JmsTopicConfig</jms-topic>
+
+    <log>com.caucho.log.LogConfig</log>
+
+    <logger>com.caucho.log.LoggerConfig</logger>
+
+    <mbean>com.caucho.jmx.MBeanConfig</mbean>
+
+    <message-destination-ref>com.caucho.config.types.MessageDestinationRef</message-destination-ref>
+
+    <persistent-store>com.caucho.server.cluster.PersistentStoreConfig</persistent-store>
+
+    <persistence-manager>com.caucho.amber.cfg.PersistenceManager</persistence-manager>
+    
+    <persistence-unit-ref>com.caucho.config.types.PersistenceUnitRef</persistence-unit-ref>
+
+    <reference>com.caucho.config.types.ReferenceConfig</reference>
+
+    <resource>com.caucho.jca.Resource</resource>
+
+    <rar-deploy>com.caucho.jca.ResourceDeploy</rar-deploy>
+    
+    <resource-default>com.caucho.jca.ResourceDefault</resource-default>
+    
+    <resource-deploy>com.caucho.jca.ResourceDeploy</resource-deploy>
+
+    <resource-env-ref>com.caucho.config.types.ResourceEnvRef</resource-env-ref>
+
+    <resource-manager>com.caucho.jca.ResourceManagerConfig</resource-manager>
+
+    <resource-ref>com.caucho.config.types.ResourceRef</resource-ref>
+
+    <security-role-ref>com.caucho.config.types.SecurityRoleRef</security-role-ref>
+
+    <servlet-classloader-hack>com.caucho.loader.ServletClassloaderHack</servlet-classloader-hack>
+
+    <stderr-log>com.caucho.log.StderrLog</stderr-log>
+
+    <stdout-log>com.caucho.log.StdoutLog</stdout-log>
+
+    <system-property>com.caucho.loader.SystemProperty</system-property>
+
+    <temp-dir>com.caucho.java.TempDir</temp-dir>
+    <temporary-directory>com.caucho.java.TempDir</temporary-directory>
+<!--
+    <web-service-client>com.caucho.soa.client.WebServiceClient</web-service-client>
+    -->
+    
+    <work-dir>com.caucho.java.WorkDir</work-dir>
+    <work-directory>com.caucho.java.WorkDir</work-directory>
+  </environment-attribute>
+
+  <flow-attribute>
+    <resin:bean>com.caucho.jca.Resource</resin:bean>
+
+    <resin:choose>com.caucho.config.core.ResinChoose</resin:choose>
+
+    <resin:env>com.caucho.config.core.ResinEnv</resin:env>
+
+    <resin:if>com.caucho.config.core.ResinIf</resin:if>
+
+    <resin:import>com.caucho.config.core.ResinImport</resin:import>
+
+    <resin:include>com.caucho.config.core.ResinInclude</resin:include>
+
+    <resin:log>com.caucho.config.core.ResinLog</resin:log>
+
+    <resin:mbean>com.caucho.jmx.MBeanConfig</resin:mbean>
+
+    <resin:message>com.caucho.config.core.ResinLog</resin:message>
+
+    <resin:reference>com.caucho.config.types.ReferenceConfig</resin:reference>
+
+    <resin:resource>com.caucho.jca.Resource</resin:resource>
+
+    <resin:set>com.caucho.config.core.ResinSet</resin:set>
+  </flow-attribute>
+</config-types>

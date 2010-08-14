@@ -1,0 +1,429 @@
+default namespace javaee = "http://java.sun.com/xml/ns/javaee"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+javaee_any = text | (attribute * {string} | element * { javaee_any })*
+
+javaee_boolean =
+  "true"
+  | "false"
+  | "yes"
+  | "no"
+
+javaee_description = element description {
+  attribute xml:lang { string }?,
+
+  string
+}
+
+javaee_description-Group =
+  javaee_description*,
+
+  javaee_display-name?,
+
+  javaee_icon?
+
+javaee_dewey-version = string
+
+javaee_display-name = element display-name {
+  attribute xml:lang { string }?,
+
+  string
+}
+
+javaee_ejb-link = element ejb-link {
+  string
+}
+
+javaee_ejb-local-ref = element ejb-local-ref {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  javaee_ejb-ref-name,
+
+  javaee_ejb-ref-type,
+
+  javaee_local-home?,
+
+  javaee_local?,
+
+  javaee_ejb-link?,
+
+  javaee_resource-Group
+}
+
+javaee_ejb-ref = element ejb-ref {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  javaee_ejb-ref-name,
+
+  javaee_ejb-ref-type?,
+
+  javaee_home?,
+
+  javaee_remote?,
+
+  javaee_ejb-link?,
+
+  javaee_resource-Group
+}
+
+javaee_ejb-ref-name = element ejb-ref-name {
+  javaee_jndi-name
+}
+
+javaee_ejb-ref-type = element ejb-ref-type {
+  "Entity" | "Session"
+}
+
+javaee_env-entry = element env-entry {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  javaee_env-entry-name,
+
+  javaee_env-entry-type?,
+
+  javaee_env-entry-value?,
+
+  javaee_resource-Group
+}
+
+javaee_env-entry-name = element env-entry-name {
+  javaee_jndi-name
+}
+
+javaee_env-entry-type = element env-entry-type {
+  "java.lang.Boolean"
+  | "java.lang.Byte"
+  | "java.lang.Character"
+  | "java.lang.String"
+  | "java.lang.Short"
+  | "java.lang.Integer"
+  | "java.lang.Long"
+  | "java.lang.Float"
+  | "java.lang.Double"
+}
+
+javaee_env-entry-value = element env-entry-value {
+  string
+}
+
+javaee_fully-qualified-class = string
+
+javaee_home = element home {
+  javaee_fully-qualified-class
+}
+
+javaee_icon = element icon {
+  attribute id { string }?,
+
+  attribute xml:lang { string }?,
+
+  element small-icon { javaee_path }?,
+
+  element large-icon { javaee_path }?
+}
+
+javaee_init-param = element init-param {
+  javaee_param-value-Type
+}
+
+javaee_injection-target = element injection-target {
+  element injection-target-class { string },
+
+  element injection-target-name { string }
+}
+
+javaee_java-identifier = string
+
+javaee_jndi-environment-refs-Group =
+  javaee_env-entry*,
+
+  javaee_ejb-ref*,
+
+  javaee_ejb-local-ref*,
+
+  javaee_service-ref-Group,
+
+  javaee_resource-ref*,
+
+  javaee_resource-env-ref*,
+
+  javaee_message-destination-ref*,
+
+  javaee_persistence-context-ref*,
+
+  javaee_persistence-unit-ref*,
+
+  javaee_post-construct*,
+
+  javaee_pre-destroy*
+
+javaee_jndi-name = string
+
+javaee_lifecycle-callback-Type =
+  (element lifecycle-callback-class { string }?,
+
+   element lifecycle-callback-method { string })
+
+javaee_local = element local {
+  javaee_fully-qualified-class
+}
+
+javaee_local-home = element local-home {
+  javaee_fully-qualified-class
+}
+
+javaee_lookup-name = element lookup-name {
+  string
+}
+
+javaee_mapped-name = element mapped-name {
+  string
+}
+
+javaee_message-destination = element message-destination {
+  attribute id { string }?,
+
+  javaee_description-Group,
+
+  javaee_message-destination-name,
+
+  javaee_mapped-name?
+}
+
+javaee_message-destination-link = element message-destination-link {
+  javaee_fully-qualified-class
+}
+
+javaee_message-destination-name = element message-destination-name {
+  string
+}
+
+javaee_message-destination-ref = element message-destination-ref {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  javaee_message-destination-ref-name,
+
+  javaee_message-destination-type?,
+
+  javaee_message-destination-usage?,
+
+  javaee_message-destination-link?,
+
+  javaee_resource-Group
+}
+
+javaee_message-destination-ref-name = element message-destination-ref-name {
+  javaee_jndi-name
+}
+
+javaee_message-destination-type = element message-destination-type {
+  javaee_fully-qualified-class
+}
+
+javaee_message-destination-usage = element message-destination-usage {
+  "Consumes"
+  | "Produces"
+  | "ConsumesProduces"
+}
+
+javaee_module-name = element module-name {
+  string
+}  
+
+javaee_param-name = element param-name {
+  javaee_string
+}
+
+javaee_param-value = element param-value {
+  string
+}
+
+javaee_param-value-Type =
+  javaee_description*,
+
+  javaee_param-name,
+
+  javaee_param-value
+
+javaee_path = string
+
+javaee_persistence-context-ref = element persistence-context-ref {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  element persistence-context-ref-name { string },
+
+  element persistence-unit-name { string }?,
+
+  element persistence-context-type { string }?,
+
+  element persistence-property { javaee_property-Type }*,
+
+  javaee_resource-Group
+}
+
+javaee_persistence-unit-ref = element persistence-unit-ref {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  element persistence-unit-ref-name { string },
+
+  element persistence-unit-name { string }?,
+
+  javaee_resource-Group
+}
+
+javaee_post-construct = element post-construct {
+  javaee_lifecycle-callback-Type
+}
+
+javaee_pre-destroy = element pre-destroy {
+  javaee_lifecycle-callback-Type
+}
+
+javaee_property-Type =
+  attribute id { string }?,
+
+  element name { string },
+
+  element value { string }
+
+javaee_remote = element remote {
+  javaee_fully-qualified-class
+}
+
+javaee_res-auth = element res-auth {
+  "Application" | "Container"
+}
+
+javaee_res-sharing-scope = element res-sharing-scope {
+  "Shareable" | "Unshareable"
+}
+
+javaee_res-type = element res-type {
+  javaee_fully-qualified-class
+}
+
+javaee_resource-Group =
+  javaee_mapped-name?,
+
+  javaee_injection-target*,
+  
+  javaee_lookup-name*
+
+javaee_resource-env-ref = element resource-env-ref {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  javaee_resource-env-ref-name,
+
+  javaee_resource-env-ref-type?,
+
+  javaee_resource-Group
+}
+
+javaee_resource-env-ref-name = element resource-env-ref-name {
+  javaee_jndi-name
+}
+
+javaee_resource-env-ref-type = element resource-env-ref-type {
+  javaee_fully-qualified-class
+}
+
+javaee_resource-ref = element resource-ref {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  javaee_res-ref-name,
+
+  javaee_res-type?,
+
+  javaee_res-auth?,
+
+  javaee_res-sharing-scope?,
+
+  javaee_resource-Group
+}
+
+javaee_res-ref-name = element res-ref-name {
+  javaee_jndi-name
+}
+
+javaee_role-name = element role-name {
+  string
+}
+
+javaee_role-link = element role-link {
+  string
+}
+
+javaee_run-as = element run-as {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  javaee_role-name
+}
+
+javaee_security-role = element security-role {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  javaee_role-name,
+
+  javaee_role-link?
+}
+
+javaee_security-role-ref = element security-role-ref {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  javaee_role-name,
+
+  javaee_role-link?
+}
+
+javaee_service-ref = element service-ref {
+  javaee_description-Group,
+
+  element service-ref-name { string },
+
+  element service-interface { javaee_fully-qualified-class },
+
+  element service-ref-type { javaee_fully-qualified-class }?,
+
+  element wsdl-file { string }?,
+
+  element jaxrpc-mapping-file { string }?,
+
+  element service-qname { string }?,
+
+  element port-component-ref { string }*,
+
+  javaee_resource-Group
+}
+
+javaee_service-ref-Group =
+  javaee_service-ref*
+
+javaee_string = string
+
+javaee_true-false = "true" | "false"
+
+javaee_war-path = string

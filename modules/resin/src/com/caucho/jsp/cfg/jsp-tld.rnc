@@ -1,0 +1,13 @@
+
+include "jsp11-tld.rnc"
+include "jsp12-tld.rnc"
+include "jsp20-tld.rnc"
+include "jsp21-tld.rnc"
+include "jsf-tld.rnc"
+
+start = jsp21_taglib
+        | jsp20_taglib
+        | jsp12_taglib
+        | jsp12_ns_taglib
+        | jsp11_taglib
+        | jsf_taglib

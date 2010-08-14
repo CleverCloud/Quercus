@@ -1,0 +1,1194 @@
+<project name="resin" default="compile" basedir=".">
+  <import file="build-common.xml"/>
+  <property name="jar.update" value="true"/>
+
+  <property name="promodules" location="${basedir}/../pro/modules"/>
+  <property name="jdkapi.href" value="http://java.sun.com/javase/6/docs/api"/>
+
+  <property name="shell" value="bash"/>
+
+  <property name="debian.component" value="universe"/>
+
+  <target name="compile" 
+          depends="init, hessian, javaee, jaxstream, jcache, portlet, script, resin-kernel, quercus, resin, ecmascript, inject, webutil, conf, ext, j2ee-management, j2ee-deploy">
+  </target>
+
+  <!--
+     - artifacts
+    -->
+     
+  <target name="ant" depends="init">
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="ant"/>
+      <param name="artifact.jar" value="resin-ant.jar"/>
+    </antcall>
+  </target>
+
+  <target name="eclipse" depends="init, resin, resin-kernel, hessian">
+    <property name="eclipse.basedir" location="${artifacts}/eclipse"/>
+    <property name="eclipse.build" location="${eclipse.basedir}/build"/>
+  
+    <mkdir dir="${eclipse.build}"/>
+  
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="eclipse"/>
+      <param name="artifact.jar" value="resin-eclipse.jar"/>
+      <param name="artifact.dist" value="${eclipse.build}"/>
+    </antcall>
+    
+    <copy todir="${eclipse.build}"
+          preservelastmodified="true"
+          overwrite="true">
+      <fileset dir="${eclipse.basedir}">
+        <include name="META-INF/*"/>
+        <include name="plugin.properties"/>
+        <include name="plugin.xml"/>
+        <include name="buildfiles/*.xml"/>
+        <include name="icons/**/*.png"/>
+        <include name="servers/*.serverdef"/>
+        <include name="conf/**"/>
+        <include name="src/**"/>
+        <exclude name="src/manifest"/>
+      </fileset>
+    </copy>
+
+    <copy file="${lib}/resin.jar" todir="${eclipse.build}/lib"/>
+    <copy file="${lib}/resin-kernel.jar" todir="${eclipse.build}/lib"/>
+    <copy file="${lib}/hessian.jar" todir="${eclipse.build}/lib"/>
+
+    <property name="eclipse.dist" location="${eclipse.basedir}/dist"/>
+
+    <mkdir dir="${eclipse.dist}"/>
+
+    <jar jarfile="${eclipse.dist}/com.caucho.resin.eclipse_${version}.jar"
+         manifest="${eclipse.basedir}/META-INF/MANIFEST.MF">
+      <fileset dir="${eclipse.build}">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="netbeans" depends="init">
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="netbeans"/>
+      <param name="artifact.jar" value="resin-netbeans.jar"/>
+    </antcall>
+
+    <property name="nbm.build" location="${artifacts}/netbeans/dist"/>
+    
+    <mkdir dir="${nbm.build}/Info" />
+    <mkdir dir="${nbm.build}/netbeans/modules" />
+    
+    <copy file="${artifacts}/netbeans/dist/resin-netbeans.jar"
+          tofile="${nbm.build}/netbeans/modules/resin-netbeans.jar"/>
+    
+    <copy file="${artifacts}/netbeans/Info/info.xml"
+          tofile="${nbm.build}/Info/info.xml"/>
+    
+    <copy todir="${nbm.build}/netbeans">
+      <fileset dir="${artifacts}/netbeans/netbeans">
+        <include name="**/*.xml"/>
+      </fileset>
+    </copy>
+	  
+    <jar jarfile="${artifacts}/netbeans/dist/resin-netbeans.nbm">
+      <fileset dir="${nbm.build}">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+        <exclude name="*.nbm"/>
+        <exclude name="*.jar"/>
+      </fileset>
+    </jar>
+	  
+  </target>
+
+  <target name="richfaces" depends="init">
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="richfaces"/>
+      <param name="artifact.jar" value="resin-richfaces.jar"/>
+    </antcall>
+  </target>
+
+  <target name="spring" depends="init">
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="spring"/>
+      <param name="artifact.jar" value="resin-spring.jar"/>
+    </antcall>
+  </target>
+  
+  <target name="artifacts" depends="init, compat">
+    <mkdir dir="artifacts"/>
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="ant"/>
+    </antcall>
+    <!--
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="cxf"/>
+    </antcall>
+    
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="maven"/>
+    </antcall>
+    
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="mule"/>
+    </antcall>
+    -->
+
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="spring"/>
+    </antcall>
+    
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="wicket"/>
+    </antcall>
+<!--
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="xfire"/>
+    </antcall>
+    -->
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="xwork2"/>
+    </antcall>
+  </target>
+  
+  <target name="compat" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="compat"/>
+      <param name="module.jar" value="resin-compat.jar"/>
+    </antcall>
+  </target>
+     
+  <target name="junit" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="junit"/>
+      <param name="module.jar" value="resin-junit.jar"/>
+    </antcall>
+  </target>
+	
+  <target name="eclipselink" depends="init">
+    <antcall target="module" inheritRefs="true">
+	  <param name="module.name" value="eclipselink"/>
+	  <param name="module.jar" value="resin-eclipselink.jar"/>
+	</antcall>
+  </target>	
+
+  <target name="hibernate" depends="init">
+    <antcall target="module" inheritRefs="true">
+	  <param name="module.name" value="hibernate"/>
+	  <param name="module.jar" value="resin-hibernate.jar"/>
+	</antcall>
+  </target>	
+
+  <target name="ejb" depends="init, jta">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="ejb"/>
+      <param name="module.jar" value="ejb-15.jar"/>
+      <!--param name="javac.source" value="1.5"/-->
+    </antcall>
+  </target>
+
+  <target name="jpa" depends="init, ejb">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jpa"/>
+      <param name="module.jar" value="jpa-15.jar"/>
+      <!--param name="javac.source" value="1.5"/-->
+    </antcall>
+  </target>
+
+  <target name="hessian" depends="init, servlet16">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="hessian"/>
+      <param name="module.jar" value="hessian.jar"/>
+      <param name="module.dist" value="${lib}"/>
+    </antcall>
+  </target>
+
+  <target name="j2ee-deploy" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="j2ee-deploy"/>
+      <param name="module.jar" value="j2ee-deploy-10.jar"/>
+    </antcall>
+  </target>
+
+  <target name="j2ee-management" depends="init,ejb">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="j2ee-management"/>
+      <param name="module.dist" value="${lib}"/>
+      <param name="module.jar" value="j2ee-management-10.jar"/>
+      <!--param name="javac.source" value="1.5"/-->
+    </antcall>
+  </target>
+
+  <target name="jaxrpc" depends="init,saaj,servlet16">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jaxrpc"/>
+      <param name="module.jar" value="jaxrpc-15.jar"/>
+      <param name="module.dist" value="${lib}"/>
+      <!--param name="javac.source" value="1.5"/-->
+    </antcall>
+  </target>
+
+  <target name="jaxstream" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jaxstream"/>
+      <param name="module.jar" value="jaxstream-15.jar"/>
+      <param name="module.dist" value="${lib}"/>
+      <!--param name="javac.source" value="1.5"/-->
+    </antcall>
+  </target>
+
+  <target name="jws" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jws"/>
+      <param name="module.jar" value="jws-15.jar"/>
+      <!--param name="javac.source" value="1.5"/-->
+    </antcall>
+  </target>
+
+  <target name="jca" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jca"/>
+      <param name="module.jar" value="jca-15.jar"/>
+    </antcall>
+  </target>
+
+  <target name="jcr" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jcr"/>
+      <param name="module.jar" value="jcr-101.jar"/>
+    </antcall>
+  </target>
+
+  <target name="jms" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jms"/>
+      <param name="module.jar" value="jms-11.jar"/>
+    </antcall>
+  </target>
+
+  <target name="servlet16" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="servlet16"/>
+      <param name="module.jar" value="servlet-16.jar"/>
+    </antcall>
+  </target>
+
+  <!--
+    We now ship Sun's jsf-api.jar and jsf-impl.jar in modules/ext/
+  <target name="jsf" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jsf"/>
+      <param name="module.dist" value="${lib}"/>
+      <param name="module.jar" value="jsf-12.jar"/>
+    </antcall>
+  </target-->
+
+  <target name="jstl" depends="init, servlet16">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jstl"/>
+      <param name="module.jar" value="jstl-11.jar"/>
+    </antcall>
+  </target>
+
+  <target name="jta" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jta"/>
+      <param name="module.jar" value="jta-101.jar"/>
+    </antcall>
+  </target>
+
+  <!--
+   We now ship Sun's mail.jar in modules/ext/javamail-XX.jar
+  
+  <target name="mail" depends="init,jaf">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="javamail"/>
+      <param name="module.jar" value="javamail-11.jar"/>
+    </antcall>
+  </target>
+  -->
+
+  <target name="maven-plugin" depends="init">
+    <property name="module.src" value="${artifacts}/maven/src"/>
+    <property name="module.build" value="${artifacts}/maven/classes"/>
+    
+    <mkdir dir="${module.build}" />
+
+    <copy tofile="${module.build}/META-INF/maven/com.caucho/resin-maven-plugin/pom.xml"
+          file="${artifacts}/maven/maven2/pom.xml"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${maven.version}"/>
+      </filterset>
+    </copy>
+
+    <copy tofile="${module.build}/META-INF/maven/plugin.xml"
+          file="${module.src}/META-INF/maven/plugin.xml.in"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${maven.version}"/>
+      </filterset>
+    </copy>
+   
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="maven"/>
+      <param name="artifact.jar" value="resin-maven-plugin.jar"/>
+    </antcall>
+  </target>
+  
+  <target name="netbeans-plugin" depends="init">
+    <property name="artifact.name" value="netbeans"/>
+    <property name="jar.name" value="resin-netbeans-plugin"/>
+    
+    <antcall target="artifact" inheritRefs="true">
+      <param name="artifact.name" value="${artifact.name}"/>
+      <param name="artifact.ext" value="nbm"/>
+      <param name="artifact.jar" value="${jar.name}.jar"/>
+    </antcall>
+
+    <property name="nbm.build" location="${artifacts}/${artifact.name}/dist"/>
+    
+    <mkdir dir="${nbm.build}/Info" />
+    <mkdir dir="${nbm.build}/netbeans/modules" />
+    
+    <copy file="${nbm.build}/${jar.name}.jar"
+          tofile="${nbm.build}/netbeans/modules/${jar.name}.jar"/>
+    
+    <copy file="${artifacts}/${artifact.name}/Info/info.xml"
+          tofile="${nbm.build}/Info/info.xml"/>
+    
+    <copy todir="${nbm.build}/netbeans">
+      <fileset dir="${artifacts}/${artifact.name}/netbeans">
+        <include name="**/*.xml"/>
+      </fileset>
+    </copy>
+	  
+    <jar jarfile="${nbm.build}/${jar.name}.nbm">
+      <fileset dir="${nbm.build}">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+        <exclude name="*.nbm"/>
+      </fileset>
+    </jar>
+	  
+  </target>
+  
+  <target name="portlet" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="portlet"/>
+      <param name="module.jar" value="portlet-10.jar"/>
+    </antcall>
+  </target>
+  
+  <target name="resin-kernel" depends="init, inject, servlet16, version">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="kernel"/>
+      <param name="module.dist" value="${lib}"/>
+      <param name="module.jar" value="resin-kernel.jar"/>
+    </antcall>
+  </target>
+
+  <target name="resin-xml" depends="init">
+    <copy tofile="conf/resin.xml"
+          file="conf/resin.xml.in"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="HTTP_PORT" value="${resin.http}"/>
+        <filter token="HTTPS_PORT" value="${resin.https}"/>
+      </filterset>
+    </copy>
+    
+    <copy tofile="modules/resin/src/manifest"
+          file="modules/resin/src/manifest.in"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${version}"/>
+      </filterset>
+    </copy>
+  </target>
+  
+  <target name="script" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="script"/>
+      <param name="module.jar" value="script-10.jar"/>
+    </antcall>
+  </target>
+  
+  <target name="support" depends="init, compat">
+    <mkdir dir="plugins"/>
+    
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="support"/>
+      <param name="module.jar" value="../plugins/resin-support.jar"/>
+    </antcall>
+  </target>
+
+  <target name="experiment" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="experiment"/>
+      <param name="module.jar" value="experiment.jar"/>
+      <!--param name="javac.source" value="1.5"/-->
+    </antcall>
+  </target>
+
+  <target name="jcache" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jcache"/>
+      <param name="module.dist" value="${lib}"/>
+      <param name="module.jar" value="jcache-16.jar"/>
+    </antcall>
+  </target>
+
+  <target name="osgi" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="osgi"/>
+      <param name="module.dist" value="${lib}"/>
+      <param name="module.jar" value="osgi-14.jar"/>
+    </antcall>
+  </target>
+
+  <target name="inject" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="webbeans"/>
+      <param name="module.dist" value="${lib}"/>
+      <param name="module.jar" value="inject-16.jar"/>
+    </antcall>
+  </target>
+
+  <target name="version">
+    <copy file="${modules}/kernel/src/com/caucho/Version.tmpl"
+          tofile="${modules}/kernel/src/com/caucho/Version.java"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${version}"/>
+        <filter token="DATE" value="${date}"/>
+        <filter token="VERSION_DATE" value="${vdate}"/>
+      </filterset>
+    </copy>
+
+    <copy file="${modules}/c/src/common/version.h.in"
+          tofile="${modules}/c/src/common/version.h"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${version}"/>
+        <filter token="DATE" value="${date}"/>
+        <filter token="VERSION_DATE" value="${vdate}"/>
+      </filterset>
+    </copy>
+
+    <copy file="${modules}/csharp/src/common/Version.cs.in"
+          tofile="${modules}/csharp/src/common/Version.cs"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${version}"/>
+        <filter token="DATE" value="${date}"/>
+        <filter token="VERSION_DATE" value="${vdate}"/>
+      </filterset>
+    </copy>
+  </target>
+
+  <target name="javaee" depends="ejb, jca, jms, jpa, servlet16, jcache, jstl, jta, jws, inject">
+    <!--
+       - javaee-16.jar
+      -->
+    <jar destfile="${resin.lib}/javaee-16.jar">
+      <fileset dir="${resin.modules}/ejb/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jca/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jcache/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jms/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jpa/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+
+      <!--
+      <fileset dir="${resin.modules}/jsf/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      -->
+      
+      <fileset dir="${resin.modules}/jstl/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jta/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jws/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/servlet16/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/webbeans/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="resin-compile">
+    <!-- build module -->
+
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="resin"/>
+      <param name="module.dist" value="${lib}"/>
+    </antcall>
+  </target>
+  
+  <target name="resin" depends="init, resin-xml, hessian, jcache, javaee, portlet, script, resin-kernel, resin-compile"/>
+
+  <!--
+  <target name="jaf" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="jaf"/>
+      <param name="module.jar" value="jaf-11.jar"/>
+    </antcall>
+  </target>
+  -->
+
+  <target name="saaj" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="saaj"/>
+      <param name="module.jar" value="saaj.jar"/>
+    </antcall>
+  </target>
+
+  <target name="webutil" depends="init, resin">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="webutil"/>
+      <param name="module.dist" value="${lib}"/>
+    </antcall>
+  </target>
+
+  <target name="quercus-dev" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="quercus"/>
+      <param name="module.dist" value="${lib}"/>
+    </antcall>
+  </target>
+
+  <target name="quercus" depends="quercus-dev"/>
+
+  <target name="ecmascript" depends="init">
+    <antcall target="module" inheritRefs="true">
+      <param name="module.name" value="ecmascript"/>
+      <param name="module.dist" value="${lib}"/>
+      <!--param name="javac.source" value="1.5"/-->
+    </antcall>
+  </target>
+
+  <target name="csharp" depends="init">
+    <property name="module.name" value="csharp"/>
+    <property name="module.src" value="${modules}/${module.name}/src"/>
+    <property name="module.build" value="${modules}/${module.name}/classes"/>
+    <property name="module.dist" value="${lib}"/>
+
+    <mkdir dir="${module.build}" />
+    
+    <path id="cs-path">
+      <fileset dir="${module.src}">
+         <include name="**/*.cs"/>
+      </fileset>
+    </path>
+
+    <exec executable="gmcs" dir="${module.build}">
+       <arg value="-target:module"/>
+       <arg value="-out:${lib}/Hessian.netmodule"/>
+       <!--
+       <arg pathref="cs-path"/>
+       -->
+       <arg value="-recurse:${module.src}/**.cs"/>
+    </exec>
+  </target>
+
+  <target name="deploy" depends="init, resin">
+    <mkdir dir="${clientlib}"/>
+    <jar jarfile="${clientlib}/resin-deploy.jar"
+         compress="${jar.compress}" index="${jar.index}" update="${jar.update}"
+         manifest="${modules}/deploy/src/manifest">
+
+      <fileset dir="${modules}/resin/classes">
+        <include name="com/caucho/hessian/**"/>
+        <include name="com/caucho/services/**"/>
+        <include name="com/caucho/j2ee/deployclient/**"/>
+        <include name="com/caucho/mbeans/**"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="win32" if="win32">
+    <mkdir dir="${install}/win32"/>
+    <!--
+    <mkdir dir="${install}/win32/apache-1.3"/>
+    -->
+    <mkdir dir="${install}/win32/apache-2.0"/>
+    <mkdir dir="${install}/win32/apache-2.2"/>
+    <!--
+    <copy todir="${install}/win32/apache-1.3"
+          file="${win32}/resin/modules/c/src/apache1/Apache136/mod_caucho.dll"/>
+	  -->
+    <copy todir="${install}/win32"
+          file="${win32}/resin/modules/c/src/resin_os/Release/resin_os.dll"/>
+    <copy todir="${install}/win64"
+          file="${win32}/resin/modules/c/src/resin_os_64/Release/resin_os.dll"/>
+    <copy todir="${install}"
+          file="${win32}/resin/modules/csharp/src/resin/bin/Release/resin.exe"/>
+    <copy todir="${install}"
+          file="${win32}/resin/modules/csharp/src/setup/bin/Release/setup.exe"/>
+    <copy todir="${install}/win32"
+          file="${win32}/resin/modules/c/src/isapi_srun/Release/isapi_srun.dll"/>
+    <copy todir="${install}/win64"
+          file="${win32}/resin/modules/c/src/isapi_64/Release/isapi_srun.dll"/>
+    <copy todir="${install}/win32/apache-2.2"
+          file="${win32}/resin/modules/c/src/apache22/Release/mod_caucho.dll"/>
+    <copy todir="${install}/win32/apache-2.0"
+          file="${win32}/resin/modules/c/src/apache2/Release/mod_caucho.dll"/>
+
+    <chmod perm="ugo+rx">
+      <fileset dir="${install}">
+        <include name="*.exe"/>
+        <include name="win32/*.dll"/>
+        <include name="win64/*.dll"/>
+      </fileset>
+    </chmod>
+  </target>
+
+  <target name="conf" depends="init, resin">
+    <copy todir="${install}/conf" preservelastmodified="true">
+      <fileset dir="conf">
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="ext" depends="init, resin">
+    <copy todir="${install}/lib" preservelastmodified="true">
+      <fileset dir="${ext}">
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="webapps" depends="init, doc, quercus">
+  </target>
+
+  <target name="doc" depends="init">
+    <mkdir dir="${install}/webapps"/>
+
+    <!--
+    <jar jarfile="${install}/webapps/resin-doc.war"
+         compress="true" index="${jar.index}" update="${jar.update}">
+
+      <fileset dir="doc">
+        <exclude name="**/WEB-INF/work/**"/>
+        <exclude name="**/WEB-INF/pre_work/**"/>
+        <exclude name="**/WEB-INF/db/**"/>
+        <exclude name="**/WEB-INF/classes/**/*.class"/>
+        <exclude name="**/WEB-INF/tmp/**"/>
+        <exclude name="**/.cvsignore"/>
+        <exclude name="**/.svnignore"/>
+      </fileset>
+    </jar>
+    -->
+  </target>
+
+  <target name="javadoc" depends="init">
+    <delete quiet="true" file="${dist}/resin-javadoc-${version}.war"/>
+
+    <delete quiet="true" dir="${build}/javadoc"/>
+
+    <mkdir dir="${build}/javadoc/web-app"/>
+
+    <javadoc destdir="${build}/javadoc/web-app/" 
+      maxmemory="512m"
+      use="true" 
+      author="true"
+      version="true"
+      windowtitle="Resin ${version}"
+      overview="${modules}/resin/src/overview.html"	     
+      source="1.6"
+      splitindex="yes">
+
+      <packageset dir="${modules}/ejb/src"/>
+      <packageset dir="${modules}/hessian/src"/>
+      <packageset dir="${modules}/servlet16/src"/>
+      <packageset dir="${modules}/jcache/src"/>
+      <packageset dir="${modules}/jpa/src"/>
+      <packageset dir="${modules}/jaxstream/src"/>
+      <packageset dir="${modules}/jca/src"/>
+      <packageset dir="${modules}/jms/src"/>
+      <packageset dir="${modules}/jstl/src"/>
+      <packageset dir="${modules}/jta/src"/>
+      <packageset dir="${modules}/quercus/src"/>
+      <!--
+      <packageset dir="${modules}/osgi/src"/>
+      -->
+      <packageset dir="${modules}/resin/src"/>
+      <!--
+      <packageset dir="${modules}/script/src"/>
+      <packageset dir="${modules}/unix/src"/>
+      -->
+      <packageset dir="${modules}/kernel/src"/>
+      <packageset dir="${modules}/webbeans/src"/>
+      <!--
+      <packageset dir="${modules}/webutil/src"/>
+      -->
+      <packageset dir="${promodules}/pro/src"/>
+
+    <!-- For any linked documents here, the href="xxx" must be matched
+       - by an <api id="xxx"/> in web.xml
+    <link href="${jdkapi.href}"/>
+      -->
+    </javadoc>
+
+    <mkdir dir="${dist}"/>
+
+    <jar 
+      jarfile="${dist}/resin-javadoc-${version}.war"
+      basedir="${build}/javadoc/web-app"
+      compress="true"
+      index="false">
+      <exclude name="**/timestamp"/>
+      <exclude name="**/WEB-INF/lib"/>
+
+      <exclude name="**/work"/>
+      <exclude name="**/tmp"/>
+      <exclude name="**/.*"/>
+      <exclude name="**/.svn"/>
+      <exclude name="**/debug.log"/>
+    </jar>
+
+  </target>
+
+  <target name="pdf" depends="init">
+    <delete dir="${build}/pdf" />
+    <mkdir dir="${build}/pdf/images"/>
+
+    <apply executable="convert" dir="." dest="${build}/pdf/images">
+      <fileset dir="${doc}/images">
+        <include name="*.gif" />
+        <include name="*.jpg" />
+        <include name="*.png" />
+      </fileset>
+      <srcfile/>
+      <targetfile/>
+      <mapper>
+        <globmapper from="*.gif" to="*.pdf"/>
+        <globmapper from="*.jpg" to="*.pdf"/>
+        <globmapper from="*.png" to="*.pdf"/>
+      </mapper>
+    </apply>
+    
+    <copy todir="${build}/pdf/images"
+	  overwrite='true'>
+      <fileset dir="${doc}/images">
+        <include name="**/*.pdf"/>
+      </fileset>
+    </copy>
+
+    <generate-pdf name="resin-admin"/>
+
+    <copy tofile="${dist}/resin-4.0-admin.pdf"
+          file="${build}/pdf/resin-admin/resin-admin.pdf"/>
+    
+    <!--
+    <generate-pdf name="test"/>
+    -->
+  </target>
+
+  <target name="test-pdf" depends="init">
+    <generate-pdf name="test"/>
+  </target>
+
+  <target name="relaxng">
+    <mkdir dir="xsd"/>
+    
+    <java classname="com.thaiopensource.relaxng.translate.Driver" fork='true'>
+       <classpath>
+          <fileset dir="lib">
+            <include name="*.jar" />
+          </fileset>
+       </classpath>
+       <arg line="${modules}/resin/classes/com/caucho/server/resin/resin.rnc"/>
+       <arg line="xsd/resin.xsd"/>
+    </java>
+    
+    <java classname="com.thaiopensource.relaxng.translate.Driver" fork='true'>
+       <classpath>
+          <fileset dir="lib">
+            <include name="*.jar" />
+          </fileset>
+       </classpath>
+       <arg line="${modules}/resin/classes/com/caucho/server/webapp/resin-web-xml.rnc"/>
+       <arg line="xsd/resin-web-xml.xsd"/>
+    </java>
+  </target>
+
+  <target name="dist.clean">
+    <delete dir="${dist}/${dist.name}"/>
+  </target>
+
+  <target name="dist" depends="dist.clean, configure, compile, update, junit, eclipselink, artifacts, ant, resin.dist.build, dist.package, quercus.war"/>
+
+  <target name="configure">
+     <copy tofile="modules/c/src/resin/Makefile.in"
+	   file="${prodir}/modules/c/src/resin/Makefile.in"
+           preservelastmodified="true"
+	   failonerror="false"
+           overwrite="true"/>
+     
+     <copy tofile="modules/c/src/resinssl/Makefile.in"
+	   file="${prodir}/modules/c/src/resinssl/Makefile.in"
+           preservelastmodified="true"
+	   failonerror="false"
+           overwrite="true"/>
+     
+     <mkdir dir="automake"/>
+     <exec executable="aclocal"/>
+     <exec executable="libtoolize">
+        <arg line="-f -c"/>
+     </exec>
+     <exec executable="automake">
+        <arg line="-a -i -c"/>
+     </exec>
+     <exec executable="automake">
+        <arg line="-a -i -c --foreign"/>
+     </exec>
+     <exec executable="autoconf"/>
+  </target>
+
+  <target name="maven-dist" depends="init, compile, ant, maven-plugin, artifacts, netbeans, resin.dist.jar">
+    <property name="maven" value="${maven.root}/com/caucho/"/>
+    
+    <antcall target="maven2-jar" inheritRefs="true">
+      <param name="maven.name" value="resin"/>
+      <param name="jar" value="${dist}/${dist.name}/lib/resin.jar"/>
+      <param name="pom.xml" value="${modules}/resin/maven2/pom.xml"/>
+      <param name="ivy.xml" value="${modules}/resin/maven2/ivy.xml"/>
+    </antcall>
+
+    <antcall target="maven2-jar" inheritRefs="true">
+      <param name="maven.name" value="resin-javaee"/>
+      <param name="jar" value="${dist}/${dist.name}/lib/javaee-16.jar"/>
+      <param name="pom.xml" value="${modules}/javaee/maven2/pom.xml"/>
+      <param name="ivy.xml" value="${modules}/javaee/maven2/ivy.xml"/>
+    </antcall>
+
+    <antcall target="maven2-artifact" inheritRefs="true">
+      <param name="module.name" value="ant"/>
+      <param name="jar.name" value="resin-ant.jar"/>
+      <param name="maven.name" value="resin-ant"/>
+    </antcall>
+<!--
+    <antcall target="maven2-artifact" inheritRefs="true">
+      <param name="module.name" value="eclipse"/>
+      <param name="jar.name"
+	     value="com.caucho.resin.eclipse_${version}.jar"/>
+      <param name="maven.name" value="resin-eclipse"/>
+    </antcall>
+-->
+    <!--
+    <antcall target="maven2-module" inheritRefs="true">
+      <param name="module.name" value="deploy"/>
+      <param name="jar.name" value="resin-deploy.jar"/>
+      <param name="maven.name" value="resin-deploy"/>
+    </antcall>
+    -->
+
+    <antcall target="maven2-module" inheritRefs="true">
+      <param name="module.name" value="hessian"/>
+      <param name="jar.name" value="hessian.jar"/>
+      <param name="maven.name" value="resin-hessian"/>
+    </antcall>
+
+    <antcall target="maven2-artifact" inheritRefs="true">
+      <param name="module.name" value="maven"/>
+      <param name="jar.name" value="resin-maven-plugin.jar"/>
+      <param name="maven.name" value="resin-maven-plugin"/>
+    </antcall>
+
+    <antcall target="maven2-artifact" inheritRefs="true">
+      <param name="module.name" value="netbeans"/>
+      <param name="module.ext" value="nbm"/>
+      <param name="jar.name" value="resin-netbeans.nbm"/>
+      <param name="maven.name" value="resin-netbeans"/>
+    </antcall>
+
+    <antcall target="maven2-artifact" inheritRefs="true">
+      <param name="module.name" value="spring"/>
+      <param name="jar.name" value="resin-spring.jar"/>
+      <param name="maven.name" value="resin-spring"/>
+    </antcall>
+
+    <!--
+    <antcall target="maven2-module" inheritRefs="true">
+      <param name="module.name" value="support"/>
+      <param name="jar.name" value="resin-support.jar"/>
+      <param name="maven.name" value="resin-support"/>
+    </antcall>
+    -->
+  </target>
+
+  <target name="maven-rsync" depends="init,maven-dist">
+    <exec executable="rsync">
+      <arg value="-av"/>
+      <arg value="--rsh=ssh"/>
+      <arg value="${maven.root}"/>
+      <arg value="caucho@weasley.caucho.com:/var/www/hosts/www.caucho.com/webapps/"/>
+    </exec>
+  </target>
+  
+  <target name="rest-jar" depends="init, compile">
+    <property name="dist.name" value="${shortproduct}-${version}"/>
+    <mkdir dir="${dist}/${dist.name}"/>
+
+    <jar destfile="${dist}/resin-rest-${version}.jar">
+      <fileset dir="${modules}/resin/classes">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+        <exclude name="*~"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="com/caucho/soa/rest/HessianRestProxy.class"/>
+        <exclude name="com/caucho/soa/rest/HessianRestProtocolServlet.class"/>
+        <exclude name="com/caucho/soa/rest/JAXBRestProxy.class"/>
+        <exclude name="com/caucho/soa/rest/JAXBRestProtocolServlet.class"/>
+        <exclude name="com/caucho/soa/rest/RestProxy*.class"/>
+        <exclude name="com/caucho/soa/rest/RestProtocolServlet.class"/>
+
+        <include name="com/caucho/soa/rest/**"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="hessian-flash" depends="init">
+    <taskdef resource="flexTasks.tasks" classpath="${user.home}/flash/ant/lib/flexTasks.jar" />
+    <property name="FLEX_HOME" value="${user.home}/flash"/>
+
+    <property name="dist.name" value="${shortproduct}-${version}"/>
+    <mkdir dir="${dist}/${dist.name}"/>
+    
+    <compc output="${modules}/flash/build/hessian-flash.swc">
+      <source-path path-element="${modules}/flash/src"/>
+      <include-sources 
+        dir="${modules}/flash/src" 
+        includes="hessian/client/HessianProxy.as 
+                  hessian/client/HessianAsyncToken.as 
+                  hessian/io/AbstractHessianInput.as 
+                  hessian/io/AbstractHessianOutput.as 
+                  hessian/io/Double.as 
+                  hessian/io/Float.as 
+                  hessian/io/Hessian2Constants.as
+                  hessian/io/Hessian2Input.as
+                  hessian/io/HessianOutput.as
+                  hessian/io/Hessian2StreamingInput.as
+                  hessian/io/Hessian2StreamingOutput.as
+                  hessian/io/HessianProtocolError.as
+                  hessian/io/HessianServiceError.as
+                  hessian/io/ObjectDefinition.as
+                  hessian/events/*.as"/>
+    </compc>
+
+    <compc output="${modules}/flash/build/hessian-flex.swc">
+      <source-path path-element="${modules}/flash/src"/>
+      <include-sources 
+        dir="${modules}/flash/src" 
+        includes="hessian/client/*.as 
+                  hessian/io/*.as 
+                  hessian/events/*.as 
+                  hessian/mxml/*.as"/>
+    </compc>
+
+    <compc output="${modules}/flash/build/bam-flash.swc">
+      <source-path path-element="${modules}/flash/src"/>
+      <include-sources 
+        dir="${modules}/flash/src" 
+        includes="bam/*.as 
+                  bam/hmtp/*.as 
+                  com/caucho/xmpp/*.as
+                  com/caucho/xmpp/ping/*.as"/>
+      <compiler.include-libraries dir="${modules}/flash/build" append="true">
+        <include name="hessian-flash.swc" />
+      </compiler.include-libraries>
+    </compc>
+
+    <jar destfile="${dist}/${dist.name}/hessian-flex-${version}-src.jar">
+      <fileset dir="${modules}/flash/src">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+        <exclude name="*~"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/.svn/**"/>
+
+        <include name="hessian/**"/>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="apache.license"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="dist.configure.make" depends="dist">
+    <exec dir="${dist}/${dist.name}" executable="./configure">
+      <arg value="--prefix=/opt/resin"/>
+    </exec>
+
+    <exec dir="${dist}/${dist.name}" executable="make"/>
+  </target>
+
+  <target name="dist.rpm" depends="dist.configure.make">
+    <exec dir="${dist}/${dist.name}" executable="checkinstall">
+      <arg line="-R --install=no --fstrans=yes -y" />
+    </exec>
+
+    <copy todir="${dist}">
+      <fileset dir="${dist}/RPMS">
+        <include name="**/*.rpm"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="quercus.war" depends="init, resin.dist.jar">
+    <property name="quercus.dist.name" value="quercus-war-${version}"/>
+  
+    <delete dir="${dist}/${quercus.dist.name}"/>
+    <delete file="${dist}/quercus-${version}.war"/>
+  
+    <mkdir dir="${dist}/${quercus.dist.name}"/>
+    <mkdir dir="${dist}/${quercus.dist.name}/WEB-INF/licenses"/>
+
+    <copy tofile="${dist}/${quercus.dist.name}/WEB-INF/lib/resin.jar"
+          file="${resin.dist}/${dist.name}/lib/resin.jar"/>
+
+    <copy tofile="${dist}/${quercus.dist.name}/WEB-INF/lib/javaee-16.jar"
+          file="${resin.dist}/${dist.name}/lib/javaee-16.jar"/>
+
+    <copy tofile="${dist}/${quercus.dist.name}/WEB-INF/lib/inject-16.jar"
+          file="${resin.lib}/inject-16.jar"/>
+
+    <copy tofile="${dist}/${quercus.dist.name}/WEB-INF/lib/javamail-141.jar"
+          file="${resin.lib}/javamail-141.jar"/>
+          
+    <copy tofile="${dist}/${quercus.dist.name}/WEB-INF/web.xml"
+          file="${resin.install}/php/quercus-war/WEB-INF/web.xml"/>
+    
+    <copy tofile="${dist}/${quercus.dist.name}/images/caucho-white.jpg"
+          file="${resin.install}/php/quercus-war/images/caucho-white.jpg"/>
+
+    <copy tofile="${dist}/${quercus.dist.name}/images/dragonfly-tiny.png"
+          file="${resin.install}/php/quercus-war/images/dragonfly-tiny.png"/>
+
+    <copy tofile="${dist}/${quercus.dist.name}/index.php"
+          file="${resin.install}/php/quercus-war/index.php"/>
+
+    <copy tofile="${dist}/${quercus.dist.name}/README"
+          file="${resin.install}/php/quercus-war/README"/>
+
+    <jar destfile="${dist}/quercus-${version}.war">
+      <fileset dir="${dist}/${quercus.dist.name}">
+        <include name="WEB-INF/lib/resin.jar"/>
+        <include name="WEB-INF/lib/inject-16.jar"/>
+        <include name="WEB-INF/lib/javamail-141.jar"/>
+        <include name="WEB-INF/licenses"/>
+        <include name="WEB-INF/web.xml"/>
+        <include name="images/caucho-white.jpg"/>
+        <include name="images/dragonfly-tiny.png"/>
+        <include name="index.php"/>
+        <include name="README"/>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="LICENSE"/>
+      </fileset>
+    </jar>
+    
+    <delete file="${dist}/quercus-${version}-src.jar"/>
+
+    <jar destfile="${dist}/quercus-${version}-src.jar">
+      <fileset dir="${resin.modules}/kernel/src">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+        <exclude name="*~"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/.svn/**"/>
+        <include name="com/caucho/**"/>
+      </fileset>
+      <fileset dir="${resin.modules}/quercus/src">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+        <exclude name="*~"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/.svn/**"/>
+        <include name="com/caucho/**"/>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="LICENSE"/>
+      </fileset>
+    </jar>
+    
+    <copy tofile="${dist}/quercus-4_0-snap.war"
+          file="${dist}/quercus-${version}.war"/>
+
+    <copy tofile="${dist}/quercus-4_0-snap-src.jar"
+          file="${dist}/quercus-${version}-src.jar"/>
+  </target>
+
+  <!--
+  <target name="clean" depends="init">
+    <delete>
+      <fileset dir="${modules}">
+        <include name="*/classes/**"/>
+        <include name="*/dist/**"/>
+      </fileset>
+    </delete>
+    <delete>
+      <fileset dir=".">
+        <include name="**/*.class"/>
+      </fileset>
+    </delete>
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+  -->
+
+  <target name="distclean" depends="init, clean, win32clean">
+    <delete dir="${install}/conf"/>
+    <delete dir="${lib}"/>
+    <delete dir="${maven.lib}"/>
+    <delete dir="${clientlib}"/>
+    <delete dir="${install}/unix"/>
+
+    <delete dir="${install}/logs"/>
+    <delete dir="${install}/bin"/>
+    <delete dir="${install}/doc/WEB-INF"/>
+    <delete dir="${install}/cache"/>
+    <delete dir="${install}/php/quercus-war/WEB-INF/lib"/>
+  </target>
+
+  <target name="win32clean" if="win32">
+    <delete dir="${install}/win32"/>
+    <delete dir="${install}/win64"/>
+  </target>
+
+</project>
+

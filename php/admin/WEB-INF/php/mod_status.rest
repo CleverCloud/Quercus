@@ -1,0 +1,101 @@
+<?php
+/*
+ * REST status page duplicating the Apache mod_status REST page.
+ */
+
+
+header("Content-Type: text/plain; charset=utf-8");
+
+mbean_init();
+
+$id = $g_server->Id;
+
+if (! $id)
+  $id = "default";
+
+$index = sprintf("%02d", $g_server->Index);
+  
+$os = $g_mbean_server->lookup("java.lang:type=OperatingSystem");
+$runtime = $g_mbean_server->lookup("java.lang:type=Runtime");
+$thread = $g_mbean_server->lookup("resin:type=ThreadPool");
+$jvm_thread = $g_mbean_server->lookup("java.lang:type=Threading");
+$stat = $g_mbean_server->lookup("resin:type=StatService");
+
+$period = $stat->getSamplePeriod() / 1000;
+
+$start_time = $runtime->StartTime;
+
+$request_total = $g_server->getRequestCountTotal();
+
+$name = $index . "|Resin|Request|Http Request Count";
+$request_sample = $stat->getLastValue($name);
+
+$bytes_total = $g_server->getRequestWriteBytesTotal();
+
+$name = $index . "|Resin|Request|Http Request Bytes";
+$bytes_sample = $stat->getLastValue($name);
+
+$scoreboard_count = scoreboard_count();
+
+printf("Total Accesses: %d\n", $request_total);
+printf("Total kBytes: %d\n", $bytes_total / 1000);
+
+printf("CPULoad: %d\n", $g_server->CpuLoadAvg);
+printf("Uptime: %d\n", time() - $start_time / 1000);
+
+printf("ReqPerSec: %f\n", $request_sample / $period);
+printf("BytesPerSec: %f\n", $bytes_sample / $period);
+printf("BytesPerReq: %f\n", $bytes_sample / max($request_sample, 1));
+printf("BusyWorkers: %d\n", $scoreboard_count['W']);
+printf("IdleWorkers: %d\n", $scoreboard_count['_']);
+
+$scoreboard = "";
+$scoreboard .= str_repeat('W', $scoreboard_count['W']);
+$scoreboard .= str_repeat('A', $scoreboard_count['A']);
+$scoreboard .= str_repeat('_', $scoreboard_count['_']);
+$scoreboard .= str_repeat('.', $scoreboard_count['.']);
+$scoreboard .= str_repeat('?', $scoreboard_count['?']);
+
+echo "Scoreboard: ". $scoreboard . "\n";
+
+function scoreboard_count()
+{
+  global $jvm_thread;
+  global $g_server;
+
+  $thread_ids = $jvm_thread->AllThreadIds;
+
+  sort($thread_ids);
+
+  $scoreboard_count = array();
+
+  foreach ($thread_ids as $id) {
+    $info = $jvm_thread->getThreadInfo($id, 50);
+    $conn = $g_server->findConnectionByThreadId($id);
+
+    if (! $info) {
+      $scoreboard_count['?'] += 1;
+      continue;
+    }
+    else if (! $conn) {
+      $scoreboard_count['.'] += 1;
+      continue;
+    }
+
+    $state = $conn->getDisplayState();
+
+    if ($state == 'accept') {
+      $scoreboard_count['_'] += 1;
+    }
+    else if ($state == 'duplex') {
+      $scoreboard_count['A'] += 1;
+    }
+    else {
+      $scoreboard_count['W'] += 1;
+    }
+  }
+
+  return $scoreboard_count;
+}
+
+

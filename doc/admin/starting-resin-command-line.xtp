@@ -1,0 +1,369 @@
+<document>
+  <header>
+    <product>resin</product>
+    <version>Resin 4.0</version>
+    <title>Command-Line Configuration</title>
+    <description>
+      <p>While most configuration options have been made available in
+        resin.xml, this section describes some common command-line
+        options.</p>
+    </description>
+  </header>
+  <body>
+    <localtoc/>
+    <s1 title="./configure options">
+
+    <p>
+    The <code>./configure; make; make install</code> step is important for all Unix users.  It configures and compiles 
+    low level JNI code that enables Resin to provide a number of features not
+    normally available to Java programs and also provides significant performance
+    improvements.
+    </p>
+
+    <p>
+    The most commonly used options for <code>./configure</code> are documented
+    below, the full set of available command line options is available by running
+    <code>./configure --help</code>.
+    </p>
+
+    <deftable>
+    <tr>
+      <td>--help</td>
+      <td>Help for all ./configure command line options</td></tr>
+    <tr>
+      <td>--enable-64bit</td>
+      <td>Compiles the JNI using 64-bits, requires <code>&lt;jvm-arg>-d64&lt;/jvm-arg></code> entry in resin.xml</td>
+    </tr>
+    <tr>
+      <td>--enable-ssl</td>
+      <td>Enable OpenSSL, see the <a href="security.xtp#openssl">OpenSSL</a> documentation for details.</td>
+    </tr>
+    <tr>
+      <td>--with-apxs=<var>/path/to/apxs</var></td>
+      <td>Enable <a href="starting-resin-apache.xtp">Apache integration</a> and produce mod_caucho</td>
+    </tr>
+    <tr>
+      <td>--enable-debug</td>
+      <td>Enables extended logging for mod_caucho, isapi_dll and resin_jni. Log files corresponding to these modules can be found respectively in /tmp/mod_caucho.log, /temp/isapi_dll.log and stderr for the JVM running Resin.</td>
+    </tr>
+    </deftable>
+
+    <p>
+      The 64-bit JNI compilation must match the JDK you're using, i.e.
+      you'll need to add a <code>&lt;jvm-arg>-d64&lt;/jvm-arg></code> entry in resin.xml to
+      indicate that the jvm should start in 64-bit mode.
+    </p>
+
+    </s1>
+    
+    <s1 title="Startup Options">
+      <p>As of Resin 4.0, startup options should be declared in the
+        configuration file. However, some startup options are available
+        via the command line.</p>
+      <s2 name="command-line" title="Command-line arguments">
+
+      <deftable>
+      <tr>
+        <th>Argument</th>
+        <th>Meaning</th>
+        <th>Default</th>
+      </tr>
+      <tr>
+        <td>-conf <var>xxx</var></td>
+        <td>Selects the Resin configuration file</td>
+        <td>conf/resin.xml</td>
+      </tr>
+      <tr>
+        <td>-server <var>xxx</var></td>
+        <td>Selects the &lt;server> in the resin.xml</td>
+        <td>""</td>
+      </tr>
+      <tr>
+        <td>-verbose</td>
+        <td>Show the Java environment before starting Resin.</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>console</td>
+        <td>Starts Resin in console mode for development and debugging</td>
+        <td>n/a</td>
+      </tr>
+      <tr>
+        <td>start</td>
+        <td>Starts Resin as a daemon, starting the watchdog if necessary</td>
+        <td>n/a</td>
+      </tr>
+      <tr>
+        <td>status</td>
+        <td>Show the status of Resin as a daemon.</td>
+        <td>n/a</td>
+      </tr>
+      <tr>
+        <td>stop</td>
+        <td>Stops Resin as a daemon by contacting the watchdog.</td>
+        <td>n/a</td>
+      </tr>
+      <tr>
+        <td>restart</td>
+        <td>Restarts Resin as a daemon by contacting the watchdog.</td>
+        <td>n/a</td>
+      </tr>
+      <tr>
+        <td>kill</td>
+        <td>Kill Resin as a daemon by contacting the watchdog, a killed process is
+           destroyed and not allowed to clean up or finish pending connections.</td>
+        <td>n/a</td>
+      </tr>
+      <tr>
+        <td>shutdown</td>
+        <td>Shutdown the watchdog and all of the Resin daemons.</td>
+        <td>n/a</td>
+      </tr>
+      <tr>
+        <td>-resin-home <var>xxx</var></td>
+        <td>
+           Deprecated. Sets the Resin home directory.
+           Use environment variable <var>RESIN_HOME</var> or
+           <var>&lt;jvm-arg&gt;-Dresin.home=xxx&lt;/jvm-arg&gt;</var> in resin.xml.
+        </td>
+        <td>The parent directory of resin.jar</td>
+      </tr>
+      </deftable>
+      </s2>
+    </s1>
+      <s1 title="JDK arguments">
+
+      <p>Resin 4.0 has moved all JDK arguments into the resin.xml
+        file, in the &lt;<a config-tag="jvm-arg"/>&gt;
+      tag. Because the Resin 4.0 watchdog starts each Resin server instance,
+      it can pass the arguments defined in the configuration file to the JVM.
+      By moving the Java arguments to the configuration file, server configuration
+      is easier and more maintainable.</p>
+
+      <example title="resin.xml with Java arguments">
+      &lt;resin xmlns="http://caucho.com/ns/resin">
+        &lt;cluster id="app-tier">
+
+          &lt;server-default>
+            &lt;jvm-arg>-Xms32m&lt;/jvm-arg>
+            &lt;jvm-arg>-Xmx512m&lt;/jvm-arg>
+            &lt;jvm-arg>-Xss1m&lt;/jvm-arg>
+            &lt;jvm-arg>-verbosegc&lt;/jvm-arg>
+            &lt;jvm-arg>-Dfoo=bar&lt;/jvm-arg>
+            &lt;jvm-arg>-Dcaucho.smallmem&lt;/jvm-arg>
+            &lt;jvm-arg>-agentlib:resin&lt;/jvm-arg>
+            &lt;jvm-arg>-Xdebug&lt;/jvm-arg>
+            
+            &lt;http port="8080"/>
+          &lt;/server-default>
+
+          &lt;server id="a" address="192.168.2.1" port="6800"/>
+
+          ...
+        &lt;/cluster>
+      &lt;/resin>
+      </example>
+
+      </s1>
+
+<s1 name="memory" title="Heap size">
+
+<p>The allocation of memory for the JVM is specified using -X options when
+starting Resin (the exact options may depend upon the JVM that you are using,
+the examples here are for the Sun JVM).</p>
+
+<deftable>
+<tr>
+  <th>JVM option passed to Resin</th>
+  <th>Meaning</th>
+</tr>
+<tr>
+  <td>-Xms</td>
+  <td>initial java heap size</td>
+</tr>
+<tr>
+  <td>-Xmx</td><td>maximum java heap size</td>
+</tr>
+<tr>
+  <td>-Xmn</td>
+  <td>the size of the heap for the <i>young generation</i></td>
+  </tr>
+  </deftable>
+
+<example title="Example: resin.xml startup with heap memory options">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="">
+
+  &lt;server id="" address="127.0.0.1" port="6800">
+    &lt;jvm-arg>-Xmx500M&lt;/jvm-arg>
+    &lt;jvm-arg>-Xms500M&lt;/jvm-arg>
+    &lt;jvm-arg>-Xmn100M&lt;/jvm-arg>
+
+    &lt;http port="80"/>
+  &lt;/server>
+
+  ...
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+<p>It is good practice with server-side Java applications like Resin to set the
+minimum <var>-Xms</var> and maximum <var>-Xmx</var> heap sizes to the same value.</p>
+
+<p>For efficient <a href="#garbage-collection">garbage collection</a>, the
+<var>-Xmn</var> value should be lower than the <var>-Xmx</var> value.</p>
+
+<s2 title="Heap size does not determine the amount of memory your process uses">
+
+<p>If you monitor your java process with an OS tool like top or taskmanager,
+you may see the amount of memory you use exceed the amount you have specified
+for -Xmx.  -Xmx limits the java heap size, java will allocate memory for other
+things, including a stack for each thread. It is not unusual for the total
+memory consumption of the VM to exceed the value of -Xmx.</p>
+</s2>
+
+</s1> <!-- memory -->
+
+<s1 name="garbage-collection" title="Garbage collection">
+
+
+<p>(thanks to Rob Lockstone for his comments)</p> 
+
+<p>
+There are essentially two GC threads running. One is a very lightweight
+thread which does "little" collections primarily on the Eden (a.k.a.
+Young) generation of the heap. The other is the Full GC thread which
+traverses the entire heap when there is not enough memory left to
+allocate space for objects which get promoted from the Eden to the
+older generation(s).
+</p>
+
+
+<p>
+If there is a memory leak or inadequate heap allocated, eventually the older
+generation will start to run out of room causing the Full GC thread to run
+(nearly) continuously. Since this process "stops the world", Resin won't be
+able to respond to requests and they'll start to back up.
+</p>
+
+
+<p>
+The amount allocated for the Eden generation is the value specified with
+<var>-Xmn</var>.  The amount allocated for the older generation is the value of
+<var>-Xmx</var> minus the <var>-Xmn</var>.  Generally, you don't want the Eden to be
+too big or it will take too long for the GC to look through it for space that
+can be reclaimed.
+</p>
+
+
+</s1> <!-- garbage-collection -->
+
+<s1 name="stack-size" title="Stack size">
+
+<p>Each thread in the VM gets a stack.  The stack size will limit the number of
+threads that you can have, too big of a stack size and you will run out of
+memory as each thread is allocated more memory than it needs. 2048k is an
+appropriate value for most situations.
+ </p>
+
+<deftable title="Stack configuration">
+<tr>
+  <th>&lt;jvm-arg></th>
+  <th>Meaning</th>
+</tr>
+<tr>
+  <td>-Xss</td>
+  <td>the stack size for each thread</td>
+</tr>
+</deftable>
+
+<p><code>-Xss</code> determines the size of the stack: <code>-Xss1024k</code>.
+If the stack space is too small, eventually you will see an exception <a javadoc="java.lang.StackOverflowError"/>.
+
+</p><p>Some people have reported that it is necessary to change stack size
+settings at the OS level for Linux.  A call to <code>ulimit</code> may
+be necessary, and is usually done with a command in /etc/profile:</p>
+
+<example title="Limit thread stack size on Linux">
+unix> ulimit -s 2048
+</example>
+</s1>
+
+<s1 name="monitor" title="Monitoring the JVM">
+
+<p>
+JDK 5 includes a number of tools that are useful for monitoring the JVM.
+Documentation for these tools is available from the
+<a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/index.html#manage">Sun
+website</a>.  For JDK's prior to 5, Sun provides the
+<a href="http://developer.sun.com/dev/coolstuff/jvmstat">jvmstat tools</a>.
+</p>
+
+<p>
+The most useful tool is <var>jconsole</var>.  Details on using jconsole
+are provided in the <a href="advanced-jmx.xtp#JDK 5.0 and JMX">Administration</a>
+section of the Resin documentation.
+</p>
+
+<example title="Example: jconsole configuration">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="">
+
+  &lt;server-default>
+    &lt;jvm-arg>-Dcom.sun.management.jmxremote&lt;/jvm-arg>
+  &lt;/server-default>
+
+  &lt;server id="" address="127.0.0.1" port="6800"/>
+
+  ...
+&lt;/cluster>  
+&lt;/resin>
+</example>
+
+<example title="Example: jconsole launching">
+<i> ... in another shell window ... </i>
+
+win&gt; jconsole.exe
+unix&gt; jconsole
+
+<i>Choose Resin's JVM from the "Local" list.</i>
+</example>
+
+<p>
+<var>jps</var> and <var>jstack</var> are also useful, providing a quick command line
+method for obtaining stack traces of all current threads.
+Details on obtaining and interpreting stack traces is in the
+<a href="resin-admin.xtp">resin-admin console</a> documentation.
+</p>
+
+<example title="jps and jstack">
+<b># jps</b>
+12903 Jps
+20087 Resin
+<b># jstack 20087</b>
+Attaching to process ID 20087, please wait...
+Debugger attached successfully.
+Client compiler detected.
+JVM version is 1.5.0-beta2-b51
+Thread 12691: (state = BLOCKED)
+ - java.lang.Object.wait(long) (Compiled frame; information may be imprecise)
+ - com.caucho.util.ThreadPool.runTasks() @bci=111, line=474 (Compiled frame)
+ - com.caucho.util.ThreadPool.run() @bci=85, line=423 (Interpreted frame)
+ - java.lang.Thread.run() @bci=11, line=595 (Interpreted frame)
+
+
+Thread 12689: (state = BLOCKED)
+ - java.lang.Object.wait(long) (Compiled frame; information may be imprecise)
+ - com.caucho.util.ThreadPool.runTasks() @bci=111, line=474 (Compiled frame)
+ - com.caucho.util.ThreadPool.run() @bci=85, line=423 (Interpreted frame)
+ - java.lang.Thread.run() @bci=11, line=595 (Interpreted frame)
+
+...
+
+</example>
+
+</s1>
+
+  </body>
+</document>

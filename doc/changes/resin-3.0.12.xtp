@@ -1,0 +1,26 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.12 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="Resin-Pro/OpenSSL">
+
+<p>Fixed JDK 1.4/1.5 compatibility problem with OpenSSL.</p>
+
+</s1>
+
+<s1 title="ext-webapp">
+
+<p>Directory for common jars.  The classes are loaded individually
+in each web-app, so it's safe to put non-classloader
+aware jars in ext-webapp.</p>
+
+</s1>
+
+</body>
+</document>

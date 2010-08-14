@@ -1,0 +1,135 @@
+<navigation threaded="true" section="Resin : Development Guide : ">
+  <item link="index.xtp" title="Development">
+
+    <!--
+       - Amber
+    <item link="amber.xtp" title="Amber (JPA)">
+      <item link="amber-basic-field/index.xtp" title="Field"/>
+      <item link="amber-basic/index.xtp" title="Property"/>
+      <item link="amber-query/index.xtp" title="Query"/>
+      <item link="amber-many2one/index.xtp" title="Many-to-One"/>
+      <item link="amber-one2many/index.xtp" title="One-to-Many"/>
+      <item link="amber-many2many/index.xtp" title="Many-to-Many"/>
+      <item link="amber-inherit/index.xtp" title="Inherit"/>
+      <item link="amber-session/index.xtp" title="Sessions"/>
+    </item>
+      -->
+
+    <!--
+       - IoC
+      -->
+    <item link="ioc.xtp" title="Java Injection (CanDI)">
+      <!--
+      <item link="jaxb-bean-config/index.xtp" title="JAXB IoC"/>
+      <item link="ioc-services/index.xtp" title="Services"/>
+      -->
+      <item link="ioc-binding/index.xtp" title="Binding Patterns"
+	    description="Service, Resource, Startup, and Plugin Patterns for CanDI (JSR-299)"/>
+      <!--
+      <item link="ioc-basic/index.xtp" title="Basic Resource"/>
+      -->
+      <item link="ioc-injection/index.xtp" title="Injection"/>
+      <item link="ioc-periodictask/index.xtp" title="Periodic Task"/>
+      <item link="ioc-appconfig/index.xtp" title="IoC appconfig"/>
+    </item>
+
+    <!--
+       - Database
+      -->
+    <item link="database.xtp" title="Database">
+      <item link="db-jdbc/index.xtp" title="JDBC Basic"/>
+      <item link="db-jdbc-ioc/index.xtp" title="JDBC IoC"/>
+    </item>
+
+    <!--
+       - EJB
+      -->
+    <item link="ejb.xtp" title="EJB">
+      <item link="ejb-stateless/index.xtp" title="Stateless"/>
+    </item>
+     
+    <!--
+       - JMX
+      -->
+    <item link="jmx.xtp" title="JMX">
+      <item link="jmx-basic/index.xtp" title="Basic"/>
+      <item link="jmx-listener/index.xtp" title="Listener"/>
+      <item link="jmx-registration/index.xtp" title="Registration"/>
+      <item link="jmx-mbean-server/index.xtp" title="MBeanServer"/>
+    </item>
+
+    <!--
+       - JSF
+      -->
+    <item link="jsf.xtp" title="JSF">
+      <item link="jsf-webbeans/index.xtp" title="JSF/CanDI"/>
+    </item>
+
+    <!--
+       - Messaging
+      -->
+    <item link="jms.xtp" title="Messaging">
+      <item link="bam-queue/index.xtp" title="BAM Queue"/>
+      <item link="jms-php-queue-send/index.xtp" title="JMS/PHP Send"/>
+      <item link="jms-php-queue-receive/index.xtp" title="JMS/PHP Receive"/>
+      <item link="jms-ioc-listener/index.xtp" title="MDB Listener"/>
+     </item>
+
+    <!--
+       - Quercus
+      -->
+    <item link="quercus.xtp" title="Quercus">
+      <item link="quercus-hello/index.xtp" title="Hello World"/>
+      <item link="quercus-module/index.xtp" title="Java Modules"/>
+      <item link="quercus-json/index.xtp" title="JSON" />
+      <item link="quercus-pdo/index.xtp" title="PDO" />
+      <!--
+      <item link="quercus-gettext/index.xtp" title="Gettext" />
+      -->
+    </item>
+
+    <!--
+       - Remoting
+      -->
+    <item link="remoting.xtp" title="Remoting">
+      <item link="hessian-serialize/index.xtp" title="Hessian Serialization"/>
+      <item link="hessian-add/index.xtp" title="Hessian Addition"/>
+      <item link="hessian-service/index.xtp" title="Service Addition"/>
+      <item link="hessian-ioc/index.xtp" title="Hessian with DI"/>
+      <item link="burlap-add/index.xtp" title="Burlap Addition"/>
+      <item link="custom-protocol/index.xtp" title="custom-protocol"/>
+
+      <item link="remote-hello-world/index.xtp" title="Simple Service"/>
+      <!--
+      <item link="esb-hello-jaxb/index.xtp" title="Configuring a service with JAXB"/>
+      -->
+      <item link="esb-servlet-client/index.xtp" title="Client Injection"/>
+      <!--
+      <item link="rest-flickr/index.xtp" title="Flickr REST"/>
+      <item link="soa-jaxws/index.xtp" title="JAX-WS example"/>
+      -->
+    </item>
+     
+    <!--
+       - Servlet
+      -->
+    <item link="servlet.xtp" title="Servlet">
+      <item link="servlet-hello/index.xtp" title="Hello, World"/>
+      <item link="servlet-comet/index.xtp" title="Comet"/>
+      <item link="servlet-ioc/index.xtp" title="IoC"/>
+      <item link="websocket-java/index.xtp" title="WebSocket"/>
+      <item link="websocket-php/index.xtp" title="WebSocket PHP"/>
+    </item>
+    
+    <item link="security-basic/index.xtp" title="Security"/>
+  
+     <!--     
+    <item link="jca-lifecycle/index.xtp" title="JCA Lifecycle"/>
+    <item link="jca-work/index.xtp" title="JCA Work"/>
+    <item link="jca-timer/index.xtp" title="JCA Timer"/>
+    <item link="jca-cron/index.xtp" title="JCA Cron"/>
+    <item link="jca-connectionAbstract/index.xtp" title="JCA Connector"/>
+      -->
+  </item>
+</navigation>
+

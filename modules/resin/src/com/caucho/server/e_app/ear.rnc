@@ -1,0 +1,11 @@
+default namespace j2ee = "http://java.sun.com/xml/ns/j2ee"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+include "classpath:com/caucho/config/cfg/j2ee.rnc"
+include "ear_13.rnc"
+include "ear-14.rnc"
+include "ear-15.rnc"
+
+start = javaee_application | j2ee_application | ear13_application

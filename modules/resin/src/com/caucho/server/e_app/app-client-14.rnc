@@ -1,0 +1,34 @@
+default namespace j2ee = "http://java.sun.com/xml/ns/j2ee"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+include "classpath:com/caucho/config/cfg/j2ee.rnc"
+
+start = j2ee14_application-client
+
+j2ee14_application-client = element application-client {
+  attribute id { string }?,
+
+  attribute version { string },
+
+  attribute xsi:schemaLocation { string },
+
+  j2ee_description-Group,
+
+  j2ee_env-entry*,
+
+  j2ee_ejb-ref*,
+
+  j2ee_service-ref-Group,
+
+  j2ee_resource-ref*,
+
+  j2ee_resource-env-ref*,
+
+  j2ee_message-destination-ref*,
+
+  element callback-handler { j2ee_fully-qualified-class }?,
+
+  j2ee_message-destination*
+}

@@ -1,0 +1,182 @@
+<document>
+<header>
+<product>resin</product>
+<type>tutorial</type>
+<title>Resource Timers</title>
+
+<description>
+<p>Resources can use the JCA timer capability to manage periodic tasks.
+The timers use the familiar <code>java.util.Timer</code>, providing extra
+support for the environment lifecycle.</p>
+
+<p>Timers start short tasks.  Longer timed tasks will use the timer in
+combination with the JCA work management API.</p>
+</description>
+ <tutorial-startpage>index.jsp</tutorial-startpage>
+ 
+</header>
+<body>
+
+
+<summary/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr><td><viewfile-link file="WEB-INF/web.xml"/>
+    </td><td>Configures the TimerResource
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/TimerResource.java"/>
+    </td><td>The resource implementation registers a launching task with the Timer and provides common state.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/WorkScheduleTimerTask.java"/>
+    </td><td>The timer task which launches the work task.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/WorkTask.java"/>
+    </td><td>The work task executes the long task.
+</td></tr><tr><td><viewfile-link file="index.jsp"/>
+    </td><td>The starting page for the tutorial
+</td></tr></deftable>
+</s1>
+
+<s1 title="The Timer task">
+
+<p>The <code>java.util.Timer</code> provides an API to launch periodic
+tasks.  Because the timer tasks are expected to be short, the timer
+needs to launch a longer-lived <code>Work</code> task for the actual
+work.  The <a href="../jca-work">work tutorial</a>
+gives more information on the JCA Work API.</p>
+
+<p>Resin provides the <code>Timer</code> to the resource's
+<code>start</code> and shuts it down properly when the
+resource environment closes (web-app, host, server, etc.)  In other
+words, resources should not create <code>java.util.Timer</code> objects
+directly, but should use the <code>BootstrapContext</code> to create
+the timers.</p>
+
+<p>The <code>TimerTask</code> API resembles the familiar
+<code>Runnable</code> API for threads.  Most application will just
+need to implement the <code>run()</code> method for the task's code.</p>
+
+<example title="WorkScheduleTimerTask.java">
+public class WorkScheduleTimerTask extends java.util.TimerTask {
+  private static final Logger log =
+    Logger.getLogger(TimerTask.class.getName());
+
+  private WorkManager _workManager;
+  private Work _work;
+
+  WorkScheduleTimerTask(WorkManager workManager, Work work)
+  {
+    _workManager = workManager;
+    _work = work;
+  }
+
+  public void run()
+  {
+    try {
+      _workManager.scheduleWork(_work);
+    } catch (WorkException e) {
+      log.log(Level.WARNING, e.toString(), e);
+    }
+  }
+}
+</example>
+
+</s1>
+
+<s1 title="The work task">
+
+<p>For this example, the work task is trivial.  It just increments a
+counter in the <code>TimerResource</code>.</p>
+
+<example title="WorkTask.java">
+public class WorkTask implements Work {
+  private TimerResource _resource;
+
+  WorkTask(TimerResource resource)
+  {
+    _resource = resource;
+  }
+
+  public void run()
+  {
+    _resource.addCount();
+  }
+
+  public void release()
+  {
+  }
+}
+
+</example>
+
+</s1>
+
+<s1 title="The Resource">
+
+<p>The <code>TimerResource</code> in this example just registers the
+timer tasks and exits.  As before, the resource extends
+<code>com.caucho.jca.AbstractResourceAdapter</code>
+to simplify the example.</p>
+
+<example title="TimerResource.java">
+public class TimerResource extends AbstractResourceAdapter {
+  private int _count;
+  
+  /**
+   * Adds to the count.
+   */
+  public void addCount()
+  {
+    _count++;
+  }
+
+  public void start(BootstrapContext ctx)
+    throws ResourceAdapterInternalException
+  {
+    WorkManager workManager = ctx.getWorkManager();
+    
+    Work work = new WorkTask(this);
+
+    TimerTask timerTask = new WorkScheduleTimerTask(workManager, work);
+
+    Timer timer = ctx.createTimer();
+
+    long initialDelay = 0;
+    long period = 10000L;
+
+    timer.schedule(timerTask, initialDelay, period);
+  }
+  
+  public void stop()
+    throws ResourceAdapterInternalException
+  {
+  }
+
+  public String toString()
+  {
+    return "TimerResource[" + _count + "]";
+  }
+}
+</example>
+
+</s1>
+
+<s1 title="Configuration and JSP">
+
+<p>The configuration for this resource is trivial since it has no
+attributes.</p>
+
+<example title="web.xml">
+&lt;resource name="jca/timer" type="example.TimerResource"/&gt;
+</example>
+
+<p>The demo JSP is also trivial.  It looks up the resource through
+JNDI and prints it to the page.</p>
+
+<example title="index.jsp">
+&lt;%@ page import="javax.naming.*" %&gt;
+&lt;%= new InitialContext().lookup("java:comp/env/jca/timer") %&gt;
+</example>
+
+</s1>
+
+</body>
+</document>

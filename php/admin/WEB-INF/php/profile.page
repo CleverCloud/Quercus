@@ -1,0 +1,468 @@
+<?php
+/**
+ * Summary of profiling
+ */
+
+require_once "WEB-INF/php/inc.php";
+
+if (! admin_init()) {
+  return;
+}
+
+$profile = @new Java("com.caucho.profile.Profile");
+$profileQuercus = isset($_POST['profile_quercus']);
+
+if ($profile) {
+  if ($_POST['action'] == 'stop') {
+    $profile->stop();
+  }
+  else if ($_POST['action'] == 'start') {
+    if ($_POST['period'] >= 10) {
+      $profile->setPeriod($_POST['period']);
+    }
+
+    if ($_POST['depth'] >= 1) {
+      $profile->setDepth($_POST['depth']);
+    }
+    
+    $profile->start();
+  }
+
+  if ($profile->active) {
+    echo "<h2>Profile Active for Server " . $g_server->Id . "</h2>";
+    echo "Period: {$profile->period}ms Depth: {$profile->depth}";
+
+    echo "<form action='?q=profile' method='post' style='display:inline'>";
+    echo "<input type='hidden' name='period' ";
+    echo        "value='" . $_POST['period'] . "'/>";
+    echo "<input type='hidden' name='depth' ";
+    echo        "value='" . $_POST['depth'] . "'/>";
+
+    if ($profileQuercus) {
+      echo "<input type='hidden' name='profile_quercus' ";
+      echo        "value='profile_quercus'/>";
+    }
+
+    echo "<input type='submit' name='action' value='stop'/>";
+
+    echo "</form>";
+
+    echo "</h2>\n";
+  }
+  else {
+    echo "<h2>";
+    echo "Profile Stopped";
+    echo "</h2>";
+
+    echo "<form action='?q=profile' method='post' style='display:inline'>";
+    echo "Period: <select type='select' name='period'>";
+
+    $PERIODS = Array(10, 25, 100, 250, 1000, 2500, 10000);
+
+    if (!isset($_POST['period']) || 
+        !is_numeric($_POST['period']) ||
+        !in_array($_POST['period'], $PERIODS))
+      $postedPeriod = 100;
+    else
+      $postedPeriod = $_POST['period'];
+
+    foreach ($PERIODS as $period) {
+      if ($period == $postedPeriod) 
+        echo "  <option selected value='{$period}'>{$period}ms</option>";
+      else
+        echo "  <option value='{$period}'>{$period}ms</option>";
+    }
+
+    echo "</select>";
+
+    echo " Depth: <select type='select' name='depth'>";
+
+    $DEPTHS = Array(1, 2, 4, 8, 12, 16, 20, 32, 250);
+
+    if (!isset($_POST['depth']) || 
+        !is_numeric($_POST['depth']) ||
+        !in_array(intval($_POST['depth']), $DEPTHS))
+      $postedDepth = 16;
+    else
+      $postedDepth = $_POST['depth'];
+
+    foreach ($DEPTHS as $depth) {
+      if ($depth == $postedDepth) 
+        echo "  <option selected>{$depth}</option>";
+      else
+        echo "  <option>{$depth}</option>";
+    }
+
+    echo "</select>";
+
+    echo "<input type='submit' name='action' value='start'/><br/>";
+
+    echo "<span title='Highlight Quercus function names in stacks and ";
+    echo              "decode Quercus-generated Java class names and ";
+    echo              "functions to their original PHP names'>";
+
+    if ($profileQuercus) 
+      echo "<input type='checkbox' name='profile_quercus' checked/>";
+    else
+      echo "<input type='checkbox' name='profile_quercus'/>";
+
+    echo "Enable Quercus profiling mode</span>";
+    echo "</form>";
+
+    if ($profileQuercus) 
+      echo "<br/>* indicates stack trace contains PHP function calls";
+  }
+
+  $period = $profile->getPeriod();
+  $sample_ticks = $profile->getTicks();
+  $results = $profile->getResults();
+  
+
+  echo "<h3>Run Time: " . ($sample_ticks * $period / 1000) . "s</h3>\n";
+
+  $partition = do_partition_profile($results);
+  $groups = array("active", "block", "jni", "resin", "keepalive", "wait",
+                  "accept", "single", "all");
+
+//  echo "<table class='threads'>\n";
+
+  echo "<p>";
+  echo "<ul class='tabs'>";
+  $count = 0;
+  foreach ($groups as $name) {
+    $entries = $partition[$name];
+
+    if (sizeof($entries) <= 0)
+      continue;
+
+    $count++;
+
+    echo "<li id='tab_" . $name . "'";
+    if ($count == 1)
+      echo " class='selected'";
+    else
+      echo " class=''";
+    echo ">\n";
+
+    echo "<a href='#' onclick=\"";
+    foreach ($groups as $subname) {
+      if (sizeof($partition[$subname]) <= 0)
+        continue;
+
+      if ($subname == $name) {
+        echo "show('g_" . $subname . "');";
+        echo "sel('tab_" . $subname . "');";
+      }
+      else {
+        echo "hide('g_" . $subname . "');";
+        echo "unsel('tab_" . $subname . "');";
+      }
+    }
+    echo "\">" . $name . "</a></li>";
+  }
+  echo "</ul>\n";
+
+  $count = 0;
+  foreach ($groups as $name) {
+    $entries = $partition[$name];
+
+    if (sizeof($entries) <= 0)
+      continue;
+
+    $count++;
+
+    echo "<div"
+    echo " id='g_" . $name . "'";
+    if ($count != 1)
+     echo " style='display:none'";
+    echo ">\n";
+
+    echo "<table";
+    echo " class='threads'>\n";
+
+    //$topTicks = $entries[0]->getCount();
+    $total_ticks = 0;
+    for ($i = sizeof($entries) - 1; $i >= 0; $i--) {
+      $total_ticks += $entries[$i]->getCount();
+    }
+
+    echo "<tr class='head'><th colspan='5' align='left'>$name (" . sizeof($entries) . ")";
+
+    $show = "hide('s_$name');show('h_$name');";
+    $hide = "show('s_$name');hide('h_$name');";
+
+    for ($i = 0; $i < sizeof($entries); $i++) {
+      $show .= "show('t_{$name}_{$i}');";
+      $hide .= "hide('t_{$name}_{$i}');";
+    }
+
+    echo " <a id='s_$name' href=\"javascript:$show\">show</a> ";
+    echo "<a id='h_$name' href=\"javascript:$hide\" style='display:none'>hide</a>";
+
+    echo "</th></tr>\n";
+
+    echo "<tr>";
+    echo "  <th>% time</th>";
+    echo "  <th>time self";
+    echo "  <th>% sum</th>";
+    echo "<th><th>trace\n";
+    echo "</tr>";
+
+    $total_percent = 0;
+    for ($i = 0; $i < sizeof($entries); $i++) {
+      $entry = $entries[$i];
+
+      $time_percent = 100 * $entry->getCount() / $sample_ticks;
+      $self_percent = 100 * $entry->getCount() / $total_ticks;
+      $total_percent += $self_percent;
+
+      echo "<tr>";
+      echo "<td align='right'>";
+      printf("%9.3f%%", $time_percent);
+      echo "</td><td align='right'>";
+      printf("%.3fs", $entry->getCount() * $period * 0.001);
+      echo "</td><td align='right'>";
+      printf("%9.3f%%", $total_percent);
+      echo "</td>";
+      echo "<td>";
+      echo "<a id='s_{$name}_{$i}' href=\"javascript:show('t_{$name}_{$i}');hide('s_{$name}_{$i}');show('h_{$name}_{$i}');\">show</a> ";
+      echo "<a id='h_{$name}_{$i}' href=\"javascript:hide('t_{$name}_{$i}');show('s_{$name}_{$i}');hide('h_{$name}_{$i}');\" style='display:none'>hide</a> ";
+      echo "</td>";
+
+      if ($profileQuercus)
+        echo "<td class='quercus'>";
+      else 
+        echo "<td>";
+
+      echo $entry->getDescription();
+
+      // echo print_stack_entry($stack);
+
+      if (contains_quercus_calls($entry))
+        echo "*";
+
+      echo "</td>";
+      echo "</tr>\n";
+
+//      echo "<tr id='t_{$name}_{$i}' style='display:none; cellpadding:0'>";
+      echo "<tr>";
+
+      echo "<td colspan='1'>";
+      echo "</td>";
+
+      echo "<td colspan='4'>";
+
+      if ($profileQuercus)
+        echo "<div class='quercus-stack-trace'";
+      else {
+        echo "<div class='stack-trace'";
+      }
+      echo " id='t_{$name}_{$i}' style='display:none'>";
+
+      foreach ($entry->getStackTrace() as $stack) {
+        echo "  at " . print_stack_entry($stack);
+      }
+      
+      echo "</div>";
+      echo "</td>";
+      echo "</tr>\n";
+    }
+
+    echo "</table>\n";
+    echo "</div>\n";
+  }
+
+ // echo "</table>\n";
+}
+else {
+  echo "<h2>Profiling is not available</h2>";
+
+  echo "<p>Profiling requires Resin Professional and compiled JNI</p>";
+}
+
+function do_partition_profile($entries)
+{
+  $partition = array();
+  foreach ($entries as $info) {
+    $stackTrace = $info->getStackTrace();
+
+    if (! $stackTrace) {
+      continue;
+    }
+
+    $partition["all"][] = $info;
+    $className = $stackTrace[0]->className;
+    $methodName = $stackTrace[0]->methodName;
+
+    if ($info->getCount() < 2) {
+      $partition["single"][] = $info;
+    }
+    else if ($info->isBlocked()) {
+      $partition["block"][] = $info;
+    }
+    else if ($info->isJni()
+             && ! preg_match("/com.caucho.server.admin/", $className)
+             && $className != "com.caucho.vfs.JniRandomAccessFile"
+             && $className != "com.caucho.vfs.JniFileStream") {
+      $partition["jni"][] = $info;
+    }
+    else if ($info->isWaiting() || $info->isParked() || $info->isSleeping()) {
+      $partition["wait"][] = $info;
+    }
+    else if ($stackTrace[0]->className == "java.lang.Object"
+        && $stackTrace[0]->methodName == "wait") {
+      $partition["wait"][] = $info;
+    }
+    else if ($stackTrace[0]->className == "sun.misc.Unsafe"
+        && $stackTrace[0]->methodName == "park") {
+      $partition["wait"][] = $info;
+    }
+    else if ($stackTrace[0]->className == "java.lang.Thread"
+        && $stackTrace[0]->methodName == "sleep") {
+      $partition["wait"][] = $info;
+    }
+    else if ($stackTrace[0]->className == "com.caucho.vfs.JniServerSocketImpl"
+             && $stackTrace[0]->methodName == "nativeAccept") {
+      $partition["accept"][] = $info;
+    }
+    else if ($stackTrace[0]->className == "java.net.PlainSocketImpl"
+             && $stackTrace[0]->methodName == "socketAccept") {
+      $partition["accept"][] = $info;
+    }
+    else if ($stackTrace[0]->className == "com.caucho.profile.Profile"
+             && $stackTrace[0]->methodName == "nativeProfile") {
+      $partition["resin"][] = $info;
+    }
+    else if ($stackTrace[0]->className == "com.caucho.server.admin.JniNetStat") {
+      // netstat is a slow blocking
+      $partition["resin"][] = $info;
+    }
+    else if ($stackTrace[0]->className == "com.caucho.server.port.JniSelectManager"
+             && $stackTrace[0]->methodName == "selectNative") {
+      $partition["resin"][] = $info;
+    }
+    else if (is_resin_main($stackTrace)) {
+      $partition["resin"][] = $info;
+    }
+    else if (is_keepalive($stackTrace)) {
+      $partition["keepalive"][] = $info;
+    }
+    else if (is_accept($stackTrace)) {
+      $partition["accept"][] = $info;
+    }
+    else if ($stackTrace[0]->className == "java.lang.ref.ReferenceQueue") {
+    }
+    else {
+      $partition["active"][] = $info;
+    }
+  }
+
+  return $partition;
+}
+
+function is_resin_main($stackTrace)
+{
+  for ($i = 0; $i < sizeof($stackTrace); $i++) {
+    if ($stackTrace[$i]->className == "com.caucho.server.resin.Resin"
+        && $stackTrace[$i]->methodName == "waitForExit") {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function is_accept($stackTrace)
+{
+  if ($stackTrace[0]->className == "com.caucho.vfs.JniServerSocketImpl"
+      && $stackTrace[0]->methodName == "nativeAccept") {
+    return true;
+  }
+  else if ($stackTrace[0]->className == "java.net.PlainSocketImpl"
+           && $stackTrace[0]->methodName == "socketAccept") {
+    return true;
+  }
+  else if ($stackTrace[0]->className == "java.net.PlainSocketImpl"
+           && $stackTrace[0]->methodName == "accept") {
+    return true;
+  }
+
+  return false;
+}
+
+function is_keepalive($stackTrace)
+{
+  for ($i = 0; $i < sizeof($stackTrace); $i++) {
+    if ($stackTrace[$i - 1]->className == "com.caucho.server.port.TcpConnection"
+             && $stackTrace[$i - 1]->methodName == "keepaliveRead") {
+      return true;
+    }
+    else if ($stackTrace[$i - 1]->className == "com.caucho.server.port.TcpConnection"
+             && $stackTrace[$i - 1]->methodName == "waitForKeepalive") {
+      return true;
+    }
+    else if ($stackTrace[$i - 1]->className == "com.caucho.vfs.ReadStream"
+             && $stackTrace[$i - 1]->methodName == "waitForRead") {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function is_quercus($className)
+{
+  return strpos($className, "_quercus._") === 0;
+}
+
+function contains_quercus_calls($entry)
+{
+  global $profileQuercus;
+
+  if ($profileQuercus) {
+    foreach ($entry->getStackTrace() as $stack) {
+      if (is_quercus($stack->className))
+        return true;
+    }
+  }
+
+  return false;
+}
+
+function decode_quercus_class_name($className)
+{
+  $parts = explode("$", $className);
+  $script = $parts[0];
+  $function = $parts[1];
+
+  $script = substr($script, strlen("_quercus._"));
+  $script = str_replace("._", "/", $script);
+  $script = str_replace("__", ".", $script);
+  $script = str_replace("_22d", "-", $script);
+
+  ereg("fun_(.*)_[0-9]*", $function, $matches);
+
+  return Array($script, $matches[1]);
+}
+
+function print_stack_entry($stack)
+{
+  global $profileQuercus;
+
+  if ($profileQuercus && is_quercus($stack->className)) {
+    $result = decode_quercus_class_name($stack->className);
+    $script = $result[0];
+    $function = $result[1];
+    $arg = $stack->getArg();
+
+    if ($function == "")
+      return "<b>{$script}: &lt;top level&gt;</b>\n";
+    else 
+      return "<b>{$script}: {$function}({$arg})</b>\n";
+  }
+  else {
+    $methodName = str_replace("<init>", "&lt;init&gt;", $stack->methodName);
+    return "{$stack->className}.{$methodName}({$stack->getArg()})\n";
+  }
+}
+?>

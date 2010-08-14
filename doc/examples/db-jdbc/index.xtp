@@ -1,0 +1,258 @@
+<document>
+  <header>
+    <product>resin</product>
+    <type>tutorial</type>
+    <tutorial-startpage>basic</tutorial-startpage>
+    <title>Basic JDBC Database Pattern</title>
+    <description>
+    <p>This tutorial describes the standard pattern
+for using a database in Resin.</p>
+    </description>
+  </header>
+
+  <body>
+    <summary/>
+
+<s1>
+<p>Using a JDBC database is a three step process:</p>
+
+<ul>
+<li>Configuring the &lt;database&gt; in the resin-web.xml or resin.conf
+</li><li>Retrieving the <code>DataSource</code> from the global JNDI
+resource map.
+</li><li>Using a <code>Connection</code> from the <code>DataSource</code>
+to execute the SQL.
+</li></ul>
+
+<p>JDBC database access is based around the Factory pattern.
+With JDBC, <code>javax.sql.DataSource</code> is the Factory object
+and <code>java.sql.Connection</code> is the factory's generated object.
+The &lt;database&gt; configures the <code>DataSource</code> and stores it
+in the JNDI resource map.  The servlet will retrieve the
+<code>DataSource</code> and use it as a factory to obtain
+<code>Connection</code> objects, the main workhorse for using databases.</p>
+</s1>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <td><viewfile-link file="WEB-INF/resin-web.xml"/></td>
+  <td>resin-web.xml configuration</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/BasicServlet.java"/></td>
+  <td>The JDBC query servlet.</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/InitServlet.java"/></td>
+  <td>The JDBC initialization servlet.</td>
+</tr>
+</deftable>
+</s1>
+
+<s1 title="Database Schema">
+
+<example>
+CREATE TABLE jdbc_basic_brooms (
+  id INTEGER PRIMARY KEY auto_increment,
+
+  name VARCHAR(128),
+
+  cost INTEGER
+);
+
+INSERT INTO jdbc_basic_brooms (name, cost) VALUES ('firebolt', 4000)
+INSERT INTO jdbc_basic_brooms (name, cost) VALUES ('nimbus 2001', 500)
+INSERT INTO jdbc_basic_brooms (name, cost) VALUES ('nimbus 2000', 300)
+INSERT INTO jdbc_basic_brooms (name, cost) VALUES ('cleansweep 7', 150)
+INSERT INTO jdbc_basic_brooms (name, cost) VALUES ('cleansweep 5', 100)
+INSERT INTO jdbc_basic_brooms (name, cost) VALUES ('shooting star', 50)
+</example>
+
+</s1>
+
+<s1 title="Database Configuration">
+
+<p>In Resin 3.0, the &lt;database&gt; tag configures the database
+pool and driver and saves the connection factory (DataSource) in JNDI.
+JNDI is just a global lookup tree available to
+all classes, making it straightforward to separate resource
+configuration from the application code.</p>
+
+<p>The &lt;driver&gt; tag configures the database driver.  The database
+vendor will make the driver classes available and describe the
+configuration variables.  The <a href="doc|db-thirdparty.xtp">thirdparty database page</a> describes
+several important database configurations.</p>
+
+<p>The &lt;type&gt; tag is the most important driver configuration item.
+It specifies the main Java driver class.  For many drivers, you will
+have a choice of different drivers following different internal JDBC
+APIs.  If you have a choice, you should try the drivers in the
+following order, after checking your database vendor's recommendations:</p>
+
+<ol>
+<li>JCA - Java Connection Architecture - this is a common driver
+interface for more than just JDBC.  If possible, it's generally the
+best to choose.</li>
+<li>ConnectionPoolDataSource - JDBC driver which has extra hooks to
+help Resin pool the connections.</li>
+<li>Driver - old-style JDBC driver.  Its main benefit is that it's
+generally always available as a fallback.</li>
+</ol>
+
+<example>
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+
+  &lt;database jndi-name="jdbc/basic"&gt;
+    &lt;driver type="com.caucho.db.jca.ConnectionFactory"&gt;
+      &lt;url&gt;resin:WEB-INF/db&lt;/url&gt;
+    &lt;/driver&gt;
+  &lt;/database&gt;
+
+&lt;/web-app&gt;
+</example>
+
+<p>The &lt;url&gt; specifies the location of the database. Each
+database driver will have a unique URL formal.  In this case,
+the &lt;url&gt; specifies a directory for the database files.  Other
+databases may specify a host and port.</p>
+
+<s2 title="com.caucho.db.jca.ConnectionFactory">
+
+<p>The specific driver for this example,
+<code>com.caucho.db.jca.ConnectionFactory</code> is a simple database
+intended for examples and testing.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Servlet Initialization">
+
+<p>The servlet needs to locate the <code>DataSource</code> to
+use JDBC.  The servlet needs to lookup the database pool's DataSource
+using JNDI.  In the configuration above, the name "jdbc/basic" is
+shorthand for "java:comp/env/jdbc/basic".  "java:comp/env" is a
+context containing configured resources.  For example,
+"java:comp/env/jdbc/basic" is a JDBC resource in that context.</p>
+
+<p>Because the servlet only needs to look up the
+<code>DataSource</code> once, it will generally look it up in the
+<code>init()</code> method and store it as an instance variable.
+The <code>DataSource</code> is thread-safe, so it
+can be used simultaneously by any of the requesting threads.</p>
+
+<example>
+import javax.inject.Inject;
+import javax.inject.Named;
+
+public class BasicServlet extends HttpServlet {
+  @Inject @Named("jdbc/basic")
+  private DataSource _ds;
+
+  ...
+}
+</example>
+
+<s2 title="Standard configuration">
+
+<example title="resin-web.xml">
+&lt;servlet servlet-name="my-servlet"
+         servlet-class="example.BasicServlet"&gt;
+&lt;/servlet&gt;
+</example>
+
+</s2>
+
+</s1>
+
+<s1 title="Using the Database">
+
+<p>The most important pattern when using JDBC is the
+following try/finally block.  All database access should follow this pattern.
+Because connections are pooled, it's vital to close the connection no
+matter what kind of exceptions may be thrown   So the
+<code>conn.close()</code> must be in a finally block.</p>
+
+<example title="Connection try ... finally block">
+Connection conn = _ds.getConnection();
+try {
+  ...
+} finally {
+  conn.close();
+}
+</example>
+
+<p>The full example splits the database access into two methods to
+clarify the roles.  The <code>service</code> retrieves the output
+writer from the servlet response and wraps any checked exceptions
+in a <code>ServletException</code>.  Splitting the servlet method
+simplifies the <code>doQuery</code> method, so it can concentrate
+on the database access.</p>
+
+<example>
+package example;
+
+public class BasicServlet extends HttpServlet {
+  @Resource(name="jdbc/basic")
+  private DataSource _ds;
+
+  public void service(HttpServletRequest req,
+                      HttpServletResponse res)
+    throws java.io.IOException, ServletException
+  {
+    PrintWriter out = res.getWriter();
+
+    try {
+      doQuery(out);
+    } catch (SQLException e) {
+      throw new ServletException(e);
+    }
+  }
+
+  private void doQuery(PrintWriter out)
+    throws IOException, SQLException
+  {
+    Connection conn = _ds.getConnection();
+
+    try {
+      String sql = "SELECT name, cost FROM jdbc_basic_brooms"
+                   + " ORDER BY cost DESC";
+      
+      Statement stmt = conn.createStatement();
+
+      ResultSet rs = stmt.executeQuery(sql);
+
+      out.println("&lt;table border='3'&gt;");
+      
+      while (rs.next()) {
+        out.println("&lt;tr&gt;&lt;td&gt;" + rs.getString(1));
+        out.println("    &lt;td&gt;" + rs.getString(2));
+      }
+
+      out.println("&lt;/table&gt;");
+      
+      rs.close();
+      stmt.close();
+    } finally {
+      conn.close();
+    }
+  }
+}
+</example>
+
+</s1>
+
+<s1 title="See also">
+
+<ul>
+<li><a href="doc|database-tags.xtp">Database configuration</a> reference</li>
+<li><a href="doc|db-thirdparty.xtp">Sample configurations</a> for several database drivers</li>
+<li>Using <a href="examples|db-jdbc-ioc/index.xtp">Dependency Injection for Databases</a></li>
+<li>The <a href="examples|ioc-injection/index.xtp">Dependency Injection</a> (or Assembly Line) pattern.</li>
+</ul>
+
+</s1>
+
+  </body>
+</document>

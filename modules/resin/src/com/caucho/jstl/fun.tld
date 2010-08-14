@@ -1,0 +1,102 @@
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" version="2.0">
+  <tlib-version>1.0</tlib-version>
+  <short-name>fn</short-name>
+
+  <uri>http://java.sun.com/jsp/jstl/functions</uri>
+
+  <function>
+    <name>contains</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>boolean contains(String, String)</function-signature>
+  </function>
+
+  <function>
+    <name>containsIgnoreCase</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>boolean containsIgnoreCase(String, String)</function-signature>
+  </function>
+
+  <function>
+    <name>endsWith</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>boolean endsWith(String, String)</function-signature>
+  </function>
+
+  <function>
+    <name>escapeXml</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>String escapeXml(String)</function-signature>
+  </function>
+
+  <function>
+    <name>indexOf</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>int indexOf(String, String)</function-signature>
+  </function>
+
+  <function>
+    <name>join</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>String join(String [], String)</function-signature>
+  </function>
+
+  <function>
+    <name>length</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>int length(Object)</function-signature>
+  </function>
+
+  <function>
+    <name>replace</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>String replace(String, String, String)</function-signature>
+  </function>
+
+  <function>
+    <name>split</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>String []split(String, String)</function-signature>
+  </function>
+
+  <function>
+    <name>startsWith</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>boolean startsWith(String, String)</function-signature>
+  </function>
+
+  <function>
+    <name>substring</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>String substring(String, int, int)</function-signature>
+  </function>
+
+  <function>
+    <name>substringAfter</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>String substringAfter(String, String)</function-signature>
+  </function>
+
+  <function>
+    <name>substringBefore</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>String substringBefore(String, String)</function-signature>
+  </function>
+
+  <function>
+    <name>toLowerCase</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>String toLowerCase(String)</function-signature>
+  </function>
+
+  <function>
+    <name>toUpperCase</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>String toUpperCase(String)</function-signature>
+  </function>
+
+  <function>
+    <name>trim</name>
+    <function-class>com.caucho.jstl.Functions</function-class>
+    <function-signature>String trim(String)</function-signature>
+  </function>
+</taglib>

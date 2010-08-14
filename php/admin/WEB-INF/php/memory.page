@@ -1,0 +1,185 @@
+<?php
+/**
+ * Summary of heap
+ */
+
+require_once "WEB-INF/php/inc.php";
+
+if (! admin_init()) {
+  return;
+}
+
+$stat_service = $g_mbean_server->lookup("resin:type=StatService");
+
+$si = sprintf("%02d", $g_server->Index);
+
+if ($stat_service) {
+  echo "<h2>Graphs</h2>\n";
+/*  
+  echo "<p>";
+  echo "<img src='graph.php?";
+  echo "g[0][0]=$si|JVM|Memory|Heap Memory Used"
+  echo "&g[1][0]=$si|JVM|Memory|Heap Memory Free"
+  echo "&g[2][0]=$si|JVM|Memory|Tenured Memory Used"
+  echo "&g[3][0]=$si|JVM|Memory|PermGen Memory Used"
+  echo "&width=600&height=300' width='600' height='300'>\n"
+  */
+  $end = time();
+  $start = $end - 6 * 3600;
+  stat_graph("memory", 600, 300, $start, $end,
+             array("$si|JVM|Memory|Heap Memory Used",
+                   "$si|JVM|Memory|Heap Memory Free",
+                   "$si|JVM|Memory|Tenured Memory Used",
+                   "$si|JVM|Memory|PermGen Memory Used"));
+}
+
+$memory = $g_mbean_server->lookup("resin:type=Memory");
+
+$row = 0;
+echo "<table class='data'>\n"
+
+echo "<tr>";
+echo "<th>pool</th>\n";
+echo "<th>max</th>\n";
+echo "<th>committed</th>\n";
+echo "<th>used</th>\n";
+echo "<th>free</th>\n";
+echo "</tr>";
+
+echo "<tr class='" . row_style($row++) . "'>";
+echo "<td>CodeCache</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->CodeCacheMax / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->CodeCacheCommitted / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->CodeCacheUsed / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->CodeCacheFree / 1e6) . "</td>";
+echo "</tr>\n";
+
+echo "<tr class='" . row_style($row++) . "'>";
+echo "<td>Eden</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->EdenMax / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->EdenCommitted / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->EdenUsed / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->EdenFree / 1e6) . "</td>";
+echo "</tr>\n";
+
+echo "<tr class='" . row_style($row++) . "'>";
+echo "<td>PermGen</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->PermGenMax / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->PermGenCommitted / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->PermGenUsed / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->PermGenFree / 1e6) . "</td>";
+echo "</tr>\n";
+
+echo "<tr class='" . row_style($row++) . "'>";
+echo "<td>Survivor</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->SurvivorMax / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->SurvivorCommitted / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->SurvivorUsed / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->SurvivorFree / 1e6) . "</td>";
+echo "</tr>\n";
+
+echo "<tr class='" . row_style($row++) . "'>";
+echo "<td>Tenured</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->TenuredMax / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->TenuredCommitted / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->TenuredUsed / 1e6) . "</td>";
+echo "<td align='right'>" . sprintf("%.2fM", $memory->TenuredFree / 1e6) . "</td>";
+echo "</tr>\n";
+
+echo "</table>";
+
+echo "<h2>Heap Dump</h2>";
+
+$heap_dump_cl = java_class("com.caucho.profile.HeapDump");
+
+if ($heap_dump_cl->isAvailable()) {
+  $heap = @$heap_dump_cl->create();
+}
+
+$is_heap_available_heap = false;
+
+$heap_file = "/tmp/java.hprof";
+
+if ($heap) {
+  echo "<form action='?q=memory' method='post'>";
+  echo "Resin Heap Dump: <input type='submit' name='action' value='dump heap'><br>";
+  echo "JVM Heap Dump: <input type='submit' name='action' value='jvm heap dump'> (saves JVM binary heap to $heap_file)";
+  echo "</form>";
+
+  if ($_POST['action'] == 'jvm heap dump') {
+    $memory_mbean = $g_mbean_server->lookup("com.sun.management:type=HotSpotDiagnostic");
+
+    $memory_mbean->dumpHeap($heap_file, true);
+
+    echo "<h2>Saving Heap to $heap_file</h2>";
+  }
+  
+  if ($_POST['action'] == 'dump heap') {
+    $entries = $heap->dump();
+
+    $is_heap_available = sizeof($entries) > 0;
+  }
+  else {
+    $entries = $heap->getLastHeapDump();
+    $is_heap_available = true;
+  }
+}
+
+if (sizeof($entries) > 0) {
+  $topSize = $entries[0]->getTotalSize();
+
+  echo "<table class='data'>";
+  echo "<tr>\n";
+  echo "  <th>rank</th>\n";
+  echo "  <th>self+desc</th>\n";
+  echo "  <th>self</th>\n";
+  echo "  <th>desc</th>\n";
+  echo "  <th>count</th>\n";
+  echo "  <th>class</th>\n";
+  echo "</tr>\n";
+
+  for ($i = 0; $i < sizeof($entries); $i++) {
+    $entry = $entries[$i];
+
+    echo "<tr class='" . row_style($i) . "'>";
+    echo "<td>";
+    printf("%.4f", $entry->getTotalSize() / $topSize);
+    echo "</td>";
+    echo "<td align='right'>";
+    printf("%.3fM", $entry->getTotalSize() / (1024 * 1024));
+    echo "</td>";
+    echo "<td align='right'>";
+    printf("%.3fM", $entry->getSelfSize() / (1024 * 1024));
+    echo "</td>";
+    echo "<td align='right'>";
+    printf("%.3fM", $entry->getChildSize() / (1024 * 1024));
+    echo "</td>";
+    echo "<td align='right'>";
+    printf("%d", $entry->getCount());
+    echo "</td>";
+    echo "<td>";
+    echo "{$entry->getClassName()}";
+    echo "</td>";
+    echo "</tr>\n";
+  }
+
+  echo "</table>\n";
+}
+else if (! $is_heap_available) {
+  echo "<h2>Heap dump is not available</h2>\n";
+  echo "<p>The heap dump requires Resin Professional and compiled JNI. It\n";
+  echo "also requires an '-agentlib:resin' JVM argument:</p>\n";
+
+  echo "<pre>\n";
+  echo "&lt;resin ...>\n";
+  echo "  &lt;cluster id='...'>\n";
+  echo "    &lt;server id='...'>\n";
+  echo "       ...\n";
+  echo "       &lt;jvm-arg>-agentlib:resin&lt;/jvm-arg>\n";
+  echo "    &lt;/server>\n";
+  echo "  &lt;/cluster>\n";
+  echo "&lt;/resin>\n";
+  echo "</pre>\n";
+}
+
+?>

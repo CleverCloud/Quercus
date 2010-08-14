@@ -1,0 +1,781 @@
+<document>
+<header>
+  <title>Database Configuration</title>
+  <version>Resin 3.0</version>
+
+  <description>
+<p>
+Resin provides a robust and tested connection pool that is used to
+obtain connections to databases. 
+</p>
+
+  </description>
+</header>
+
+<body>
+<localtoc/>
+
+<s1 title="See also">
+
+<ul>
+<li><a href="http://wiki.caucho.com/">The Caucho Wiki</a> contains sample configurations for several database drivers
+</li><li><a href="../examples/db-jdbc/index.xtp">Basic JNDI/JDBC usage tutorial</a>
+</li><li>Using <a href="../examples/db-jdbc-ioc/index.xtp">Java Injection for Databases</a>
+</li></ul>
+
+</s1>
+
+<s1 title="Basic Configuration">
+
+<p>A basic &lt;database&gt; configuration specifies the following:
+</p>
+
+<ul>
+<li>The JNDI name where the configured DataSource will be stored</li>
+<li>The database driver's main class</li>
+<li>The driver-specific url for the database.</li>
+<li>Any user and password information.</li>
+</ul>
+
+<example title="Example: mysql configuration">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+&lt;database jndi-name='jdbc/test_mysql'&gt;
+  &lt;driver type="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource"&gt;
+    &lt;url&gt;jdbc:mysql://localhost:3306/test&lt;/url&gt;
+    &lt;user&gt;&lt;/user&gt;
+    &lt;password&gt;&lt;/password&gt;
+  &lt;/driver&gt;
+&lt;/database&gt;
+
+&lt;/web-app>
+</example>
+
+<p>This &lt;database&gt; will configure a javax.sql.DataSource and
+store it in JNDI at java:comp/env/jdbc/test_mysql.  To use the data
+source, follow the database use pattern in the
+<a href="../examples/db-jdbc/index.xtp">DataSource tutorial.</a></p>
+
+<p>Although some deployments will specify driver and
+connection pool parameters, the default values will be fine for most
+applications.</p>
+
+</s1>
+
+<s1 title="Core Concepts">
+
+<s2 title="Connection">
+<glossary title="connection" type="inline">
+An established channel of communication between a client and a server. The
+client and the server may be on separate machines, on the same machine, or even
+running in the same JVM.  Often the connection is established using TCP/IP as
+the transport of communication.
+</glossary>
+
+<p>A database connection is used to allow the Java program, running in a JVM,
+to communicate with a database server.</p>
+</s2>
+
+<s2 title="Connection Pool">
+<glossary title="connection pool" type="inline">
+A set of connections maintained so that the connections can be reused when
+there is a future need for the conneciton.
+</glossary>
+
+<p>
+Connection pools are used to reduce the overhead of using a database.
+Establishing a connection to the database is a costly operation.  A connection
+pool keeps a pool of open connections, each connection can be used for a time
+as needed, and then released back to the pool.  A connection that has been
+released back to the pool can then be reused.  </p>
+
+<p>Connection pooling is especially important in server applications.  The
+overhead of opening a new connection for each new client request is too costly.
+Instead, the database pool allows for a connection to be opened once and then
+reused for many requests.</p>
+</s2>
+
+<s2 title="DataSource">
+<glossary title="DataSource" type="inline">
+A JDBC term (and interface name) used for a factory that is used to obtain connections.
+</glossary>
+
+<p>
+Resin provides an implementation of <code>DataSource</code>.  Resin's
+implementation  of <code>DataSource</code> is a connection pool.
+</p>
+</s2>
+
+<s2 title="Driver">
+
+<glossary title="driver" type="inline">
+An implemetation of a defined interface that hides the details of
+communication with a device or other resource, such as a database.
+</glossary>
+
+<p>A Driver provides an interface and is responsible for the communication
+with the database. Every different database (i.e Oracle, MySQL) has their own
+means of enabling communication from the client (in this case Resin and you
+applications) and the database.  The Driver provides a common interface that
+hides the details of that communication.  </p>
+
+</s2>
+
+<s2 title="Transaction">
+
+<glossary title="transaction" type="inline">
+A transaction is used to mark a group of operations and provide a guarantee
+that all of the operations happen, or none of them happen.  Transactions
+protect the integrity of the database.
+</glossary>
+
+<p>Transactions are especially important in server applications where many
+threads of processing may be interacting with the database at the same
+time.</p>
+
+<p>For a simple example, imagine a set of operations that reads a value,
+calculates a new value, and then updates the database.
+
+<example title="Example: simple set of database operations">
+read value A=1 
+calculate  A=A+1 
+update     A=2
+
+read value A=2 
+calculate  A=A+1 
+update     A=3
+</example>
+
+
+</p><p>Imagine if one thread is performing this operation, and in the middle of
+this read/calculate/update, another thread performs an update.  The data that
+the first thread obtained from the read and is using for the calculation and
+update is no longer valid.</p>
+
+<example title="Example: 2 Threads with database race condition">
+Thread 1                 Thread 2
+--------                 --------
+read value A=1           read value A=1
+calculate  A=A+1         calculate A=A+1
+                         update A=2
+update     A=2
+</example>
+
+<p>Placing the read/calculate/update operations in a transactions guarantees
+that only one thread can perform those operations at a time, if a second thread
+comes along and tries to perform the operation, it will have to wait for the
+first thread to finish before it can begin.</p>
+
+<example title="Example: 2 Threads protected with transactions">
+
+Thread1                Thread 2
+-------                --------
+read value A=1         
+calculate  A=A+1       (tries to read A, but has to wait for thread 1)
+update     A=2
+                       read value A=2
+                       calculate A=A+1
+                       update A=3
+</example>
+
+</s2>
+
+<s2 title="Distributed Transaction">
+
+<glossary title="distributed transaction" type="inline">
+A distributed transaction is a transaction that involves more than one
+connection.
+</glossary>
+
+<p>If the guarantees that transactions apply need to apply to operations that
+occur on two databases within the same transaction,
+distributed transactions are needed.</p>
+
+<p>If <code>A</code> and <code>B</code> in the following example are in two
+different databases, then a distributed transaction is needed:</p>
+
+<example title="Example: Simple set of database operations">
+read value db1.A=1 
+read value db2.B=99
+calculate  A=A+1 
+calculate  B=B-A 
+update     db1.A=2
+update     db2.B=97
+</example>
+
+<p>Distributed transactions are rarely needed, and few databases really support
+them.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Core Configuration">
+
+<defun title="database" version="Resin 3.0">
+<parents>server, host-default, host, web-app-default, web-app</parents>
+
+<p>Configure a <var>database</var> resource, which is a database pool that manages
+and provides connections to a database.</p>
+      
+<deftable-childtags>
+<tr>
+  <th>attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>JNDI name to store the pool under.  Servlets, jsp, and
+other java code use this name.  The path is relative to
+<code>java:comp/env</code></td>
+  <td> </td>
+</tr>
+<tr>
+  <td>driver</td>
+  <td>Configure the database <a href="#driver">driver</a>.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>backup-driver</td>
+  <td>Configure a backup <a href="#driver">driver</a>.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>max-connections</td>
+  <td><a href="#pooling">Pooling parameter</a> - maximum number of allowed connections</td>
+  <td>1024</td>
+</tr>
+<tr>
+  <td>max-idle-time</td>
+  <td><a href="#pooling">Pooling parameter</a> - maximum time an idle connection is kept in
+the pool</td>
+  <td>30 sec</td>
+</tr>
+<tr>
+  <td>max-active-time</td>
+  <td><a href="#pooling">Pooling parameter</a> - maximum time a connection allowed to be active</td>
+  <td>6 hours</td>
+</tr>
+<tr>
+  <td>max-pool-time</td>
+  <td><a href="#pooling">Pooling parameter</a> - maximum time a connection is kept in the pool</td>
+  <td>24 hours</td>
+</tr>
+<tr>
+  <td>connection-wait-time</td>
+  <td><a href="#pooling">Pooling parameter</a> - how long to wait for an idle connection (Resin 1.2.3)</td>
+  <td>30 sec</td>
+</tr>
+<tr>
+  <td>max-overflow-connections</td>
+  <td><a href="#pooling">Pooling parameter</a> - how many "overflow" connection are allowed if the connection wait times out.</td>
+  <td>1024</td>
+</tr>
+<tr>
+ <td>ping-table</td>
+ <td><a href="#reliability">Reliability parameter</a> - The database table used to "ping", checking that the connection is still live.</td>
+ <td>n/a</td>
+</tr>
+<tr>
+  <td>ping</td>
+  <td><a href="#reliability">Reliability parameter</a> - test for live connections before allocating them from the pool.</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>ping-interval</td>
+  <td><a href="#reliability">Reliability parameter</a> - set the minimum interval for pings, instead of doing a ping every time</td>
+  <td>1s</td>
+</tr>
+<tr>
+  <td>prepared-statement-cache-size</td>
+  <td>A cache that holds prepared statements, a reused prepared statement avoids the overhead of the driver making the prepared statement</td>
+  <td>0</td>
+</tr>
+<tr>
+  <td>spy</td>
+  <td>A debugging aid, if true, generate <code>info</code> level log events that reveal the SQL that is used with the connections.</td>
+  <td>false
+<!--
+<tr><td>xa<td><td>Set true o
+-->
+
+</td></tr></deftable-childtags>
+
+<p>All times default to seconds, but can use longer time periods:</p>
+
+<deftable title="Time suffixes">
+<tr>
+ <th>Suffix</th>
+ <th>Description</th>
+</tr>
+<tr><td>s</td><td>seconds
+</td></tr><tr><td>m</td><td>minutes
+</td></tr><tr><td>h</td><td>hours
+</td></tr><tr><td>D</td><td>days
+</td></tr></deftable>
+
+<p>The class that corresponds to &lt;database&gt; is <a javadoc="com.caucho.sql.DBPool"/></p>
+
+</defun>
+
+
+</s1>
+
+
+<s1 name="driver-config" title="Driver Configuration">
+
+<defun title="driver" version="Resin 3.0">
+<parents>database</parents>
+
+<p>Configure a database <var>driver</var>.  The driver is a class provided by the
+database vendor, it is responsible for the communication with the database.</p>
+
+<p>
+The jar file with the driver in it can be placed in <code>WEB-INF/lib</code>,
+although it is often best to place your datbase driver's jar file in
+<code>$RESIN_HOME/lib/local/</code>, which makes the driver available to all of
+your web applications.
+</p>
+
+<p>The class that corresponds to &lt;driver&gt; is <a javadoc="com.caucho.sql.DriverConfig"/></p>
+
+<deftable-childtags>
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+</tr>
+<tr><td>type</td><td>The Java class name of the database driver.</td><td> 
+</td></tr><tr><td>url</td><td>The driver specific database url.</td><td> 
+</td></tr><tr><td>user</td><td>The username to give the database driver.</td><td> 
+</td></tr><tr><td>password</td><td>The password to give the database driver.</td><td> 
+</td></tr><tr><td>init-param</td><td>Set <a href="#init-param">driver specific properties</a> not known to Resin.</td><td> 
+</td></tr></deftable-childtags>
+
+</defun> <!-- driver -->
+
+
+<s2 name="choosing-driver" title="Choosing a driver class for &lt;type&gt;">
+
+<p>Database vendors usually provide many different classes that are potential
+candidates for <var>type</var>.  The JDBC api has developed over time, and is now
+being replaced by the more general JCA architecture.  The driver you choose
+depends on the options the vendor offers, and whether or not you need
+distributed transactions.</p>
+
+<s3 title="JCA drivers">
+
+<p>JCA is replacing JDBC as the API for database drivers.  JCA is a much more
+flexible approach that defines an API that can be used for any kind of
+connection, not just a connection to a database.  If a database vendor provides
+a JCA interface, it is the best one to use.</p>
+
+<p>A JCA driver implements <code>ManagedConnectionFactory</code>.  When you
+specify such a class for <var>type</var>, Resin will notice that it is a JCA driver
+and take advantage of the added functionality that the JCA interface
+provides.</p>
+
+<p>The same JCA driver is used for both non-distributed and distributed
+transactions</p>
+</s3>
+
+<s3 title="JDBC 2.0 - ConnectionPoolDataSource">
+
+<p>JDBC 2.0 defined the interface <var>ConnectionPoolDataSource</var>.  A
+<code>ConnectionPoolDataSource</code> is <i>not</i> a connection pool, but it
+does provide some extra information that helps Resin to pool the connection
+more effectively.</p>
+
+<p>A driver that implements <var>ConnectionPoolDataSource</var> is better than a
+JDBC 1.0 driver that implements <var>Driver</var>.  
+
+</p></s3>
+
+<s3 title="JDBC 2.0 - XADataSource">
+
+<p>JDBC 2.0 defined the interface <var>XADataSource</var> for connections that can
+participate in <var>distributed transactions</var>. A distributed transaction is
+needed when transactions involve multiple connections.  For example, with two
+different database backends, if the guarantees that transactions apply need to
+apply to operations that occur on both databases within the same transaction,
+distributed transactions are needed.</p>
+
+<p>Distributed transactions are rarely needed, and few databases really support
+them.  Some vendors will provide <code>XADataSource</code> drivers even though
+the database does not really support distributed transactions.  Often,
+<code>XADataSource</code> drivers are slower than their
+<code>ConnectionPoolDataSource</code> counterparts.</p>
+
+<p><code>XADataSource</code> should only be used if distributed transactions
+are really needed, and can probably be safely ignored for most
+applications.</p>
+
+</s3>
+
+<s3 title="JDBC 1.0 - Driver">
+
+<p>
+<var>Driver</var> is the original JDBC interface, and is the least desirable kind
+of driver to use.  Resin can still pool database connections using these drivers, but it will not be as efficient as the newer drivers.
+</p>
+
+</s3>
+</s2> <!-- choosing-driver -->
+
+<s2 name="init-param" title="Set driver properties with init-param">
+
+<p><var>init-param</var> is used to set properties of the database driver that are
+specific to the driver and are not generic enough for resin to provide a
+named configuration tag.</p>
+
+<p>For example, MySQL drivers accept the <code>useUnicode</code> parameter, if
+true the driver will use Unicode character encodings when handling
+strings.</p>
+
+<example title="Example: mysql configuration">
+&lt;database&gt;
+  &lt;jndi-name&gt;jdbc/mysql&lt;/jndi-name&gt;
+  &lt;driver&gt;
+    &lt;type&gt;com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource&lt;/type&gt;
+    &lt;url&gt;jdbc:mysql://localhost:3306/dbname&lt;/url&gt;
+    &lt;user&gt;username&lt;/user&gt;
+    &lt;password&gt;password&lt;/password&gt;
+
+    <b>&lt;init-param useUnicode="true"/&gt;</b>
+  &lt;/driver&gt;
+  ...
+&lt;/database&gt;
+</example>
+
+</s2> <!-- init-driver -->
+
+</s1> <!-- driver-config -->
+
+<s1 name="pooling" title="Pooling Configuration">
+
+<p>
+Pooling configuration controls the behaviour of Resin's pooling of database
+connections.  For most applications and databases the only needed change is to
+increase the max-connections value to meet high demand.  Other pooling
+parameters have defaults that are based on our years of experience with many
+different databases in many different applications.  Changes from the defaults
+should only be done in response to specific problems, and with a good
+understanding of how pooling works.
+</p>
+
+</s1>
+
+
+<s1 name="reliability" title="Reliability Configuration">
+
+<s2 name="reliability-ping" title="ping">
+
+<p>Resin's database pool can test if the pooled database connection
+is still alive by configuring a <var>ping</var> query.  This is typically only
+necessary if the <a href="#pooling">pooling</a> parameters are changed from
+their default values.
+</p>
+
+<p>If the pool is configured with a long max-idle-time the database connection
+may become stale if the database is restarted, or if the database is configured
+with a shorter connection timeout value than the configuration of the Resin
+pool.  Normally when a database connection is returned to the pool it will wait
+there until the next request or the idle-time expires.  If the database goes
+down in the meantime or closes the connection, the connection will become
+stale.  The <var>ping</var> configuration can test the database connection.</p>
+
+<p>When pinging, Resin's DBPool will test a table specified with the
+<var>ping-table</var> parameter before returning the connection to the application.
+If the ping fails, the connection is assumed to be no good and a different
+connection from the pool is returned.  For a ping-table of BROOMS, Resin will
+use the query <code>select 1 from BROOMS where 1=0</code>
+</p>
+
+<example title="Example: &lt;ping> configuration">
+  &lt;database jndi-name="..."&gt;
+    &lt;driver type="..."&gt;
+      ...
+    &lt;/driver&gt;
+
+    &lt;ping&gt;true&lt;/ping&gt;
+    &lt;ping-table&gt;BROOMS&lt;/ping-table&gt;
+  &lt;/database&gt;
+</example>
+
+
+<p>You can test the ping using the following steps:
+</p>
+
+<ol>
+<li>Configure the database with ping-table and ping.
+</li><li>Execute some servlet that queries the database.
+</li><li>Restart the database server.
+</li><li>Execute another servlet that queries the database.
+</li></ol>
+
+</s2> <!-- reliability-ping -->
+
+<s2 name="driver_list" title="&lt;driver> list">
+<p>
+If there is a pool of database servers available that can be used for database
+operations, Resin can be configured with a list of &lt;driver> tags. 
+Resin uses a round robin algorithm to cycle through the list of drivers when
+obtaining connections.  If a particular &lt;driver> fails to provide a
+connection, Resin continues the attempt to obtain a connection. If all of the
+configured drivers fail to provide a connection the exception is propogated to
+the caller.
+</p>
+
+<example title="Example: A &lt;driver> list">
+&lt;database jndi-name="jdbc/hogwarts"&gt;
+  &lt;driver&gt;
+    &lt;type&gt;com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource&lt;/type&gt;
+    &lt;url&gt;jdbc:mysql://192.168.0.<b>110</b>:3306/hogwarts&lt;/url&gt;
+    ...
+  &lt;/driver&gt;
+
+  &lt;driver&gt;
+    &lt;type&gt;com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource&lt;/type&gt;
+    &lt;url&gt;jdbc:mysql://192.168.0.<b>111</b>:3306/hogwarts&lt;/url&gt;
+    ...
+  &lt;/driver&gt;
+  ...
+&lt;/database&gt;
+</example>
+
+<s3 name="backup-driver" title="&lt;backup-driver> list">
+<p>
+Drivers in a driver list can be marked as backups.  The drivers configured with
+&lt;backup-driver&gt; are used only if all of the drivers configured with
+&lt;driver&gt; have failed.
+</p>
+
+<p>
+Each time a new connection is needed Resin goes through the process of first
+attempting to use one of the &lt;driver> configured drivers to get a connection,
+and if that fails then the &lt;backup-driver> are used.
+A new connection is needed from the driver if the pool of connections that is
+maintained by Resin does not contain an idle connection.  The
+<a href="#pooling">Pooling configuration</a> and the usage pattern of the
+application determine how often a connection is obtained from a driver.  The
+pooling configuration typically allows a single real connection to be reused by
+the application many times.
+</p>
+
+<p>
+The lifetime of a connection obtained from a &lt;backup-driver> is determined by
+the <a href="#pooling">Pooling configuration</a>, thus even if the main
+&lt;driver> becomes available again a connection previously obtained from a
+&lt;backup-driver> will continue to be used until it expires from the pool.
+</p>
+
+<example title="Example: A &lt;backup-driver> list">
+&lt;database jndi-name="jdbc/hogwarts"&gt;
+  &lt;driver&gt;
+    &lt;type&gt;com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource&lt;/type&gt;
+    &lt;url&gt;jdbc:mysql://192.168.0.<b>110</b>:3306/hogwarts&lt;/url&gt;
+    ...
+  &lt;/driver&gt;
+
+  &lt;driver&gt;
+    &lt;type&gt;com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource&lt;/type&gt;
+    &lt;url&gt;jdbc:mysql://192.168.0.<b>111</b>:3306/hogwarts&lt;/url&gt;
+    ...
+  &lt;/driver&gt;
+
+  &lt;backup-driver&gt;
+    &lt;type&gt;com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource&lt;/type&gt;
+    &lt;url&gt;jdbc:mysql://192.168.0.<b>112</b>:3306/hogwarts&lt;/url&gt;
+    ...
+  &lt;/backup-driver&gt;
+
+  &lt;backup-driver&gt;
+    &lt;type&gt;com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource&lt;/type&gt;
+    &lt;url&gt;jdbc:mysql://192.168.0.<b>113</b>:3306/hogwarts&lt;/url&gt;
+    ...
+  &lt;/backup-driver&gt;
+  ...
+&lt;/database&gt;
+</example>
+
+</s3>
+
+</s2> <!-- driver-list -->
+
+</s1> <!-- reliability -->
+
+<s1 name="usage" title="Obtaining and using a database connection">
+
+<s2 name="usage/lookup" title="Getting the DataSource">
+
+<p>The <code>DataSource</code> is a factory that is used to obtain
+a connection.  The <code>DataSource</code> is obtained using the <a config-tag="jndi-name"/> specified when configuring the database resource.  
+
+</p><p>Ideally, the JNDI lookup of <code>DataSource</code> is done only once, the
+<code>DataSource</code> obtained from the lookup can be stored in a member variable
+or other appropriate place.  The stored <code>DataSource</code> can then be used
+each time a connection is needed.  If it is not stored, there will be an impact
+on performance from having to do the lookup each time you want to get a
+connection.</p>
+
+<example title="Example: Obtaining a DataSource">
+import javax.sql.*;
+import javax.webbeans.*;
+
+public class .... {
+  @Named("jdbc/test") DataSource _pool;
+
+  ...
+}
+</example>
+</s2> <!-- usage/lookup -->
+
+<s2 name="usage/get-connection" title="Getting a Connection">
+
+<p>A connection is obtained from the <code>DataSource</code>.  The
+connection is used as needed, and then released with a call to close() so that
+Resin knows it is available for a subsequent request.</p>
+
+<p>It is very important that the <code>close()</code> is <i>always</i> called, even
+if there as an exception. Without the <code>close()</code>, Resin's database pool
+can loose connections.  If you fail to close() a connection, Resin does not know
+that it is available for reuse, and cannot allocate it for another request.
+Eventually, Resin may run out of connections.  </p>
+
+<warn>Always put a <code>close()</code> in a finally block, to guarantee that it is called.</warn>
+
+<p>The following example shows the use of a <code>finally</code> block that contains
+the <code>close()</code>.  Because the <code>close()</code> is in a finally block, it
+will happen even if the code using the connection throws an exception.</p>
+
+<example title="Example: Getting a connection from the DataSource">
+package javax.webbeans.*;
+package javax.sql.*;
+
+public class MyBean()
+{
+  @In DataSource _pool;
+
+  public void doStuff()
+  {
+    Connection conn = null;
+    try {
+      conn = _pool.getConnection();
+
+      Statement stmt = conn.createStatement();
+
+      ResultSet rs = stmt.executeQuery(" ... ");
+
+      ...
+
+      rs.close();
+      stmt.close();
+    } catch (SQLException e) {
+      throw new ServletException(e);
+    } finally {
+      try {
+        if (conn != null)
+          conn.close();
+      } catch (SQLException e) {
+      }
+    }
+  }
+}
+</example>
+
+</s2> <!-- usage/get-connection -->
+
+<s2 name="usage/get-driver-connection" title="Getting the underlying driver connection">
+
+<p>
+The connection obtained by <code>pool.getConnection()</code> is an instance of 
+<a javadoc="com.caucho.sql.UserConnection"/>.
+</p>
+
+<p>
+<code>UserConnection</code> is a wrapper around the real driver connection, it
+allows Resin to intercept the close() call and manage the underlying driver
+connection.
+</p>
+
+<p>
+In rare circumstances it is necessary to obtain the real connection returned by the driver.
+Typically this is a requirement for situations where the driver provides a
+specialized API that is not available with the standard JDBC API.
+</p>
+
+<example title="Example: Getting the underlying driver connection">
+Connection driverConn = ((com.caucho.sql.UserConnection) connection).getConnection();
+
+// never do this: driverConn.close()
+</example>
+
+</s2>
+
+</s1> <!-- usage -->
+
+<s1 title="Protecting the database password">
+
+<p>
+Resin provides facilities that allow you to plugin your own custom
+code that returns a password to Resin.  However any solution is vulnerable,
+unless you require a person to type in a password every time Resin starts (or
+restarts).  Typically the security of the machine hosting Resin, and proper
+permissions on the readability of the resin.xml file, are sufficient to
+protect your database password.
+</p>
+
+<p>
+The solution shown below is not really secure because you can disassemble the
+Password code to get the decryption key, but it may be marginally better than
+plaintext.</p>
+ 
+<example title="Example: password encryption">
+&lt;driver type="..."&gt; 
+  &lt;password xmlns:hogwarts="urn:java:com.hogwarts">
+    &lt;hogwarts:Password value="mX9aN9M=="/>
+  &lt;/password>
+  ...
+</example>
+ 
+<p>
+You will need to provide com.hogwarts.Password:
+</p>
+ 
+<example title="Example: Password class">
+package com.hogwarts;
+
+public class Password { 
+  private String _value; 
+ 
+  public void setValue(String value) 
+  { 
+    _value = value; 
+  } 
+ 
+  public Object replaceObject() 
+  { 
+    return decrypt(_value); 
+  } 
+
+  private String decrypt(String encrypted)
+  {
+    ... custom code ...
+  }
+} 
+</example>
+ 
+<p>
+This solution is completely general, you can use &lt;mypkg:MyClass/> anywhere
+in the configuration files where a string value is allowed.
+</p>
+ 
+<p>
+Resin does not provide the equivalent of com.hogwarts.Password because it's not
+really secure.  Providing that kind of solution would lead some to believe it
+was a secure solution.
+</p>
+
+</s1>
+</body>
+</document>

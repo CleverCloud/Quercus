@@ -1,0 +1,31 @@
+.SUFFIXES: .o .lo
+
+CC=@CC@
+CFLAGS=@CFLAGS@
+CFLAGS_SHLIB=@CFLAGS_SHLIB@
+LIBTOOL=@LIBTOOL@
+EGREP=@EGREP@
+LD=@LD@
+LD_SHLIB=@LD_SHLIB@
+LDFLAGS=@LDFLAGS@
+LDFLAGS_SHLIB=@LDFLAGS_SHLIB@
+OBJ=stream.o config.o memory.o
+OBJ_PICS=stream.lo config.lo memory.lo
+INCLUDES=@INCLUDES@
+
+all	: $(OBJ) $(OBJ_PICS)
+
+.c.lo	:
+	$(LIBTOOL) --mode=compile $(CC) -o $@ -c $(INCLUDES) $(CFLAGS) $<
+
+.c.o	:
+	$(CC) -c $(INCLUDES) $(CFLAGS) $<
+
+install	:
+
+clean	:
+	- rm *.o *.lo *.la *.so *.jnilib *.dylib
+	- rm -rf .libs
+
+$(OBJ)	: Makefile cse.h
+$(OBJ_PICS)	: Makefile cse.h

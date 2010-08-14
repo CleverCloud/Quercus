@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<localization>
+<!-- from JavaGenerator -->
+<message>
+  <key>`{0}' must extend HttpJspPage</key>
+  <value>`{0}' must extend HttpJspPage</value>
+</message>
+<message>
+  <key>{0} expects a `{1}' attribute</key>
+  <value>{0} expects a `{1}' attribute</value>
+</message>
+<message>
+  <key>{0} expects an `{1}' attribute</key>
+  <value>{0} expects an `{1}' attribute</value>
+</message>
+<message>
+  <key>unexpected attribute `{0}' in `{1}'</key>
+  <value>unexpected attribute `{0}' in `{1}'</value>
+</message>
+<message>
+  <key>required attribute `{0}' missing from `{1}'</key>
+  <value>required attribute `{0}' missing from `{1}'</value>
+</message>
+<message>
+  <key>`{0}' expects an empty body</key>
+  <value>`{0}' expects an empty body</value>
+</message>
+<message>
+  <key>tag variable expects a name</key>
+  <value>tag variable expects a name</value>
+</message>
+<message>
+  <key>tag variable `{0}' expects a classname</key>
+  <value>tag variable `{0}' expects a classname</value>
+</message>
+<message>
+  <key>unknown attribute `{0}'</key>
+  <value>unknown attribute `{0}'</value>
+</message>
+<message>
+  <key>jsp:plugin expects `type' of applet or bean</key>
+  <value>jsp:plugin expects `type' of applet or bean</value>
+</message>
+<message>
+  <key>unknown scope `{0}'</key>
+  <value>unknown scope `{0}'</value>
+</message>
+<message>
+  <key>`{0}' is an interface</key>
+  <value>`{0}' is an interface</value>
+</message>
+<message>
+  <key>`{0}' is abstract</key>
+  <value>`{0}' is abstract</value>
+</message>
+<message>
+  <key>`{0}' must be public</key>
+  <value>`{0}' must be public</value>
+</message>
+<message>
+  <key>`{0}' has no public zero-arg constructor</key>
+  <value>`{0}' has no public zero-arg constructor</value>
+</message>
+<message>
+  <key>{0} unknown variable `{1}'</key>
+  <value>{0} unknown variable `{1}'</value>
+</message>
+<message>
+  <key>bean `{0}' has no get method for `{1}'</key>
+  <value>bean `{0}' has no get method for `{1}'</value>
+</message>
+<message>
+  <key>bean `{0}' has no set method for `{1}'</key>
+  <value>bean `{0}' has no set method for `{1}'</value>
+</message>
+<message>
+  <key>bean `{0}' has no property named `{1}'</key>
+  <value>bean `{0}' has no property named `{1}'</value>
+</message>
+<message>
+  <key>expected `{0}' at `{1}'</key>
+  <value>expected `{0}' at `{1}'</value>
+</message>
+<message>
+  <key>parameter format error: {0}</key>
+  <value>parameter format error: {0}</value>
+</message>
+<message>
+  <key>{0} can't find class `{1}'</key>
+  <value>{0} can't find class `{1}'</value>
+</message>
+
+<!-- JavaScriptGenerator -->
+<message>
+  <key>duplicate jsp:useBean `{0}'</key>
+  <value>duplicate jsp:useBean `{0}'</value>
+</message>
+
+<!-- JspGenerator -->
+<message>
+  <key>{0} expects `true' or `false' at `{1}'</key>
+  <value>{0} expects `true' or `false' at `{1}'</value>
+</message>
+<message>
+  <key>unknown directive `{0}'</key>
+  <value>unknown directive `{0}'</value>
+</message>
+<message>
+  <key>unknown JSP action `{0}'</key>
+  <value>unknown JSP action `{0}'</value>
+</message>
+<message>
+  <key>unknown tag `{0}'</key>
+  <value>unknown tag `{0}'</value>
+</message>
+<message>
+  <key>attributes are not valid in `{0}'</key>
+  <value>attributes are not valid in `{0}'</value>
+</message>
+
+<!-- JspParser -->
+<message>
+  <key>unknown JSP language `{0}'</key>
+  <value>unknown JSP language `{0}'</value>
+</message>
+<message>
+  <key>expected `&lt;/{0}>' at end of file.</key>
+  <value>expected `&lt;/{0}>' at end of file.</value>
+</message>
+<message>
+  <key>circular include of `{0}'</key>
+  <value>circular include of `{0}'</value>
+</message>
+<message>
+  <key>can't find include file `{0}'</key>
+  <value>can't find include file `{0}'</value>
+</message>
+<message>
+  <key>unknown jsp directive at `{0}'</key>
+  <value>unknown jsp directive at `{0}'</value>
+</message>
+<message>
+  <key>unknown content encoding `{0}'</key>
+  <value>unknown content encoding `{0}'</value>
+</message>
+<message>
+  <key>expected `%>' at {0} (for &lt;%@ at line {1})</key>
+  <value>expected `%>' at {0} (for &lt;%@ at line {1})</value>
+</message>
+<message>
+  <key>expected `/>' at {0}</key>
+  <value>expected `/>' at {0}</value>
+</message>
+<message>
+  <key>expected `>' at {0}</key>
+  <value>expected `>' at {0}</value>
+</message>
+<message>
+  <key>expected `{0}' at end of file</key>
+  <value>expected `{0}' at end of file</value>
+</message>
+<message>
+  <key>taglib directive expects `{0}' attribute</key>
+  <value>taglib directive expects `{0}' attribute</value>
+</message>
+<message>
+  <key>unknown taglib descriptor file `{0}'</key>
+  <value>unknown taglib descriptor file `{0}'</value>
+</message>
+<message>
+  <key>expected &lt;/{0}> at &lt;/{1}></key>
+  <value>expected &lt;/{0}> at &lt;/{1}></value>
+</message>
+
+<!-- QBodyContent -->
+
+<message>
+  <key>BodyContent is no longer valid</key>
+  <value>BodyContent is no longer valid</value>
+</message>
+
+<!-- QPageContext -->
+<message>
+  <key>unknown including page: `{0}'</key>
+  <value>unknown including page: `{0}'</value>
+</message>
+<message>
+  <key>unknown forwarding page: `{0}'</key>
+  <value>unknown forwarding page: `{0}'</value>
+</message>
+
+<!-- XslManager -->
+<message>
+  <key>can't find stylesheet `{0}'</key>
+  <value>can't find stylesheet `{0}'</value>
+</message>
+
+</localization>

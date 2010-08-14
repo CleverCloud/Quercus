@@ -1,0 +1,367 @@
+<document>
+  <header>
+    <title>Quercus: PDO (portable database object)</title>
+        <description>
+          <p>The PDO tutorial explains using the new PHP 5 portable
+database object (PDO) interface.</p>
+        </description>
+    <type>tutorial</type>
+    <tutorial-startpage>test.php</tutorial-startpage>
+  </header>
+
+  <body>
+
+    <localtoc/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <td><viewfile-link file="WEB-INF/resin-web.xml"/></td>
+  <td>resin-web.xml configuration</td>
+</tr>
+<tr>
+  <td><viewfile-link file="test.php"/></td>
+  <td>The PDO tutorial</td>
+</tr>
+</deftable>
+</s1>
+
+<s1 title="Introduction">
+
+<p>This short article introduces PDO, the PHP 5 Portable Database Object
+interface.</p>
+
+<p>At the minimal level, PDO can be reduced to three statements:</p>
+<ol>
+<li>Creating a PDO object with <code>new PDO(<var>url</var>)</code></li>
+<li>Querying a SQL statement with results with <code>$pdo->query(<var>sql</var>)</code></li>
+<li>Executing a SQL statement with <code>$pdo->exec(<var>sql</var>)</code></li>
+</ol>
+
+<p>PDO has several variations on those three statements, but you can always
+get by with the first three.</p>
+
+<s2 title="Connecting to the Database: new PDO">
+
+<p>The first step in working with databases is to specify which database
+we're connecting to and create a new connection.
+The <code>new PDO(<var>url</var>)</code> call creates a new connection
+to a database.  The <var>url</var> describes which database to use.
+Quercus recognizes the PHP standard urls like <var>mysql:dbname=test</var>
+and it also can use JNDI names directly
+like <var>java:comp/env/jdbc/resin</var>.
+</p>
+
+<example title="connecting to a database in JNDI">
+$pdo = new PDO("java:comp/env/jdbc/resin");
+</example>
+
+</s2>
+
+<s2 title="Executing SQL statements: exec">
+
+<p>Once the application has connected with a database, it needs to
+do something, and since relational databases require tables and some
+data, the application will need to create them.  In PDO, the
+<code>$pdo->exec(<var>sql</var>)</code> method executes arbitrary
+SQL.  We'll use <code>exec</code> to create the database and add some
+data.</p>
+
+<example title="creating the database">
+$pdo = new PDO("java:comp/env/jdbc/resin");
+
+$pdo->exec(&lt;&lt;&lt;END
+CREATE TABLE brooms (
+  id INTEGER PRIMARY KEY auto_increment,
+  name VARCHAR(255) UNIQUE,
+  price INTEGER
+)
+END)
+  or die("Can't create table 'brooms'");
+
+$pdo->exec("INSERT INTO brooms (name, price)"
+           . " VALUES ('cleansweep 5', 5)")
+  or die("Can't insert data into table 'brooms'");
+
+$pdo->exec("INSERT INTO brooms (name, price)"
+           . " VALUES ('cleansweep 7', 15)")
+  or die("Can't insert data into table 'brooms'");
+</example>
+
+</s2>
+
+<s2 title="Querying the database: query">
+
+<p>Once the database has data, we'll want to query the database to
+see what we've stored.  The <code>$pdo->query(<var>sql</var>)</code> method
+queries the database.  For now, we'll use the <code>foreach</code> form
+of the query.</p>
+
+<example title="displaying the data">
+$pdo = new PDO("java:comp/env/jdbc/resin");
+
+echo "&lt;table>\n"
+
+$sql = "SELECT name, price FROM brooms";
+foreach ($pdo->query($sql) as $name => $price) {
+  echo "&lt;tr>&lt;td>$name&lt;td>$price\n";
+}
+
+echo "&lt;/table>\n"
+</example>
+</s2>
+
+<s2 title="Moving forward: CRUD">
+
+<p>For basic database access, the three calls we've
+introduced are sufficient.  If you're just starting with PDO, you may
+want to stop right here, stick with <code>new PDO(<var>url</var>)</code>,
+<code>$pdo->exec(<var>sql</var>)</code>,
+and <code>$pdo->query(<var>sql</var>)</code> with the foreach pattern until
+you can write PDO code without checking the tutorial.  Go ahead, add some
+foo.php with some sample tables and get learning!</p>
+
+<p>Once you've tattooed the basic three PDO calls into your brain, it's time
+to start exploring the alternatives PDO provides.  We'll introduce some
+of the main options using the
+<a href="http://en.wikipedia.org/wiki/CRUD_%28acronym%29">CRUD</a>
+framework.</p>
+
+<p>CRUD (<b>C</b>reate, <b>R</b>ead, <b>U</b>pdate, <b>D</b>elete)
+is just a simple acronym to organize the basics of any database or
+persistence application.  It's a handy mnemonic when sketching out
+a prototype, helping to avoid the embarrassment of forgetting to let the user
+delete an object.  And it's handy when learning a new persistence
+framework or database API to make sure you've covered the bases.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Create">
+
+<p>The first step in any database application is to create the database
+and to create the first entries in the database.  In PDO, creating the
+database table and creating entries can use the
+same <code>$pdo->exec(<var>sql</var>)</code> call as we
+introduced above.  From a relation database perspective,
+creating a table is very different from adding a new item, but at the PDO
+level, they're similar.  We'll use the <code>exec</code> call to create
+the database as above, and then introduce the
+<code>prepare(<var>sql</var>)</code> call for prepared statements to add
+items.</p>
+
+<example title="creating the database">
+$pdo = new PDO("java:comp/env/jdbc/resin");
+
+$pdo->exec(&lt;&lt;&lt;END
+CREATE TABLE brooms (
+  id INTEGER PRIMARY KEY auto_increment,
+  name VARCHAR(255),
+  price INTEGER
+)
+END);
+</example>
+
+<p>Although we could use the basic <code>exec</code> method to add the
+data, this time we'll introduce prepared statements and
+the <code>$pdo->prepare(<var>sql</var>)</code> method.</p>
+
+<p>Prepared statements precompile the SQL for a database query and assign
+parameters for each call.  Most importantly, this can create cleaner code.
+Prepared statements can also avoid some of the security problems associated
+with web applications.  Because the parameter assignment are always values
+and never raw SQL, Quercus can properly escape the values automatically.
+Prepared statements can also improve efficiency by allowing the SQL to
+be parsed only once and then used multiple times.</p>
+
+<p>Prepared statements in PDO split SQL execution into three phases:
+<code>prepare</code>, <code>bindParam</code> and <code>execute</code>.
+<code>$pdo->prepare(<var>sql</var>)</code> parses the SQL and
+returns a <code>PDOStatement</code> object. <code>$stmt->bindParam(...)</code>
+assigns the parameters to PHP variables.  And <code>$stmt->execute()</code>
+actually executes the statement.</p>
+
+<p>In this example, we'll add some more brooms to the database.  This time,
+we'll loop across a PHP array to insert the values.</p>
+
+<example title="inserting with prepare">
+$pdo = new PDO("java:comp/env/jdbc/resin");
+
+$stmt = $pdo->prepare("INSERT INTO (name, price) VALUES (:name, :price)");
+
+$stmt->bindParam(":name", $name);
+$stmt->bindParam(":price", $price);
+
+$brooms = array("nimbus 2000" => 100,
+                "nimbus 2001" => 150);
+
+foreach ($brooms as $name => $price) {
+  $stmt->execute() or die("Can't add $name to brooms");
+}
+</example>
+
+</s1>
+
+<s1 title="Read">
+
+<p>Because most database accesses are reads, most applications will
+spend extra time creating useful queries, and optimizing and
+caching for performance.  PDO provides the basic
+<code>$pdo->query(<var>sql</var>)</code>, but it also supports many ways
+of extracting data.</p>
+
+<s2 title="$pdo->query and foreach">
+
+<p>As we described in the introduction, your application can get away
+with using the basic PDO query pattern.  The result of a PDO query
+can work with the PHP <code>foreach</code> statement to iterate
+through the rows of the result.  Each result will be an associative
+array of the result values.</p>
+
+<example>
+$pdo = new PDO("java:comp/env/jdbc/resin");
+
+$sql = "SELECT * FROM brooms";
+
+foreach ($pdo->query($sql) as $row) {
+  echo $row['name'] . ", " . $row['price'] . "&lt;br>\n";
+}
+</example>
+
+</s2>
+
+<s2 title="$pdo->query and fetch(PDO::FETCH_ASSOC)">
+
+<p>In some cases, an application might need more control over
+the row iteration than the <code>foreach</code> pattern provides.
+For example, an application might want to avoid creating a
+&lt;table> if the database has no data.
+When more control is needed, PDO lets you split out the
+iteration from retrieving the row, using <code>$stmt->fetch(...)</code>.</p>
+
+<p>The <code>$stmt->fetch(...)</code> call will also let the application
+choose the type of object it wants to deal with.  For now, we'll stick
+with an associative array.</p>
+
+<example title="PDO::FETCH_ASSOC">
+$pdo = new PDO("java:comp/env/jdbc/resin");
+
+$stmt = $pdo->query("SELECT * FROM brooms") or die();
+
+echo "&lt;table>";
+while (($row = $stmt->fetch(PDO::FETCH_ASSOC))) {
+  echo "&lt;tr>&lt;td>${row['name']}&lt;td>${row['price']}\n";
+}
+echo "&lt;/table>";
+</example>
+
+</s2>
+
+<s2 title="fetch(PDO::FETCH_OBJ)">
+
+<p>PDO's <code>fetch</code> method provides many options for extracting
+data from a row other than a full associative list.  In particular, you
+can return a PHP 5 object representing the row.  In many cases, the
+object will be more efficient than an array in PHP programs.
+Since PHP automatically copies arrays but does not automatically copy
+PHP 5 objects, you can avoid stressing out the garbage collector by
+using objects over arrays.</p>
+
+<p>The PHP code for getting an object from a row is identical to the
+associative array but swapping PDO::FETCH_OBJ for PDO::FETCH_ASSOC.
+PDO provides many other fetch options as well, but we'll restrict
+ourselves to PDO::FETCH_OBJ.</p>
+
+<example title="PDO::FETCH_OBJ">
+$pdo = new PDO("java:comp/env/jdbc/resin");
+
+$stmt = $pdo->query("SELECT * FROM brooms") or die();
+
+echo "&lt;table>";
+while (($row = $stmt->fetch(PDO::FETCH_OBJ))) {
+  echo "&lt;tr>&lt;td>$row->name&lt;td>$row->price\n";
+}
+echo "&lt;/table>";
+</example>
+
+</s2>
+
+</s1>
+
+<s1 title="Update">
+
+<p>Once an application has data, it will often need to update it.
+In this case, we'll raise the prices of some of the brooms.  As
+with the creation, PDO's updates use the <code>exec</code> and
+<code>prepare</code> methods.</p>
+
+<s2 title="Transactions">
+
+<p>In this case, though, we'd like some extra reliability, so we'll
+add some transaction support.  Transactions are a generalized lock
+in a database, allowing multiple statements to execute atomically.  That
+means either all of the statements will update the
+database or none of them will.</p>
+
+<p>In many examples, the all-or-none property is vital to the integrity
+of a database.  A bank transfer, for example, must deduct a balance
+from one account and give it to another.  Withdrawing from one without
+adding to the other would be a disaster.  In a less critical example,
+a bulletin board forum which updates a comment's hierarchy might need
+to change multiple columns at once to avoid corrupting the forum.
+Although the price of failure is less for a forum, it's still important
+for producing professional code.</p>
+
+<p>The transaction wraps the SQL statements
+between a <code>beginTransaction()</code> call
+and a <code>commit()</code> call.  All the SQL statements in between
+will be executed as one indivisible block (atomic) or the commit will fail.
+</p>
+
+<example>
+$stmt = $pdo->prepare("UPDATE brooms SET price=:price WHERE name=:broom");
+
+$stmt->bindParam(":broom", $broom);
+$stmt->bindParam(":price", $price);
+
+$pdo->beginTransaction();
+
+$brooms = array("nimbus 2000" => 120,
+                "nimbus 2001" => 250);
+
+foreach ($brooms as $broom => $price) {
+  $stmt->execute();
+}
+
+$pdo->commit();
+</example>
+
+</s2>
+
+</s1>
+
+<s1 title="Delete">
+
+<p>For completeness, and to clean up the example, we'll need to
+delete the entries we've added.  PDO uses the <code>exec</code>
+and <code>prepare</code> methods for DELETE just as for
+INSERT.  We'll use the prepared statement method since we'll be deleting
+several items.</p>
+
+<example>
+$pdo = new PDO("java:comp/env/jdbc/resin");
+
+$stmt = $pdo->prepare("DELETE FROM brooms WHERE name=:name");
+$stmt->bindParam(":name", $name);
+
+foreach (array('firebolt', 'nimbus 2000', 'nimbus 2001') as $name) {
+  $stmt->execute();
+}
+</example>
+
+</s1>
+
+
+  </body>
+</document>

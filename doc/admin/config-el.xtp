@@ -1,0 +1,874 @@
+<document>
+<header>
+  <product>resin</product>
+  <title>EL Variables and Functions</title>
+  <description>
+  <p>
+Resin configuration can directly access Resin-IoC/WebBeans-configured
+beans and variables using EL expressions in the configuration files.
+Predefines variables include webApp, host, and resin variables.
+  </p>
+  </description>
+</header>
+
+<body>
+<localtoc/>
+<!--
+<s1 name="vars" title="Environment Variables">
+
+<p>Each Environment in Resin has an associated set of EL objects and
+functions.  The EL Environment is inherited, the objects available in
+<code>host</code> are also available in <code>web-app</code>.</p>
+
+<example title="host regexp">
+&lt;host regexp="www.([^.]+).com"&gt;
+  &lt;root-directory&gt;/opt/www/${host.regexp[1]}&lt;/root-directory&gt;
+
+  &lt;context-param server-id="${server.name}"/&gt;
+
+  &lt;web-app id="/"&gt;
+    &lt;document-directory&gt;webapps/ROOT&lt;/document-directory&gt;
+  &lt;/web-app&gt;
+&lt;/host&gt;
+</example>
+
+<deftable title="Environment variables">
+<tr><th>variable</th><th>attribute</th><th>meaning</th>
+</tr><tr><td>Var</td><td>&#160;</td><td>System properties, e.g. ${system["resin.home"]}
+
+</td></tr><tr><td>server</td><td>&#160;</td><td>Server properties
+</td></tr><tr><td>&#160;</td><td>id</td><td>The server id, as specified in -server id
+</td></tr><tr><td>&#160;</td><td>rootDir</td><td>The server root directory
+
+</td></tr><tr><td>host</td><td>&#160;</td><td>Virtual host properties
+</td></tr><tr><td>&#160;</td><td>url</td><td>The host's canonical URL
+</td></tr><tr><td>&#160;</td><td>name</td><td>The host name
+</td></tr><tr><td>&#160;</td><td>rootDir</td><td>The host's root directory
+</td></tr><tr><td>&#160;</td><td>warDir</td><td>The host's war directory
+</td></tr><tr><td>&#160;</td><td>warExpandDir</td><td>The host's war expansion directory
+</td></tr><tr><td>&#160;</td><td>regexp</td><td>Regular expression values for host regexp matches
+
+</td></tr><tr><td>app</td><td>&#160;</td><td>web-app properties
+</td></tr><tr><td>&#160;</td><td>url</td><td>The web-app's canonical URL
+</td></tr><tr><td>&#160;</td><td>name</td><td>The web-app name
+</td></tr><tr><td>&#160;</td><td>contextPath</td><td>The web-app's context path
+</td></tr><tr><td>&#160;</td><td>docDir</td><td>The web-app's document directory
+</td></tr><tr><td>&#160;</td><td>regexp</td><td>Regular expression values for web-app url-regexp matches
+</td></tr></deftable>
+</s1>
+
+<s1 name="init" title="Servlet/Filter bean-style initialization" version="2.1.3">
+
+<p>EL expressions can be used to configure servlets and
+filters. <var>init-param</var> values can use JSP EL expressions, including the
+ability to use system properties.
+
+</p><p>Servlets, filters, and resources can be configured like beans with setter
+methods are called directly (See <a href="config-candi.xtp">Bean-style
+init)</a>.</p>
+
+<p>One example use use for the bean-style servlet initialization is to avoid
+JNDI lookup inside the servlet code.  For example, a servlet that that uses a
+JDBC DataSource might look like:</p>
+
+<example title="Servlet using JDBC">
+package test;
+
+...
+
+public class TestServlet extends HttpServlet {
+  private DataSource _dataSource;
+
+  /**
+   * Bean setter is called to configure the servlet
+   * before the init() method.
+   */
+  public void setDataSource(DataSource dataSource)
+  {
+    _dataSource = dataSource;
+  }
+
+  ...
+}
+</example>
+
+<p>The servlet is configured as follows:</p>
+
+<example title="Example configuration">
+&lt;web-app&gt;
+  &lt;allow-servlet-el/&gt;
+
+  &lt;servlet servlet-name='test'
+           servlet-class='test.TestServlet'&gt;
+    &lt;init&gt;
+      &lt;data-source&gt;${jndi:lookup("java:comp/env/jdbc/test")}&lt;/data-source&gt;
+    &lt;/init&gt;
+  &lt;/servlet&gt;
+
+  ...
+&lt;/web-app&gt;
+</example>
+
+<p>The <code>%lt;data-source%gt;</code> xml tag corresponds to the
+<code>setDataSource</code> method of the bean.  More infomation on this
+powerful pattern is in the <a href="config-candi.xtp">Bean-style init</a>
+section of the documentation.</p>
+</s1>
+-->
+
+<s1 title="Examples">
+
+
+
+<s2 title="Servlet/Filter initialization">
+<p>EL expressions can be used to configure servlets and
+filters. <var/init-param/> values can use JSP EL expressions, including the
+ability to use system properties.</p>
+
+<p>Servlets, filters, and resources can be configured like beans with setter
+methods are called directly (See <a href="config-candi.xtp">Bean-style
+init)</a>.</p>
+
+<p>One example use for the bean-style servlet initialization is to avoid
+JNDI lookup inside the servlet code.  For example, a servlet that that uses a
+JDBC DataSource might look like:</p>
+
+<example title="Servlet using JDBC">
+package test;
+
+...
+
+public class TestServlet extends HttpServlet {
+  private DataSource _dataSource;
+
+  /**
+   * Bean setter is called to configure the servlet
+   * before the init() method.
+   */
+  public void setDataSource(DataSource dataSource)
+  {
+    _dataSource = dataSource;
+  }
+
+  ...
+}
+</example>
+
+<p>The servlet is configured as follows:</p>
+
+<example title="Example configuration">
+&lt;web-app&gt;
+  &lt;allow-servlet-el/&gt;
+
+  &lt;servlet servlet-name='test'
+           servlet-class='test.TestServlet'&gt;
+    &lt;init&gt;
+      &lt;data-source&gt;${jndi("java:comp/env/jdbc/test")}&lt;/data-source&gt;
+    &lt;/init&gt;
+  &lt;/servlet&gt;
+
+  ...
+&lt;/web-app&gt;
+</example>
+
+<p>The <code>&lt;data-source&gt;</code> xml tag corresponds to the
+<code>setDataSource</code> method of the bean.  More infomation on this
+powerful pattern is in the <a href="config-candi.xtp">bean configuration</a>
+section of the documentation.</p>
+</s2>
+
+</s1>
+
+<defun title="Environment variables">
+<p>
+Environment variables inherited by the process from the operting system are
+available as variables in el expressions, for example <code>${LANG}</code>.
+</p>
+</defun>
+
+<defun title="fmt.sprintf()">
+<p>Format a string using a sprintf-like format string.</p>
+
+<def>fmt.sprintf(format[,arg1, arg2 ... argN])</def>
+
+<deftable-parameters>
+<tr>
+  <td>format</td>
+  <td>the format string (see below)</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>arg1..argN</td>
+  <td>the values used for the conversions in the format string</td>
+  <td>n/a</td>
+</tr>
+</deftable-parameters>
+
+<p><code/sprintf/> accepts a series of arguments, applies to each a format 
+specifier  from `format', and returns the formatted data as a string.
+`format' is a string containing two types of objects:  ordinary
+characters (other than `%'), which are copied unchanged to the output, and
+conversion specifications, each of which is introduced by `%'. (To include
+`%' in the output, use `%%' in the format string). </p>
+
+<p>A conversion specification has the following form:</p>
+
+<def>%[FLAGS][WIDTH][.PREC][TYPE]</def>
+
+<p>TYPE is required, the rest are optional.</p>
+
+<p>The following TYPE's are supported:</p>
+
+<deftable>
+<tr>
+  <td>%%</td>
+  <td>a percent sign</td>
+</tr>
+<tr>
+  <td>%c</td>
+  <td>a character with the given number</td>
+</tr>
+<tr>
+  <td>%s</td>
+  <td>a string, a null string becomes "#null"</td>
+</tr>
+<tr>
+  <td>%z</td>
+  <td>a string, a null string becomes the empty string ""</td>
+</tr>
+<tr>
+  <td>%d</td>
+  <td>a signed integer, in decimal</td>
+</tr>
+<tr>
+  <td>%o</td>
+  <td>an integer, in octal</td>
+</tr>
+<tr>
+  <td>%u</td>
+  <td>an integer, in decimal</td>
+</tr>
+<tr>
+  <td>%x</td>
+  <td>an integer, in hexadecimal</td>
+</tr>
+<tr>
+  <td>%X</td>
+  <td>an integer, in hexadecimal using upper-case letters</td>
+</tr>
+<tr>
+  <td>%e</td>
+  <td>a floating-point number, in scientific notation</td>
+</tr>
+<tr>
+  <td>%E</td>
+  <td>a floating-point number, like %e with an upper-case "E"</td>
+</tr>
+<tr>
+  <td>%f</td>
+  <td>a floating-point number, in fixed decimal notation</td>
+</tr>
+<tr>
+  <td>%g</td>
+  <td>a floating-point number, in %e or %f notation</td>
+</tr>
+<tr>
+  <td>%G</td>
+  <td>a floating-point number, like %g with an upper-case "E"</td>
+</tr>
+<tr>
+  <td>%p</td>
+  <td>a pointer (outputs a value like the default of toString())</td>
+</tr>
+</deftable>
+
+<p>Intepret the word `integer' to mean the java type long.  
+Since java does not support unsigned integers, all integers are treated 
+the same.</p>
+
+<p>The following optional FLAGS are supported:</p>
+<deftable>
+<tr>
+  <td>0</td>
+  <td>If the TYPE character is an integer leading zeroes are used 
+      to pad the field width instead of spaces (following any 
+      indication of sign or base).</td>
+</tr>
+
+<tr>
+  <td>+</td>
+  <td>Include a `+' with positive numbers.</td>
+</tr>
+
+<tr>
+  <td>(a space)</td>
+  <td>use a space placeholder for the `+' that would result
+      from a positive number</td>
+</tr>
+
+<tr>
+  <td>-</td>
+  <td>The result of is left justified, and the right is padded with
+      blanks until the result is `WIDTH' in length.  If you do not 
+      use this flag, the result is right justified, and padded on 
+      the left.</td>
+</tr>
+
+<tr>
+  <td>#</td>
+  <td>an alternate display is used, for `x' and `X' a
+      non-zero result will have an "0x" prefix; for floating 
+      point numbers the result will always contain a decimal point.</td>
+</tr>
+
+<tr>
+  <td>j</td>
+  <td>escape a string suitable for a Java string, or a CSV file. 
+      The following escapes are applied: " becomes \", 
+      newline becomes \n, return becomes \r, \ becomes \\.</td>
+</tr>
+
+<tr>
+  <td>v</td>
+  <td>escape a string suitable for CSV files, the same as `j'
+      with an additional <code>"</code> placed at the beginning 
+      and ending of the string</td>
+</tr>
+
+<tr>
+  <td>m</td>
+  <td>escape a string suitable for a XML file.  The following
+      escapes are applied: &lt; becomes &amp;lt;, 
+      &gt; becomes &amp;gt; &amp; becomes &amp;amp;
+      ' becomes &amp;#039, " becomes &amp;034;</td>
+</tr>
+</deftable>
+
+<p>The optional WIDTH argument specifies a minium width for the field.
+Spaces are used unless the `0' FLAG was used to indicate 0 padding.</p>
+
+<p>The optional PREC argument is introduced with a `.', and gives the 
+maximum number of characters to print; or the minimum
+number of digits to print for integer and hex values; or the maximum 
+number of significant digits for `g' and `G'; or the number of digits 
+to print after the decimal point for floating points.</p>
+
+</defun> <!-- sprintf -->
+
+<defun title="fmt.timestamp()">
+
+<p>Format a timestamp string.</p>
+
+<example>fmt.timestamp(format[,date])</example>
+
+<deftable-parameters>
+<tr>
+  <td>format</td>
+  <td>the format string (see below)</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>date</td>
+  <td>an object with <a javadoc="java.util.Date"/> or <a javadoc="java.util.Calendar"/> or <a javadoc="com.caucho.util.QDate"/></td>
+  <td>the current date and time</td>
+</tr>
+</deftable-parameters>
+
+<example>
+msg="The current date and time is ${fmt.timestamp('%Y/%m/%d %H:%M:%S.%s')}"
+msg="time=${fmt.timestamp('[%Y/%m/%d %H:%M:%S.%s]')}"
+</example>
+
+<p><code>format</code> contains regular characters, which are just copied to
+the output string, and percent codes which are substituted with time and date
+values.</p>
+
+<deftable>
+<tr>
+  <th>Code</th>
+  <th>Meaning</th>
+</tr>
+<tr>
+  <td>%a</td>
+  <td>day of week (short)</td>
+</tr>
+<tr>
+  <td>%A</td>
+  <td>day of week (verbose)</td>
+</tr>
+<tr>
+  <td>%b</td>
+  <td>day of month (short)</td>
+</tr>
+<tr>
+  <td>%B</td>
+  <td>day of month (verbose)</td>
+</tr>
+<tr>
+  <td>%c</td>
+  <td>Java locale date</td>
+</tr>
+<tr>
+  <td>%d</td>
+  <td>day of month (two-digit)</td>
+</tr>
+<tr>
+  <td>%H</td>
+  <td>24-hour (two-digit)</td>
+</tr>
+<tr>
+  <td>%I</td>
+  <td>12-hour (two-digit)</td>
+</tr>
+<tr>
+  <td>%j</td>
+  <td>day of year (three-digit)</td>
+</tr>
+<tr>
+  <td>%m</td>
+  <td>month (two-digit)</td>
+</tr>
+<tr>
+  <td>%M</td>
+  <td>minutes</td>
+</tr>
+<tr>
+  <td>%p</td>
+  <td>am/pm</td>
+</tr>
+<tr>
+  <td>%S</td>
+  <td>seconds</td>
+</tr>
+<tr>
+  <td>%s</td>
+  <td>milliseconds</td>
+</tr>
+<tr>
+  <td>%W</td>
+  <td>week in year (three-digit)</td>
+</tr>
+<tr>
+  <td>%w</td>
+  <td>day of week (one-digit)</td>
+</tr>
+<tr>
+  <td>%y</td>
+  <td>year (two-digit)</td>
+</tr>
+<tr>
+  <td>%Y</td>
+  <td>year (four-digit)</td>
+</tr>
+<tr>
+  <td>%Z</td>
+  <td>time zone (name)</td>
+</tr>
+<tr>
+  <td>%z</td>
+  <td>time zone (+/-0800)</td>
+</tr>
+</deftable>
+
+</defun> <!-- timestamp -->
+
+<defun title="host">
+
+<deftable title="host properties">
+
+<tr>
+  <th>variable</th>
+  <th>meaning</th>
+</tr>
+<tr>
+  <td>name</td>
+  <td>The name of the host</td>
+</tr>
+<tr>
+  <td>regexp</td>
+  <td>Regular expression values for host regexp matches</td>
+</tr>
+<tr>
+  <td>root</td>
+  <td>The root directory of the host</td>
+</tr>
+<tr>
+  <td>url</td>
+  <td>The canonical url of the host</td>
+</tr>
+</deftable>
+
+<s2 title="Example">
+<example>
+&lt;host regexp="www.([^.]+).com">
+  &lt;root-directory>/opt/www/${host.regexp[1]}&lt;/root-directory>
+
+  &lt;context-param server-id="${server.name}"/>
+
+  &lt;web-app id="/">
+    &lt;document-directory>webapps/ROOT&lt;/document-directory>
+  &lt;/web-app>
+&lt;/host>
+</example>
+</s2>
+
+</defun>
+
+<defun title="java">
+
+<deftable title="java properties">
+<tr>
+  <th>variable</th>
+  <th>meaning</th>
+</tr>
+<tr>
+  <td>version</td>
+  <td>The JDK version</td>
+</tr>
+</deftable>
+
+</defun>
+
+<defun title="jndi()">
+
+<p>The configuration EL supports the static function jndi:lookup.
+jndi:lookup can be used to lookup a JNDI value for the configuration.</p>
+
+<example title="configuring JNDI">
+&lt;servlet servlet-name='foo'
+         servlet-class='qa.FooServlet'&gt;
+  &lt;init&gt;
+    &lt;data-source&gt;${jndi:lookup("java:comp/env/jdbc/test")}&lt;/data-source&gt;
+  &lt;/init&gt;
+&lt;/servlet&gt;
+</example>
+</defun> <!-- jndi:lookup -->
+
+<defun title="resin">
+<deftable title="resin properties">
+<tr>
+  <th>variable</th>
+  <th>meaning</th>
+</tr>
+<tr>
+  <td>address</td>
+  <td>The local IP address</td>
+</tr>
+<tr>
+  <td>conf</td>
+  <td>Path to the configuration file</td>
+</tr>
+<tr>
+  <td>home</td>
+  <td>The the location of the Resin executables</td>
+</tr>
+<tr>
+  <td>hostName</td>
+  <td>The local hostname as returned by InetAddress</td>
+</tr>
+<tr>
+  <td>root</td>
+  <td>The location of the content, specified at startup with --root-directory</td>
+</tr>
+<tr>
+  <td>serverId</td>
+  <td>The identity of the active &lt;server>, specified at startup with --server</td>
+</tr>
+<tr>
+  <td>version</td>
+  <td>The resin version, e.g. 3.1.0</td>
+</tr>
+</deftable>
+</defun>
+
+<defun title="server">
+
+<p>
+Values related to the active &lt;<a config-tag="server">></a>.
+</p>
+
+<deftable title="server properties">
+<tr>
+  <th>variable</th>
+  <th>meaning</th>
+</tr>
+<tr>
+  <td>address</td>
+  <td>the bind address of the cluster and load balancing port</td>
+</tr>
+<tr>
+  <td>id</td>
+  <td>The identity of the active &lt;server>, specified at startup with --server</td>
+</tr>
+<tr>
+  <td>port</td>
+  <td>the cluster and load balancing port</td>
+</tr>
+<tr>
+  <td>httpAddress</td>
+  <td>the bind address of the http listener, INADDR_ANY for all addresses</td>
+</tr>
+<tr>
+  <td>httpPort</td>
+  <td>the port number of the http listener</td>
+</tr>
+<tr>
+  <td>httpsAddress</td>
+  <td>the bind address of the ssl http listener, INADDR_ANY for all addresses</td>
+</tr>
+<tr>
+  <td>httpsPort</td>
+  <td>the port number of the ssl http listener</td>
+</tr>
+</deftable>
+</defun>
+
+<defun title="System properties">
+<p>
+System properties are available as variables in el expressions.
+Many system property names are not valid el
+identifiers; in that case the <var>system</var> variable is used, for example
+<code>${system['java.io.tmpdir']}</code>.
+</p>
+
+<p>
+A full list of standard java system properties is provided in the javadoc for
+<a javadoc="java.lang.System">java.lang.System</a>.
+</p>
+
+<deftable title="Standard system properties">
+<tr>
+  <th>variable</th>
+  <th>meaning</th>
+</tr>
+<tr>
+  <td>java.io.tmpdir</td>
+  <td>Default temp file path</td>
+</tr>
+<tr>
+  <td>os.name</td>
+   <td>Operating system name</td>
+</tr>
+<tr>
+  <td>os.arch</td>
+   <td>Operating system architecture</td>
+</tr>
+<tr>
+  <td>os.version</td>
+   <td>Operating system version</td>
+</tr>
+<tr>
+  <td>user.name</td>
+   <td>User's account name</td>
+</tr>
+<tr>
+  <td>user.home</td>
+   <td>User's home directory</td>
+</tr>
+<tr>
+  <td>user.dir</td>
+   <td>User's current working directory</td>
+</tr>
+</deftable>
+
+</defun>
+
+<defun title="webApp">
+
+<deftable title="webApp properties">
+<tr>
+  <th>variable</th>
+  <th>meaning</th>
+</tr>
+<tr>
+  <td>name</td>
+  <td>The name of the web-app</td>
+</tr>
+<tr>
+  <td>contextPath</td>
+  <td>The context path of the web-app</td>
+</tr>
+<tr>
+  <td>regexp</td>
+  <td>Regular expression values for web-app regexp matches</td>
+</tr>
+<tr>
+  <td>root</td>
+  <td>The root directory of the web-app</td>
+</tr>
+<tr>
+  <td>url</td>
+  <td>The canonical url of the web app</td>
+</tr>
+</deftable>
+</defun>
+<!--
+<s1 name="functions" title="Functions">
+
+<p>Static functions are available in EL expressions.  Resin also makes utility
+objects avilable as EL variables that provide functions as methods.</p>
+
+<s2 title="jndi">
+
+<s3 title="jndi:lookup" type="defun">
+
+<p>The configuration EL supports a the static function jndi:lookup.
+jndi:lookup can be used to lookup a JNDI value for the configuration.</p>
+
+<example title="configuring JNDI">
+&lt;servlet servlet-name='foo'
+         servlet-class='qa.FooServlet'&gt;
+  &lt;init&gt;
+    &lt;data-source&gt;${jndi:lookup("java:comp/env/jdbc/test")}&lt;/data-source&gt;
+  &lt;/init&gt;
+&lt;/servlet&gt;
+</example>
+</s3>
+</s2>
+
+<s2 title="fmt">
+
+<p>The EL Environment contains a <var>fmt</var> object, which has a number of
+useful formatting methods.</p>
+
+<s3 title="fmt.timestamp()" type="defun">
+
+<p>Format a timestamp string.</p>
+
+<example>fmt.timestamp(format[,date])</example>
+
+<deftable-parameters>
+<tr><td>format</td><td>the format string (see below)</td><td>required
+</td></tr><tr><td>date</td><td>an object with <a javadoc="java.util.Date"/> or <a javadoc="java.util.Calendar"/> or <a javadoc="com.caucho.util.QDate"/></td><td>the current date and time
+</td></tr></deftable-parameters>
+
+<example>
+msg="The current date and time is ${fmt.timestamp('%Y/%m/%d %H:%M:%S.%s')}"
+msg="time=${fmt.timestamp('[%Y/%m/%d %H:%M:%S.%s]')}"
+</example>
+
+<p><code>format</code> contains regular characters, which are just copied to
+the output string, and percent codes which are substituted with time and date
+values.</p>
+
+<deftable>
+<tr><th>Code</th><th>Meaning
+</th></tr><tr><td>%a</td><td>day of week (short)
+</td></tr><tr><td>%A</td><td>day of week (verbose)
+</td></tr><tr><td>%b</td><td>day of month (short)
+</td></tr><tr><td>%B</td><td>day of month (verbose)
+</td></tr><tr><td>%c</td><td>Java locale date
+</td></tr><tr><td>%d</td><td>day of month (two-digit)
+</td></tr><tr><td>%H</td><td>24-hour (two-digit)
+</td></tr><tr><td>%I</td><td>12-hour (two-digit)
+</td></tr><tr><td>%j</td><td>day of year (three-digit)
+</td></tr><tr><td>%m</td><td>month (two-digit)
+</td></tr><tr><td>%M</td><td>minutes
+</td></tr><tr><td>%p</td><td>am/pm
+</td></tr><tr><td>%S</td><td>seconds
+</td></tr><tr><td>%s</td><td>milliseconds
+</td></tr><tr><td>%W</td><td>week in year (three-digit)
+</td></tr><tr><td>%w</td><td>day of week (one-digit)
+</td></tr><tr><td>%y</td><td>year (two-digit)
+</td></tr><tr><td>%Y</td><td>year (four-digit)
+</td></tr><tr><td>%Z</td><td>time zone (name)
+</td></tr><tr><td>%z</td><td>time zone (+/-0800)
+</td></tr></deftable>
+
+</s3>
+
+<s3 title="fmt.sprintf()" type="defun">
+<p>Format a string using a sprintf-like format string.</p>
+
+<def>fmt.sprintf(format[,arg1, arg2 ... argN])</def>
+
+<deftable-parameters>
+<tr><td>format</td><td>the format string (see below)</td><td>required
+</td></tr><tr><td>arg1..argN</td><td>the values used for the conversions in the format string</td><td>n/a
+</td></tr></deftable-parameters>
+
+<p><code>sprintf</code> accepts a series of arguments, applies to each a format 
+specifier  from `format', and returns the formatted data as a string.
+`format' is a string containing two types of objects:  ordinary
+characters (other than `%'), which are copied unchanged to the output, and
+conversion specifications, each of which is introduced by `%'. (To include
+`%' in the output, use `%%' in the format string). </p>
+
+<p>A conversion specification has the following form:</p>
+
+<def>%[FLAGS][WIDTH][.PREC][TYPE]</def>
+
+<p>TYPE is required, the rest are optional.</p>
+
+<p>The following TYPE's are supported:</p>
+
+<deftable>
+<tr><td>%%</td><td>a percent sign
+</td></tr><tr><td>%c</td><td>a character with the given number
+</td></tr><tr><td>%s</td><td>a string, a null string becomes "#null"
+</td></tr><tr><td>%z</td><td>a string, a null string becomes the empty string ""
+</td></tr><tr><td>%d</td><td>a signed integer, in decimal
+</td></tr><tr><td>%o</td><td>an integer, in octal
+</td></tr><tr><td>%u</td><td>an integer, in decimal
+</td></tr><tr><td>%x</td><td>an integer, in hexadecimal
+</td></tr><tr><td>%X</td><td>an integer, in hexadecimal using upper-case letters
+</td></tr><tr><td>%e</td><td>a floating-point number, in scientific notation
+</td></tr><tr><td>%E</td><td>a floating-point number, like %e with an upper-case "E"
+</td></tr><tr><td>%f</td><td>a floating-point number, in fixed decimal notation
+</td></tr><tr><td>%g</td><td>a floating-point number, in %e or %f notation
+</td></tr><tr><td>%G</td><td>a floating-point number, like %g with an upper-case "E"
+</td></tr><tr><td>%p</td><td>a pointer (outputs a value like the default of toString())
+</td></tr></deftable>
+
+<p>Intepret the word `integer' to mean the java type long.  
+Since java does not support unsigned integers, all integers are treated 
+the same.</p>
+
+<p>The following optional FLAGS are supported:</p>
+<deftable>
+<tr><td>0</td><td>If the TYPE character is an integer leading zeroes are used 
+             to pad the field width instead of spaces (following any 
+             indication of sign or base).
+
+</td></tr><tr><td>+</td><td>Include a `+' with positive numbers.
+
+</td></tr><tr><td>(a space)</td><td>use a space placeholder for the `+' that would result
+                     from a positive number
+</td></tr><tr><td>-</td><td>The result of is left justified, and the right is padded with
+             blanks until the result is `WIDTH' in length.  If you do not 
+             use this flag, the result is right justified, and padded on 
+             the left.
+</td></tr><tr><td>#</td><td>an alternate display is used, for `x' and `X' a
+             non-zero result will have an "0x" prefix; for floating 
+             point numbers the result will always contain a decimal point.
+
+</td></tr><tr><td>j</td><td>escape a string suitable for a Java string, or a CSV file. 
+             The following escapes are applied: " becomes \", 
+             newline becomes \n, return becomes \r, \ becomes \\.
+
+</td></tr><tr><td>v</td><td>escape a string suitable for CSV files, the same as `j'
+             with an additional <code>"</code> placed at the beginning 
+             and ending of the string
+
+</td></tr><tr><td>m</td><td>escape a string suitable for a XML file.  The following
+             escapes are applied: &lt; becomes &amp;lt;, 
+             &gt; becomes &amp;gt; &amp; becomes &amp;amp;
+             ' becomes &amp;#039, " becomes &amp;034;
+</td></tr></deftable>
+
+<p>The optional WIDTH argument specifies a minium width for the field.
+Spaces are used unless the `0' FLAG was used to indicate 0 padding.</p>
+
+<p>The optional PREC argument is introduced with a `.', and gives the 
+maximum number of characters to print; or the minimum
+number of digits to print for integer and hex values; or the maximum 
+number of significant digits for `g' and `G'; or the number of digits 
+to print after the decimal point for floating points.</p>
+
+</s3>
+</s2>
+
+</s1>
+-->
+</body>
+</document>

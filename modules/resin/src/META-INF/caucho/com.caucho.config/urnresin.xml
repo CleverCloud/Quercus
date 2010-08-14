@@ -1,0 +1,21 @@
+<namespace xmlns="urn:java:com.caucho.resin">
+
+  <flow name="choose"
+        class="com.caucho.config.core.ResinChoose"/>
+
+  <flow name="if"
+        class="com.caucho.config.core.ResinIf"/>
+
+  <bean name="import"
+        class="com.caucho.config.core.ResinImport"/>
+
+  <bean name="log"
+        class="com.caucho.config.core.ResinLog"/>
+
+  <bean name="message"
+        class="com.caucho.config.core.ResinLog"/>
+    
+  <bean name="set"
+        class="com.caucho.config.core.ResinSet"/>
+	
+</namespace>

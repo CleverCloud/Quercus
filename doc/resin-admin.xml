@@ -1,0 +1,69 @@
+<book title="Resin Administration">
+  <chapter title="Starting Resin">
+    <linked-section link="admin/starting-resin.xtp" />
+    <linked-section link="admin/starting-resin-command-line.xtp" />
+    <linked-section link="admin/starting-resin-watchdog.xtp" />
+    <linked-section link="admin/starting-resin-apache.xtp" />
+  </chapter>
+
+  <chapter title="Migrating to Resin 4.0">
+    <linked-section link="admin/migration.xtp" />
+  </chapter>
+
+  <chapter title="Deployment">
+    <linked-section link="admin/deploy.xtp" />
+    <linked-section link="admin/deploy-git-overview.xtp" />
+    <linked-section link="admin/deploy-tool-reference.xtp" />
+    <linked-section link="admin/deploy-pomegranate.xtp" />
+  </chapter>
+
+  <chapter title="Configuration">
+    <linked-section link="admin/config-overview.xtp" />
+    <linked-section link="admin/config-candi.xtp" />
+    <linked-section link="admin/config-el.xtp" />
+  </chapter>
+
+  <chapter title="Database">
+    <linked-section link="admin/database.xtp" />
+  </chapter>
+
+  <chapter title="Logging">
+    <linked-section link="admin/logging.xtp" />
+  </chapter>
+
+  <chapter title="HTTP">
+    <linked-section link="admin/http-server.xtp" />
+    <linked-section link="admin/http-virtual-hosts.xtp" />
+    <linked-section link="admin/http-rewrite.xtp" />
+    <linked-section link="admin/http-proxy-cache.xtp" />
+  </chapter>
+
+  <chapter title="Security">
+    <linked-section link="admin/security-overview.xtp" />
+    <linked-section link="admin/security-authenticators.xtp" />
+    <linked-section link="admin/security-authentication-method.xtp" />
+    <linked-section link="admin/security-authorization.xtp" />
+    <linked-section link="admin/security-ssl.xtp" />
+  </chapter>
+
+  <chapter title="Scheduled Tasks">
+    <linked-section link="admin/scheduled-tasks.xtp" />
+  </chapter>
+
+  <chapter title="Clustering">
+    <linked-section link="admin/clustering-overview.xtp" />
+  </chapter>
+
+  <chapter title="Resin monitoring and administration web application">
+    <linked-section link="admin/resin-admin-console.xtp" />
+  </chapter>
+
+  <chapter title="Advanced Topics">
+    <linked-section link="admin/advanced-classloaders.xtp" />
+    <linked-section link="admin/advanced-jmx.xtp" />
+  </chapter>
+
+  <chapter title="Reference">
+    <linked-section link="admin/reference.xtp" />
+  </chapter>
+</book>

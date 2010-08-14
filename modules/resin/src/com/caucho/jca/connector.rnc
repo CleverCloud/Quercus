@@ -1,0 +1,10 @@
+default namespace j2ee = "http://java.sun.com/xml/ns/j2ee"
+namespace local = ""
+
+include "classpath:com/caucho/config/cfg/resin-j2ee.rnc"
+
+start = connector
+
+connector = element connector {
+  
+}

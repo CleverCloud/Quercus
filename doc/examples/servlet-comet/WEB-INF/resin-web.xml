@@ -1,0 +1,17 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+
+  <!--
+     - To enable Java Injection classpath scanning, put a META-INF/beans.xml
+     - in your META-INF/classes directory or in a jar file containing
+     - your Java Injection beans.  When Resin finds the META-INF/beans.xml,
+     - it will scan all classes for injectible (simple) beans.
+     -->
+
+  <!--
+     - Configure the comet servlet
+    -->
+  <servlet-mapping url-pattern="/comet"
+                   servlet-class="example.TestCometServlet"
+                   async-supported="true"/>
+
+</web-app>

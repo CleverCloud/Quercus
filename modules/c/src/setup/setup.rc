@@ -1,0 +1,109 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SETUP_INIT DIALOG DISCARDABLE  0, 0, 255, 143
+STYLE WS_CAPTION | WS_SYSMENU
+CAPTION "Resin Setup"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_RESIN_HOME,68,20,167,12,ES_AUTOHSCROLL
+    CONTROL         "Apache",IDC_APACHE_ENABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,20,65,40,12
+    EDITTEXT        IDC_APACHE_HOME,68,65,167,12,ES_AUTOHSCROLL
+    CONTROL         "IIS/PWS",IDC_IIS_ENABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,20,85,42,12
+    EDITTEXT        IDC_IIS_HOME,68,85,167,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "OK",IDC_OK,51,110,40,15
+    PUSHBUTTON      "Cancel",IDC_CANCEL,101,110,40,15
+    PUSHBUTTON      "&Apply",IDC_APPLY,151,110,40,15
+    LTEXT           "&Resin Home",IDC_STATIC,20,20,39,8,SS_CENTERIMAGE
+    GROUPBOX        "General",IDC_STATIC,10,5,235,38
+    GROUPBOX        "Web Servers",IDC_STATIC,7,49,235,55
+    PUSHBUTTON      "Remove",IDC_REMOVE,201,110,40,15
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_SETUP_INIT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 241
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 125
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

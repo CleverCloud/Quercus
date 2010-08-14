@@ -1,0 +1,51 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 4.0.6 Release Notes</title>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 4.0.6 Overview">
+
+<ul>
+<li>ipv6 support</li>
+<li>&lt;class-loader> config changes</li>
+<li>documentation reorganization</li>
+</ul>
+
+</s1>
+
+<s1 title="JavaEE 6 Web Profile TCK progress">
+
+<ul>
+<li>passes Servlet TCK for JavaEE 6</li>
+<li>passes JSP TCK for JavaEE 6</li>
+</ul>
+
+</s1>
+
+<s1 title="class-loader config changes">
+
+<p>The &lt;class-loader> configuration behavior was previously confusing,
+and has been updated. Now, class loaders add added in the order they are
+defined in the resin.xml, and their search order is the same as the
+resin.xml order.</p>
+
+<p>To change the priority, you can use the &lt;prologue> tag to force
+evaluation in the &lt;prologue> pass. This will cause your classloader to
+be defined before any classloader in the standard pass.</p>
+
+</s1>
+
+<s1 title="documentation reorganization">
+
+<p>The documentation has been reorganized to split the
+reference (basically tags) from the explanatory section.</p>
+
+</s1>
+
+</body>
+</document>

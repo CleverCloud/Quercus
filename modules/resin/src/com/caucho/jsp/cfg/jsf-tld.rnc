@@ -1,0 +1,27 @@
+
+default namespace r = "http://caucho.com/ns/resin"
+
+jsf_component-class = element component-class {
+  string
+}
+
+jsf_name = element name {
+  string
+}
+
+jsf_tag = element jsf-tag {
+  jsf_name
+
+  & jsf_component-class
+}
+
+jsf_taglib = element jsf-taglib {
+  jsf_uri?
+
+  & jsf_tag*
+}
+
+jsf_uri = element uri {
+  string
+}
+

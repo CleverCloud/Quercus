@@ -1,0 +1,12 @@
+; ISAPI_SRUN.def : declares the module parameters for the DLL.
+
+LIBRARY	     "ISAPI_SRUN"
+
+EXPORTS
+	HttpExtensionProc
+	GetExtensionVersion
+	TerminateExtension
+	TerminateFilter
+	GetFilterVersion
+	HttpFilterProc
+	DllMain

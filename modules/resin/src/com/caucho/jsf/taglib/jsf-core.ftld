@@ -1,0 +1,28 @@
+<jsf-taglib xmlns="http://caucho.com/ns/resin">
+  <uri>http://java.sun.com/jsf/core</uri>
+
+  <jsf-tag>
+    <name>param</name>
+    <component-class>javax.faces.component.UIParameter</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>selectItem</name>
+    <component-class>javax.faces.component.UISelectItem</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>selectItems</name>
+    <component-class>javax.faces.component.UISelectItems</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>subview</name>
+    <component-class>javax.faces.component.UINamingContainer</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>verbatim</name>
+    <component-class>javax.faces.component.UIOutput</component-class>
+  </jsf-tag>
+</jsf-taglib>

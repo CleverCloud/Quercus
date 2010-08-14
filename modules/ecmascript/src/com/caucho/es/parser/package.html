@@ -1,0 +1,34 @@
+<html>
+<body>
+This package contains the code for compiling JavaScript files.
+
+ <p>Most applications will use the <code>Parser.parse(String)</code> interface
+ to parse JavaScript.  That method will try to load a precompiled
+ script from the work directory before trying to parse it.
+
+ <p>Applications will often set the script path a directory for
+ script and include the classpath in the path.  Applications will
+ often override the work dir for a more appropriate work directory.
+
+<code><pre>
+package com.caucho.vfs.*;
+package com.caucho.es.*;
+
+...
+
+com.caucho.es.parser.Parser parser;
+parser = new com.caucho.es.parser.Parser();
+
+MergePath scriptPath = new MergePath();
+scriptPath.addMergePath(Vfs.lookup("/home/ferg/js"));
+scriptPath.addClassPath(loader);
+parser.setScriptPath(scriptPath);
+ 
+Path workPath = Vfs.lookup("/tmp/caucho/work");
+parser.setWorkDir(workPath);
+ 
+Script script = parser.parse("test.js");
+</pre></code>
+
+</body>
+</html>

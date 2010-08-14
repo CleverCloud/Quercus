@@ -1,0 +1,264 @@
+<document>
+<header>
+<type>tutorial</type>
+<tutorial-startpage>stateless</tutorial-startpage>
+<title>Local Stateless Session Hello</title>
+<description>
+
+<p>Stateless sessions make database queries and updates robust by
+setting transaction boundaries at each business method.
+This <var>stateless session</var> bean example annotates a single
+business method with a SUPPORTS transaction attribute, marking the
+method as a read-only transaction boundary.</p>
+
+<p>See also:</p>
+<ul>
+<li>The <a href="doc|resin-ejb.xtp">Resin-EJB</a> reference.
+</li></ul>
+
+</description>
+</header>
+
+<body>
+<localtoc/>
+
+<s1>
+<p>A Hello, World example for EJB 3.0 is much simpler than for earlier
+versions of EJB.  To implement the EJB you need to implement:</p>
+
+<ul>
+<li>A local interface</li>
+<li>The bean implementation</li>
+</ul>
+
+<p>To configure Resin to be a server for the EJB you need to:</p>
+
+<ul>
+<li>Configure the ejb-stateless-bean</li>
+<li>Inject the bean into the application servlet</li>
+</ul>
+
+<p>In this tutorial, a simple "Hello" EJB is created and
+deployed within Resin.</p>
+</s1>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <th>File</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/web.xml"/></td>
+  <td>web.xml configuration</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/Hello.java"/></td>
+  <td>The local interface for the stateless session bean</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/HelloBean.java"/></td>
+  <td>The implementation for the stateless session bean</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/HelloServlet.java"/></td>
+  <td>The client for the stateless session bean</td>
+</tr>
+</deftable>
+</s1>
+
+<s1 title="Local Interface">
+
+<p>The remote interface defines the client view of the bean.
+It declares all the business methods.  Our
+only business method is the <code>hello</code> method.</p>
+
+<example title="Hello.java">
+package example;
+
+public interface Hello {
+  public String hello();
+}
+</example>
+
+</s1>
+
+<s1 title="Bean Implementation">
+
+<p>The second class for EJBs is the bean implementation class.  It implements
+the functionality provided by the remote interface.</p> 
+
+<example title="HelloBean.java">
+package example;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import static javax.ejb.TransactionAttributeType.SUPPORTS;
+
+import com.caucho.config.Name;
+
+@Stateless
+public class HelloBean implements Hello {
+  @Name("greeting")
+  private String _greeting;
+
+  @TransactionAttribute(SUPPORTS)
+  public String hello()
+  {
+    return _greeting;
+  }
+}
+</example>
+
+<s2 title="@Stateless">
+
+<p>The @Stateless annotation marks the bean as a stateless session
+bean.  Resin will create a stub implementing <code>Hello</code> and
+store it in the Java Injection directory with type <code>Hello</code> and
+name <code>@Name("HelloBean")</code>.</p>
+
+<p>The @Stateless annotation can have an optional <code>name</code>
+value which overrides the default name of "HelloBean".</p>
+
+</s2>
+
+<s2 title="@Name">
+
+<p>The <a href="http://caucho.com/resin-javadoc/com/caucho/config/Name.html">@com.caucho.config.Name</a> annotation tells Resin to lookup the
+greeting <code>String</code>
+in Java Injection directory using Resin's internal @Name binding "greeting" when the
+session bean is created.</p>
+
+<p>In this example, the greeting is configured with an &lt;env-entry&gt;
+in the web.xml.</p>
+
+</s2>
+
+<s2 title="Alternate Dependency Injection">
+
+<p>In some cases, it may be clearer to configure the session bean directly,
+rather than using Java Injection injection.  Instead of creating a separate
+&lt;env-entry>, you can configure the greeting value using XML
+straight from the resin-web.xml file.</p>
+
+<example title="resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;qa:TestBean xmlns:qa="urn:java:qa">
+    &lt;qa:greeting>Hello, World from web.xml&lt;/qa:greeting>
+  &lt;/qa:TestBean>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="@TransactionAttribute">
+
+<p>Managing transactions is the primary purpose of stateless
+session beans.  Transactions are a more powerful version of
+a <code>synchronized</code> lock used to protect database integrity.
+<a href="doc|ejb-annotations.xtp#@TransactionAttribute">@TransactionAttribute</a>
+marks the transaction boundary for each business method.</p>
+
+<example>
+@javax.ejb.TransactionAttribute(SUPPORTS)
+public String hello()
+</example>
+
+<p>The <code>hello()</code> business method uses SUPPORTS because it's
+a read-only method.  It doesn't need to start a new transaction on its
+own, but will participate in any transaction that already exists.</p>
+
+<p>The REQUIRED transaction value starts up a new transaction if none
+already exists.  It's used when updating database values.</p>
+
+<deftable>
+<tr>
+  <th>TransactionAttribute</th>
+  <th>meaning</th>
+</tr>
+<tr>
+  <td>REQUIRED</td>
+  <td>Start a new transaction if necessary</td>
+</tr>
+<tr>
+  <td>SUPPORTS</td>
+  <td>Don't start a new transaction, but use one if it exists</td>
+</tr>
+</deftable>
+
+</s2>
+
+</s1>
+
+<s1 title="Configuring the EJB stateless bean">
+
+<p><code>&lt;StatelessBean&gt;</code> configure the session bean
+from the resin-web.xml.
+The &lt;StatelessBean&gt; entry will
+look at the bean's annotations to enhance the class.</p>
+
+<example title="ejb-stateless-bean in web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+
+  &lt;env-entry env-entry-name="greeting"
+             env-entry-type="java.lang.String"
+             env-entry-value="Hello, World."/&gt;
+
+  &lt;qa:TestBean xmlns:qa="urn:java:qa">
+    &lt;StatelessBean/>
+  &lt;/qa:TestBean>
+  
+&lt;/web-app&gt;
+</example>
+
+<p>The &lt;qa:TestBean&gt; can optionally configure the bean
+directly with its properites as described in the alternate
+dependency injection section.</p>
+
+</s1>
+
+<s1 title="Client">
+
+<example title="HelloServlet.java">
+import javax.enterprise.inject.Current;
+
+public class HelloServlet extends GenericServlet {
+  @Current private Hello _hello;
+
+  public void service(HttpServletRequest req, HttpServletResponse res)
+    throws IOException, ServletException
+  {
+    PrintWriter out = res.getWriter();
+    
+    out.println(_hello.hello());
+  }
+}
+</example>
+
+<s2 title="@EJB">
+
+<p>The <a href="http://caucho.com/resin-javadoc/com/caucho/enterprise/inject/Current.html">@Current</a> annotation tells
+Resin to look for a <code>Hello</code> component in the Java Injection
+repository.
+</p>
+
+<p>The servlet could also lookup the Hello bean with JNDI in the
+<code>init()</code> method or use an &lt;init&gt; configuration in the
+web.xml:
+
+<example title="alternative configuration">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+&lt;servlet servlet-name="hello" servlet-class="example.HelloServlet"&gt;
+  &lt;init hello="${Hello}"/&gt;
+&lt;/servlet&gt;
+</example>
+
+</p></s2>
+
+</s1>
+
+</body>
+</document>

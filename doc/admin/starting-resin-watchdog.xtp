@@ -1,0 +1,357 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin Watchdog</title>
+    <type>contents</type>
+
+    <description>
+<p>
+For reliability and security, Resin servers are started and monitored
+by a separate Resin watchdog process.  The watchdog continually checks
+the health of
+the Resin server and restarts the Resin instance if is becomes unresponsive.
+</p>
+
+<p>In most cases, the watchdog reads the resin.xml and configures itself
+automatically, so no extra configuration is required.  Certain specialized
+configurations like ISPs can configure the watchdog to isolate JVMs
+for protection and security.
+</p>
+    </description>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Overview">
+
+<p>Because the watchdog runs quietly as a separate service, most of
+the time you won't need to pay attention to the watchdog at all.  The
+standard configuration launches on watchdog per machine which
+monitors all the Resin JVMs on that matchine, so most sites will not
+need to change any watchdog configuration.</p>
+
+<p>The main management tasks where you might need to pay attention to
+the watchdog is shutting it down if something is severely wrong with
+the machine, and checking the watchdog logs for Resin restart
+events.</p>
+
+<p>The watchdog automatically restarts Resin if the Resin JVM ever
+crashes or exits.  So if you want to stop Resin, you need to tell the
+watchdog to stop the instance, or you can stop the watchdog entirely.
+The watchdog is typically controlled by the resin.jar main
+program (<code>ResinBoot</code>), which has commands to start, stop,
+and restart Resin instances as well as reporting the watchdog
+status.</p>
+
+<figure src="startup-watchdog.png"/>
+
+<p>While most users will use the watchdog automatically with no extra
+configuration, ISPs and larger and complicated sites can create a
+specialised watchdog.xml with a &lt;watchdog-manager> tag to control
+the watchdog at a much finer level.  The &lt;watchdog-manager> lets an
+ISP run the watchdog under its own control, and specify exactly the
+command-line parameters for their users' Resin instances, including
+the ability to create secure chroot instances for their users.
+Typically, the watchdog will run as root, while the user instances
+will run with their respective user ids.</p>
+
+</s1>
+
+<s1 title="command-line">
+
+<p>The watchdog is controlled on the command-line using resin.jar's
+main class, <code>ResinBoot</code>.  The major operations are: start, stop, restart, shutdown
+and status.</p>
+
+<s2 title="console">
+
+<p>The "console" command starts a new Resin instance in a console window for
+development.  The standard output of the Resin instance will appear in the
+console window.</p>
+
+<example title="Example: watchdog console">
+resin-4.0.x> java -jar lib/resin.jar -conf conf/test.conf -server a console
+...
+</example>
+
+</s2>
+
+<s2 title="start">
+
+<p>The "start" command starts a new Resin instance with the given server id.
+<code>ResinBoot</code> will first try to contact the watchdog on the
+current machine, and start a new watchdog if necessary.  The server id
+must be unique for all servers defined in the resin.xml.</p>
+
+<example title="Example: watchdog start">
+resin-4.0.x> java -jar lib/resin.jar -conf conf/test.conf -server a start
+
+Resin/4.0.x started -server 'a' for watchdog at 127.0.0.1:6700
+</example>
+
+</s2>
+
+<s2 title="stop">
+
+<p>The "stop" command stops the Resin instance with the given server id.
+If the stopped instances is the last one managed by the watchdog, the
+watchdog will automatically exit.  If no <code>-server</code> is specified,
+the watchdog defaults to <code>-server ""</code>.</p>
+
+<example title="Example: watchdog stop">
+resin-4.0.x> java -jar lib/resin.jar stop
+
+Resin/4.0.x started -server '' for watchdog at 127.0.0.1:6600
+</example>
+
+</s2>
+
+<s2 title="status">
+
+<p>The "status" command summarizes the current Resin instances managed
+by the watchdog service.</p>
+
+<example title="Example: watchdog status">
+resin-4.0.x> java -jar lib/resin.jar status
+
+Resin/4.0.x status for watchdog at 127.0.0.1:6600
+
+server '' : active
+  password: missing
+  user: ferg
+  root: /home/test/resin/
+  conf: /etc/resin/resin.xml
+</example>
+
+</s2>
+
+</s1>
+
+<s1 title="Single Resin instance">
+
+<p>This example shows a single-server site listening to the
+standard HTTP port 80 and running the server as the "resin" user.  In this
+example, the watchdog typically runs as root so it can bind to the
+protected port 80, while the Resin instance runs as "resin" for security.</p>
+
+<figure src="watchdog-single.png"/>
+
+<p>Since this configuration uses the default, the watchdog listens to
+port 6600 for commands.</p>
+
+<example title="Example: /etc/resin/resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="urn:java:com.caucho.resin">
+      
+&lt;cluster id="">
+
+  &lt;server id="app-a" address="127.0.0.1">
+    &lt;user-name>resin&lt;/user-name>
+    &lt;group-name>resin&lt;/group-name>
+
+    &lt;http port="80"/>
+  &lt;/server>
+
+  &lt;resin:import path="${__DIR__}/app-default.xml"/>
+
+  &lt;host id="">
+    &lt;web-app id="" path="/var/www/htdocs"/>
+  &lt;/host>
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+</s1>
+
+<s1 title="Single machine load balance with shared watchdog">
+
+<p>When running multiple instances of Resin on the same
+machine, one watchdog-manager typically handles all the instances.
+The server id will select which instance to start or stop.</p>
+
+<p>In this example, there is one web-tier server acting as a load-balancer
+and two app-tier servers handling the backend data, all on a single machine.
+A site might want multiple app-tier servers for more reliable maintenance
+and upgrades.  While one server is down, traffic can be handled by a second
+server.</p>
+
+<p>The example uses default watchdog configuration from the standard resin.xml
+file.  The watchdog process and <code>ResinBoot</code> will both read
+the resin.xml file for the server configuration, so there's no explicit
+watchdog configuration necessary.  The watchdog detects that
+multiple servers are running on the same machine and manages all of them
+automatically.</p>
+
+
+<figure src="watchdog-multiple.png"/>
+
+<example title="Example: /etc/resin/resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="urn:java:com.caucho.resin">
+
+&lt;cluster id="app-tier">
+
+  &lt;server-default>
+    &lt;user-name>resin&lt;/user-name>
+    &lt;group-name>resin&lt;/group-name>
+  &lt;/server-default>
+
+  &lt;server id="app-a" address="192.168.1.10" port="6810"/>
+  &lt;server id="app-b" address="192.168.1.10" port="6811"/>
+
+  &lt;host id="">
+    &lt;web-app id="" path="/var/www/htdocs"/>
+  &lt;/host>
+
+&lt;/cluster>
+
+&lt;cluster id="web-tier">
+
+  &lt;server-default>
+    &lt;user-name>resin&lt;/user-name>
+    &lt;group-name>resin&lt;/group-name>
+  &lt;/server-default>
+
+  &lt;server id="web-a" address="192.168.1.10" port="6800">
+    &lt;http port="80"/>
+  &lt;/server>
+
+  &lt;host id="">
+
+     &lt;resin:LoadBalance regexp="" cluster="app-tier"/>
+
+  &lt;/host>
+
+&lt;/cluster>
+
+&lt;/resin>
+</example>
+
+</s1>
+
+<s1 title="Single machine load balance with distinct watchdog">
+
+<p>In some cases, it's best to let each Resin instance have its own
+watchdog, for example when multiple users are sharing the same
+machine.  Each &lt;server> block configures a separate &lt;watchdog-port>.
+Because the watchdog will read the resin.xml and use the &lt;server> block
+matching the <code>-server id</code> command-line argument, each watchdog
+will start with it's own port.</p>
+
+<example title="Example: /etc/resin/resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+&lt;cluster id="app-tier">
+
+  &lt;server-default>
+    &lt;user-name>resin&lt;/user-name>
+    &lt;group-name>resin&lt;/group-name>
+  &lt;/server-default>
+
+  &lt;server id="app-a" address="192.168.1.10" port="6810">
+    &lt;watchdog-port>6700&lt;/watchdog-port>
+
+    &lt;http port="8080"/>
+  &lt;/server>
+
+  &lt;server id="app-b" address="192.168.1.10" port="6811">
+    &lt;watchdog-port>6701&lt;/watchdog-port>
+
+    &lt;http port="8081"/>
+  &lt;/server>
+
+  &lt;host id="">
+    &lt;web-app id="" path="/var/www/htdocs"/>
+  &lt;/host>
+
+&lt;/cluster>
+
+&lt;/resin>
+</example>
+
+<p>In the previous example, starting Resin with <code>-server app-a</code>
+will start a watchdog at port 6700.  Starting Resin
+with <code>-server app-b</code> will start the watchdog at port 6701.</p>
+
+<example title="Example: starting app-b with watchdog-port=6701">
+resin-4.0.x> java -jar lib/resin.jar -server app-b start
+</example>
+
+</s1>
+
+<s1 title="ISP watchdog management">
+
+<p>In a situation like an ISP, you may wish to have a separate
+configuration file for the watchdog, which launches Resin instances
+for different users.  In this case, you will want to make sure
+the watchdog.xml is not readable by the users, and make sure to
+set a management user (see <a href="security.xtp">resin-security</a>).</p>
+
+<ul>
+<li>Start and restart the user's Resin JVM</li>
+<li>Set JVM parameters and Java executable</li>
+<li>Set the Resin instance root-directory</li>
+<li>setuid user-name and group-name</li>
+<li>Set the resin.xml configuration (must be readable by the user)</li>
+<li>Open protected ports like port 80</li>
+<li>Optional chroot for additional security</li>
+</ul>
+
+<p>The watchdog will launch the Resin instance with the given user as a
+setuid.  It will also open any necessary protected ports, e.g. port 80.</p>
+
+<example title="Example: /etc/resin/watchdog.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="urn:java:com.caucho.resin">
+
+&lt;resin:AdminAuthenticator>
+  &lt;user name="harry" password="MD5HASH=="/>
+&lt;/resin:AdminAuthenticator>
+
+&lt;watchdog-manager>
+
+  &lt;watchdog-default>
+    &lt;jvm-arg>-Xmx256m&lt;/jvm-arg>
+  &lt;/watchdog-default>
+
+  &lt;watchdog id="user_1">
+    &lt;user-name>user_1&lt;/user-name>
+    &lt;group-name>group_1&lt;/group-name>
+
+    &lt;resin-xml>/home/user_1/conf/resin.xml&lt;/resin-conf>
+    &lt;resin-root>/home/user_1/www&lt;/resin-root>
+
+    &lt;open-port address="192.168.1.10" port="80"/>
+  &lt;/watchdog>
+
+  ...
+
+  &lt;watchdog id="user_n">
+    &lt;user-name>user_n&lt;/user-name>
+    &lt;group-name>group_n&lt;/group-name>
+
+    &lt;resin-conf>/home/user_n/conf/resin.xml&lt;/resin-conf>
+    &lt;resin-root>/home/user_n/www&lt;/resin-root>
+
+    &lt;open-port address="192.168.1.240" port="80"/>
+  &lt;/watchdog>
+
+&lt;/watchdog-manager>
+
+&lt;/resin>
+</example>
+
+</s1>
+
+<s1 title="Management/JMX">
+
+<p>The watchdog publishes the watchdog instances to JMX with the JMX name
+"resin:type=Watchdog,name=a".  With a JMX monitoring tool like jconsole,
+you can view and manage the watchdog instances.</p>
+
+</s1>
+</body>
+</document>

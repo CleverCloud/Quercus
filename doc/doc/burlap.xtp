@@ -1,0 +1,172 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Burlap</title>
+    <description>
+      <p>Burlap is a simple XML-based protocol for connecting web
+        services.  The com.caucho.burlap.client and com.caucho.burlap.server
+        packages do not require any other Resin classes, so can be used in
+        smaller clients, like applets.</p>
+
+      <p>Because Burlap is a small protocol, J2ME devices like cell-phones can use
+        it to connect to Resin servers.  Because it's powerful, it can be used
+        for EJB services.</p>
+    </description>
+  </header>
+
+  <body>
+    <localtoc/>
+
+
+<s1 title="Burlap Client">
+
+<p>Using a Burlap service from a Java client is like calling a method.
+The BurlapProxyFactory creates proxies which act like normal Java
+objects, with possibility that the method might throw a protocol exception
+if the remote connection fails.  Using BurlapProxyFactory requires
+JDK&#160;1.3.</p>
+
+<p>Each service will have a normal Java interface describing the
+service.  The trivial hello, world example just returns a string.
+Because the Burlap services support Java serialization, any Java type
+can be used.</p>
+
+<example title="API for Basic service">
+package burlap.test;
+
+public interface Basic {
+  public String hello();
+}
+</example>
+
+<p>The following is an example of a standalone Burlap client.  The
+client creates a BurlapProxyFactory.  The client uses the factory to
+create client stubs with the given target URL and a Java interface for
+the API.  The returned object is a stub implementing the API.</p>
+
+<example title="Burlap Client for Basic service">
+package burlap.test;
+
+import java.net.URL;
+
+import com.caucho.burlap.client.BurlapProxyFactory;
+
+public class BasicClient {
+  public static void main(String []args)
+    throws Exception
+  {
+    URL url = new URL("http://www.caucho.com/burlap/test/basic");
+
+    BurlapProxyFactory factory = new BurlapProxyFactory();
+    Basic basic = (Basic) factory.create(Basic.class, url);
+
+    System.out.println("Hello: " + basic.hello());
+  }
+}
+</example>
+
+<p>There are no more complications to using the client.  The
+service can add methods and use any Java type for parameters and results.</p>
+
+</s1>
+
+<s1 title="Burlap Service">
+
+<p>While most Burlap services will use Resin-CMP or Resin-EJB, to take
+advantage of the benefits of EJB, the Burlap library makes it possible
+to write services by extending BurlapServlet.</p>
+
+<p>Any public method is treated as a service method.  So adding new
+methods is as easy as writing a normal Java class.</p>
+
+<p>Because the service is implemented as a Servlet, it can use all
+the familiar servlet data in the ServletContext, just like a
+normal servlet.</p>
+
+<example title="Hello Service">
+package burlap.test;
+
+import com.caucho.burlap.server.BurlapServlet;
+
+public class BasicService extends BurlapServlet implements Basic {
+  public String hello()
+  {
+    return "Hello, world";
+  }
+}
+</example>
+
+</s1>
+
+<s1 title="Burlap Client for a cell-phone">
+
+<p>Burlap can be used for even small Java devices.  The following classes
+from com.caucho.burlap.client can be extracted into a J2ME jar:</p>
+
+<ul>
+<li>MicroBurlapInput
+</li><li>MicroBurlapOutput
+</li><li>BurlapRemote
+</li><li>BurlapServiceException
+</li><li>BurlapProtocolException
+</li></ul>
+
+<p>The following example shows the code for using a cell phone as a
+client.  It's a bit more complicated than using the proxy, since the
+client is responsible for creating the connection and writing the
+data.</p>
+
+<example title="Hello, world">
+import javax.microedition.io.Connector;
+import javax.microedition.io.HttpConnection;
+
+...
+
+MicroBurlapInput in = new MicroBurlapInput();
+
+String url = "http://www.caucho.com/burlap/test/basic";
+
+HttpConnection c = (HttpConnection) Connector.open(url);
+
+c.setRequestMethod(HttpConnection.POST);
+
+OutputStream os = c.openOutputStream();
+MicroBurlapOutput out = new MicroBurlapOutput(os);
+
+out.call("hello", null);
+
+os.flush();
+
+is = c.openInputStream();
+
+MicroBurlapInput in = new MicroBurlapInput(is);
+Object value = in.readReply(null);
+</example>
+
+</s1>
+
+<s1 title="Burlap Serialization">
+
+<p>The Burlap classes can be used for serialization and deserialization.</p>
+
+<example title="Serialization">
+Object obj = ...;
+
+OutputStream os = new FileOutputStream("test.xml");
+BurlapOutput out = new BurlapOutput(os);
+
+out.writeObject(obj);
+os.close();
+</example>
+
+<example title="Deserialization">
+InputStream is = new FileInputStream("test.xml");
+BurlapInput in = new BurlapInput(is);
+
+Object obj = in.readObject(null);
+is.close();
+</example>
+
+</s1>
+  </body>
+</document>

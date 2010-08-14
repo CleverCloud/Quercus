@@ -1,0 +1,182 @@
+<?php
+/**
+ * Summary of quercus
+ */
+
+require_once "WEB-INF/php/inc.php";
+
+$store = java_class("com.caucho.quercus.profile.ProfileStore");
+
+$profile_list = $store->getReports();
+
+if (empty($profile_list)) {
+  echo "<p>No Quercus profiles are available because profiling is not\n";
+  echo " enabled or has not triggered.\n";
+  echo "<p>To enable profiling, configure a non-zero profile probability\n";
+  echo " for the Quercus servlet in WEB-INF/resin-web.xml, like the\n"
+  echo " following (1e-3 means 1 of 1000 requests profiled)\n";
+  echo "<code><pre>"
+  echo "&lt;web-app xmlns=\"http://caucho.com/ns/resin\">\n";
+  echo "\n";
+  echo "  &lt;servlet-mapping url-pattern=\"*.php\"\n";
+  echo "                   servlet-class=\"com.caucho.quercus.servlet.QuercusServlet\">\n";
+  echo "    &lt;init profile-probability=\"1e-3\"/>\n";
+  echo "  &lt;/servlet-mapping>\n";
+  echo "\n";
+  echo "&lt;/web-app>\n";
+  echo "</pre></code>"
+  
+  return;
+}
+
+if ($_GET['id'])
+  $report = $store->findReport($_GET['id']);
+
+if ($report && $_GET['mid'])
+  $method = $report->findMethodByIndex($_GET['mid']);
+
+if ($method) {
+  quercus_display_hierarchy($report, $method);
+}
+else if ($report) {
+  quercus_display_hotspot($report);
+}
+else {
+  quercus_display_summary($profile_list);
+}  
+
+function quercus_display_summary($profile_list)
+{
+  echo "<table class='data'>\n";
+  $row = 0;
+  foreach ($profile_list as $item) {
+    echo "<tr class=row_${$row++}>";
+      echo "<td><a href='?q=quercus&id=" . $item->getId() . "'>";
+      echo $item->getUrl();
+      echo "</a></td>\n";
+      echo "<td>" . sprintf("%.3fms", $item->getTotalMicros() / 1000) . "</td>\n";
+      echo "<td>" . strftime("%Y-%m-%d %H:%M:%S", $item->getTimestamp() / 1000) . "</td>\n";
+    echo "</tr>";
+  }
+  echo "</table>";
+}  
+
+function quercus_display_hotspot($profile)
+{
+  echo "<h4>"
+  echo "<a href='?q=quercus'>top</a> >> ";
+  
+  $total_time = $profile->getTotalMicros();
+
+  echo $profile->getUrl();
+  echo " (" . sprintf("%.3f", $total_time / 1000) . "ms)";
+  echo "</h3>"
+
+  echo "<h3>Hot Spot Report</h3>\n";
+  
+  echo "<table class='data'>\n";
+  echo "<tr>";
+  echo " <th>self(ms)</th>";
+  echo " <th>total(ms)</th>";
+  echo " <th>count</th>";
+  echo " <th>%self</th>";
+  echo " <th>%total</th>";
+  echo " <th>name</th>";
+  echo "</tr>";
+  $row = 0;
+
+  $sum = 0;
+  foreach ($profile->getMethodsBySelfMicros() as $method) {
+    $sum += $method->getSelfMicros();
+    
+    echo "<tr class='" . row_style($row++) . "'>";
+    echo "<td align='right'>" . sprintf("%.3fms", $method->getSelfMicros() / 1000) . "</td>";
+    echo "<td align='right'>" . sprintf("%.3fms", $method->getTotalMicros() / 1000) . "</td>";
+    echo "<td align='right'>" . $method->getCount() . "</td>";
+    echo "<td align='right'>";
+      echo sprintf("%6.2f%%", 100.0 * $method->getSelfMicros() / $total_time);
+    echo "<td align='right'>";
+      echo sprintf("%6.2f%%", 100.0 * $sum / $total_time);
+    echo "</td>\n";
+    echo "<td>";
+    echo "<a href='?q=quercus&id=" . $profile->getId()
+                . "&mid=" . $method->getId() . "'>";
+    echo $method->getName();
+    echo "</a></td>\n";
+    echo "</tr>\n";
+  }
+  
+  echo "</table>";
+}
+
+function quercus_display_hierarchy($report, $method)
+{
+  echo "<h4>"
+  
+  echo "<a href='?q=quercus'>top</a> >> ";
+  
+  $total_time = $report->getTotalMicros();
+
+  echo "<a href='?q=quercus&id=" . $report->getId() . "'>";
+  echo $report->getUrl() . "</a>";
+  echo " (" . sprintf("%.3f", $total_time / 1000) . "ms)";
+  echo "</h4>"
+  
+  echo "<table class='data'>\n";
+  echo "<tr>";
+  echo " <th>%total</th>";
+  echo " <th>time(ms)</th>";
+  echo " <th>count</th>";
+  echo " <th>name</th>";
+  echo " <th>%total</th>";
+  echo "</tr>";
+  $row = 0;
+
+  $method_time = $method->getTotalMicros();
+
+  foreach ($method->getParentItemsByMicros() as $parent_item) {
+    display_item($report, $parent_item->getParent(), $parent_item,
+                 $method_time, $row++);
+  }
+    
+  echo "<tr class='" . row_style($row++) . "'>";
+  echo "<td align='right'><b>";
+  echo sprintf("%6.2f%%", 100.0 * $method->getTotalMicros() / $total_time);
+  echo "</b></td>";
+      
+  echo "<td align='right'><b>" . sprintf("%.3fms", $method->getTotalMicros() / 1000) . "</b></td>";
+  echo "<td align='right'><b>" . $method->getCount() . "</b></td>";
+  echo "<td><b>" . $method->getName() . "<b></td>\n";
+  echo "<td align='right'><b>";
+    echo sprintf("%6.2f%%", 100.0 * $method->getSelfMicros() / $method_time);
+  echo "</b></td>\n";
+  echo "</tr>\n";
+  
+  foreach ($method->getChildItemsByMicros() as $child_item) {
+    display_item($report, $child_item->getName(), $child_item,
+                 $method_time, $row++);
+  }
+  
+  echo "</table>";
+}
+
+function display_item($report, $name, $item, $method_time, $row)
+{
+  echo "<tr class='" . row_style($row++) . "'>";
+  echo "<td></td>";
+  echo "<td align='right'>" . sprintf("%.3fms", $item->getMicros() / 1000) . "</td>";
+  echo "<td align='right'>" . $item->getCount() . "</td>";
+  echo "<td>";
+
+  $sub_method = $report->findMethodByName($name);
+
+  echo "<a href='?q=quercus&id=" . $report->getId()
+              . "&mid=" . $sub_method->getId() . "'>";
+  
+  echo $name;
+  echo "</a></td>";
+  echo "<td align='right'>" . sprintf("%6.2f%%", 100 * $item->getMicros() / $method_time) . "</td>";
+  echo "</tr>";
+}
+
+?>

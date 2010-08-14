@@ -1,0 +1,8 @@
+anonymous=com.caucho.security.AnonymousAuthenticator
+jaas=com.caucho.security.JaasAuthenticator
+jdbc=com.caucho.security.JdbcAuthenticator
+ldap=com.caucho.security.LdapAuthenticator
+null=com.caucho.security.NullAuthenticator
+properties=com.caucho.security.PropertiesAuthenticator
+xml=com.caucho.security.XmlAuthenticator
+Xml=com.caucho.security.XmlAuthenticator

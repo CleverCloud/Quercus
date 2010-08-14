@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="modules/deploy/src"/>
+	<classpathentry kind="src" path="modules/eclipselink/src"/>
+	<classpathentry kind="src" path="modules/junit/src"/>
+	<classpathentry kind="src" path="modules/ejb/src"/>
+	<classpathentry kind="src" path="modules/hessian/src"/>
+	<classpathentry kind="src" path="modules/jaxb/src"/>
+	<classpathentry kind="src" path="modules/jaxrpc/src"/>
+	<classpathentry kind="src" path="modules/jaxstream/src"/>
+	<classpathentry kind="src" path="modules/jaxws/src"/>
+	<classpathentry kind="src" path="modules/jca/src"/>
+	<classpathentry kind="src" path="modules/jcache/src"/>
+	<classpathentry kind="src" path="modules/jcr/src"/>
+	<classpathentry kind="src" path="modules/jms/src"/>
+	<classpathentry kind="src" path="modules/jpa/src"/>
+	<classpathentry kind="src" path="modules/jsf/src"/>
+	<classpathentry kind="src" path="modules/jstl/src"/>
+	<classpathentry kind="src" path="modules/jta/src"/>
+	<classpathentry kind="src" path="modules/jws/src"/>
+	<classpathentry kind="src" path="modules/kernel/src"/>
+	<classpathentry kind="src" path="modules/quercus/src"/>
+	<classpathentry kind="src" path="modules/resin/src"/>
+	<classpathentry kind="src" path="modules/servlet16/src"/>
+	<classpathentry kind="src" path="modules/webbeans/src"/>
+	<classpathentry kind="src" path="modules/webutil/src"/>
+	<classpathentry kind="src" path="modules/ecmascript/src"/>
+	<classpathentry kind="lib" path="modules/ext/activation.jar"/>
+	<classpathentry kind="lib" path="modules/ext/javamail-141.jar"/>
+	<classpathentry kind="lib" path="modules/ext/jsf-api.jar"/>
+	<classpathentry kind="lib" path="modules/ext/jsf-impl.jar" sourcepath="/src"/>
+	<classpathentry kind="lib" path="modules/ext/jsr173_1.0_api.jar"/>
+	<classpathentry kind="lib" path="modules/ext/jsr88.jar"/>
+	<classpathentry kind="lib" path="modules/ext/trang.jar"/>
+	<classpathentry kind="lib" path="modules/ext/webservices-api.jar"/>
+	<classpathentry kind="lib" path="modules/ext/webservices-extra-api.jar"/>
+	<classpathentry kind="lib" path="modules/ext/junit-4.7.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="modules/ext/eclipselink.jar"/>
+	<classpathentry kind="lib" path="modules/ext/validation-api-1.0.0.GA.jar"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>

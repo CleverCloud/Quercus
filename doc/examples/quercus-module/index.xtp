@@ -1,0 +1,190 @@
+<document>
+  <header>
+    <title>Quercus: Java and PHP integration</title>
+        <description>
+          <p>Adding PHP functions with a Java module.</p>
+        </description>
+    <type>tutorial</type>
+    <tutorial-startpage>hello.php</tutorial-startpage>
+  </header>
+
+  <body>
+    <localtoc/>
+
+    <summary/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <td><viewfile-link file="hello.php"/></td>
+  <td>The PHP Hello, World</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/HelloModule.java"/></td>
+  <td>The Java module definition</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/resin-web.xml"/></td>
+  <td>web.xml configuration</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/META-INF/services/com.caucho.quercus.QuercusModule"/></td>
+  <td>Adding the module</td>
+</tr>
+</deftable>
+</s1>
+
+<s1 title="Introduction">
+<p>
+This article shows how to use Quercus, Resin's PHP implementation,
+to create a module in Java callable from a PHP page.
+</p>
+<!--
+[[PHP Hello World Module (jar version)]] explains how a module is meant to be used within your PHP code, so I won't repeat that information here.  Instead, this article will focus on the steps necessary to create and use a module without having to "jar up" your files.
+-->
+
+<p>For purposes of this article, I assume that you are working with
+Resin 3.2.0 with the home directory at C:\resin-3.2.0. I will call this
+directory <code>$webApp</code>.
+</p>
+
+</s1>
+
+<s1 title="Step 1: Create resin-web.xml and place it in $webApp/WEB-INF">
+
+<example title="resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+   &lt;servlet servlet-name="resin-php"
+               servlet-class="com.caucho.quercus.servlet.QuercusServlet"/&gt;
+ 
+   &lt;servlet-mapping url-pattern="*.php" servlet-name="resin-php"/&gt;	   
+&lt;/web-app&gt;
+</example>
+
+</s1>
+
+<s1 title="Step 2: Create HelloModule.java and place it in $webApp/WEB-INF/classes/example">
+
+<example title="HelloModule.java">
+package example;
+ 
+import com.caucho.quercus.module.AbstractQuercusModule;
+ 
+public class HelloModule extends AbstractQuercusModule {
+   /*
+   ** Notice the careful use of the naming
+   ** convention hello_test.  This is done
+   ** in order to prevent name collisions
+   ** among different libraries.
+   */
+   public String hello_test(String name)
+   {
+     return "Hello, " + name;
+   }
+}
+</example>
+</s1>
+
+<s1 title="Step 3: Create com.caucho.quercus.QuercusModule and place it in $webApp/WEB-INF/classes/META-INF/services">
+
+<example title="com.caucho.quercus.QuercusModule">
+example.HelloModule
+</example>
+</s1>
+
+<s1 title="Step 4: Create hello.php and place it in webapps/ROOT">
+
+<example title="hello.php">
+&lt;?php echo hello_test("World") ?&gt;
+</example>
+
+<p>
+In your favorite browser, type:
+</p>
+
+<example>
+ http://localhost:8080/hello.php
+</example>
+
+<p>
+You should see:
+</p>
+
+<results>
+ Hello, World
+</results>
+
+</s1>
+
+<s1 title="Advanced Users">
+
+<p>The first argument of a Java function may be the <code>Env</code>.
+The <code>Env</code> provides access to Quercus resources like printing
+to the browser and retrieving a PHP ini value.  For the API of
+<code>Env</code>, refer to the Quercus javadoc.</p>
+
+<example>
+
+package example;
+
+import com.caucho.quercus.env.Env;
+import com.caucho.quercus.module.AbstractQuercusModule;
+ 
+public class HelloModule extends AbstractQuercusModule {
+   /*
+   ** Notice the careful use of the naming
+   ** convention hello_test.  This is done
+   ** in order to prevent name collisions
+   ** among different libraries.
+   **
+   ** @param env provides access to Quercus environment resources
+   ** @param name
+   */
+   public String hello_test(Env env, String name)
+   {
+     env.println("inside HelloModule  hello_test()");
+     return "Hello, " + name;
+   }
+}
+
+</example>
+
+<p>Now <code>hello_test</code> will print "inside HelloModule hello_test()"
+to the browser before returning.</p>
+
+</s1>
+
+<s1 title="Java Function Arguments/Return Marshaling">
+
+<p>Quercus does marshaling to and from Quercus Values and Java objects.
+If a Java function requires a String, Quercus will automatically convert
+the internal Quercus StringValue to a String.  If a Java function returns
+an <code>int</code>, Quercus will create a Quercus LongValue for it.</p>
+
+<p>For other Java Objects like <code>java.util.Date</code> that are returned
+to PHP, Quercus puts them into wrappers to expose their public methods and
+members to the PHP script.  Java Collection, List, and Map instances have
+the additional ability to be used within a PHP script like any other PHP
+array.</p>
+
+<p>For more information, see
+<a href="../../doc/quercus-java-integration.xtp">Java Interface</a>.</p>
+
+</s1>
+
+<s1 title="Conclusion">
+
+<p>It is fairly straight forward to create your own modules callable from
+within a Quercus/PHP page.  The above tutorial takes through the steps
+to create the simple hello world application (without needing
+to "jar-up" your files).</p>
+
+<p>If you want to change your module in any way, all you have to do is
+resave the ".java" file in the classes\example directory, and Resin
+will recompile it for you.</p>
+
+<p>You do not need to restart your web app or Resin.  It's just that simple.</p>
+</s1>
+
+  </body>
+</document>

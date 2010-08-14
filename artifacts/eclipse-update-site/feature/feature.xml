@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.caucho.resin.eclipse"
+      label="Resin Eclipse Feature"
+      version="4.0.2"
+      provider-name="Caucho Technology">
+
+   <description url="http://www.caucho.com/">
+      Resin Eclipse Plugin based on WebTools Generic Server.
+   </description>
+
+   <copyright>
+      Copyright (c) 1998-2009 Caucho Technology -- all rights reserved
+
+This file is part of Resin(R) Open Source
+
+Each copy or derived work must preserve the copyright notice and this
+notice unmodified.
+
+Resin Open Source is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Resin Open Source is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE, or any warranty
+of NON-INFRINGEMENT.  See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License
+along with Resin Open Source; if not, write to the
+
+  Free Software Foundation, Inc.
+  59 Temple Place, Suite 330
+  Boston, MA 02111-1307  USA
+   </copyright>
+
+   <license>
+      Copyright (c) 1998-2009 Caucho Technology -- all rights reserved
+
+This file is part of Resin(R) Open Source
+
+Each copy or derived work must preserve the copyright notice and this
+notice unmodified.
+
+Resin Open Source is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Resin Open Source is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE, or any warranty
+of NON-INFRINGEMENT.  See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License
+along with Resin Open Source; if not, write to the
+
+  Free Software Foundation, Inc.
+  59 Temple Place, Suite 330
+  Boston, MA 02111-1307  USA
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.jst.server.core"/>
+      <import plugin="org.eclipse.jst.server.generic.core"/>
+      <import plugin="org.eclipse.jst.server.generic.ui"/>
+      <import plugin="org.eclipse.jst.server.ui"/>
+      <import plugin="org.eclipse.jst.common.project.facet.core"/>
+      <import plugin="org.eclipse.wst.common.project.facet.core"/>
+      <import plugin="org.eclipse.wst.common.project.facet.ui"/>
+      <import plugin="org.eclipse.wst.server.core"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.wst.server.ui"/>
+      <import plugin="org.eclipse.core.variables"/>
+   </requires>
+
+   <plugin
+         id="com.caucho.resin.eclipse"
+         download-size="0"
+         install-size="0"
+         version="4.0.2"/>
+
+</feature>

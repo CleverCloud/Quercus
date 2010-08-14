@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<antlib>
+  <!-- Tasks -->
+  <taskdef name="jspc" classname="com.caucho.ant.Jspc"/>
+  <taskdef name="upload-war" classname="com.caucho.ant.ResinUploadWar"/>
+  <taskdef name="copy-tag" classname="com.caucho.ant.ResinCopyTag"/>
+  <taskdef name="delete-tag" classname="com.caucho.ant.ResinDeleteTag"/>
+  <taskdef name="query-tags" classname="com.caucho.ant.ResinQueryTags"/>
+</antlib>

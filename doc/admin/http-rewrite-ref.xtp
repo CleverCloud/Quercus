@@ -1,0 +1,175 @@
+<document>
+<header>
+<title>URL Rewriting and Dispatching</title>
+<description>
+
+<p>Tag reference for Resin's URL rewriting and dispatching system.</p>
+
+</description>
+</header>
+<body>
+
+<reference-legend/>
+<localtoc/>
+
+<!-- XXX write admin oriented reference and add to reference.xtp -->
+
+<s1 title="Overview">
+
+<deftable title="Dispatch rules">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/Dispatch.html">&lt;resin:Dispatch></a></td>
+  <td>Normal servlet dispatching with optional <em>target</em> rewriting.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/FastCgiProxy.html">&lt;resin:FastCgiProxy></a></td>
+  <td>Proxies the request to a backend server using FastCGI as a proxy protocol.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/Forbidden.html">&lt;resin:Forbidden></a></td>
+  <td>Send a HTTP forbidden response.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/Forward.html">&lt;resin:Forward></a></td>
+  <td>Forwards to the new URL using RequestDispatcher.forward with the <em>target</em> URL.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/HttpProxy.html">&lt;resin:HttpProxy></a></td>
+  <td>Proxies the request to a backend server using HTTP as a proxy protocol.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/LoadBalance.html">&lt;resin:LoadBalance></a></td>
+  <td>Load balance to a cluster of backend Resin servers.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/Redirect.html">&lt;resin:Redirect></a></td>
+  <td>Send a HTTP redirect to a new URL specified by <em>target</em>.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/SendError.html">&lt;resin:SendError></a></td>
+  <td>Send a HTTP error response.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/AbstractTargetDispatchRule.html">AbstractTargetDispatchRule</a></td>
+  <td>Base class for custom dispatch rules.</td>
+</tr>
+</deftable>
+
+<deftable title="Basic conditions">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfAuthType.html">&lt;resin:IfAuthType></a></td>
+  <td>Checks for the authentication type, request.getAuthType().</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfCookie.html">&lt;resin:IfCookie></a></td>
+  <td>Checks for the presence of a named HTTP cookie from request.getCookies().</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfCron.html">&lt;resin:IfCron></a></td>
+  <td>Matches if the current time is in an active range configured by cron-style times.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfFileExists.html">&lt;resin:IfFileExists></a></td>
+  <td>Matches if the URL corresponds to an actual file.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfHeader.html">&lt;resin:IfHeader></a></td>
+  <td>Tests for a HTTP header and value match.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfLocale.html">&lt;resin:IfLocale></a></td>
+  <td>Tests for a Locale match from the HTTP request.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfLocalPort.html">&lt;resin:IfLocalPort></a></td>
+  <td>Compares the local port of the request, request.getLocalPort().</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfMethod.html">&lt;resin:IfMethod></a></td>
+  <td>Compares the HTTP method, request.getMethod().</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfNetwork.html">&lt;resin:IfNetwork></a></td>
+  <td>Compares the remote IP address to a network pattern like 192.168/16.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfQueryParam.html">&lt;resin:IfQueryParam></a></td>
+  <td>Tests for a HTTP query parameger, request.getParameter().</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfRemoteUser.html">&lt;resin:IfRemoteUser></a></td>
+  <td>Tests against the remote user, request.getRemoteUser().</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfSecure.html">&lt;resin:IfSecure></a></td>
+  <td>True for SSL requests, i.e. if request.isSecure() is true.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/IfUserInRole.html">&lt;resin:IfUserInRole></a></td>
+  <td>Tests is the user is in the servlet security role.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/RequestPredicate.html">RequestPredicate</a></td>
+  <td>Interface for custom request predicates.</td>
+</tr>
+</deftable>
+
+<deftable title="Combining conditions">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/And.html">&lt;resin:And></a></td>
+  <td>Matches if all children match.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/Or.html">&lt;resin:Or></a></td>
+  <td>Matches if any children match.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/Not.html">&lt;resin:Not></a></td>
+  <td>Matches if the child does not match.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/NotAnd.html">&lt;resin:NotAnd></a></td>
+  <td>Matches if any child does not match.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/NotOr.html">&lt;resin:NotOr></a></td>
+  <td>Matches if all the children do not match.</td>
+</tr>
+</deftable>
+
+<deftable title="Rewrite filters">
+<tr>
+  <th>name</th>
+  <th>description</th>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/SetHeader.html">&lt;resin:SetHeader></a></td>
+  <td>Sets a response header.</td>
+</tr>
+<tr>
+  <td><a href="http://caucho.com/resin-javadoc/com/caucho/rewrite/SetRequestSecure.html">&lt;resin:SetRequestSecure></a></td>
+  <td>Marks the request as secure.</td>
+</tr>
+<tr>
+  <td>&lt;mypkg:MyFilter></td>
+  <td>Servlet filters.</td>
+</tr>
+</deftable>
+
+</s1>
+
+</body>
+
+</document>

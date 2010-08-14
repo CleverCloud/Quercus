@@ -1,0 +1,18 @@
+default namespace r = "http://caucho.com/ns/resin"
+namespace l = ""
+
+include "classpath:com/caucho/config/cfg/env.rnc"
+include "classpath:com/caucho/config/cfg/resin-j2ee.rnc"
+
+start = r_enterprise-application
+
+r_boolean = string
+r_int = string
+r_period = string
+r_jndi = string
+r_class-Type = string
+r_kbytes = string
+
+r_enterprise-application = element enterprise-application {
+  r_env-Content
+}

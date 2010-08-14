@@ -1,0 +1,20 @@
+<module codenamebase="com.caucho.netbeans"
+        distribution=""
+	homepage="http://caucho.com"
+	license="GPL v2"
+	needsrestart="false"
+	releasedate="2008/01/05">
+  <manifest AutoUpdate-Show-In-Client="true"
+            OpenIDE-Module="com.caucho.netbeans"
+            OpenIDE-Module-Display-Category="Web &amp; Java EE"
+	    OpenIDE-Module-Implementation-Version="080105"
+	    OpenIDE-Module-Java-Dependencies="Java &gt; 1.4"
+            OpenIDE-Module-Layer="com/caucho/netbeans/resources/layer.xml"
+	    OpenIDE-Module-Long-Description="Resin Application Server"
+            OpenIDE-Module-Module-Dependencies="org.netbeans.modules.j2eeapis/1 &gt; 1.4, org.netbeans.modules.j2eeserver/4 &gt; 1.10, org.netbeans.modules.java.platform/1 &gt; 1.7.1, org.netbeans.modules.project.libraries/1 &gt; 1.11, org.openide.dialogs &gt; 6.2, org.openide.filesystems &gt; 6.4.1, org.openide.nodes &gt; 6.5, org.openide.util &gt; 6.3"
+	    OpenIDE-Module-Name="Resin Application Server"
+	    OpenIDE-Module-Requires="org.openide.modules.ModuleFormat1"
+	    OpenIDE-Module-Short-Descripton="Resin"
+	    OpenIDE-Module-Specification-Version="1.0"/>
+  <license name="GPL">GPL</license>
+</module>

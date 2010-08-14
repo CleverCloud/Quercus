@@ -1,0 +1,12 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <resource jndi-name="factory">
+    <type>example.ManagedConnectionFactoryImpl</type>
+    <init>
+      <name>example</name>
+    </init>
+  </resource>
+
+  <servlet servlet-name="test" servlet-class="example.TestServlet"/>
+
+  <servlet-mapping url-pattern="/demo" servlet-name="test"/>
+</web-app>

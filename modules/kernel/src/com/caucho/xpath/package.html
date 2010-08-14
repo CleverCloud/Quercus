@@ -1,0 +1,22 @@
+<html>
+<body>
+Finding and selecting XML nodes using XSL patterns.  The Xql package
+implements the pattern matching of the July 1999, W3C XSLT draft.  It
+provides a simple API to find XML nodes.
+
+<p>To find the first table with an image at any
+depth beneath the source node:
+
+<code><pre>
+Node found = Xql.find(".//table[.//img]", node);
+</pre></code>
+
+<p>Or to select all tables in all sections below the current node:
+
+<code><pre>
+Iterator iter = Xql.select("section/table", node);
+</pre></code>
+
+<p>Patterns can also be compiled.
+</body>
+</html>

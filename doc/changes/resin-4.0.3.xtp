@@ -1,0 +1,39 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 4.0.3 Release Notes</title>
+    <description>
+<ul>
+<li>LoadBalancer/backend protocol synchronization issues (both Resin load balancer and Apache)</li>
+<li>@com.caucho.ejb.SessionPool is a class annotation for stateless server
+beans that specifies the size of the stateless session pool.</li>
+<li>HMTP/BAM internal refactor.</li>
+<li>Hessian performance improvements to use low-level
+reflection when possible.</li>
+</ul>
+
+    </description>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 4.0.3 Overview">
+
+<p>Resin 4.0.3 is primarily a bug fix release:</p>
+
+<ul>
+<li>LoadBalancer/backend protocol synchronization issues (both Resin load balancer and Apache)</li>
+<li>@com.caucho.ejb.SessionPool is a class annotation for stateless server
+beans that specifies the size of the stateless session pool.</li>
+<li>HMTP/BAM internal refactor.</li>
+<li>Hessian performance improvements to use low-level
+reflection when possible.</li>
+</ul>
+
+<p>Resin 4.0.x is the active development branch.</p>
+</s1>
+
+</body>
+</document>

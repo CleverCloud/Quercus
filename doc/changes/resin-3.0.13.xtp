@@ -1,0 +1,284 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.13 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="HessianProxyFactory.setReadTimeout(long)">
+
+<p>Added a setReadTimeout to the HessianProxyFactory.  This capability
+is only supported by JDK 1.5.</p>
+
+</s1>
+
+<s1 title="active-wait-time">
+
+<p>An active-wait-time parameter is now available for the web-app.  This
+specifies the time Resin will wait during a restart for the new web-app.
+If the time expires, Resin will return a 503.  The default is 15s.</p>
+
+</s1>
+
+<s1 title="forward target in rewrite">
+
+<example title="web.xml">
+&lt;web-app&gt;
+  &lt;rewrite-dispatch&gt;
+    &lt;forward regexp='^/foo' target='/bar'/&gt;
+  &lt;/rewrite-dispatch&gt;
+&lt;/web-app&gt;
+</example>
+
+</s1>
+
+<s1 title="Manual web-app restart cookbook">
+
+<p>A <a href="doc|jmx-servlet.xtp">Restart cookbook</a> is available for
+creating an admin servlet to stop, start, or update a web-app.</p>
+
+</s1>
+
+<s1 title="round-robin policy">
+
+<p>HmuxLoadBalanceServlet can now use a strict round-robin balance strategy.</p>
+
+<example>
+&lt;servlet servlet-class="com.caucho.servlets.HmuxLoadBalanceServlet"&gt;
+  &lt;init&gt;
+    &lt;cluster&gt;a&lt;/cluster&gt;
+    &lt;strategy&gt;load-balance&lt;/strategy&gt;
+  &lt;/init&gt;
+&lt;/servlet&gt;
+</example>
+
+</s1>
+
+<s1 title="clustered configuration and deployment">
+
+<p>Resin Pro can now be configured and deployed based on a master
+configuration server.  Configuration files and .wars placed on the
+master will be propagated to the cluster.</p>
+
+<p>The clustered files use the special "config:" scheme in the configuration
+file, e.g. in archive-directory.  The scheme is read-only and backed
+up on a client-side database to provide reliability when the master
+is taken down.</p>
+
+<example title="master configuration">
+&lt;servlet-mapping url-pattern="/config"&gt;
+  &lt;servlet-class&gt;com.caucho.vfs.remote.RemoteFilesystemServlet&lt;/servlet-class&gt;
+  &lt;init&gt;
+    &lt;root&gt;${resin.rootDir}&lt;/root&gt;
+  &lt;/init&gt;
+&lt;/servlet-mapping&gt;
+</example>
+
+<p>On a config client, "config:" reads from the master.
+On the master or a non-clustered server, "config:" acts as a normal
+relative path.</p>
+
+ <example title="webapps configuration">
+&lt;web-app-deploy&gt;
+  &lt;archive-directory&gt;config:webapps&lt;/archive-directory&gt;
+  &lt;expand-directory&gt;webapps&lt;/expand-directory&gt;
+&lt;web-app-deploy&gt;
+</example>
+
+<p>The config clients are started with the "-config-server"
+command-line argument, pointing to the configuration server.</p>
+
+<example>
+unix&gt; bin/httpd.sh -config-server http://config:8081/config \
+                   -conf config:conf/resin.conf \
+                   -server a
+</example>
+
+</s1>
+
+<s1 title="resin:type">
+
+<p>resin:type is now allowed in more places in the configuration file,
+in particular in the openssl &lt;password&gt; element.</p>
+
+</s1>
+
+<s1 title="Connection configuration">
+
+<p>The &lt;database&gt; configuration can now configure the created
+connections with &lt;connection&gt;.  Currently the &lt;transaction-isolation&gt;,
+&lt;read-only&gt;, and &lt;catalog&gt; are configurable.</p>
+
+<example>
+&lt;database jndi-name="jdbc/example"&gt;
+  &lt;driver&gt;
+    ...
+  &lt;/driver&gt;
+  &lt;connection&gt;
+    &lt;transaction-isolation&gt;read-committed&lt;/transaction-isolation&gt;
+  &lt;/connection&gt;
+&lt;/database&gt;
+</example>
+
+</s1>
+
+<s1 title="Load balancer cluster client control">
+
+<p>Individual load balancer clients can now be disabled through JMX.</p>
+
+<p>Given the following cluster</p>
+
+<example>
+&lt;cluster-definition id="a"&gt;
+  &lt;srun host="localhost" port="6802"/&gt;
+&lt;/cluster-definition&gt;
+</example>
+
+<p>The name of a cluster client is:
+</p>
+<example>
+resin:Server=Default,
+      type=ClusterClient,
+      Cluster=a,
+      host=localhost,
+      port=6802
+</example>
+
+<p>The MBean interface is in com.caucho.server.cluster.mbean.ClusterClientMBean.  The appropriate methods are <code>enable()</code>,
+<code>disable()</code>, and <code>isActive()</code>.</p>
+
+
+</s1>
+
+<s1 title="503 failover with HmuxLoadBalanceServlet">
+
+<p>The 503 failover has been improved with HmuxLoadBalanceServlet.</p>
+
+<p>In addition, the web-app busy/inactive reporting has changed.  Now,
+you can disable a single backend web-app
+and the load balancer will failover the web-app requests
+to the following server.</p>
+
+</s1>
+
+<s1 title="driver-type">
+
+<p>The &lt;database&gt; driver now has optional driver-type.</p>
+
+<example>
+&lt;database&gt;
+  &lt;jndi-name&gt;test&lt;/jndi-name&gt;
+  &lt;driver type="test.jdbc.TestDriver"
+          driver-type="ConnectionPoolDataSource"&gt;
+    &lt;url&gt;jdbc:test:foo&lt;/url&gt;
+  &lt;/driver&gt;
+ &lt;/database&gt;
+</example>
+
+</s1>
+
+<s1 title="server.rootDir">
+
+<p>Added server.rootDir to the tree-loader for shared jars.</p>
+
+</s1>
+
+<s1 title="access-log path-format">
+
+<p>The &lt;access-log&gt; can have a path-format attribute which
+specifies the path by date.  Unlike the archive-path, the log is
+created the formatted name directly.</p>
+
+</s1>
+
+<s1 title="archive-path">
+
+<p>Added archive-path to web-app.</p>
+
+</s1>
+
+<s1 title="host-alias-regexp">
+
+<p>Added regexp support for host aliases.</p>
+
+</s1>
+
+<s1 title="IoC configuration for JMS">
+
+<p>Resin now has two IoC resources for JMS, a listener and a
+message sender.</p>
+
+<p>ListenerResource provides the capabilities of EJB message beans, without
+the complexity of EJB.</p>
+
+<example>
+&lt;resource type="com.caucho.jms.resource.ListenerResource"&gt;
+  &lt;init&gt;
+     &lt;connection-factory&gt;\${jmsFactory}&lt;/connection-factory&gt;
+
+     &lt;destination&gt;\${queue}&lt;/destination&gt;
+
+     &lt;listener type="example.MyListener"/&gt;
+ &lt;/init&gt;
+&lt;/resource&gt;
+</example>
+
+</s1>
+
+<s1 title="var for resource/bean">
+
+<p>Resin's IoC configuration tag, &lt;resource&gt; can now accept
+a "var" attribute, storing the resource in EL for later use.</p>
+
+<example>
+&lt;resource var="child"
+           type="example.MyChild"&gt;
+&lt;/resource&gt;
+
+&lt;resource jndi-name="bean"
+           type="example.MyBean"&gt;
+  &lt;init&gt;
+    &lt;child&gt;\${child}&lt;/child&gt;
+  &lt;/init&gt;
+&lt;/resource&gt;
+</example>
+
+</s1>
+
+<s1 title="resin EL variables">
+
+<p>New configuration EL variables:</p>
+
+<table>
+<tr><td>$\{resin.home}</td><td>Same as $\{resinHome}
+</td></tr><tr><td>$\{resin.rootDir}</td><td>Same as $\{serverRoot}
+</td></tr><tr><td>$\{resin.resinProfessional}</td><td>Same as $\{isResinProfessional}
+</td></tr></table>
+
+</s1>
+
+<s1 title="Refactoring">
+
+<p>The deploy and config code has been refactored.  Neither change should
+be user-visible.</p>
+
+</s1>
+
+<s1 title="Special Thanks">
+
+<p>Thanks to Mircea Crisan for tracking down the JdbcMessage
+init order issue with Postgres.</p>
+
+<p>Thanks to John Didion for finding the missing
+Hessian deserializer cache.</p>
+
+<p>Thanks to Andy Nahapetian for finding and fixing
+the Hessian reference serialization bug.</p>
+
+</s1>
+
+</body>
+</document>

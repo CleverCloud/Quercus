@@ -1,0 +1,9 @@
+<ivy-module>
+  <info organisation="com.caucho" module="resin-netbeans-plugin" revision="@VERSION@">
+    <license name="GPL"/>
+  </info>
+
+  <dependencies>
+    <dependency org="com.caucho" name="resin" rev="@VERSION@"/>
+  </dependencies>
+</ivy-module>

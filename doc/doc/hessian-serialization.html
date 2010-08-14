@@ -1,0 +1,1629 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en"><head><title>Hessian 2.0 Serialization Protocol</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="Hessian 2.0 Serialization Protocol">
+<meta name="generator" content="xml2rfc v1.32 (http://xml.resource.org/)">
+<style type='text/css'><!--
+        body {
+                font-family: verdana, charcoal, helvetica, arial, sans-serif;
+                font-size: small; color: #000; background-color: #FFF;
+                margin: 2em;
+        }
+        h1, h2, h3, h4, h5, h6 {
+                font-family: helvetica, monaco, "MS Sans Serif", arial, sans-serif;
+                font-weight: bold; font-style: normal;
+        }
+        h1 { color: #900; background-color: transparent; text-align: right; }
+        h3 { color: #333; background-color: transparent; }
+
+        td.RFCbug {
+                font-size: x-small; text-decoration: none;
+                width: 30px; height: 30px; padding-top: 2px;
+                text-align: justify; vertical-align: middle;
+                background-color: #000;
+        }
+        td.RFCbug span.RFC {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: bold; color: #666;
+        }
+        td.RFCbug span.hotText {
+                font-family: charcoal, monaco, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: normal; text-align: center; color: #FFF;
+        }
+
+        table.TOCbug { width: 30px; height: 15px; }
+        td.TOCbug {
+                text-align: center; width: 30px; height: 15px;
+                color: #FFF; background-color: #900;
+        }
+        td.TOCbug a {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, sans-serif;
+                font-weight: bold; font-size: x-small; text-decoration: none;
+                color: #FFF; background-color: transparent;
+        }
+
+        td.header {
+                font-family: arial, helvetica, sans-serif; font-size: x-small;
+                vertical-align: top; width: 33%;
+                color: #FFF; background-color: #666;
+        }
+        td.author { font-weight: bold; font-size: x-small; margin-left: 4em; }
+        td.author-text { font-size: x-small; }
+
+        /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+        a.info {
+                /* This is the key. */
+                position: relative;
+                z-index: 24;
+                text-decoration: none;
+        }
+        a.info:hover {
+                z-index: 25;
+                color: #FFF; background-color: #900;
+        }
+        a.info span { display: none; }
+        a.info:hover span.info {
+                /* The span will display just on :hover state. */
+                display: block;
+                position: absolute;
+                font-size: smaller;
+                top: 2em; left: -5em; width: 15em;
+                padding: 2px; border: 1px solid #333;
+                color: #900; background-color: #EEE;
+                text-align: left;
+        }
+
+        a { font-weight: bold; }
+        a:link    { color: #900; background-color: transparent; }
+        a:visited { color: #633; background-color: transparent; }
+        a:active  { color: #633; background-color: transparent; }
+
+        p { margin-left: 2em; margin-right: 2em; }
+        p.copyright { font-size: x-small; }
+        p.toc { font-size: small; font-weight: bold; margin-left: 3em; }
+        table.toc { margin: 0 0 0 3em; padding: 0; border: 0; vertical-align: text-top; }
+        td.toc { font-size: small; font-weight: bold; vertical-align: text-top; }
+
+        ol.text { margin-left: 2em; margin-right: 2em; }
+        ul.text { margin-left: 2em; margin-right: 2em; }
+        li      { margin-left: 3em; }
+
+        /* RFC-2629 <spanx>s and <artwork>s. */
+        em     { font-style: italic; }
+        strong { font-weight: bold; }
+        dfn    { font-weight: bold; font-style: normal; }
+        cite   { font-weight: normal; font-style: normal; }
+        tt     { color: #036; }
+        tt, pre, pre dfn, pre em, pre cite, pre span {
+                font-family: "Courier New", Courier, monospace; font-size: small;
+        }
+        pre {
+                text-align: left; padding: 4px;
+                color: #000; background-color: #CCC;
+        }
+        pre dfn  { color: #900; }
+        pre em   { color: #66F; background-color: #FFC; font-weight: normal; }
+        pre .key { color: #33C; font-weight: bold; }
+        pre .id  { color: #900; }
+        pre .str { color: #000; background-color: #CFF; }
+        pre .val { color: #066; }
+        pre .rep { color: #909; }
+        pre .oth { color: #000; background-color: #FCF; }
+        pre .err { background-color: #FCC; }
+
+        /* RFC-2629 <texttable>s. */
+        table.all, table.full, table.headers, table.none {
+                font-size: small; text-align: center; border-width: 2px;
+                vertical-align: top; border-collapse: collapse;
+        }
+        table.all, table.full { border-style: solid; border-color: black; }
+        table.headers, table.none { border-style: none; }
+        th {
+                font-weight: bold; border-color: black;
+                border-width: 2px 2px 3px 2px;
+        }
+        table.all th, table.full th { border-style: solid; }
+        table.headers th { border-style: none none solid none; }
+        table.none th { border-style: none; }
+        table.all td {
+                border-style: solid; border-color: #333;
+                border-width: 1px 2px;
+        }
+        table.full td, table.headers td, table.none td { border-style: none; }
+
+        hr { height: 1px; }
+        hr.insert {
+                width: 80%; border-style: none; border-width: 0;
+                color: #CCC; background-color: #CCC;
+        }
+--></style>
+</head>
+<body>
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<table summary="layout" width="66%" border="0" cellpadding="0" cellspacing="0"><tr><td><table summary="layout" width="100%" border="0" cellpadding="2" cellspacing="1">
+<tr><td class="header">Network Working Group</td><td class="header">S. Ferguson</td></tr>
+<tr><td class="header">Internet-Draft</td><td class="header">E. Ong</td></tr>
+<tr><td class="header">Intended status: Standards Track</td><td class="header">Caucho Technology Inc.</td></tr>
+<tr><td class="header">Expires: February 27, 2008</td><td class="header">August 26, 2007</td></tr>
+</table></td></tr></table>
+<h1><br />Hessian 2.0 Serialization Protocol<br />hessian.txt</h1>
+
+<h3>Status of this Memo</h3>
+<p>
+By submitting this Internet-Draft,
+each author represents that any applicable patent or other IPR claims of which
+he or she is aware have been or will be disclosed,
+and any of which he or she becomes aware will be disclosed,
+in accordance with Section&nbsp;6 of BCP&nbsp;79.</p>
+<p>
+Internet-Drafts are working documents of the Internet Engineering
+Task Force (IETF), its areas, and its working groups.
+Note that other groups may also distribute working documents as
+Internet-Drafts.</p>
+<p>
+Internet-Drafts are draft documents valid for a maximum of six months
+and may be updated, replaced, or obsoleted by other documents at any time.
+It is inappropriate to use Internet-Drafts as reference material or to cite
+them other than as &ldquo;work in progress.&rdquo;</p>
+<p>
+The list of current Internet-Drafts can be accessed at
+<a href='http://www.ietf.org/ietf/1id-abstracts.txt'>http://www.ietf.org/ietf/1id-abstracts.txt</a>.</p>
+<p>
+The list of Internet-Draft Shadow Directories can be accessed at
+<a href='http://www.ietf.org/shadow.html'>http://www.ietf.org/shadow.html</a>.</p>
+<p>
+This Internet-Draft will expire on February 27, 2008.</p>
+
+<h3>Copyright Notice</h3>
+<p>
+Copyright &copy; The IETF Trust (2007).</p>
+<a name="toc"></a><br /><hr />
+<h3>Table of Contents</h3>
+<p class="toc">
+<a href="#anchor1">1.</a>&nbsp;
+Introduction<br />
+<a href="#anchor2">2.</a>&nbsp;
+Design Goals<br />
+<a href="#anchor3">3.</a>&nbsp;
+Hessian Grammar<br />
+<a href="#anchor4">4.</a>&nbsp;
+Serialization<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##binary">4.1.</a>&nbsp;
+binary data<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor5">4.1.1.</a>&nbsp;
+Compact: short binary<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor6">4.1.2.</a>&nbsp;
+Binary Examples<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##boolean">4.2.</a>&nbsp;
+boolean<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor7">4.2.1.</a>&nbsp;
+Boolean Examples<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##date">4.3.</a>&nbsp;
+date<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor8">4.3.1.</a>&nbsp;
+Date Examples<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##double">4.4.</a>&nbsp;
+double<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor9">4.4.1.</a>&nbsp;
+Compact: double zero<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor10">4.4.2.</a>&nbsp;
+Compact: double one<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor11">4.4.3.</a>&nbsp;
+Compact: double octet<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor12">4.4.4.</a>&nbsp;
+Compact: double short<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor13">4.4.5.</a>&nbsp;
+Compact: double float<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor14">4.4.6.</a>&nbsp;
+Double Examples<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##int">4.5.</a>&nbsp;
+int<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor15">4.5.1.</a>&nbsp;
+Compact: single octet integers<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor16">4.5.2.</a>&nbsp;
+Compact: two octet integers<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor17">4.5.3.</a>&nbsp;
+Compact: three octet integers<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor18">4.5.4.</a>&nbsp;
+Integer Examples<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##list">4.6.</a>&nbsp;
+list<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor19">4.6.1.</a>&nbsp;
+Compact: repeated list<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor20">4.6.2.</a>&nbsp;
+List examples<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##long">4.7.</a>&nbsp;
+long<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor21">4.7.1.</a>&nbsp;
+Compact: single octet longs<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor22">4.7.2.</a>&nbsp;
+Compact: two octet longs<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor23">4.7.3.</a>&nbsp;
+Compact: three octet longs<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor24">4.7.4.</a>&nbsp;
+Compact: four octet longs<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor25">4.7.5.</a>&nbsp;
+Long Examples<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##map">4.8.</a>&nbsp;
+map<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor26">4.8.1.</a>&nbsp;
+Map examples<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##null">4.9.</a>&nbsp;
+null<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##object">4.10.</a>&nbsp;
+object<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor27">4.10.1.</a>&nbsp;
+Compact: class definition<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor28">4.10.2.</a>&nbsp;
+Compact: object instantiation<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor29">4.10.3.</a>&nbsp;
+Object examples<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##ref">4.11.</a>&nbsp;
+ref<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor30">4.11.1.</a>&nbsp;
+Compact: two octet reference<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor31">4.11.2.</a>&nbsp;
+Compact: three octet reference<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor32">4.11.3.</a>&nbsp;
+Ref Examples<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##string">4.12.</a>&nbsp;
+string<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor33">4.12.1.</a>&nbsp;
+Compact: short strings<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor34">4.12.2.</a>&nbsp;
+String Examples<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##type">4.13.</a>&nbsp;
+type<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor35">4.14.</a>&nbsp;
+Compact: type references<br />
+<a href="#anchor36">5.</a>&nbsp;
+Reference Maps<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##ref-map">5.1.</a>&nbsp;
+value reference<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##class-map">5.2.</a>&nbsp;
+class reference<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="##type-map">5.3.</a>&nbsp;
+type reference<br />
+<a href="#anchor37">6.</a>&nbsp;
+Bytecode map<br />
+<a href="#rfc.authors">&#167;</a>&nbsp;
+Authors' Addresses<br />
+<a href="#rfc.copyright">&#167;</a>&nbsp;
+Intellectual Property and Copyright Statements<br />
+</p>
+<br clear="all" />
+
+<a name="anchor1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1"></a><h3>1.&nbsp;
+Introduction</h3>
+
+<p>
+        Hessian is a dynamically-typed, binary serialization and Web
+Services protocol designed for object-oriented transmission.
+      
+</p>
+<a name="anchor2"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2"></a><h3>2.&nbsp;
+Design Goals</h3>
+
+<p>
+        Hessian is dynamically-typed, compact, and portable across languages.
+      
+</p>
+<p>
+      The Hessian protocol has the following design goals:
+      
+</p>
+<ul class="text">
+<li>
+          It must self-describe the serialized types, i.e. not require
+external schema or interface definitions.
+        
+</li>
+<li>It must be language-independent, including supporting
+scripting languages.
+</li>
+<li>It must be readable or writable in a single pass.
+</li>
+<li>It must be as compact as possible.
+</li>
+<li>
+          It must be simple so it can be effectively tested and implemented.
+        
+</li>
+<li>It must be as fast as possible.
+</li>
+<li>It must support Unicode strings.
+</li>
+<li>
+          It must support 8-bit binary data without escaping or using 
+          attachments.
+        
+</li>
+<li>
+          It must support encryption, compression, signature, and
+          transaction context envelopes.
+        
+</li>
+</ul>
+<a name="anchor3"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3"></a><h3>3.&nbsp;
+Hessian Grammar</h3>
+<br /><hr class="insert" />
+<a name="serialization_grammar"></a>
+
+<p>Serialization Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+           # starting production
+top        ::= value
+
+           # 8-bit binary data split into 64k chunks
+binary     ::= 'b' b1 b0 &lt;binary-data&gt; binary # non-final chunk
+           ::= 'B' b1 b0 &lt;binary-data&gt;        # final chunk
+           ::= [x20-x2f] &lt;binary-data&gt;        # binary data of
+                                                 #  length 0-15
+
+           # boolean true/false
+boolean    ::= 'T'
+           ::= 'F'
+
+           # definition for an object (compact map)
+class-def  ::= 'O' type int string*
+
+           # time in UTC encoded as 64-bit long milliseconds since
+           #  epoch
+date       ::= 'd' b7 b6 b5 b4 b3 b2 b1 b0
+
+           # 64-bit IEEE double
+double     ::= 'D' b7 b6 b5 b4 b3 b2 b1 b0
+           ::= x67                   # 0.0
+           ::= x68                   # 1.0
+           ::= x69 b0                # byte cast to double
+                                     #  (-128.0 to 127.0)
+           ::= x6a b1 b0             # short cast to double
+           ::= x6b b3 b2 b1 b0       # 32-bit float cast to double
+
+           # 32-bit signed integer
+int        ::= 'I' b3 b2 b1 b0
+           ::= [x80-xbf]             # -x10 to x3f
+           ::= [xc0-xcf] b0          # -x800 to x7ff
+           ::= [xd0-xd7] b1 b0       # -x40000 to x3ffff
+
+           # list/vector length
+length     ::= 'l' b3 b2 b1 b0
+           ::= x6e int
+
+           # list/vector
+list       ::= 'V' type? length? value* 'z'
+           ::= 'v' int int value*    # type-ref, length
+
+           # 64-bit signed long integer
+long       ::= 'L' b7 b6 b5 b4 b3 b2 b1 b0
+           ::= [xd8-xef]             # -x08 to x0f
+           ::= [xf0-xff] b0          # -x800 to x7ff
+           ::= [x38-x3f] b1 b0       # -x40000 to x3ffff
+           ::= x77 b3 b2 b1 b0       # 32-bit integer cast to long
+
+           # map/object
+map        ::= 'M' type? (value value)* 'z'  # key, value map pairs
+
+           # null value
+null       ::= 'N'
+
+           # Object instance
+object     ::= 'o' int value*
+
+           # value reference (e.g. circular trees and graphs)
+ref        ::= 'R' b3 b2 b1 b0    # reference to nth map/list/object in
+                                  #  stream
+           ::= x4a b0             # reference to 1-255th map/list/object
+           ::= x4b b1 b0          # reference to 1-65535th map/list/object
+
+           # UTF-8 encoded character string split into 64k chunks
+string     ::= 's' b1 b0 &lt;utf8-data&gt; string  # non-final chunk
+           ::= 'S' b1 b0 &lt;utf8-data&gt;         # string of length
+                                             #  0-65535
+           ::= [x00-x1f] &lt;utf8-data&gt;         # string of length
+                                             #  0-31
+
+           # map/list types for OO languages
+type       ::= 't' b1 b0 &lt;type-string&gt;         # type name
+           ::= x75 int                         # type reference
+
+           # main production
+value      ::= null
+           ::= binary
+           ::= boolean
+           ::= date
+           ::= double
+           ::= int
+           ::= list
+           ::= long
+           ::= map
+           ::= class-def value
+           ::= ref
+           ::= string
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;1&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="anchor4"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4"></a><h3>4.&nbsp;
+Serialization</h3>
+
+<p>Hessian's object serialization has 8 primitive types:
+</p>
+<ol class="text">
+<li>raw <a class='info' href='##binary'>binary<span> (</span><span class='info'>binary data</span><span>)</span></a> data
+</li>
+<li><a class='info' href='##boolean'>boolean<span> (</span><span class='info'>boolean</span><span>)</span></a>
+</li>
+<li>64-bit <a class='info' href='##date'>date<span> (</span><span class='info'>date</span><span>)</span></a>
+</li>
+<li>64-bit <a class='info' href='##double'>double<span> (</span><span class='info'>double</span><span>)</span></a>
+</li>
+<li>32-bit <a class='info' href='##int'>int<span> (</span><span class='info'>int</span><span>)</span></a>
+</li>
+<li>64-bit <a class='info' href='##long'>long<span> (</span><span class='info'>long</span><span>)</span></a>
+</li>
+<li><a class='info' href='##null'>null<span> (</span><span class='info'>null</span><span>)</span></a>
+</li>
+<li>UTF8-encoded <a class='info' href='##string'>string<span> (</span><span class='info'>string</span><span>)</span></a>
+</li>
+</ol>
+<p>It has 3 recursive types:
+</p>
+<ol class="text">
+<li><a class='info' href='##list'>list<span> (</span><span class='info'>list</span><span>)</span></a> for lists and arrays
+</li>
+<li><a class='info' href='##map'>map<span> (</span><span class='info'>map</span><span>)</span></a> for maps and dictionaries
+</li>
+<li><a class='info' href='##object'>object<span> (</span><span class='info'>object</span><span>)</span></a> for objects
+</li>
+</ol>
+<p>Finally, it has one special contruct:
+</p>
+<ol class="text">
+<li>
+          <a class='info' href='##ref'>ref<span> (</span><span class='info'>ref</span><span>)</span></a> for shared and circular object 
+          references.
+        
+</li>
+</ol>
+<p>Hessian 2.0 has 3 internal reference maps:
+</p>
+<ol class="text">
+<li>An <a class='info' href='##ref-map'>object/list reference map<span> (</span><span class='info'>value reference</span><span>)</span></a>.
+</li>
+<li>An <a class='info' href='##class-map'>class definition reference map<span> (</span><span class='info'>class reference</span><span>)</span></a>.
+</li>
+<li>A <a class='info' href='##type-map'>type (class name) reference map<span> (</span><span class='info'>type reference</span><span>)</span></a>.
+</li>
+</ol>
+<a name="#binary"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.1"></a><h3>4.1.&nbsp;
+binary data</h3>
+<br /><hr class="insert" />
+<a name="binary_grammar"></a>
+
+<p>Binary Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+binary ::= b b1 b0 &lt;binary-data&gt; binary
+       ::= B b1 b0 &lt;binary-data&gt;
+       ::= [x20-x2f] &lt;binary-data&gt;
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;2&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>
+          Binary data is encoded in chunks.  The octet x42 ('B') encodes
+          the final chunk and x62 ('b') represents any non-final chunk.
+          Each chunk has a 16-bit length value.
+        
+</p>
+<p>
+          len = 256 * b1 + b0
+        
+</p>
+<a name="anchor5"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.1.1"></a><h3>4.1.1.&nbsp;
+Compact: short binary</h3>
+
+<p>
+            Binary data with length less than 15 may be encoded by a single
+            octet length [x20-x2f].
+          
+</p>
+<p>
+            len = code - 0x20
+          
+</p>
+<a name="anchor6"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.1.2"></a><h3>4.1.2.&nbsp;
+Binary Examples</h3>
+<br /><hr class="insert" />
+<a name="binary_examples"></a>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+x20               # zero-length binary data
+
+x23 x01 x02 x03   # 3 octet data
+
+B x10 x00 ....    # 4k final chunk of data
+
+b x04 x00 ....    # 1k non-final chunk of data
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;3&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="#boolean"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.2"></a><h3>4.2.&nbsp;
+boolean</h3>
+<br /><hr class="insert" />
+<a name="boolean_grammar"></a>
+
+<p>Boolean Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+boolean ::= T
+        ::= F
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;4&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>The octet 'F' represents false and the octet T represents true.
+</p>
+<a name="anchor7"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.2.1"></a><h3>4.2.1.&nbsp;
+Boolean Examples</h3>
+<br /><hr class="insert" />
+<a name="boolean_examples"></a>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+T   # true
+F   # false
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;5&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="#date"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.3"></a><h3>4.3.&nbsp;
+date</h3>
+<br /><hr class="insert" />
+<a name="date_grammar"></a>
+
+<p>Date Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+date ::= d b7 b6 b5 b4 b3 b2 b1 b0
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;6&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>
+          Date represented by a 64-bit long of milliseconds since the
+          Jan 1 1970 00:00H, UTC.
+        
+</p>
+<a name="anchor8"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.3.1"></a><h3>4.3.1.&nbsp;
+Date Examples</h3>
+<br /><hr class="insert" />
+<a name="date_examples"></a>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+d x00 x00 x00 xd0 x4b x92 x84 xb8   # 2:51:31 May 8, 1998 UTC
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;7&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="#double"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.4"></a><h3>4.4.&nbsp;
+double</h3>
+<br /><hr class="insert" />
+<a name="double_grammar"></a>
+
+<p>Double Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+double ::= D b7 b6 b5 b4 b3 b2 b1 b0
+       ::= x67
+       ::= x68
+       ::= x69 b0
+       ::= x6a b1 b0
+       ::= x6b b3 b2 b1 b0
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;8&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>A 64-bit IEEE floating pointer number.
+</p>
+<a name="anchor9"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.4.1"></a><h3>4.4.1.&nbsp;
+Compact: double zero</h3>
+
+<p>The double 0.0 can be represented by the octet x67
+</p>
+<a name="anchor10"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.4.2"></a><h3>4.4.2.&nbsp;
+Compact: double one</h3>
+
+<p>The double 1.0 can be represented by the octet x68
+</p>
+<a name="anchor11"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.4.3"></a><h3>4.4.3.&nbsp;
+Compact: double octet</h3>
+
+<p>
+            Doubles between -128.0 and 127.0 with no fractional component
+            can be represented in two octets by casting the byte value to a 
+            double.
+          
+</p>
+<p>
+            value = (double) b0
+          
+</p>
+<a name="anchor12"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.4.4"></a><h3>4.4.4.&nbsp;
+Compact: double short</h3>
+
+<p>
+            Doubles between -32768.0 and 32767.0 with no fractional component
+            can be represented in three octets by casting the short value to a 
+            double.
+          
+</p>
+<p>
+            value = (double) (256 * b1 + b0)
+          
+</p>
+<a name="anchor13"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.4.5"></a><h3>4.4.5.&nbsp;
+Compact: double float</h3>
+
+<p>
+            Doubles which are equivalent to their 32-bit float representation
+            can be represented as the 4-octet float and then cast to double.
+          
+</p>
+<a name="anchor14"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.4.6"></a><h3>4.4.6.&nbsp;
+Double Examples</h3>
+<br /><hr class="insert" />
+<a name="double_examples"></a>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+x67          # 0.0
+x68          # 1.0
+
+x69 x00      # 0.0
+x69 x80      # -128.0
+x69 xff      # 127.0
+
+x70 x00 x00  # 0.0
+x70 x80 x00  # -32768.0
+x70 xff xff  # 32767.0
+
+D x40 x28 x80 x00 x00 x00 x00 x00  # 12.25
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;9&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="#int"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.5"></a><h3>4.5.&nbsp;
+int</h3>
+<br /><hr class="insert" />
+<a name="integer_grammar"></a>
+
+<p>Integer Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+int ::= 'I' b3 b2 b1 b0
+    ::= [x80-xbf]
+    ::= [xc0-xcf] b0
+    ::= [xd0-xd7] b1 b0
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;10&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>
+          A 32-bit signed integer.  An integer is represented by the
+          octet x49 ('I') followed by the 4 octets of the integer
+          in big-endian order.
+        
+</p>
+<p>
+          value = (b3 &lt;&lt; 24) + (b2 &lt;&lt; 16) + (b1 &lt;&lt; 8) + b0;
+        
+</p>
+<a name="anchor15"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.5.1"></a><h3>4.5.1.&nbsp;
+Compact: single octet integers</h3>
+
+<p>
+            Integers between -16 and 47 can be encoded by a single octet in the
+            range x80 to xbf.
+          
+</p>
+<p>
+            value = code - 0x90
+          
+</p>
+<a name="anchor16"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.5.2"></a><h3>4.5.2.&nbsp;
+Compact: two octet integers</h3>
+
+<p>
+            Integers between -2048 and 2047 can be encoded in two octets with
+            the leading byte in the range xc0 to xcf.
+          
+</p>
+<p>
+            value = ((code - 0xc8) &lt;&lt; 8) + b0;
+          
+</p>
+<a name="anchor17"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.5.3"></a><h3>4.5.3.&nbsp;
+Compact: three octet integers</h3>
+
+<p>
+            Integers between -262144 and 262143 can be encoded in three bytes 
+            with the leading byte in the range xd0 to xd7.
+          
+</p>
+<p>
+            value = ((code - 0xd4) &lt;&lt; 16) + (b1 &lt;&lt; 8) + b0;
+          
+</p>
+<a name="anchor18"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.5.4"></a><h3>4.5.4.&nbsp;
+Integer Examples</h3>
+<br /><hr class="insert" />
+<a name="integer_examples"></a>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+x90                # 0
+x80                # -16
+xbf                # 47
+
+xc8 x00            # 0
+xc0 x00            # -2048
+xc7 x00            # -256
+xcf xff            # 2047
+
+xd4 x00 x00        # 0
+xd0 x00 x00        # -262144
+xd7 xff xff        # 262143
+
+I x00 x00 x00 x00  # 0
+I x00 x00 x01 x2c  # 300
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;11&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="#list"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.6"></a><h3>4.6.&nbsp;
+list</h3>
+<br /><hr class="insert" />
+<a name="list_grammar"></a>
+
+<p>List Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+list ::= V type? length? value* z
+     ::= v int int value*
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;12&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>
+          An ordered list, like an array.  All lists have a type string, a 
+          length, a list of values, and a trailing octet x7a ('z').
+          The type string may be an arbitrary UTF-8 string understood by
+          the service. The length may be omitted to indicate that
+          the list is variable length.
+        
+</p>
+<p>
+          Each list item is added to the reference list to handle shared and 
+          circular elements.  See the ref element.
+        
+</p>
+<p>
+          Any parser expecting a list must also accept a null or a shared ref.
+        
+</p>
+<p>
+          The valid values of type are not specified in this document and 
+          may depend on the specific application.  For example, a server 
+          implemented in a language with static typing which exposes an Hessian 
+          interface can use the type information to instantiate the specific 
+          array type.  On the other hand, a server written in a dynamicly-typed 
+          language would likely ignore the contents of type entirely and create 
+          a generic array.
+        
+</p>
+<a name="anchor19"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.6.1"></a><h3>4.6.1.&nbsp;
+Compact: repeated list</h3>
+
+<p>
+            Hessian 2.0 allows a compact form of the list for successive lists 
+            of the same type where the length is known beforehand.  The type 
+            and length are encoded by integers, where the type is a reference 
+            to an earlier specified type.
+          
+</p>
+<a name="anchor20"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.6.2"></a><h3>4.6.2.&nbsp;
+List examples</h3>
+<br /><hr class="insert" />
+<a name="list_example_1"></a>
+
+<p>
+              Serialization of a typed int array: int[] = {0, 1}
+            
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+V
+  t x00 x04 [int     # encoding of int[] type
+  x6e x02            # length = 2
+  x90                # integer 0
+  x91                # integer 1
+  z
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;13&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+<br /><hr class="insert" />
+<a name="list_example_2"></a>
+
+<p>Anonymous variable-length list = {0, "foobar"}
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+V
+  t x00 x04 [int     # encoding of int[] type
+  x6e x02            # length = 2
+  x90                # integer 0
+  x91                # integer 1
+  z
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;14&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+<br /><hr class="insert" />
+<a name="list_example_3"></a>
+
+<p>Repeated list type
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+V
+  t x00 x04 [int   # type for int[] (save as type #1)
+  x63 x02          # length 2
+  x90              # integer 0
+  x91              # integer 1
+  z
+
+v
+  x91              # type reference to int[] (integer #1)
+  x92              # length 2
+  x92              # integer 2
+  x93              # integer 3
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;15&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="#long"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.7"></a><h3>4.7.&nbsp;
+long</h3>
+<br /><hr class="insert" />
+<a name="long_grammar"></a>
+
+<p>Long Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+long ::= L b7 b6 b5 b4 b3 b2 b1 b0
+     ::= [xd8-xef]
+     ::= [xf0-xff] b0
+     ::= [x38-x3f] b1 b0
+     ::= x77 b3 b2 b1 b0
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;16&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>
+          A 64-bit signed integer.  An long is represented by the
+          octet x4c ('L' )
+          followed by the 8-bytes of the integer in big-endian order.
+        
+</p>
+<a name="anchor21"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.7.1"></a><h3>4.7.1.&nbsp;
+Compact: single octet longs</h3>
+
+<p>
+            Longs between -8 and 15 are represented by a single octet in the
+            range xd8 to xef.
+          
+</p>
+<p>
+             value = (code - 0xe0)
+          
+</p>
+<a name="anchor22"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.7.2"></a><h3>4.7.2.&nbsp;
+Compact: two octet longs</h3>
+
+<p>
+            Longs between -2048 and 2047 are encoded in two octets with
+            the leading byte in the range xf0 to xff.
+          
+</p>
+<p>
+             value = ((code - 0xf8) &lt;&lt; 8) + b0
+          
+</p>
+<a name="anchor23"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.7.3"></a><h3>4.7.3.&nbsp;
+Compact: three octet longs</h3>
+
+<p>
+            Longs between -262144 and 262143 are encoded in three octets with
+            the leading byte in the range x38 to x3f.
+          
+</p>
+<p>
+             value = ((code - 0x3c) &lt;&lt; 16) + (b1 &lt;&lt; 8) + b0
+          
+</p>
+<a name="anchor24"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.7.4"></a><h3>4.7.4.&nbsp;
+Compact: four octet longs</h3>
+
+<p>
+            Longs between which fit into 32-bits are encoded in five octets with
+            the leading byte x77.
+          
+</p>
+<p>
+             value = (b3 &lt;&lt; 24) + (b2 &lt;&lt; 16) + (b1 &lt;&lt; 8) + b0
+          
+</p>
+<a name="anchor25"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.7.5"></a><h3>4.7.5.&nbsp;
+Long Examples</h3>
+<br /><hr class="insert" />
+<a name="long_examples"></a>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+xe0                  # 0
+xd8                  # -8
+xef                  # 15
+
+xf8 x00              # 0
+xf0 x00              # -2048
+xf7 x00              # -256
+xff xff              # 2047
+
+x3c x00 x00          # 0
+x38 x00 x00          # -262144
+x3f xff xff          # 262143
+
+x77 x00 x00 x00 x00  # 0
+x77 x00 x00 x01 x2c  # 300
+
+L x00 x00 x00 x00 x00 x00 x01 x2c  # 300
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;17&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="#map"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.8"></a><h3>4.8.&nbsp;
+map</h3>
+<br /><hr class="insert" />
+<a name="map_grammar"></a>
+
+<p>Map Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+map        ::= M type? (value value)* z
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;18&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>
+          Represents serialized maps and can represent objects.
+          The type element describes the type of the map.
+        
+</p>
+<p>
+          The type may be empty, i.e. a zero length.  The parser is responsible 
+          for choosing a type if one is not specified.  For objects, 
+          unrecognized keys will be ignored.
+        
+</p>
+<p>
+          Each map is added to the reference list.  Any time the parser expects 
+          a map, it must also be able to support a null or a ref.
+        
+</p>
+<p>The type is chosen by the service.
+</p>
+<a name="anchor26"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.8.1"></a><h3>4.8.1.&nbsp;
+Map examples</h3>
+<br /><hr class="insert" />
+<a name="map_example_1"></a>
+
+<p>A sparse array
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+map = new HashMap();
+map.put(new Integer(1), "fee");
+map.put(new Integer(16), "fie");
+map.put(new Integer(256), "foe");
+
+---
+
+M
+  x91       # 1
+  x03 fee   # "fee"
+
+  xa0       # 16
+  x03 fie   # "fie"
+
+  xb9 x00   # 256
+  x03 foe   # "foe"
+
+  z
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;19&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+<br /><hr class="insert" />
+<a name="map_example_2"></a>
+
+<p>Map Representation of a Java Object
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+public class Car implements Serializable {
+  String color = "aquamarine";
+  String model = "Beetle";
+  int mileage = 65536;
+}
+
+---
+M
+  t x00 x13 com.caucho.test.Car  # type
+
+  x05 color                # color field
+  x0a aquamarine
+
+  x05 model                # model field
+  x06 Beetle
+
+  x07 mileage              # mileage field
+  I x00 x01 x00 x00
+  z
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;20&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="#null"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.9"></a><h3>4.9.&nbsp;
+null</h3>
+<br /><hr class="insert" />
+<a name="null_grammar"></a>
+
+<p>Null Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+null ::= N
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;21&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>Null represents a null pointer.
+</p>
+<p>The octet 'N' represents the null value.
+</p>
+<a name="#object"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.10"></a><h3>4.10.&nbsp;
+object</h3>
+<br /><hr class="insert" />
+<a name="object_grammar"></a>
+
+<p>Object Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+object     ::= 'o' int value*
+
+class-def  ::= 'O' type int string*
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;22&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="anchor27"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.10.1"></a><h3>4.10.1.&nbsp;
+Compact: class definition</h3>
+
+<p>
+            Hessian 2.0 has a compact object form where the field names
+            are only serialized once.  Following objects only need to serialize
+            their values.
+          
+</p>
+<p>
+            The object definition includes a mandatory type string, the number 
+            of fields, and the field names.  The object definition is stored in 
+            the object definition map and will be referenced by object 
+            instances with an integer reference.
+          
+</p>
+<a name="anchor28"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.10.2"></a><h3>4.10.2.&nbsp;
+Compact: object instantiation</h3>
+
+<p>
+            Hessian 2.0 has a compact object form where the field names
+            are only serialized once.  Following objects only need to serialize
+            their values.
+          
+</p>
+<p>
+            The object instantiation creates a new object based on a previous
+            definition.  The integer value refers to the object definition.
+          
+</p>
+<a name="anchor29"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.10.3"></a><h3>4.10.3.&nbsp;
+Object examples</h3>
+<br /><hr class="insert" />
+<a name="object_example_1"></a>
+
+<p>Object serialization
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+class Car {
+  String color;
+  String model;
+}
+
+out.writeObject(new Car("red", "corvette"));
+out.writeObject(new Car("green", "civic"));
+
+---
+
+O                        # object definition (#0)
+  t x00 x0b example.Car  # type is example.Car
+  x92                    # two fields
+  x05 color              # color field name
+  x05 model              # model field name
+
+o
+  x90                    # object definition #0
+  x03 red                # color field value
+  x08 corvette           # model field value
+
+o
+  x90                    # object definition #0
+  x05 green              # color field value
+  x05 civic              # model field value
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;23&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+<br /><hr class="insert" />
+<a name="object_example_2"></a>
+
+<p>
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+enum Color {
+  RED,
+  GREEN,
+  BLUE,
+}
+
+out.writeObject(Color.RED);
+out.writeObject(Color.GREEN);
+out.writeObject(Color.BLUE);
+out.writeObject(Color.GREEN);
+
+---
+
+O                         # object definition #0
+  t x00 x0b example.Color # type is example.Color
+  x91                     # one field
+  x04 name                # enumeration field is "name"
+
+o                         # object #0
+  x90                     # object definition ref #0
+  x03 RED                 # RED value
+
+o                         # object #1
+  x90                     # object definition ref #0
+  x05 GREEN               # GREEN value
+
+o                         # object #2
+  x90                     # object definition ref #0
+  x04 BLUE                # BLUE value
+
+x4a x01                   # object ref #1, i.e. Color.GREEN
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;24&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="#ref"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.11"></a><h3>4.11.&nbsp;
+ref</h3>
+<br /><hr class="insert" />
+<a name="ref_grammar"></a>
+
+<p>Ref Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+ref ::= R b3 b2 b1 b0
+    ::= x4a b0
+    ::= x4b b1 b0
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;25&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>
+          An integer referring to a previous list, map, or object instance.
+          As each list, map or object is read from the input stream,
+          it is assigned the integer position in the stream, i.e. the first
+          list or map is '0', the next 
+          is '1', etc.  A later ref can then use the previous object.  Writers 
+          MAY generate refs.  Parsers MUST be able to 
+          recognize them.
+        
+</p>
+<p>
+          ref can refer to incompletely-read items.  For example, a circular 
+          linked-list will refer to the first link before the entire list has 
+          been read.
+        
+</p>
+<p>
+          A possible implementation would add each map, list, and object
+          to an array as it is read.  The ref will return the corresponding
+          value from the array.  To support circular structures, the
+          implementation would store the map, list or object immediately,
+          before filling in the contents.
+        
+</p>
+<p>
+          Each map or list is stored into an array as it is
+          parsed.  ref selects one of the stored objects.  The first
+          object is numbered '0'.
+        
+</p>
+<a name="anchor30"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.11.1"></a><h3>4.11.1.&nbsp;
+Compact: two octet reference</h3>
+
+<p>
+            References between 0 and 255 can be encoded by two octets
+          
+</p>
+<p>
+            value = b0
+          
+</p>
+<a name="anchor31"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.11.2"></a><h3>4.11.2.&nbsp;
+Compact: three octet reference</h3>
+
+<p>
+            References between 0 and 255 can be encoded in three octets
+          
+</p>
+<p>
+            value = (b1 &lt;&lt; 8) + b0
+          
+</p>
+<a name="anchor32"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.11.3"></a><h3>4.11.3.&nbsp;
+Ref Examples</h3>
+<br /><hr class="insert" />
+<a name="ref_examples"></a>
+
+<p>Circular list
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+list = new LinkedList();
+list.data = 1;
+list.tail = list;
+
+---
+O
+  x9a LinkedList
+  x92
+  x04 head
+  x04 tail
+
+o x90      # object stores ref #0
+  x91      # data = 1
+  x4b x00  # next field refers to itself, i.e. ref #0
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;26&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>
+          ref only refers to list, map and objects elements.
+          Strings and binary data, in particular, will only share references
+          if they're wrapped in a list or map.
+        
+</p>
+<a name="#string"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.12"></a><h3>4.12.&nbsp;
+string</h3>
+<br /><hr class="insert" />
+<a name="string_grammar"></a>
+
+<p>String Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+string ::= s b1 b0 &lt;utf8-data&gt; string
+       ::= S b1 b0 &lt;utf8-data&gt;
+       ::= [x00-x1f] &lt;utf8-data&gt;
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;27&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p> 
+          A 16-bit unicode character string encoded in UTF-8.  Strings are 
+          encoded in chunks. x53 ('S') represents the final chunk
+          and x73 ('s') represents any non-final chunk.  Each chunk
+          has a 16-bit length value.
+        
+</p>
+<p>
+          The length is the number of characters, which may be different than
+          the number of bytes.
+        
+</p>
+<p>String chunks may not split surrogate pairs.
+</p>
+<a name="anchor33"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.12.1"></a><h3>4.12.1.&nbsp;
+Compact: short strings</h3>
+
+<p>
+            Strings with length less than 32 may be encoded with a single
+            octet length [x00-x1f].
+          
+</p>
+<p>
+            value = code
+          
+</p>
+<a name="anchor34"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.12.2"></a><h3>4.12.2.&nbsp;
+String Examples</h3>
+<br /><hr class="insert" />
+<a name="string_examples"></a>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+x00               # "", empty string
+x05 hello         # "hello"
+x01 xc3 x83       # "\u00c3"
+
+S x00 x05 hello   # "hello" in long form
+
+s x00 x07 hello,  # "hello, world" split into two chunks
+  x05 world
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;28&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="#type"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.13"></a><h3>4.13.&nbsp;
+type</h3>
+<br /><hr class="insert" />
+<a name="type_grammar"></a>
+
+<p>Type Grammar
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+type ::= 't' b1 b0 &lt;type-string&gt;
+     ::= x4a b0
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;29&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>A <a class='info' href='##map'>map<span> (</span><span class='info'>map</span><span>)</span></a> or <a class='info' href='##list'>list<span> (</span><span class='info'>list</span><span>)</span></a>
+        MAY include a type attribute indicating the type name of the
+        map or list for object-oriented languages.
+</p>
+<p>Each type is added to the <a class='info' href='##type-map'>type map<span> (</span><span class='info'>type reference</span><span>)</span></a>
+        for future reference.
+</p>
+<a name="anchor35"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.14"></a><h3>4.14.&nbsp;
+Compact: type references</h3>
+
+<p>
+            Repeated type strings MAY use the
+            <a class='info' href='##type-map'>type map<span> (</span><span class='info'>type reference</span><span>)</span></a> to refer to a previously
+            used type.  The type reference is zero-based over all the
+            types encountered during parsing.
+          
+</p>
+<a name="anchor36"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5"></a><h3>5.&nbsp;
+Reference Maps</h3>
+
+<p>Hessian 2.0 has 3 internal reference maps:
+</p>
+<ol class="text">
+<li>An map/object/list reference map.
+</li>
+<li>An class definition map.
+</li>
+<li>A type (class name) map.
+</li>
+</ol>
+<p>The value reference map lets Hessian support arbitrary
+      graphs, and recursive and circular data structures.
+</p>
+<p>The class and type maps improve Hessian efficiency by
+      avoiding repetition of common string data.
+</p>
+<a name="#ref-map"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5.1"></a><h3>5.1.&nbsp;
+value reference</h3>
+
+<p>Hessian supports arbitrary graphs by
+        adding <a class='info' href='##list'>list<span> (</span><span class='info'>list</span><span>)</span></a>,
+        <a class='info' href='##object'>object<span> (</span><span class='info'>object</span><span>)</span></a>, and 
+        <a class='info' href='##map'>map<span> (</span><span class='info'>map</span><span>)</span></a> as it encounters them in
+        the bytecode stream.
+</p>
+<p>Parsers MUST store each list, object and map in the reference
+        map as they are encountered.
+</p>
+<p>The stored objects can be used with a <a class='info' href='##ref'>ref<span> (</span><span class='info'>ref</span><span>)</span></a>
+        bytecode.
+</p>
+<a name="#class-map"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5.2"></a><h3>5.2.&nbsp;
+class reference</h3>
+
+<p>Each <a class='info' href='##object'>object definition<span> (</span><span class='info'>object</span><span>)</span></a> is
+        automatically added to the class-map.  Parsers MUST add a
+        class definition to the class map as each is encountered.
+        Following object instances will refer to the defined class.
+</p>
+<a name="#type-map"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5.3"></a><h3>5.3.&nbsp;
+type reference</h3>
+
+<p>The <a class='info' href='##type'>type<span> (</span><span class='info'>type</span><span>)</span></a> strings for
+        <a class='info' href='##map'>map<span> (</span><span class='info'>map</span><span>)</span></a> and <a class='info' href='##list'>list<span> (</span><span class='info'>list</span><span>)</span></a>
+        values are stored in a type map for reference.
+</p>
+<p>Parsers MUST add a type string to the type map as
+        each is encountered.
+</p>
+<a name="anchor37"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6"></a><h3>6.&nbsp;
+Bytecode map</h3>
+
+<p>
+        Hessian is organized as a bytecode protocol.  A Hessian reader 
+        is essentially a switch statement on the initial octet.
+      
+</p><br /><hr class="insert" />
+<a name="bytecode_encoding"></a>
+
+<p>Bytecode Encoding
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+x00 - x1f    # utf-8 string length 0-32
+x20 - x2f    # binary data length 0-16
+x30 - x37    # reserved
+x38 - x3f    # long from -x40000 to x3ffff
+x40 - x41    # reserved
+x42          # 8-bit binary data final chunk ('B')
+x43          # reserved ('C' streaming call)
+x44          # 64-bit IEEE encoded double ('D')
+x45          # reserved ('E' envelope)
+x46          # boolean false ('F')
+x47          # reserved
+x48          # reserved ('H' header)
+x49          # 32-bit signed integer ('I')
+x4a          # reference to 1-256th map/list
+x4b          # reference to 1-65536th map/list
+x4c          # 64-bit signed long integer ('L')
+x4d          # map with optional type ('M')
+x4e          # null ('N')
+x4f          # object definition ('O')
+x50          # reserved ('P' streaming message/post)
+x51          # reserved
+x52          # reference to map/list - integer ('R')
+x53          # utf-8 string final chunk ('S')
+x54          # boolean true ('T')
+x55          # reserved
+x56          # list/vector ('V')
+x57 - x62    # reserved
+x62          # 8-bit binary data non-final chunk ('b')
+x63          # reserved ('c' call for RPC)
+x64          # UTC time encoded as 64-bit long milliseconds since
+             #  epoch ('d')
+x65          # reserved
+x66          # reserved ('f' for fault for RPC)
+x67          # double 0.0
+x68          # double 1.0
+x69          # double represented as byte (-128.0 to 127.0)
+x6a          # double represented as short (-32768.0 to 327676.0)
+x6b          # double represented as float
+x6c          # list/vector length ('l')
+x6d          # reserved ('m' method for RPC call)
+x6e          # list/vector compact length
+x6f          # object instance ('o')
+x70          # reserved ('p' - message/post)
+x71          # reserved
+x72          # reserved ('r' reply for message/RPC)
+x73          # utf-8 string non-final chunk ('s')
+x74          # map/list type ('t')
+x75          # type-ref
+x76          # compact vector ('v')
+x77          # long encoded as 32-bit int
+x78 - x79    # reserved
+x7a          # list/map terminator ('z')
+x7b - x7f    # reserved
+x80 - xbf    # one-octet compact int (-x10 to x3f, x90 is 0)
+xc0 - xcf    # two-octet compact int (-x800 to x3ff)
+xd0 - xd7    # three-octet compact int (-x40000 to x3ffff)
+xd8 - xef    # one-octet compact long (-x8 to x10, xe0 is 0)
+xf0 - xff    # two-octet compact long (-x800 to x3ff, xf8 is 0)
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;30&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="rfc.authors"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>Authors' Addresses</h3>
+<table width="99%" border="0" cellpadding="0" cellspacing="0">
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Scott Ferguson</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Caucho Technology Inc.</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">P.O. Box 9001</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">La Jolla, CA  92038</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">USA</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:ferg@caucho.com">ferg@caucho.com</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Emil Ong</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Caucho Technology Inc.</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">P.O. Box 9001</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">La Jolla, CA  92038</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">USA</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:emil@caucho.com">emil@caucho.com</a></td></tr>
+</table>
+<a name="rfc.copyright"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>Full Copyright Statement</h3>
+<p class='copyright'>
+Copyright &copy; The IETF Trust (2007).</p>
+<p class='copyright'>
+This document is subject to the rights,
+licenses and restrictions contained in BCP&nbsp;78,
+and except as set forth therein,
+the authors retain all their rights.</p>
+<p class='copyright'>
+This document and the information contained herein are provided
+on an &ldquo;AS IS&rdquo; basis and THE CONTRIBUTOR,
+THE ORGANIZATION HE/SHE REPRESENTS
+OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY, THE IETF TRUST
+AND THE INTERNET ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT
+THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY
+IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR
+PURPOSE.</p>
+<h3>Intellectual Property</h3>
+<p class='copyright'>
+The IETF takes no position regarding the validity or scope of any
+Intellectual Property Rights or other rights that might be claimed
+to pertain to the implementation or use of the technology
+described in this document or the extent to which any license
+under such rights might or might not be available; nor does it
+represent that it has made any independent effort to identify any
+such rights.
+Information on the procedures with respect to
+rights in RFC documents can be found in BCP&nbsp;78 and BCP&nbsp;79.</p>
+<p class='copyright'>
+Copies of IPR disclosures made to the IETF Secretariat and any
+assurances of licenses to be made available,
+or the result of an attempt made to obtain a general license or
+permission for the use of such proprietary rights by implementers or
+users of this specification can be obtained from the IETF on-line IPR
+repository at <a href='http://www.ietf.org/ipr'>http://www.ietf.org/ipr</a>.</p>
+<p class='copyright'>
+The IETF invites any interested party to bring to its attention
+any copyrights,
+patents or patent applications,
+or other
+proprietary rights that may cover technology that may be required
+to implement this standard.
+Please address the information to the IETF at <a href='mailto:ietf-ipr@ietf.org'>ietf-ipr@ietf.org</a>.</p>
+<h3>Acknowledgment</h3>
+<p class='copyright'>
+Funding for the RFC Editor function is provided by
+the IETF Administrative Support Activity (IASA).</p>
+</body></html>

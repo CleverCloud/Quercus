@@ -1,0 +1,140 @@
+<document>
+  <header>
+    <product>resin-ee</product>
+    <title>Hessian/Burlap Java Binding Draft Spec</title>
+<date>December 02, 2003</date>
+  </header>
+
+  <body>
+    <localtoc/>
+
+
+<s1 title="Introduction">
+
+<p>Burlap and Hessian use type names in two contexts:</p>
+<ul>
+<li>as &lt;type&gt; values for lists and objects.
+</li><li>as mangled names for method overloading
+</li></ul>
+
+<p>The mapping from a language's types to the Burlap/Hessian names
+is necessarily language dependent, but designed for cross-language use.</p>
+
+</s1>
+
+<s1 title="Java to Burlap/Hessian">
+
+<p>The mapping of specific Java types to Burlap/Hessian is relatively
+straightforward.  A Java implementation will also use this mapping when
+it's parsing and knows the type of the object.  Contrast that with the Burlap to Java mapping.  Note that XML DOM is mapped to a string.</p>
+
+<deftable>
+<tr><th width="50%">Java</th><th>Burlap
+</th></tr><tr><td>null</td><td>null
+</td></tr><tr><td>String</td><td>string
+</td></tr><tr><td>boolean</td><td>boolean
+</td></tr><tr><td>byte</td><td>int
+</td></tr><tr><td>short</td><td>int
+</td></tr><tr><td>int</td><td>int
+</td></tr><tr><td>long</td><td>long
+</td></tr><tr><td>float</td><td>double
+</td></tr><tr><td>double</td><td>double
+</td></tr><tr><td>char</td><td>string
+</td></tr><tr><td>Boolean</td><td>boolean
+</td></tr><tr><td>Byte</td><td>int
+</td></tr><tr><td>Short</td><td>int
+</td></tr><tr><td>Integer</td><td>int
+</td></tr><tr><td>Long</td><td>long
+</td></tr><tr><td>Float</td><td>double
+</td></tr><tr><td>Double</td><td>double
+</td></tr><tr><td>Character</td><td>string
+</td></tr></deftable>
+
+<deftable>
+<tr><th width="50%">Java</th><th>Burlap
+</th></tr><tr><td>String</td><td>string
+</td></tr><tr><td>StringBuffer</td><td>string
+</td></tr><tr><td>char[]</td><td>string
+</td></tr><tr><td>org.w3c.dom.Node</td><td>string
+</td></tr><tr><td>byte[]</td><td>base64
+</td></tr><tr><td>Object[]</td><td>[object
+</td></tr></deftable>
+
+<deftable>
+<tr><th width="50%">Java</th><th>Burlap
+</th></tr><tr><td>Date</td><td>date
+</td></tr><tr><td>List</td><td>list
+</td></tr><tr><td>Vector</td><td>list
+</td></tr><tr><td>Map</td><td>map
+</td></tr><tr><td>HashMap</td><td>map
+</td></tr><tr><td>Hashtable</td><td>map
+</td></tr><tr><td>Object</td><td>map (with serialization)
+</td></tr><tr><td>EJBHome</td><td>remote (using HomeHandle)
+</td></tr><tr><td>EJBObject</td><td>remote (using Handle)
+</td></tr></deftable>
+
+<note>Some of these conversions are lossy.  For example, a Byte object
+serialized and then deserialized will become an Integer.  This is the
+price paid working with other languages.</note>
+
+</s1>
+
+<s1 title="Method overloading">
+
+<p>Java-based servers typically expose three overloaded methods:</p>
+<ul>
+<li>The simple method name, which corresponds to the shorted overloaded method.
+</li><li>The method name with the number of arguments appended, e.g. add__2.
+</li><li>The method name with the Burlap/Hessian types, e.g. add_int_int
+</li></ul>
+
+<p>In this case, all of "add" , "add__2", and "add_int_int" will map to
+the same method.  The client will use whichever is appropriate to
+its capabilities.  For example, many scripting languages can only handle
+the number of arguments as a mangling technique.</p>
+
+</s1>
+
+<s1 title="Burlap to Java">
+
+<p>In several cases, a Java parser may know nothing about the
+expected type.  For example, an method's argument might be
+Object or the serialized data may be in a Vector, or a client may
+not specify the type for a &lt;map&gt;.</p>
+
+<deftable>
+<tr><th width="50%">Burlap</th><th>Java
+</th></tr><tr><td>null</td><td>null
+</td></tr><tr><td>boolean</td><td>Boolean
+</td></tr><tr><td>int</td><td>Integer
+</td></tr><tr><td>double</td><td>Double
+</td></tr><tr><td>string</td><td>String
+</td></tr><tr><td>date</td><td>Date
+</td></tr><tr><td>base64</td><td>byte []
+</td></tr><tr><td>list</td><td>ArrayList
+</td></tr><tr><td>map</td><td>HashMap
+</td></tr></deftable>
+
+</s1>
+
+<s1 title="Changes">
+
+<s2 title="v3 changes (2001-12-27)">
+
+<ul>
+<li>Change ;ejbid= to ?ejbid=
+</li></ul>
+
+</s2>
+
+<s2 title="v2 changes">
+
+<ul>
+<li>Change SML-RPC to Burlap
+</li></ul>
+
+</s2>
+
+</s1>
+  </body>
+</document>

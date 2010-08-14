@@ -1,0 +1,32 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <!--
+     - Instantiates the Emitter resource.
+     -
+     - This resource sends notifications to any listeners when
+     - its send() method is invoked.
+    -->
+  <resource mbean-name="example:name=emitter"
+            type="example.Emitter">
+  </resource>
+  <!--
+     - Instantiates the Listener and registers with the emitter.
+     -
+     - The <listen> tag registers the listener with the emitter.
+     - The "handback" attribute is optional, defaulting to null.
+    -->
+  <resource mbean-name="example:name=listener"
+            type="example.Listener">
+    <mbean-listener mbean-name="example:name=emitter" handback="tutorial"/>
+  </resource>
+
+  <!--
+     - Configures the listener servlet with the emitter and listener.
+    -->
+  <servlet-mapping url-pattern="/listener"
+                   servlet-class="example.ListenerServlet">
+    <init>
+      <emitter>${jndi:lookup("mbean:example:name=emitter")}</emitter>
+      <listener>${jndi:lookup("mbean:example:name=listener")}</listener>
+    </init>
+  </servlet-mapping>
+</web-app>

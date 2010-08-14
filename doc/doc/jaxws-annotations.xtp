@@ -1,0 +1,45 @@
+<document>
+<header>
+  <title>JAX-WS Annotations</title>
+  <version>Resin 3.1</version>
+
+</header>
+<body>
+
+<localtoc/>
+
+<defun title="@WebService">
+
+<p>@WebService marks a class or interface as a web service.</p>
+
+<def title="@WebService">
+@Target({ElementType.TYPE})
+public @interface WebService {
+  String name() default "";
+  String targetNamespace() default "";
+  String serviceName() default "";
+  String wsdlLocation() default "";
+  String endpointInterface() default "";
+  String portName() default "";
+};
+</def>
+
+</defun>
+
+<defun title="@WebMethod">
+
+<p>@WebMethod marks a method or interface as a web method.</p>
+
+<def title="@WebMethod">
+@Target({ElementType.METHOD})
+public @interface WebMethod {
+  String operationName() default "";
+  String action() default "";
+  boolean exclude() default false;
+}
+</def>
+
+</defun>
+
+</body>
+</document>

@@ -1,0 +1,272 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin with IIS Reference Page</title>
+    <description>
+      <p>Resin provides a fast servlet runner for IIS,
+        allowing IIS to run servlets and JSP files.
+      </p>
+
+    </description>
+  </header>
+
+  <body>
+    <s1 name="prerequisites" title="IIS Prerequisites">
+      <ul>
+        <li>.NET Extensibility</li>
+        <li>ASP</li>
+        <li>ASP.NET</li>
+        <li>ISAPI Extensions</li>
+        <li>ISAPI Filters</li>
+        <li>IIS Management Console (optional)</li>
+        <li>IIS Management Scripts and Tools (optional)</li>
+      </ul>
+    </s1>
+
+    <s1 name="install-configure"
+        title="Installing and Configuring Resin IIS Handler">
+      <ul>
+        <li>Copy Resin.IIS.Handler.dll to web application's bin directory</li>
+        <li>Register the handler in ASP.NET web application config file</li>
+      </ul>
+
+
+        <example title="web.config">
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;configuration>
+  &lt;system.webServer>
+    &lt;handlers>
+      <b>&lt;add name="ResinHandlerFactory"</b> &lt;!--Name used by resin handler. Can be changed.-->
+           <b>path="*"</b> &lt;!-- Requests path to invoke the handler on-->
+           <b>verb="*"</b> &lt;!-- HTTP Method. possible values: 'GET', 'POST', 'HEAD' or combination 'GET,POST' -->
+           <b>type="Caucho.IIS.ResinHandlerFactory"</b> &lt;!-- Resin Handler Factory that supplies one reusable handler instance-->
+           <b>preCondition="integratedMode"/></b>
+    &lt;/handlers>
+  &lt;/system.webServer>
+  &lt;appSettings>
+    <b>&lt;add key="resin.servers" value="127.0.0.1:6800"/></b> &lt;!-- Address and port to Resin server(s)-->
+    &lt;add key="resin.log-level" value="Information"/> &lt;!-- logging level used by Resin IIS Handler. Use 'None' for silent operation-->
+  &lt;/appSettings>
+&lt;/configuration>
+        </example>
+
+
+      <p>
+        Resin IIS Handler communicates with Resin using HMUX (Resin's internal
+        protocol) with the connection made to the port defined in Resin's
+        configuration file. Matching Resin configuration for the example IIS
+        configuration given above must bind Resin HMUX listener to port 6800.
+
+         <example title="resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core"&gt;
+       ...
+  &lt;cluster id="app-tier"&gt;
+       ...
+    <b>&lt;server id="" address="127.0.0.1" port="6800"/&gt;</b>
+       ...
+      </example>
+        Port 6800 is the default HMUX port used by Resin.
+      </p>
+
+      <p>
+        Resin IIS Handler accepts the following configuration parameters:
+      </p>
+      <deftable>
+        <tr>
+          <td><b>Name</b></td>
+          <td><b>Description</b></td>
+          <td><b>Default</b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>resin.servers</td>
+          <td>Space separated list of ip:port pairs to backend Resin servers
+            e.g. '127.0.0.1:6800 127.0.0.1:6801'
+          </td>
+          <td>127.0.0.1:6800</td>
+        </tr>
+        <tr>
+          <td>resin.log-level</td>
+          <td>Logging level: Information | Warning | Error | None
+          </td>
+          <td>Error</td>
+        </tr>
+        <tr>
+          <td>resin.session-cookie</td>
+          <td>Session Cookie Name</td>
+          <td>JSESSIONID</td>
+        </tr>
+        <tr>
+          <td>resin.ssl-session-cookie</td>
+          <td>Secure Session Cookie Name</td>
+          <td>SSLJSESSIONID</td>
+        </tr>
+        <tr>
+          <td>resin.sticky-sessions</td>
+          <td>Use sticky sessions for distributing requests</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>resin.session-url-prefix</td>
+          <td>prefix used to identifiy sessionid in urls</td>
+          <td>;jsessionid=</td>
+        </tr>
+        <tr>
+          <td>resin.load-balance-connect-timeout</td>
+          <td>Timeout used with connect to backend</td>
+          <td>5 sec.</td>
+        </tr>
+        <tr>
+          <td>resin.load-balance-idle-time</td>
+          <td>Maximum time to keep sockets to backend open</td>
+          <td>5 sec.</td>
+        </tr>
+        <tr>
+          <td>resin.load-balance-recover-time</td>
+          <td>Retry period on failed backend server</td>
+          <td>15 sec.</td>
+        </tr>
+        <tr>
+          <td>resin.socket-timeout</td>
+          <td>How long to wait for a read or write operation to backend server
+            to complete
+          </td>
+          <td>65 sec.</td>
+        </tr>
+        <tr>
+          <td>resin.caucho-status</td>
+          <td>Enables or disables /caucho-status request.
+          </td>
+          <td>true</td>
+        </tr>
+      </deftable>
+
+      <p>In order to configure Resin IIS Handler to communicate to a set of
+      Resin Pro Servers resin.servers configuration parameter needs be an
+        enumeration of ip:port pairs:</p>
+
+       <example title="web.config">
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;configuration>
+  &lt;system.webServer>
+    &lt;handlers>
+      <b>&lt;add name="ResinHandlerFactory"</b> &lt;!--Name used by resin handler. Can be changed.-->
+           <b>path="*"</b> &lt;!-- Requests path to invoke the handler on-->
+           <b>verb="*"</b> &lt;!-- HTTP Method. possible values: 'GET', 'POST', 'HEAD' or combination 'GET,POST' -->
+           <b>type="Caucho.IIS.ResinHandlerFactory"</b> &lt;!-- Resin Handler Factory that supplies one reusable handler instance-->
+           <b>preCondition="integratedMode"/></b>
+    &lt;/handlers>
+  &lt;/system.webServer>
+  &lt;appSettings>
+    <b>&lt;add key="resin.servers" value="127.0.0.1:6800 127.0.0.2:6800 127.0.0.1:6801 127.0.0.2:6802"/></b> &lt;!-- Address and port to Resin server(s)-->
+    &lt;add key="resin.log-level" value="Information"/> &lt;!-- logging level used by Resin IIS Handler. Use 'None' for silent operation-->
+  &lt;/appSettings>
+&lt;/configuration>
+        </example>
+    </s1>
+
+    <s1 name="appcmd" title="Configuring using appcmd.exe configuration utility">
+      <p>Appcmd.exe offers a command line interface to configuring IIS server.
+        Below are the examples showing how to use the utility to configure
+        various aspects of Resin IIS Handler.
+      </p>
+
+      <p>Assuming that we are working with the Default Web Site:</p>
+      <example title="Registering the Resin IIS Handler">
+        # Remove Resin IIS Hanlder if one is registered
+        %APPCMD% set config "Default Web Site" /section:handlers /-[name='ResinHandlerFactory']
+
+        # Add Resin IIS Handler
+        %APPCMD% set config "Default Web Site" /section:handlers /+[name='ResinHandlerFactory',path='*',\
+        verb='*',type='Caucho.IIS.ResinHandlerFactory',preCondition='integratedMode']
+
+        # Note: The above command needs to be issued in one line. The \ character
+        # at the last position of the first line is used to denote that command
+        # continues on next line
+
+
+        # Note: %APPCMD% should be pointing to the location of appcmd.exe utility.
+        #       default location is c:\Windows\System32\inetsrv\appcmd.exe
+      </example>
+
+      <p>Specifying parameters using appcmd.exe:</p>
+      <example title="Resin IIS Hanlder parameters">
+        # Remove resin.servers parameter
+        %APPCMD% set config "Default Web Site" /section:appSettings /-[key='resin.servers']
+        # Set resin.servers parameter
+        %APPCMD% set config "Default Web Site" /section:appSettings /+[key='resin.servers',value='192.168.0.1:6800']
+
+        # Remove resin.log-level parameter
+        %APPCMD% set config "Default Web Site" /section:appSettings /-[key='resin.log-level']
+        # Set resin.log-level parameter to 'Information'
+        %APPCMD% set config "Default Web Site" /section:appSettings /+[key='resin.log-level',value='Information']
+      </example>
+    </s1>
+
+    <s1 title="Tracing &amp; Logging with Resin IIS Handler">
+      <s2 title="Tracing">
+        <p>
+          When Resin IIS Handler is compiled with TRACE option enabled it uses
+          <code>System.Diagnostics.Trace</code> class to output detailed information
+          for every request. This can be useful in debugging errors. Tracing information
+          will go into a file configured in a tracing listener.
+        </p>
+        <example title="Configuring Resin IIS Handler for tracing">
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;configuration>
+  &lt;system.diagnostics>
+    &lt;trace autoflush="true" indentsize="0">
+      &lt;listeners>
+         &lt;add name="resin-trace" initializeData="C:\temp\resin-iis-trace.log" type="System.Diagnostics.TextWriterTraceListener" />
+      &lt;/listeners>
+    &lt;/trace>
+  &lt;/system.diagnostics>
+&lt;/configuration>
+        </example>
+        <p>
+          Note, that Resin IIS Handler in distribution compiled with no TRACE option.
+        </p>
+      </s2>
+
+      <s2 title="Logging">
+        <p>
+          Resin IIS Handler uses standart .NET loggin mechanism to output information
+        on its opeartion. Upon startup, the handler attempts to initialize Logging
+        to write to 'Application' log using 'Resin IIS Handler' log source. If
+        the log source can not be created automatically due to permissions or other issues,
+        the source can be created manually be adding a key 'Resin IIS Handler' to
+        log sources collection in the registry at </p>
+      <p>
+        <code>[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Eventlog\Application\Resin IIS Handler]</code>
+        </p>
+
+        <p>
+          Alternatively, copy the contents of the following text box into a file
+          with .reg extension and double click on it to import into registry.
+
+        </p>
+        <example title="Resin IIS Handler Logging Source">
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Eventlog\Application\Resin IIS Handler]
+        </example>
+      </s2>
+    </s1>
+
+    <s1 name="caucho-status" title="Resin IIS Handler Status">
+       <p>
+          <code>caucho-status</code>
+          is optional and probably should be avoided in
+          a production site. It lets you ask the Caucho IIS module about it's
+          configuration, and the status of the backend server(s), valuable for
+          debugging. To see caucho-status point your browser url to
+         http://youriisserver/caucho-status.
+        </p>
+    </s1>
+  </body>
+</document>

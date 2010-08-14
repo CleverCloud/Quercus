@@ -1,0 +1,16 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+<!--
+  <servlet-mapping url-pattern="/flickr/rest/*"
+                   servlet-class="example.FlickrImpl"
+                   jndi-name="service/FlickrImpl">
+    <protocol uri="rest">
+      <jaxb-package>example.data</jaxb-package>
+    </protocol>
+  </servlet-mapping>
+
+  <remote-client jndi-name="rest/flickr">
+    <uri>rest:url=${webApp.url}/flickr/rest/</uri>
+    <interface>example.FlickrAPI</interface>
+  </remote-client>
+  -->
+</web-app>

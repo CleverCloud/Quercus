@@ -1,0 +1,4 @@
+activemq=org.apache.activemq.ra.ActiveMQManagedConnectionFactory
+jackrabbit=org.apache.jackrabbit.jca.JCAManagedConnectionFactory
+
+

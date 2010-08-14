@@ -1,0 +1,220 @@
+<document>
+  <header>
+    <title>Quercus: Background PHP tasks using BAM</title>
+        <description>
+          <p>This tutorial will introduce using Broker Agent Messaging (BAM) to
+          run background tasks written in PHP.</p>
+        </description>
+    <type>tutorial</type>
+    <tutorial-startpage>frontend.php</tutorial-startpage>
+  </header>
+
+  <body>
+
+    <summary/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr><td><viewfile-link file="WEB-INF/resin-web.xml"/>
+    </td><td>web.xml configuration
+</td></tr><tr><td><viewfile-link file="frontend.php"/>
+    </td><td>The frontend PHP interface
+</td></tr><tr><td><viewfile-link file="backend.php"/>
+    </td><td>The background PHP task
+</td></tr></deftable>
+</s1>
+
+<s1 title="Introduction">
+
+<p>
+In the past, PHP developers who wanted to run tasks in the background
+were limited to cron jobs or using the <code>system()</code> function to
+launch the tasks manually.
+</p>
+<p>
+This tutorial introduces PHP developers to using Broker Agent Messaging (BAM)
+to queue tasks to be handled by a background agent, also written in PHP.  The 
+application will initiate tasks to be handled in the background on a frontend
+script.  This script is a normal PHP web page.  The tasks in this case are
+items to add to an RSS feed.  The background agent then takes the tasks and
+executes them to add the items to the RSS document.  We are only using RSS
+modification as an example.  In general, this functionality might be used to
+execute tasks that take a long time, but which you don't want to have the
+user wait for while the page is reloading.  Further examples include payment
+processing, heavy computation, or any other slow process.
+</p>
+
+</s1>
+
+<s1 title="Implementing the application">
+<p>
+Let's go ahead and dive into the code of the application.  The application
+consists of two PHP scripts: a frontend page and a backend <em>agent</em>.
+We'll go over exactly what we mean by agent toward the end of the tutorial,
+but for now it suffices to know that it is code that will handle the tasks
+assigned by the frontend.  Let's look at the frontend first, since that will
+be most familiar to existing PHP developers.
+</p>
+
+<s2 title="Frontend">
+<p>
+The frontend script will look very familiar to any PHP developer.  It's a
+normal page that's executed when the user browses to it.  The only difference
+is that it uses some functions specific to BAM.  The page consists mainly of
+a form with a button and a frame containing the RSS feed.  The button is a
+submit button that simply calls back to the same page, POSTing a value of
+"add".  When this value is present, the PHP code sends 5 messages to the
+background process using the <code>bam_send_message()</code> function.
+</p>
+
+<example title="frontend.php">
+&lt;html>
+  &lt;head>
+    &lt;title>Frontend&lt;/title>
+  &lt;/head>
+  &lt;body>
+    &lt;?php
+      if ($_POST["add"]) {
+        bam_send_message("backend@localhost", "foo");
+        bam_send_message("backend@localhost", "bar");
+        bam_send_message("backend@localhost", "baz");
+        bam_send_message("backend@localhost", "bam");
+        bam_send_message("backend@localhost", "bop");
+      }
+    ?>
+    &lt;form action="frontend.php" method="POST">
+      &lt;input type="submit" name="add" value="Add 5 Tasks"/>
+    &lt;/form>
+
+    &lt;iframe src="rss.xml" width="100%" height="100%"/>
+  &lt;/body>
+&lt;/html>
+</example>
+
+<p>
+There are two things to take notice of in the calls to 
+<code>bam_send_message()</code>:
+</p>
+<ul>
+
+  <li>The target address: <b>backend@localhost</b>. This is the 
+  address of the backend process in the BAM system.  We'll see how this
+  is configured later.  To learn more about BAM addressing in
+  general, see the <a href="../../doc/hmtp.xtp">BAM documentation</a>.</li>
+
+  <li>The messages: <b>foo</b>, <b>bar</b>, etc.  Notice the order of the 
+  messages sent by the frontend script.  These messages will be received 
+  by the backend script and processed in order.</li>
+
+</ul>
+</s2>
+
+<s2 title="Backend">
+<p>
+The backend script will be new to most developers.  It is written in PHP, but
+has a slightly unusual execution pattern.  Let's look at the script at the 
+high level first.
+</p>
+
+<example title="backend.php overview">
+&lt;?php
+function bam_message($to, $from, $value)
+{
+  // process the message...
+}
+
+bam_dispatch();
+?>
+</example>
+
+<p>
+This backend script implements an event handler called an BAM "agent".  These
+agents can listen for and send certain kinds of communications.  For now, we'll
+focus on messages.  Messages are simple, unidirection communications that 
+include a to address, a from address, and a value.  
+</p>
+<p>
+When a message is received by the agent, the script is executed from top to
+bottom.  When the <code>bam_dispatch()</code> function is called, it dispatches
+the message to the event handler function, <code>bam_message()</code>.  It
+passes the to and from addresses as well as the value of the message to this
+function.  Thus in this case, all of our task handling code goes into
+<code>bam_message()</code>.
+</p>
+<p>
+Now let's take a look at the contents of the function:
+</p>
+
+<example title="backend.php overview">
+function bam_message($to, $from, $value)
+{
+  $doc = new DOMDocument();
+  $doc->Load("rss.xml");
+  $xpath = new DomXPath($doc);
+
+  $items = $xpath->query("rss/channel/item");
+
+  if ($items->length == 0) {
+    $task_number = 1;
+  }
+  else {
+    // take the task number of the last task from its guid
+    $guid = $xpath->query("rss/channel/item/guid");
+    $task_number = explode("#", $guid->item(0)->nodeValue)[1] + 1;
+  }
+
+  // Create the new item 
+  $new_item = $doc->createElement("item");
+  $new_item->appendChild($doc->createElement("title", "Task $task_number"));
+  $new_item->appendChild($doc->createElement("link", "http://www.caucho.com/"));
+  $new_item->appendChild($doc->createElement("description", "Task $task_number ($value)"));
+  $new_item->appendChild($doc->createElement("pubDate", date("D, j M Y H:i:s e")));
+  $new_item->appendChild($doc->createElement("guid", "http://www.caucho.com/quercus-tasks#$task_number"));
+
+  // Insert the new item
+  $channel = $xpath->query("rss/channel");
+  $channel->item(0)->insertBefore($new_item, $items->item(0));
+
+  // trim off any items beyond 10
+  $num_items = $items->length;
+  while ($num_items > 10) {
+    $num_items--;
+    $channel->item(0)->removeChild($items->item($num_items));
+  }
+
+  $doc->save("rss.xml");
+}
+</example>
+
+<p>
+This function just does some basic XML manipulations to add new items to the
+RSS feed.  The main thing to notice is that we use the value of the message
+sent to construct the description of the RSS item.
+</p>
+</s2>
+
+<s2 title="Configuring the backend agent">
+Finally to hook up the backend.php script at a BAM agent, we need to do a
+small bit of configuration in the resin-web.xml:
+
+<example title="resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+  &lt;bam-service name="backend@localhost" 
+               class="com.caucho.quercus.lib.bam.BamPhpAgent">
+    &lt;init>
+      &lt;script>backend.php&lt;/script>
+    &lt;/init>
+  &lt;/bam-service>
+&lt;/web-app>
+</example>
+</s2>
+</s1>
+
+<s1 title="See also">
+<ul>
+<li><a href="../../doc/hmtp.xtp">BAM documentation</a></li>
+</ul>
+</s1>
+
+</body>
+</document>

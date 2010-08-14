@@ -1,0 +1,75 @@
+<document>
+  <header>
+    <product>resin-ee</product>
+    <title>Creating and Removing Entity Beans</title>
+    <description>
+      <p>Describes the basic create/remove api for persistent entities.
+    </p></description>
+    <type>tutorial</type>
+    <tutorial-startpage>create</tutorial-startpage>
+  </header>
+
+  <body>
+    <summary/>
+
+<s1>
+<p>Almost all applications need to add and remove entities from the
+database.  Although most database accesses are reads, eventually we
+need to change the database.  With Amber, you create a new instance
+with the following steps:</p>
+
+<ol>
+<li>Instantiate the instance with "new"
+</li><li>Populate the values
+</li><li>Call the EntityManager persist method
+</li></ol>
+</s1>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr><td><viewfile-link file="WEB-INF/resin-web.xml"/>
+    </td><td>resin-web.xml configuration
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/META-INF/persistence.xml"/>
+    </td><td>persistence.xml configuration
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/Course.java"/>
+    </td><td>The course bean
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/CreateServlet.java"/>
+    </td><td>The create servlet
+</td></tr></deftable>
+</s1>
+
+<s1 title="Database Schema">
+
+<p>The example uses the same database table as the previous basic example.</p>
+
+<example title="create.sql">
+CREATE TABLE create_courses (
+  id BIGINT PRIMARY KEY auto_increment,
+  course VARCHAR(250),
+  instructor VARCHAR(250)
+);
+</example>
+
+</s1>
+
+<s1 title="Client Servlet">
+
+<p>Clients create a new bean and populate the fields just like
+a normal Java object.  The client adds the entry to the database
+by calling the EntityManager's <code>persist</code> method.</p>
+
+<example title="Adding and Removing Courses">
+...
+
+divination = new Course("Divination", "Sybil Trelawney");
+_entityManager.persist(divination);
+
+...
+
+_entityManager.remove(divination);
+...
+</example>
+
+</s1>
+  </body>
+</document>

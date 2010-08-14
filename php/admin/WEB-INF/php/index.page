@@ -1,0 +1,142 @@
+<?php
+
+/**
+ * Overview of admin
+ */
+
+if (! admin_init(false)) {
+  return;
+}
+?>
+
+<h1>Resin Administration</h1>
+
+<table border='0'>
+<tr>
+<!-- Summary -->
+<td width='50%'>
+<h2><a href="?q=summary">Summary</a></h2>
+
+<p>A summary of the server's state.</p>
+
+</td>
+
+<!-- Cache -->
+<td>
+<h2><a href="?q=cache">Cache</a></h2>
+
+<p>Describes the proxy cache state.</p>
+
+</td>
+
+<tr>
+<!-- Cluster -->
+<td>
+<h2><a href="?q=cluster">Cluster</a></h2>
+
+<p>Overview of the cluster status.</p>
+
+</td>
+
+<!-- Config -->
+<td>
+<h2><a href="?q=config">Config</a></h2>
+
+<p>Review of the server's configuration as parsed by
+the current Resin instance.</p>
+
+</td>
+</tr>
+
+<tr>
+<!-- Graphs -->
+<td>
+<h2><a href="?q=graphs">Graphs</a></h2>
+
+<p>Custom graphing of internal Resin statistics.  Requires Resin-Pro and
+a HTML 5 browser like Firefox 3.5.</p>
+
+</td>
+
+<!-- JMX -->
+<td>
+<h2><a href="?q=jmx">JMX</a></h2>
+
+<p>Table-based view of all JMX beans registered with the JVM.</p>
+
+</td>
+</tr>
+
+<tr>
+<!-- Memory -->
+<td>
+<h2><a href="?q=memory">Memory</a></h2>
+
+<p>Heap dump to debug memory leaks and memory overview.
+The heap dump requires Resin-Pro.</p>
+
+</td>
+
+<!-- Postmortem -->
+<td>
+<h2><a href="?q=postmortem">Postmortem</a></h2>
+
+<p>A report to aid in debugging failures in which the server died or
+restarted.</p>
+
+</td>
+</tr>
+
+<tr>
+<!-- Profile -->
+<td>
+<h2><a href="?q=profile">CPU Profile</a></h2>
+
+<p>CPU profiling of the running instance.  Because the profiling is
+lightweight and sample-based, it can be used in a runtime environment.</p>
+
+</td>
+
+<!-- Quercus -->
+<td>
+<h2><a href="?q=quercus">Quercus</a></h2>
+
+<p>Experimental Quercus profiling.</p>
+
+</td>
+</tr>
+
+<tr>
+<!-- Thread -->
+<td>
+<h2><a href="?q=thread">Thread Dump</a></h2>
+
+<p>Provides thread dumps to check the current status of a Resin instance.</p>
+
+</td>
+
+<!-- Web-App -->
+<td>
+<h2><a href="?q=webapp">WebApp</a></h2>
+
+<p>Overview of the web-apps running in the Resin instance.</p>
+
+</td>
+</tr>
+
+<tr>
+<td>
+<h2><a href="rest.php">REST</a></h2>
+
+<p>REST pages for programmatic access</p>
+
+<?php
+
+foreach (load_pages("rest") as $key => $value) {
+  echo "<a href='rest.php?q=" . $key . "'>" . $key . "</a><br>\n"
+}
+?>
+
+</table>
+
+<?php display_footer("index.php"); ?>

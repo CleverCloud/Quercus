@@ -1,0 +1,52 @@
+<document>
+<header>
+  <title>server: Server tag configuration</title>
+  <version>Resin 4.0</version>
+
+  <description>
+
+  <p>The &lt;server> tag configures a JVM instance in a cluster.  It
+configures HTTP and cluster sockets, keepalives and timeouts, thread pooling,
+load balancing, and JVM arguments.</p>
+
+  </description>
+</header>
+<body>
+<reference-legend/>
+
+<localtoc/>
+<include-defun name="accept-listen-backlog"/>
+<include-defun name="accept-thread-max"/>
+<include-defun name="accept-thread-min"/>
+<include-defun name="address"/>
+<include-defun name="cluster-port"/>
+<include-defun name="group-name"/>
+<include-defun name="http"/>
+<include-defun name="jvm-arg"/>
+<include-defun name="jvm-classpath"/>
+<include-defun name="keepalive-max"/>
+<include-defun name="keepalive-select-enable"/>
+<include-defun name="keepalive-select-thread-timeout"/>
+<include-defun name="keepalive-timeout"/>
+<include-defun name="load-balance-connect-timeout"/>
+<include-defun name="load-balance-recover-time"/>
+<include-defun name="load-balance-idle-time"/>
+<include-defun name="load-balance-warmup-time"/>
+<include-defun name="load-balance-weight"/>
+<include-defun name="memory-free-min"/>
+<include-defun name="port"/>
+<include-defun name="port-default"/>
+<include-defun name="protocol"/>
+<include-defun name="server"/>
+<include-defun name="server-default"/>
+<include-defun name="shutdown-wait-max"/>
+<include-defun name="socket-timeout"/>
+<include-defun name="thread-idle-max"/>
+<include-defun name="thread-idle-min"/>
+<include-defun name="thread-max"/>
+<include-defun name="user-name"/>
+<include-defun name="watchdog-arg"/>
+<include-defun name="watchdog-port"/>
+
+</body>
+</document>

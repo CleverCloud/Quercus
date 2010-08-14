@@ -1,0 +1,40 @@
+default namespace javaee = "http://java.sun.com/xml/ns/javaee"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+include "classpath:com/caucho/config/cfg/javaee.rnc"
+
+javaee15_application-client = element application-client {
+  attribute id { string }?,
+
+  attribute metadata-complete { string }?,
+
+  attribute version { string },
+
+  attribute xsi:schemaLocation { string },
+
+  javaee_description-Group,
+
+  javaee_env-entry*,
+
+  javaee_ejb-ref*,
+
+  javaee_service-ref-Group,
+
+  javaee_resource-ref*,
+
+  javaee_resource-env-ref*,
+
+  javaee_message-destination*,
+
+  javaee_message-destination-ref*,
+
+  javaee_persistence-unit-ref*,
+
+  javaee_post-construct*,
+
+  javaee_pre-destroy*,
+
+  element callback-handler { javaee_fully-qualified-class }?
+}

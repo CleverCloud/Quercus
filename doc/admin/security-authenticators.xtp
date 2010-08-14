@@ -1,0 +1,69 @@
+<document>
+<header>
+<product>resin</product>
+<title>Resin Authenticators</title>
+<description>
+<p>
+The following are details on the authenticators that can be used with Resin, along with 
+example code to utilize as a starting point for your applications:  
+</p>
+</description>
+</header>
+<body>
+<localtoc/>
+<include-defun name="resin:DatabaseAuthenticator"/>
+<include-defun name="resin:JaasAuthenticator"/>
+<include-defun name="resin:LdapAuthenticator"/>
+<include-defun name="resin:PropertiesAuthenticator"/>
+<include-defun name="resin:XmlAuthenticator"/>
+<include-defun name="AbstractAuthenticator"/>
+<!--
+    XXX: Why is this commented-out?
+<s2 title="AuthenticationList" version="3.0.9">
+<p>
+In a vast majority of cases, a single authenticator for an application is fine. However,
+there can be some instances where it is necesary to chain together more than one 
+authenticator. For example, you may need to augment or use a pre-existing authenticator
+(or authenticators) for a new application.
+</p>
+<p>
+AuthenticatorList (<a href="javadoc|com.caucho.server.security.AuthenticatorList|"/>)
+is used to configure more than one authenticator in a list. Each configured authenticator 
+is tried in turn and if the authentication fails the next authenticator in the list is 
+attempted.
+</p>
+<p>The following example shows the use of an authentication list:</p>
+<example>
+  &lt;authenticator type="com.caucho.server.security.AuthenticatorList"&gt;
+    &lt;init&gt;
+      &lt;authenticator resin:type="com.caucho.server.security.XmlAuthenticator"&gt;
+        &lt;user&gt;admin:NIHlOSafJN2H7emQCkOQ2w==:user,admin&lt;/user&gt;
+      &lt;/authenticator&gt;
+
+      &lt;authenticator resin:type='com.caucho.server.security.JdbcAuthenticator'&gt;
+        &lt;data-source&gt;jdbc/users&lt;/data-source&gt;
+        &lt;password-query&gt;
+          SELECT password FROM LOGIN WHERE username=?
+        &lt;/password-query&gt;
+        &lt;cookie-auth-query&gt;
+          SELECT username FROM LOGIN WHERE cookie=?
+        &lt;/cookie-auth-query&gt;
+        &lt;cookie-auth-update&gt;
+          UPDATE LOGIN SET cookie=? WHERE username=?
+        &lt;/cookie-auth-update&gt;
+        &lt;role-query&gt;
+          SELECT role FROM LOGIN WHERE username=?
+        &lt;/role-query&gt;
+      &lt;/authenticator&gt;
+    &lt;/init&gt;
+  &lt;/authenticator&gt;
+
+  &lt;login-config auth-method='basic'/&gt;
+
+  &lt;security-constraint url-pattern='/users/*' role-name='user'/&gt;
+  &lt;security-constraint url-pattern='/admin/*' role-name='admin'/&gt;
+</example>
+</s2>
+-->
+</body>
+</document>

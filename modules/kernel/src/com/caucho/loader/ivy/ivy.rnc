@@ -1,0 +1,170 @@
+start = ivy-module
+
+artifact = element artifact {
+  attribute conf { string }?
+  & attribute classifier { string }?
+  & attribute ext { string }?
+  & attribute name { string }?
+  & attribute url { string }?
+  & attribute type { string }?
+
+  & conf*
+}
+
+boolean-Type = string
+
+conf =  element conf {
+  attribute name { string }
+  & attribute description { string }?
+  & attribute visibility { string }?
+  & attribute extends { string }?
+  & attribute transitive { string }?
+  & attribute deprecated { string }?
+
+  & ivy-include*
+
+  & exclude*
+
+  & attribute mapped { string }?
+
+  & element mapped {
+      attribute name { string }
+    }*
+}
+
+configurations = element configurations {
+  attribute defaultconfmapping { string }?
+
+  & attribute confmappingoverride { boolean-Type }?
+
+  & conf*
+
+  & ivy-include*
+}
+
+conflicts = element conflicts {
+  manager+
+}
+
+description = element description {
+  attribute homepage { string }?
+}
+
+manager = element manager {
+  attribute org { string }?
+  & attribute module { string }?
+  & attribute name { string }?
+  & attribute rev { string }?
+  & attribute matcher { string }?
+}
+
+dependencies = element dependencies {
+  attribute defaultconf { string }?
+  & attribute defaultconfmapping { string }?
+  & attribute confmappingoverride { boolean-Type }?
+
+  & dependency*
+  & exclude*
+}
+
+dependency = element dependency {
+  attribute org { string }?
+  & attribute name { string }?
+  & attribute branch { string }?
+  & attribute rev { string }?
+  & attribute force { string }?
+  & attribute changing { string }?
+  & attribute transitive { string }?
+  & attribute conf { string }?
+
+  & artifact*
+  & conf*
+  & exclude*
+  & ivy-include*
+}
+
+exclude = element exclude {
+  attribute name { string }?
+  & attribute type { string }?
+  & attribute ext { string }?
+  & attribute conf { string }?
+  & attribute org { string }?
+  & attribute module { string }?
+  & attribute matcher { string }?
+
+  & conf*
+}
+
+ivy-include = element include {
+  attribute name { string }?
+  & attribute type { string }?
+  & attribute ext { string }?
+  & attribute conf { string }?
+  & attribute matcher { string }?
+
+  & conf*
+}
+
+ivy-module = element ivy-module {
+  attribute version { String }
+
+  & configurations?
+
+  & conflicts?
+
+  & dependencies?
+
+  & info
+
+  & publications?
+}
+
+info = element info {
+  attribute organisation { string }
+
+  & attribute module { string }
+
+  & attribute branch { string }?
+
+  & attribute revision { string }?
+
+  & attribute status { string }?
+
+  & attribute publication { string }?
+
+  & attribute resolver { string }?
+
+  & attribute namespace { string }?
+
+  & attribute default { boolean-Type }?
+
+  & license*
+
+  & ivyauthor*
+
+  & repository*
+
+  & description?
+}
+
+ivyauthor = element ivyauthor {
+  attribute name { string }
+  & attribute url { string }?
+}
+
+license = element license {
+  attribute name { string }
+  & attribute url { string }?
+}
+
+publications = element publications {
+  artifact*
+}
+
+repository = element repository {
+  attribute name { string }
+  & attribute url { string }
+  & attribute pattern { string }?
+  & attribute ivy { boolean-Type }?
+  & attribute artifacts { boolean-Type }?
+}

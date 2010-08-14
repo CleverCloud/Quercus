@@ -1,0 +1,152 @@
+<?php
+/**
+ * SQL display
+ */
+
+require_once "WEB-INF/php/inc.php";
+require_once "WEB-INF/php/wizard.php";
+
+if (! admin_init($query, true)) {
+  return;
+}
+
+?>
+<h1>JDBC Pool Query Utility</h1>
+<p>
+This utility allows you to make SQL queries through any of the JDBC pools
+that you have configured in any of your applications.
+</p>
+<?php
+
+$drivers = $g_mbean_server->query("resin:type=JdbcQuery,*");
+
+if (count($drivers) == 0) {
+?>
+<span class="warn">You don't have any JDBC pools configured yet.  If you need
+help configuring a pool, try using the 
+<a href="<?= "?q=wizards&server-id=$g_server_id" ?>">database configuration wizard.</a></span>
+<?php
+}
+
+foreach ($drivers as $driver) {
+  $safe_name = str_replace("/", "_", $driver->Name);
+
+  // XXX ignore internal database for now.  The jdbc driver is not compatible.
+  if ($safe_name == "jdbc_resin")
+    continue;
+
+  $driver_form = new RootForm("query_{$safe_name}", "{$driver->Name} SQL");
+  $driver_form->add_child(new FormContent("<b>URL</b>: " . $driver->getUrl()));
+
+  $username = $driver->getUserName();
+  if ($username) {
+    $driver_form->add_child(new FormContent("<b>User name</b>: {$username}"));
+  }
+
+  $pool = $g_mbean_server->query("resin:*,name=\"{$driver->Name}\",type=ConnectionPool");
+
+  if (count($pool) == 1) {
+    require_once "WEB-INF/php/db.php";
+    $driver_form->add_child(new FormContent(print_db_pools($pool)));
+  }
+
+  // schema browser
+  $default_catalog = $driver->getDefaultCatalog();
+
+  if (! $default_catalog) {
+    $catalogs = $driver->listCatalogs();
+  }
+  else {
+    $catalogs = array($default_catalog);
+  }
+
+  if (count($catalogs) == 1) {
+    $schema_browser = new OptionalForm("schema_browser_{$safe_name}", 
+                                       "Browse catalog '{$catalogs[0]}'");
+  }
+  else {
+    $schema_browser = new OptionalForm("schema_browser_{$safe_name}", 
+                                       "Browse catalogs");
+  }
+
+  $driver_form->add_child($schema_browser);
+
+  foreach ($catalogs as $catalog) {
+    if (count($catalogs) == 1) {
+      $catalog_form = $schema_browser;
+    }
+    else {
+      $catalog_form = new OptionalForm("schema_browser_{$safe_name}_catalog_{$catalog}", 
+                                       "Browse catalog <tt>$catalog</tt>");
+    }
+
+    $tables = $driver->listTables($catalog);
+    foreach ($tables as $table) {
+      $table_form = new OptionalForm("schema_browser_{$safe_name}_{$table}", 
+                                     "Browse table '{$table}'");
+      $catalog_form->add_child($table_form);
+
+      $columns = $driver->listColumns($catalog, $table);
+
+      $schema_html = "<table class='schema'>\n";
+
+      $schema_html .= "<tr><th>Column name</th><th>Column type</th></tr>\n";
+      foreach ($columns as $column) {
+        $schema_html .= "<tr>\n";
+        $schema_html .= "<td>" . $column->getName() . "</td>\n";
+        $schema_html .= "<td>" . $column->getType() . "</td>\n";
+        $schema_html .= "</tr>\n";
+      }
+
+      $schema_html .= "</table>\n";
+
+      $table_form->add_child(new FormContent($schema_html));
+    }
+  }
+
+  $driver_form->add_child(new TextField("{$safe_name}-sql", 
+                                        "SQL Query", true));
+
+  $driver_form->process("sql_result_processor", $driver);
+}
+
+function sql_result_processor($form, $driver)
+{
+  $safe_name = str_replace("/", "_", $driver->Name);
+  $sql = $form->get_field("{$safe_name}-sql")->get_value();
+
+  try {
+    echo "<div class='sql'>\n";
+    echo "<h3>Query Results</h3>\n"
+    echo "<span style='font-size: 150%;'><tt>$sql</tt></span>\n"
+    echo "<table class='sql'>\n";
+
+    $results = $driver->query($sql);
+
+    if ($results == null) 
+      echo "<tr><td>Unable to perform query (unknown error)</td></tr>";
+    else {
+      $row_names = $results->getRowNames();
+      $result_data = $results->getResultData();
+
+      echo "<tr>";
+      foreach ($row_names as $name) {
+        echo "<th>$name</th>";
+      }
+      echo "</tr>\n";
+
+      foreach ($result_data as $row) {
+        echo "<tr>";
+        foreach ($row as $cell) {
+          echo "<td>$cell</td>";
+        }
+        echo "</tr>\n";
+      }
+    }
+  }
+  catch (Exception $e) {
+    echo "<tr><td>Unable to perform query ({$e->getMessage()})</td></tr>";
+  }
+
+  echo "</table>\n</div>\n";
+}

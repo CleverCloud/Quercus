@@ -1,0 +1,7 @@
+Class-Path: javaee-16.jar javaee-15.jar pro.jar license.jar hessian.jar quercus.jar resin-kernel.jar jcache-16.jar webservices-api.jar
+Implementation-Vendor: Caucho Technology, Inc.
+Implementation-Version: @VERSION@
+J2EE-DeploymentFactory-Implementation-Class: com.caucho.j2ee.deployclient.DeploymentFactoryImpl
+Main-Class: com.caucho.boot.ResinBoot
+
+

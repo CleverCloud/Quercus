@@ -1,0 +1,105 @@
+<document>
+  <header>
+    <product>resin-ee</product>
+    <title>Query CMP</title>
+        <description>
+          <p>The Amber Query API resembles the JDBC PreparedStatement with
+enhanced SQL and direct support for objects.</p>
+        </description>
+    <type>tutorial</type>
+    <tutorial-startpage>query</tutorial-startpage>
+  </header>
+
+  <body>
+    <summary/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr><td><viewfile-link file="WEB-INF/resin-web.xml"/>
+    </td><td>resin-web.xml configuration
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/META-INF/persistence.xml"/>
+    </td><td>persistence.xml configuration
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/Student.java"/>
+    </td><td>The student bean
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/House.java"/>
+    </td><td>The house bean
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/QueryServlet.java"/>
+    </td><td>The course servlet
+</td></tr></deftable>
+</s1>
+
+<s1 title="Database Schema">
+
+<example title="House.java">
+<a href="doc|amber-table.xtp#@Entity">@Entity</a>
+public class House {
+  <a href="doc|amber-table.xtp#@Id">@Id</a>
+  <a href="doc|amber-table.xtp#@Column">@Column</a>(name="id")
+  public long getId()
+
+  <a href="doc|amber-table.xtp#@Basic">@Basic</a>
+  public String getName()
+
+  <a href="doc|amber-table.xtp#@OneToMany">@OneToMany</a>(targetEntity=Student.class,
+        mappedBy="house")
+  public Collection getStudentList()
+}
+</example>
+
+<example title="Student.java">
+<a href="doc|amber-table.xtp#@Entity">@Entity</a>
+public class Student {
+  <a href="doc|amber-table.xtp#@Id">@Id</a>
+  <a href="doc|amber-table.xtp#@Column">@Column</a>(name="id")
+  public long getId()
+
+  <a href="doc|amber-table.xtp#@Basic">@Basic</a>
+  public String getName()
+
+  <a href="doc|amber-table.xtp#@ManyToOne">@ManyToOne</a>
+  <a href="doc|amber-table.xtp#@JoinColumn">@JoinColumn</a>(name="house")
+  public House getHouse()
+}
+</example>
+
+</s1>
+
+<s1 title="Query">
+
+<example title="QueryServlet.java">
+  private void doService(PrintWriter out)
+    throws java.io.IOException
+  {
+    Query allHouse = _entityManager.createQuery("SELECT o FROM House o");
+    
+    String sql = ("SELECT s" +
+		  " FROM House h, IN(h.studentList) s" +
+		  " WHERE h.id=?1 AND s.gender='M'");
+    Query boysInHouse = _entityManager.createQuery(sql);
+    
+    List houses = allHouse.getResultList();
+
+    for (int i = 0; i &lt; houses.size(); i++) {
+      House house = (House) houses.get(i);
+      
+      out.println("&lt;H3&gt;Boys living in " + house.getName() + ":&lt;/H3&gt;");
+
+      boysInHouse.setParameter(1, new Long(house.getId()));
+      List boys = boysInHouse.getResultList();
+
+      if (boys.size() == 0)
+	out.println("No boys are living in " + house.getName());
+
+      for (int j = 0; j &lt; boys.size(); j++) {
+	Student boy = (Student) boys.get(j);
+
+	out.println(boy.getName() + "&lt;br&gt;");
+      }
+    }
+  }
+}
+</example>
+
+</s1>
+  </body>
+</document>

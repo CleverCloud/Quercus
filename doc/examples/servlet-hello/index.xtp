@@ -1,0 +1,162 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>A Hello, World Servlet</title>
+    <description><p>A trivial "hello, world" servlet</p></description>
+    <type>tutorial</type>
+ <tutorial-startpage>hello</tutorial-startpage>
+  </header>
+
+  <body>
+    <localtoc/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <th>File</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/resin-web.xml"/></td>
+  <td>resin-web.xml configuration</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/test/HelloServlet.java"/></td>
+  <td>The Hello, World servlet.</td>
+</tr>
+</deftable>
+</s1>
+
+<s1>
+<p>Servlets are the pure Java solution to handle web requests.  Many
+application will use servlets instead of JSP and others will use servlets
+in conjunction with JSP.  Experienced JSP programmers use servlets
+in conjunction with JSP to create clearer and simpler applications.
+The servlets handle Java processing: form handing, calculation and
+database queries.  JSP formats the results.</p>
+
+<p>Servlets belong in <var>WEB-INF/classes</var>.  On this machine,
+the source is in Java source in <var>WEB-INF/classes</var>.
+<!--
+<jsp:expression>
+application.getRealPath("/WEB-INF/classes")
+</jsp:expression></var>.
+-->
+WEB-INF/classes is the standard location
+for servlets and other Java classes.  Resin automatically reloads and
+recompiles servlets, beans, and classes placed in WEB-INF/classes.
+You should make some changes and add errors to become familiar with Resin's
+recompilation and the error reporting.</p>
+
+<p>Create the following servlet in
+<var>WEB-INF/classes/test/HelloServlet.java</var> with your favorite
+text editor: notepad, emacs, vi, or whatever.
+<!--
+(On this machine,
+<var><jsp:expression>
+  application.getRealPath("/WEB-INF/classes/test/HelloServlet.java")
+</jsp:expression></var>)
+-->
+</p>
+
+<example title="Example: WEB-INF/classes/test/HelloServlet.java">
+package test;
+
+import java.io.*;
+
+import javax.servlet.http.*;
+import javax.servlet.*;
+
+public class HelloServlet extends HttpServlet {
+  public void doGet (HttpServletRequest req,
+                     HttpServletResponse res)
+    throws ServletException, IOException
+  {
+    PrintWriter out = res.getWriter();
+
+    out.println("Hello, world!");
+    out.close();
+  }
+}
+</example>
+
+<p>Now browse the servlet at
+<!--
+<a href="hello"><jsp:expression>
+request.getContextPath() + "/hello"
+</jsp:expression></a>.
+-->
+<a href="hello">http://localhost:8080/resin-doc/tutorial/hello</a>.
+Resin will automatically compiles the servlet for you.
+Browsing servlets differs from page browsing because
+you're executing a servlet class, not looking at a page.
+The <var>/hello</var> URL is configured for the hello, world servlet below.</p>
+</s1>
+
+<s1 title="Configuration">
+
+<p>Configuration for the servlet is in the <var>WEB-INF/web.xml</var> file.</p>
+
+<p>The servlet needs to be configured and it needs to be mapped
+to a URL.  The <a config-tag="servlet"/> tag
+configures the servlet.  In our simple example, we just need to
+specify the class name for the servlet.</p>
+
+<p>The <a config-tag="servlet-mapping"/>
+tag specifies the URLs which will invoke the servlet.  In our case,
+the <var>/hello</var> URL invokes the servlet.  Because the tutorial
+<a href="doc|webapp.xtp">webapp</a> is a sub-URL like
+<var>/doc/servlet/tutorial/helloworld</var>, the actual URL to invoke
+the servlet is the combination of the two.</p>
+
+<example title="Example: WEB-INF/web.xml">
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee" version="2.4"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http:/java.sun.com/dtd/web-app_2_3.dtd"&gt;
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;hello&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;test.HelloServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;hello&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/hello&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</example>
+
+<p>Resin allows a short cut for the XML configuration in the example above;
+you can use XML attributes in place of elements.  The
+Servlet 2.4 standard uses only elements.  So the servlet-mapping
+configuration following the Servlet 2.4 standard would look like:</p>
+
+<example title="Example: WEB-INF/resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+
+   &lt;servlet-mapping url-pattern="/hello"
+            servlet-class="test.HelloServlet"/&gt;
+
+&lt;/web-app&gt;
+</example>
+
+<p>The two are entirely equivalent.  For larger configurations,
+using attributes makes the resin.conf or web.xml more readable.</p>
+
+<deftable>
+<tr>
+  <th>tag</th>
+  <th>meaning</th>
+</tr>
+<tr>
+  <td>web-app</td>
+  <td>Web application top-level tag.</td>
+</tr>
+</deftable>
+
+<p>The <var>xmlns="http://caucho.com/ns/resin"</var> lets Resin
+validate the web.xml configuration.  The validator will catch most
+errors in the web.xml.</p>
+
+</s1>
+  </body>
+</document>

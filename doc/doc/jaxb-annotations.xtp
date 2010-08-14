@@ -1,0 +1,359 @@
+<document>
+<header>
+  <title>JAXB Annotations for SOA/IoC</title>
+  <version>Resin 3.1</version>
+
+  <description>
+<p>JAXB annotations customize the serialization of a model bean.</p>
+  </description>
+</header>
+<body>
+
+<localtoc/>
+
+<defun title="@XmlAccessorType">
+
+<p>@XmlAccessorType sets default field and property serializability.
+By default, JAXB serializes public fields and properties.  By setting
+@XmlAccessorType, the bean can choose to only allow annotated fields
+to be serialized.</p>
+
+<p>@XmlAccessorType works with the other annotations and
+<a href="#@XmlTransient">@XmlTransient</a> to serialize fields and properties.
+@XmlTransient prevents serialization, overriding the @XmlAccessorType.
+The presense of any other annotation will force serialization,
+overriding the @XmlAccessorType.</p>
+
+<deftable title="@XmlAccessorType values">
+<tr>
+  <td>NONE</td>
+  <td>Only annotated fields and properites should be serialized></td>
+</tr>
+<tr>
+  <td>FIELD</td>
+  <td>All fields (public or private) should be serialized></td>
+</tr>
+<tr>
+  <td>PROPERTY</td>
+  <td>All properties (public or private) should be serialized></td>
+</tr>
+<tr>
+  <td>PUBLIC_MEMBER</td>
+  <td>Public fields and properties></td>
+</tr>
+</deftable>
+
+<example title="@XmlAccessorType serializing fields">
+@XmlAccessorType(XmlAccessType.FIELD)
+class Bean {
+  private String data;
+}
+</example>
+
+<example title="XML Document">
+&lt;Bean>
+  &lt;data>Sample Data&lt;/data>
+&lt;/Bean>
+</example>
+
+<def title="@XmlAccessorType">
+@Target(value={PACKAGE,TYPE})
+public @interface XmlAccessorType {
+  public XmlAccessType value() default XmlAccessType.PUBLIC_MEMBER;
+}
+</def>
+
+<def title="XmlAccessType">
+public enum XmlAccessType {
+    FIELD, NONE, PROPERTY, PUBLIC_MEMBER;
+}
+</def>
+
+</defun>
+
+<defun title="@XmlAttribute">
+
+<p>@XmlAttribute marks a field or property as serialized to an
+XML attribute.  By default, fields serialize to XML elements.
+It can also customize the XML attribute name and namespace.</p>
+
+<p>@XmlAttribute can work with
+<a href="#@XmlAccessorType">@XmlAccessorType</a> to select which fields
+and properties should be serialized to XML.  By default, public fields
+and properties will be serialized.  Adding @XmlAttribute to a private
+field will mark that field as serializable.</p>
+
+<p>@XmlAttribute can also customize the XML attribute name.  By default, the
+XML attribute name is taken from the field name or the property name.  
+The <code>name()</code> value of the @XmlAttribute annotation will override
+the default element name.</p>
+
+<example title="@XmlAttribute for a private field">
+@XmlRootElement
+class Bean {
+  @XmlAttribute("sample-field")
+  private String _myField;
+}
+</example>
+
+<example title="XML document for the Bean">
+&lt;Bean sample-field="A sample value">
+&lt;/Bean>
+</example>
+
+<def title="@XmlAttribute definition">
+@Target(value={FIELD,METHOD})
+public @interface XmlAttribute {
+  public String name() default "##default";
+  public boolean required() default false;
+  public String namespace() default "##default";
+}
+</def>
+
+</defun>
+
+<defun title="@XmlElement">
+
+<p>@XmlElement marks a field or property as serialized to an
+XML element.  It can also customize the XML element name and namespace.</p>
+
+<p>@XmlElement can work with
+<a href="#@XmlAccessorType">@XmlAccessorType</a> to select which fields
+and properties should be serialized to XML.  By default, public fields
+and properties will be serialized.  Adding @XmlElement to a private
+field will mark that field as serializable.</p>
+
+<p>@XmlElement can also customize the XML element name.  By default, the
+XML element name is taken from the field name or the property name.  
+The <code>name()</code> value of the @XmlElement annotation will override
+the default element name.</p>
+
+<example title="@XmlElement for a private field">
+@XmlRootElement
+class Bean {
+  @XmlElement("sample-field")
+  private String _myField;
+}
+</example>
+
+<example title="XML document for the Bean">
+&lt;Bean>
+  &lt;sample-field>A sample value&lt;/sample-field>
+&lt;/Bean>
+</example>
+
+<def title="@XmlElement definition">
+@Target(value={FIELD,METHOD})
+public @interface XmlElement {
+  public String name() default "##default";
+  public boolean nillable() default false;
+  public boolean required() default false;
+  public String namespace() default "##default";
+  public String defaultValue() default "\u0000";
+  public Class type() DEFAULT.class;
+}
+</def>
+
+</defun>
+
+<defun title="@XmlElements">
+
+<p>@XmlElements allows lists to contain multiple different tags.  It
+contains a list of @XmlElement values allowed as values.</p>
+
+<example title="@XmlElement allowing two tags">
+class Bean {
+  @XmlElements({
+    @XmlElement(name="a",type=BeanA.class),
+    @XmlElement(name="b",type=BeanB.class)
+  })
+  private List&lt;SubBean> data = new List&lt;SubBean>();
+}
+
+class BeanA extends SubBean {
+  @XmlValue
+  private String data;
+}
+
+class BeanB extends SubBean {
+  @XmlValue
+  private String data;
+}
+</example>
+
+<example title="XML document for the example">
+&lt;Bean>
+  &lt;a>Some BeanA Data&lt;/a>
+  &lt;b>Some BeanB Data&lt;/b>
+  &lt;a>Another BeanA Data&lt;/a>
+&lt;/Bean>
+</example>
+
+<def title="@XmlElements definition">
+@Target(value={FIELD,METHOD})
+public @interface XmlElements {
+  public XmlElement[] value();
+}
+</def>
+
+</defun>
+
+<defun title="@XmlElementWrapper">
+
+<p>@XmlElementWrapper adds a wrapper XML tag for list values.
+By default, JAXB list values are serialized directly without any extra
+tags.  @XmlElementWrapper adds a container XML tags.</p>
+
+<example title="Bean example with @XmlElementWrapper">
+class Bean {
+  @XmlElementWrapper(name="values")
+  private List&lt;String> data = new ArrayList&lt;String>();
+}
+</example>
+
+<example title="XML document for example">
+&lt;Bean>
+  &lt;values>
+    &lt;data>Some data&lt;/data>
+    &lt;data>Another item&lt;/data>
+    &lt;data>Third item&lt;/data>
+  &lt;/values>
+&lt;/Bean>
+</example>
+
+<def title="@XmlElementWrapper definition">
+@Target(value={FIELD,METHOD})
+public @interface XmlElementWrapper {
+  public String name() default "##default";
+  public String namespace() default "##default";
+  public boolean nillable() default false;
+}
+</def>
+
+</defun>
+
+<defun title="@XmlJavaTypeAdapter">
+
+<p>@XmlJavaTypeAdapter specifies a Java class which converts
+helper values to final values.</p>
+
+<p>In some cases, the Java model may not directly match the XML
+model.  For example, it's complicated to represent Java maps in
+XML.  The @XmlJavaTypeAdapter provides a standard way of managing
+complex types.</p>
+
+<example title="Maps in a Bean">
+class Bean {
+  @XmlJavaTypeAdapter(MyMapAdapter.class)
+  private HashMap&lt;String,String> map;
+}
+
+class MyMapAdapter
+  extends XmlAdapter&lt;Temp,Map&lt;String,String>> {
+  ...
+}
+
+class Temp {
+  @XmlElement
+  private List&lt;Item> entry = new ArrayList&lt;item>();
+}
+
+class Item {
+  @XmlAttribute
+  private String key;
+
+  @XmlAttribute
+  private String value;
+}
+</example>
+
+<example title="XML Document">
+&lt;Bean>
+  &lt;entry key="a" value="data-a"/>
+  &lt;entry key="b" value="data-b"/>
+  &lt;entry key="c" value="data-c"/>
+&lt;/Bean>
+</example>
+
+<def title="@XmlJavaTypeAdapter">
+@Target({PACKAGE, FIELD, METHOD, TYPE, PARAMETER})
+public @interface XmlJavaTypeAdapter {
+  Class&lt;? extends XmlAdapter> value();
+  Class type() default DEFAULT.class;
+}
+</def>
+
+</defun>
+
+<defun title="@XmlRootElement">
+
+<p>@XmlRootElement marks a class as a top-level XML node.  @XmlRootElement
+can also be used with @XmlElementRef to handle some inheritance situations.</p>
+
+<p>The <code>name()</code> value of @XmlRootElement customizes the
+XML name used to serialize a top-level element.  The default value is
+the class name.</p>
+
+<example title="@XmlRootElement for renaming">
+@XmlRootElement(name="my-bean")
+class Bean {
+  public String data;
+}
+</example>
+
+<example title="XML document for the Bean">
+&lt;my-bean>
+  &lt;data>A sample value&lt;/data>
+&lt;/my-bean>
+</example>
+
+<def title="@XmlRootElement definition">
+@Target(value=TYPE)
+public @interface XmlRootElement {
+  public String name() default "##default";
+  public String namespace() default "##default";
+}
+</def>
+
+</defun>
+
+<defun title="@XmlTransient">
+
+<p>@XmlTransient marks a field or property as unserializable.  JAXB
+will ignore the transient field.</p>
+
+<def title="@XmlTransient annotation">
+@Target(value={FIELD,METHOD})
+public @interface XmlTransient {
+}
+</def>
+
+</defun>
+
+<defun title="@XmlValue">
+
+<p>@XmlValue marks a single field as representing the entire content
+of the bean.  If a bean has an @XmlValue annotation, no other
+property or field may be serialized.</p>
+
+<example title="@XmlValue filling a bean">
+class Bean {
+  @XmlValue
+  private String data;
+}
+</example>
+
+<example title="XML document for @XmlValue">
+&lt;Bean>Sample Data&lt;/Bean>
+</example>
+
+<def title="@XmlValue definition">
+@Target(value={FIELD,METHOD})
+public @interface XmlValue {
+}
+</def>
+
+</defun>
+
+</body>
+</document>

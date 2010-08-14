@@ -1,0 +1,164 @@
+
+default namespace j2ee = "http://java.sun.com/xml/ns/j2ee"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+include "classpath:com/caucho/config/cfg/j2ee.rnc"
+
+j2ee_generic-boolean = string
+j2ee_variable = string
+
+jsp20_attribute = element attribute {
+  attribute id { string }?,
+
+  jsp20_description*,
+
+  element name { j2ee_java-identifier },
+
+  element required { j2ee_generic-boolean }?,
+
+  ((element rtexprvalue { j2ee_generic-boolean }?,
+     element type { j2ee_fully-qualified-class }?)
+
+   | element fragment { j2ee_generic-boolean }?)
+}
+
+jsp20_body-content = element body-content {
+  "tagdependent"
+  | "JSP"
+  | "empty"
+  | "scriptless"
+}
+
+jsp20_description = element description { string }*
+
+jsp20_display-name = element display-name { string }*
+
+jsp20_extension-Type =
+  (attribute id { string }?,
+
+   attribute namespace { string },
+
+   jsp20_extension-element+)
+
+jsp20_extension-element = element extension-element {
+  attribute id { string }?
+}
+
+jsp20_function = element function {
+  attribute id { string }?,
+
+  j2ee_description-Group,
+
+  element name { string },
+
+  element function-class { j2ee_fully-qualified-class },
+
+  element function-signature { string },
+
+  element example { string }?,
+
+  element function-extension { jsp20_extension-Type }*
+}
+
+jsp20_listener = element listener {
+  attribute id { string }?,
+
+  j2ee_description-Group,
+
+  element listener-class { j2ee_fully-qualified-class }
+}
+
+jsp20_tag = element tag {
+  attribute id { string }?,
+
+  j2ee_description-Group,
+
+  element name { string },
+
+  element tag-class { j2ee_fully-qualified-class },
+
+  element tei-class { j2ee_fully-qualified-class }?,
+
+  jsp20_body-content?,
+
+  jsp20_variable*,
+
+  jsp20_attribute*,
+
+  element dynamic-attributes { j2ee_generic-boolean }?,
+
+  element example { string }?,
+
+  element tag-extension { jsp20_extension-Type }*
+}
+
+jsp20_tag-file = element tag-file {
+  attribute id { string }?,
+
+  j2ee_description-Group,
+
+  element name { string },
+
+  element path { j2ee_path },
+
+  element example { string }?,
+
+  element tag-extension { jsp20_extension-Type }*
+}
+
+## XXX: tck requires short-name to be optional
+jsp20_taglib = element taglib {
+  attribute version { "2.0" },
+
+  attribute xsi:schemaLocation { string }?,
+
+  j2ee_description-Group,
+
+  element tlib-version { j2ee_dewey-version },
+  
+  element jsp-version { j2ee_dewey-version }?,
+
+  element short-name { string }?,
+
+  element uri { string }?,
+
+  jsp20_validator?,
+
+  jsp20_listener*,
+
+  jsp20_tag*,
+
+  jsp20_tag-file*,
+
+  jsp20_function*,
+
+  element taglib-extension { jsp20_extension-Type }*
+}
+
+jsp20_validator = element validator {
+  attribute id { string }?,
+
+  jsp20_description*,
+
+  element validator-class { j2ee_fully-qualified-class },
+
+  j2ee_init-param*
+}
+
+jsp20_variable = element variable {
+  attribute id { string }?,
+
+  jsp20_description*,
+
+  ( element name-given { j2ee_java-identifier }
+  | element name-from-attribute { j2ee_java-identifier }),
+
+  element variable-class { j2ee_fully-qualified-class }?,
+
+  element declare { j2ee_generic-boolean }?,
+
+  element scope { "AT_BEGIN" | "NESTED" | "AT_END" }?
+}
+

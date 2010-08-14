@@ -1,0 +1,540 @@
+<document>
+<body>
+<s1>
+<title>Resin-EE Change Log</title>
+
+<s2 title="3.0 snap - Aug 31, 2004">
+<ul>
+<li>Basic conversion completed.
+</li><li>Added basic @Stateful support
+</li><li>Added basic @Stateless support
+</li><li>Changed to unified entity LruCache
+</li></ul>
+</s2>
+
+<s2 title="2.1.snap - Aug 19, 2004">
+<ul>
+<li>Clear dead objects from EJB (rep by Kirk Rasmussen)
+</li><li>Clear caching of dependent relation (rep by Scott Croco)
+</li></ul>
+</s2>
+
+<s2 title="3.0.8 - Jun 8, 2004">
+<ul>
+<li>Avoided NPE in PersistentManager (rep by T McAuley)
+</li><li>Fixed message bean receiving with new API (rep by Andrea Mari)
+</li><li>Add ContainerTransaction.setDescription (rep by T McAuley)
+</li><li>JDBC-backed Queue and Topic (rep by Travis Atkins and PeterB)
+</li></ul>
+</s2>
+
+<s2 title="3.0.7 - Mar 25, 2004">
+<ul>
+<li>Updated message-driven bean configuration (rep by Alon Salant)
+</li><li>method-parameters wasn't properly parsed in ejb.jar file (rep by Richard Esasterling)
+</li></ul>
+</s2>
+
+<s2 title="3.0.5 - Jan 14, 2004">
+<ul>
+<li>(2004-01-14) Misc JMS updates
+</li><li>(2003-11-12) Missing setDescription on EjbJar
+</li></ul>
+</s2>
+
+<s2 title="2.1.12 - Dec 11, 2003">
+<ul>
+<li>Support top for sql-server (rep by Kirk Rasmussen)
+</li></ul>
+</s2>
+
+<s2 title="3.0.4 - Nov 3, 2003">
+<ul>
+<li>QEntityContext creation needs to set the used flag on creation (rep by Francois Bertrand)
+</li><li>CMR issue case with collection and missing local key getter (rep by Rudy D'hauwe)
+</li></ul>
+</s2>
+
+<s2 title="2.1.11 - Sep 8, 2003">
+<ul>
+<li>(2003-08-21) Errors with EJB-QL disjunctions (rep by Mike Wynholds)
+</li><li>Exception thrown in ejbCreate does not force rollback (rep by Kirk Rasmussen)
+</li><li>EJB validation problem with merged relations (rep by Max Kutny)
+</li><li>hessian handling of remote user (rep by Charbel El-Achkar)
+</li></ul>
+</s2>
+
+<s2 title="3.0.2-beta - Aug 8, 2003">
+<ul>
+<li>Added &lt;boolean-literal&gt; for literal configuration
+</li></ul>
+</s2>
+
+<s2 title="3.0.1-beta - May 15, 2003">
+<ul>
+<li>(2002-05-12) Uppercase of auth-method FORM needs to be recognized (rep by Jeff Miller)
+</li><li>Changed protection of _ejb_trans in __QPersist (rep by Chuck Adams)
+</li><li>(2002-04-22) Quercus comments weren't working (rep by Jason Chesko)
+</li><li>(2002-03-19) ClockCache was using == instead of equals
+</li><li>(2002-03-18) Update EJB to use ClockCache instead of LruCache
+</li><li>JMX needs to support the custom MBeanServerBuilder (rep by Michael Rumpf)
+</li><li>Added doc for custom login config (rep by Max Kutny).
+</li><li>Added custom sql to &lt;query-function&gt; (rep by Max Kutny)
+</li><li>xsi:schemaLocation was missing from ejb-jar.rnc (rep by Russ Egan)
+</li><li>queries need to add dependencies to the bean (rep by Max Kutny)
+</li><li>basic aliasing with identifying relationships (rep by Bo Glenn)
+</li><li>IIOP issues with generating the IOR (rep by Fabien Thiriet)
+</li><li>added auto-gen support for String based keys when getGeneratedKeys is available (rep by Kirk Rasmussen)
+</li></ul>
+</s2>
+
+<s2 title="2.1.10 - Jun 18, 2003">
+<ul>
+<li>getCollection() wasn't allowed to use old bean in some cases (rep by Kirk Rasmussen)
+</li><li>cache-size overflow wasn't handled cleanly (rep by Kirk Rasmussen)
+</li><li>(2003-05-21) Date allowed as primary key (rep by Kirk Rasmussen)
+</li><li>(2003-04-29) Hessian serialization of byte[] was using writeBinary instead of writeBytes. (rep by zayda)
+</li></ul>
+</s2>
+
+<s2 title="2.1.9 - April 16, 2003">
+<ul>
+<li>(2003-04-08) test.ejb depends wasn't properly cleared on server restart (rep by Max Kutny)
+</li><li>(2003-03-26) ejb.jar needs to accept META-INF/foo.ejb (rep by Jorgen Wahlberg)
+</li><li>(2003-03-14) IIOP stub code generation issues (rep by Fabien Thiriet)
+</li><li>order dependency in ejb-relation with foo.ejb and foo-resin.ejb (rep by Daniel Lopez)
+</li><li>create with failed ejbCreate wasn't properly removing the bean from the cache (rep by Max Kutny)
+</li></ul>
+</s2>
+
+<s2 title="2.1.8 - Mar 6, 2003">
+<ul>
+<li>(2003-02-25) create was throwing DuplicateKeyWrapper when it should have thrown CreateException
+</li><li>fastcgirunner.pl.in missing from Resin-EE (rep by Kevin Skidmore)
+</li><li>IIOP server in subpath (rep by Fabien Thiriet)
+</li></ul>
+</s2>
+
+<s2 title="3.0.0 - Feb 13, 2003">
+<ul>
+<li>added require-source to &lt;compiling-loader&gt; (rep by Max Kutny)
+</li><li>beans sharing same classes need to be distinct (rep by Frank Juang)
+</li><li>(2003-01-08) In Map relations, FinderException but not ObjectNotFoundException should throw EJBException (rep by Max Kutny) 
+</li><li>handling Maps with local keys missing (rep by max Kutny) 
+</li><li>adding logs for select/activate (rep by Max Kutny)
+</li><li>missing primary key type checking (rep by Max Kutny)
+</li></ul>
+</s2>
+
+<s2 title="2.1.snap - Jan 8, 2003">
+<ul>
+<li>(2003-01-08) &lt;order-by&gt; in collections should allow multiple order-by (fixed! by Upil)
+</li><li>MySQL table generation should use DATETIME instead of TIMESTAMP (rep by Michael Wynholds)
+</li><li>(2002-12-17) removed lower limit of 1024 on the entity-cache-size (rep by Sher)
+</li><li>read-only was improperly setting Supports as ejbHome and business method transaction (rep by Max Kutny)
+</li><li>(2002-12-04) identifying primary key issue with a particular config (rep by Joseph Toth)
+</li><li>getCollection().add(...) shouldn't select entire db (rep by Kirk Rasmussen)
+</li><li>EJBCompiler should allow multiple *.ejb (rep by Kirk Rasmussen)
+</li></ul>
+</s2>
+
+<s2 title="2.1.6 - Nov 8, 2002">
+<ul>
+<li>n-m with int primary key failed regression (rep by Andrew Barton)
+</li><li>Print enclosed stack trace from FinderExceptionWrapper (rep by Max Kutny)
+</li><li>(2002-11-07) n-m with int primary key failed regression (rep by Andrew Barton)
+</li><li>Print enclosed stack trace from FinderExceptionWrapper (rep by Max Kutny)
+</li><li>(2002-11-01) Fix handling of unidirectional 1-n with int primary key (rep by Mike Wynholds)
+</li><li>Fix -app-dir usage() printing in EJBCompiler (rep by Dash Sam)
+</li><li>Generated EJB skeleton does not depend on the impl class or the bean class, only the interfaces (rep by Andrew Barton)
+</li></ul>
+</s2>
+
+<s2 title="2.1.5 - Oct 4, 2002">
+<ul>
+<li>(2002-09-26) EntityConfig validation was missing prim-key-class check (rep by Max Kutny)
+</li><li>Allow LIMIT 1 to work with find methods with single values (rep by Max Kutny)
+</li><li>insufficient validation of container-transaction (rep by Max Kutny)
+</li><li>(2002-09-24) EJB depends on custom key class (rep by Max Kutny)
+</li><li>validator was throwing exception for cmp-field with missing impl (rep by Max Kutny)
+</li><li>ejbRemove doesn't need to throw RemoveException (rep by Rick Hightower)
+</li><li>(2002-09-23) Collection/read-only sync issues (rep by Jan Heise and Adam Langley)
+</li><li>Map example fixes (rep by Tauren Mills)
+</li><li>Burlap/Hessian Stub fixes to ensure that exceptions aren't caught twice (rep by Alon Salant)
+</li><li>primitive key types must treat columns as NOT NULL (rep by Adam Langley and Max Kutny)
+</li><li>(2002-08-30) create should try PersistentUtils.getGeneratedKeys (rep by Joseph Toth)
+</li><li>(2002-08-26) sql-column with references and n-1 relation (rep by Bo Glenn)
+</li><li>(2002-08-07) count(..) needs to deal with multiple-key objects (rep by Kirk Rasmussen)
+</li></ul>
+</s2>
+
+<s2 title="2.1.4 - Aug 2, 2002">
+<ul>
+<li>PersistentBean needs to understand interface vs impl (rep by Andre van Dalen)
+</li><li>EJBCompiler needs to throw wrapped exception (rep by Kirk Rasmussen)
+</li><li>Add error checking with cascade-delete on wrong side (rep by Yannick Menager)
+</li></ul>
+</s2>
+
+<s2 title="2.1.3 - July 23, 2002">
+<ul>
+<li>(2002-06-24) Added proper JNDI for Burlap and Hessian (rep by Alon Salant and Christian Bauer)
+</li><li>(2002-06-21) query returning int can return Integer from ejbSelect (rep by Chris Beck)
+</li><li>Bean introspection wasn't catching field defined in interfaces (rep by Nicholas Lesiecki)
+</li><li>Allow Burlap/Hessian to instantiate classes with non-zero-arg constructors (rep by Rene Palad)
+</li><li>primary key decoding was ignoring protocol (rep by Joseph Toth)
+</li><li>brought Burlap into sync with Hessian
+</li><li>Added resin-isolation='row-locking' to EJBServer (rep by Jan Heise and Max Kutny)
+</li><li>Added jdbc-isolation to EJBServer (rep by Jan Heise)
+</li></ul>
+</s2>
+
+<s2 title="2.1.2 - June 11, 2002">
+<ul>
+<li>(2002-06-06) find and ejbSelect methods are read-only
+</li><li>(2002-06-04) Made generated inner constructor public to workaround jikes bug (fixed! by David Soergel)
+</li><li>Burlap specify expected class for array s(rep by Rene Palad)
+</li><li>Error messages for the DataSource were using java:comp/jdbc/test no matter the actual setting (rep by Kirk Rasmussen)
+</li><li>query-function was only allowing a single item (rep by Sunil Kamath)
+</li><li>(2002-05-28) Make transaction-timeout configurable in EJBServer (rep by Rene Palad)
+</li><li>disabled same-jvm optimization for Burlap (rep by Luiz Parzianello)
+</li><li>relationship-role needs check for exactly two elements (rep by Mark Crowthers)
+</li><li>result-type-mapping was missing from query element (rep by Maykey Tres)
+</li><li>int max(int) signature added to FunExpr (rep by Andre van Dalen)
+</li><li>char arguments in ejbSelect weren't treated as Strings for function matching (rep by Andre van Dalen)
+</li><li>(2002-05-22) cached beans weren't timing out in find, waiting for the getData (rep by Kirk Rasmussen)
+</li><li>Relations in separate packages weren't handling ejbSelect preload (rep by Nicholas Lesiecki and Ron Tapia)
+</li><li>Checking for null relation in finder needs to set null type (rep by Joseph Toth)
+</li></ul>
+</s2>
+
+<s2 title="2.1.1 - May 13, 2002">
+<ul>
+<li>check for null with local interfaces in find method (rep by Serge Knystautas)
+</li><li>IN ('a', 'b') fixes (rep by Kirk Rasmussen)
+</li><li>(2002-05-13) collections getters should be treated as getter
+</li><li>collections need to have cache-timeout controlled by owning bean (rep by Kirk Rasmussen)
+</li><li>Added -app-dir for EJBCompiler (rep by Thomas Memenga)
+</li><li>(2002-05-09) Hessian stub generator was generating wrong code for Date (rep by Marc Villenueve)
+</li><li>(2002-05-06) regression
+</li><li>(2002-04-30) implicit relation code generation problems (rep by Kirk Rasmussen)
+</li><li>(2002-04-28) regression cleanup
+</li><li>Lazy ejbLoad of fields
+</li><li>(2002-04-23) Allow ?2 in ORDER BY (rep by Kirk Rasmussen and Timothy Falconer)
+</li><li>Added resin-isolation
+</li><li>Added query-loads-bean (rep by Christian Sell)
+</li><li>ejb-ql LIMIT support for Postgres and unknown databases
+</li><li>Hessian and Burlap need to handle Throwable like Exception (rep by Nicholas Lesiecki)
+</li><li>(2002-04-17) getId() does not need to be in local interface (rep by Daniel Lopez)
+</li><li>Added method configuration to resin-ejb
+</li><li>Added query-function to resin-ejb (rep by Kirk Rasmussen)
+</li><li>&lt;2002-04-15) Hessian stub wasn't throwing accurate exceptions (rep by Nicholas Lesiecki)
+</li><li>Several IIOP 1.2 protocol fixes (rep by Joseph Toth)
+</li><li>DependentServer no longer exists (rep by Drew Davidson)
+</li><li>Added data-source to &lt;entity&gt; config (rep by Luiz Claudio Parzianello)
+</li><li>Update only EJBs affected by a relation not necessarily target (rep by Nicholas Lesiecki)
+</li><li>Can't use _caucho as a temporary SQL name for Oracle (rep by Paul Visan)
+</li><li>(2002-04-08) Add single read load optimization (rep by Serge Knystautas)
+</li><li>Remove Lock code (rep by Serge Knystautas)
+</li><li>Cleanup _EJB dependencies (rep by Nicholas Lesiecki)
+</li><li>Allow separation of Resin-specific configuration from EJB configuration. (rep by Daniel Lopez)
+</li><li>auto-compile wasn't propagaged to persistence (rep by Kirk Rasmussen)
+</li><li>EJBcompiler needs Thread.setContextClassLoader (rep by Kirk Rasmussen)
+</li></ul>
+</s2>
+
+<s2 title="2.1.0 - March 26, 2002">
+<ul>
+<li>EJBcompiler needs a wrapped DynamicClassLoader (rep by Kirk Rasmussen)
+</li><li>(2002-03-22) sql-column was broken for collections (rep by Mike Wynholds and Kirk Rasmussen)
+</li><li>(2002-03-20) Quercus: Added Weblog replaced WeblogComment with general Comment
+</li><li>Quercus: eliminated Product/S2 and replaced with general Category
+</li><li>Quercus: UserRoles now is identifying relation
+</li><li>Quercus: passwords now MD5(user:password)
+</li><li>cleanup object releases in TransactionContext (rep by Serge Knystautas)
+</li><li>byte [] wasn't being set to setBinaryStream property (rep by Serge Knystautas)
+</li><li>create methods were wrapping custom exceptions (rep by Rudy D'hauwe)
+</li><li>(2002-03-18) added sql-column/references (rep by Joseph Toth and Christian Sell)
+</li><li>(2002-03-16) issues with identifying relation and 1-1 implicit (rep by Kirk Rasmussen)
+</li><li>(2002-03-13) Avoid setBytes because of Oracle bug (rep by Drew Davidson)
+</li><li>Added com.caucho.ejb.EJBCompiler (rep by Kirk Rasmussen)
+</li><li>(2002-03-08) regression
+</li><li>(2002-03-05) java.util.Date wasn't retrieved properly
+</li><li>error message for bad data-source was swallowed (rep by Guido Schoonheim)
+</li><li>(2002-03-01) added queue-connection-factory to EJBServer
+</li><li>better error message for relations returning mismatches (rep by Kirk Rasmussen)
+</li><li>added database init for SQL Server (rep by Kirk Rasmussen)
+</li><li>(2002-02-27) setString generated by EJB needs to check for null and call setNull
+</li><li>Set return values had mismatch with removeImpl signature
+</li><li>added entity-cache-size, entity-cache-timeout, and lock-timeout (rep by Kirk Rasmussen)
+</li><li>Added ejb-config-dir as init-param to EJBServer (rep by Joseph Toth)
+</li><li>autogen sql now supports auto-increment for mysql, postgres, oracle
+</li><li>(2002-02-15) restrict relation alias checking (rep by Kirk Rasmussen)
+</li><li>added com.caucho.ejb.TableLockFactory (rep by Serge Knystautas)
+</li><li>basic implementation of create-database-schema
+</li><li>Added lock-factory as an init-param (rep by Serge Knystautas)
+</li><li>(2002-02-13) aliasing of sql-name with cmp-field must throw exception
+</li><li>(2002-02-11) fillKeys needs transaction sync to get updates (rep by Nicholas Lesiecki)
+</li><li>ejbSelect with single value can return null (rep by Kirk Rasmussen)
+</li><li>(2002-02-08) Fixed IS EMPTY (rep by Rick Hightower)
+</li><li>Added MEMBER OF (rep by Rick Hightower, Andy Barton, Paul Visan)
+</li><li>n-1 collection was inadvertantly affected by 1-1 fix (rep by Kirk Rasmussen)
+</li><li>(2002-02-07) CMP can't use sql-table-name for Java field for tables with '.' (rep by Kirk Rasmussen)
+</li><li>Added order-by for collection relations (rep by Serge Knystautas)
+</li><li>(2002-02-01) 1-1 relations were not handled properly with non-bidirectional tables
+</li><li>(2002-01-31) Unloaded locals need to be able to reference reloaded local (rep by Anders Vesterberg)
+</li><li>(2002-01-30) Use short fields for work around DB ORDER BY (rep by Anders Vesterberg)
+</li><li>wasn't properly handling null for relations (rep by Drew Davidson)
+</li><li>(2002-01-27) Major rewrite to change EJB configuration to resource-ref
+</li><li>(2002-01-15) In CMP, ejbFindXXX methods can now be implemented (rep by Frederic R)
+</li><li>findXXX methods were incorrectly rolling back transactions (rep by Serge Knystautas)
+</li><li>Added burlap message support.
+</li></ul>
+</s2>
+
+<s2 title="1.0.5 - Jan 10, 2002">
+<ul>
+<li>CMP column validation no longer needs count (rep by Max Kutny)
+</li><li>(2002-01-02) regression cleanup
+</li><li>(2002-01-01) create methods weren't obeying new locking scheme.
+</li><li>getKey() methods shouldn't load the bean (rep by Serge Knystautas)
+</li><li>Integer fields weren't handling null (fixed! by David Soergel)
+</li><li>added lock-timeout to EJBServlet's init-param (rep by Serge Knystautas)
+</li><li>Burlap return of void object needs to be &lt;null&gt;&lt;/null&gt;
+</li><li>(2001-12-31) findXXX methods weren't handline interface extensions properly (rep by Max Kutny)
+</li><li>added EJBAdmin as caucho.ejb.admin with cacheInvalidate (rep by Thomas Memenga)
+</li><li>transaction timeout now rolls the transaction back (rep by Serge Knystautas)
+</li><li>added getCollection() transaction assert (rep by Nicholas Lesiecki)
+</li><li>added cache-size and cache-timeout (rep by Roger Campbell)
+</li><li>create debug needs to be after super.ejbCreate call (rep by Nicholas Lesiecki and Ron Tapia)
+</li><li>(2001-12-28) Configurable lock-factory with LockFactory and Lock and made ExclusiveLockFactory the default (rep by Serge Knystautas)
+</li><li>removeImpl() was setting updateCount instead of changeCount (rep by Rick Hightower)
+</li><li>setXXX(Collection) was stubbed out (rep by Rick Hightower)
+</li><li>(2001-12-27) composite key create with autogen key field
+</li><li>Identifying relationship with autogen key field
+</li><li>(2001-12-26) Write lock contention performance issues (rep by Serge Knystautas)
+</li><li>Object(o) wasn't testing types correctly (rep by Christian Sell and Rick Hightower)
+</li><li>(2001-12-13) First Resin-EJB snapshot
+</li><li>completed message-driven beans
+</li><li>need to check metadata before querying database for tables and columns (rep by Rick Hightower)
+</li><li>rollbacks should throw the underlying exception when possible (rep by Serge Knystautas)
+</li><li>stateless session beans can call remove()
+</li><li>relation with multiplicity=1 update wasn't convering key to object (rep by Joseph Dane)
+</li><li>(2001-12-13) Cleanup writeLock logic (rep by Serge Knystausas)
+</li><li>Change table/column validation to use SELECT count(col) ... WHERE 0=1 (fixed! by Thomas Memenga)
+</li><li>(2001-12-12) verify that collection modification happens in same context as the collection is obtained (rep by David Soergel)
+</li><li>isIdentical can't delegate to equals (rep by Joseph Dane)
+</li><li>equals and hashCode for entity objects should not be remote calls (rep by Joseph Dane)
+</li><li>(2001-12-11) Only jars in WEB-INF/lib and *.ejb are automatically deployed
+</li><li>improved testing of *.ejb change date
+</li><li>relations need to be verified before find/select query processing (rep by Joseph Dane)
+</li><li>(2001-12-08) reload on *.ejb change
+</li><li>Integer relationship keys weren't handling null properly (fixed! by David Soergel)
+</li><li>(2001-12-05) collection relations with methods not in local interface generated bad code (rep by Nigel Taylor)
+</li><li>multiple collection relations would generate bad QPersist code (rep by Nigel Taylor)
+</li><li>(2001-12-03) env-entry wasn't handling compound names (rep by Christian Sell)
+</li><li>default.sql changes to cleanup examples for postgres (fixed! by Paul Snively)
+</li><li>parent interfaces weren't properly validated (rep by Rick Hightower)
+</li><li>(2001-11-28) sql-name missing from identifying relation ejbCreate (rep by Christian Sell)
+</li><li>added env-entry (rep by Christian Sell)
+</li><li>persistent relations don't need to be in local interface (rep by Christian Sell)
+</li><li>(2001-11-21) jdbc-ref wasn't properly used in error messages (rep by Christian Sell)
+</li><li>primkey-field not allowed with composite key (rep by Anders Vesterberg)
+</li></ul>
+</s2>
+
+<s2 title="1.0.4 - Nov 16, 2001">
+<ul>
+<li>EntityLocals need to be serialized differently than Remote (rep by Serge Knysautas)
+</li><li>getPublic must be allowed (rep by Serge Knystautas)
+</li><li>Beans which are about to be DELETEd shouldn't also UPDATE set their relations (rep by Serge Knystautas)
+</li><li>BETWEEN needs to allow date (rep by Nicholas Lesiecki)
+</li><li>Added identifying relation examples.
+</li><li>(2001-11-11) added mapping relation with identifying relation
+</li><li>(2001-11-08) clearing a relation with an int field must call setNull, not setInt(0) (rep by Matthew Pangaro)
+</li><li>BeanSkeletonGenerator needs to throw better MethodNotFoundException (rep by Christian Sell)
+</li><li>abstract methods implemented in a subclass were treated as abstract.
+</li><li>added method-permission
+</li><li>basic message-drive-bean implementation
+</li><li>need to throw exception when setting primary key outside of ejbCreate (rep by jelmer)
+</li><li>sql-name should be allowed in cmr-field (rep by Christian Sell)
+</li><li>(2001-10-30) more regression failures due to composite key changes
+</li><li>(2001-10-26) regression failures due to composite key changes
+</li><li>(2001-10-24) same JVM, but separate web-apps need proxy serialization.
+</li><li>Composite keys were not implemented according to the spec (rep by Nicholas Liesiecki and Rick Hightower)
+</li></ul>
+</s2>
+
+<s2 title="1.0.3 - Oct 17, 2001">
+<ul>
+<li>`&gt;' and '&gt;=' weren't parsed properly (rep by R Tapia)
+</li><li>(2001-09-28) Update view beans when primary beans change (rep by Nicholas Lesiecki)
+</li><li>java.sql.Date wasn't handled as a field (rep by Michal Mosiewicz)
+</li><li>StatelessServer needs to retry create() when it fails initially (rep by Michal Mosiewicz)
+</li><li>collection.add() and remove() must throw illegal argument exception if bad argument (rep by Michal Mosiewicz)
+</li><li>n-1 with int primary key wasn't checking key list properly (rep by Neil Aggarwal)
+</li><li>Burlap base64 encoding wasn't properly masking bytes
+</li><li>(2001-09-24) local interface needs to be public (rep by Michal Mosiewicz)
+</li><li>added composite primary key (rep by Michal Mosiewicz)
+</li><li>delete order wasn't correct in dealing with foreign keys (rep by Rick Hightower)
+</li><li>ejb-ql type checking wasn't allowing int = Integer (rep by Rick Hightower)
+</li><li>(2001-09-11) rollback in ejbPostCreate didn't rollback object properly (rep by Kai Zaunick)
+</li><li>(2001-09-04) date comparison `&lt;' must accept java.sql.Timestamp, etc. (rep by Paul Hettl)
+</li><li>date queries must accept java.sql.Timestamp, etc. (rep by Curtis Spencer)
+</li><li>Added mapping: getFoo(int i) and setFoo(int i, String value)
+</li></ul>
+</s2>
+
+<s2 title="1.0.1 - Aug 27, 2001">
+<ul>
+<li>create code must use SQL-name for id. (rep by Paul Visan and Nicholas Lesiecki)
+</li><li>EJBServlet should accept jdbc-ref='jdbc/test' (rep by Neil Aggarwal)
+</li><li>boolean field needs to use getBoolean (rep by Michal Mosiewicz)
+</li><li>In persist.Generate, setNull should include type (rep by Jim Walkin) 
+</li><li>char should be allowed as primary key (rep by Adam Langley)
+</li><li>ejbCreate should automatically detect unset keys (rep by Rick Hightower and Nicholas Lesiecki)
+</li><li>(2001-08-15) added source-cascade-delete and target-cascade-delete
+</li><li>cmp-field validation error message was printing wrong method (rep by George Moshovitis)
+</li><li>All the functions in the JDBC 2.0 core should be allowed (rep by Adam Langley)
+</li><li>LIKE should allow ?1 as pattern (rep by Anders Vesterberg)
+</li><li>use _ejb as a package prefix (rep by Anders Vesterberg)
+</li><li>Allow burlap clients outside of Resin (rep by Jim Paterson and Travis Romney)
+</li><li>Added SQL for the entity config test (rep by Rick Hightower)
+</li><li>(2001-08-07) fixed unidirection relation updates when bean is remove
+</li><li>ejb configuration can now refer to beans defined in another ejb configuration file (rep by Gerret Apelt)
+</li><li>(2001-07-31) support serializable fields
+</li><li>support byte[] fields (fixed! by Rick Hightower and Nicholas Lesiecki)
+</li><li>handle select overloading properly (rep by Gerret Apelt)
+</li><li>HandleEncoder didn't handle session ids (rep by Rafael Luque Leiva)
+</li><li>(2001-07-24) cleaned up delete callback to EntityServer (rep by Gerret Apelt)
+</li><li>1-1 relation with select was using wrong column (rep by Gerret Apelt)
+</li><li>Use metadata when possible for field/column validation (rep by Rick Hightower and Nicholas Lesiecki)
+</li><li>Support BigDecimal (rep by Rick Hightower and Nicholas Lesiecki)
+</li><li>Catch exceptions thrown by bean constructor (rep by Gerret Apelt)
+</li><li>Added LIMIT (mysql only) (rep by George Moshovitis)
+</li><li>Added DESC and ASC to ORDER BY (rep by George Moshovitis and Gerret Apelt)
+</li><li>(2001-07-20) BMP custom primary key support (rep by Rafael Leiva)
+</li><li>select with zero integer value was throwing ObjectNotFoundException
+</li><li>More cases of missing update with remove (rep by Gerret Apelt)
+</li><li>(2001-07-10) missing update with remove of n-1 relation (rep by Gerret Apelt)
+</li><li>Home.remove(obj) wasn't properly handled (rep by George Moshovitis)
+</li><li>Expressions now allowed in select expressions
+</li><li>fixes to parsed method-name (fixed! by Gerret Apelt)
+</li><li>allow parsed method-name
+</li><li>source-ejb, etc in ejb-relation. (rep by Gerret Apelt)
+</li></ul>
+</s2>
+
+<s2 title="1.0.0 - July 9, 2001">
+<ul>
+<li>Support Byte, Integer, etc as cmp fields (rep by Jerome Audouy)
+</li><li>Support full paths in LocalContextFactory (rep by Gerret Apelt)
+</li><li>Added 'distributed' option to EJBServlet
+</li><li>better transaction locking (rep by Jedi Huang)
+</li><li>better wrapping of FinderExceptions for findByPrimaryKey (rep by Jerome Audouy)
+</li><li>sql-name in cmr-field is forbidden (rep by Gerret Apelt)
+</li><li>added ORDER BY (rep by George Moschovitis)
+</li><li>ejbRemove has trouble with relations and primary key as int
+</li><li>findByValue had trouble when primary key was int (rep by Gerret Apelt)
+</li><li>methods duplicated in subinterfaces were generated twice (rep by Gerret Apelt)
+</li><li>AbstractServer was over-hasty in catching ejb-name conflicts
+</li><li>(2001-06-26)
+</li><li>getDate and setDate null pointer issues (rep by Gerret Apelt)
+</li><li>Queries for n-1 relations use wrong name (rep by Gerret Apelt)
+</li><li>PersistentList.Iterator's remove was incorrect (rep by Gerret Apelt)
+</li></ul>
+</s2>
+
+<s2 title="1.0.b3 - June 24, 2001">
+<ul>
+<li>findByFoo(TestLocal) should be allowed (rep by Gerret Apelt)
+</li><li>Added PersistentSet
+</li><li>validate getXXX and setXXX methods (rep by Gerret Apelt)
+</li><li>check for illegal duplicate elements (rep by Gerret Apelt)
+</li><li>added cascade-delete
+</li><li>Local objects no longer need load-on-startup or full url
+</li><li>Support Object(h) in EJB-QL (rep by Gerret Apelt)
+</li><li>Support SELECT DISTINCT in EJB-QL (rep by Gerret Apelt)
+</li><li>Support IN(foo.bar) syntax for EJB-QL (rep by Gerret Apelt)
+</li><li>changed try {} block in ejbRemove to avoid compiler problem (rep by Jerome Audouy)
+</li><li>handle multiplicity one and many for 1-n unidirectional
+</li><li>redesign generated code to handle rollbacks better (rep by Jerome Audouy)
+</li><li>find returning collection must support Integer keys (rep by Alexander Dergatch)
+</li><li>find returning collection in LocalHome was returning EJBObject (rep by Gerret Apelt)
+</li><li>cmr-field must detect when return type is bad or method not implemented (rep by Gerret Apelt)
+</li><li>Upgraded cmr validation
+</li><li>JDBC validation must not stop entire web-app (rep by Gerret Apelt)
+</li><li>BurlapContext lookup of a local bean must throw an exception (rep by Gerret Apelt)
+</li><li>LocalContext lookup of a remote bean must throw an exception (rep by Gerret Apelt)
+</li><li>added sql-name for cmp-field
+</li><li>Must detect when column is missing (rep by Gerret Apelt)
+</li><li>cmp-version wasn't allowed (rep by Gerret Apelt)
+</li><li>added sql-table-name
+</li><li>Must detect when ejb-names conflict (rep by Gerret Apelt)
+</li><li>Need better error message for missing JNDI for DataSource (rep by Gerret Apelt)
+</li><li>Support Integer as primary key (rep by Alexander Dergatch)
+</li><li>Fixed distribution error
+</li><li>Let database generate primary key (rep by Jerome Audouy)
+</li><li>Support Long as primary key (rep by Stephane Huther)
+</li><li>EJBLocalHome and EJBLocalObject from the new EJB 2.0 spec
+</li><li>EJB find with collections was broken (rep by Dmitri Maximovich)
+</li><li>Added getCallerPrincipal using Resin 2.0 SecurityContext.
+</li></ul>
+</s2>
+
+<s2 title="1.0.b2 - April 17, 2001">
+<ul>
+<li>removed ::burlap:meta, replacing it with _burlap_getAttribute
+</li><li>allow Integer as primary key (rep by Joris Verschoor)
+</li><li>fixed dpo relation set entity bean transactions
+</li><li>CMP data-source needs to be configurable (rep by HR Harkins)
+</li><li>foo_bar needs to map to getFooBar (rep by Rich Harkins)
+</li><li>fixed loader issues with the ;ejbid=meta (rep by Dino Fancellu)
+</li><li>BMP finder can return Collection and Enumeration (rep by Dmitri Maximovich)
+</li><li>Completed session beans
+</li><li>Changed Burlap encoding for EJB objects.
+</li><li>SML-RPC renamed "Burlap"
+</li><li>Major redesign to separate core from protocols
+</li><li>SML-RPC now supports standard XML entities
+</li><li>EJB-QL implemented except for remote finder methods and 'IN'
+</li><li>basic n-m relations
+</li><li>Completed dependent object create
+</li><li>ObjectSkeleton and HomeSkeleton are now serializable
+</li><li>Support EJB-QL IS EMPTY, IS FALSE, IS TRUE
+</li><li>Support EJB-QL functions: concat, substring, locate, length, abs, sqrt
+</li><li>Support EJB-QL IS NULL
+</li><li>Support EJB-QL LIKE
+</li><li>Support EJB-QL BETWEEN
+</li><li>remove interface now validated.
+</li><li>home interface now validated.
+</li><li>Clients can now use jndi context.
+</li><li>ejbRemove method now generated for CMP entity beans
+</li><li>ejb-jar.xml and *.ejb now picked up automatically
+</li><li>find&lt;<em>method</em>&gt; now generated for CMP entity beans
+</li><li>ejbHome&lt;<em>method</em>&gt; now allowed in entity beans
+</li><li>clients accessing beans in the same JVM use in-JVM serialization
+</li><li>clients accessing beans in the same classloader use pass-by-reference
+</li><li>multiple beans now allowed per server
+</li><li>added /__smlrpc__:meta virtual object for meta requests
+</li><li>removed type from the handles and from &lt;remote&gt;
+</li><li>added MetaStub for direct calls
+</li><li>String []getFoo() could generate [Ljava/lang/String; instead of String[] (rep by uwe schaefer)
+</li><li>Initial implementation of EJB 2.0 CMP
+</li></ul>
+</s2>
+
+<s2 title="1.0.b1 - Sept 12, 2000">
+<ul>
+<li>Sessions and bean-managed entity beans
+</li></ul>
+</s2>
+
+<s2 title="0.1.0 - June 5, 2000">
+<ul>
+<li>SML-RPC serializer
+</li><li>Initial session bean stub and skeleton generators.
+</li></ul>
+</s2>
+</s1>
+</body>
+</document>

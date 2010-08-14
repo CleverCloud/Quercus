@@ -1,0 +1,43 @@
+<document>
+<header>
+  <title>Database Configuration</title>
+  <version>Resin 4.0</version>
+
+  <description>
+<p>
+Resin provides a robust and tested connection pool that is used to
+obtain connections to databases. 
+</p>
+
+  </description>
+</header>
+
+<body>
+<reference-legend/>
+<localtoc/>
+
+<include-defun name="connection-wait-time"/>
+<include-defun name="close-dangling-connections"/>
+<include-defun name="database"/>
+<include-defun name="driver"/>
+<include-defun name="max-active-time"/>
+<include-defun name="max-close-statements"/>
+<include-defun name="max-connections"/>
+<include-defun name="max-create-connections"/>
+<include-defun name="max-idle-time"/>
+<include-defun name="max-overflow-connections"/>
+<include-defun name="max-pool-time"/>
+<include-defun name="password"/>
+<include-defun name="database:ping"/>
+<include-defun name="ping-table"/>
+<include-defun name="ping-query"/>
+<include-defun name="ping-interval"/>
+<include-defun name="prepared-statement-cache-size"/>
+<include-defun name="save-allocation-stack-trace"/>
+<include-defun name="spy"/>
+<include-defun name="transaction-timeout"/>
+
+
+
+</body>
+</document>

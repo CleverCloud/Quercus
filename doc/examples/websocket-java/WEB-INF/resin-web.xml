@@ -1,0 +1,10 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+
+  <!--
+     - The WebSocketServlet is defined like a normal socket.
+    -->
+  
+  <servlet-mapping url-pattern="/websocket"
+                   servlet-class="example.WebSocketServlet"/>
+  
+</web-app>

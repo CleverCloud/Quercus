@@ -1,0 +1,391 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.8 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="Dependency Injection/Inversion of Control">
+
+<p>Resin's buzzword compliance has been enhanced in 3.0.8.  Instead of
+the old, boring "bean-style init" phrase, parts of the documentation have
+been upgraded to use the snazzier "dependency injection" buzzword.
+Since Resin's configuration is based on setters, the proper buzzword
+is "setter based dependency injection."</p>
+
+<figure src="assembler-eg1.gif"/>
+
+<p>The upgraded, buzzword-compliant documentation includes:</p>
+
+<ul>
+<li><a href="examples|ioc-injection/index.xtp">Dependency Injection for the MovieFinder example</a>
+</li><li><a href="examples|db-jdbc/index.xtp">Dependency Injection for a servlet's DataSource</a>
+</li><li><a href="examples|ioc-periodictask/index.xtp">Dependency Injection for a PeriodicTask resource</a>
+</li><li><a href="examples|jmx-listener/index.xtp">Dependency Injection for a JMX client emitter/listener</a>
+</li><li><a href="examples|hessian-ioc/index.xtp">Dependency Injection for Hessian Service configuration</a>
+</li></ul>
+
+<p>The main documentation on Resin's <a href="doc|ioc-bean.xtp">bean-style
+init</a> has not yet been upgraded to the new buzzwords, but
+provides more information on the configuration patterns.</p>
+
+</s1>
+
+<s1 title="MBean JNDI - MBean Dependency Injection">
+
+<p>MBeans now have a JNDI URL, "mbean:", which allows them to the used
+for bean-style init (Dependency Injection.)</p>
+
+<p>The JNDI lookup will return the MBean's proxy interface
+if one is available.</p>
+
+<p>If a MBean domain is included in the name, e.g. "mbean:foo:type=Bar",
+Resin will use the full MBean name.  If only the attributes are used,
+e.g. "mbean:type=Bar", Resin will add the local JMX context name.  In other
+words, Resin will add the web-app's properties.  This allows the
+configuration to be independent of the web-app or host configuration block.</p>
+
+<p>So "mbean:type=Bar", might be converted
+to the full MBean name "resin:Host=foo.bar,WebApp=/dir,type=Bar".</p>
+
+<p>Since jndi:lookup can be used for dependency injection (bean-style init),
+you can use it to configure mbeans.</p>
+
+<example>
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;resource mbean-name="type=Test" type="qa.Test"/&gt;
+
+  &lt;resource jndi-name="t1" type="qa.T1"&gt;
+    &lt;init&gt;
+      &lt;test&gt;\${jndi:lookup("mbean:type=Test")}&lt;/test&gt;
+    &lt;/init&gt;
+  &lt;/resource&gt;
+&lt;/web-app&gt;
+</example>
+
+<p>In the preceeding example, T1 has a <code>setTest(TestMBean)</code>
+method.</p>
+
+</s1>
+
+<s1 title="Persistent/Distributed sessions">
+
+<p>The persistent/distributed sessions have been changed because the
+old configuration had caused much confusion.  (The old configuration
+still works for backward compatibility.)</p>
+
+<p><a href="doc|resin-tags.xtp#persistent-store">&lt;persistent-store&gt;</a>
+configures the persistent/distributed store in the &lt;server&gt; level for
+all persistent store types: jdbc, cluster (tcp), and file.  The
+&lt;server&gt; level is required because the persistent-store needs to
+communicate with other servers in the cluster to notify about
+updates.</p>
+
+<p>Each &lt;web-app&gt; needs to enable persistent store for its
+session-config individually.  The <a href="doc|config-webapp.xtp#session-config">use-persistent-store</a>
+attribute of the &lt;session-config&gt; enables the persistent-store.</p>
+
+<p>As usual, you can use <a href="doc|config-webapp.xtp#web-app-default">&lt;web-app-default&gt;</a> to
+enable configuration for all web-apps.</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+
+&lt;server&gt;
+  &lt;cluster&gt;
+    &lt;srun server-id="a" port="6810" index="1"/&gt;
+    &lt;srun server-id="b" port="6811" index="2"/&gt;
+  &lt;/cluster&gt;
+
+  &lt;persistent-store type="jdbc"&gt;
+    &lt;init data-source="jdbc/session"/&gt;
+  &lt;/persistent-store&gt;
+
+  &lt;web-app-default&gt;
+    &lt;session-config use-persistent-store="true"/&gt;
+  &lt;/web-app-default&gt;
+
+  &lt;host id=''&gt;
+    &lt;web-app id='/'/&gt;
+  &lt;/host&gt;
+&lt;/server&gt;
+&lt;/resin&gt;
+</example>
+</s1>
+
+<s1 title="cluster client configuration">
+
+<p>The client configuration for the cluster is now configurable
+(e.g. for load balancing and distributed sessions).</p>
+
+<example title="resin.conf">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+ &lt;server&gt;
+   &lt;cluster&gt;
+     &lt;client-live-time&gt;60s&lt;/client-live-time&gt;
+     &lt;client-dead-time&gt;15s&lt;/client-dead-time&gt;
+     &lt;client-read-timeout&gt;10s&lt;/client-read-timeout&gt;
+     &lt;client-write-timeout&gt;15s&lt;/client-write-timeout&gt;
+
+     &lt;srun .../&gt;
+   &lt;/cluster&gt;
+
+   ...
+ &lt;/server&gt;
+ 
+&lt;/resin&gt;
+</example>
+
+</s1>
+
+<s1 title="http/srun timeout configuration">
+
+<p>Added
+read-timeout and write-timeout for <a href="doc|resin-tags.xtp#http">http</a>
+and <a href="doc|resin-tags.xtp#srun">srun</a>
+.</p>
+
+<example>
+&lt;http host="localhost" port="8080"&gt;
+  &lt;read-timeout&gt;120s&lt;/read-timeout&gt;
+  &lt;write-timeout&gt;60s&lt;/write-timeout&gt;
+&lt;/http&gt;
+</example>
+
+</s1>
+
+<s1 title="web-app-deploy Enchancements">
+
+<p>web-apps configured with <a href="doc|webapp-tags.xtp#web-app-deploy">web-app-deploy</a> can now be custom configured
+in the resin-conf using &lt;web-app&gt; inside the web-app-deploy.
+In particular, the &lt;web-app&gt; can define a &lt;context-path&gt; different
+from the default value given by the .war name.</p>
+
+<p>The web-apps are matched using the &lt;document-directory&gt; as a unique
+identifier.</p>
+
+<example title="resin.conf">
+...
+&lt;web-app-deploy path="webapps"&gt;
+  &lt;web-app context-path="/foo" document-directory="bar"/&gt;
+&lt;/web-app-deploy&gt;
+...
+</example>
+
+</s1>
+
+<s1 title="startup-mode, redeploy-mode, and WebAppMBean.restart()">
+
+<p>Application redeployment is now controllable through the <a href="doc|webapp-tags.xtp#web-app">web-app</a> web.xml
+and through JMX.</p>
+
+<p>The startup-mode has three values: "automatic", "lazy", and "manual".
+</p><ul>
+<li>automatic - starts the web-app on server start (default)
+</li><li>lazy - starts the web-app on the first request
+</li><li>manual - waits for JMX to start the web-app.
+</li></ul>
+
+<p>The redeploy-mode has two values: "automatic", and "manual".
+</p><ul>
+<li>automatic - restarts the web-app when modified (web.xml, *.class, *.war, etc).
+</li><li>manual - waits for JMX to restart the web-app when changes occur.
+</li></ul>
+
+<p>The WebAppMBean has three new methods:
+</p><ul>
+<li>start() - starts the application
+</li><li>stop() - stops the application
+</li><li>restart() - restarts the application
+</li></ul>
+
+</s1>
+
+<s1 title="log rotation and compression">
+
+<p>If the archive-name for log rotation ends in ".gz", then Resin will
+use GZip to compress the log when it's rotated.  See the <a href="doc|config-log.xtp#Compression">log configuration</a>.
+</p>
+
+<example>
+  &lt;log name="" level="warning" path='log/error.log'
+       archive-format="%Y-%m-%d.error.log.gz"
+       rollover-period="1D"/&gt;
+
+  &lt;access-log path="log/access.log"
+              archive-format="access-%Y%m%d.log.gz"
+              rollover-period="1D"/&gt;
+</example>
+
+</s1>
+
+<s1 title="Ping Enchancements: Deadlock detection with JDK 1.5">
+
+<p>With JDK 1.5, the &lt;ping&gt; resource will check the JDK to detect deadlocks
+and will automatically log the deadlocked threads and restart the JDK when
+deadlocks are detected.</p>
+
+</s1>
+
+<s1 title="Cache invalidation">
+
+<p>The ServletServerMBean adds clearCache() and clearCacheByPattern().
+</p></s1>
+
+<s1 title="Portlet Support">
+
+<p>Resin's <a href="../doc/portlet.xtp">Portlet support</a> provides
+a generic library package for application to use the portal/portlet
+design pattern.</p>
+
+<p>The portlet support is currently in Beta.</p>
+
+</s1>
+
+<s1 title="Groovy Support">
+
+<p>Resin can use <a href="doc|groovy.xtp">Groovy
+scripts as Java classes</a> or even as servlets.</p>
+
+<p>Full Groovy support is waiting for an important bug fixes from Groovy.
+See the <a href="http://jira.codehaus.org/secure/ViewIssue.jspa?key=GROOVY-375">Groovy Bug Report 375</a> and vote on it.</p>
+
+<p>To enable Groovy support, put the groovy*.jar and the asm-*.jar in resin/lib.  Then add a &lt;compiling-loader&gt; entry to the &lt;class-loader&gt; configuration.</p>
+
+<example title="WEB-INF/web.xml configuration for groovy">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;class-loader&gt;
+    &lt;compiling-loader path="WEB-INF/groovy"
+                      compiler="groovyc"
+                      source-extension=".groovy"/&gt;
+  &lt;/class-loader&gt;
+&lt;/web-app&gt;
+</example>
+
+<p>Once you've done that, you can drop in groovy source files
+in WEB-INF/groovy and use them like Java beans from your Java classes.
+</p>
+
+<example title="WEB-INF/groovy/test/MyBean.groovy">
+package test;
+
+public class MyBean {
+  public String toString() return { "groovy[]"; }
+}
+</example>
+
+</s1>
+
+<s1 title="PHP">
+
+<p>PHP support has been fixed in 3.0.8.  The full configuration
+doc is in  <a href="doc|quercus.xtp">quercus</a>.</p>
+
+<example title="web.xml">
+&lt;web-xml&gt;
+  &lt;servlet servlet-name="php"
+           servlet-class="com.caucho.servlets.FastCGIServlet"&gt;
+    &lt;init&gt;
+      &lt;server-address&gt;localhost:8002&lt;/server-address&gt;
+    &lt;/init&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping url-pattern="*.php" servlet-name="php"/&gt;
+&lt;/web-xml&gt;
+</example>
+
+</s1>
+
+<s1 title="Hessian">
+
+<p><a href="../doc/hessian-1.0-spec.xtp">Hessian 1.0.1</a> has
+been released. Hessian 1.0.1 clarifies the non-normative
+naming conventions for the meta-info protocol and the object names.</p>
+
+<p>The new object name uses query string of "?id=XXX" to avoid dependency
+on EJB.</p>
+
+<p>The new meta-info attributes for <code>_hessian_getAttribute(attrName)</code> are:</p>
+<deftable>
+<tr><td>attribute</td><td>description.
+</td></tr><tr><td>java.api.class</td><td>Returns the java API interface for this URL.
+</td></tr><tr><td>java.home.class</td><td>Returns the java API interface for the factory/home URL, i.e. stripped of the "?id=XXX".
+</td></tr><tr><td>java.object.class</td><td>Returns the java API interface for the object instances URL, i.e. those which have query string "?id=XXX".
+</td></tr></deftable>
+
+<p>Hessian now supports a JNDI "hessian:" URL.</p>
+
+<example>
+Context ic = new InitialContext();
+Bean bean = (Bean) ic.lookup("hessian://localhost:8080/hessian/bean");
+</example>
+
+</s1>
+
+<s1 title="jndi-link">
+
+<p><a href="doc|env-tags.xtp#jndi-link">jndi-link</a> no longer
+requires the &lt;factory&gt;.  Now it can be used
+as a symbolic link to another JNDI name.</p>
+
+<example>
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;jndi-link jndi-name="java:comp/env/stock-service"
+             foreign-name="hessian://foo.com:8080/service/stock"/&gt;
+&lt;/web-app&gt;
+</example>
+
+</s1>
+
+<s1 title="ThrottleFilter">
+
+<p>A new standard <a href="doc|filter-library.xtp#ThrottleFilter">ThrottleFilter</a> has been added.  The filter restricts
+the number of requests from the same IP, defaulting to 2 (the HTTP spec limit.)
+The ThrottleFilter is useful to limit some parallel download programs
+that can use more threads than they should.
+</p>
+
+<example>
+&lt;filter filter-name="throttle"
+        filter-class="com.caucho.filters.ThrottleFilter"&gt;
+  &lt;init&gt;
+    &lt;max-concurrent-requests&gt;2&lt;/max-concurrent-requests&gt;
+  &lt;/init&gt;
+&lt;/filter&gt;
+
+&lt;filter-mapping url-pattern="/*" filter-name="throttle"/&gt;
+</example>
+
+</s1>
+
+<s1 title="64-bit JNI">
+
+<p>The JNI has been updated to support 64-bit compilation on Solaris.
+The <a href="../doc/resin-web-server.xtp">configuration</a> looks like:</p>
+
+<example>
+unix&gt; ./configure --enable-64bit
+unix&gt; make
+unix&gt; make install
+unix&gt; bin/httpd.sh -J-d64
+</example>
+
+</s1>
+
+<s1 title="Bugs">
+
+<p>
+</p><ul>
+<li>See the changelog for more details.
+</li><li>Important bug fix for JNI keepalives on Win32.
+</li><li>Important misc memory and reload fixes
+</li></ul>
+<p>
+
+</p></s1>
+
+</body>
+</document>

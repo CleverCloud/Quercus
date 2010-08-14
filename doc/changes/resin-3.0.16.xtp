@@ -1,0 +1,41 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.16 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="cache/cluster session backend fixes">
+
+<p>Important fixes to the cache/cluster session, for bugs introduced in
+3.0.15.</p>
+
+</s1>
+
+<s1 title="SSL changed to use blocking read/write">
+
+<p>The SSL and JNI sockets now use blocking reads and writes.</p>
+
+</s1>
+
+<s1 title="host/web-app merging">
+
+<p>&lt;host&gt; merging now uses the &lt;host-name&gt; values.</p><p>
+
+</p></s1>
+
+<s1 title="cache-mapping additions">
+
+<p>The &lt;<a href="http://wiki.caucho.com/Cache-mapping">cache-mapping</a>&gt; tag now allows url-regexp.</p>
+
+<p>&lt;max-age&gt; replaces &lt;expires&gt;.</p>
+
+<p>&lt;s-max-age&gt; added.</p>
+
+</s1>
+
+</body>
+</document>

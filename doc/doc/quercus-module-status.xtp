@@ -1,0 +1,335 @@
+<document>
+  <header>
+    <title>Quercus Modules Status</title>
+    <description>
+      <p>
+      Completion status of standard and extension PHP modules implemented in
+      Java for Quercus.
+      </p>
+    </description>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="module implementation status">
+<s2 title="Apache Functions">
+<s3 title="Implemented Functions">
+<p>apache_child_terminate (stub), apache_note, apache_request_headers, apache_reset_timeout (stub), getallheaders, virtual</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>apache_get_modules, apache_get_version, apache_getenv, apache_lookup_uri, apache_response_headers, apache_setenv, ascii2ebcdic, ebcdic2ascii</p>
+</s3>
+</s2>
+
+<s2 title="APC Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="Array Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="Class/Object Functions">
+<s3 title="Implemented Functions">
+<p>class_exists, get_class, get_class_methods, get_class_vars, get_declared_classes, get_object_vars, get_parent_class, is_a, is_object, is_subclass_of, method_exists</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>call_user_method, call_user_method_array, get_declared_interfaces, interface_exists, property_exists</p>
+</s3>
+</s2>
+
+<s2 title="BCMath Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="Calender Functions">
+<p>cal_days_in_month, easter_date, easter_days</p>
+</s2>
+
+<s2 title="Ctype Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="Date and Time Functions">
+<s3 title="Implemented Functions">
+<p>checkdate, date, getdate, gettimeofday, gmdate, gmmktime, gmstrftime, microtime, mktime, strftime, strtotime, time</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>date_default_timezone_get, date_default_timezone_set, date_sunrise, date_sunset, idate, localtime, strptime</p>
+</s3>
+</s2>
+
+<s2 title="Directory Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="Error Handling and Logging Functions">
+<s3 title="Implemented Functions">
+<p>debug_backtrace, error_log, error_reporting, set_error_handler, restore_error_handler, trigger_error, user_error</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>debug_print_backtrace, restore_exception_handler, set_exception_handler</p>
+</s3>
+</s2>
+
+<s2 title="Exif Functions">
+<s3 title="Implemented Functions">
+<p>read_exif_data, exif_imagetype</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>exif_read_data, exif_thumbnail, exif_tagname</p>
+</s3>
+</s2>
+
+<s2 title="Filesystem Functions">
+<s3 title="Unimplemented Functions">
+<p>disk_free_space (stub), disk_total_space (stub), readlink (stub), umask (stub)</p>
+</s3>
+</s2>
+
+<s2 title="Function Handling Functions">
+<s3 title="Implemented Functions">
+<p>call_user_func_array, call_user_func, create_function, get_defined_functions, func_get_arg, func_get_args, func_num_args, function_exists, register_shutdown_function</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>register_tick_function, unregister_tick_function</p>
+</s3>
+</s2>
+
+<s2 title="Gettext Functions">
+<s3 title="Implemented Functions">
+<p>bindtextdomain, dcgettext, dcngettext, dgettext, dngettext, gettext, ngettext, textdomain</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>bind_textdomain_codeset (stub)</p>
+</s3>
+</s2>
+
+<s2 title="HTTP Functions">
+<s3 title="Implemented Functions">
+<p>header, headers_sent, setcookie</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>headers_list, setrawcookie</p>
+</s3>
+</s2>
+
+<s2 title="Iconv">
+<s3 title="Unimplemented Functions">
+<p>ob_iconv_handler</p>
+</s3>
+</s2>
+
+<s2 title="Image Functions">
+<s3 title="Implemented Functions">
+<p>gd_info, getimagesize, imagetypes, image_type_to_extension, image_type_to_mime_type, imagegif, imagepng, imagejpeg, imagealphablending, imageantialias, imagecolorallocate, imagecolorallocatealpha, imagecolordeallocate, imagecolorat, imagecolorclosest, imagecolorclosestalpha, imagecolorexact, imagecolorexactalpha, imagecolormatch, imagecolorresolve, imagecolorresolvealpha, imagecolorsforindex, imagecreate, imagecreatefromgif, imagecreatefromjpeg, imagecreatefrompng, imagecreatefromxbm, imagecreatefromxpm, imagecreatefromwbmp, imagecreatefromstring, imagecreatetruecolor, imagedestroy, imageistruecolor, imagesetpixel, imageline, imagedashedline, imagearc, imagefilledarc, imageellipse, imagefilledellipse, imagepolygon, imagefilledpolygon, imagerectangle, imagefilledrectange, imagechar, imagestring, imagecharup, imagesx, imagesy, imagefontheight, imagefontwidth, imagecopy, imagecopymerge, imagecopymergegray, imagecopyresampled, imagecopyresized, imagesetbrush, imagesetstyle, imagesetthickness, imagesavealpha, imagecolortransparent, imagefill, imagefilltoborder, imageconvolution, imagefilter</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>imagecolorclosesthwb, imagecolorset, imagecolorstotal, imageftbbox,  imagefttext, imagegammacorrect, imageinterlace, imagelayereffect, imageloadfont, imagepalettecopy, imagepsbbox, imagepscopyfont, imagepsencodefont, imagepsextendfont, imagepsfreefont, imagepsloadfont, imagepsslantfont, imagepstext, imagerotate, iptcembed, image2wbmp, jpeg2wbmp, png2wbmp, imagecreatefromgd2, imagecreatefromgd2part, imagecreatefromgd, imagegd2, imagegd</p>
+</s3>
+</s2>
+
+<s2 title="JSON Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="Mail Functions">
+<s3 title="Implemented Functions">
+<p>mail</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>ezmlm_hash</p>
+</s3>
+</s2>
+
+<s2 title="Mcrypt Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="Mhash Functions">
+<s3 title="Implemented Functions">
+<p>mhash, mhash_count, mhash_get_block_size, mhash_get_hash_name</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>mhash_keygen_s3k</p>
+</s3>
+</s2>
+
+<s2 title="Misc Functions">
+<s3 title="Implemented Functions">
+<p>constant, define, defined, die, eval, exit, get_browser, pack, sleep, uniqid, unpack, usleep</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>connection_aborted, connection_status, connection_timeout, __halt_compiler, highlight_file, highlight_string, ignore_user_abort, php_check_syntax, php_strip_whitespace, show_source, sys_getloadavg, time_nanosleep, time_sleep_until</p>
+</s3>
+</s2>
+
+<s2 title="Multibyte String">
+<s3 title="Unimplemented Functions">
+<p>mb_convert_kana, mb_detect_order, mb_get_info (stub), mb_http_input, mb_http_output, mb_output_handler, mb_regex_set_options, mb_substitute_character</p>
+</s3>
+</s2>
+
+<s2 title="MySQL Functions">
+<s3 title="Unimplemented Functions">
+<p>mysql_change_user, mysql_info, mysql_list_processes, mysql_thread_id</p>
+</s3>
+</s2>
+
+<s2 title="MySQL Improved Functions">
+<s3 title="Unimplemented Functions">
+<p>mysqli_debug, mysqli_disable_reads_from_master, mysqli_disable_rpl_parse, mysqli_info, mysqli_kill, mysqli_master_query, mysqli_report, mysqli_rpl_parse_enabled, mysqli_rpl_probe, mysqli_rpl_query_type, mysqli_send_long_data, mysqli_send_query, mysqli_server_end, mysqli_server_init, mysqli_ssl_set, mysqli_stmt_send_long_data, mysqli_thread_id, mysqli_thread_safe</p>
+</s3>
+</s2>
+
+<s2 title="Network Functions">
+<s3 title="Implemented Functions">
+<p>checkdnsrr, closelog, define_syslog_variables(stub), dns_check_record, dns_get_mx, fsockopen, gethostbyaddr, gethostbyname, gethostbynamel, getmxrr, getprotobyname, getprotobynumber, getservbyname, getservbyport, ip2long, openlog(stub), syslog</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>dns_get_record, inet_ntop, inet_pton, long2ip, pfsockopen, socket_get_status, socket_get_blocking, socket_get_timeout</p>
+</s3>
+</s2>
+
+<s2 title="Options and Information Functions">
+<s3 title="Implemented Functions">
+<p>assert, extension_loaded, get_cfg_var, get_defined_constants, get_extension_funcs, get_include_path, get_loaded_extensions, getenv, getlastmod,  getmygid, getmyinode, getmypid, getmyuid, ini_alter, ini_get, ini_get_all, ini_set, php_sapi_name, php_uname (stub), phpinfo, phpversion, putenv,   restore_include_path, set_inclue_path, set_time_limit, version_compare</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>assert_options, dl (stub), get_current_user (stub), get_included_files, get_magic_quotes_gpc, get_magic_quotes_runtime, get_required_files, getopt, getrusage, ini_restore, memory_get_usage, php_ini_scanned_files, php_logo_gid, phpcredits, putenv, restore_include_path, set_magic_quotes_runtime, zend_logo_gid, zend_version</p>
+</s3>
+</s2>
+
+<s2 title="Oracle Functions">
+<s3 title="Unimplemented Functions">
+<p>oci_internal_debug, ocicloselob, ocicollappend, ocicollassign, ocicollassignelem, ocicollgetelemn, ocicollmax, ocicollsize, ocicolltrim, ocifetchinfo, ocifreecollection, ocifreedesc, ociloadlob, ocisavelob, ocisavelobfile, ociwritelobtofile, ociwritetemporarylob</p>
+</s3>
+</s2>
+
+<s2 title="Output Control Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="Postgres Functions">
+<s3 title="Unimplemented Functions">
+<p>pg_options, pg_trace, pg_transaction_status, pg_untrace</p>
+</s3>
+</s2>
+
+<s2 title="Regexp (Perl) Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="Regexp (POSIX) Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="PDF Functions">
+<s3 title="Implemented Functions">
+<p>pdf_arc, pdf_arcn, pdf_begin_document, pdf_begin_page_ext, pdf_begin_page, pdf_circle, pdf_clip, pdf_close, pdf_closepath_fill_stroke, pdf_closepath_stroke, pdf_closepath, pdf_concat, pdf_continue_text, pdf_curveto, pdf_delete, pdf_end_document, pdf_end_page_ext, pdf_end_page, pdf_end_path, pdf_fill_stroke, pdf_fill, pdf_fit_image, pdf_get_buffer, pdf_get_errmsg, pdf_get_errnum, pdf_get_image_height, pdf_get_image_width, pdf_get_buffer, pdf_get_parameter, pdf_get_value, pdf_initgraphics, pdf_lineto, pdf_load_font, pdf_load_image, pdf_moveto, pdf_new, pdf_open_file, pdf_open_image_file, pdf_place_image, pdf_place_pdi_page, pdf_rect, pdf_restore, pdf_rotate, pdf_save, pdf_scale, pdf_set_info, pdf_set_parameter, pdf_set_text_pos, pdf_set_value, pdf_setcolor, pdf_setdash, pdf_setdashpattern, pdf_setflat, pdf_setfont, pdf_setgray_fill, pdf_setgray_stroke, pdf_setgray, pdf_setlinecap, pdf_setlinejoin, pdf_setlinewidth, pdf_setmatrix, pdf_setmiterlimit, pdf_setrgbcolor_fill, pdf_setrgbcolor_stroke, pdf_setrgbcolor, pdf_shading_pattern, pdf_shading, pdf_shfill, pdf_show_boxed, pdf_show_xy, pdf_show, pdf_skew, pdf_stringwidth, pdf_stroke, pdf_translate</p>
+</s3>
+</s2>
+
+<s2 title="Program Execution Functions">
+<s3 title="Implemented Functions">
+<p>escapeshellarg, escapeshellcmd, exec, passthru, shell_exec, system</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>proc_close, proc_get_status, proc_nice, proc_open, proc_terminate</p>
+</s3>
+</s2>
+
+<s2 title="Session Handling Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="SimpleXML Functions">
+<s3 title="Implemented Functions">
+<p>simplexml_load_file, simplexml_load_string, SimpleXMLElement->asXML(), SimpleXMLElement->attributes(), SimpleXMLElement->children(), SimpleXMLElement->xpath()</p>
+</s3>
+</s2>
+
+<s2 title="Stream Functions">
+<s3 title="Implemented Functions">
+<p>stream_context_create, stream_context_get_default, stream_context_get_options, stream_context_set_option, stream_context_set_params, stream_copy_to_stream, stream_get_contents, stream_get_line, stream_get_transports, stream_get_wrappers, stream_register_wrapper, stream_wrapper_register, stream_wrapper_restore, stream_wrapper_unregister</p>
+</s3>
+<s3 title="Unimplemented Functions">
+<p>stream_bucket_append, stream_bucket_make_writeable, stream_bucket_new, stream_bucket_prepend, stream_filter_append, stream_filter_prepend, stream_filter_register, stream_filter_remove, stream_get_filters, stream_get_meta_data, stream_select, stream_set_blocking, stream_set_timeout (stub), stream_set_write_buffer (stub), stream_socket_accept, stream_socket_server, stream_socket_client, stream_socket_enable_crypto, stream_socket_get_name, stream_socket_pair, stream_socket_recvform, stream_socket_sendto, stream_socket_server</p>
+</s3>
+</s2>
+
+<s2 title="String Functions">
+<s3 title="Unimplemented Functions">
+<p>convert_cyr_string, hebrev, hebrevc, htmlspecialchars_decode, levelshtein, localeconv, nl_langinfo, similar_text, strpbrk, substr_compare, vfprintf</p>
+</s3>
+</s2>
+
+<s2 title="URL Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="Tokenizer Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="URL Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="Variable Handling Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+
+<s2 title="XML Functions">
+<s3 title="Unimplemented Functions">
+<p>xml_error_string, xml_get_current_byte_index, xml_get_current_column_number, xml_get_current_line_number, xml_get_error_code, xml_set_external_entity_ref_handler</p>
+</s3>
+</s2>
+
+<s2 title="Zip Functions">
+<s3 title="Implemented Functions">
+<p>zip_close, zip_open, zip_read, zip_entry_close, zip_entry_compressedsize, zip_entry_compressionmethod, zip_entry_filesize, zip_entry_name, zip_entry_open, zip_entry_read</p>
+</s3>
+</s2>
+
+<s2 title="Zlib Functions">
+<s3 title="Complete">
+<p>All functions implemented.</p>
+</s3>
+</s2>
+</s1>
+
+</body>
+</document>

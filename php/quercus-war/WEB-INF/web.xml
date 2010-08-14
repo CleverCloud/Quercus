@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+
+<web-app>
+  <description>Caucho Technology's PHP Implementation</description>
+
+  <servlet>
+    <servlet-name>Quercus Servlet</servlet-name>
+    <servlet-class>com.caucho.quercus.servlet.QuercusServlet</servlet-class>
+
+    <!--
+      Specifies the encoding Quercus should use to read in PHP scripts.
+    -->
+    <!--
+    <init-param>
+      <param-name>script-encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+    -->
+
+    <!--
+      Tells Quercus to use the following JDBC database and to ignore the
+      arguments of mysql_connect().
+    -->
+    <!--
+    <init-param>
+      <param-name>database</param-name>
+      <param-value>jdbc/test</param-value>
+    </init-param>
+    -->
+
+    <!--
+    <init-param>
+      <param-name>ini-file</param-name>
+      <param-value>WEB-INF/php.ini</param-value>
+    </init-param>
+    -->
+    
+    <!--
+      Location of the license to enable php to java compilation.
+    -->
+    <init-param>
+      <param-name>license-directory</param-name>
+      <param-value>WEB-INF/licenses</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Quercus Servlet</servlet-name>
+    <url-pattern>*.php</url-pattern>
+  </servlet-mapping>
+
+  <welcome-file-list>
+    <welcome-file>index.php</welcome-file>
+  </welcome-file-list>
+</web-app>

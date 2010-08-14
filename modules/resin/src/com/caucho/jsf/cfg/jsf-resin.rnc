@@ -1,0 +1,142 @@
+default namespace r = "http://caucho.com/ns/resin";
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
+
+javaee-class = string
+
+rjsf12-any-Group =
+  text
+  | (attribute * {string}
+  | element * { rjsf12-any-Group })*
+
+rjsf12_application = element application {
+  attribute id { string }?
+
+  & element action-listener { javaee-class }?
+
+  & element default-render-kit-id { string }?
+
+  & element message-bundle { string }?
+
+  & element navigation-handler { javaee-class }?
+
+  & element view-handler { javaee-class }?
+
+  & element state-manager { javaee-class }?
+
+  & element el-resolver { javaee-class }*
+
+  & element property-resolver { javaee-class }?
+
+  & element variable-resolver { javaee-class }?
+}
+
+rjsf12_faces-config = element faces-config {
+  attribute id { string }?
+
+  & attribute xsi:schemaLocation { string }?
+
+  & attribute version { string }?
+
+  & rjsf12_application*
+
+  & rjsf12_bean*
+
+  & rjsf12_factory*
+
+  & rjsf12_component*
+
+  & rjsf12_converter*
+
+  & rjsf12_lifecycle*
+
+  & rjsf12_managed-bean*
+
+  & rjsf12_navigation-rule*
+
+  & rjsf12_referenced-bean*
+
+  & rjsf12_render-kit*
+
+  & rjsf12_validator*
+
+  & element faces-config-extension { jsf-any-Group }*
+}
+
+rjsf12_application-resource-bundle = element application-resource-bundle {
+  attribute id { string }?
+
+  javaee_description-Group,
+
+  element base-name { javaee-class }
+
+  element var { string }
+}
+
+rjsf12_attribute = element attribute {
+  attribute id { string }?
+
+  javaee_description-Group,
+
+  element attribute-name { string },
+
+  element attribute-class { javaee-class },
+
+  element default-value { string }?,
+
+  element suggested-value { string }?,
+
+  element attribute-extension { jsf-any-Group }*
+}
+
+rjsf12_factory = element factory {
+  attribute id { string }?
+
+  & element application-factory { javaee-class }?
+
+  & element faces-context-factory { javaee-class }?
+
+  & element lifecycle-factory { javaee-class }?
+
+  & element render-kit-factory { javaee-class }?
+
+  & element factory-extension { jsf12-any-Group }*
+}
+
+rjsf12_name =
+  attribute name { string }
+  | element name { string }
+
+rjsf12_class =
+  attribute class { string }
+  | element class { string }
+
+rjsf12_init =
+  element any { rjsf12-any-Group }
+
+rjsf12_bean = element bean {
+  rjsf12_name
+
+  & rjsf12_class
+
+  & rjsf12_init
+
+rjsf12_managed-bean = element managed-bean {
+  attribute id { string }?
+
+  javaee_description-Group,
+
+  element managed-bean-name { string },
+
+  element managed-bean-class { javaee-class },
+
+  element managed-bean-scope { string },
+
+  (jsf12_managed-property*
+
+  | jsf12_map-entries
+
+  | jsf12_list-entries)
+
+  element managed-bean-extension { jsf12-any-Group }*
+}

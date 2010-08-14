@@ -1,0 +1,153 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Configuring a Service on the Resin ESB using JAXB</title>
+    <description>
+      <p>A service on the Resin ESB can be configured easily using JAXB.
+      </p>
+    </description>
+    <type>tutorial</type>
+    <tutorial-startpage>demo.jsp</tutorial-startpage>
+  </header>
+
+  <body>
+    <summary/>
+
+  <s1>
+<p>Services on the Resin ESB can be configured easily using JAXB.
+</p>
+</s1>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr><td><viewfile-link file="WEB-INF/classes/example/HelloService.java"/>
+    </td><td>Interface for the hello service.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/HelloServiceImpl.java"/>
+    </td><td>The main service implementation.
+</td></tr><tr><td><viewfile-link file="WEB-INF/resin-web.xml"/>
+    </td><td>Configures the environment
+</td></tr><tr><td><viewfile-link file="demo.jsp"/>
+    </td><td>Client JSP
+</td></tr></deftable>
+</s1>
+
+<s1 title="Service Implementation">
+
+<p>The HelloService implementation for this tutorial still conforms to the
+same API as in the 
+<a href="../soa-hello-world/index.xtp">Simple Service tutorial</a>, but 
+now has an annotated field to allow the hello message to be changed via JAXB
+configuration.
+</p>
+
+<example title="HelloServiceImpl.java">
+package example;
+
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@WebService(endpointInterface="example.HelloService")
+@XmlRootElement
+public class HelloServiceImpl implements HelloService {
+  @XmlElement(name="hello")
+  private String _hello;
+
+  /**
+   * Returns "hello, world".
+   */
+  @WebMethod
+  public String hello()
+  {
+    return _hello;
+  }
+}
+</example>
+
+</s1>
+
+<s1 title="Remote Interface">
+
+<p>The Java interface describes the remote API.  The API here is the same
+as in the <a href="../soa-hello-world/index.xtp">Simple Service tutorial</a>.
+</p>
+
+<example title="HelloService.java">
+package example;
+
+public interface HelloService {
+  /**
+   * Returns "hello, world".
+   */
+  public String hello();
+}
+</example>
+
+</s1>
+
+<s1 title="Service configuration">
+
+<p>
+The configuration of this service is almost identical to 
+the <a href="../soa-hello-world/index.xtp">Simple Service tutorial</a>, but now
+includes data to be unmarshalled into the service.  Specifically, the hello
+field is initialized from the &lt;init> child tag of &lt;web-service>.
+</p>
+
+<example title="<web-service>">
+&lt;servlet-mapping url-pattern="/hello/*"
+                 servlet-class="example.HelloServiceImpl">
+                 jndi-name="service/HelloService">
+
+  &lt;init>
+    &lt;hello>hola mundo&lt;/hello>
+  &lt;/init>
+
+  &lt;protocol type="hessian"/>
+&lt;/servlet-mapping>
+</example>
+
+<p>
+Since the service API has not changed, the &lt;web-service-client> tag
+and its contents remain unchanged from the
+<a href="../soa-hello-world/index.xtp">Simple Service tutorial</a>.
+</p>
+
+<example title="<web-service-client>">
+&lt;web-service-client jndi-name="hessian/HelloService">
+  &lt;url>hessian:${webApp.url}/hello/&lt;/url>
+  &lt;interface>example.HelloService&lt;/interface>
+&lt;/web-service-client>
+</example>
+
+</s1>
+
+<s1 title="Java Client">
+
+<p>The client can now connect to the HelloService using any supported
+encoding simply by doing a lookup in JNDI.  The message returned now 
+is the one initialized via JAXB.</p>
+
+<example title="demo.jsp">
+&lt;%@ page import="com.caucho.naming.Jndi" %>
+&lt;%@ page import="example.HelloService" %>
+&lt;%
+HelloService hessianHello = (HelloService) Jndi.lookup("hessian/HelloService");
+HelloService vmHello = (HelloService) Jndi.lookup("service/HelloService");
+%>
+&lt;pre>
+From Hessian: &lt;%= hessianHello.hello() %>
+From VM: &lt;%= vmHello.hello() %>
+&lt;/pre>
+</example>
+<results>
+From Hessian: hola mundo
+From VM: hola mundo
+</results>
+
+</s1>
+
+  </body>
+</document>

@@ -1,0 +1,27 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <!--
+     - Configures the database.
+     -
+     - jndi-name specifies the JNDI name
+     - type      specifies the driver class
+     - path      is a driver-specific configuration parameter
+    -->
+  <database name="jdbc/basic">
+    <driver type="com.caucho.db.jca.ConnectionFactory">
+      <url>resin:WEB-INF/db</url>
+
+      <remove-on-error/>
+    </driver>
+  </database>
+
+  <!--
+     - Configures the initialization servlet.
+    -->
+  <servlet servlet-name="init" servlet-class="example.InitServlet">
+    <load-on-startup/>
+  </servlet>
+
+  <servlet servlet-name="basic" servlet-class="example.BasicServlet"/>
+
+  <servlet-mapping url-pattern="/basic" servlet-name="basic"/>
+</web-app>

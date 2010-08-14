@@ -1,0 +1,77 @@
+namespace local = ""
+
+start = ear13_application
+
+ear13_alt-dd = element alt-dd { string }
+
+ear13_application = element application {
+  ear13_icon?,
+
+  ear13_display-name,
+
+  ear13_description?,
+
+  ear13_module+,
+
+  ear13_security-role*
+}
+
+## path to rar connector
+ear13_connector = element connector { string }
+
+## the context root of the web application
+ear13_context-root = element context-root { string }
+
+ear13_description = element description { string }
+
+ear13_display-name = element display-name { string }
+
+## path to ejb jar
+ear13_ejb = element ejb { string }
+
+ear13_icon = element icon {
+  ear13_small-icon?,
+
+  ear13_large-icon?
+}
+
+## path to application client module
+ear13_java = element java { string }
+
+ear13_large-icon = element large-icon { string }
+
+ear13_module = element module {
+  (ear13_connector
+
+  | ear13_ejb
+
+  | ear13_java
+
+  | ear13_web),
+
+  ear13_alt-dd?
+}
+
+ear13_role-name = element role-name {
+  string
+}
+
+ear13_security-role = element security-role {
+  ear13_description?,
+
+  ear13_role-name
+}
+
+ear13_small-icon = element small-icon { string }
+
+ear13_web = element web {
+  ear13_web-uri,
+
+  ear13_context-root?
+}
+
+ear13_web-uri = element web-uri {
+  string
+}
+
+

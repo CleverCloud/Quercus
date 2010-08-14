@@ -1,0 +1,113 @@
+<?php
+
+mbean_init();
+
+#
+# load graph
+# 
+$hash = $_REQUEST['hash'];
+$graph = $_REQUEST['graph'];
+
+if (! $hash && ! $graph) {
+?>
+<b>Graph not specified in request</b>
+<?php
+  return;
+}
+
+$cache = resin_create_distcache("resin:admin:graph");
+
+if (! $hash) {
+  $user = quercus_servlet_request()->getRemoteUser();
+  $user_item = $cache->get($user);
+
+  $hash = $user_item['user-graphs'][$graph];
+}
+
+$item = $cache->get($hash);
+
+if (! $item) {
+?>
+<b>Graph unavailable (Hash: <?= $hash ?></b>
+<?php
+  return;
+}
+
+$name = $item['name'];
+$checks = $item['checks'];
+$servers = $item['servers'];
+
+if ($servers == null) {
+  $self_index = sprintf("%02d", $g_server->SelfServer->ClusterIndex);
+  $servers = array($self_index);
+}
+
+foreach ($checks as $check) {
+  foreach ($servers as $server) {
+    $names[] = "$server|$check";
+  }
+}
+
+#
+# formatting parameters
+# 
+
+$canvas = "graph-{$hash}";
+$width = 220;
+$height = 150;
+$period = 60;
+
+if (isset($_REQUEST["canvas"])) {
+  $canvas = $_REQUEST["canvas"];
+}
+
+if (isset($_REQUEST["width"])) {
+  $width = $_REQUEST["width"];
+}
+
+if (isset($_REQUEST["height"])) {
+  $height = $_REQUEST["height"];
+}
+
+if (isset($_REQUEST["period"])) {
+  $period = $_REQUEST["period"];
+}
+
+# 
+# compute time bounds
+# 
+
+$now = time();
+$start = $now - $period * 60;
+$dt = date_create();
+$tz = date_timezone_get($dt);
+$offset = timezone_offset_get($tz, $dt);
+
+$time = $start + $offset;
+
+if ($p_period <= 60) {
+}
+else if ($p_period <= 12 * 60) {
+  $time += 3600 - 1;
+  $time -= $time % 3600;
+}
+else if ($p_period <= 24 * 60) {
+  $time += 3 * 3600 - 1;
+  $time -= $time % (3 * 3600);
+}
+else {
+  $time += 24 * 3600 - 1;
+  $time -= $time % (24 * 3600);
+}
+
+$start = $time - $offset;
+$end = $start + $period * 60;
+
+# 
+# output graph
+# 
+
+require_once "WEB-INF/php/graph.php";
+
+stat_graph($canvas, $width, $height, $start, $end, $names);
+?>

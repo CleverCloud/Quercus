@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="com.caucho.netbeans" default="netbeans" basedir=".">
+    <description>Builds, tests, and runs the project com.caucho.netbeans.</description>
+    <import file="nbproject/build-impl.xml"/>
+    
+    <!--property name="resin_dir" location="src/com/caucho/netbeans"/>
+
+    <target name="s2binit" depends="build-init">
+        <taskdef name="schema2beans" classname="org.netbeans.modules.s2banttask.Schema2BeansAntTask">
+          <classpath>
+                <pathelement path="external/org-netbeans-modules-schema2beans.jar" />
+                <pathelement path="external/schema2beansdev.jar" />
+                <pathelement path="external/s2banttask.jar"/>
+          </classpath>
+        </taskdef>
+    </target>
+  
+    <target name="dd2beans_gen" depends="s2binit">
+        <echo message="generating bean graph for Resin Server configuration files" />
+        <schema2beans schema="${resin_dir}/resources/resin-web-app_4_2.xsd"
+            package="com.caucho.netbeans.config.gen"
+            schemaType="xmlschema"
+            validate="true"
+            attrProp="true"
+            removeUnreferencedNodes="true"
+            docroot="resin-web-app"
+            rootDir="src"
+            />
+        <schema2beans schema="${resin_dir}/resources/resin-ejb-jar_4_6.xsd"
+            package="com.caucho.netbeans.config.gen"
+            schemaType="xmlschema"
+            validate="true"
+            attrProp="true"
+            removeUnreferencedNodes="true"
+            docroot="resin-ejb-jar"
+            rootDir="src"/>
+    </target>
+
+    <target name="compile" depends="dd2beans_gen, projectized-common.compile"/>
+
+    <target name="clean" depends="clean-ddgen-src, projectized-common.clean"/>
+
+    <target name="clean-ddgen-check">
+        <available property="have-config" file="${resin_dir}/config/gen"/>
+    </target>
+
+    <target name="clean-ddgen-src" if="have-config" depends="clean-ddgen-check">
+        <delete>
+            <fileset dir="${resin_dir}/config/gen">
+                <include name="*.java"/>
+            </fileset>
+        </delete>
+        <delete dir="${resin_dir}/config/gen"/>
+    </target-->
+</project>

@@ -1,0 +1,177 @@
+Copyright (c) 1998-2009 Caucho Technology. All Rights Reserved.
+
+
+This is the README file for Quercus(tm)
+=======================================
+TABLE OF CONTENTS
+  I)    Introduction
+  II)   Getting Started
+  III)  Using a database with Quercus
+  IV)   JDBC Connections
+  V)    Quercus Open Source vs. Quercus Professional
+  VI)   Quercus on Tomcat
+  VII)  Quercus on Glassfish
+  VIII) Resources
+
+
+I) Introduction 
+---------------
+Thank you for downloading the Quercus standalone .war package.
+
+Quercus is Caucho Technology's 100% Java implementation of PHP 5.
+
+
+II) Getting Started
+-------------------
+First, make sure you are running JDK 5 or greater.
+
+Then follow your server's instructions for deploying a war file.  After
+deploying, browse to the Quercus webapp and the index page will check that
+Quercus is correctly deployed.
+
+
+III) Using a database with Quercus
+----------------------------------
+Quercus only needs a JDBC driver in order to use a particular database.
+To use the PHP mysql functions, you will need the MySQL JDBC driver.
+
+
+IV) JDBC Connections
+--------------------
+Quercus is able to use database connections from a DataSource configured
+using JNDI.  Application servers typically provide a mechanism for making a
+connection pool DataSource available with JNDI.
+
+Quercus database connection methods accept the JNDI name directly:
+
+  $conn = mysql_connect("java:comp/env/jdbc/myDatabaseName")
+
+  OR
+
+  $pdo = new PDO("java:comp/env/jdbc/myDatabaseName");
+
+If the web.xml contains a configuration for a JDBC database, then Quercus will
+ignore the arguments to PHP database functions and will connect directly to
+the preconfigured database.
+
+    <init-param>
+      <param-name>database</param-name>
+      <param-value>jdbc/myDatabaseName</param-value>
+    </init-param>
+
+Quercus will use the above database for all calls to the database like the
+ones below:
+
+  $conn = mysql_connect("localhost", "user", "pass");
+
+  OR
+
+  $pdo = new PDO("mysql:host=localhost", "user", "pass");
+
+Consult the documentation for your application server for instructions on
+configuring a database and making it available with a JNDI name.
+
+
+V) Quercus Open Source vs. Quercus Professional
+-----------------------------------------------
+Quercus Professional offers significantly faster performance over
+Quercus Open Source because it compiles php scripts to java source code.
+To use Quercus Professional, you will need to:
+
+1) Download Quercus Professional standalone.
+2) Have a valid license file.
+3) Specify the location of your license in your web.xml.
+
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+<web-app>
+  <servlet>
+    <servlet-name>Quercus Servlet</servlet-name>
+    <servlet-class>com.caucho.quercus.servlet.QuercusServlet</servlet-class>
+    <init-param>
+      <param-name>license-directory</param-name>
+      <param-value>WEB-INF/licenses</param-value>
+    </init-param>
+  </servlet>
+</web-app>
+
+
+VI) Quercus on Tomcat
+---------------------
+1) Download the latest Quercus standalone war file.
+
+2) Place the war file in your webapps directory for a war deploy, or extract the
+   war contents into your webapps/ROOT directory.
+
+3) Start Tomcat.
+
+4) Quercus should now be running.  To check, browse to the Quercus webapp and
+   an index page will test to see if Quercus is running.
+
+The following step is only needed if you intend to use a database in
+Quercus with Tomcat:
+
+5) Download the appropiate database driver and place it into Tomcat's
+   lib directory.
+
+
+VII) Quercus on Glassfish
+------------------------
+You can use autodeploy or deloy the webapp via the Glassfish web admin:
+
+1) Download the latest Quercus .war file from http://quercus.caucho.com.
+
+2) Log into Glassfish web admin.
+
+3) Click on deploy Web Application (.war).
+
+4) Point Glassfish to the location of the Quercus .war file'. Then click OK.
+   Glassfish will automatically deploy Quercus.
+
+5) Quercus should now be running.  To check, browse to the Quercus webapp and
+   an index page will show up indicating the status of Quercus.  Or you can
+   click on "Launch" from Glassfish admin's "Web Applications" page and your
+   browser will go to the Quercus webapp.
+
+6) PHP files can now be added to the root directory of the expanded web
+    application.
+
+The following steps are only needed if you intend to use a database in
+Quercus with Glassfish:
+
+7) Download the databse driver and place it into Glassfish's
+   lib directory.
+
+Follow the next steps if you want to configure a JDBC connection.
+
+8) In Glassfish web admin, create a JDBC Connection Pool.  Specify the database
+   name, username, and password.
+
+9) In Glassfish web admin, create a JDBC Resource with a JNDI name , for example 
+   "jdbc/myDatabaseName".
+
+10) Configure Quercus to use the JDBC database by adding a tag to
+    WEB-INF/web.xml:
+
+    <init-param>
+      <param-name>database</param-name>
+      <param-value>jdbc/myDatabaseName</param-value>
+    </init-param>
+
+
+VIII) Resources
+-------------
+1) http://www.caucho.com
+   Go here for documentation, guides, examples, and Quercus downloads.
+
+2) http://bugs.caucho.com
+   Report bugs here.
+
+3) http://forum.caucho.com
+   Forums for Resin, Hessian, and Quercus.
+
+4) http://maillist.caucho.com
+   Mailing lists for Resin, Hessian, and Quercus.
+

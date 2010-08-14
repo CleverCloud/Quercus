@@ -1,0 +1,18 @@
+Implementation-Vendor: Caucho Technology, Inc.
+Implementation-Version: 3.1.0
+AutoUpdate-Show-In-Client: false
+OpenIDE-Module: com.caucho.netbeans
+OpenIDE-Module-Dependencies: org.netbeans.modules.j2eeapis/1,  org.netbeans.modules.j2ee.common/1,  org.netbeans.modules.j2eeserver/4,  org.openide.nodes
+OpenIDE-Module-Display-Category: "Web &amp; Java EE"
+OpenIDE-Module-Implementation-Version: 080106
+OpenIDE-Module-Layer: com/caucho/netbeans/resources/layer.xml
+OpenIDE-Module-Long-Description: Resin Application Server
+OpenIDE-Module-Localizing-Bundle: com/caucho/netbeans/resources/Bundle.properties
+OpenIDE-Module-Module-Name: Resin Application Server
+OpenIDE-Module-Public-Packages: -
+OpenIDE-Module-Requires: org.openide.modules.ModuleFormat1
+OpenIDE-Module-Short-Description: Resin
+OpenIDE-Module-Specification-Version: 1.0
+
+
+

@@ -1,0 +1,86 @@
+<document>
+<header>
+  <product>resin</product>
+  <title>Web Application: tags</title>
+  <version>Resin 3.0</version>
+
+  <description>
+
+  <p>Web applications are configured with the &lt;web-app> tag, which can occur in a number of places.</p>
+      
+  <ul>
+        
+  <li><var type="file">WEB-INF/web.xml</var> contains a top-level
+  web-app element.  It is the Servlet standard location for defining
+  things like servlet mappings and security roles.</li>
+        
+  <li><var type="file">WEB-INF/resin-web.xml</var> is also used by
+  Resin and will override and supplement the configuration in <var type="file">WEB-INF/web.xml</var>.  Use it to specify Resin specific
+  configuration if you prefer to keep <var>WEB-INF/web.xml</var> strictly
+  conforming to the Servlet specification.</li>
+        
+  <li>A web application can also be configured in the main Resin
+  configuration, and in this context <var>web-app</var> is a child of &lt;<a href="http-virtual-hosts-ref.xtp">host</a>&gt;.</li>
+
+  </ul>
+
+  </description>
+</header>
+
+<body>
+
+<reference-legend/>
+<localtoc/>
+
+<include-defun name="access-log"/>
+<include-defun name="active-wait-time"/>
+<include-defun name="allow-forward-after-flush"/>
+<include-defun name="allow-servlet-el"/>
+<include-defun name="archive-path"/>
+<include-defun name="auth-constraint"/>
+<include-defun name="cache-mapping"/>
+<include-defun name="constraint"/>
+<include-defun name="context-param"/>
+<include-defun name="cookie-http-only"/>
+<include-defun name="ear-deploy"/>
+<include-defun name="error-page"/>
+<include-defun name="filter"/>
+<include-defun name="filter-mapping"/>
+<include-defun name="form-login-config"/>
+<include-defun name="idle-time"/>
+<include-defun name="jsf"/>
+<include-defun name="jsp"/>
+<include-defun name="jsp-config"/>
+<include-defun name="lazy-servlet-validate"/>
+<include-defun name="listener"/>
+<include-defun name="login-config"/>
+<include-defun name="mime-mapping"/>
+<include-defun name="multipart-form"/>
+<include-defun name="path-mapping"/>
+<include-defun name="protocol"/>
+<include-defun name="redeploy-check-interval"/>
+<include-defun name="redeploy-mode"/>
+<include-defun name="resource tags"/>
+<include-defun name="rewrite-dispatch"/>
+<include-defun name="rewrite-real-path"/>
+<include-defun name="root-directory"/>
+<include-defun name="secure"/>
+<include-defun name="security-constraint"/>
+<include-defun name="servlet"/>
+<include-defun name="servlet-mapping"/>
+<include-defun name="servlet-regexp"/>
+<include-defun name="session-config"/>
+<include-defun name="shutdown-wait-max"/>
+<include-defun name="statistics-enable"/>
+<include-defun name="strict-mapping"/>
+<include-defun name="user-data-constraint"/>
+<include-defun name="web-app"/>
+<include-defun name="web-app-default"/>
+<include-defun name="web-app-deploy"/>
+<include-defun name="web-resource-collection"/>
+<include-defun name="welcome-file-list"/>
+
+
+</body>
+
+</document>

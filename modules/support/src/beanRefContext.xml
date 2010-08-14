@@ -1,0 +1,4 @@
+<beans>
+  <bean class="com.caucho.spring.ResinApplicationContext"
+        name="resin-webbeans-factory"/>
+</beans>

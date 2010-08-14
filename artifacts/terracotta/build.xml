@@ -1,0 +1,43 @@
+<project basedir="."
+         default="compile"
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <property name="project.name"  value="resin-terracotta"/>
+
+  <property name="src"  location="${basedir}/src"/>
+  <property name="build" location="${basedir}/classes"/>
+  <property name="dist" location="${basedir}/dist"/>
+
+  <target name="compile">
+    <ivy:cachepath pathid="classpath" />
+
+    <mkdir dir="${build}"/>
+
+    <javac srcdir="${src}"
+           destdir="${build}"
+           debug="on"
+           source="1.5"
+           target="1.5"
+           excludes="**/.svn/**">
+      <classpath refid="classpath"/>
+    </javac>
+
+    <mkdir dir="${dist}"/>
+
+    <jar jarfile="${dist}/${project.name}.jar"
+         compress="false" index="true" update="true"
+         manifest="${src}/manifest">
+      <fileset dir="${build}">
+      </fileset>
+    </jar>
+  </target>
+
+ <target name="clean">
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+</project>
+
+
+

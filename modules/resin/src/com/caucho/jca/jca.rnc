@@ -1,0 +1,237 @@
+default namespace j2ee = "http://java.sun.com/xml/ns/j2ee"
+
+namespace local = ""
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+include "classpath:com/caucho/config/cfg/j2ee.rnc"
+include "jca-10.rnc"
+
+start = j2ee_connector | jca10_connector
+
+j2ee_activationspec = element activationspec {
+  attribute id { string }?,
+
+  j2ee_activationspec-class,
+
+  j2ee_required-config-property*
+}
+
+j2ee_activationspec-class = element activationspec-class {
+ j2ee_fully-qualified-class
+}
+
+j2ee_adminobject = element adminobject {
+  attribute id { string }?,
+
+  j2ee_adminobject-interface,
+
+  j2ee_adminobject-class,
+
+  j2ee_config-property*
+}
+
+j2ee_adminobject-class = element adminobject-class {
+ j2ee_fully-qualified-class
+}
+
+j2ee_adminobject-interface = element adminobject-interface {
+ j2ee_fully-qualified-class
+}
+
+j2ee_authentication-mechanism = element authentication-mechanism {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_authentication-mechanism-type,
+
+  j2ee_credential-interface
+}
+
+j2ee_authentication-mechanism-type = element authentication-mechanism-type {
+  string
+}
+
+j2ee_config-property = element config-property {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_config-property-name,
+
+  j2ee_config-property-type,
+
+  j2ee_config-property-value?
+}
+
+j2ee_config-property-name = element config-property-name {
+  string
+}
+
+j2ee_config-property-type = element config-property-type {
+  "java.lang.Boolean"
+  | "java.lang.String"
+  | "java.lang.Integer"
+  | "java.lang.Double"
+  | "java.lang.Byte"
+  | "java.lang.Short"
+  | "java.lang.Long"
+  | "java.lang.Float"
+  | "java.lang.Character"
+}
+
+j2ee_config-property-value = element config-property-value {
+  string
+}
+
+j2ee_connection-definition = element connection-definition {
+  attribute id { string }?,
+
+  element managedconnectionfactory-class { j2ee_fully-qualified-class },
+
+  j2ee_config-property*,
+
+  j2ee_connectionfactory-interface,
+
+  j2ee_connectionfactory-impl-class,
+
+  j2ee_connection-interface,
+
+  j2ee_connection-impl-class
+}
+
+j2ee_connection-impl-class = element connection-impl-class {
+  j2ee_fully-qualified-class
+}
+
+j2ee_connection-interface = element connection-interface {
+  j2ee_fully-qualified-class
+}
+
+j2ee_connectionfactory-impl-class = element connectionfactory-impl-class {
+  j2ee_fully-qualified-class
+}
+
+j2ee_connectionfactory-interface = element connectionfactory-interface {
+  j2ee_fully-qualified-class
+}
+
+j2ee_connector = element connector {
+  attribute id { string }?,
+
+  attribute version { "1.5" },
+
+  attribute xsi:schemaLocation { string }?,
+
+  j2ee_description-Group*,
+
+  element vendor-name { string },
+
+  element eis-type { string },
+
+  element resourceadapter-version { string },
+
+  j2ee_license?,
+
+  j2ee_resourceadapter
+}
+
+j2ee_credential-interface = element credential-interface {
+  "javax.resource.spi.security.PasswordCredential"
+  | "javax.resource.spi.security.GenericCredential"
+  | "org.ietf.jgss.GSSCredential"
+}
+
+j2ee_inbound-resourceadapter = element inbound-resourceadapter {
+  attribute id { string }?,
+
+  j2ee_messageadapter?
+}
+
+j2ee_license = element license {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_license-required
+}
+
+j2ee_license-required = element license-required {
+  j2ee_boolean
+}
+
+j2ee_messageadapter = element messageadapter {
+  attribute id { string }?,
+
+  j2ee_messagelistener+
+}
+
+j2ee_messagelistener = element messagelistener {
+  attribute id { string }?,
+
+  j2ee_messagelistener-type,
+
+  j2ee_activationspec
+}
+
+j2ee_messagelistener-type = element messagelistener-type {
+  j2ee_fully-qualified-class
+}
+
+j2ee_outbound-resourceadapter = element outbound-resourceadapter {
+  attribute id { string }?,
+
+  j2ee_connection-definition+,
+
+  j2ee_transaction-support,
+
+  j2ee_authentication-mechanism*,
+
+  j2ee_reauthentication-support
+}
+
+j2ee_reauthentication-support = element reauthentication-support {
+  j2ee_boolean
+}
+
+j2ee_resourceadapter = element resourceadapter {
+  attribute id { string }?,
+
+  j2ee_resourceadapter-class?,
+
+  j2ee_config-property*,
+
+  j2ee_outbound-resourceadapter?,
+
+  j2ee_inbound-resourceadapter?,
+
+  j2ee_adminobject*,
+
+  j2ee_security-permission*
+}
+
+j2ee_resourceadapter-class = element resourceadapter-class {
+  j2ee_fully-qualified-class
+}
+
+j2ee_required-config-property = element required-config-property {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_config-property-name
+}
+
+j2ee_security-permission = element security-permission {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  element security-permission-spec { string }
+}
+
+j2ee_transaction-support = element transaction-support {
+  "NoTransaction",
+  "LocalTransaction",
+  "XATransaction"
+}

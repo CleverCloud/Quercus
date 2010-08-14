@@ -1,0 +1,163 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 4.0.4 Release Notes</title>
+    <description>
+<ul>
+<li>Pass Servlet 3.0 TCK for  JavaEE 6 web profile</li>
+<li>com.caucho.resin.ResinBeanContainer for embedded Resin use</li>
+<li>com.caucho.junit.ResinJUnitRunner for embedded junit use</li>
+<li>Quercus support for PHP 5.3 Namespaces</li>
+<li>Quercus support for PHP 5.3 Closures</li>
+</ul>
+    </description>
+
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 4.0.4 Overview">
+
+<ul>
+<li>Pass Servlet 3.0 TCK for  JavaEE 6 web profile</li>
+<li>com.caucho.resin.ResinBeanContainer for embedded Resin use</li>
+<li>com.caucho.junit.ResinJUnitRunner for embedded junit use</li>
+<li>Quercus support for PHP 5.3 Namespaces</li>
+<li>Quercus support for PHP 5.3 Closures</li>
+</ul>
+
+<p>Resin 4.0.x is the active development branch.</p>
+</s1>
+
+<s1 title="Servlet 3.0 TCK for Web Profile">
+
+<p>Passing the Servlet 3.0 TCK in 4.0.4 is the first step for Resin to complete
+the JavaEE-6 Web Profile. The web profile is our primary focus for the 
+next few months. It's the "good bits" of JavaEE-6: all the specifications
+aimed at developing web applications without the legacy enterprise
+requirements like CORBA that only specialized applications use.</p>
+
+<p>Our plan is to continue passing new TCKs for each of the next 
+few 4.0.x releases until we are done with the web profile.</p>
+
+</s1>
+
+<s1 title="Embedded ResinContext">
+
+<p>The new embedded ResinContext lets you use Resin's CanDI and EJB
+environment in a non-Resin context like a JUnit test or even in a
+standalone application.</p>
+
+<p>The simplest use of Resin context scans for *.jar files with CanDI
+beans.xml or EJB ejb-jar.xml files and lets you start a CanDI
+request scope.</p>
+
+<s2 title="Embedded Requests">
+
+<example title="Example: ResinBeanContainer">
+import com.caucho.resin.*;
+
+public class MyMain {
+  static void main(String []argv)
+  {
+    ResinBeanContainer resinContext = new ResinBeanContainer();
+
+    // scan classpath and initialize @Startup beans
+    resinContext.start();
+
+    // start a new request
+    RequestContext cxt = resinContext.beginRequest();
+
+    try {
+      MyBean bean = cxt.newInstance(MyBean.class);
+
+      bean.doStuff();
+    } finally {
+      cxt.close();
+    }
+  }
+}
+</example>
+
+</s2>
+
+<s2 title="Configuring beans">
+
+<p>You can configure the beans XML using the same environment
+tags as are available to the resin.xml and resin-web.xml like
+&lt;mypkg:MyBean> for CanDI, &lt;database> for databases, and
+&lt;resin:import> to include files.</p>
+
+<example title="Example: beans.xml">
+&lt;beans xmlns="http://caucho.com/ns/resin"
+   xmlns:lang="urn:java:java.lang"
+   xmlns:ee="urn:java:ee">
+
+  &lt;mypkg:MyBean xmlns="urn:java:com.mycom.mypkg">
+    &lt;my-field>my-value&lt;/my-field>
+  &lt;/mypkg:MyBean>
+
+  &lt;lang:String>
+    &lt;new>my-config-value&lt;/new>
+    &lt;ee:Named>my-config-name&lt;/ee:Named>
+  &lt;/lang:String>
+
+  &lt;database name="my-db">
+    &lt;driver type="..." url="..."/>
+  &lt;/database>
+    
+&lt;/beans>
+</example>
+
+</s2>
+
+</s1>
+
+<s1 title="ResinBeanContainerRunner">
+
+<p>The ResinBeanContainer has an associated JUnit @RunWith runner, letting
+you create JUnit tests for your model code in Resin's CDI environment.</p>
+
+<example title="Example: test junit">
+package qa;
+
+import org.junit.*;
+import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
+import com.caucho.junit.ResinBeanContainerRunner;
+import javax.inject.*;
+
+@RunWith(ResinBeanContainerRunner.class)
+@ResinBeanConfiguration(beansXml="test.xml")
+public class MyTest {
+  @Inject MyBean _myBean;
+  
+  @Test public void simpleTest()
+  {
+    assertTrue(_myBean != null);
+  }
+}
+</example>
+
+</s1>
+
+<s1 title="PHP 5.3 Namespaces and Closures">
+
+<p>Quercus in 4.0.4 has implemented the namespaces and closures capabilities
+of PHP 5.3. Namespaces finally give PHP the ability to isolate functions
+and classes with unique names.</p>
+
+<p>Closures add functional programming capabilities to PHP, giving power to
+more powerful event-driven frameworks.</p>
+
+<p>In addition to the major language changes, Quercus has completed its
+support for variable class methods and late static binding, both features
+are used in new-generation PHP frameworks to improve templating power and
+clarity.</p>
+
+</s1>
+
+</body>
+</document>

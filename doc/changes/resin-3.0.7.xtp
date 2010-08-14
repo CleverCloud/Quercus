@@ -1,0 +1,300 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.7 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="Overview">
+
+<p>Resin 3.0.7 includes a number of configuration changes for the
+more advanced user.  It also includes a large number of bug fixes
+and some performance enhancements.</p>
+
+</s1>
+
+<s1 title="Configuration control">
+
+<p>The resin.conf and web.xml configuration files can now use
+resin:if and resin:choose control.  These can be useful to create
+a resin.conf which works for both testing and deployment, depending on
+an environment parameter.</p>
+
+<p>When possible, users should avoid using the control tags when possible
+to keep their configuration files as simple as possible.</p>
+
+<example>
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+            xmlns:resin="http://caucho.com/ns/resin/core"&gt;
+  &lt;resin:choose&gt;
+  &lt;resin:when test="\${mode='development'}"&gt;
+    &lt;resin:log&gt;Development Mode&lt;/resin:log&gt; 
+  &lt;/resin:when&gt;
+  &lt;resin:when test="\${mode='deploy'}"&gt;
+    &lt;resin:log&gt;Deployment Mode&lt;/resin:log&gt; 
+  &lt;/resin:when&gt;
+  &lt;resin:otherwise&gt;
+    &lt;resin:log&gt;Unknown Mode \${mode}&lt;/resin:log&gt;
+  &lt;/resin:otherwise&gt;
+&lt;/web-app&gt;
+</example>
+
+<s2 title="resin:set">
+
+<p>resin:set adds an EL variable to the current context.</p>
+
+<def>
+&lt;resin:set var="name" value="\${value}"/&gt;
+</def>
+
+</s2>
+
+<s2 title="resin:if">
+
+<p>resin:if executes part of the configuration file conditionally.</p>
+
+<def>
+&lt;resin:if test="${expr}"&gt;
+  ...
+&lt;resin:if&gt;
+</def>
+
+</s2>
+
+<s2 title="resin:choose">
+
+<p>resin:choose implements an if, elsif, else.</p>
+
+<def>
+&lt;resin:choose&gt;
+&lt;resin:when test="${expr1}"&gt;
+  ...
+&lt;/resin:when&gt;
+&lt;resin:when test="${expr2}"&gt;
+  ...
+&lt;/resin:when&gt;
+&lt;resin:otherwise&gt;
+&lt;/resin:otherwise&gt;
+</def>
+
+</s2>
+
+<s2 title="resin:env">
+
+<p>resin:env creates a new environment for a section of the
+configuration file.  Some users may want to use this to create resources
+or databases with custom &lt;class-loader&gt; tags.</p>
+
+<example>
+&lt;web-app&gt;
+  ..
+  &lt;resin:env&gt;
+    &lt;class-loader&gt;
+      &lt;library-loader path="/opt/customlib"/&gt;
+    &lt;/class-loader&gt;
+
+    &lt;resource ...&gt;
+  &lt;/resin:env&gt;
+  ...
+</example>
+
+</s2>
+
+<s2 title="resin:log">
+
+<p>Logs a message to the given log file.</p>
+
+</s2>
+
+<s2 title="resin:import">
+
+<p>resin:import now replaces resin:include.
+The behavior is a bit different.  The target file now is validated by
+schema where the schema depends on the location of the resin:import.
+So a resin:import in &lt;server&gt; will have a target with a top-level now
+of &lt;server&gt;.
+</p>
+
+<p>resin:import also allows a &lt;fileset&gt; attribute.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Batch Compilation">
+
+<p>The compiling-loader will now batch as many changed *.java files as it finds and will submit all at once for compilation.</p>
+
+<p>The "batch" attribute of compiling-loader controls this behavior.</p>
+</s1>
+
+<s1 title="Logging">
+
+<p>The &lt;log&gt; tag now supports multiple &lt;logger&gt; children.</p>
+
+<example>
+&lt;log path='log/connections.log' timestamp='[%H:%M:%S.%s] '/&gt;
+  &lt;logger name='com.caucho.server.port.TcpConnection' level='all'/&gt;
+  &lt;logger name='com.caucho.server.http.HttpRequest' level='all'/&gt;
+&lt;/log&gt;
+</example>
+
+</s1>
+
+<s1 title="Apache">
+
+<p>Manual configuration has been restored to mod_caucho.</p>
+
+<p>The configuration looks like:</p>
+
+<example>
+LoadModule caucho_module /usr/local/apache2/modules/mod_caucho.so
+
+CauchoHost localhost 6802
+&lt;Location /test/*&gt;
+  SetHandler caucho-request
+&lt;/Location&gt;
+</example>
+
+</s1>
+
+<s1 title="Clustering">
+
+<p>The cluster-definition and cluster-ref have now been properly added.</p>
+
+<example title="backend.conf">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+&lt;server&gt;
+  &lt;cluster-definition id='foo.com'&gt;
+    &lt;srun id="foo" index='1' host='localhost' port='6810'/&gt;
+  &lt;/cluster-definition&gt;
+
+  &lt;cluster-definition id='bar.com'&gt;
+    &lt;srun id="bar" index='2' host='localhost' port='6811'/&gt;
+  &lt;/cluster-definition&gt;
+
+  &lt;host-default&gt;
+    &lt;cluster cluster-ref="${host.name}"/&gt;
+    &lt;web-app id="/"/&gt;
+  &lt;/host-default&gt;
+
+  &lt;host id="foo.com" root-directory="foo"/&gt;
+  &lt;host id="bar.com" root-directory="bar"/&gt;
+&lt;/server&gt;
+&lt;/resin&gt;
+</example>
+
+<example title="frontend.conf">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;server&gt;
+    &lt;cluster-definition id='foo.com'&gt;
+      &lt;srun id="a" index='1' host='localhost' port='6810'/&gt;
+    &lt;/cluster-definition&gt;
+
+    &lt;cluster-definition id='bar.com'&gt;
+      &lt;srun id="b" index='2' host='localhost' port='6811'/&gt;
+    &lt;/cluster-definition&gt;
+
+    &lt;host-default&gt;
+      &lt;web-app id='/'&gt;
+        &lt;servlet servlet-name='remote'
+                 servlet-class='com.caucho.servlets.HmuxLoadBalanceServlet'&gt;
+          &lt;init-param cluster="${host.name}"/&gt;
+        &lt;/servlet&gt;
+
+        &lt;servlet-mapping url-pattern='/*' servlet-name='remote'/&gt;
+      &lt;/web-app&gt;
+    &lt;/host-default&gt;
+
+    &lt;host id='foo.com'/&gt;
+    &lt;host id='bar.com'/&gt;
+  &lt;/server&gt;
+&lt;/resin&gt;
+</example>
+
+</s1>
+
+<s1 title="Database">
+
+<p>The database configuration now allows for a backup driver.
+Multiple &lt;driver&gt; blocks round-robin the load.</p>
+
+<example>
+&lt;database&gt;
+  &lt;jndi-name&gt;jdbc/mysql&lt;/jndi-name&gt;
+
+  &lt;driver type="org.gjt.mm.mysql.Driver"&gt;
+    &lt;url&gt;jdbc:mysql://gryffindor:3306/test&lt;/url&gt;
+  &lt;/driver&gt;
+
+  &lt;driver type="org.gjt.mm.mysql.Driver"&gt;
+    &lt;url&gt;jdbc:mysql://hufflepuff:3306/test&lt;/url&gt;
+  &lt;/driver&gt;
+
+  &lt;backup-driver type="org.gjt.mm.mysql.Driver"&gt;
+    &lt;url&gt;jdbc:mysql://slytherin:3306/test&lt;/url&gt;
+  &lt;/backup-driver&gt;
+&lt;/database&gt;
+</example>
+
+</s1>
+
+<s1 title="JMX">
+
+<p>Resin's JMX has been upgraded to support JDK 1.5.
+The MBeanServer at java:comp/jmx/MBeanServer makes the
+JDK java.lang.monitoring available.</p>
+
+</s1>
+
+<s1 title="Apache 2.0 enhancements">
+
+<p>mod_caucho can now have individually configured ResinConfigServer in
+separate &lt;Location&gt; blocks.</p>
+</s1>
+
+<s1 title="Burlap/Hessian">
+
+<p>Added com.caucho.hessian.io.BeanSerializerFactory to allow bean-style
+serialization instead of requiring field serialization.</p>
+
+</s1>
+
+<s1 title="Classloader">
+
+<p>library-loader now accepts fileset.</p>
+
+</s1>
+
+<s1 title="Distributed XA Logging">
+
+<p>The transaction manager can now be configured for
+distributed XA logging and recovery.  The log does not affect
+single-resource transactions.</p>
+
+<example title="resin.conf">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;transaction-manager&gt;
+    &lt;transaction-log&gt;
+      &lt;path&gt;file:/var/xalog/log1&lt;/path&gt;
+    &lt;/transaction-log&gt;
+  &lt;/transaction-manager&gt;
+
+  ...
+&lt;/resin&gt;
+</example>
+</s1>
+
+<s1 title="JSP batch precompilation">
+
+<p>A new resource, com.caucho.jsp.JspPrecompileResource, will precompile
+JSP files on web-app startup.  This compilation is batched to a single
+javac invocation, which generally improves JSP compilation and
+startup performance.</p>
+</s1>
+
+</body>
+</document>

@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.caucho</groupId>
+  <artifactId>resin-support</artifactId>
+  <packaging>jar</packaging>
+  <version>@VERSION@</version>
+  <name>Resin Support for 3rd Party Packages</name>
+  <url>http://caucho.com</url>
+
+  <licenses>
+    <license>
+      <name>The GNU General Public License Version 2</name>
+    </license>
+  </licenses>
+    
+  <dependencies>
+    <dependency>
+      <groupId>com.caucho</groupId>
+      <artifactId>resin</artifactId>
+      <version>@VERSION@</version>
+    </dependency>
+  </dependencies>
+</project>

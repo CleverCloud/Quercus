@@ -1,0 +1,52 @@
+<html>
+<body>
+The XSLT transformation package.  XSLT transforms XML trees to XML
+trees using Stylesheets.  The steps for a typical transformation are:
+
+<ol>
+<li>Create the XSLT stylesheet.
+<li>Read the source document.
+<li>Transform the source document.
+</ol>
+
+<p>The Caucho XSL package supports two related stylesheet languages.
+XSLT (W3C 1.0) and 'StyleScript'.  Strict XSLT stylesheets are
+created by parsing the XML externally, then generating the stylesheet:
+
+<code><pre>
+StylesheetFactory factory = new Xsl();
+Stylesheet style = factory.newStylesheet("mystyle.xsl");
+
+StreamTransformer transformer = style.newStreamTransformer();
+
+WriteStream os = Vfs.openWrite("test.html");
+transformer.transform("test.xml", os);
+os.close();
+</pre></code>
+
+<p>StyleScript stylesheets just use a different stylesheet factory.
+
+<code><pre>
+StylesheetFactory factory = new StyleScript();
+Stylesheet style = factory.newStylesheet("mystyle.xsl");
+
+StreamTransformer transformer = style.newStreamTransformer();
+
+WriteStream os = Vfs.openWrite("test.html");
+transformer.transform("test.xml", os);
+os.close();
+</pre></code>
+
+<h3>Transformers</h3>
+
+Resin's XSL provides several different output methods, each represented
+by a transformer:
+
+<ul>
+<li>StreamTransformer - print directly to an output stream
+<li>StringTransformer - create a string from the result
+<li>NodeTransformer - append the results to an XML node
+</ul>
+
+</body>
+</html>

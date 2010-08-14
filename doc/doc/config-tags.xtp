@@ -1,0 +1,85 @@
+<document>
+<body>
+
+<!-- 
+  - every identity contains 2 parts
+  - <identity>tag/parent-tag</identity>
+  - except toplevel tags which only contain
+  - <identity>tag</identity>
+  -
+  - a <section/><header> has one or more <identity/> elements
+  -->
+<s1>
+  <header>
+    <title>Configuration tags</title>
+    <product>resin</product>
+    
+    <description>
+      All configuration tags used by Resin.
+    </description>
+  </header>
+  <body>
+
+<!-- host -->
+  <s2>
+    <header>
+      <identity>host/server</identity>
+      <title>host</title>
+      <type>config-tag</type>
+      <product>resin</product>
+      <flag>resin-innovation</flag>
+      <description>
+        <p>Defines a virtual host.  If no hosts are specified, or if a
+         request doesn't match a host, the configuration in <a config-tag="host-default"/> will be used instead.</p>
+
+         <p>The <a config-tag="id"/> may contain a list of hosts, seperated by comma's.  Any host
+         in the list will match.</p>
+
+        <p>If the <a config-tag="id"/> for a host is null or '*', the
+        <var type="config-tag">host</var> is a default host that is
+        used for any virtual host that doesn't match a more
+        specific <var type="config-tag">host</var>.</p>
+
+        <p>Hosts can use <var>regexp</var> instead of <var>id</var> to dynamically create
+        new hosts.</p>
+
+      </description>
+    </header>
+    <body>
+      <summary/>
+      <s3 title="Examples">
+        <example>
+&lt;resin&gt;
+  ...
+  &lt;server&gt;
+
+    ...
+    &lt;host id='www.foobar.com, foobar.com'
+          app-dir='foobar/docs'&gt;
+      &lt;web-app id='/'&gt;
+        &lt;servlet-mapping url-pattern='/servlets/*'
+                         servlet-name='invoker'/&gt; 
+      &lt;/web-app&gt;
+    &lt;/host&gt;
+
+    &lt;host regexp='([^.]*).users.com'
+          app-dir='/home/$1/public_html'&gt;
+      ...
+    &lt;/host&gt;
+
+  &lt;/server&gt;
+&lt;/resin&gt;
+      </example>
+
+      <note>Only the Resin Java process understands regexps.  Because
+      mod_caucho, isapi_srun and the other web server plugins don't
+      understand the regexps, you may need to do additional work to
+      make the web server send the request to Resin.</note>
+
+      </s3>
+    </body>
+  </s2>
+
+<!-- web-app -->
+</body>
+</s1></body></document>

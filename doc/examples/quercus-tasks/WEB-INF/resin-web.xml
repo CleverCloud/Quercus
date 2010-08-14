@@ -1,0 +1,8 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <bam-service name="backend@localhost" 
+               class="com.caucho.quercus.lib.bam.BamPhpAgent">
+    <init>
+      <script>backend.php</script>
+    </init>
+  </bam-service>
+</web-app>

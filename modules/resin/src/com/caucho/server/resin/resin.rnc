@@ -1,0 +1,6 @@
+default namespace r = "http://caucho.com/ns/resin"
+namespace l = ""
+
+include "resin-content.rnc"
+
+start = r_resin | l_resin

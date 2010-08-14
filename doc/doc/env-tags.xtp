@@ -1,0 +1,3364 @@
+<document>
+<header>
+<product>resin</product>
+<title>Resources: class loaders, environment and IoC</title>
+<version>Resin 3.0</version>
+
+<description>
+<p>Environment tags configure class-loaders, logging, authentication
+and resources like databases, JMS queues, EJB servers, and web service
+clients.  Many of the resources are stored in JNDI or in EL variables
+for later assembly.</p>
+
+<p>Any environment resource can appear in any
+of Resin environments: &lt;resin>, &lt;cluster>, &lt;host> and &lt;web-app>.
+Resources configured at parent levels are shared among all children,
+so a database can share connection pools for all web-apps or an
+authenticator can provide single-signon.</p>
+
+</description>
+</header>
+
+<body>
+
+<localtoc/>
+
+<defun title="&lt;authenticator>" occur="*">
+<parents>resin, cluster, host, web-app, login-config</parents>
+  <!-- com.caucho.config.types.Authenticator -->
+
+<p>&lt;authenticator> configures an authentication resource
+for the current environment context.  The authenticator is used for
+login and also for the <code>getUserPrincipal</code>
+and <code>isUserInRole</code> methods of the
+<code>HttpServletRequest</code> object.</p>
+
+<p>The authenticators are scoped to their containing environment.
+An authenticator defined in
+WEB-INF/resin-web.xml applies only to the web-app, while an
+authenticator defined in the &lt;cluster> section of the resin.xml
+applies to the entire cluster.  The <a href="resin-tags.xtp#management">&lt;management></a> configuration provides an authenticator which is available
+to all applications.</p>
+
+<p>Resin's servlet authentication uses an authentication resource to
+validate user login and to provide single-signon capability.
+The authenticator is configured in the environment context
+where it is shared.  An authenticator configured in the web-app
+only applies to the web-app, but an authenticator configured in
+the host will apply to all hosts.</p>
+
+<p>The authenticator class is selected with the <var>uri</var> or
+<var>class</var> attribute.  The <var>class</var> can be any custom class
+extending <code>com.caucho.server.security.AbstractAuthenticator</code>.
+The <var>uri</var> is a symbolic name for the authenticator class.
+More details on the predefined authenticators are in the
+<a href="resin-security.xtp">Resin security</a> documentation.</p>
+
+<ul>
+<li><var>properties:</var>  Java properties-style authentication.</li>
+<li><var>jaas:</var>  JAAS authentication.</li>
+<li><var>jdbc:</var>  JDBC password-based authentication.</li>
+<li><var>xml:</var>  XML JDBC password-based authentication.</li>
+</ul>
+
+<p>Configuration of the authenticator uses bean-style configuration in the
+&lt;init&gt; tag.</p>
+
+<p>See also: the <a href="resin-security.xtp">Resin security</a> section.</p>
+
+<deftable-childtags title="&lt;authenticator> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>binding</td>
+  <td>Custom WebBeans binding.  Since Resin 3.1.5</td>
+  <td></td>
+</tr>
+<tr>
+  <td>class</td>
+  <td>The implementing class for the authenticator.  Since Resin 3.0</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>The JNDI name where the authenticator is stored.  Since Resin 3.0</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>The Resin-IoC name where the authenticator is stored.  Since Resin 3.1.5</td>
+  <td></td>
+</tr>
+<tr>
+  <td>uri</td>
+  <td>shortcut alias for the authenticator class.  Can also include inline
+parameters.  Examples include xml:, property:, jdbc:, jndi:.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>A bean-style configuration section.  Since Resin 3.0</td>
+  <td></td>
+</tr>
+</deftable-childtags>
+
+<def title="&lt;authenticator> schema">
+r_authenticator = element authenticator {
+  (r_class | r_uri)
+  &amp; r_binding*
+  &amp; r_init?
+  &amp; r_jndi-name?
+  &amp; r_name?
+  &amp; r_scope?
+}
+</def>
+
+<example title="Example: WEB-INF/resin-web.xml properties-based authenticator">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;authenticator uri="properties:password-digest=none">
+    &lt;init>
+harry=quidditch,user
+ron=cannons,user,prefect
+    &lt;/init>
+  &lt;/authenticator>
+
+&lt;/web-app>
+</example>
+
+</defun>
+
+<defun title="&lt;bam-service>" occur="*" version="Resin 3.0">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>&lt;bam-service> configures a <a href="hmtp.xtp">BamService</a> to
+listen for messages.  The service is always a single instance.</p>
+
+<p>&lt;bam-service> can be used as a simple queueing service, replacing
+JMS queues and ejb-message-bean.  By default the queue is consumed 
+with a single thread.  Unlike EJB message driven beans, &lt;bam-service>
+uses a single instance like a servlet, not a pool of instances.
+</p>
+
+<p>The bean has full access to Resin-IoC capabilities, including
+dependency injection, transaction attributes, and aspect interception.
+</p>
+
+<deftable title="&lt;bam-service> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>Classname of the BamService bean</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC configuration for the listener bean</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>The JID of the service, used by clients to send messages to</td>
+  <td></td>
+</tr>
+<tr>
+  <td>thread-max</td>
+  <td>The number of threads to handle the queue.  If 0, the service
+  is not queued, but handles messages directly.</td>
+  <td>1</td>
+</tr>
+<tr>
+  <td>uri</td>
+  <td>A shortcut name for the service, defined in META-INF/caucho/com.caucho.uri/com.caucho.bam.BamService.</td>
+  <td></td>
+</tr>
+</deftable>
+
+<def title="&lt;bam-service> schema">
+element ejb-message-bean {
+  class
+  &amp; init?
+  &amp; name?
+  &amp; uri?
+}
+</def>
+
+<example title="Example: Log service in WEB-INF/resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;bam-service uri="caucho.log:">
+    &lt;name>log&lt;/name>
+    &lt;init>
+      &lt;name>test.Log&lt;name>
+    &lt;/init>
+  &lt;/bam-service>
+
+&lt;/web-app>
+</example>
+
+</defun>
+
+<defun title="&lt;bean>" occur="*" version="Resin 3.0">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.config.types.Resource -->
+
+<p>&lt;bean> configures a custom singleton bean and stores in the
+WebBeans registry.  &lt;bean> is a primary configuration tag
+for <a href="resin-ioc.xtp">Resin's IoC</a> capabilities.
+The bean can also be optional registered in JNDI.</p>
+
+<p>Custom configuration of the bean is in the &lt;init&gt; section.
+Field values may use JSP-EL expressions as well as constant strings
+or even complex sub-beans. More details for configuring singleton
+beans are in <a href="resin-ioc.xtp">Resin IoC</a>.</p>
+
+<deftable-childtags title="&lt;bean> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>Application class implementing the resource. Since Resin 3.0</td>
+  <td>required</td>
+</tr>
+<!--
+<tr>
+  <td>arg</td>
+  <td>Arguments to the resource's constructor.  Since Resin 3.0</td>
+  <td></td>
+</tr>
+-->
+<tr>
+  <td>init</td>
+  <td>IoC configuration for the bean</td>
+  <td></td>
+</tr>
+<!--
+<tr>
+  <td>listener</td>
+  <td>Registers the bean as a listener for a JMX emitter. Resin 3.0</td>
+  <td></td>
+</tr>
+-->
+<tr>
+  <td>jndi-name</td>
+  <td>JNDI name for the resource.  Since Resin 3.0</td>
+  <td></td>
+</tr>
+<tr>
+  <td>mbean-name</td>
+  <td>JMX name for management registration. Resin 3.0</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>The name of the bean, used for @Named injection. Resin 3.1.4.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>scope</td>
+  <td>request, session, conversational, application, singleton. Resin 3.1.4.</td>
+  <td>singleton</td>
+</tr>
+</deftable-childtags>
+
+<def title="&lt;bean> schema">
+r_bean = element bean {
+  r_class?
+  &amp; r_binding*
+  &amp; r_init?
+  &amp; r_jndi-name?
+  &amp; r_mbean-name?
+  &amp; r_mbean-interface?
+  &amp; r_name?
+  &amp; r_scope?
+}
+</def>
+
+<example title="Example: WEB-INF/resin-web.xml singleton bean">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+  &lt;bean name="test"&gt;
+    &lt;type&gt;test.MyBean&lt;/type&gt;
+    &lt;init&gt;
+      &lt;greeting&gt;Hello&lt;/greeting&gt;
+      &lt;server&gt;${serverId}&lt;/server&gt;
+      &lt;sub-bean&gt;
+        &lt;value&gt;${2 + 2}&lt;/value&gt;
+      &lt;/sub-bean&gt;
+    &lt;/init&gt;
+  &lt;/bean&gt;
+&lt;/web-app>
+</example>
+
+</defun> 
+
+<defun title="&lt;case-insensitive>" occur="?">
+<parents>resin, cluster, host, web-app</parents>
+<default>true on Windows, false on Unix.</default>
+
+<p>&lt;case-insensitive> specifies whether the environment
+context is case sensitive or insensitive.</p>
+
+<p>Because some operating systems are case-insensitive, it is important
+for security reasons for Resin to behave differently for case-sensitive
+and case-insensitive directories.  For example, when case-insensitive
+is true, url-patterns will match in a case-insensitive manner, so TEST.JSP
+will work like test.jsp.</p>
+
+<def title="&lt;case-insensitive> schema">
+r_case-insensitive = element case-insensitive {
+  r_boolean-Type
+}
+</def>
+
+</defun>
+
+<defun title="&lt;character-encoding>" occur="?" version="Resin 1.1" type="defun">
+<parents>resin, cluster, host, web-app</parents>
+<default>The default value is ISO-8859-1.</default>
+
+<p>&lt;character-encoding> specifies the default character
+encoding for the environment.</p>
+
+<def title="&lt;character-encoding> schema">
+r_character-encoding = element character-encoding {
+  string
+}
+</def>
+
+<example title="Example: utf-8 as default character encoding">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;character-encoding&gt;utf-8&lt;/character-encoding&gt;
+  ...
+
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;class-loader>" occur="*" version="Resin 3.0">
+  <parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.loader.EnvironmentClassLoader -->
+
+<p>&lt;class-loader> configures a dynamic classloader
+for the current environment.</p>
+
+<p>Each environment (&lt;cluster&gt;, &lt;host&gt;, &lt;web-app&gt;) etc,
+can add dynamic classloaders.  The environment will inherit the parent
+classloaders.  Each &lt;class-loader&gt; is comprised of several implementing
+loader items: library-loader for WEB-INF/lib, compiling-loader for
+WEB-INF/classes.</p>
+
+<p>For web-apps, the classloaders generally belong in a &lt;prologue>
+section, which ensures that Resin evaluates them first.  The evaluation
+order is particularly important in cases like resin-web.xml vs web.xml,
+because the resin-web.xml is evaluated after the web.xml.</p>
+
+<deftable title="classloader types">
+<tr>
+  <th>Element</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>&lt;compiling-loader></td>
+  <td>Automatically compiles sources code to
+classes.  It its the default loader for WEB-INF/classes.</td>
+</tr>
+<tr>
+  <td>&lt;library-loader></td>
+  <td>Loads jar files from a directory.  It is the default loader
+for WEB-INF/lib.</td>
+</tr>
+<tr>
+  <td>&lt;simple-loader></td>
+  <td>Loads classes from a directory, but does not compile them
+automatically.</td>
+</tr>
+<tr>
+  <td>&lt;tree-loader></td>
+  <td>Loads jar files from a directory, recursively searching subdirectories.
+</td>
+</tr>
+</deftable>
+
+<def title="&lt;class-loader> schema">
+r_class-loader = element class-loader {
+  r_compiling-loader*
+
+  &amp; r_library-loader*
+
+  &amp; r_simple-loader*
+
+  &amp; r_tree-loader*
+}
+</def>
+
+<example title="Example: WEB-INF/resin-web.xml defined &lt;class-loader>">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;prologue>
+    &lt;class-loader&gt;
+      &lt;compiling-loader path="WEB-INF/classes"/&gt;
+
+      &lt;library-loader path="WEB-INF/lib"/&gt;
+    &lt;/class-loader&gt;
+  &lt;/prologue>
+&lt;/web-app&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;compiling-loader>" occur="*" version="Resin 3.0" type="defun">
+  <parents>class-loader</parents>
+  <!-- com.caucho.loader.CompilingLoader -->
+
+<p>&lt;compiling-loader> automatically compiles Java code into .class
+files before loading them.</p>
+
+<deftable title="&lt;compiling-loader> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>args</td>
+  <td>Additional arguments to be passed to the Java compiler. Resin 3.0</td>
+  <td></td>
+</tr>
+<tr><td>batch</td>
+    <td>If true, multiple changed *.java files will be compiled in a single batch. Resin 3.0.7</td>
+     <td>true</td></tr>
+<tr>
+  <td>encoding</td>
+  <td>I18N encoding for the Java compiler. Since Resin 3.0</td>
+  <td></td></tr>
+<tr>
+  <td>path</td>
+  <td>Filesystem path for the class loader.  Since Resin 3.0</td>
+  <td>required</td></tr>
+<tr>
+  <td>source</td>
+  <td>Java source directory. Since Resin 3.0</td>
+  <td>value of path</td></tr>
+<tr>
+  <td>require-source</td>
+  <td>If true, .class files without matching .java files will be deleted. Since Resin 3.0</td>
+  <td>false</td>
+</tr>
+</deftable>
+
+<example title="Example: WEB-INF/resin-web.xml &lt;compiling-loader>">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+  &lt;prologue>
+    &lt;class-loader>
+      &lt;compiling-loader path="WEB-INF/classes"
+                        source="WEB-INF/src"/>
+    &lt;/class-loader>
+  &lt;/prologue>
+&lt;/web-app>
+</example>
+
+</defun>
+
+<defun title="&lt;component>" occur="*" version="Resin 3.0">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.config.types.Resource -->
+
+<p>&lt;component> configures a component bean template and stores in the
+WebBeans registry.  Injection of a &lt;component> will generally create a
+new bean instance in constrast to the singleton &lt;bean>.
+&lt;component> is a primary configuration tag
+for <a href="resin-ioc.xtp">Resin's IoC</a> capabilities.
+The bean can also be optionally registered in JNDI.</p>
+
+<p>Custom configuration of the component is in the &lt;init&gt; section.
+Field values may use JSP-EL expressions as well as constant strings
+or even complex sub-beans. More details for configuring singleton
+beans are in <a href="resin-ioc.xtp">Resin IoC</a>.</p>
+
+<deftable-childtags title="&lt;component> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>Application class implementing the resource. Since Resin 3.0</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC configuration for the bean</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>JNDI name for the resource.  Since Resin 3.0</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>The name of the bean, used for @Named injection. Resin 3.1.4.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>scope</td>
+  <td>dependent, request, session, conversational, application, singleton. Resin 3.1.4.</td>
+  <td>dependent</td>
+</tr>
+</deftable-childtags>
+
+<def title="&lt;component> schema">
+r_component = element component {
+  r_class?
+  &amp; r_binding*
+  &amp; r_init?
+  &amp; r_jndi-name?
+  &amp; r_name?
+  &amp; r_scope?
+}
+</def>
+
+<example title="Example: WEB-INF/resin-web.xml component bean">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;component name="test"&gt;
+    &lt;type&gt;test.MyBean&lt;/type&gt;
+    &lt;init&gt;
+      &lt;greeting&gt;Hello&lt;/greeting&gt;
+      &lt;server&gt;${serverId}&lt;/server&gt;
+      &lt;sub-bean&gt;
+        &lt;value&gt;${2 + 2}&lt;/value&gt;
+      &lt;/sub-bean&gt;
+    &lt;/init&gt;
+  &lt;/component&gt;
+
+&lt;/web-app>
+</example>
+
+</defun> 
+
+<defun title="&lt;connection-factory>" occur="*" version="Resin 3.1.5"
+       type="defun">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.jca.ConnectorResource -->
+
+<deftable title="Parallels to JDBC">
+<tr>
+  <th>JDBC Class</th>
+  <th>Connector Class</th>
+</tr>
+<tr>
+  <td>Connection</td>
+  <td>Connection (driver-defined class)</td>
+</tr>
+<tr>
+  <td>DataSource</td>
+  <td>ConnectionFactory (driver-defined class)</td>
+</tr>
+<tr>
+  <td>Driver</td>
+  <td>ManagedConnectionFactory</td>
+</tr>
+<tr>
+  <td>n/a</td>
+  <td>ResourceAdapter</td>
+</tr>
+</deftable>
+
+<deftable title="&lt;connection-factory> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>ManagedConnectionFactory driver for the resource</td>
+  <td>required or <var>uri</var></td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC configuration for the ManagedConnectionFactory</td>
+  <td></td>
+</tr>
+<tr>
+  <td>local-transaction-optimization</td>
+  <td>Enables the local transaction optimization during commit</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>max-active-time</td>
+  <td>Configures the maximum time allowed for a connection</td>
+  <td>infinite</td>
+</tr>
+<tr>
+  <td>max-connections</td>
+  <td>Configures the maximum connections available</td>
+  <td>1024</td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>JNDI name for the <code>ConnectionFactory</code></td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>The IoC name for the <code>ConnectionFactory</code>, used for @Named injection. Resin 3.1.4.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>resource-adapter</td>
+  <td>The driver's <code>ResourceAdapter</code></td>
+  <td></td>
+</tr>
+<tr>
+  <td>shareable</td>
+  <td>Enables sharing of <code>Connection</code> objects in a transaction</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>uri</td>
+  <td>Shortcut alias for the ManagedConnectionFactory</td>
+  <td>required or <var>class</var></td>
+</tr>
+</deftable>
+
+<def title="&lt;connection-factory> schema">
+r_connection-factory = element connection-factory {
+  (r_class | r_uri)
+  &amp; r_binding*
+  &amp; r_init?
+  &amp; r_jndi-name?
+  &amp; r_name?
+
+  &amp; local-transaction-optimization?
+  &amp; max-active-time?
+  &amp; max-connections?
+  &amp; resource-adapter?
+  &amp; shareable?
+}
+</def>
+
+</defun>
+
+<defun title="&lt;database>" occur="*" version="Resin 3.0" type="defun">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.sql.DBPool -->
+
+<p>&lt;database> defines a database (i.e. DataSource)  resource.</p>
+
+<p>The <a href="config-database.xtp">database configuration</a> section has
+more details on the configuration.  A code pattern for using databases
+is in a <a href="../examples/db-jdbc/index.xtp">DataSource tutorial.</a></p>
+
+<deftable title="&lt;database> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>backup-driver</td>
+  <td>Configures a backup database driver.  If Resin can't connect to
+any of the main drivers, it will use one of the. backups</td>
+  <td></td>
+</tr>
+<tr>
+  <td>close-dangling-connections</td>
+  <td>If an application does not close a Connection by the end of the
+request, Resin will close it automatically an issue a warning.</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>connection</td>
+  <td>Defines initialization attributes for new connections, e.g.
+setting the transaction-isolation.</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>connection-wait-time</td>
+  <td>When max-connections has been reached, how long Resin will wait for
+a connection to become idle before giving up.</td>
+  <td>10min</td>
+</tr>
+<tr>
+  <td>driver</td>
+  <td>Configures the database driver, giving the driver's class name
+as well as its JDBC URL and any other configuration.</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>The JNDI name to register the connection's <code>DataSource</code>
+under.  If the name can be relative to <var>java:comp/env</var>.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>max-active-time</td>
+  <td>The maximum time Resin will allow a connection to remain open
+before forcing a close.</td>
+  <td>6 hours</td>
+</tr>
+<tr>
+  <td>max-close-statements</td>
+  <td>The maximum number of Statements Resin will hold to automatically
+close when the Connection closes.</td>
+  <td>256</td>
+</tr>
+<tr>
+  <td>max-connections</td>
+  <td>The maximum number of Connections allowed.</td>
+  <td>128</td>
+</tr>
+<tr>
+  <td>max-create-connections</td>
+  <td>The maximum number of connection creation allowed at one time.</td>
+  <td>5</td>
+</tr>
+<tr>
+  <td>max-idle-count</td>
+  <td>The maximum number of Connections in the idle pool.</td>
+  <td>1024</td>
+</tr>
+<tr>
+  <td>max-idle-time</td>
+  <td>The maximum time a connection will spend in the idle pool before closing.</td>
+  <td>30s</td>
+</tr>
+<tr>
+  <td>max-overflow-connections</td>
+  <td>The number of extra connection creation if the number of connections exceeds to pool size.</td>
+  <td>0</td>
+</tr>
+<tr>
+  <td>max-pool-time</td>
+  <td>The total time a connection can be used before it is automatically closed instead of returned to the idle pool.</td>
+  <td>24h</td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>The IoC name to save the <code>ConnectionFactory</code> as,
+used with <code>@Named</code> to inject the resource.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>password</td>
+  <td>The JDBC password for the connection.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>ping</td>
+  <td>If true, Resin will ping the database before returning a connection
+from the pool (if ping-interval is exceeded).</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>ping-interval</td>
+  <td>How often an idle connection should ping the database
+to ensure it is still valid.</td>
+  <td>1s</td>
+</tr>
+<tr>
+  <td>ping-query</td>
+  <td>A custom query used to ping the database connection.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>ping-table</td>
+  <td>A table used to ping the database connection.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>prepared-statement-cache-size</td>
+  <td>How many <code>PreparedStatements</code> to save in the
+prepared statement cache.</td>
+  <td>0</td>
+</tr>
+<tr>
+  <td>save-allocation-stack-trace</td>
+  <td>If true, saves the location of the connection allocation as a
+stack trace.</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>spy</td>
+  <td>Enables spy logging of database statements.  The logging occurs with
+name="com.caucho.sql" and level="fine".</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>transaction-timeout</td>
+  <td>Sets the transaction timeout.</td>
+  <td>none</td>
+</tr>
+<tr>
+  <td>user</td>
+  <td>Sets the authentication user.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>wrap-statements</td>
+  <td>If true, Resin wraps statements and automatically closes them
+on connection close.</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>xa</td>
+  <td>Enables automatic enlistment of <code>Connections</code>
+with any <code>UserTransaction</code>.  Disabling &lt;xa> means the
+connection are independent of transactions, useful for read-only
+connections.</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>xa-forbid-same-rm</td>
+  <td>Workaround flag to handle certain database drivers that do
+not properly implement the XAResource API.</td>
+  <td>false</td>
+</tr>
+</deftable>
+
+<def title="&lt;database> schema">
+database = element database {
+  backup-driver*
+  &amp; close-dangling-connections?
+  &amp; connection?
+  &amp; connection-wait-time?
+  &amp; driver+
+  &amp; jndi-name?
+  &amp; max-active-time?
+  &amp; max-close-statements?
+  &amp; max-connections?
+  &amp; max-create-connections?
+  &amp; max-idle-count?
+  &amp; max-idle-time?
+  &amp; max-overflow-connections?
+  &amp; max-pool-time?
+  &amp; name?
+  &amp; password?
+  &amp; ping?
+  &amp; ping-interval?
+  &amp; ping-query?
+  &amp; ping-table?
+  &amp; prepared-statement-cache-size?
+  &amp; save-allocation-stack-trace?
+  &amp; spy?
+  &amp; transaction-timeout?
+  &amp; user?
+  &amp; wrap-statements?
+  &amp; xa?
+  &amp; xa-forbid-same-rm?
+}
+
+backup-driver = element backup-driver {
+  class?
+  &amp; url?
+  &amp; element * { * }?
+}
+
+connection = element connection {
+  catalog?
+  &amp; read-only?
+  &amp; transaction-isolation?
+}
+
+driver = element driver {
+  class?
+  &amp; url?
+  &amp; element * { * }?
+}
+
+</def>
+
+<example title="Example: WEB-INF/resin-web.xml database">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+&lt;database jndi-name='jdbc/test_mysql'&gt;
+  &lt;driver class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource"&gt;
+    &lt;url&gt;jdbc:mysql://localhost:3306/test&lt;/url&gt;
+    &lt;user&gt;&lt;/user&gt;
+    &lt;password&gt;&lt;/password&gt;
+  &lt;/driver&gt;
+&lt;/database&gt;
+
+&lt;/web-app>
+</example>
+
+</defun>
+
+<defun title="&lt;database-default>" occur="*" version="Resin 3.0" type="defun">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.sql.DBPool -->
+
+<p>&lt;database-default> defines default database values to be used
+for any &lt;database> definition, or runtime database creation
+(see <a href="http://caucho.com/resin-javadoc/com/caucho/sql/DatabaseManager.html">DatabaseManager</a>).</p>
+
+<def title="&lt;database-default> schema">
+element database-default {
+  r_database-Content
+}
+</def>
+
+<example title="Example: WEB-INF/resin-web.xml idle-time defaults">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;database-default>
+    &lt;max-idle-time>10s&lt;/max-idle-time>
+  &lt;/database-default>
+
+&lt;/web-app>
+</example>
+
+</defun>
+
+<defun title="&lt;dependency>" occur="?" version="Resin 3.0.1" type="defun">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>&lt;dependency> adds dependent files which should force a
+reload when changed, like web.xml and resin-web.xml.</p>
+
+<deftable title="&lt;dependency> attributes">>
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>path</td>
+  <td>Filesystem path to the dependent file.  Since Resin 3.0</td>
+  <td>required</td>
+</tr>
+</deftable>
+
+<def title="&lt;dependency> schema">
+element dependency {
+  string
+}
+</def>
+
+<example title="Example: struts dependency">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;dependency path="WEB-INF/struts-config.xml"/&gt;
+  ...
+&lt;/web-app&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;dependency-check-interval>" occur="?" version="Resin 3.0">
+<parents>resin, cluster, host, web-app</parents>
+<default>2s</default>
+
+<p>&lt;dependency-check-interval> Configures how often the environment context
+should be checked for changes.  The default value is set low for
+development purposes, deployments should use something larger like
+5m or 1h.</p>
+
+<p>Resin automatically checks each environment for updates, generally
+class or configuration updates.  Because these checks can take a considerable
+amount of time, deployment servers should use high values like 60s or more while development machines will want low values like 2s.</p>
+
+<p>The interval defaults to the parent's interval.  So the web-app will
+default to the host's value.</p>
+
+<def title="&lt;dependency-check-interval> schema">
+element dependency-check-interval {
+  string
+}
+</def>
+
+<example title="Example: deployment dependency-check-interval">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;cluster id="app-tier">
+    &lt;dependency-check-interval>1h&lt;dependency-check-interval>
+
+    &lt;server id="app-a" .../>
+
+    &lt;host id=""/>
+      ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;ejb-message-bean>" occur="*" version="Resin 3.0">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.ejb.EJBServer -->
+
+<p>&lt;ejb-message-bean> configures a bean as a message listener.
+The listener can be a simple bean that just implements the
+<code>javax.jms.MessageListener interface</code>.  No other packaging
+or complications are necessary.  Resin will retrieve messages from a
+configured queue and pass them to the listener as they arrive.  The
+listeners are typically pooled.
+</p>
+
+<p>The bean has full access to Resin-IoC capabilities, including
+dependency injection, transaction attributes, and aspect interception.
+</p>
+
+<p>The message bean can plug into custom messaging systems.  The
+application will need to define a <a href="http://caucho.com/resin-javadoc/javax/resource/spi/ResourceAdapter.html">ResourceAdapter</a> and
+an <code>ActivationSpec</code>.  More details are available in the
+<a href="resin-messaging.xtp">Resin Messaging section</a>.</p>
+
+<deftable title="&lt;ejb-message-bean> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>activation-spec</td>
+  <td>Configures a custom message-listener driver</td>
+  <td></td>
+</tr>
+<tr>
+  <td>class</td>
+  <td>Classname of the listener bean</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>destination</td>
+  <td>Queue or Topic for JMS message receiving</td>
+  <td></td>
+</tr>
+<tr>
+  <td>destination-type</td>
+  <td>javax.jms.Queue or javax.jms.Topic</td>
+  <td></td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC configuration for the listener bean</td>
+  <td></td>
+</tr>
+<tr>
+  <td>message-consumer-max</td>
+  <td>The number of listener instances to create for the pool.</td>
+  <td>5</td>
+</tr>
+</deftable>
+
+<def title="&lt;ejb-message-bean> schema">
+element ejb-message-bean {
+  class
+  &amp; init?
+  &amp; (activation-spec?
+     | (destination?
+        &amp; destination-type?
+        &amp; destination-name?
+        &amp; message-consumer-max?)
+    )
+}
+</def>
+
+<example title="Example: JMS listener in WEB-INF/resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;jms-connection-factory uri="resin:"/>
+  &lt;jms-queue name="my_queue" uri="memory:"/>
+
+  &lt;ejb-message-bean class="qa.MyListener">
+    &lt;destination>${my_queue}&lt;/destination>
+  &lt;/ejb-message-bean>
+
+&lt;/web-app>
+</example>
+
+<example title="Example: ActiveMQ in WEB-INF/resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;resource-adapter uri="activemq:"/>
+
+  &lt;ejb-message-bean class="qa.MyListener">
+    &lt;activation-spec uri="activemq:">
+       &lt;init physical-name="queue.test"/>
+    &lt;/activation-spec uri="activemq:">
+  &lt;/ejb-message-bean>
+
+&lt;/web-app>
+</example>
+
+</defun>
+
+
+<defun title="&lt;ejb-server>" occur="*" version="Resin 3.0">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.ejb.EJBServer -->
+
+<p>Configures an EJB server.  See <a href="resin-ejb.xtp">Resin EJB</a>
+for more details.</p>
+
+<deftable title="&lt;ejb-server> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>auto-compile</td>
+  <td>enables auto-compilation of EJB stubs and skeletons</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>create-database-schema</td>
+  <td>enables JPA auto-creation of missing database tables</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>data-source</td>
+  <td>specifies the default database for JPA</td>
+  <td></td>
+</tr>
+<tr>
+  <td>config-directory</td>
+  <td>specifies a directory containing *.ejb configuration files</td>
+  <td></td>
+</tr>
+<tr>
+  <td>ejb-descriptor</td>
+  <td>path to a *.ejb file to load</td>
+  <td></td>
+</tr>
+<tr>
+  <td>ejb-jar</td>
+  <td>path to a jar file containing a META-INF/ejb-jar.xml with EJBs</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jndi-prefix</td>
+  <td>prefix for JNDI registration of EJBs</td>
+  <td></td>
+</tr>
+<tr>
+  <td>validate-database-schema</td>
+  <td>verifies the actual database tables against the JPA definitions</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>jms-connection-factory</td>
+  <td>specifies the default JMS ConnectionFactory for message beans</td>
+  <td></td>
+</tr>
+<tr>
+  <td>xa-data-source</td>
+  <td>specifies a separate database for transactions</td>
+  <td>data-source</td>
+</tr>
+</deftable>
+
+<def title="&lt;ejb-server> schema">
+element ejb-server {
+  auto-compile
+  &amp; create-database-schema
+  &amp; data-source
+  &amp; config-directory
+  &amp; ejb-descriptor
+  &amp; ejb-jar
+  &amp; jndi-prefix
+  &amp; validate-database-schema
+  &amp; jms-connection-factory
+  &amp; xa-data-source
+}
+</def>
+
+</defun>
+
+<defun title="&lt;ejb-stateful-bean>">
+<parents>resin, host-default, host, web-app-default, web-app</parents>
+
+<p>&lt;ejb-stateful-bean> configures an EJB @Stateful bean.  The
+@Stateful bean is a single-threaded component bean suitable for
+transaction processing.  See <a href="resin-ejb.xtp">Resin EJB</a>
+for more details.</p>
+
+<p>The stateful-bean is registered in the Resin-IoC/WebBeans context and
+optionally with JNDI.</p>
+
+<p>Since @Stateful beans are components, they are created at the request
+of the application and destroyed by the application.  @Stateful beans are
+never singletons.  For singleton-style beans, either use a &lt;bean> or
+a @Stateless session bean.</p>
+
+<p>@Stateful beans may optionally implement a <a href="http://caucho.com/resin-javadoc/javax/ejb/SessionSynchronization.html">SessionSynchronization</a> interface for transaction callbacks.</p>
+
+<deftable title="&lt;ejb-stateful-bean> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>the classname of the bean implementation</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC initialization for each bean instance</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>A JNDI name to store the bean as.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>The Resin-IoC/WebBeans @Named registration</td>
+  <td>The classname</td>
+</tr>
+<tr>
+  <td>scope</td>
+  <td>The Resin-IoC/WebBeans scope: dependent, request, session, conversaion</td>
+  <td>dependent classname</td>
+</tr>
+</deftable>
+
+<def title="&lt;ejb-stateful-bean> schema">
+element ejb-stateful-bean {
+  class
+  &amp; init?
+  &amp; jndi-name?
+  &amp; name?
+  &amp; scope?
+}
+</def>
+
+</defun>
+
+<defun title="&lt;ejb-stateless-bean>">
+<parents>resin, host-default, host, web-app-default, web-app</parents>
+
+<p>&lt;ejb-stateless-bean> configures an EJB @Stateless bean.  The
+@Statelesss bean is a pooled, proxied, singleton component bean suitable.
+See <a href="resin-ejb.xtp">Resin EJB</a> for more details.</p>
+
+<p>The stateless-bean is registered in the Resin-IoC/WebBeans context and
+optionally with JNDI.</p>
+
+<p>@Stateless beans are similar to &lt;bean> singletons, but pool instances.
+Each instance executes a single thread at a time, unlike &lt;bean>
+singletons which are multithreaded like servlets.  Both styles can
+use the same aspect capabilities like dependency injection, transactions,
+and interceptors.  Because @Stateless beans are singletons, they
+do not have a scope attribute.</p>
+
+<deftable title="&lt;ejb-stateless-bean> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>the classname of the bean implementation</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC initialization for each bean instance</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>A JNDI name to store the bean as.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>The Resin-IoC/WebBeans @Named registration</td>
+  <td>The classname</td>
+</tr>
+</deftable>
+
+<def title="&lt;ejb-stateless-bean> schema">
+element ejb-stateless-bean {
+  class
+  &amp; init?
+  &amp; jndi-name?
+  &amp; name?
+}
+</def>
+
+</defun>
+
+<defun title="&lt;env-entry>" occur="*" version="Resin 3.0" type="defun">
+<parents>resin, host-default, host, web-app-default, web-app</parents>
+  <!-- com.caucho.config.types.EnvEntry -->
+
+<p>&lt;env-entry> configures a JNDI scalar value
+for JNDI-based application configuration.</p>
+
+<p>Some application beans prefer to retrieve configuration data from JNDI,
+including String, Integer, and Double constants.  env-entry configures
+that data in the current context.  As with other Resin configuration, the
+value can use JSP-EL expressions.</p>
+
+<deftable title="&lt;env-entry> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>env-entry-name</td>
+  <td>JNDI name to store the value.  Since Servlet 2.1</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>env-entry-type</td>
+  <td>Java type for the value.  Since Servlet 2.1</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>env-entry-value</td>
+  <td>Value to be stored.  Since Servlet 2.1</td>
+  <td>required</td>
+</tr>
+</deftable>
+
+<def title="&lt;env-entry> schema">
+element env-entry {
+  description*,
+
+  env-entry-name,
+
+  env-entry-type,
+
+  env-entry-value
+}
+</def>
+
+<p>The example configuration stores a string in java:comp/env/greeting.
+Following the J2EE spec, the env-entry-name is relative to
+java:comp/env.  If the env-entry is in the &lt;host&gt; context, it will
+be visible to all web-apps in the host.</p>
+
+<example title="Example: WEB-INF/resin-web.xml with env-entry">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+  &lt;env-entry&gt;
+    &lt;env-entry-name&gt;greeting&lt;/env-entry-name&gt;
+    &lt;env-entry-type&gt;java.lang.String&lt;/env-entry-type&gt;
+    &lt;env-entry-value&gt;Hello, World&lt;/env-entry-value&gt;
+  &lt;/env-entry&gt;
+
+  &lt;servlet ...>
+  &lt;/servlet>
+&lt;/web-app>
+</example>
+
+<p>The following servlet fragment is a typical use in a servlet.  The
+servlet only looks up the variable once and stores it for later use.
+</p>
+
+<example title="Example: GreetingServlet.java">
+import java.io.*;
+import javax.naming.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class TestServlet extends HttpServlet {
+  private String greeting;
+
+  public void init()
+    throws ServletException
+  {
+    try {
+      Context env = 
+        (Context) new InitialContext().lookup("java:comp/env");
+      greeting = (String) env.lookup("greeting");
+    } catch (NamingException e) {
+      throw new ServletException(e);
+    }
+  }
+
+  ...
+}
+</example>
+
+</defun>
+
+<defun title="&lt;fileset>" version="Resin 3.0.7" type="defun">
+
+<p>&lt;fileset&gt; provides the ability to match a set of files.  It is
+modelled after the ant tag by the same name.  The fileset matches
+files from a base directory defined by 'dir'.  Files can be included
+by patterns defined by &lt;include> tags or excluded by patterns defined in
+&lt;exclude> tags.</p>
+
+<deftable title="&lt;fileset> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr><td>dir</td>
+    <td>the starting directory</td>
+    <td>required</td></tr>
+<tr><td>include</td>
+    <td>an include pattern</td>
+    <td>do not include all files</td></tr>
+<tr><td>exclude</td>
+    <td>an exclude pattern</td>
+    <td>do not exclude any files</td></tr>
+</deftable>
+
+<def title="&lt;fileset> schema">
+element fileset {
+  dir
+  &amp; exclude*
+  &amp; include*
+</def>
+
+<s2 title="fileset patterns">
+
+<p>A pattern can contain two special characters: '*' and '**'.  '*' matches any
+part of path, but does not match the path separator.  '**' matches any part of
+a path, including the path separator. </p>
+
+<p>The following example matches .jar files in WEB-INF/lib.  Since it does
+not search the lib directory recursively, WEB-INF/lib/foo/bar.jar will not
+match.</p>
+
+<example title="Example: fileset pattern '*'">
+&lt;fileset dir="WEB-INF/lib"&gt;
+  &lt;include name="*.jar"/&gt;
+&lt;/fileset&gt;
+
+MATCH    lib/foo.jar
+MATCH    lib/bar.jar
+NO MATCH lib/baz/foo.jar
+</example>
+
+<p>The following example matches .jar files in WEB-INF/lib recursively,
+so a deeper file like WEB-INF/lib/foo/bar.jar will match.</p>
+
+<example title="Example: fileset pattern '**'">
+&lt;fileset dir="WEB-INF/tree"&gt;
+  &lt;include name="**/*.jar"/&gt;
+&lt;/fileset&gt;
+
+MATCH    lib/foo.jar
+MATCH    lib/bar.jar
+MATCH    lib/baz/foo.jar
+</example>
+
+</s2>
+
+</defun>
+
+<defun title="&lt;javac>" occur="?" type="defun">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.java.JavacConfig -->
+
+<p>&lt;javac> configures the Java compiler for automatically
+compiled files.</p>
+
+<p>The javac configuration is used for JSP, PHP, EJB and
+compiling-loader configuration.</p>
+
+<deftable title="&lt;javac> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>args</td>
+  <td>extra arguments to pass to the compiler</td>
+  <td></td>
+</tr>
+<tr>
+  <td>compiler</td>
+  <td>the compiler name: eclipse, groovyc, internal, or a command-line</td>
+  <td></td>
+</tr>
+<tr>
+  <td>encoding</td>
+  <td>the character encoding to use</td>
+  <td>utf-8</td>
+</tr>
+<tr>
+  <td>max-batch</td>
+  <td>the maximum number of source files to batch into one compilation</td>
+  <td>64</td>
+</tr>
+</deftable>
+
+<def title="&lt;javac> schema">
+element javac {
+  args*
+  &amp; compiler
+  &amp; encoding?
+  &amp; max-batch?
+}
+</def>
+
+<p>
+The eclipse compiler requires the presence of
+$RESIN_HOME/lib/eclipse-compiler.jar (which is included with Resin). It is a
+very fast compiler that was developed as part of the Eclipse project. 
+</p>
+
+<example title="Example: eclipse compiler">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+ &lt;javac compiler="eclipse" args="-source 1.5"/&gt;
+
+  ...
+
+&lt;/resin>
+</example>
+
+<p>
+The internal compiler requires tools.jar from the JDK installation, so a JDK
+must be used (not a JRE).  Sometimes the internal compiler causes errors,
+creating exceptions or simply hanging and taking up a thread. The solution is
+to change the compiler to use an external compiler. 
+</p>
+
+<example title="Internal compiler">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+ &lt;javac compiler="internal" args=""/&gt;
+
+&lt;/resin>
+</example>
+
+<p>
+The javac compiler is included with the JDK. It executes that same as the
+internal compiler, however it is executed as an external process and is less
+prone to the problems described for the internal compiler.  In resin.xml with
+the javac configuration option: 
+</p>
+
+<example title="javac JDK compiler">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+ &lt;javac compiler="javac" args=""/&gt;
+
+  ...
+
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;jms-connection-factory>" occur="*" version="Resin 3.1.5">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>&lt;jms-connection-factory> configures a JMS <code>ConnectionFactory</code>
+and registers it with Resin-IoC/WebBeans.  The <code>ConnectionFactory</code>
+can be specified by it's class or a URI alias.</p>
+
+<p>See <a href="resin-messaging.xtp">Resin messaging</a> for more
+information.</p>
+
+<deftable title="jms-connection-factory URIs">
+<tr>
+  <th>Scheme</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>resin:</td>
+  <td>Resin's ConnectionFactory implementation</td>
+</tr>
+</deftable>
+
+<deftable title="&lt;jms-connection-factory> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>class name of the ConnectionFactory implementation</td>
+  <td>required (or <var>uri</var>)</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC initialization configuration for the factory</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>Name for registering in JNDI, relative to java:comp/env</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td><a href="resin-ioc.xtp#@Named">@Named</a> binding in Resin-IoC</td>
+  <td></td>
+</tr>
+<tr>
+  <td>uri</td>
+  <td>URI alias for the ConnectionFactory class</td>
+  <td></td>
+</tr>
+</deftable>
+
+<def title="&lt;jms-connection-factory> schema">
+element jms-connection-factory {
+  (class | uri)
+  &amp; init?
+  &amp; jndi-name?
+  &amp; name?
+}
+</def>
+
+</defun>
+
+<defun title="&lt;jms-queue>" occur="*" version="Resin 3.1.5">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>&lt;jms-queue> configures a JMS <code>Queue</code>
+and registers it with Resin-IoC/WebBeans.  Resin's JMS Queues implement
+the <code>BlockingQueue</code> interface and can be used directly or
+with the JMS <code>ConnectionFactory</code>.</p>
+
+<p>See <a href="resin-messaging.xtp">Resin messaging</a> for more
+information.</p>
+
+<p>The Queue can either be identified by the implementing class name
+or with a URI alias.   Third-party queues using JCA will use
+the <a href="#resource-adapter">&lt;resource-adapter></a> and either
+<a href="#connection-factory">&lt;connection-factory></a> or
+<a href="#activation-spec">&lt;activation-spec></a>.</p>
+
+<p>Code sending messages to a Queue will typically use either
+the <code>BlockingQueue</code> API or JMS.  Code receiving from a queue
+will generally use an <a href="#ejb-message-bean">EJB message bean</a>.</p>
+
+<deftable title="&lt;jms-queue> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>class name of the Queue implementation</td>
+  <td>required (or <var>uri</var>)</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC initialization for the Queue</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>JNDI name for storing the Queue</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td><a href="resin-ioc.xtp#@Named">@Named</a> binding for Resin-IoC</td>
+  <td></td>
+</tr>
+</deftable>
+
+<deftable title="Queue URI aliases">
+<tr>
+  <th>URI</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>file:</td>
+  <td>Persistent, file-backed Queue</td>
+</tr>
+<tr>
+  <td>memory:</td>
+  <td>Simple, memory-based Queue</td>
+</tr>
+<tr>
+  <td>server:</td>
+  <td>Server side of a clustered Queue</td>
+</tr>
+<tr>
+  <td>client:</td>
+  <td>Client side of a clustered Queue</td>
+</tr>
+</deftable>
+
+<def title="&lt;jms-queue> schema">
+element jms-queue {
+  (class | uri)
+  &amp; init
+  &amp; jndi-name
+  &amp; name
+}
+</def>
+
+</defun>
+
+<defun title="&lt;jms-topic>" occur="*" version="Resin 3.1.5">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>&lt;jms-topic> configures a JMS <code>Topic</code>
+and registers it with Resin-IoC/WebBeans.  Resin's JMS Topics implement
+the <code>BlockingTopic</code> interface and can be used directly or
+with the JMS <code>ConnectionFactory</code>.</p>
+
+<p>See <a href="resin-messaging.xtp">Resin messaging</a> for more
+information.</p>
+
+<p>The Topic can either be identified by the implementing class name
+or with a URI alias.   Third-party topics using JCA will use
+the <a href="#resource-adapter">&lt;resource-adapter></a> and either
+<a href="#connection-factory">&lt;connection-factory></a> or
+<a href="#activation-spec">&lt;activation-spec></a>.</p>
+
+<p>Code sending messages to a Topic will typically use either
+the <code>BlockingTopic</code> API or JMS.  Code receiving from a topic
+will generally use an <a href="#ejb-message-bean">EJB message bean</a>.</p>
+
+<deftable title="&lt;jms-topic> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>class name of the Topic implementation</td>
+  <td>required (or <var>uri</var>)</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC initialization for the Topic</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>JNDI name for storing the Topic</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td><a href="resin-ioc.xtp#@Named">@Named</a> binding for Resin-IoC</td>
+  <td></td>
+</tr>
+</deftable>
+
+<deftable title="Topic URI aliases">
+<tr>
+  <th>URI</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>file:</td>
+  <td>Persistent, file-backed Topic</td>
+</tr>
+<tr>
+  <td>memory:</td>
+  <td>Simple, memory-based Topic</td>
+</tr>
+<tr>
+  <td>server:</td>
+  <td>Server side of a clustered Topic</td>
+</tr>
+<tr>
+  <td>client:</td>
+  <td>Client side of a clustered Topic</td>
+</tr>
+</deftable>
+
+<def title="&lt;jms-topic> schema">
+element jms-topic {
+  (class | uri)
+  &amp; init
+  &amp; jndi-name
+  &amp; name
+}
+</def>
+
+</defun>
+
+<defun title="&lt;jndi-link>" occur="*" version="Resin 1.2">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.naming.LinkProxy -->
+
+<p>&lt;jndi-link> creates a symbolic link from one jndi name to another, or links to a foreign JNDI context.</p>
+
+<p>Resin's JNDI can link to foreign JNDI contexts.  For example, third-party
+EJB servers will often expose their EJB beans through a JNDI context.
+jndi-link will create the appropriate InitialContextFactory, configure it,
+and lookup the foreign JNDI objects.</p>
+
+<deftable title="&lt;jndi-link> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr><td>factory</td>
+    <td>Class name of the JNDI InitialContextFactory.  Since Resin 1.2</td>
+    <td>optional</td></tr>
+<tr><td>foreign-name</td>
+    <td>The target name of the symbolic link, or the sub-context of the foreign JNDI context.  Since Resin 1.2</td>
+    <td>none</td></tr>
+<tr><td>init-param</td>
+    <td>Configuration parameters for the JNDI environment passed to InitialContextFactory.  Since Resin 1.2</td>
+    <td>none</td></tr>
+<tr><td>jndi-name</td>
+    <td>The JNDI name to use for the link.  Resin 3.0</td>
+    <td>required</td></tr>
+</deftable>
+
+<def title="&lt;jndi-link> schema">
+element jndi-link {
+  jndi-name
+  &amp; factory?
+  &amp; foreign-name?
+  &amp; init-param*
+}
+</def>
+
+<example title="Example: A JNDI symbolic link for a DataSource">
+&lt;web-app xmlns="http://caucho.com/ns/resin"dd&gt;
+  &lt;database jndi-name="jdbc/oracle"&gt;
+    ...
+  &lt;/database&gt;
+
+  &lt;jndi-link jndi-name="java:comp/env/jdbc/gryffindor"&gt;
+    &lt;foreign-name&gt;java:comp/env/jdbc/oracle&lt;/foreign-name&gt;
+  &lt;/jndi-link&gt;
+
+  &lt;jndi-link jndi-name="java:comp/env/jdbc/slytherin"&gt;
+    &lt;foreign-name&gt;java:comp/env/jdbc/oracle&lt;/foreign-name&gt;
+  &lt;/jndi-link&gt;
+&lt;/web-app&gt;
+</example>
+
+<example title="Example: A JNDI foreign context for all EJB">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;jndi-link jndi-name='java:comp/env/ejb'&gt;
+    &lt;factory&gt;com.caucho.ejb.hessian.HessianContextFactory&lt;/factory&gt;
+    &lt;init-param java.naming.provider.url='http://ejb.hogwarts.com:80/hessian'/&gt;
+  &lt;/jndi-link&gt;
+&lt;/web-app&gt;
+</example>
+
+<example title="Example: A JNDI foreign context for selected EJB">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;jndi-link jndi-name='java:comp/env/remote-ejb'&gt;
+    &lt;factory&gt;com.caucho.ejb.hessian.HessianContextFactory&lt;/factory&gt;
+    &lt;init-param java.naming.provider.url='http://ejb.hogwarts.com:80/hessian'/&gt;
+  &lt;/jndi-link&gt;
+
+  &lt;jndi-link jndi-name="java:comp/env/ejb/Foo"&gt;
+    &lt;foreign-name&gt;java:comp/env/remote-ejb/Foo&lt;/foreign-name&gt;
+  &lt;/jndi-link&gt;
+
+  &lt;jndi-link jndi-name="java:comp/env/ejb/Bar"&gt;
+    &lt;foreign-name&gt;java:comp/env/local-ejb/Bar&lt;/foreign-name&gt;
+  &lt;/jndi-link&gt;
+&lt;/web-app&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;jpa-persistence>" occur="*" version="Resin 3.1">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>&lt;jpa-persistence> configures JPA persistence defaults.
+More details on JPA are available on the <a href="amber.xtp">Amber</a> page.</p>
+
+<deftable title="&lt;jpa-persistence> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>create-database-schema</td>
+  <td>If true, Amber will automatically create the database schema</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>cache-size</td>
+  <td>Size of the entity cache</td>
+  <td>32k</td>
+</tr>
+<tr>
+  <td>data-source</td>
+  <td>database used for JTA</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jdbc-isolation</td>
+  <td>JDBC isolation level used for connections</td>
+  <td></td>
+</tr>
+<tr>
+  <td>read-data-source</td>
+  <td>Data source to be used for read-only queries</td>
+  <td>data-source</td>
+</tr>
+<tr>
+  <td>validate-database-schema</td>
+  <td>enables validation of the database tables on startup</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>xa-data-source</td>
+  <td>database to use in transactions</td>
+  <td>data-source</td>
+</tr>
+</deftable>
+
+<def title="&lt;jpa-persistence> schema">
+element jpa-persistence {
+  create-database-schema?
+  &amp; cache-size?
+  &amp; cache-timeout?
+  &amp; data-source?
+  &amp; jdbc-isolation?
+  &amp; persistence-unit*
+  &amp; persistence-unit-default*
+  &amp; read-data-source?
+  &amp; validate-database-schema?
+  &amp; xa-data-source?
+}
+
+element persistence-unit {
+  name
+  &amp; jta-data-source?
+  &amp; non-jta-data-source?
+  &amp; provider?
+  &amp; transaction-type?
+  &amp; properties?
+}
+
+element persistence-unit-default {
+  &amp; jta-data-source?
+  &amp; non-jta-data-source?
+  &amp; provider?
+  &amp; transaction-type?
+  &amp; properties?
+}
+
+element properties {
+  element property {
+     name
+     &amp; value
+  }*
+}
+</def>
+
+</defun>
+
+<defun title="&lt;library-loader>" occur="*" version="Resin 3.0">
+  <parents>class-loader</parents>
+
+<p>&lt;library-loader> configures a jar
+library, <var>WEB-INF/lib</var>-style class loader.</p>
+
+<p>The library-loader will add jar files in its path to the current classpath.
+Jar files are recognized wihen they have a filename extension of
+<code>.jar</code> or <code>.zip</code>.</p>
+
+<deftable>
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>fileset</td>
+  <td>An ant-style fileset</td>
+  <td></td>
+</tr>
+<tr>
+  <td>path</td>
+  <td>Filesystem path for the class loader.  Since Resin 3.0</td>
+  <td>required</td>
+</tr>
+</deftable>
+
+<def title="&lt;library-loader> schema">
+element library-loader {
+  fileset
+  | path
+}
+
+element fileset {
+  dir
+  &amp; exclude*
+  &amp; include*
+}
+</def>
+
+<p>See <a href="http://caucho.com/resin-javadoc/javadoc/com/caucho/loader/LibraryLoader.html">DirectoryLoader</a>.</p>
+
+</defun>
+
+<defun title="&lt;log>" occur="*" type="defun">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>&lt;log> configures JDK 1.4 java.util.logger handler.</p>
+
+<p>The <a href="config-log.xtp">log configuration</a> describes
+log in detail.</p>
+
+<deftable title="&lt;log> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>archive-format</td>
+  <td>defines a format string for log rollover</td>
+  <td></td>
+</tr>
+<tr>
+  <td>format</td>
+  <td>defines the output formatting</td>
+  <td></td>
+</tr>
+<tr>
+  <td>formatter</td>
+  <td>defines a custom formatter</td>
+  <td></td>
+</tr>
+<tr>
+  <td>handler</td>
+  <td>defines a custom handler</td>
+  <td></td>
+</tr>
+<tr>
+  <td>level</td>
+  <td>sets the logging level of the handler</td>
+  <td>info</td>
+</tr>
+<tr>
+  <td>mbean-name</td>
+  <td>sets an mbean-name to register the logger for runtime management</td>
+  <td></td>
+</tr>
+<tr>
+  <td>path</td>
+  <td>sets the VFS path for the log file</td>
+  <td></td>
+</tr>
+<tr>
+  <td>path-format</td>
+  <td>sets a pattern for creating the VFS path for the messages</td>
+  <td></td>
+</tr>
+<tr>
+  <td>rollover-count</td>
+  <td>sets the maximum number of rollover files</td>
+  <td></td>
+</tr>
+<tr>
+  <td>rollover-period</td>
+  <td>sets the number of days before a log file rollover </td>
+  <td>1m</td>
+</tr>
+<tr>
+  <td>rollover-size</td>
+  <td>sets the maximum log size before a rollover</td>
+  <td>1g</td>
+</tr>
+<tr>
+  <td>timestamp</td>
+  <td>sets the formatting string for the timestamp label</td>
+  <td></td>
+</tr>
+<tr>
+  <td>use-parent-handlers</td>
+  <td>if true, the log is also copied to parent handlers</td>
+  <td>true</td>
+</tr>
+</deftable>
+
+<def title="&lt;log> schema">
+element log {
+  archive-format?
+  &amp; format?
+  &amp; formatter?
+  &amp; handler?
+  &amp; level?
+  &amp; mbean-name?
+  &amp; name
+  &amp; path?
+  &amp; path-format?
+  &amp; rollover-count?
+  &amp; rollover-period?
+  &amp; rollover-size?
+  &amp; timestamp?
+  &amp; use-parent-handlers?
+}
+</def>
+
+</defun>
+
+<defun title="&lt;logger>" occur="*">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>&lt;log> configures JDK 1.4 java.util.logger Logger level.</p>
+
+<p>The <a href="config-log.xtp">log configuration</a> describes
+log in detail.</p>
+
+<deftable title="&lt;logger> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>level</td>
+  <td>the java.util.logging level: finest, finer, fine, config, info, warning, severe</td>
+  <td>info</td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>the java.util.logging name, typically a classname</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>use-parent-handlers</td>
+  <td>if true, parent handlers are also invoked</td>
+  <td>true</td>
+</tr>
+</deftable>
+
+<def title="&lt;logger> schema">
+element logger {
+  name
+  &amp; level?
+  &amp; use-parent-handlers?
+}
+</def>
+
+<example title="Example: compilation logging">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;log name="" level="all" path="log/debug.log"/>
+  &lt;logger name="com.caucho.java" level="fine"/>
+
+  &lt;cluster id="app-tier">
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;mail>" occur="*" version="Resin 3.0">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>&lt;mail> configures a javax.mail.Session object and makes
+it available in Resin-IoC/WebBeans.  Mail properties can be
+configured using the properties attribute.  Some of the most common
+properties can be configured directly on the &lt;mail> tag.</p>
+
+<deftable title="&lt;mail> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>authenticator</td>
+  <td>sets a custom javamail authenticator, either with EL or a
+  custom resin:type bean</td>
+  <td></td>
+</tr>
+<tr>
+  <td>debug</td>
+  <td>sets the mail.debug flag</td>
+  <td></td>
+</tr>
+<tr>
+  <td>from</td>
+  <td>sets the mail.from property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>host</td>
+  <td>sets the mail.host property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>imap-host</td>
+  <td>sets the mail.imap.host property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>imap-port</td>
+  <td>sets the mail.imap.port property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>imap-user</td>
+  <td>sets the mail.imap.user property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC configuration for other properties</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>JNDI name to store the mail Session</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>Resin-IoC/WebBeans @Named value</td>
+  <td></td>
+</tr>
+<tr>
+  <td>password</td>
+  <td>sets the password for authentication</td>
+  <td></td>
+</tr>
+<tr>
+  <td>pop3-host</td>
+  <td>sets the mail.pop3.host property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>pop3-port</td>
+  <td>sets the mail.pop3.port property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>pop3-user</td>
+  <td>sets the mail.pop3.user property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>properties</td>
+  <td>general mail properties in property file format</td>
+  <td></td>
+</tr>
+<tr>
+  <td>smtp-host</td>
+  <td>sets the mail.smtp.host property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>smtp-port</td>
+  <td>sets the mail.smtp.port property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>smtp-user</td>
+  <td>sets the mail.smtp.user property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>store-protocol</td>
+  <td>sets the mail.store.protocol property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>transport-protocol</td>
+  <td>sets the mail.transport.protocol property</td>
+  <td></td>
+</tr>
+<tr>
+  <td>user</td>
+  <td>sets the mail.user property</td>
+  <td></td>
+</tr>
+</deftable>
+
+<def title="&lt;mail> schema">
+element mail {
+  authenticator?
+  &amp; debug?
+  &amp; from?
+  &amp; host?
+  &amp; imap-host?
+  &amp; imap-port?
+  &amp; imap-user?
+  &amp; init?
+  &amp; jndi-name?
+  &amp; name?
+  &amp; pop3-host?
+  &amp; pop3-port?
+  &amp; pop3-user?
+  &amp; smtp-host?
+  &amp; smtp-port?
+  &amp; smtp-user?
+  &amp; store-protocol?
+  &amp; transport-protocol?
+  &amp; user?
+}
+</def>
+
+<example title="Example: mail">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;mail jndi-name="java:comp/env/mail">
+    &lt;from>noreply@foo.com&lt;/from>
+    &lt;smtp-host>localhost&lt;/smtp-host>
+    &lt;smtp-port>25&lt;/smtp-port>
+
+    &lt;properties>
+      mail.smtp.starttls.enable=true
+    &lt;/properties>
+  &lt;/mail>
+&lt;/web-app>
+</example>
+
+</defun>
+
+<defun title="&lt;reference>" occur="*" version="Resin 3.0">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.config.types.ReferenceConfig -->
+
+<p>&lt;reference> configures a JNDI ObjectFactory.  Some legacy
+resources are configured using an ObjectFactory syntax.  The &lt;reference>
+tag provides a compatible way to configure those objects.  More modern
+resources should use &lt;bean> or &lt;component> for IoC configuration.</p>
+
+<p>JNDI ObjectFactories are used to create objects from JNDI references.
+The &lt;reference&gt; tag configures the ObjectFactory and stores it in JNDI.</p>
+
+<deftable title="&lt;reference> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>JNDI name for the reference.  Since Resin 3.0</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>factory</td>
+  <td>Class name of the ObjectFactory. Resin 3.0</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>Bean-style initialization for the factory</td>
+  <td>none</td>
+</tr>
+</deftable>
+
+<def title="&lt;reference> schema">
+element reference {
+  factory 
+  &amp; jndi-name
+  &amp; init-param*
+}
+</def>
+
+<example title="Example: Hessian client reference">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+&lt;reference&gt;
+  &lt;jndi-name&gt;hessian/hello&lt;/jndi-name&gt;
+  &lt;factory&gt;com.caucho.hessian.client.HessianProxyFactory&lt;/factory&gt;
+  &lt;init url="http://localhost:8080/ejb/hello"/&gt;
+        type="test.HelloHome"/&gt;
+&lt;/reference&gt;
+
+&lt;/web-app>
+</example>
+
+</defun>
+
+<defun title="&lt;remote-client>">
+<parents>cluster, host, web-app</parents>
+
+<p>&lt;remote-client> configures a proxy to a web-service.
+It uses a Java interface and a URI to select the web-service.</p>
+
+<p>The URI is defined as: <var>protocol:url=location</var>, where
+location is typically a HTTP URL.</p>
+
+<ul>
+<li>See <a href="resin-remoting.xtp">Resin remoting</a> for more
+information, including how to write an adapter for Resin remoting.</li>
+<li>See the <a href="../examples/remote-hello-world/">hello world tutorial</a>
+for an example.</li>
+</ul>
+
+<deftable title="&lt;remote-client> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>Class name of the protocol implementation</td>
+  <td>required (or <var>uri</var>)</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC initialization for the protocol implementation</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td><a href="resin-ioc.xtp#@Named">@Named</a> binding for Resin-IoC</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>JNDI binding name</td>
+  <td></td>
+</tr>
+<tr>
+  <td>uri</td>
+  <td>Shortcut alias name for the protocol class</td>
+  <td></td>
+</tr>
+</deftable>
+
+<deftable title="remote-client protocols">
+
+<tr>
+  <td>URI</td>
+  <td>Description</td>
+</tr>
+<tr>
+  <td><var>cxf</var>:url=http://foo.com/hello/cxf</td>
+  <td>Defines a cxf service.  See <a href="http://wiki.caucho.com/CXF">http://wiki.caucho.com/CXF</a> for more information.</td>
+</tr>
+<tr>
+  <td><var>burlap</var>:url=http://foo.com/hello/burlap</td>
+  <td>Defines a burlap service at http://foo.com/hello/burlap</td>
+</tr>
+<tr>
+  <td><var>hessian</var>:url=http://foo.com/hello/hessian</td>
+  <td>Defines a hessian service at http://foo.com/hello/hessian</td>
+</tr>
+<tr>
+  <td><var>xfire</var>:url=http://foo.com/hello/cxf</td>
+  <td>Defines a xfire client.  See <a href="http://wiki.caucho.com/XFire">http://wiki.caucho.com/XFire</a> for more information.</td>
+</tr>
+</deftable>
+
+<def title="remote-client">
+element remote-client {
+  (class|uri)
+  &amp; name?
+  &amp; jndi-name?
+  &amp; interface
+}
+</def>
+
+</defun> <!-- remote-client -->
+
+<defun title="&lt;resin:choose>" version="Resin 3.0.7">
+
+<p>resin:choose implements an if, elsif, else.</p>
+
+<deftable title="&lt;resin:choose> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>resin:when</td>
+  <td>A configuration section executed when matching a test condition</td>
+</tr>
+<tr>
+  <td>resin:otherwise</td>
+  <td>A fallback section executed when the tests fail</td>
+</tr>
+</deftable>
+
+<p>The &lt;resin:choose> schema is context-dependent.  A &lt;resin:choose>
+in a &lt;web-app> will have &lt;web-app> content, while a &lt;resin:choose>
+in a &lt;host> will have &lt;host> content.</p>
+
+<def title="&lt;resin:choose> schema">
+element resin:choose {
+  resin:when*,
+  resin:otherwise
+}
+
+element resin:when {
+  attribute test { string },
+
+  <var>context-dependent content</var>
+}
+
+element resin:otherwise {
+  <var>context-dependent content</var>
+}
+</def>
+
+<example title="Example: resin:choose usage pattern">
+&lt;resin:choose&gt;
+  &lt;resin:when test="${expr1}"&gt;
+    ...
+  &lt;/resin:when&gt;
+
+  &lt;resin:when test="${expr2}"&gt;
+    ...
+  &lt;/resin:when&gt;
+
+  &lt;resin:otherwise&gt;
+    ...
+  &lt;/resin:otherwise&gt;
+&lt;resin:choose&gt;
+</example>
+
+<s2 title="&lt;resin:when>" version="Resin 3.0.7" type="defun">
+<parents>resin:choose</parents>
+<p>&lt;resin:when> conditionally configures a block within a
+&lt;resin:choose> block.  If the <var>test</var> matches, Resin will
+use the enclosed configuration.</p>
+
+<deftable title="&lt;resin:when> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>test</td>
+  <td>the test to perform</td>
+</tr>
+</deftable>
+
+<def title="&lt;resin:when> schema">
+element resin:when {
+  attribute test { string },
+
+  <var>context-dependent content</var>
+}
+</def>
+
+</s2>
+
+<s2 title="&lt;resin:otherwise>" version="Resin 3.0.7" type="defun">
+<parents>resin:choose</parents>
+<p>&lt;resin:otherwise> is the catch-all configuration for a &lt;resin:choose>
+block when none of the &lt;resin:when> items match.</p>
+
+<def title="&lt;resin:otherwise> schema">
+element resin:otherwise {
+  <var>context-dependent content</var>
+}
+</def>
+
+</s2>
+
+</defun> <!-- resin:choose -->
+
+<defun title="&lt;resin:if>" version="Resin 3.0.7">
+
+<p>resin:if executes part of the configuration file conditionally.  resin:if
+can be particularly useful in combination with Java command-line properties
+like -Dfoo=bar to enable development mode or testing configuration.
+</p>
+
+<deftable title="&lt;resin:if> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>test</td>
+  <td>the test to perform</td>
+  <td>required</td>
+</tr>
+</deftable>
+
+<p>The resin:if schema is context-dependent.  For example, resin:if in
+a &lt;web-app> will have web-app content while resin:if in a &lt;host>
+will have host content.</p>
+
+<def title="&lt;resin:if> schema">
+element resin:if {
+  attribute test { string }
+
+  <var>context-dependent content</var>
+}
+</def>
+
+<example title="Example: enable debugging for -Ddevelopment">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+        xmlns:core="http://caucho.com/ns/resin/core">
+
+  &lt;resin:if test="${system['development']}"&gt;
+    &lt;logger name="com.foo" level="finer"/>
+  &lt;/resin:if&gt;
+
+  ...
+&lt;/resin>
+</example>
+
+</defun> <!-- resin:if -->
+
+<defun title="&lt;resin:import>" version="Resin 3.0.7" type="defun">
+
+<p>&lt;resin:import> reads configuration from another file or set of
+files.  For example, the WEB-INF/web.xml and WEB-INF/resin-web.xml files
+are implemented as &lt;resin:import> in the app-default.xml.</p>
+
+<p>The target file is validated by the schema of the including context.
+So a resin:import in &lt;web-app-default&gt; will have a target with a
+top-level of &lt;web-app&gt;, and a resin:import in &lt;cluster> will have
+a top-level tag of &lt;cluster>.
+</p>
+
+<deftable title="&lt;resin:import> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>path</td>
+  <td>a path to a file</td>
+  <td>either path or fileset is required</td>
+</tr>
+<tr>
+  <td>fileset</td>
+  <td>a <a href="env-tags.xtp#fileset">fileset</a> describing all
+the files to import.</td>
+  <td>either path or fileset is required</td>
+</tr>
+<tr>
+  <td>optional</td>
+  <td>if true, no error when file does not exist</td>
+  <td>false</td>
+</tr>
+</deftable>
+
+<def title="&lt;resin:import> schema">
+element import {
+  (path | fileset)
+  &amp; optional?
+}
+
+element fileset {
+  dir
+  &amp; exclude*
+  &amp; include*
+}
+</def>
+
+<p>The following example shows how Resin implements the WEB-INF/web.xml
+and WEB-INF/resin-web.xml files.  Both are simply resin:import in a
+web-app-default.  When Resin configures the web-app, it will process
+the web-app-default program, and call resin:import for the web.xml file.</p>
+
+<example title="Example: import implementation of WEB-INF/web.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core">
+  &lt;cluster id="app-tier">
+
+    &lt;web-app-default>
+      &lt;resin:import path="WEB-INF/web.xml" optional="true"/>
+      &lt;resin:import path="WEB-INF/resin-web.xml" optional="true"/>
+    &lt;/web-app-default>
+
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+<p>Virtual hosts can use resin:import to add a custom host.xml file.
+The host.xml can use any &lt;host> attribute, including &lt;host-name>
+and &lt;host-alias> to customize the virtual host configuration.</p>
+
+<example title="Example: adding host.xml in host-deploy">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core">
+  &lt;cluster id="app-tier">
+
+    &lt;host-deploy path="/var/www/hosts">
+      &lt;host-default>
+        &lt;resin:import path="host.xml" optional="true"/>
+
+        &lt;web-app-deploy path="webapps"/>
+      &lt;/host-default>
+    &lt;/web-app-default>
+
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+<p>Some applications may want to split their configuration into multiple
+files using the fileset.  For example, a <a href="resin-ioc.xtp">Resin-IoC</a>
+application might want to define beans in WEB-INF/beans/*.xml and give
+the web-app flexibility in which bean files to create.</p>
+
+<example title="Example: Bean IoC fileset in resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+          xmlns:core="http://caucho.com/ns/resin/core">
+
+  &lt;resin:import>
+    &lt;fileset dir="WEB-INF/beans">
+      &lt;include>*.xml&lt;/include>
+    &lt;/fileset>
+  &lt;/resin:import>
+
+&lt;/web-app>
+</example>
+
+</defun>
+  
+<defun title="&lt;resin:message>" version="Resin 3.0.7">
+
+<p>Logs a message to the given log file. The content of the element is the
+message.</p>
+
+<def title="&lt;resin:message> schema">
+element resin:message {
+  string
+}
+</def>
+
+<example title="logging in resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+         xmlns:resin="http://caucho.com/ns/resin/core">
+
+  &lt;resin:message&gt;Starting server ${server.name}&lt;/resin:message&gt;
+
+&lt;/web-app>
+</example>
+
+</defun> <!-- resin:message -->
+
+<defun title="&lt;resin:set>" version="Resin 3.0.7">
+
+<p>resin:set adds an EL variable to the current context.</p>
+
+<deftable title="&lt;resin:set> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>var</td>
+  <td>name of the variable to set</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>value</td>
+  <td>value</td>
+  <td>required</td>
+</tr>
+</deftable>
+
+<def title="&lt;resin:set> schema">
+element set {
+  name
+  &amp; value
+  &amp; default
+  &amp; attribute * { string }
+}
+</def>
+
+<example title="Example: resin:set in resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+          xmlns:resin="http://caucho.com/ns/resin/core">
+  &lt;resin:set name="root" value="/var/www"/>
+
+  &lt;cluster id="app-tier">
+    &lt;root-directory>${root}&lt;/root-directory>
+
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun> <!-- resin:message -->
+
+<defun title="&lt;resource>" occur="*" version="Resin 3.0" type="defun">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.config.types.Resource -->
+
+<p>&lt;resource> is an obsolete synonym for &lt;bean> to define custom
+singletons.  Applications should use the &lt;bean> syntax instead.</p>
+
+</defun> 
+
+<defun title="&lt;resource-adapter>" occur="*" version="Resin 3.1" type="defun">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.config.types.Resource -->
+
+<p>&lt;resource-adapter> configures a JCA <code>ResourceAdapter</code>
+in combination with <a href="#connection-factory">&lt;connection-factory></a>
+for connections or <a href="#activation-spec">&lt;activation-spec</a> for
+message listeners.  See <a href="resin-messaging.xtp">Resin messaging</a>
+for typical uses.</p>
+
+<p><code>ResourceAdapters</code> can be deployed in .rar files, but this
+is not required by Resin.  Instead, you can configure the ResourceAdapter
+directly.</p>
+
+<p>A symbolic URI can be used in place of the ResourceAdapter's class name.</p>
+
+<deftable title="&lt;resource-adapter> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>The classname of the ResourceAdapter implementation class</td>
+  <td>required (or <var>uri</var>)</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC initialization for the ResourceAdapter</td>
+  <td></td>
+</tr>
+<tr>
+  <td>jndi-name</td>
+  <td>JNDI name for binding the ResourceAdapter</td>
+  <td></td>
+</tr>
+<tr>
+  <td>name</td>
+  <td><a href="resin-ioc.xtp#@Named">@Named</a> binding for Resin-IoC injection.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>uri</td>
+  <td>Alias schema for the ResourceAdapter class name</td>
+  <td></td>
+</tr>
+</deftable>
+
+<def title="&lt;resource-adapter> schema">
+element resource-adapter {
+  (class | uri)
+  &amp; init?
+  &amp; name?
+  &amp; jndi-name?
+}
+</def>
+
+</defun> 
+
+<defun title="&lt;resource-deploy>" occur="*" version="Resin 3.0" type="defun">
+<parents>resin, cluster, host-default, host, web-app-default, web-app</parents>
+  <!-- com.caucho.jca.ResourceDeploy -->
+
+<p>&lt;resource-deploy> defines a deployment directory for .rar files.</p>
+
+<p>Connectors and resources defined in .rar files must be deployed
+before they can be configured by <a href="#connector">connector</a>.
+The &lt;resource-deploy&gt; tag specifies the directory for that deployment.
+</p>
+
+<deftable title="&lt;resource-deploy> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>resource-deploy</td>
+  <td>Configures .rar deployment</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>path</td>
+  <td>Configures the path where users will place .rar files</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>expand-path</td>
+  <td>Configures the directory where Resin will expand rar files</td>
+  <td>the path value</td>
+</tr>
+</deftable>
+
+<def title="&lt;resource-deploy> schema">
+element resource-deploy {
+  path
+  &amp; expand-directory?
+  &amp; expand-path?
+  &amp; resource-default?
+}
+</def>
+
+<example title="Example: resource-deploy">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;cluster id="app-tier">
+
+    &lt;host id=""&gt;
+      &lt;resource-deploy path="deploy"/&gt;
+    &lt;/host>
+  &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;resource-ref>" occur="*" version="Servlet 2.2" type="defun">
+<parents>resin, cluster, host, web-app</parents>
+  <!-- com.caucho.config.types.ResourceRef -->
+
+<p>&lt;resource-ref> declares that the application needs
+a resouce configuration.</p>
+
+<p>resource-ref is not directly used by Resin.  It's a servlet configuration
+item intended to tell GUI tools which resources need configuration.
+Resource configuration in Resin uses the resource, reference,
+database, and ejb-server tags.</p>
+
+<p>For backwards compatibility, Resin 2.1-style configuration files
+may still use resource-ref to configure resources, but it's recommended to
+convert the configuration.</p>
+
+<def title="&lt;resource-ref> schema">
+element resource-ref {
+  attribute id?,
+  description*,
+  res-ref-name,
+  ref-type,
+  res-auth,
+  res-sharing-scope?
+}
+</def>
+
+</defun>
+
+<defun title="&lt;scheduled-task>"> version="Resin 3.1.6">
+
+<p>&lt;scheduled-task> schedules a job to be executed at specific times
+or after specific delays.  The times can be specified by a cron syntax or
+by a simple delay parameter.  The job can be either a <code>Runnable</code>
+bean, a method specified by an EL expression, or a URL.</p>
+
+<p>When specified as an IoC bean, the bean task has full IoC capabilities,
+including injection, @TransactionAttribute aspects, interception and
+@Observes.</p>
+
+<deftable title="&lt;scheduled-task> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>class</td>
+  <td>the classname of the singleton bean to create</td>
+</tr>
+<tr>
+  <td>cron</td>
+  <td>a cron-style scheduling description</td>
+</tr>
+<tr>
+  <td>delay</td>
+  <td>a simple delay-based execution</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>IoC initialization for the bean</td>
+</tr>
+<tr>
+  <td>mbean-name</td>
+  <td>optional MBean name for JMX registration</td>
+</tr>
+<tr>
+  <td>method</td>
+  <td>EL expression for a method to be invoked as the task</td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>optional IoC name for registering the task</td>
+</tr>
+<tr>
+  <td>period</td>
+  <td>how often the task should be invoked in simple mode</td>
+</tr>
+<tr>
+  <td>task</td>
+  <td>alternate task assignment for predefined beans</td>
+</tr>
+</deftable>
+
+<def title="&lt;scheduled-task> schema">
+element scheduled-task {
+  class?
+  &amp; cron?
+  &amp; delay?
+  &amp; init?
+  &amp; mbean-name?
+  &amp; method?
+  &amp; name?
+  &amp; period?
+  &amp; task?
+}
+</def>
+
+<s2 title="bean-style job configuration">
+
+<p>The most common and flexible job configuration uses standard IoC
+bean-style configuration.  The bean must implement <code>Runnable</code>.
+Like the &lt;bean> tag, the <var>class</var> attribute specifies the
+<code>Runnable</code> class, and any <var>init</var> section configures
+the bean using <a href="resin-ioc.xtp">Resin IoC</a> configuration.</p>
+
+<example title="Example: 5min cron bean task">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;scheduled-task class="qa.MyTask">
+    &lt;cron>*/5&lt;/cron>
+  &lt;/scheduled-task>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="task reference job configuration">
+
+<p>The task bean can also be passed to the &lt;scheduled-task> using
+a Resin-IoC EL reference.  The name of the task bean would be defined
+previously, either in a &lt;bean> or &lt;component> or picked up by classpath
+scanning.  Like the bean-style job configuration, the reference bean must
+implement <code>Runnable</code>.</p>
+
+<example title="Example: midnight cron bean task">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;scheduled-task task="#{taskBean}">
+    &lt;cron>0 0 *&lt;/cron>
+  &lt;/scheduled-task>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="method reference job configuration">
+
+<p>&lt;scheduled-task> can execute a method on a defined bean as the
+scheduler's task.  The method is specified using EL reference syntax.
+At each trigger time, &lt;scheduled-task> will invoke the EL method
+expression.</p>
+
+<p>In the following example, the task invokes <code>myMethod()</code>
+on the <var>myBean</var> singleton every 1 hour.</p>
+
+<example title="Example: 1h period method task">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;bean name="myBean" class="qa.MyBean"/>
+
+  &lt;scheduled-task method="#{myBean.myMethod}">
+    &lt;delay>10m&lt;/delay>
+    &lt;period>1h&lt;/period>
+  &lt;/scheduled-task>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="url job configuration">
+
+<p>In a &lt;web-app>, the &lt;scheduled-task> can invoke a servlet URL
+at the trigger times.  The task uses the servlet <code>RequestDispatcher</code>
+and forwards to the specified URL.  The URL is relative to the &lt;web-app>
+which contains the &lt;scheduled-task.</p>
+
+<example title="Example: sunday cron url task">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;scheduled-task url="/cron.php">
+    &lt;cron>0 15 * * 0&lt;/cron>
+  &lt;/scheduled-task>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+</defun> <!-- scheduled-task -->
+
+<defun title="&lt;servlet-hack>" occur="*" version="Resin 3.0" type="defun">
+  <parents>class-loader</parents>
+
+<p>Use of servlet-hack is discouraged.  Using servlet-hack violates
+the JDK's classloader delegation model and can
+produce surprising ClassCastExceptions.</p>
+
+<p>servlet-hack reverses the normal class loader order.
+Instead of parent classloaders having priority, child classloaders
+have priority.</p>
+
+<def title="&lt;servlet-hack> schema">
+element servlet-hack {
+  boolean
+}
+</def>
+
+</defun>
+
+<defun title="&lt;simple-loader>" occur="*" version="Resin 3.0" type="defun">
+  <parents>class-loader</parents>
+  <!-- com.caucho.loader.SimpleLoader -->
+
+<p>&lt;simple-loader> Configures a
+simple <var>WEB-INF/classes</var>-style class loader.</p>
+
+<p>.class files in the specified directory will be loaded without any
+special compilation steps (in contrast with compiling-loader.)</p>
+
+<deftable title="&lt;simple-loader> attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>path</td>
+  <td>Filesystem path for the class loader.  Since Resin 3.0</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>prefix</td>
+  <td>Class package prefix to only load to a subset of classes. Resin 3.0</td>
+  <td>none</td>
+</tr>
+</deftable>
+
+<def title="&lt;simple-loader> schema">
+element simple-loader {
+  path
+  &amp; prefix?
+}
+</def>
+
+</defun>
+
+<defun title="&lt;stderr-log>" occur="?" type="defun">
+<parents>resin, cluster, host-default, host, web-app-default, web-app</parents>
+
+<p>Configures the destination for <code>System.err</code>.</p>
+
+<p>The <a href="config-log.xtp">log configuration</a> describes
+stderr-log in detail.</p>
+
+<deftable title="&lt;stderr-log> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>archive-format</td>
+  <td>defines a format string for log rollover</td>
+  <td></td>
+</tr>
+<tr>
+  <td>path</td>
+  <td>sets the VFS path for the log file</td>
+  <td></td>
+</tr>
+<tr>
+  <td>path-format</td>
+  <td>sets a pattern for creating the VFS path for the messages</td>
+  <td></td>
+</tr>
+<tr>
+  <td>rollover-count</td>
+  <td>sets the maximum number of rollover files</td>
+  <td></td>
+</tr>
+<tr>
+  <td>rollover-period</td>
+  <td>sets the number of days before a log file rollover </td>
+  <td>1m</td>
+</tr>
+<tr>
+  <td>rollover-size</td>
+  <td>sets the maximum log size before a rollover</td>
+  <td>1g</td>
+</tr>
+<tr>
+  <td>timestamp</td>
+  <td>sets the formatting string for the timestamp label</td>
+  <td></td>
+</tr>
+</deftable>
+
+<def title="&lt;stderr-log> schema">
+element stderr-log {
+  (path | path-format)
+  &amp; archive-format?
+  &amp; rollover-period?
+  &amp; rollover-size?
+  &amp; rollover-count?
+  &amp; timestamp?
+}
+</def>
+
+</defun>
+
+<defun title="&lt;stdout-log>" occur="?" type="defun">
+<parents>resin, cluster, host-default, host, web-app-default, web-app</parents>
+
+<p>Configures the destination for <code>System.out</code>.</p>
+
+<p>The <a href="config-log.xtp">log configuration</a> describes
+stderr-log in detail.</p>
+
+<deftable title="&lt;stdout-log> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>archive-format</td>
+  <td>defines a format string for log rollover</td>
+  <td></td>
+</tr>
+<tr>
+  <td>path</td>
+  <td>sets the VFS path for the log file</td>
+  <td></td>
+</tr>
+<tr>
+  <td>path-format</td>
+  <td>sets a pattern for creating the VFS path for the messages</td>
+  <td></td>
+</tr>
+<tr>
+  <td>rollover-count</td>
+  <td>sets the maximum number of rollover files</td>
+  <td></td>
+</tr>
+<tr>
+  <td>rollover-period</td>
+  <td>sets the number of days before a log file rollover </td>
+  <td>1m</td>
+</tr>
+<tr>
+  <td>rollover-size</td>
+  <td>sets the maximum log size before a rollover</td>
+  <td>1g</td>
+</tr>
+<tr>
+  <td>timestamp</td>
+  <td>sets the formatting string for the timestamp label</td>
+  <td></td>
+</tr>
+</deftable>
+
+<def title="&lt;stdout-log> schema">
+element stdout-log {
+  (path | path-format)
+  &amp; archive-format?
+  &amp; rollover-period?
+  &amp; rollover-size?
+  &amp; rollover-count?
+  &amp; timestamp?
+}
+</def>
+
+</defun>
+
+<defun title="&lt;system-property>" occur="*" version="Resin 2.0" type="defun">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>Sets a Java system property.  The effect is the same as if you
+had called <a href="javadoc|java.lang.System|setProperty(String,String)"/> before starting Resin.</p>
+
+<def title="&lt;system-property> schema">
+element system-property {
+  attribute * { string }+
+}
+</def>
+
+<example title="Example: setting system property">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;system-property foo="bar"/&gt;
+&lt;/resin&gt;
+</example>
+</defun>
+
+<defun title="&lt;temp-dir>" occur="?" version="Resin 1.1" type="defun">
+<parents>resin, cluster, host-default, host, web-app-default, web-app</parents>
+<default>Defaults to <var>WEB-INF/tmp</var></default>
+
+<p>&lt;temp-dir> configures the application temp directory.
+This is the path used in
+<var>javax.servlet.context.tempdir</var>.</p>
+
+<def title="&lt;temp-dir> schema">
+element temp-dir {
+  string
+}
+</def>
+
+</defun>
+
+<defun title="&lt;tree-loader>" occur="*" version="Resin 3.0" type="defun">
+  <parents>class-loader</parents>
+  <!-- com.caucho.loader.TreeLoader -->
+
+<p>&lt;tree-loader> configures a jar library, <var>WEB-INF/lib</var>-style class loader similar to
+<a config-tag="library-loader"/>, but will also find <code>.jar</code> and
+<code>.zip</code> files in subdirectories.</p>
+
+<deftable title="&lt;tree-loader> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>path</td>
+  <td>Filesystem path for the class loader.  Since Resin 3.0</td>
+  <td>required</td>
+</tr>
+</deftable>
+
+<def title="&lt;tree-loader> schema">
+element tree-loader {
+  path
+}
+</def>
+
+</defun>
+
+<defun title="&lt;work-dir>" occur="?" version="Resin 2.0.0" type="defun">
+<parents>resin, config, host, web-app</parents>
+<default>Defaults to <var>WEB-INF/work</var></default>
+
+<p>&lt;work-dir> configures a work directory for automatically generated
+code, e.g. for JSP, PHP, and JPA classes.</p>
+
+<def title="&lt;work-dir> schema">
+element work-dir {
+  string
+}
+</def>
+
+</defun>
+
+</body>
+</document>

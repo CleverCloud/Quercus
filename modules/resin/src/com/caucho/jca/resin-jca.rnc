@@ -1,0 +1,199 @@
+default namespace r = "http://caucho.com/ns/j2ee"
+
+namespace local = ""
+
+include "classpath:com/caucho/config/cfg/resin-j2ee.rnc"
+
+start = r_connector
+
+r_activationspec = element activationspec {
+  r_activationspec-class,
+
+  r_required-config-property*
+}
+
+r_activationspec-class = element activationspec-class {
+ r_fully-qualified-class
+}
+
+r_adminobject = element adminobject {
+  r_adminobject-interface,
+
+  r_adminobject-class
+}
+
+r_adminobject-class = element adminobject-class {
+ r_fully-qualified-class
+}
+
+r_adminobject-interface = element adminobject-interface {
+ r_fully-qualified-class
+}
+
+r_authentication-mechanism = element authentication-mechanism {
+  r_description*,
+
+  r_authentication-mechanism-type,
+
+  r_credential-interface
+}
+
+r_authentication-mechanism-type = element authentication-mechanism-type {
+  string
+}
+
+r_config-property = element config-property {
+  r_description*,
+
+  r_config-property-name,
+
+  r_config-property-type,
+
+  r_config-property-value?
+}
+
+r_config-property-name = element config-property-name {
+  string
+}
+
+r_config-property-type = element config-property-type {
+  string
+}
+
+r_config-property-value = element config-property-value {
+  string
+}
+
+r_connection-definition = element connection-definition {
+  element managedconnectionfactory-class { r_fully-qualified-class },
+
+  r_config-property*,
+
+  r_connectionfactory-interface?,
+
+  r_connectionfactory-impl-class?,
+
+  r_connection-interface?,
+
+  r_connection-impl-class?
+}
+
+r_connection-impl-class = element connection-impl-class {
+  r_fully-qualified-class
+}
+
+r_connection-interface = element connection-interface {
+  r_fully-qualified-class
+}
+
+r_connectionfactory-impl-class = element connectionfactory-impl-class {
+  r_fully-qualified-class
+}
+
+r_connectionfactory-interface = element connectionfactory-interface {
+  r_fully-qualified-class
+}
+
+r_connector = element connector {
+  attribute version { "1.5" }?,
+
+  r_description*,
+
+  r_display-name*,
+
+  r_icon*,
+
+  element vendor-name { string }?,
+
+  element eis-type { string }?,
+
+  element resource-adapter-version { string }?,
+
+  r_license?,
+
+  r_resourceadapter,
+
+  r_deployment-extension*
+}
+
+r_credential-interface = element credential-interface {
+  r_fully-qualified-class
+}
+
+r_inbound-resourceadapter = element inbound-resourceadapter {
+  r_messageadapter?
+}
+
+r_license = element license {
+  r_description*,
+
+  r_license-required
+}
+
+r_license-required = element license-required {
+  r_boolean
+}
+
+r_messageadapter = element messageadapter {
+  r_messagelistener+
+}
+
+r_messagelistener = element messagelistener {
+  r_messagelistener-type,
+
+  r_activationspec
+}
+
+r_messagelistener-type = element messagelistener-type {
+  r_fully-qualified-class
+}
+
+r_outbound-resourceadapter = element outbound-resourceadapter {
+  r_connection-definition+,
+
+  r_transaction-support?,
+
+  r_authentication-mechanism*,
+
+  r_reauthentication-support?,
+
+  r_security-permission*
+}
+
+r_reauthentication-support = element reauthentication-support {
+  r_boolean
+}
+
+r_resourceadapter = element resourceadapter {
+  r_resourceadapter-class,
+
+  r_config-property*,
+
+  r_outbound-resourceadapter?,
+
+  r_inbound-resourceadapter?,
+
+  r_adminobject*
+}
+
+r_resourceadapter-class = element resourceadapter-class {
+  r_fully-qualified-class
+}
+
+r_required-config-property = element required-config-property {
+  r_description*,
+
+  r_config-property-name
+}
+
+r_security-permission = element security-permission {
+  r_description*,
+
+  element security-permission-spec { string }
+}
+
+r_transaction-support = element transaction-support {
+  "NoTransaction",
+  "LocalTransaction",
+  "XATransaction"
+}

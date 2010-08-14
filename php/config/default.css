@@ -1,0 +1,267 @@
+/*
+ background: #ccddff;
+ background: #99bbff;
+*/
+
+body {
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: small;
+  background: white;
+  color: black;
+  margin: 0em;
+  margin-right: 1em;
+  margin-bottom: 1em;
+  padding: 0;
+}
+
+a {
+  text-decoration : none;
+}
+
+a:hover {
+  text-decoration : underline;
+}
+
+div.tab-container {
+  padding-left: 12px;
+  margin-bottom: 1px;
+  position: relative;
+}
+
+div.section {
+  padding-left: 2em;
+}
+
+ul.status {
+  border-bottom: 1px solid gray;
+  list-style-type:none;
+  position:relative;
+  padding : 0em;
+  margin : 0em;
+  float:left;
+  border-right: 1px solid gray;
+}
+
+.status li {
+  float:left;
+  display : inline;
+  margin : 0em;
+  padding: 0.4em 0.4em 0.3em 0.4em;
+  overflow:hidden;
+  border-left: 1px solid gray;
+}
+
+li.server {
+  background : #ccddee;
+}
+
+ul.tabs {
+  border-bottom: 1px solid gray;
+  list-style-type:none;
+  position:relative;
+  padding : 0em;
+  padding-bottom : 0.4em;
+}
+
+.tabs li {
+  display : inline;
+  margin : 0em 0.4em 0em 0.4em;
+  padding: 0.4em 0.4em 0.4em 0.4em;
+  overflow:hidden;
+  border-top: 1px solid gray;
+  border-left: 1px solid gray;
+  border-right: 1px solid gray;
+}
+
+.tabs li.selected {
+  background: #ccddff;
+  border-bottom: 1px solid white;
+}
+
+table.threads {
+  color: black;
+  border-collapse: collapse;
+}
+
+h1 {
+  font-family : sans-serif;
+  background-image: url(images/hbleed.gif);
+  padding-top : .3em;
+  padding-bottom : .3em;
+}
+
+hr {
+  border : 0;
+  height : 1px;
+  background-color : #002b80;
+}
+
+div.description {
+  margin: 1em 0;
+  font-style: italic;
+}
+
+pre {
+  background : #ffeecc;
+  color : black;
+  font-family : monospace;
+  font-size : .9em;
+}
+
+.head th {
+  padding: 1em 0em;
+  font-size : 120%;
+  border:0;
+  background : white;
+}
+
+.threads td {
+  padding: 3px;
+  border: thin solid grey;
+}
+
+.threads .head th {
+  background: white;
+  border: 0;
+  padding-top: 1em;
+}
+
+.threads th {
+  padding: 3px;
+  border: thin solid grey;
+  background: #99bbff;
+}
+
+table.data {
+  font-size: 100%;
+  color: black;
+  border-collapse: collapse;
+  background: #f4f4f4;
+  empty-cells: hide;
+}
+
+.data tr.ra {
+  background: #f4f4f4;
+}
+
+.data tr.rb {
+  background: #e4e4e4;
+}
+
+.data td {
+  padding: 3px 4px 3px 4px;
+  border: thin solid grey;
+}
+
+.data th {
+  padding: 3px 4px 3px 4px;
+  background: #99bbff;
+  text-align: center;
+  border: thin solid grey;
+}
+
+/*  background : #d0e4ff; */
+.data td.group {
+  background : #b9cef7;
+  font-weight : bold;
+}
+
+.data td.item {
+  background : #e0e6f8;
+  font-weight : bold;
+}
+
+.data td.itemfail {
+  font-weight : bold;
+  background : #f99;
+}
+
+/**
+  * scrolling table
+  */
+
+tbody.scroll {
+  display : block;
+  overflow : auto;
+  height : 15em;
+  width : 100%;
+}
+
+thead.scroll {
+  display : block;
+  width : 100%;
+}
+
+td.date {
+  width : 11em;
+}
+
+td.level {
+  width : 4em;
+}
+
+td.message {
+  white-space : pre;
+  width : auto;
+}
+
+td.leftnav {
+  background : #b9cef7;
+  color : black;
+  valign : top;
+  padding : 3px;
+}
+
+td.buttons {
+  background: #f9f9f9;
+  padding : 0;
+  border: none;
+  text-align : right;
+}
+
+.nav-cluster {
+  font-weight : bold;
+  font-size : 120%;
+  margin-top : 0.5em;
+}
+
+.nav-this {
+  margin-left : 0.5em;
+  font-size : 110%;
+}
+
+.nav-server {
+  margin-left : 0.5em;
+  font-size : 110%;
+}
+
+.nav-dead {
+  margin-left : 0.5em;
+  font-size : 110%;
+  color : grey;
+}
+
+.fail {
+  background : #f99;
+}
+
+th.fail {
+  background : #f99;
+}
+
+.warmup {
+  background : #fe9;
+}
+
+.warn {
+  background : #fe9;
+}
+
+.warning td {
+  background : #fe9;
+}
+
+.stopped-lazy {
+  background : #bbb;
+  font-style : italic;
+}

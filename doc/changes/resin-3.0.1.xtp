@@ -1,0 +1,379 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.1 Beta Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="Overview">
+
+<p>Resin 3.0.1 is the second beta release of Resin 3.0.x.</p>
+
+<p>Because of the large number of changes, developers should stress
+test their application with Resin 3.0.1 thoroughly before deploying
+it.</p>
+
+
+<p>We are calling the Resin 3.0.x series "beta".  The "production"
+versions will be the Resin 3.1.x series.  The two reasons for calling
+the code "beta" is the large number of changes, and because we are
+expecting to add a great deal of features to following 3.0.x
+releases.  For many users, the stability of 3.0.x will be sufficient
+for deployment, but we wanted to give an extra warning to make sure
+that people stress tested their applications before deploying on 3.0.x.</p>
+
+</s1>
+
+<s1 title="JSP 2.0 and Servlet 2.4 drafts">
+
+<p>Resin 3.0.1 implements the complete JSP 2.0 third draft.  Any
+discrepancies should be reported as bugs.</p>
+
+<p>In particular, Resin 3.0.1 adds support for *.tag and *.tagx files.</p>
+
+<p>Resin 3.0.1 does not yet include the full support for the third
+draft of Servlet 2.4.  In particular, the ERROR dispatch configuration
+for filters and the Request listeners have not yet been implemented.</p>
+
+</s1>
+
+<s1 title="Persistent Session changes">
+
+<p>Resin 3.0.1 includes a large number of persistent session
+changes.  Large parts of that section of Resin has been reimplemented.</p>
+
+<p>Configuration-wise, the changes should be minimal.  The
+&lt;persistent-store&gt; is configured outside the &lt;session-config&gt;, or
+for TCP (cluster) sessions, the &lt;cluster-store&gt; is configured inside
+the &lt;cluster&gt; definition itself. Old-style resin.conf and web.xml are
+still accepted.</p>
+
+<s2 title="Passivation changes (change in session-max)">
+
+<p>Resin 3.0.1 now allows for many more
+sessions on disk than in memory.  session-max continues to specify the
+maximum number of sessions allows in memory, but the number of session
+stored on disk may be much larger.</p>
+
+<p>This change will allow sites to set very large session-timeout values, e.g.
+24 hours or even 1 month, and allow the sessions to be saved
+in the persistent store without overloading the memory.</p>
+
+</s2>
+
+<s2 title="session owning servers (always-load-session)">
+
+<p>jdbc-store now understands the owning server for a session,
+as tcp-store always has.  Now, when a request goes to the owning server
+for the session, the jdbc-store does not need to query the database
+for any updates (backup servers will always need to query the database.</p>
+
+<p>By saving that query, jdbc-store should now be about as efficient for
+a load-balanced configuration as tcp-store, as long as the
+load balancer understands sticky sessions.  (If the load balancer always
+sends requests to random servers, there is a smaller probability that
+the request will reach the owning server.)</p>
+
+</s2>
+
+<s2 title="CRC checking (always-save-session)">
+
+<p>always-save-session now checks the CRC-64 hash of the serialized
+session to see if any changes have occurred.  If the hash is identical,
+Resin will know not to save the serialized value, saving either a
+database trip for jdbc-store or a TCP update for cluster-store.
+The session will still incur the cost of serialization.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Resources">
+
+<p>&lt;resource&gt; now recognizes <code>ResourceAdapter</code> and
+<code>ManagedConnectionFactory</code> resources.  If the configured
+resource implements <code>ResourceAdapter</code> or
+<code>ManagedConnectionFactory</code>, Resin will call them with the
+appropriate lifecycle methods.</p>
+
+<p>The <a href="examples|jca-connection/index.xtp">Resource
+tutorials</a> show how resources can take advantage
+of these callbacks.</p>
+
+<s2 title="CronResource (run-at)">
+
+<p>The new <a href="examples|jca-cron/index.xtp">CronResource</a> now
+replaces the old run-at servlets.  The CronResource accepts an
+application WorkTask which it executes at specific times, configured
+following the Unix cron syntax.</p>
+
+<example title="Cron sample config">
+&lt;resource type="com.caucho.resources.CronResource"&gt;
+  &lt;init&gt;
+    &lt;cron&gt;10 3,18&lt;/cron&gt;
+    &lt;work bean-class="example.WorkTask"&gt;
+      &lt;value&gt;Example&lt;/value&gt;
+      &lt;jndi&gt;java:comp/env/example&lt;/jndi&gt;
+    &lt;/work&gt;
+  &lt;/init&gt;
+&lt;/resource&gt;
+</example>
+
+</s2>
+
+</s1>
+
+<s1 title="XDoclet">
+
+<p>Resin 3.0 now has a limited direct support for EJB/XDoclet generation.
+The internal XDoclet generator is run as part of &lt;make-loader&gt;, the
+make classloader.  Most of the CMP examples have been expanded to
+use XDoclet.</p>
+
+<example title="web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;class-loader&gt;
+    &lt;make-loader path="WEB-INF/classes"&gt;
+      &lt;ejb-doclet srcdir="WEB-INF/classes"/&gt;
+    &lt;/make-loader&gt;
+
+    &lt;compiling-loader path="WEB-INF/classes"/&gt;
+  &lt;/class-loader&gt;
+&lt;/web-app&gt;
+</example>
+
+</s1>
+
+<s1 title="Configuration Changes">
+
+  <s2 title="cluster (srun)">
+
+<p>The clustering configuration (srun) has changed slightly.  The &lt;srun&gt;
+elements must now be in a &lt;cluster&gt; block.</p>
+
+<example title="cluster">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;server&gt;
+    &lt;cluster&gt;
+      &lt;port id='' host='127.0.0.1' port='6802'/&gt;
+    &lt;/cluster&gt;
+
+    ...
+  &lt;/server&gt;
+&lt;/resin&gt;
+</example>
+
+<def title="cluster Relax-NG Schema">
+r_cluster = element cluster {
+  attribute id { string }?
+
+  &amp; (r_cluster-port* | r_cluster-group*)
+
+  &amp; r_cluster-store?)
+}
+
+r_cluster-group = element group {
+  r_cluster-port*
+}
+
+r_cluster-port =
+  element port { r_cluster-port-Contents }
+</def>
+
+  </s2>
+
+  <s2 title="persistent store">
+
+<p>Persistent store is now configured separately from
+the &lt;session-config&gt;.  This will allow the persistent store to
+manage distributed objects for things other than sessions and is also
+needed for the lazy-init to work with cluster store.</p>
+
+<example title="cluster (TCP) store">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+
+&lt;server&gt;
+  &lt;cluster&gt;
+    &lt;port server-id="a" port='6810' index='1'/&gt;
+    &lt;port server-id="b" port='6811' index='2'/&gt;
+
+    &lt;cluster-store name="caucho/store" path="session"/&gt;
+  &lt;/cluster&gt;
+
+  &lt;host id=''&gt;
+    &lt;web-app id='/'&gt;
+      &lt;session-config persistent-store="caucho/store"/&gt;
+    &lt;/web-app&gt;
+  &lt;/host&gt;
+&lt;/server&gt;
+&lt;/resin&gt;
+</example>
+
+<example title="JDBC store">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;persistent-store name="caucho/store" type="jdbc"&gt;
+    &lt;init&gt;
+      &lt;data-source&gt;jdbc/session&lt;/data-source&gt;
+    &lt;/init&gt;
+  &lt;/persistent-store&gt;
+
+  &lt;session-config persistent-store="caucho/store"/&gt;
+&lt;/web-app&gt;
+</example>
+
+<def title="persistent-store Relax-NG Schema">
+r_persistent-store = element persistent-store {
+  r_name,
+
+  (attribute type { string } | element type { string }),
+
+  init?
+}
+
+r_cluster-store = element cluster-store {
+  (attribute name { string } | element name { string })?,
+
+  (attribute path { string } | element path { string }),
+
+  (attribute always-load { string } | element always-load { string })?,
+
+  (attribute always-save { string } | element always-save { string })?
+}
+</def>
+
+  </s2>
+
+  <s2 title="dependency">
+
+<p>Resin 3.0.1 adds experimental support for custom dependency checking.
+With &lt;dependency&gt;, a web.xml can specify that the Application should
+be restarted when a specified file changes,
+just like the web.xml.  For example, a user could specify
+the struts-config.xml.</p>
+
+<example title="dependency">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;dependency path="WEB-INF/struts-config.xml"/&gt;
+
+  ...
+&lt;/web-app&gt;
+</example>
+
+<def title="dependency Relax-NG Schema">
+r_dependency = element dependency {
+  (attribute path { string } | element path { string })
+}
+</def>
+
+  </s2>
+
+  <s2 title="ear-deploy">
+
+<p>Resin 3.0.1 adds preliminary support for EAR files with
+the &lt;ear-deploy&gt; configuration element.  The deployment directory,
+specified by the <var>path</var>, is the location for the .ear file.  That
+directly may safely coexist with the <var>webapps</var> directory, since the
+expanded directory names are unique.</p>
+
+<p>&lt;ear-deploy&gt; may occur in the &lt;host&gt; and
+the &lt;web-app&gt; context.</p>
+
+<def title="ear-deploy Relax-NG Schema">
+r_ear-deploy = element ear-deploy {
+  (attribute url-prefix { string } | element url-prefix { string })?
+
+  &amp; (attribute path { r_path } | element path { r_path })
+
+  &amp; (attribute expand-path { r_path } | element expand-path { r_path })?
+
+  &amp; r_lazy-init?
+}
+</def>
+
+  </s2>
+
+  <s2 title="resource-deploy">
+
+<p>Resin 3.0.1 adds preliminary support for RAR files with
+the &lt;resource-deploy&gt; configuration element.  The deployment directory,
+specified by the <var>path</var>, is the location for the .rar file.  That
+directly may safely coexist with the <var>webapps</var> directory, since the
+expanded directory names are unique.</p>
+
+<p>&lt;resource-deploy&gt; may occur in any environment context, e.g. &lt;server&gt;,
+&lt;host&gt;, or &lt;web-app&gt;.</p>
+
+<p>The resources found by the
+&lt;resource-deploy&gt; are configured and created with the
+&lt;connector&gt; element.</p>
+
+<def title="resource-deploy Relax-NG Schema">
+r_resource-deploy = element resource-deploy {
+  (attribute path { string } | element path { string })
+
+  &amp; (attribute expand-path { string } | element expand-path { string })?
+}
+</def>
+
+  </s2>
+
+  <s2 title="connector">
+
+<p>The new connector element is used to configure .rar resources.
+Old style connectors will have a single &lt;connection-factory&gt; interface.
+New-style connectors (Connector 1.5) can include a separate
+&lt;resource-adapter&gt; configuration.</p>
+
+<example title="web.xml with connector config">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;resource-deploy path="WEB-INF/deploy"/&gt;
+
+  &lt;connector type="example.TestResourceFactory"&gt;
+    &lt;connection-factory name="jca/t1"&gt;
+      &lt;init&gt;&lt;value&gt;a&lt;/value&gt;&lt;/init&gt;
+    &lt;/connection-factory&gt;
+  &lt;/connector&gt;
+&lt;/web-app&gt;
+</example>
+
+<def title="connector Relax-NG Schema">
+r_connector = element connector {
+  r_type
+
+  &amp; r_resource-adapter?
+
+  &amp; r_connection-factory*
+}
+
+r_connection-factory = element connection-factory {
+  r_name,
+
+  r_type?,
+
+  r_init?
+}
+
+r_resource-adapter = element resource-adapter {
+  r_name?,
+
+  r_init?
+}
+</def>
+
+  </s2>
+</s1>
+
+<s1 title="Limitations">
+
+<ol>
+<li>libresin.so will not yet compile for MacOS-X.  Resin will still run without it, but OpenSSL is not available and the JNI enhancements are not available either.
+</li><li>The IIS and Apache plugins are still definitely of experimental quality.
+</li></ol>
+
+</s1>
+
+</body>
+</document>

@@ -1,0 +1,100 @@
+<!--
+  - A sample build.xml that can be saved in WEB-INF/build.xml and run with
+  - ant -f WEB-INF/build.xml
+ -->
+
+<project name="application" default="help" basedir=".">
+  <property file="local.properties"/>
+
+  <!-- assume build.xml is in webapps/APPNAME/WEB-INF for finding resin.home -->
+  <property name="resin.home" location="${basedir}/../../.."/>
+  <property name="resin.root" location="${resin.home}"/>
+
+  <property name="webApp.root"    location="${basedir}/.."/>
+  <property name="webApp.lib"     location="${webApp.root}/WEB-INF/lib"/>
+  <property name="webApp.src"     location="${webApp.root}/WEB-INF/classes"/>
+  <property name="webApp.classes" location="${webApp.root}/WEB-INF/classes"/>
+  <property name="webApp.work"    location="${webApp.root}/WEB-INF/work"/>
+
+  <property name="war"    location="${java.io.tmpdir}/${ant.project.name}.war"/>
+
+  <path id="classpath">
+    <fileset dir="${resin.home}/lib">
+      <include name="*.jar"/>
+    </fileset>
+ 
+    <fileset dir="${webApp.lib}">
+      <include name="*.jar"/>
+    </fileset>
+ 
+    <pathelement location="${java.home}/../lib/tools.jar"/>
+  </path>
+
+  <target name="help">
+    <echo>
+A sample build.xml that can be saved in WEB-INF/build.xml and run with
+ant -f WEB-INF/build.xml all
+
+Most developers using Resin do not use a build script because Resin will
+compile all changed files automatically.  However precompilation of all
+files is sometimes desired before deploying an application in production.
+
+TARGETS:
+
+compile     all compilation
+  classes   compile classes in WEB-INF/classes
+  jsp       pre-compile all jsp files 
+
+war         build a war file in ${war}
+
+clean       delete the .class and compiled jsp files
+
+    </echo>
+  </target>
+
+  <target name="compile" depends="classes, jsp"/>
+
+  <target name="classes">
+    <mkdir dir="${webApp.classes}"/>
+
+    <javac srcdir="${webApp.src}"
+           destdir="${webApp.classes}"
+           classpathref="classpath"
+           fork="true"
+           />
+  </target>
+
+  <target name="jsp">
+
+    <mkdir dir="${webApp.work}"/>
+
+    <java classname="com.caucho.jsp.JspCompiler"
+          classpathref="classpath" fork="true">
+
+      <arg value="-app-dir"/>
+      <arg path="${webApp.root}"/>
+      <arg value="-class-dir"/>
+      <arg path="${webApp.work}"/>
+
+      <arg path="${webApp.root}"/>
+    </java>
+
+  </target>
+
+  <target name="war" depends="compile">
+    <delete file="${war}"/>
+
+    <jar destfile="${war}"
+         basedir="${webApp.root}"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="${webApp.root}/WEB-INF/work"/>
+
+    <delete>
+      <fileset dir="${webApp.classes}" includes="**/*.class"/>
+    </delete>
+  </target>
+
+</project>
+

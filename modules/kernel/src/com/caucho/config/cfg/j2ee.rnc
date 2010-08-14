@@ -1,0 +1,338 @@
+default namespace j2ee = "http://java.sun.com/xml/ns/j2ee"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+j2ee_any = text | (attribute * {string} | element * { j2ee_any })*
+
+j2ee_boolean =
+  "true"
+  | "false"
+  | "yes"
+  | "no"
+
+j2ee_description = element description {
+  attribute xml:lang { string }?,
+
+  string
+}
+
+j2ee_description-Group =
+  j2ee_description*,
+
+  j2ee_display-name?,
+
+  j2ee_icon?
+
+j2ee_dewey-version = string
+
+j2ee_display-name = element display-name {
+  attribute xml:lang { string }?,
+
+  string
+}
+
+j2ee_ejb-link = element ejb-link {
+  string
+}
+
+j2ee_ejb-local-ref = element ejb-local-ref {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_ejb-ref-name,
+
+  j2ee_ejb-ref-type,
+
+  j2ee_local-home,
+
+  j2ee_local,
+
+  j2ee_ejb-link?
+}
+
+j2ee_ejb-ref = element ejb-ref {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_ejb-ref-name,
+
+  j2ee_ejb-ref-type,
+
+  j2ee_home,
+
+  j2ee_remote,
+
+  j2ee_ejb-link?
+}
+
+j2ee_ejb-ref-name = element ejb-ref-name {
+  j2ee_jndi-name
+}
+
+j2ee_ejb-ref-type = element ejb-ref-type {
+  "Entity" | "Session"
+}
+
+j2ee_env-entry = element env-entry {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_env-entry-name,
+
+  j2ee_env-entry-type,
+
+  j2ee_env-entry-value?
+}
+
+j2ee_env-entry-name = element env-entry-name {
+  j2ee_jndi-name
+}
+
+j2ee_env-entry-type = element env-entry-type {
+  "java.lang.Boolean"
+  | "java.lang.Byte"
+  | "java.lang.Character"
+  | "java.lang.String"
+  | "java.lang.Short"
+  | "java.lang.Integer"
+  | "java.lang.Long"
+  | "java.lang.Float"
+  | "java.lang.Double"
+}
+
+j2ee_env-entry-value = element env-entry-value {
+  string
+}
+
+j2ee_fully-qualified-class = string
+
+j2ee_home = element home {
+  j2ee_fully-qualified-class
+}
+
+j2ee_icon = element icon {
+  attribute id { string }?,
+
+  attribute xml:lang { string }?,
+
+  element small-icon { j2ee_path }?,
+
+  element large-icon { j2ee_path }?
+}
+
+j2ee_init-param = element init-param {
+  j2ee_param-value-Type
+}
+
+j2ee_java-identifier = string
+
+j2ee_jndi-environment-refs-Group =
+  j2ee_env-entry*,
+
+  j2ee_ejb-ref*,
+
+  j2ee_ejb-local-ref*,
+
+  j2ee_service-ref-Group,
+
+  j2ee_resource-ref*,
+
+  j2ee_resource-env-ref*,
+
+  j2ee_message-destination-ref*
+
+j2ee_jndi-name = string
+
+j2ee_local = element local {
+  j2ee_fully-qualified-class
+}
+
+j2ee_local-home = element local-home {
+  j2ee_fully-qualified-class
+}
+
+j2ee_message-destination = element message-destination {
+  attribute id { string }?,
+
+  j2ee_description-Group,
+
+  j2ee_message-destination-name
+}
+
+j2ee_message-destination-link = element message-destination-link {
+  j2ee_fully-qualified-class
+}
+
+j2ee_message-destination-name = element message-destination-name {
+  string
+}
+
+j2ee_message-destination-ref = element message-destination-ref {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_message-destination-ref-name,
+
+  j2ee_message-destination-type,
+
+  j2ee_message-destination-usage,
+
+  j2ee_message-destination-link?
+}
+
+j2ee_message-destination-ref-name = element message-destination-ref-name {
+  j2ee_jndi-name
+}
+
+j2ee_message-destination-type = element message-destination-type {
+  j2ee_fully-qualified-class
+}
+
+j2ee_message-destination-usage = element message-destination-usage {
+  "Consumes"
+  | "Produces"
+  | "ConsumesProduces"
+}
+
+j2ee_module-name = element module-name {
+  string
+}
+
+j2ee_param-name = element param-name {
+  j2ee_string
+}
+
+j2ee_param-value = element param-value {
+  string
+}
+
+j2ee_param-value-Type =
+  j2ee_description*
+
+  & j2ee_param-name
+
+  & j2ee_param-value
+
+j2ee_path = string
+
+j2ee_remote = element remote {
+  j2ee_fully-qualified-class
+}
+
+j2ee_res-auth = element res-auth {
+  "Application" | "Container"
+}
+
+j2ee_res-sharing-scope = element res-sharing-scope {
+  "Shareable" | "Unshareable"
+}
+
+j2ee_res-type = element res-type {
+  j2ee_fully-qualified-class
+}
+
+j2ee_resource-env-ref = element resource-env-ref {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_resource-env-ref-name,
+
+  j2ee_resource-env-ref-type
+}
+
+j2ee_resource-env-ref-name = element resource-env-ref-name {
+  j2ee_jndi-name
+}
+
+j2ee_resource-env-ref-type = element resource-env-ref-type {
+  j2ee_fully-qualified-class
+}
+
+j2ee_resource-ref = element resource-ref {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_res-ref-name,
+
+  j2ee_res-type,
+
+  j2ee_res-auth,
+
+  j2ee_res-sharing-scope?
+}
+
+j2ee_res-ref-name = element res-ref-name {
+  j2ee_jndi-name
+}
+
+j2ee_role-name = element role-name {
+  string
+}
+
+j2ee_role-link = element role-link {
+  string
+}
+
+j2ee_run-as = element run-as {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_role-name
+}
+
+j2ee_security-role = element security-role {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_role-name,
+
+  j2ee_role-link?
+}
+
+j2ee_security-role-ref = element security-role-ref {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_role-name,
+
+  j2ee_role-link?
+}
+
+j2ee_service-ref = element service-ref {
+  javaee_description-Group,
+
+  element service-ref-name { string },
+
+  element service-interface { j2ee_fully-qualified-class },
+
+  element wsdl-file { string }?,
+
+  element jaxrpc-mapping-file { string }?,
+
+  element service-qname { string }?,
+
+  j2ee_port-component-ref
+}
+
+j2ee_port-component-ref = element port-component-ref {
+  element service-endpoint-interface { j2ee_fully-qualified-class }
+}
+
+j2ee_service-ref-Group =
+  j2ee_service-ref*
+
+j2ee_string = string
+
+j2ee_true-false = "true" | "false"
+
+j2ee_war-path = string

@@ -1,0 +1,14 @@
+com.caucho.admin
+com.caucho.config
+com.caucho.distcache
+com.caucho.ejb
+com.caucho.inject
+com.caucho.jms
+com.caucho.log
+com.caucho.protocols
+com.caucho.remote
+com.caucho.resources
+com.caucho.rewrite
+com.caucho.security
+com.caucho.server.admin
+com.caucho.server.repository

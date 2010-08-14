@@ -1,0 +1,914 @@
+default namespace resin = "http://caucho.com/ns/resin"
+
+namespace rcore = "http://caucho.com/ns/resin/core"
+namespace r = "urn:java:com.caucho.resin"
+
+namespace local = ""
+namespace l = ""
+
+include "../webapp/resin-web-xml-content.rnc"
+include "../e_app/resin-ear-content.rnc"
+include "resin-compat.rnc"
+
+l_resin = element l:caucho.com {
+  r_any-Group
+}
+
+r_proxy-cache = element (proxy-cache|cache) {
+  r_path?
+
+  & (attribute disk-size { r_int } | element disk-size { r_int })?
+
+  & r_enable?
+
+  & (attribute enable-range { r_boolean-Type }
+     | element enable-range { r_boolean-Type })?
+
+  & (attribute entries { r_int } | element entries { r_int })?
+
+  & (attribute max-entry-size { r_int }
+     | element max-entry-size { r_int })?
+
+  & (attribute memory-size { r_int } | element memory-size { r_int })?
+
+  & (attribute rewrite-vary-as-private { r_boolean-Type }
+     | element rewrite-vary-as-private { r_boolean-Type })?
+}
+
+r_cluster = element cluster {
+  attribute id { string },
+
+  r_root-directory?,
+
+  r_cluster-Content
+}
+
+r_cluster-default = element cluster-default {
+  r_cluster-Content
+}
+
+## <cluster> contents
+r_cluster-Content =
+  r_env-Basis
+
+  & r_access-log?
+
+  & (attribute connection-error-page { string }
+     | element connection-error-page { string })?
+
+  & (attribute development-mode-error-page { r_boolean-Type }
+     | element development-mode-error-page { r_boolean-Type })?
+
+  & (attribute dynamic-server-enable { r_boolean-Type }
+     | element dynamic-server-enable { r_boolean-Type })?
+
+  & r_ear-default*
+
+  & r_error-page*
+
+  & r_host*
+
+  & r_host-default*
+
+  & r_host-deploy*
+
+  & r_ignore-client-disconnect?
+
+  & (attribute invocation-cache-size { r_int-Type }
+     | element invocation-cache-size { r_int-Type })?
+
+  & (attribute invocation-cache-max-url-length { r_int-Type }
+     | element invocation-cache-max-url-length { r_int-Type })?
+
+  & (attribute max-uri-length { r_int-Type }
+     | element max-uri-length { r_int-Type })?
+
+  & r_persistent-store?
+
+  & r_ping*
+
+  & r_proxy-cache?
+
+  & r_redeploy-mode?
+
+  & r_rewrite-dispatch?
+
+  & r_root-directory?
+
+  & r_server*
+
+  & r_server-default*
+
+  & (attribute server-header { string }
+     | element server-header { string })?
+
+  & r_session-cookie?
+
+  & r_session-sticky-disable?
+
+  & r_session-url-prefix?
+
+  & r_ssl-session-cookie?
+
+  & r_pod*
+  
+  & r_url-character-encoding?
+
+  & r_url-length-max?
+
+  & r_web-app-default*
+
+  & element rcore:if|r:if { rcore_if-Args, r_cluster-Content }*
+
+  & rcore_import*
+
+  & element rcore:choose|r:choose {
+      element rcore:when|r:when { rcore_when-Args, r_cluster-Content }+,
+      element rcore:otherwise|r:otherwise { r_cluster-Content }?
+    }*
+
+r_cluster-port = element cluster-port {
+  r_port-Content
+}
+
+r_deploy-service = element deploy-service {
+  r_enable?
+}
+
+r_disable =
+  attribute disable { r_boolean-Type }
+  | element disable { r_boolean-Type }
+
+r_enable =
+  attribute enable { r_boolean-Type }
+  | element enable { r_boolean-Type }
+
+r_group-name =
+  attribute group-name { string }
+  | element group-name { string }
+
+r_host = element host {
+  (attribute id { string }
+   | attribute regexp { string }
+   | element regexp { string })?
+
+  & (attribute host-alias { string }
+     | element host-alias { string })*
+
+  & (attribute host-alias-regexp { string }
+     | element host-alias-regexp { string })*
+
+  & (attribute host-name { string } | element host-name { string })?
+
+  & r_root-directory?
+
+  & (attribute secure-host-name { string }
+    | element secure-host-name { string })?
+
+  & r_host-Group
+}
+
+r_host-Content =
+  r_env-Content
+
+  & r_access-log?
+
+  & r_application*
+
+  & r_document-directory?
+
+  & r_ear-default*
+
+  & r_ear-deploy*
+
+  & r_error-page*
+
+  & r_lazy-init?
+
+  & r_redeploy-check-interval?
+
+  & r_redeploy-mode?
+
+  & r_rewrite-dispatch?
+
+  & r_startup-mode?
+
+  & r_web-app-deploy*
+
+  & r_web-app-default*
+
+  & rc_web-app*
+
+## <host> flow control
+r_host-Flow =
+  r_host-Content
+
+  & element rcore:if|r:if { rcore_if-Args, r_host-Flow }*
+
+  & rcore_import*
+
+  & element rcore:choose|r:choose {
+      element rcore:when|r:when { rcore_when-Args, r_host-Flow }+,
+      element rcore:otherwise|r:otherwise { r_host-Flow }?
+    }*
+
+## The complete host contents
+r_host-Group = r_host-Flow
+
+r_host-default = element host-default {
+  r_host-Group
+}
+
+r_host-deploy = element host-deploy {
+  r_path
+
+  & (attribute archive-directory { r_path-Type }
+     | element archive-directory { r_path-Type })?
+
+  & r_expand-cleanup-fileset?
+
+  & (attribute expand-directory { r_path-Type }
+     | element expand-directory { r_path-Type })?
+
+  & (attribute host-name { string }
+     | element host-name { string })?
+
+  & (attribute lazy-init { r_boolean-Type }
+     | element lazy-init { r_boolean-Type })?
+
+  & r_host-default?
+}
+
+r_http = element http {
+  (attribute id { string }
+   | attribute server-id { string }
+   | element server-id { string })?
+
+  & r_port-Content
+
+  & (attribute virtual-host { string }
+     | element virtual-host { string })?
+}
+
+r_ignore-client-disconnect =
+  attribute ignore-client-disconnect { string }
+  | element ignore-client-disconnect { string }
+
+r_jmx-service = element jmx-service {
+  r_enable?
+
+  & (attribute password { string }
+     | element password { string })?
+}
+
+r_jsse-ssl = element jsse-ssl {
+  (attribute alias { string }
+   | element alias { r_string-Group })?
+
+  & (attribute cipher-suites { string }
+     | element cipher-suites { r_string-Group })?
+
+  & (attribute key-store-file { string }
+     | element key-store-file { r_string-Group })?
+
+  & (attribute key-store-type { string }
+     | element key-store-type { r_string-Group })?
+
+  & (attribute key-manager-factory { string }
+     | element key-manager-factory { r_string-Group })?
+
+  & (attribute password { string }
+     | element password { r_string-Group })?
+
+  & (attribute protocol { string }
+     | element protocol { r_string-Group })?
+
+  & (attribute self-signed-certificate-name { string }
+     | element self-signed-certificate-name { r_string-Group })?
+
+  & (attribute ssl-context { string }
+     | element ssl-context { r_string-Group })?
+
+  & (attribute verify-client { string }
+     | element verify-client { r_string-Group })?
+}
+
+r_keepalive-connection-time-max =
+  attribute keepalive-connection-time-max { r_period-Type }
+  | element keepalive-connection-time-max { r_period-Type }
+
+r_keepalive-select-thread-timeout =
+  attribute keepalive-select-thread-timeout { r_period-Type }
+  | element keepalive-select-thread-timeout { r_period-Type }
+
+r_keepalive-select-enable =
+  attribute keepalive-select-enable { r_boolean-Type }
+  | element keepalive-select-enable { r_boolean-Type }
+
+r_keepalive-select-max =
+  attribute keepalive-select-max { r_int-Type }
+  | element keepalive-select-max { r_int-Type }
+
+r_listen =
+  element listen {
+    r_port-Content
+
+    & r_bean-Content*
+  }
+
+r_log-service = element log-service {
+  r_enable?
+
+  & (attribute level { string }
+     | element level { string })?
+     
+  & r_path?
+}
+
+r_management = element management {
+  r_management-Content
+}
+
+r_management-Content =
+  r_path?
+
+  & r_deploy-service?
+
+  & r_jmx-service?
+
+  & r_log-service?
+
+  & r_secure?
+
+  & r_stat-service?
+
+  & r_user-Management*
+
+  & r_xa-log-service?
+
+  & rcore_import*
+
+  & element rcore:if|r:if { rcore_if-Args, r_management-Content }*
+
+  & element rcore:choose|r:choose {
+      element rcore:when|r:when { rcore_when-Args, r_management-Content }+,
+      element rcore:otherwise|r:otherwise { r_management-Content }?
+    }*
+
+r_memory-free-min =
+  attribute memory-free-min { string }
+  | element memory-free-min { string }
+
+r_openssl = element openssl {
+  (attribute ca-certificate-file { string }
+     | element ca-certificate-file { r_string-Group })?
+
+  & (attribute ca-certificate-path { string }
+     | element ca-certificate-path { r_string-Group })?
+
+  & (attribute ca-revocation-file { string }
+     | element ca-revocation-file { r_string-Group })?
+
+  & (attribute ca-revocation-path { string }
+     | element ca-revocation-path { r_string-Group })?
+
+  & (attribute certificate-file { string }
+   | element certificate-file { r_string-Group })
+
+  & (attribute certificate-chain-file { string }
+     | element certificate-chain-file { r_string-Group })?
+
+  & (attribute certificate-key-file { string }
+     | element certificate-key-file { r_string-Group })?
+
+  & (attribute cipher-suite { string }
+     | element cipher-suite { r_string-Group })?
+
+  & (attribute crypto-device { string }
+     | element crypto-device { r_string-Group })?
+
+  & (attribute password { string }
+     | element password { r_string-Group })
+
+  & (attribute protocol { string }
+     | element protocol { r_string-Group })?
+
+  & (attribute session-cache { r_boolean-Type }
+     | element session-cache { r_boolean-Type })?
+
+  & (attribute session-cache-timeout { r_period }
+     | element session-cache-timeout { r_period } )?
+
+  & (attribute unclean-shutdown { r_boolean-Type }
+     | element unclean-shutdown { r_boolean-Type } )?
+  & r_verify-client?
+
+  & (attribute verify-depth { r_int }
+     | element verify-depth { r_int })?
+}
+
+r_password =
+  attribute password { string}
+  | element password { string}
+
+r_persistent-log = element persistent-log {
+
+  (attribute level { string }
+   | element level { string })?
+     
+  & r_path?
+}
+
+r_persistent-store = element persistent-store {
+  r_jndi-name?
+
+  & (attribute type { string } | element type { string })
+
+  & r_init?
+
+  & (attribute max-idle-time { r_period }
+     | element max-idle-time { r_period })?
+}
+
+## backwards compatiblity
+r_ping = element ping {
+  r_any-Group*
+}
+
+r_port = element port {
+  (attribute id { string }
+   | attribute server-id { string }
+   | element server-id { string })?
+
+  & r_port-Content
+
+  & (attribute index { string } | element index { string })?
+
+  & (attribute group { string } | element group { string })?
+
+  & (attribute backup { string } | element backup { string })?
+
+  & r_protocol
+}
+
+r_port-default = element port-default {
+  r_port-Parameters
+} 
+
+r_port-Content =
+  ((attribute address { string }
+    | element address { string }
+    | attribute host { string }
+    | element host { string })?
+
+    & (attribute port { string } | element port { string })
+
+    & r_port-Parameters
+
+    & (r_openssl | r_jsse-ssl)?
+  )
+    
+r_port-Parameters =
+   (attribute accept-listen-backlog { r_int-Type }
+    | element accept-listen-backlog { r_int-Type })?
+
+   & (attribute accept-thread-min { r_int-Type }
+      | element accept-thread-min { r_int-Type })?
+
+   & (attribute accept-thread-max { r_int-Type }
+      | element accept-thread-max { r_int-Type })?
+
+   & (attribute connection-max { r_int-Type }
+      | element connection-max { r_int-Type })?
+
+   & (attribute keepalive-connection-time-max { r_period-Type }
+      | element keepalive-connection-time-max { r_period-Type })?
+
+   & (attribute keepalive-max { r_int-Type }
+      | element keepalive-max { r_int-Type })?
+
+   & r_keepalive-select-enable?
+
+   & r_keepalive-select-thread-timeout?
+
+   & (attribute keepalive-timeout { r_period-Type }
+      | element keepalive-timeout { r_period-Type })?
+
+   & (attribute secure { r_boolean-Type }
+      | element secure { r_boolean-Type })?
+
+   & (attribute socket-timeout { r_period-Type }
+      | element socket-timeout { r_period-Type })?
+
+   & (attribute suspend-time-max { r_period-Type }
+      | element suspend-time-max { r_period-Type })?
+
+   & (attribute tcp-no-delay { string }
+      | element tcp-no-delay { string })?
+
+   & (attribute throttle-concurrent-max { r_int-Type }
+      | element throttle-concurrent-max { r_int-Type })?
+
+r_protocol =
+  element protocol {
+    r_port-Content
+
+    & (r_class | r_type)?
+
+    & r_init?
+
+    & r_bean-Content*
+  }
+
+r_module-repository = element module-repository {
+  r_bean-Custom*
+  
+  & element jars {
+    (attribute path { string }
+     | element path { string })
+  }*
+  
+  & element resolver {
+      (attribute uri { string }
+       | element uri { string })
+     
+      & (attribute artifact-pattern { string }
+         | element artifact-pattern { string })*
+    }*
+}
+
+r_pod = element pod {
+  attribute id { string }?
+
+  & r_server+
+}
+
+r_resin = element resin {
+  r_resin-Content
+}
+
+## <resin> contents
+r_resin-Content = 
+  r_env-Basis
+
+  & r_cluster*
+
+  & r_cluster-default*
+
+  & (attribute environment-system-properties { r_boolean-Type }
+     | element environment-system-properties { r_boolean-Type })?
+
+  & r_management?
+
+  & r_module-repository?
+
+  & r_resin-data-directory?
+  
+  & r_resin-system-auth-key?
+
+  & r_root-directory?
+
+  & r_security-manager?
+
+  & (attribute security-provider { string }
+     | element security-provider { string })*
+
+  & element system {
+      r_env-Content
+    }*
+
+  & r_watchdog-manager?
+
+  & element rcore:if|r:if { rcore_if-Args, r_resin-Content }*
+
+  & rcore_import*
+
+  & element rcore:choose|r:choose {
+      element rcore:when|r:when { rcore_when-Args, r_resin-Content }+,
+      element rcore:otherwise|r:otherwise { r_resin-Content }?
+    }*
+
+r_resin-data-directory =
+  attribute resin-data-directory { r_path-Type }
+  | element resin-data-directory { r_path-Type }
+
+r_resin-system-auth-key =
+  attribute resin-system-auth-key { string }
+  | element resin-system-auth-key { string }
+  
+r_security-manager = 
+  attribute security-manager { string }
+  | element security-manager {
+      string |
+
+      (attribute policy-file { string }
+       | element policy-file { string })
+    }
+
+r_server = element server {
+  attribute id { string }
+
+  & (attribute address { string }
+     | element address { string })?
+
+  & (attribute port { string }
+     | element port { string })?
+
+  & r_server-Content
+}
+
+r_server-default = element server-default {
+  r_server-Content
+}
+
+r_server-Content =
+  (attribute backup { r_boolean-Type }
+   | element backup { r_boolean-Type })?
+
+  & r_bean-Custom*
+
+  & (attribute bind-ports-after-start { r_boolean-Type }
+     | element bind-ports-after-start { r_boolean-Type })?
+
+  & r_cluster-port*
+
+  & (attribute connection-max { r_int-Type }
+     | element connection-max { r_int-Type })?
+
+  & r_group-name?
+
+  & r_http*
+
+  & (attribute jvm-arg { string }
+     | element jvm-arg { string })*
+
+  & (attribute jvm-arg-line { string }
+     | element jvm-arg-line { string })*
+
+  & (attribute jvm-classpath { string }
+     | element jvm-classpath { string })*
+
+  & (attribute java-exe { string }
+     | element java-exe { string })?
+
+  & r_keepalive-connection-time-max?
+
+  & r_keepalive-max?
+
+  & r_keepalive-select-enable?
+
+  & r_keepalive-select-max?
+
+  & r_keepalive-select-thread-timeout?
+
+  & r_keepalive-timeout?
+  
+  & r_listen*
+
+  & (attribute load-balance-connect-timeout { r_period-Type }
+     | element load-balance-connect-timeout { r_period-Type })?
+
+  & (attribute load-balance-connection-min { r_period-Type }
+     | element load-balance-connection-min { r_period-Type })?
+
+  & (attribute load-balance-idle-time { r_period-Type }
+     | element load-balance-idle-time { r_period-Type })?
+
+  & (attribute load-balance-recover-time { r_period-Type }
+     | element load-balance-recover-time { r_period-Type })?
+
+  & (attribute load-balance-socket-timeout { r_period-Type }
+     | element load-balance-socket-timeout { r_period-Type })?
+
+  & (attribute load-balance-warmup-time { r_period-Type }
+     | element load-balance-warmup-time { r_period-Type })?
+
+  & (attribute load-balance-weight { r_int-Type }
+     | element load-balance-weight { r_int-Type })?
+
+  & r_memory-free-min?
+
+  & r_ping*
+
+  & (attribute ping-url { string }
+     | element ping-url { string })*
+
+  & r_port-default*
+
+  & r_protocol*
+
+  & (attribute shutdown-wait-max { r_period-Type }
+     | element shutdown-wait-max { r_period-Type })?
+
+  & (attribute socket-timeout { r_period-Type }
+     | element socket-timeout { r_period-Type })?
+
+  & (attribute stage { string }
+     | element stage { string })?
+
+  & (attribute system-class-loader { r_class-Type }
+     | element system-class-loader { r_class-Type })?
+
+  & r_thread-max?
+
+  & r_thread-executor-task-max?
+
+  & r_thread-idle-max?
+
+  & r_thread-idle-min?
+
+  & r_user-name?
+
+  & (attribute watchdog-address { string }
+     | element watchdog-address { string })?
+
+  & (attribute watchdog-arg { string }
+     | element watchdog-arg { string })*
+
+  & (attribute watchdog-jvm-arg { string }
+     | element watchdog-jvm-arg { string })*
+
+  & r_watchdog-log?
+
+  & (attribute watchdog-password { string }
+     | element watchdog-password { string })?
+
+  & (attribute watchdog-port { r_int-Type }
+     | element watchdog-port { r_int-Type })?
+
+  & element rcore:if|r:if { rcore_if-Args, r_server-Content }*
+
+  & rcore_import*
+
+  & element rcore:choose|r:choose {
+      element rcore:when|r:when { rcore_when-Args, r_server-Content }+,
+      element rcore:otherwise|r:otherwise { r_server-Content }?
+    }*
+
+r_session-cookie = 
+  attribute session-cookie { string }
+  | element session-cookie { string }
+
+r_session-sticky-disable = 
+  attribute session-sticky-disable { string }
+  | element session-sticky-disable { string }
+
+r_session-url-prefix =
+  attribute alternate-session-url-prefix { string }
+  | element alternate-session-url-prefix { string }
+  | attribute session-url-prefix { string }
+  | element session-url-prefix { string }
+
+r_ssl-session-cookie = 
+  attribute ssl-session-cookie { string }
+  | element ssl-session-cookie { string }
+
+r_stat-item = element stat-item {
+  (attribute attr { string }
+   | element attr { string })
+     
+  & (attribute name { string }
+     | element name { string })
+   
+  & (attribute description { string }
+     | element description { string })?
+}
+
+r_stat-service = element stat-service {
+  (attribute unix-load-avg-exit-threshold { r_double-Type }
+   | element unix-load-avg-exit-threshold { r_double-Type })?
+
+  & (attribute cpu-load-log-info-threshold { r_double-Type }
+     | element cpu-load-log-info-threshold { r_double-Type })?
+
+  & (attribute cpu-load-log-warning-threshold { r_double-Type }
+     | element cpu-load-log-warning-threshold { r_double-Type })?
+
+  & (attribute cpu-load-thread-dump-threshold { r_double-Type }
+     | element cpu-load-thread-dump-threshold { r_double-Type })?
+
+  & (attribute sample-period { r_period-Type }
+     | element sample-period { r_period-Type }) ?
+
+  & (attribute thread-dump-interval { r_period-Type }
+     | element thread-dump-interval { r_period-Type })?
+
+  & r_stat-item*
+}
+
+r_thread-max =
+  attribute thread-max { string }
+  | element thread-max { string }
+
+r_thread-executor-task-max =
+  attribute thread-executor-task-max { string }
+  | element thread-executor-task-max { string }
+
+r_thread-idle-max =
+  attribute thread-idle-max { string }
+  | element thread-idle-max { string }
+
+r_thread-idle-min =
+  attribute thread-idle-min { string }
+  | element thread-idle-min { string }
+
+r_transaction-log = element transaction-log {
+  r_enable?
+
+  & r_path?
+}
+
+r_transaction-manager = element transaction-manager {
+  r_transaction-log?
+}
+
+r_url-character-encoding =
+  attribute url-character-encoding { string }
+  | element url-character-encoding { string }
+
+r_url-length-max =
+  attribute url-length-max { r_int-Type }
+  | element url-length-max { r_int-Type }
+
+r_user-Management = element user {
+  r_name
+
+  & r_password
+
+  & r_disable?
+}
+
+r_user-name =
+  attribute user-name { string }
+  | element user-name { string }
+
+r_watchdog-log = element watchdog-log {
+  (attribute log-directory { string }
+   | element log-directory { string })?
+
+  & r_rollover-count?
+
+  & r_rollover-period?
+
+  & r_rollover-size?
+}
+
+r_watchdog-manager = element watchdog-manager {
+  (attribute watchdog-address { string }
+   | element watchdog-address { string })?
+
+  & (attribute watchdog-port { string }
+     | element watchdog-port { string })?
+
+  & (attribute watchdog-jvm-arg { string }
+     | element watchdog-jvm-arg { string })*
+
+  & element watchdog {
+      r_watchdog-Content
+    }*
+
+  & element watchdog-default {
+      r_watchdog-Content
+    }*
+}
+
+r_watchdog-Content =
+  (attribute id { string }
+
+   & (attribute chroot { string }
+      | element chroot { string })?
+
+   & r_group-name?
+
+   & (attribute java-exe { string }
+      | element java-exe { string })?
+
+   & (attribute java-home { string }
+      | element java-home { string })?
+
+   & (attribute jvm-arg { string }
+      | element jvm-arg { string })*
+
+   & (attribute resin-conf { string }
+      | element resin-conf { string })?
+
+   & (attribute resin-root { string }
+      | element resin-root { string })?
+
+   & element open-port {
+        (attribute address { string }
+         | element address { string })?
+
+        & (attribute port { string }
+           | element port { string })
+     }*
+
+   & r_user-name?
+  )
+
+r_xa-log-service = element xa-log-service {
+  r_enable?
+
+  & r_path?
+}
+

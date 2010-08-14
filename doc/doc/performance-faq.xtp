@@ -1,0 +1,119 @@
+<document>
+<header>
+<product>resin</product>
+<title>Performance FAQ</title>
+<description>
+</description>
+</header>
+
+<body>
+<localtoc/>
+
+<s1 title="How many concurrent users can a Resin server handle?" type="faq">
+
+<p>
+This is not a question that can be answered in a general way.  It
+is very dependent on the particular application that Resin is used
+for.  Factors such as database usage, how the session object is
+used, the use of server side caching, and application
+architecture in general have a significant effect on the
+capabilities of a website.
+</p>
+
+<p>
+The best (and only practical) way to answer this question is to
+perform some benchmarking tests for your particular application on
+a server similar to the one that will host the website.
+The freely available httperf tool, as well as various others, are
+useful for this purpose.
+</p>
+
+<p>
+When using testing tools, 500 "concurrent threads" does not mean
+the same thing as "500 concurrent users".  A typical user is not
+constantly making requests to the server.  Typical usage involves
+a request for a page (with possible subsequent requests for
+images), and then a period of inactivity as the user reads or
+watches the content that has been downloaded.
+</p>
+
+<p>
+The ratio of number of users to number of threads again depends
+on the application involved.  For example, it may be that the
+ratio for an application is 50:1, meaning that 2500 users will
+use at maximum 250 threads on the server.
+</p>
+
+<p>
+Ideally, application benchmarks use "user scenario" scripts.  The
+script imitates what a typical user wil do, including pauses
+between requests.  This kind of script is useful for providing an
+accurate picture of web server usage.
+</p>
+
+<p>
+The primary configuration item in Resin for handling a greater
+load is <a config-tag="thread-max"/>.  The default in <code>resin.xml</code>
+can be adjusted upwards to handle increased load, the limit is determined by
+the underlying operating system.
+</p>
+
+<p>
+If anticipated load overruns a Resin server, either with CPU
+usage or with encountering OS thread limitations, clustering can
+be used to add another server to share the load.
+</p>
+</s1>
+
+<s1 title="Does Resin use NIO for improved performance?" type="faq">
+
+<p>
+Resin does not use NIO - it uses JNI to handle low-level I/O calls with native
+code.  The performance using this method was found to be much better than nio.
+</p>
+
+</s1>
+
+<s1 title="How does Resin use JNI?" type="faq">
+
+<p>
+The JNI code is compiled on the various
+Unix systems when the <code>./configure; make; make install</code>
+step is performed during installation.  Windows has precompiled dlls.
+</p>
+
+<p>
+Resin uses JNI in certain critical performance areas, such as low level socket
+connections and file operations.  JNI is also used to interface with the
+OpenSSL libraries.
+</p>
+
+<p>
+A significant benefit in particular is in Resin's ability to handle
+keepalive's.  With JNI, Resin does not need a thread for each keepalive
+connection.  The low-level <code>poll()</code> (or <code>select()</code> if
+poll() is not available) functions are used.  The end result is the possibility of many more keepalive's than if a thread was needed for each keepalive.
+</p>
+
+<p>
+The fallback if JNI is not available is to use the JDK equivalents of the
+faster JNI calls.  Also, OpenSSL is only available through JNI.
+</p>
+
+<p>
+Resin indicates that JNI is being used with a log message at startup:
+</p>
+
+<example>Loaded Socket JNI library.</example>
+
+<p>
+If JNI is not available, the log message is:
+</p>
+
+
+<example>Socket JNI library is not available.</example>
+</s1>
+
+
+</body>
+</document>

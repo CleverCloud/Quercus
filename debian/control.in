@@ -1,0 +1,9 @@
+Package: resin
+Version: @VERSION@
+Section: web
+Priority: optional
+Architecture: @ARCHITECTURE@
+Maintainer: Scott Ferguson <ferg@caucho.com>
+Provides: resin
+Description: Resin application server
+Depends: java6-sdk

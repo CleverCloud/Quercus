@@ -1,0 +1,91 @@
+<!--
+   - Resin Javadoc app for Resin version @VERSION@
+   -
+   - To configure for your local installation:
+   -
+   - 1) Configure a database to use.  An example configuration
+   -    for MySQL is below, the main Resin documentation
+   -    is a reference for configuring others.
+   -
+   - 2) (optional) Add local api's to the list of api's to index and provide
+   -    search functionality.  Look below for example <api> elements.
+   -->
+<web-app xmlns="http://caucho.com/ns/resin"
+         xmlns:resin="http://caucho.com/ns/resin/core">
+
+  <class-loader>
+    <compiling-loader path="WEB-INF/classes" source="WEB-INF/src"/>
+  </class-loader>
+
+  <database jndi-name="jdbc/resin-javadoc">
+    <driver type="com.caucho.db.jdbc.ConnectionPoolDataSourceImpl">
+      <path>WEB-INF/db</path>
+      <remove-on-error/>
+    </driver>
+  </database>
+
+  <resource jndi-name="resin-javadoc/store" type="com.caucho.doc.javadoc.Store">
+    <init>
+      <data-source>jdbc/resin-javadoc</data-source>
+
+      <api id="resin">
+        <name>Resin @VERSION@</name>
+        <location>resin</location>
+        <index>index-files/index-#.html</index>
+      </api>
+
+      <!--
+         - configuration for the local deployment can be made here,
+         - or in the optional local-config.xml file.
+        -->
+
+      <!-- jdk - an example of an api on a remote website -->
+
+      <!--
+      <api id="jdk">
+        <name>JDK</name>
+        <location>@JDKAPI.HREF@</location>
+        <index>index-files/index-#.html</index>
+      </api>
+      -->
+
+      <!-- an example of an api on the local filesystem -->
+
+      <!--
+      <api id="axis">
+        <name>Axis 1.1</name>
+        <location>c:/JAVA/axis-1_1/docs/apiDocs</location>
+        <description>
+          AXIS provides SOAP.
+        </description>
+      </api>
+      -->
+
+      <!-- 
+        - The time period to indicate to Resin's cache and to browsers
+        - that the responses (including search results) should be cached.
+        - If Resin's http cache is enabled, then the cached
+        - result will be used for subsequent requests for the same thing, even
+        - by a different user.  This is an effective way to avoid hitting the
+        - database for every search.
+        -
+        - examples: 10m, 10h, 10D
+        - -1 disables (not a good idea, but useful during development) 
+       --> 
+      <http-cache-period>1D</http-cache-period>
+
+      <!-- true/false show a help message about adding more api's -->
+      <show-add-help>true</show-add-help>
+
+      <!-- optionally change table names to use
+      <table-name-file>file</table-name-file>
+      <table-name-item>item</table-name-item>
+      -->
+
+      <resin:import path="WEB-INF/local-config.xml" optional="true"/>
+      <resin:import path="../resin-javadoc-config.xml" optional="true"/>
+    </init>
+  </resource>
+
+</web-app>
+

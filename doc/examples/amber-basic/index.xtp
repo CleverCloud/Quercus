@@ -1,0 +1,251 @@
+<document>
+  <header>
+    <product>resin-ee</product>
+    <title>Property-based Persistent Object</title>
+        <description>
+          <p>Basic persistence example showing configuration, classes, and client code for a single-table bean.</p>
+          <p>This example focuses on:</p>
+          <ul>
+            <li>Introduces persistence fundamental concepts</li>
+            <li>Setting up the database</li>
+            <li>Developing the Entity classes</li>
+            <li>Developing a Servlet to lookup and use the entity bean</li>
+            <li>Configuring Resin to deploy the bean and use JNDI</li>
+          </ul>
+        </description>
+    <type>tutorial</type>
+    <tutorial-startpage>basic</tutorial-startpage>
+  </header>
+
+  <body>
+    <localtoc/>
+
+<s1>
+<p>Amber's persistence manages tables in a relational database using a Java
+bean interface.  Each database table corresponds to a single "entity bean".  
+By creating an entity bean with container managed
+persistence, you let Amber generate the SQL to load, store, and
+cache entity beans from the database.  Avoiding SQL is an advantage in
+itself, but the primary advantage is the increased flexiblity of your
+application code.  Maintenance and code-refactoring can focus on the
+beans instead of changing lots of SQL statements in the program.</p>
+</s1>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <td><viewfile-link file="WEB-INF/resin-web.xml"/></td>
+  <td>resin-web.xml configuration</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/META-INF/persistence.xml"/></td>
+  <td>persistence.xml configuration</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/CourseBean.java"/></td>
+  <td>The course bean</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/CourseServlet.java"/></td>
+  <td>The course servlet</td>
+  </tr>
+</deftable>
+
+</s1>
+
+<s1 title="Database Schema">
+
+<example title="course.sql">
+CREATE TABLE basic_courses (
+  id INTEGER PRIMARY KEY auto_increment,
+
+  course VARCHAR(250),
+  teacher VARCHAR(250)
+);
+
+INSERT INTO basic_courses VALUES(1, 'Potions', 'Severus Snape');
+INSERT INTO basic_courses VALUES(1, 'Transfiguration', 'Minerva McGonagall');
+</example>
+
+</s1>
+
+<s1 title="Overview">
+
+<p>To find and enhance a persistent Java bean, Amber follows the following
+procedure.
+
+</p><ol>
+<li>&lt;ejb-server&gt; in the resin-web.xml configures Amber to start looking for persistence.xml in the classpath.
+</li><li>The persistence.xml in WEB-INF/classes/META-INF tells Amber to create a persistence-unit named "example".
+</li><li>The "example" persistence-unit contains a class example.CourseBean
+</li><li>Amber enhances example.CourseBean as a persistent object.
+</li></ol>
+
+<p>By the end of initialization time, Amber has enhanced CourseBean and
+made it available to the application in the persistence-unit "example".</p>
+
+<p>A servlet will then lookup the CourseBean with the following procedure:</p>
+
+<ol>
+<li>Obtain an EntityManager for the persistence unit from JNDI either directly as java:comp/env/persistence/PersistenceContext/example, or using the @PersistenceUnit injection annotation.
+</li><li>Use the EntityManager to find the instance of the bean.
+</li></ol>
+
+</s1>
+
+<s1 title="Bean Implementation">
+
+<example title="CourseBean.java">
+package example;
+
+import javax.persistence.*;
+
+<a href="doc|amber-table.xtp#@Entity">@Entity</a>
+<a href="doc|amber-table.xtp#@Table">@Table</a>(name="basic_courses")
+public class CourseBean {
+  private int _id;
+  private String _course;
+  private String _teacher;
+
+  <a href="doc|amber-table.xtp#@Id">@Id</a>
+  <a href="doc|amber-table.xtp#@Column">@Column</a>(name="id")
+  <a href="doc|amber-table.xtp#@GeneratedValue">@GeneratedValue</a>
+  public int getId()
+  {
+    return _id;
+  }
+
+  public void setId(int id)
+  {
+    _id = id;
+  }
+
+  <a href="doc|amber-table.xtp#@Basic">@Basic</a>
+  public String getCourse()
+  {
+    return _course;
+  }
+
+  public void setCourse(String course)
+  {
+    _course = course;
+  }
+
+  <a href="doc|amber-table.xtp#@Basic">@Basic</a>
+  public String getTeacher()
+  {
+    return _teacher;
+  }
+
+  public void setTeacher(String teacher)
+  {
+    _teacher = teacher;
+  }
+}
+</example>
+
+<p>With Resin, all the Java source can be dropped in WEB-INF/classes.
+Resin will automatically compile any changes and regenerate the persistence
+classes, stubs and skeletons.</p>
+
+</s1>
+
+<s1 title="Resin Configuration">
+
+<p>Now that we've built the bean, we need to
+attach it to Resin.  The entity bean is deployed using
+the <code>ejb-server</code> resource.</p>
+
+<example title="WEB-INF/resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;!-- server configuration --&gt;
+  &lt;ejb-server data-source="jdbc/resin"/&gt;
+
+  &lt;servlet servlet-name="basic" servlet-class="example.CourseServlet"/&gt;
+  &lt;servlet-mapping url-pattern="/basic" servlet-name="basic"/&gt;
+&lt;/web-app&gt;
+</example>
+
+</s1>
+
+<s1 title="persistence.xml">
+
+<p>The persistence.xml lives in META-INF/persistence.xml.  Since
+we're developing in WEB-INF/classes, the file will be in
+WEB-INF/classes/persistence.xml.</p>
+
+<example title="WEB-INF/classes/META-INF/persistence.xml">
+&lt;persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0"&gt;
+  &lt;persistence-unit name="example"&gt;
+    &lt;class&gt;example.CourseBean&lt;/class&gt;
+
+    &lt;exclude-unlisted-classes/&gt;
+  &lt;/persistence-unit&gt;
+&lt;/persistence&gt;
+</example>
+
+</s1>
+
+<s1 title="Client Servlet">
+
+<example title="CourseServlet.java">
+package example;
+
+import javax.persistence.*;
+
+public class CourseServlet extends HttpServlet {
+  @PersistenceContext(name="example")
+  private EntityManager _manager;
+
+  public void service(HttpServletRequest req, HttpServletResponse res)
+    throws java.io.IOException, ServletException
+  {
+    PrintWriter out = res.getWriter();
+
+    res.setContentType("text/html");
+
+    CourseBean []course = new CourseBean[2];
+
+    course[0] = _manager.find(CourseBean.class, new Integer(1));
+    course[1] = _manager.find(CourseBean.class, new Integer(2));
+
+    out.println("&lt;h3&gt;Course Details&lt;/h3&gt;");
+
+    for (int i = 0; i &lt; course.length; i++) {
+      out.println("course: " + course[i].getCourse() + "&lt;br&gt;");
+      out.println("teacher: " + course[i].getTeacher() + "&lt;br&gt;");
+      out.println("&lt;br&gt;");
+    }
+  }
+}
+</example>
+<results>
+&lt;h3>Course Details&lt;/h3>
+course: Potions
+instructor: Severus Snape
+
+course: Transfiguration
+instructor: Minerva McGonagall
+</results>
+
+</s1>
+
+<s1 title="Conclusion">
+
+<p>The core of Amber's persistence management is its management of a
+single table.  Much of the work underlying the database management is
+hidden from the applicaton.  Transaction management and caching happen
+automatically.  For example, once the course has been loaded from the
+database, Amber does not need to query the database again until
+the course changes.  So read-only requests, the most common, can avoid
+all database traffic.</p>
+
+<p>More complicated applications build on the single table
+management.  The following examples add more realistic features to
+this example: using queries to <a href="../amber-query/index.xtp">find all
+courses</a> and <a href="../amber-create/index.xtp">creating</a> new database rows.
+</p>
+
+</s1>
+  </body>
+</document>

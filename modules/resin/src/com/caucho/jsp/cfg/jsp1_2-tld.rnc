@@ -1,0 +1,146 @@
+
+default namespace local = ""
+namespace local = ""
+
+namespace jsp12 = "http://java.sun.com/JSP/TagLibraryDescriptor";
+
+start = jsp12_taglib
+
+j2ee_dewey-version = string
+j2ee_fully-qualified-class = string
+j2ee_generic-boolean = string
+j2ee_java-identifier = string
+j2ee_path = string
+j2ee_variable = string
+
+tld_attribute = element attribute {
+  description*,
+
+  element name { j2ee_java-identifier },
+
+  element required { j2ee_generic-boolean }?,
+
+  ( (element rtexprvalue { j2ee_generic-boolean }?,
+     element type { j2ee_fully-qualified-class }?)
+  | element fragment { j2ee_generic-boolean }?)
+}
+
+body-content = element body-content {
+  "tagdependent"
+  | "TAGDEPENDENT"
+  | "JSP"
+  | "empty"
+  | "EMPTY"
+  | "scriptless"
+  | "SCRIPTLESS"
+}
+
+description = element description { string }*
+
+display-name = element display-name { string }*
+
+function = element function {
+  description*,
+
+  display-name*,
+
+  icon*,
+
+  element name { string },
+
+  element function-class { j2ee_fully-qualified-class },
+
+  element function-signature { string },
+
+  element example { string }?
+}
+
+icon = element icon { string }*
+
+init-param = element init-param {
+  element param-name { string },
+
+  element param-value { string }
+}
+
+listener = element listener {
+  element listener-class { j2ee_fully-qualified-class }
+}
+
+tag-file = element tag-file {
+  element name { string },
+
+  element path { j2ee_path }
+}
+
+tag = element tag {
+  description*,
+
+  display-name*,
+
+  icon*,
+
+  element name { string },
+
+  element tag-class { j2ee_fully-qualified-class },
+
+  element tei-class { j2ee_fully-qualified-class }?,
+
+  body-content?,
+
+  element variable { j2ee_variable }*,
+
+  tld_attribute*,
+
+  element dynamic-attributes { j2ee_generic-boolean }?,
+
+  element example { string }?
+}
+
+taglib = element (taglib|jsp12:taglib) {
+  attribute local:version { "2.0" },
+
+  description*,
+
+  display-name*,
+
+  icon*,
+
+  element tlib-version { j2ee_dewey-version },
+
+  element short-name { string },
+
+  element uri { string }?,
+
+  validator?,
+
+  listener?,
+
+  tag*,
+
+  tag-file*,
+
+  function*
+}
+
+validator = element validator {
+  description*,
+
+  element validator-class { j2ee_fully-qualified-class },
+
+  init-param*
+}
+
+variable = element variable {
+  description*,
+
+  ( element name-given { j2ee_java-identifier }
+  | element name-from-attribute { j2ee_java-identifier }),
+
+  element variable-class { j2ee_fully-qualified-class }?,
+
+  ( (element declare { j2ee_generic-boolean }?,
+     element scope { "AT_BEGIN" | "NESTED" | "AT_END" })
+  | element fragment { j2ee_java-identifier })
+}
+

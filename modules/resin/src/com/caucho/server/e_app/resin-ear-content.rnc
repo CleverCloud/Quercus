@@ -1,0 +1,61 @@
+default namespace r = "http://caucho.com/ns/resin"
+namespace local = ""
+
+r_alt-dd = element alt-dd { string }
+
+r_application = element application {
+  attribute id { string }?
+
+  & r_application-Content
+}
+
+r_application-Content =
+  r_env-Basis
+
+  & r_description-Group
+
+  & r_module+
+
+  & r_root-directory
+
+  & r_security-role*
+
+## path to rar connector
+ear_connector = element connector { j2ee_path }
+
+## the context root of the web application
+r_context-root = element context-root { string }
+
+## path to ejb jar
+r_ejb = element ejb { j2ee_path }
+
+## path to application client module
+r_java = element java { j2ee_path }
+
+r_module = element module {
+  attribute id { string }?,
+
+  (ear_connector
+
+  | r_ejb
+
+  | r_java
+
+  | r_web),
+
+  r_alt-dd?
+}
+
+r_web = element web {
+  attribute id { string }?,
+
+  r_web-uri,
+
+  r_context-root
+}
+
+r_web-uri = element web-uri {
+  string
+}
+
+

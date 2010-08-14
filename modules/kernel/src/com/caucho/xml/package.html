@@ -1,0 +1,44 @@
+<html>
+<body>
+XML parsing and printing package.
+
+<h3>Parsing</h3>
+
+<p>Applications using strict XML parsing will either use the
+JAXP API or the SAX API to create their parsers.  Applications needing
+to parse HTML will generally instantiate their own parsers.
+
+<p>There are four parser flavors with the same API:
+Xml, LooseXml, Html and LooseHtml.  The core of the API is in AbstractParser. 
+<ul>
+<li>Xml is a strict XML parser.
+<li>LooseXml is a forgiving XML parser.
+<li>Html is a strict HTML parser.
+<li>LooseHtml is a forgiving HTML parser.
+</ol>
+
+<p>You can parse XML into a DOM tree or you can use the SAX callback
+API.  The core of the API is documented in AbstractParser.
+
+<p>DOM parsing looks like:
+
+<code><pre>
+Document doc = new Html().parseDocument("test.html");
+</pre></code>
+
+<p>Parsing directly from a string looks like:
+
+<code><pre>
+String str = "&lt;em>test html doc&lt;/em>";
+Document doc = new Html().parseDocumentString(str);
+</pre></code>
+
+<p>SAX parsing looks like:
+<code><pre>
+Html html = new Html();
+html.setContentHandler(myContentHandler);
+html.parse("test.html");
+</pre></code>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.6 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="Overview">
+
+<p>See the <a href="resin-3.0.5.xtp">3.0.5 release notes</a>
+for most of the details.</p>
+
+<p>3.0.6 was a quick bugfix release to solve a Win32 linking bug.</p>
+
+</s1>
+
+</body>
+</document>

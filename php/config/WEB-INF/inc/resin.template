@@ -1,0 +1,58 @@
+<?php
+
+include_once("common.php");
+include_once("log.php");
+include_once("management.php");
+include_once("server.php");
+
+function resin_template_description()
+{
+  echo "Resin standard configuration";
+}
+
+function resin_template_form()
+{
+  management_form();
+  server_form();
+}
+
+function resin_template_print()
+{
+  echo "<resin xmlns=\"http://caucho.com/ns/resin\"\n";
+  echo "       xmlns:resin=\"http://caucho.com/ns/resin/core\">\n";
+
+  log_print();
+  
+  management_print();
+
+  common_print();
+
+  echo "\n";
+  echo "  <cluster id=\"app-tier\">\n";
+  echo "    <root-directory>/var/www</root-directory>\n";
+
+  server_print();
+
+  echo "\n";
+  echo "    <host-default>\n";
+  echo "      <resin:import path=\"host.xml\" optional=\"true\"/>\n";
+  echo "\n";
+  echo "      <web-app-deploy path=\"webapps\"/>\n"
+  echo "    </host-default>\n";
+  echo "\n";
+  echo "    <host-deploy path=\"hosts\"/>\n";
+  echo "\n";
+
+  echo "    <!-- explicit host to configure resin-admin -->\n";
+  echo "    <host id=\"\" root-directory=\"hosts/default\">\n";
+  echo "      <web-app id=\"/resin-admin\"\n";
+  echo "               root-directory=\"\${resin.home}/php/admin\"/>\n";
+  echo "    </host>\n";
+  
+  echo "  </cluster>\n";
+  echo "\n";
+
+  echo "</resin>";
+}
+
+?>

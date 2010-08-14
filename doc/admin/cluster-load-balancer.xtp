@@ -1,0 +1,253 @@
+<document>
+<header>
+<title>Resin Load Balancing</title>
+<description>
+
+<p>As traffic increases beyond a single server, Resin's load-balancing
+lets you add new machines to handle the load and simultaneously improves
+uptime and reliability by failing over requests from a downed or maintenance
+server to a backup transparently.
+</p>
+
+</description>
+</header>
+
+<body>
+
+<localtoc/>
+
+<s1 name="resin" title="Load Balancing">
+
+<p>When your traffic requires multiple servers, your site will
+naturally split into two clusters: an app-tier of identical servers to handle
+the content and a web-tier of HTTP servers talking to the browsers, caching
+the content, and distributing the load to the app-tier servers.</p>
+
+<p>Each app-tier server is configured identically, because servers produces the same content: the app-tier servers have the same virtual hosts,
+web-applications and servlets, and use the same resin.xml.  Adding a new
+machine just requires adding a new &lt;server> tag to the cluster.</p>
+
+<figure src="cluster-load-balance.png"/>
+
+<p>The new server has a unique name like "app-b" and a TCP cluster-port
+consisting of an &lt;IP,port>, so the other servers can communicate with
+it.  Although you can start multiple Resin servers on the same machine,
+TCP requires the &lt;IP,port> must be unique, so you might need to assign
+unique ports like 6801, 6802 for servers on the same machine.  On different
+machines, you'll use unique IP addresses.  Because the cluster-port is for
+Resin servers to communicate with each other, they'll typically be private
+IP addresses like 192.168.1.10 and not public IP addresses.  In particular,
+the load balancer on the web-tier uses the cluster-port of the app-tier
+to forward HTTP requests.</p>
+
+<p>The load balancer on the web-tier forwards requests to the app-tier,
+distributing the load evenly and skipping any app-tier server that's
+down for maintenance or restarting due to a crash.  This failover capability
+increases reliability and improves the customer's experiency by making
+your site look like every server is always up.  The load balancer also
+steers traffic from a user session to the same app-tier server, improving
+caching and session performance, i.e. it supports sticky sessions.</p>
+
+<s2 title="Two Server Configuration">
+
+<p>For example, a site running Drupal on Resin might now need two
+app-tier servers to handle additional load as it grows traffic.  In the
+following configuration, the two app-tier servers "app-a" and "app-b" both
+serve the Drupal content, while the web-tier server "web-a" handles the
+HTTP, caches content, and balances the load to the app-tier cluster.</p>
+
+<p>The web-tier is configured with a &lt;cache> tag for the caching, and
+uses <a href="http-rewrite-ref.xtp">&lt;resin:LoadBalance></a>
+for the dispatching.  In this case, we send
+all content to the app-tier.  &lt;resin:LoadBalance> is part of
+Resin's <a href="http-rewrite.xtp">rewrite</a> capabilities, load
+Resin's equivalent of the Apache mod_rewrite module, providing a powerful
+and detailed URL matching and decoding, so more complicated sites might
+load-balance based on the virtual host or URL.</p>
+
+<example title="Example: resin.xml for load balancing">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="urn:java:com.caucho.resin"&gt;
+
+&lt;cluster-default>
+   &lt;resin:import path="${__DIR__}/app-default.xml"/>
+   &lt;development-mode-error-page/>
+&lt;/cluster-default>
+
+&lt;cluster id="app-tier"&gt;
+  &lt;server id="app-a" address="192.168.0.10" port="6800"/&gt;
+  &lt;server id="app-b" address="192.168.0.11" port="6800"/&gt;
+
+  &lt;host id=""&gt;
+    &lt;web-app id="" root-directory="/var/www/htdocs"/>
+  &lt;/host&gt;
+&lt;/cluster&gt;
+
+&lt;cluster id="web-tier"&gt;
+  &lt;server id="web-a" address="192.168.0.1" port="6800"&gt;
+    &lt;http port="80"/&gt;
+  &lt;/server>
+
+  &lt;cache memory-size="256M"/&gt;
+
+  &lt;host id=""&gt;
+    
+      &lt;resin:LoadBalance regexp="" cluster="app-tier"/>
+
+  &lt;/host&gt;
+&lt;/cluster&gt;
+
+&lt;/resin&gt;
+</example>
+
+<p>All three servers will use the same resin.xml, which makes managing
+multiple servers easier.  The servers are name by the
+server <var>id</var> attribute, which must be unique.  When you start
+Resin, you'll use the server-id as part of the command line</p>
+
+<example title="Example: starting servers">
+192.168.0.10> java -jar lib/resin.jar -server app-a start
+
+192.168.0.11> java -jar lib/resin.jar -server app-b start
+
+192.168.0.1> java -jar lib/resin.jar -server web-a start
+</example>
+
+<p>Since Resin lets you start multiple servers on the same machine, a
+small site might start the web-tier server and one of the app-tier servers
+on one machine, and start the second server on a second machine.  You can
+even start all three servers on the same machine, increasing reliability
+and easing maintenance, without addressing the additional load.  If you
+do put multiple servers on the same machine, remember to change the
+<var>port</var> to something like 6801, so the TCP bind doesn't
+conflict.</p>
+
+<p>In the <a href="resin-admin.xtp">/resin-admin</a> management page, you
+can manage all three servers at once, gathering statistics and load and
+watching for any errors.  When setting up /resin-admin on a web-tier
+server, you'll want to remember to add a separate &lt;web-app> for resin-admin
+to make sure the &lt;rewrite-dispatch> doesn't inadvertantly send the
+management request to the app-tier.</p>
+
+</s2>
+
+<s2 title="Socket Pooling, Timeouts, and Failover">
+
+<p>For efficiency, Resin's load balancer manages a pool of sockets
+connecting to the app-tier servers.  If Resin forwards a new request to
+an app-tier server and it has an idle socket available, it will reuse that
+socket, improving performance an minimizing network load.  Resin uses a
+set of timeout values to manage those idle sockets and to handle any
+failures or freezes of the backend servers.  The following diagram
+illustrates the main timeout values:</p>
+
+<figure src="load-balance-idle-time.png"/>
+
+<ul>
+<li><b>load-balance-connect-timeout</b>: the load balancer timeout
+for the <code>connect()</code> system call to complete to
+the app-tier (5s).</li>
+<li><b>load-balance-idle-time</b>: load balancer timeout
+for an idle socket before closing it automatically (5s).</li>
+<li><b>load-balance-recover-time</b>: the load balancer connection failure wait
+time before trying a new connection (15s).</li>
+<li><b>load-balance-socket-timeout</b>: the load balancer
+timeout for a valid request to complete (665s).</li>
+<li><b>keepalive-timeout</b>: the app-tier timeout for a keepalive
+connection (15s)</li>
+<li><b>socket-timeout</b>: the app-tier timeout for a read or
+write (65s)</li>
+</ul>
+
+<p>When an app-tier server is down due to maintenance or a crash, Resin
+will use the <b>load-balance-recover-time</b> as a delay before retrying
+the downed server.  With the failover and recover timeout, the load balancer
+reduces the cost of a failed server to almost no time at all.  Every
+recover-time, Resin will try a new connection and wait for
+<b>load-balance-connect-timeout</b> for the server to respond.  At most, one
+request every 15 seconds might wait an extra 5 seconds to connect to the
+backend server.  All other requests will automatically go
+to the other servers.</p>
+
+<p>The socket-timeout values tell Resin when a socket connection is
+dead and should be dropped.  The web-tier timeout
+<b>load-balance-socket-timeout</b> is much larger than the app-tier
+timeout <b>socket-timeout</b> because the web-tier needs to wait for
+the application to generate the response.  If your application has some
+very slow pages, like a complicated nightly report, you may need to
+increase the <b>load-balance-socket-timeout</b> to avoid the web-tier
+disconnecting it.</p>
+
+<p>Likewise, the <b>load-balance-idle-time</b> and <b>keepalive-timeout</b>
+are a matching pair for the socket idle pool.  The idle-time tells the
+web-tier how long it can keep an idle socket before closing it.  The
+keepalive-timeout tells the app-tier how long it should listen for
+new requests on the socket.  The <b>keepalive-timeout</b> must be
+significantly larger than the <b>load-balance-idle-time</b> so the app-tier
+doesn't close its sockets too soon.  The keepalive timeout can be large
+since the app-tier can use the
+<a href="http-server-ref.xtp">keepalive-select</a>
+manager to efficiently wait for many connections at once.</p>
+
+</s2>
+
+<s2 title="Dispatching">
+
+<p>In most cases, the web-tier will dispatch
+everything to the app-tier servers.  Because of Resin's
+<a href="http-proxy-cache.xtp">proxy cache</a>, the web-tier servers
+will serve static pages as fast as if they were local pages.</p>
+
+<p>In some cases, though, it may be important to send different
+requests to different backend clusters.  The
+<a javadoc="com.caucho.rewrite.LoadBalance">&lt;resin:LoadBalance></a> tag can choose clusters based on URL patterns.</p>
+
+<p>The following <a href="http-rewrite.xtp">rewrite</a>
+keeps all *.png, *.gif, and *.jpg files on the web-tier, sends
+everything in /foo/* to the foo-tier cluster, everything in /bar/* to
+the bar-tier cluster, and keeps anything else on the web-tier.</p>
+
+<example title="Example: resin.xml split dispatching">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+      xmlns:resin="urn:java:com.caucho.resin">
+
+  &lt;cluster-default>
+     &lt;resin:import path="${__DIR__}/app-default.xml"/>
+     &lt;development-mode-error-page/>
+  &lt;/cluster-default>
+      
+  &lt;cluster id="web-tier">
+    &lt;server id="web-a">
+      &lt;http port="80"/>
+    &lt;/server>
+
+    &lt;cache memory-size="64m"/>
+
+    &lt;host id="">
+      &lt;web-app id="/">
+
+        &lt;resin:Dispatch regexp="(\.png|\.gif|\.jpg)"/>
+
+        &lt;resin:LoadBalance regexp="^/foo" cluster="foo-tier"/>
+
+        &lt;resin:LoadBalance regexp="^/bar" cluster="bar-tier"/>
+
+      &lt;/web-app>
+    &lt;/host>
+  &lt;/cluster>
+
+  &lt;cluster id="foo-tier">
+    ...
+  &lt;/cluster>
+
+  &lt;cluster id="bar-tier">
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</s2> <!-- dispatching -->
+</s1> <!-- load balancing -->
+
+  </body>
+</document>

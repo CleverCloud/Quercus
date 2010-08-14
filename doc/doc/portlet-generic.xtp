@@ -1,0 +1,267 @@
+<document>
+<header>
+<product>resin</product>
+<title>Generic Portal</title>
+<description>
+<p>
+The Generic Portal is an implementation of the basic functionality of a portal,
+released with an Apache open source license.  It provides the basic
+building blocks for a portal that runs within a servlet container.
+</p>
+<p>
+The portlet specification has a well defined interface for Portlets.  However,
+portlets are not usable on their own, and need a supporting environment (a
+Portal). Since the functionality provided by a Portal is largely unspecified,
+developers that wish to leverage the advantages of Portlets may need to make a
+significant commitment to a particular, proprietary, Portal implementation.
+</p>
+<p>
+The Generic Portal package addresses these problems in the following way:
+</p>
+
+<ul>
+<li>it has an Apache open source license
+</li><li>it provides the classes necessary to use portlets in any servlet container
+</li><li>configuration information is represented by a small number of classes with
+simple implementations.  They can be used on their own, or easily specialized
+to provide an interface to particular portal implementations.
+</li></ul>
+</description>
+</header>
+
+<body>
+<summary/>
+
+<s1 title="Portlets as Servlets">
+
+<p>
+The generic portal classes, at their simplest, can be used to deploy portlets
+like servlets.  Functionality for pages is programmed in a Portlet, which
+provides a flexible and general programming pattern.  Using components of the
+generic portal, a servlet does a simple dispatch to the portlet class.  </p>
+
+<p>
+This approach is valuable for developers that wish to take advantage of
+the well defined pattern that portlets provide without  a full commitment to a
+comprehensive portal implementation .
+</p>
+
+<p>
+The generic portal includes <a href="javadoc|com.caucho.portal.generic.PortaletServlet|"/>.  A number of <a href="doc|portlet|tutorial/basic.xtp">tutorials</a> demonstrate the use of
+PortalServlet.  
+</p>
+
+</s1>
+
+
+<s1 title="Configuration and portlets.xml">
+<p>
+The portlet specification indicates the portlets.xml file as the source of
+configuration information.  The generic portal implementation does not read
+the XML files, but does provide two classes that are used to completely 
+represent the configuration.
+</p>
+
+<p>
+Users that wish to use the generic portal package in application servers
+other than Resin will be most interested in this section.
+</p>
+
+<s2 title="GenericPortletContext">
+
+<p>
+The <a href="javadoc|javax.portlet.PortletContext|"/> interface is the
+interface between the portal and the servlet container or application server
+(Resin, for example).  It's API is similar to the familiar 
+<a href="javadoc|javax.servlet.ServletContext|"/>, and it is roughly analgous
+to a web application.  
+</p>
+
+<p>
+
+</p><p>
+<a href="javadoc|com.caucho.portal.GenericPortletContext|"/> is an
+abstract implementation of PortletContext.  It provides an implementation
+of methods for storing and retrieving GenericPortletConfig objects. 
+It corresponds to the &lt;portlet&gt; elements within portlets.xml.
+</p>
+
+<s3 title="HttpPortletContext">
+<p>
+HttpPortletContext extends GenericPortletContext and completes 
+the PortletContext interface requirements by providing a wrapper 
+around a ServletContext.
+</p>
+</s3>
+
+</s2>
+
+<s2 title="GenericPortletConfig">
+
+<p>
+The <a href="javadoc|javax.portlet.PortletConfig|"/> interface is the
+configuration of a portlet.  It is roughly analgous to ServletConfig.
+The GenericPortletConfig class implements the functionality of PortletConfig
+and adds methods to handle the full range of configuration that is possible in
+a &lt;portlet&gt; configuration in portlets.xml.
+</p>
+
+</s2>
+
+<s2 name="jndi" title="JNDI">
+
+<p>
+The Generic Portal implementation uses JNDI to store and retrieve the
+GenericPortletContext.  Resin is easily configured to read the portlets.xml
+and store the results in JNDI.  For other application servers, or for greater
+portability, the GenericPortletContext class can be configured directly and
+then stored in JNDI.  
+</p>
+
+<p>
+This configuration could take place in the init() of a load-on-startup servlet.
+It might provide the ability to read the portlets.xml file, or it can be
+configured programmatically without the use of the xml file.  
+</p>
+
+<p>The default JNDI name is "java:comp/env/PortletContext".</p>
+</s2>
+
+
+<s2 title="Example - using the API to configure">
+<p>
+The following example shows how the generic portal API is used to
+create a configuration for a portal.  If this code were placed in
+the init() of a load-on-startup servlet then it would provide configuration
+within being dependent on any particular application server.
+</p>
+
+<example title="Using the API to configure a portal">
+  import javax.naming.InitialContext;
+  import javax.naming.NamingException;
+
+  ...
+  private  servletContext
+
+  ...
+
+
+  public void init(ServletConfig config)
+    throws ServletException
+  {
+    super.init(config);
+
+    HttpPortletContext portletContext = new HttpPortletContext();
+    portletContext.setServletContext(config.getServletContext());
+
+    portletContext.addCustomMode(new PortletMode("goodbye"));
+
+    GenericPortletConfig helloConfig = new GenericPortletConfig(portletContext);
+    helloConfig.setPortletName("HelloWorldPortlet");
+    helloConfig.setPortletClass("com.caucho.portal.generic.example.HelloWorldPortlet");
+    helloConfig.addSupports("text/html",PortletMode.VIEW);
+    helloConfig.addSupports("text/html",PortletMode.EDIT);
+    helloConfig.setResourceBundle("com.caucho.portal.generic.example.HelloWorldPortlet");
+
+    portletContext.addPortletConfig(_helloConfig);
+
+
+    // bind in jndi
+
+    String jndiName = "java:comp/env/PortletContext";
+    if (log.isLoggable(Level.FINE))
+      log.fine("binding with jndi name `" + jndiName + "'");
+
+    try {
+      InitialContext ic = new InitialContext();
+      ic.bind(jndiName,this);
+    }
+    catch (NamingException ex) {
+      throw new ServletException(ex);
+    }
+  }
+
+  ...
+
+</example>
+
+<p>
+The API of GenericPortletContext closely matches the format of a portlets.xml
+file.  "portlet-name" in the xml file is "setPortletName" in the api;
+"supports" in the xml file is "addSupports" in the api.  The following is an
+example of a portlets.xml file that corresponds to the configuration above:
+</p>
+
+<example>
+&lt;portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd" 
+             version="1.0"&gt;
+  &lt;portlet&gt;
+    &lt;portlet-name&gt;HelloWorldPortlet&lt;/portlet-name&gt;
+    &lt;portlet-class&gt;com.caucho.portal.generic.example.HelloWorldPortlet&lt;/portlet-class&gt;
+    &lt;supports&gt;
+      &lt;mime-type&gt;text/html&lt;/mime-type&gt;
+      &lt;portlet-mode&gt;view&lt;/portlet-mode&gt;
+      &lt;portlet-mode&gt;edit&lt;/portlet-mode&gt;
+    &lt;/supports&gt;
+  &lt;/portlet&gt;
+
+  &lt;custom-portlet-mode&gt;
+    &lt;portlet-mode&gt;goodbye&lt;/portlet-mode&gt;
+  &lt;/custom-portlet-mode&gt;
+
+&lt;/portlet-app&gt;
+</example>
+
+</s2>
+</s1> <!-- configuration -->
+
+<s1 name="customization" title="Customizing Portal behaviour">
+
+<s2 title="GenericPortalContext">
+
+<p>
+The <a href="javadoc|javax.portlet.PortalContext|"/> interface is a means for
+the Portal to provide information about it's capabilities.  When using the
+generic portal implementation, you are creating a portal.  You can use the
+PortalContext to publish the capabilities of your portal.
+</p>
+
+<p>
+<a href="javadoc|com.caucho.portal.GenericPortalContext|"/> is an
+abstract implementation of PortalContext.  It provides setters to match the
+getters defined by PortalContext.  Many portal's can simply instantiate a
+GenericPortalContext.  
+</p>
+
+</s2>
+
+
+<!--
+<section title="Request and Response">
+
+<p>
+To use a portal, it must be provided a request and a response.  The
+<a href="javadoc|com.caucho.portal.generic.GenericPortletRequest|"/> and 
+<a href="javadoc|com.caucho.portal.generic.GenericPortletResponse|"/> are 
+wrappers around the HttpServletRequest and HttpServletResponse that are
+available within the servlet.
+</p>
+
+<p>
+The GenericPortletRequest and GenericPortletResponse provide much of their
+functionality by falling through to the underlying HTTP request and response.
+</p>
+
+<p>
+The portlet specification has separate interfaces for the "action" phase and
+the "render" phase of a portlet.  The generic implementations implement both
+interfaces.  
+</p>
+
+</section>
+-->
+
+</s1> <!-- customization -->
+
+</body>
+</document>

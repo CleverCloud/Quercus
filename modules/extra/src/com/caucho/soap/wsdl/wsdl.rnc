@@ -1,0 +1,102 @@
+wsdl_definitions = element definitions {
+  attribute name { string }?,
+  attribute targetNamespace { string }?,
+
+  wsdl_import*,
+
+  wsdl_types?,
+
+  wsdl_message*,
+
+  wsdl_portType*,
+
+  wsdl_binding*,
+
+  wsdl_service*
+}
+
+wsdl_import = element import {
+  attribute namespace { string },
+  attribute location { string },
+}
+
+wsdl_types = element types {
+  # any
+}
+
+wsdl_message = element message {
+  attribute name { string },
+
+  wsdl_part*
+}
+
+wsdl_part = element part {
+  attribute name { string }?,
+  attribute type { string }?,
+  attribute element { string }?,
+}
+
+wsdl_portType = element portType {
+  attribute name { string },
+
+  wsdl_operation*
+}
+
+wsdl_operation = element operation {
+  (wsdl_input)
+
+  | (wsdl_input,
+     wsdl_output,
+     wsdl_fault*)
+
+  | (wsdl_output,
+     wsdl_input,
+     wsdl_fault*)
+
+  | (wsdl_output)
+}
+
+wsdl_input = element input {
+  attribute name { string }?,
+
+  attribute message { string }
+}
+
+wsdl_output = element output {
+  attribute name { string }?,
+
+  attribute message { string }
+}
+
+wsdl_fault = element fault {
+  # any
+}
+
+wsdl_binding = element binding {
+  attribute name { string },
+
+  attribute type { string },
+
+  wsdl_binding-operation-Type*
+}
+
+wsdl_binding-operation-Type = element operation {
+  element input {}?,
+
+  element output {}?,
+
+  element fault {
+    attribute name { string }
+  }?,
+}
+
+wsdl_service = element service {
+  attribute name { string },
+
+  wsdl_port*
+}
+
+wsdl_port = element port {
+  attribute name { string },
+  attribute binding { string }
+}

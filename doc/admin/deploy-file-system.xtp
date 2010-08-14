@@ -1,0 +1,22 @@
+<document>
+<header>
+<title>Packaging/Deployment</title>
+<description>
+<p>Deploying a web application to Resin using the file system</p>
+</p>
+</description>
+</header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Using a .war file">
+
+<p>.war files can be deployed to Resin simply by copying them to the
+web-app-deploy directory, usually in $RESIN_ROOT/webapps.</p>
+
+</s1>
+
+</body>
+</document>

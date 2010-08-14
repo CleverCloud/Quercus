@@ -1,0 +1,2 @@
+cxf=com.caucho.cxf.CXFProtocolProxyFactory
+xfire=com.caucho.xfire.XFireProtocolProxyFactory

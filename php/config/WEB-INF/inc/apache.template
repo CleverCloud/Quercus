@@ -1,0 +1,46 @@
+<?php
+
+include_once("common.php");
+include_once("management.php");
+
+function apache_template_description()
+{
+  echo "Apache-style server";
+}
+
+function apache_template_print()
+{
+  echo "<resin xmlns=\"http://caucho.com/ns/resin\"\n";
+  echo "       xmlns:resin=\"http://caucho.com/ns/resin/core\">\n";
+
+  management_print();
+  
+  echo "\n";
+  echo "  <cluster-default>\n";
+  echo "    <resin:import path=\"${__DIR__}/app-default.xml\">\n";
+  echo "  </cluster-default>\n";
+
+  echo "\n";
+  echo "  <cluster id=\"app-tier\">\n";
+  echo "    <root-directory>/var/www</root-directory>\n";
+  echo "\n";
+  echo "    <server-default>\n";
+  echo "      <http port=\"8080\"/>\n";
+  echo "    </server-default>\n";
+  echo "\n"
+  echo "    <server id=\"\" address=\"localhost\" port=\"6800\"/>\n"
+  echo "\n";
+  echo "    <cache/>\n";
+  echo "\n";
+  echo "    <host id=\"\">\n"
+  echo "\n";
+  echo "      <web-app id=\"\" root-directory=\"htdocs\"/>\n";
+  echo "\n";
+  echo "    </host>\n"
+  echo "</cluster>";
+  echo "\n";
+
+  echo "</resin>";
+}
+
+?>

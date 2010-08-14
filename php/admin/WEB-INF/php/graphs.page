@@ -1,0 +1,375 @@
+<?php
+
+$cache = resin_create_distcache("resin:admin:graph");
+
+$p_hash = $_REQUEST['h'];
+
+$p_submit = $_REQUEST['submit'];
+$p_graph = $_REQUEST['graph'];
+$p_period = $_REQUEST['p'];
+if ($_REQUEST['period'])
+  $p_period = $_REQUEST['period'];
+if ($_REQUEST['np'])
+  $p_period = $_REQUEST['np'];
+
+$user = quercus_servlet_request()->getRemoteUser();
+
+$user_item = $cache->get($user);
+$is_refresh = false;
+
+if ($p_graph) {
+  $p_hash = $user_item['user-graphs'][$p_graph];
+  $p_submit = null;
+
+  if ($_POST['remove']) {
+    unset($user_item['user-graphs'][$p_graph]);
+    $cache->put($user, $user_item);
+  }
+
+  $is_refresh = true;
+}
+
+if ($p_hash && ! $p_submit) {
+  $item = $cache->get($p_hash);
+  $p_name = $item['name'];
+  $p_checks = $item['checks'];
+  $p_servers = $item['servers'];
+}
+else if ($p_submit) {
+  $is_refresh = true;
+
+  $p_name = $_REQUEST['name'];
+  $p_checks = $_REQUEST['checks'];
+  $p_servers = $_REQUEST['servers'];
+
+  if (! $p_name) {
+    $p_submit = null;
+    $p_name = $p_servers[0] . "|" . $p_checks[0];
+  }
+
+  $item = array("name"=>$p_name,
+                "checks"=>$p_checks,
+                "servers"=>$p_servers);
+
+  $ser = serialize($item);
+  $p_hash = dechex(crc32($ser));
+
+  $cache->put($p_hash, $item);
+
+  if ($p_submit) {
+    $user_graphs = $user_item['user-graphs'];
+    if ($user_graphs == null) {
+      $user_graphs = array();
+    }
+
+    $user_graphs[$p_name] = $p_hash;
+    $user_item['user-graphs'] = $user_graphs;
+
+    $cache->put($user, $user_item);
+  }
+}
+
+$query = "&h=" . $p_hash . "&p=" . $p_period;
+
+if ($is_refresh) {
+  // redirect so the refresh will work
+  $g_next_url = "?q=" . $_REQUEST['q'] . "&s=" . $_REQUEST['s'] . $query;
+  header("Location: " . $_SERVER['SCRIPT_URL'] . $g_next_url);
+  return;
+}
+
+require_once "WEB-INF/php/inc.php";
+
+if (! admin_init($query, true)) {
+  return;
+}
+
+$names = array();
+
+$full_height = 500;
+$full_width = 600;
+
+$mbean_server = $g_mbean_server;
+
+if (! $p_period) {
+  $p_period = 60;
+}
+
+$self_index = sprintf("%02d", $g_server->SelfServer->ClusterIndex);
+
+if ($p_servers == null) {
+  $p_servers = array($self_index);
+}
+
+foreach ($p_checks as $check) {
+  foreach ($p_servers as $server) {
+    $p_names[] = "$server|$check";
+  }
+}
+
+$stat = $g_mbean_server->lookup("resin:type=StatService");
+
+if (! $stat)
+  return;
+
+if (! $p_name)
+  $p_name = $p_names[0];
+
+if (! $p_name) {
+  $p_name = $self_index . "|Resin|Server|Uptime";
+  $p_names[] = $p_name;
+}
+
+echo "<p><b>Note:</b> this page requires HTML 5 canvas support.  You may need
+to use Firefox 3.5 or other HTML 5-capable browser
+to see the graphs properly.</p>\n";
+
+$user_graphs = $user_item['user-graphs'];
+
+// existing graphs
+
+echo "<h3>Select Defined Graph</h3>\n";
+echo "<form name='def_graph' method='POST' action='" . $g_next_url . "'>";
+echo "<select name='graph' onchange='javascript:document.forms.def_graph.submit();'>\n";
+
+$selected = false;
+foreach ($user_item['user-graphs'] as $name => $hash) {
+  echo "<option ";
+  if ($p_hash == $hash) {
+    $selected = true;
+    echo " selected";
+  }
+  echo " value='" . $name . "'>" . $name . "\n";
+}
+if (! $selected)
+  echo "<option selected>--------\n";
+
+echo "</select>\n";
+echo "</form>";
+
+echo "<h1><a href=" . $g_next_url . ">Graph: $p_name</a></h1>";
+
+echo "Time: "
+
+if ($p_period == 60)
+  echo " 1h";
+else
+  echo " <a href=" . $g_next_url . "&np=" . (60) . ">1h</a>";
+
+if ($p_period == 6 * 60)
+  echo " 6h";
+else
+  echo " <a href=" . $g_next_url . "&np=" . (6 * 60) . ">6h</a>";
+
+if ($p_period == 24 * 60)
+  echo " 24h";
+else
+  echo " <a href=" . $g_next_url . "&np=" . (24 * 60) . ">24h</a>";
+
+if ($p_period == 7 * 24 * 60)
+  echo " 7d";
+else
+  echo " <a href=" . $g_next_url . "&np=" . (7 * 24 * 60) . ">7d</a>";
+
+if ($p_period == 30 * 24 * 60)
+  echo " 30d";
+else
+  echo " <a href=" . $g_next_url . "&np=" . (30 * 24 * 60) . ">30d</a>";
+?>
+<p>
+
+<?php
+
+draw_main_graph();
+
+// graph_draw("graph", $p_names, $full_width, $full_height, $start, -1, $step);
+
+$full_names = $stat->statisticsNames();
+
+$names = array();
+$servers = array();
+foreach ($full_names as $name) {
+  $values = preg_split('/[|]/', $name);
+
+  $server = array_shift($values);
+
+  if (! in_array($server, $servers)) {
+    $servers[] = $server;
+  }
+  
+  $section_array = null;
+  $section_array[] = array_shift($values);
+  $section_array[] = array_shift($values);
+
+  $section = join($section_array, '|');
+
+  $name = join($values, '|');
+
+  $names = $sections[$section];
+  if (! in_array($name, $names))
+    $names[] = $name;
+  $sections[$section] = $names;
+}
+
+/*
+echo "<ul>";
+foreach ($sections as $section => $names) {
+  echo "<li>$section\n";
+  echo "<ul>";
+  foreach ($names as $name) {
+    echo "<li>$name\n";
+  }
+  echo "</ul>";
+}
+echo "</ul>";
+*/
+
+if ($p_graph) {
+  $rest_url = "rest.php?q=graph&graph={$p_graph}&period={$p_period}";
+
+  echo "<div><a href='{$rest_url}'>Embedded graph URL</a></div>";
+}
+elseif ($p_hash) {
+  $rest_url = "rest.php?q=graph&hash={$p_hash}&period={$p_period}";
+
+  echo "<div><a href='{$rest_url}'>Embedded graph URL</a></div>";
+}
+
+echo "<br>";
+
+// server
+echo "<h3>Add New Graph</h3>";
+echo "<br>";
+
+echo "<form method='post' action='" . $g_next_url . "'>"
+echo "<input type='hidden' name='submit' value='true'>\n";
+
+echo "<input type='submit' value='Create Graph'><br>\n";
+
+echo "Graph Name: ";
+echo "<input name='name' size='40'><br>";
+
+echo "Servers: ";
+ksort($servers);
+foreach ($servers as $server) {
+  echo "<input type='checkbox' name='servers[]'";
+  echo " value='$server'>$server\n";      
+}
+echo "<br>";
+echo "Data: ";
+
+// data selection
+/*
+echo "<table width='600'>";
+echo "<tr align='top'>";
+echo "<td valign='top' width='40%'>";
+echo "<select id='name_src' multiple='yes'>";
+echo "<option disabled='true'>-- select at least one --</option>\n";
+ksort($sections);
+foreach ($sections as $section => $names) {
+  sort($names);
+  foreach ($names as $name) {
+    echo "<option>$section|$name\n";
+  }
+}
+echo "</select>";
+echo "<td valign='top' align='center'>";
+echo "<font size='+1'><a href='#' onclick=\"select_name('name_src', 'name_dst')\">>>></a></font><br>";
+echo "<font size='+1'><a href='#' onclick=\"select_name('name_dst', 'name_src')\">&lt;&lt;&lt;</a></font>";
+echo "<td valign='top' width='40%'>";
+echo "<select id='name_dst' multiple='yes' name='names'>";
+echo "<option disabled='true'>-- select at least one --</option>\n";
+echo "</select>\n";
+echo "</tr>";
+echo "</table>\n";
+*/
+
+$i = 0;
+
+ksort($sections);
+echo "<ul>"
+foreach ($sections as $section => $names) {
+  $i++;
+
+/*
+  echo "<li class='close' id='lc_$i'>";
+  echo "<a href='#' onclick='show(\"lo_$i\");hide(\"lc_$i\");'>";
+  echo "$section</a>"
+  echo "</li>";
+
+  echo "<li class='open' id='lo_$i'>";
+  echo "<a href='#' onclick='show(\"lc_$i\");hide(\"lo_$i\");'>";
+  echo $section;
+  echo "</a>";
+*/
+
+  echo "<li class='open' id='lc_$i'>";
+  echo "<img src='images/close-item.png'";
+  echo " onclick='show_n(\"lo_$i\");hide(\"lc_$i\");'></img> ";
+  echo "$section"
+  echo "</li>";
+
+  echo "<li class='open' id='lo_$i' style='display:none'";
+  echo "<img src='images/open-item.png'";
+  echo " onclick='show_n(\"lc_$i\");hide(\"lo_$i\");'></img> ";
+  echo $section;
+
+  sort($names);
+  echo "<ul style='list-style-type:none'>";
+  foreach ($names as $name) {
+    echo "<li><input type='checkbox' name='checks[]'";
+    /*
+    if (in_array("$section|$name", $p_checks))
+      echo " checked='true'";
+    */
+      
+    echo "value='$section|$name'>$name<br>\n";
+  }
+  echo "</ul>";
+  echo "</li>";
+}
+echo "</ul>";
+
+echo "</form>\n";
+
+function draw_main_graph()
+{
+  global $p_name;
+  global $p_names;
+  global $p_period;
+
+  $name = $p_name;
+
+  $width = 600 - 60;
+  $height = 400 - 40;
+
+  $now = time();
+  $start = $now - $p_period * 60;
+  $dt = date_create();
+  $tz = date_timezone_get($dt);
+  $offset = timezone_offset_get($tz, $dt);
+
+  $time = $start + $offset;
+
+  if ($p_period <= 60) {
+  }
+  else if ($p_period <= 12 * 60) {
+    $time += 3600 - 1;
+    $time -= $time % 3600;
+  }
+  else if ($p_period <= 24 * 60) {
+    $time += 3 * 3600 - 1;
+    $time -= $time % (3 * 3600);
+  }
+  else {
+    $time += 24 * 3600 - 1;
+    $time -= $time % (24 * 3600);
+  }
+
+  $start = $time - $offset;
+  $end = $start + $p_period * 60;
+
+  stat_graph("graph", $width, $height, $start, $end, $p_names);
+}
+
+?>

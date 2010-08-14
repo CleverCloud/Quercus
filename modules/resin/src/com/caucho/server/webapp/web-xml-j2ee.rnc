@@ -1,0 +1,288 @@
+default namespace j2ee = "http://java.sun.com/xml/ns/j2ee"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+include "classpath:com/caucho/config/cfg/j2ee.rnc"
+
+j2ee_auth-constraint = element auth-constraint {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_role-name*
+}
+
+j2ee_dispatcher = element dispatcher {
+  "FORWARD"
+  | "REQUEST"
+  | "INCLUDE"
+  | "ERROR"
+}
+
+j2ee_error-page = element error-page {
+  attribute id { string }?,
+
+  (element error-code { string }
+   | element exception-type { j2ee_fully-qualified-class }),
+
+  element location { string }
+}
+
+j2ee_filter = element filter {
+  attribute id { string }?,
+
+  j2ee_description-Group,
+
+  j2ee_filter-name,
+
+  element filter-class { j2ee_fully-qualified-class },
+
+  j2ee_init-param*
+}
+
+j2ee_filter-mapping = element filter-mapping {
+  attribute id { string }?,
+
+  j2ee_filter-name,
+
+  (j2ee_url-pattern | j2ee_servlet-name)+,
+
+  j2ee_dispatcher*
+}
+
+j2ee_filter-name = element filter-name {
+  string
+}
+
+j2ee_form-login-config = element form-login-config {
+  attribute id { string }?,
+
+  element form-login-page { string },
+
+  element form-error-page { string }
+}
+
+j2ee_http-method = element http-method {
+   "GET"
+ | "POST"
+ | "PUT"
+ | "DELETE"
+ | "HEAD"
+ | "OPTIONS"
+ | "TRACE"
+}
+
+j2ee_jsp-config = element jsp-config {
+  attribute id { string }?,
+
+  j2ee_taglib*,
+
+  j2ee_jsp-property-group*
+}
+
+j2ee_jsp-property-group = element jsp-property-group {
+  attribute id { string }?,
+
+  j2ee_description-Group,
+
+  j2ee_url-pattern+,
+
+  element el-ignored { j2ee_boolean }?,
+
+  element page-encoding { j2ee_string }?,
+
+  element scripting-invalid { j2ee_boolean }?,
+
+  element is-xml { j2ee_boolean }?,
+
+  element include-prelude { j2ee_path }*,
+
+  element include-coda { j2ee_path }*
+}
+
+j2ee_listener = element listener {
+  attribute id { string }?,
+
+  j2ee_description-Group,
+
+  element listener-class { j2ee_fully-qualified-class }
+}
+
+j2ee_locale-encoding-mapping = element locale-encoding-mapping {
+  attribute id { string }?,
+
+  element locale { string },
+
+  element encoding { string }
+}
+
+j2ee_locale-encoding-mapping-list = element locale-encoding-mapping-list {
+  attribute id { string }?,
+
+  j2ee_locale-encoding-mapping+
+}
+
+j2ee_login-config = element login-config {
+  attribute id { string }?,
+
+  element auth-method { string }?,
+
+  element realm-name { string }?,
+
+  j2ee_form-login-config?
+}
+
+j2ee_mime-mapping = element mime-mapping {
+  attribute id { string }?,
+
+  element extension { string },
+
+  element mime-type { string }
+}
+
+j2ee_security-constraint = element security-constraint {
+  attribute id { string }?,
+
+  j2ee_display-name*,
+
+  j2ee_web-resource-collection+,
+
+  j2ee_auth-constraint?,
+
+  j2ee_user-data-constraint?
+}
+
+j2ee_servlet-mapping = element servlet-mapping {
+  attribute id { string }?,
+
+  j2ee_servlet-name,
+
+  j2ee_url-pattern+
+}
+
+j2ee_servlet = element servlet {
+  attribute id { string }?,
+
+  j2ee_description-Group,
+
+  j2ee_servlet-name,
+
+  (element servlet-class { j2ee_fully-qualified-class }
+   | element jsp-file { string }),
+
+  j2ee_init-param*,
+
+  element load-on-startup { string }?,
+
+  element run-as { string }?,
+
+  j2ee_security-role-ref*
+}
+
+j2ee_servlet-name = element servlet-name {
+  string
+}
+
+j2ee_session-config = element session-config {
+  attribute id { string }?,
+
+  element session-timeout { string }?
+}
+
+j2ee_taglib = element taglib {
+  attribute id { string }?,
+
+  element taglib-uri { j2ee_string },
+
+  element taglib-location { j2ee_path }
+}
+
+j2ee_transport-guarantee = element transport-guarantee {
+   "NONE"
+ | "INTEGRAL"
+ | "CONFIDENTIAL"
+}
+
+j2ee_url-pattern = element url-pattern { string }
+
+j2ee_user-data-constraint = element user-data-constraint {
+  attribute id { string }?,
+
+  j2ee_description*,
+
+  j2ee_transport-guarantee
+}
+
+j2ee_web-app-Content =
+  element context-param { j2ee_param-value-Type }*
+
+  & j2ee_description-Group*
+
+  & element distributable { empty }?
+
+  & j2ee_jndi-environment-refs-Group
+
+  & j2ee_error-page*
+
+  & j2ee_filter*
+
+  & j2ee_filter-mapping*
+
+  & j2ee_jsp-config?
+
+  & j2ee_listener*
+
+  & j2ee_locale-encoding-mapping-list?
+
+  & j2ee_login-config?
+
+  & j2ee_message-destination*
+
+  & j2ee_mime-mapping*
+
+  & j2ee_security-constraint*
+
+  & j2ee_security-role*
+
+  & j2ee_servlet*
+
+  & j2ee_servlet-mapping*
+
+  & j2ee_session-config?
+
+  & j2ee_welcome-file-list?
+
+j2ee_web-app = element web-app {
+  attribute id { string }?,
+
+  attribute version { "2.4" },
+
+  attribute xsi:schemaLocation { string }?,
+
+  j2ee_web-app-Content
+}
+
+j2ee_web-resource-collection = element web-resource-collection {
+  attribute id { string }?,
+
+  element web-resource-name { string },
+
+  j2ee_description*,
+
+  j2ee_url-pattern+,
+
+  j2ee_http-method*
+}
+
+j2ee_welcome-file = element welcome-file {
+  attribute id { string }?,
+
+  string
+}
+
+j2ee_welcome-file-list = element welcome-file-list {
+  attribute id { string }?,
+
+  j2ee_welcome-file+
+}

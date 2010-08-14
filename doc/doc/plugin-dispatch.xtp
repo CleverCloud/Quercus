@@ -1,0 +1,204 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>How the Plugins Dispatch to Resin</title>
+    <description>
+      <p>When used with another web server, Resin serves JSPs and Servlets
+        and the other web server serves static content like html and
+        images.</p>
+    </description>
+
+
+  </header>
+
+  <body>
+
+<s1>
+      <p>The web server plugins (mod_caucho and isapi_srun) have
+        two main tasks:</p>
+      <ol>
+        <li>Select urls to dispatch to the Java process
+        </li><li>Pass the request and retrieve the response from the Java process.
+      </li></ol>
+
+      <note>"mod_caucho" is used to mean all the plugins.  All of the plugins
+        work the same, so "mod_caucho" is just a shorthand for
+        "mod_caucho and isapi_srun".</note>
+</s1>
+
+    <localtoc/>
+
+<s1 title="ResinConfigServer">
+
+<p>mod_caucho discovers its configuration by contacting
+the ResinConfigServer specified in the httpd.conf or resin.ini.
+The ResinConfigServer can be any Resin server.  When a user requests a URL,
+mod_caucho uses the configuration it has determined from the ResinConfigServer
+to determine whether Resin or Apache should handle the request. That decision
+is based on the configuration in the ResinConfigServer's resin.xml.</p>
+
+</s1>
+
+<s1 title="servlet-mapping selects URLs">
+
+<p>The <a href="webapp-tags.xtp#servlet-mapping">servlet-mapping</a>
+tag selects the URLs to send to Resin.
+<a href="host-tags.xtp#host">&lt;host&gt;</a> and 
+<a href="webapp-tags.xtp">&lt;web-app&gt;</a> group the
+servlet-mapping tags.</p>
+
+<s2 title="url-pattern">
+
+<p>servlet-mapping's <a href="webapp-tags.xtp#url-pattern">url-pattern</a>
+selects the URLs to pass to Resin.  servlet-mapping and url-pattern
+are part of the Servlet 2.3 standard, so there are many references explaining
+how it works.</p>
+
+<p>url-pattern can take one of four forms:</p>
+<ul>
+<li>"<var>/</var>" matches all URLs.  Use this to pass all requests to Resin.
+</li><li>"<var>/prefix/url/*</var>" matches any URL starting with <var>/prefix/url</var>,
+including <var>prefix/url</var> itself.  It does not match <var>/prefix/urlfoo</var>
+because any slash must immediately follow <var>url</var>
+</li><li>"<var>/exact/path</var>" matches only the exact path.  In other words, it
+will not match <var>/exact/path/bogus</var>.
+</li><li>"<var>*.ext</var>" matches any URL with the extension <var>ext</var>.  Resin
+allows path-infos, so <var>/foo/bar.ext/path/info</var> will also match.
+</li></ul>
+
+</s2>
+
+<s2 title="url-regexp">
+
+<note>mod_caucho does not understand regular expressions.  If you
+put regular expressions in your resin.xml, mod_caucho will not send
+the request to Resin.  Apache will handle the request itself.</note>
+
+<p>If you want to use regular expressions in servlet-mapping, web-app, or
+hosts, you must use Apache-specific configuration to send the request
+to Resin.  You can see this by looking at /caucho-status.  /caucho-status
+will not display any regular expressions.</p>
+
+</s2>
+
+<s2 title="special servlet-mappings">
+
+<p>There are two special servlet-names which only affect the plugins:
+<var>plugin_match</var> and <var>plugin_ignore</var>.</p>
+
+<p><var>plugin_match</var> will direct a request to Resin.
+The servlet engine itself
+will ignore the plugin_match directive.  You can use plugin_match to
+direct an entire subtree to Resin, e.g. to workaround the
+regexp limitation, but allow Resin's other servlet-mapping directives
+to control which servlets are used.</p>
+
+<p><var>plugin_ignore</var> keeps the request at on the web server.  So you
+could create a directory <var>/static</var> where all documents, including JSPs are
+served by the web server.</p>
+
+<example>
+&lt;!-- send everything under /resin to Resin --&gt;
+&lt;servlet-mapping url-pattern='/resin/*'
+                 servlet-name='plugin_match'/&gt;
+
+&lt;!-- keep everything under /static at the web server --&gt;
+&lt;servlet-mapping url-pattern='/static/*'
+                 servlet-name='plugin_ignore'/&gt;
+</example>
+
+</s2>
+
+<s2 title="&lt;web-app&gt;">
+
+<p><a href="webapp-tags.xtp">web-apps</a> collect servlets and
+JSP files into separate applications.  All the servlet-mappings in a
+web-app apply only to the URL suffix.</p>
+
+<p>In the following example, every URL starting with /prefix/url maps to
+the web-app.  The servlet-mapping only applies to URLs matching the prefix.
+</p>
+
+<example>
+...
+&lt;web-app id='/prefix/url'&gt;
+  &lt;servlet-mapping url-pattern='*.foo' .../&gt;
+&lt;/web-app&gt;
+..
+</example>
+
+<p>In the exaple, mod_caucho will match any URL matching /prefix/url/*.foo.
+/prefix/url/bar.foo will match, but /test/bar.foo will not match.</p>
+
+<note>Resin standalone allows a <var>regexp</var> attribute instead of an
+id.  Because mod_caucho does not understand regexps, it will ignore any
+web-app with a <var>regexp</var> attribute.</note>
+
+<note>web.xml files and war files are treated exactly the same as web-apps
+in the resin.xml.</note>
+
+</s2>
+
+<s2 title="&lt;host&gt;">
+
+<p><a href="cluster-tags.xtp#host">host</a> blocks configure
+<a href="virtual-host.xtp">virtual hosts</a>.  There's a bit of
+extra work for virtual hosts that we'll ignore here.  (Basically, you
+need to add Apache <var>ServerName</var> directives so Resin knows the name
+of the virtual host.)</p>
+
+<p>For dispatching, a host block gathers a set of web-apps.  Each host
+will match a different set of URLs, depending on the web-app configuration.
+The default host matches any host not matched by a specific rule.</p>
+
+<p>As usual, /caucho-status will show the URLs matched for each host.</p>
+
+<note>mod_caucho does not understand the host <var>regexp</var> attribute.
+It will ignore all hosts using <var>regexp</var>.  To get around this, you can
+either configure Apache directly (see below), or configure the default host
+with the same set of servlet-mappings.  Since mod_caucho will use the
+default host if no others match, it will send the right requests to
+Resin.</note>
+
+</s2>
+
+</s1>
+
+<s1 title="/caucho-status shows mod_caucho's URLs">
+
+<p>The special URL <var>/caucho-status</var> is invaluable in debugging
+Resin configurations.  <var>/caucho-status</var> displays all the resin.xml
+patterns, so you can easily scan it to see which URLs mod_caucho is sending
+to Resin and which ones are handled by Apache.</p>
+
+</s1>
+
+<s1 title="Dispatching using Apache's http.conf">
+
+<p>You can configure Apache directly, instead of letting mod_caucho dispatch
+from the resin.xml file.  If you use this method, you need to make
+sure you match the Apache configuration with the Resin configuration.</p>
+
+<note>This technique uses Apache-specific features, so it's not
+directly applicable to IIS or iPlanet.</note>
+
+<p>Apache's <var>Location</var> and <var>SetHandler</var> directives send requests
+to Resin.  The mod_caucho handler is <var>caucho-request</var>.</p>
+
+<example title="httpd.conf">
+LoadModule caucho_module libexec/mod_caucho.so
+AddModule mod_caucho.c
+
+CauchoHost localhost 6802
+AddHandler caucho-request jsp
+&lt;Location /servlet/*&gt;
+   SetHandler caucho-request
+&lt;/Location&gt;
+</example>
+
+<p>Because Apache's <var>SetHandler</var> is external to mod_caucho,
+/caucho-status will not show any <var>SetHandler</var> dispatching.</p>
+
+</s1>
+  </body>
+</document>

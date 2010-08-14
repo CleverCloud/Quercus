@@ -1,0 +1,28 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 4.0.9 Release Notes</title>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 4.0.9 Overview">
+
+<p>Resin 4.0.9 is a stability/bug fix release.</p>
+
+<p>The ThreadPool has been reworked to replace synchronization with
+atomic variables.</p>
+
+<p>The distributed cache/session backing-store has been revamped to
+replace its locking system and replace synchronization with
+atomic variables.</p>
+
+<p>Network startup has been broken into systems to simplify startup order and
+improve testability.</p>
+
+</s1>
+
+</body>
+</document>

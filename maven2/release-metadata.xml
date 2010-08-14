@@ -1,0 +1,23 @@
+<metadata>
+  <groupId>com.caucho</groupId>
+  <artifactId>@ARTIFACT@</artifactId>
+  
+  <issueManagement>
+    <url>http://bugs.caucho.com</url>
+  </issueManagement>
+  
+  <licenses>
+    <license>
+      <name>The GNU General Public License Version 2</name>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <version>@VERSION@</version>
+  <versioning>
+    <release>@VERSION@</release>
+    <versions>
+      <version>@VERSION</version>
+    </versions>
+  </versioning>
+</metadata>

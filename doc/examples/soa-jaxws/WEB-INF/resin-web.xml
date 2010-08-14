@@ -1,0 +1,12 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <servlet-mapping url-pattern="/user/*"
+                   jndi-name="service/UserService"
+                   servlet-class="example.UserServiceImpl">
+    <protocol type="soap"/>
+  </servlet-mapping>
+
+  <web-service-client jndi-name="soap/UserService">
+    <url>soap:${webApp.url}/user/</url>
+    <interface>example.UserService</interface>
+  </web-service-client>
+</web-app>

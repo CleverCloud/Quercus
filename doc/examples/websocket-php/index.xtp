@@ -1,0 +1,218 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Hello, World WebSocket in Quercus/PHP</title>
+    <description><p>A "hello, world" WebSocket servlet using the Quercus PHP implementation</p></description>
+    <type>tutorial</type>
+   <tutorial-startpage>client.php</tutorial-startpage>
+  </header>
+
+  <body>
+    <localtoc/>
+
+<s1 title="WebSocket Overview">
+
+<p>WebSocket is a new browser capability being developed for HTML 5 browsers,
+enabling fully interactive applications. With WebSockets, both the browser
+and the server can send asynchronous messages over a single TCP socket, without
+resorting to long polling or comet.</p>
+
+<p>Essentially, a WebSocket is a standard bidirectional TCP socket between
+the client and the server. The socket starts out as a HTTP connection and
+then "Upgrades" to a TCP socket after a HTTP handshake. After the handshake,
+either side can send data.</p>
+
+<example title="WebSocket handshake">
+GET /test HTTP/1.1
+Upgrade: WebSocket
+Connection: Upgrade
+Origin: http://localhost/test
+Host: localhost
+Content-Length: 0
+
+...
+
+HTTP/1.1 101 Web Socket Protocol Handshake
+Upgrade: WebSocket
+Connection: Upgrade
+Server: Resin/4.0.2
+WebSocket-Location: ws://localhost/websocket
+WebSocket-Origin: http://localhost/test
+Content-Length: 0
+Date: Fri, 08 May 2009 09:51:31 GMT
+
+...
+</example>
+
+<s2 title="WebSocket packets">
+
+<p>After the WebSocket connection is established, all data is encoded
+in lightweight packets. While the spec defines a text packet and a
+binary packet format, browsers use the text packet exclusively. (Resin's
+HMTP uses the binary packet format.)</p>
+
+<p>A text packet is the byte 0x00 followed by UTF-8 encoded data followed
+by a 0xff byte.</p>
+
+<def title="WebSocket text packet">
+x00 <em>utf-8-data</em> xff
+</def>
+
+<def title="Example: hello text packet">
+\x00hello, world\xff
+</def>
+
+</s2>
+
+
+</s1>
+
+
+<s1 title="Tutorial Description">
+
+<p>Since the tutorial is a hello, world, the JavaScript
+just does the following:</p>
+
+<ol>
+<li>Connects to the Resin WebSocket servlet</li>
+<li>Sends a "hello" query to the servlet</li>
+<li>Sends a "server" query to the servlet</li>
+<li>Displays any received messages from the servlet</li>
+</ol>
+
+</s1>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <th>File</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td><viewfile-link file="client.php"/></td>
+  <td>client HTML page and JavaScript</td>
+</tr>
+<tr>
+  <td><viewfile-link file="websocket.php"/></td>
+  <td>PHP WebSocket launcher - accepting the upgrade request</td>
+</tr>
+<tr>
+  <td><viewfile-link file="websocket-handler.php"/></td>
+  <td>PHP WebSocket handler - handles request messages</td>
+</tr>
+</deftable>
+</s1>
+
+<s1 title="WebSocket JavaScript">
+
+<p>The JavaScript for this example has been tested with the nightly
+build of Chromium.</p>
+
+<s2 title="Connecting to the WebSocket in JavaScript">
+
+<example title="Example: WebSocket connect in JavaScript">
+&lt;?php
+  $url = "ws://localhost:8080/example/websocket";
+?>
+
+&lt;script language='javascript'>
+
+function onopen(event) { ... }
+function onmessage(event) { ... }
+function onclose(event) { ... }
+
+ws = new WebSocket("&lt;?= $url ?>");
+wsopen.ws = ws;
+ws.onopen = wsopen;
+ws.onmessage = wsmessage;
+ws.onclose = wsclose;
+
+&lt;/script>
+</example>
+
+</s2>
+
+<s2 title="Receiving WebSocket data in JavaScript">
+
+<example title="Example: receive WebSocket message">
+&lt;script language='javascript'>
+
+function wsmessage(event)
+{
+  data = event.data;
+
+  alert("Received: [" + data + "]");
+}
+
+&lt;/script>
+</example>
+
+</s2>
+
+<s2 title="Sending WebSocket data in JavaScript">
+
+<example title="Example: send WebSocket message">
+&lt;script language='javascript'>
+
+function wsopen(event)
+{
+  ws = this.ws;
+
+  ws.send("my-message");
+}
+
+ws = new WebSocket(...);
+wsopen.ws = ws;
+ws.onopen = wsopen;
+
+&lt;/script>
+</example>
+
+</s2>
+</s1>
+
+<s1 title="WebSocket PHP">
+
+<p>Resin's WebSocket PHP support requires two PHP files. The first
+accepts the WebSocket request and Upgrades the HTTP request. The second
+handles WebSocket messages.</p>
+
+<p>To upgrade a HTTP socket to WebSocket, use
+<code>websocket_start(path)</code>.  The path is a PHP include path to
+handle the request.</p>
+
+<example title="Example: Upgrading to WebSocket">
+&lt;?php
+
+$ws = websocket_start("websocket-handler.php");
+</example>
+
+<p>The WebSocket handler is the heart of the server-side implementation
+of websockets. It is a single-threaded listener for client events.</p>
+
+<p>When a new packet is available, Resin will call the script, 
+expecting it to read data from the client. While
+the handler is processing, Resin will not call it
+again until the first one has completed processing.</p>
+
+<p>In this example, the handler reads a WebSocket text packet and sends
+a response.</p>
+
+<example title="Example: websocket-handler.php">
+&lt;?php
+
+// read the next packet from the client 
+$value = websocket_read();
+
+if ($value == "hello") {
+ websocket_write("world");
+} 
+else if ($value == "server") {
+ websocket_write("Resin PHP");
+}
+</example>
+
+</s1>
+
+  </body>
+</document>

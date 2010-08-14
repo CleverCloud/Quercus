@@ -1,0 +1,82 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.5 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="Overview">
+
+<p>Any bug you find in 3.0.5 should be reported in the
+<a href="http://www.caucho.com/quercus/bugtrack">bugtrack</a>.</p>
+
+<p>Because of the large number of changes from Resin 2.1 to Resin 3.0,
+developers should stress
+test their application with Resin 3.0.5 thoroughly before deploying
+it.</p>
+
+<p>3.0.5 is a bug fix release.  There were few user-visible changes.</p>
+
+</s1>
+
+<s1 title="JSP and JSTL">
+
+<p>
+The JSP and JSTL generation was reworked to improve performance.
+Those changes should be invisible to applications.</p>
+
+</s1>
+
+<s1 title="Hessian/Burlap">
+
+<p>The Hessian/Burlap servlet was cleaned up to allow any bean to act
+as a service.  The configuration looks like:</p>
+
+<example>
+&lt;servlet servlet-name="hessian"
+         servlet-class="com.caucho.hessian.servlet.HessianServlet"&gt;
+  &lt;init&gt;
+    &lt;service resin:type="example.MyService"&gt;
+      &lt;foo&gt;bar&amp;lt/foo&gt;
+    &lt;/service&gt;
+  &lt;/init&gt;
+&lt;/servlet&gt;
+</example>
+
+</s1>
+
+<s1 title="Plugins">
+
+<p>Plugins now save the configuration values.  When the Resin server
+is not available, the plugin will use the saved value.</p>
+
+<p>Apache's configuration (httpd.conf) now has a CauchoStatus "true" element.  By
+default, CauchoStatus is disabled.</p>
+
+<p>IIS's configuration in resin.ini has an IISPriority configuration
+to configure the filter's priority.</p>
+
+</s1>
+
+<s1 title="RMI">
+
+<p>There is a new <a href="../doc/soa-rmi.xtp">RMI resource</a> for
+RMI servers.  The resource handles Resin's web-app reloading, avoiding
+the classloader issues typical with RMI.</p>
+
+</s1>
+
+<s1 title="JCA/JMS">
+
+<p>A new <a href="../examples/jms-listener/index.xtp">JMS listener resource</a>
+is available.  Applications needing to implement a JMS
+listener can use this resource to receive messages without needing to
+implement EJB message beans.</p>
+
+</s1>
+
+</body>
+</document>

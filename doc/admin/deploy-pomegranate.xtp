@@ -1,0 +1,103 @@
+<document>
+  <header>
+    <title>Project Jar Repository</title>
+    <type>contents</type>
+    <description>
+    <p>Library, project, and third-party jars can be stored
+    in <var>project-jars</var> and resolved using a Maven WEB-INF/pom.xml.
+    Resin will match the correct versions from <var>project-jars</var>
+    and create classloaders for the web-app's libraries.</p>
+    </description>
+  </header>
+
+  <body>
+
+<localtoc/>
+
+<s1 title="Overview" version="Resin 4.0.0">
+
+<p>Because projects use many library jars such as Hibernate, Wicket,
+and Apache Commons, Resin provides a repository for the jars, letting
+you add all your jars in one directory and select the ones you need
+either in the resin-web.xml or in a Maven-standard
+WEB-INF/pom.xml file.  This repository gives several benefits:
+simplifying jar management, resolving versions, reusing jar files, and
+reducing .war deployment sizes.</p>
+
+<p>Resin will create internal classloaders for each of your libraries,
+and resolve the dependencies of those libraries.  So if you use "foo"
+and "bar" libraries, and both depend on a "log" library, Resin will
+hook up the classes correstly.</p>
+
+<p>At startup, Resin scans all the jars in
+<var>${resin.root}/project-jars</var> directory for pom.xml files
+and create an internal database of the artifact
+names and versions.  A WEB-INF/pom.xml will select the jars for use in
+the web-app.</p>
+
+<p>For example, your project might use two main libraries: framework-1.0.1.jar
+and persistence-2.0.2.jar, and those libraries might
+depend on parser-1.1.1.jar, log-3.3.3.jar and parser-2.2.2.jar.  Using the
+jars is a two step process:</p>
+
+<ol>
+<li>Add jars to ${resin.root}/project-jars/</li>
+<li>Add WEB-INF/pom.xml or WEB-INF/resin-web-pre.xml to declare dependencies</li>
+</ol>
+
+<p>To install, you would add all the jar files
+into ${resin.root}/project-jars and then
+add a WEB-INF/pom.xml telling Resin that you need the "framework"
+artifact with version 1.0.1 and the "persistence" artifact
+with version 2.2.2.</p>
+
+
+<figure src="project-jars.jpg"/>
+
+<p>Your web-app can declare its dependencies in two ways: a Maven-standard WEB-INF/pom.xml jar, or using a &lt;dependency> tag in the resin-web-pre.xml.
+The following example shows that the pom.xml might look like:</p>
+
+<example title="Example: WEB-INF/pom.xml">
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0">
+  &lt;groupId>com.myfoo&lt;/groupId>
+  &lt;artifactId>my-webapp&lt;/artifactId>
+  &lt;version>1.0.0&lt;/version>
+
+  &lt;dependencies>
+    &lt;dependency>
+      &lt;groupId>com.foo&lt;/groupId>
+      &lt;artifactId>framework&lt;/artifactId>
+      &lt;version>1.0.1&lt;/version>
+    &lt;/dependency>
+    
+    &lt;dependency>
+      &lt;groupId>com.bar&lt;/groupId>
+      &lt;artifactId>persistence&lt;/artifactId>
+      &lt;version>2.0.2&lt;/version>
+    &lt;/dependency>
+  &lt;/dependencies>
+&lt;/project>
+</example>
+
+<p>You can also declare your dependencies directly in a
+WEB-INF/resin-web-pre.xml.  The "resin-web-pre" means Resin evaluates
+the file before the web.xml and resin-web.xml, so the classes will be
+loaded before any servlets need them.</p>
+
+<example title="Example: WEB-INF/resin-web-pre.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;class-loader>
+  
+     &lt;dependency org="com.foo" name="framework" version="1.0.1"/>
+     &lt;dependency org="com.bar" name="persistence" version="2.0.2"/>
+     
+  &lt;/class-loader>
+
+&lt;/web-app>
+</example>
+
+</s1>
+
+  </body>
+</document>

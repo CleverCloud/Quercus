@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+
+<service_bundle type='manifest' name='RESIN4'>
+
+<service
+	name='network/http'
+	type='service'
+	version='1'>
+
+	<!--
+	  Because we may have multiple instances of network/http
+	  provided by different implementations, we keep dependencies
+	  and methods within the instance.
+	-->
+
+	<instance name='resin4' enabled='false'>
+		<!--
+		  Wait for network interfaces to be initialized.
+		-->
+		<dependency name='network'
+		    grouping='require_all'
+		    restart_on='error'
+		    type='service'>
+		    <service_fmri value='svc:/milestone/network:default'/>
+		</dependency>
+
+		<!--
+		  Wait for all local filesystems to be mounted.
+		-->
+		<dependency name='filesystem-local'
+		    grouping='require_all'
+		    restart_on='none'
+		    type='service'>
+		    <service_fmri
+			value='svc:/system/filesystem/local:default'/>
+		</dependency>
+
+		<!--
+		  Wait for automounting to be available, as we may be
+		  serving data from home directories or other remote
+		  filesystems.
+		-->
+		<dependency name='autofs'
+		    grouping='optional_all'
+		    restart_on='error'
+		    type='service'>
+		    <service_fmri value='svc:/system/filesystem/autofs:default'/>
+		</dependency>
+
+		<exec_method
+			type='method'
+			name='start'
+			exec='/lib/svc/method/http-resin4 start'
+			timeout_seconds='60'>
+            <method_context>
+                <method_credential user='webservd' privileges='basic,net_privaddr' />
+            </method_context>
+        </exec_method>
+
+		<exec_method
+			type='method'
+			name='stop'
+			exec='/lib/svc/method/http-resin4 stop'
+			timeout_seconds='60'>
+            <method_context>
+                <method_credential user="webservd" privileges="basic" />
+            </method_context>
+        </exec_method>
+
+		<property_group name='httpd' type='application'>
+			<stability value='Evolving' />
+			<!--<propval name='startup_options' type='astring' value='' />-->
+			<!--<propval name='server_type' type='astring' value='prefork' />-->
+			<!--<propval name='enable_64bit' type='boolean' value='false' />-->
+			<propval name='value_authorization' type='astring' value='solaris.smf.value.http/resin4' />
+		</property_group>
+
+		<property_group name='general' type='framework'>
+			<propval name='action_authorization' type='astring' value='solaris.smf.manage.http/resin4' />
+			<propval name='value_authorization' type='astring' value='solaris.smf.value.http/resin4' />
+		</property_group>
+
+		<property_group name='startd' type='framework'>
+			<!-- sub-process core dumps shouldn't restart
+				session -->
+			<propval name='ignore_error' type='astring'
+				value='core,signal' />
+		</property_group>
+
+		<template>
+			<common_name>
+				<loctext xml:lang='C'>
+					Caucho Resin4 JavaEE Application Server
+				</loctext>
+			</common_name>
+
+            <documentation>
+                <!--        <manpage title='REPLACE_ME' section='REPLACE_ME'/> -->
+                <doc_link name='caucho.org'
+                          uri='http://caucho.com/resin-4.0/'/>
+
+            </documentation>
+		</template>
+
+	</instance>
+
+	<stability value='Evolving' />
+
+</service>
+
+</service_bundle>

@@ -1,0 +1,75 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin Development Roadmap</title>
+    <description>
+    </description>
+  </header>
+
+  <body>
+    <s1 title="3.0.0">
+      <p>February, 2002</p>
+
+      <dl>
+        <dt>JSP 2.0
+        <dd>full support
+
+        </dd></dt><dt>Servlet 2.4
+        <dd>full support
+
+        </dd></dt><dt>Relax-NG validation of config files
+        <dd>full support
+
+        </dd></dt><dt>Javascript
+        <dd>removed
+
+       </dd></dt><dt>non-blocking I/O
+       <dd>used for Unix.  (Windows needs to wait.)  It's handled through JNI, since the JDK 1.4 nio is a bunch of junk. (The JDK 1.4 nio is significantly slower than straight io.)
+
+      </dd></dt></dl>
+    </s1>
+
+    <s1 title="3.0.1">
+      <p>date?</p>
+
+      <dl>
+        <dt>JMX
+        <dd>partial to JMX 1.2 spec
+
+        </dd></dt><dt>persistent sessions
+        <dd>after certain amount of time, the session gets put in a persistent store, and removed from memory, without being lost entirely.
+
+        </dd></dt><dt>JCA
+        <dd>missing XA support.
+
+        </dd></dt><dt>JSP/Servlet updates from later drafts
+        <dd>Draft 3 for JSP.  Draft 2 for Servlet.
+      </dd></dt></dl>
+    </s1>
+
+    <s1 title="3.0.2" subtitle="Q?">
+      <p>date?</p>
+
+      <dl>
+        <dt>JMX
+        <dd>complete
+
+        </dd></dt><dt>logging
+        <dd>final cleanup, format attribute
+      </dd></dt></dl>
+    </s1>
+
+    <s1 title="UNSHEDULED">
+      <dl>
+        <dt>JMS
+        <dd>
+        
+        </dd></dt><dt>XSLT 2.0
+        <dd>
+
+        </dd></dt><dt>JAAS
+        <dd>
+      </dd></dt></dl>
+    </s1>
+  </body>
+</document>

@@ -1,0 +1,227 @@
+<document>
+<header>
+<product>resin</product>
+<title>JMX Consoles</title>
+<description>
+<p>
+JMX Consoles provide access to both the MBean's that Resin publishes for
+information about and control of the Resin server and Application specific
+MBeans.
+</p>
+</description>
+</header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="JDK 5.0 and JMX">
+
+<p>
+JDK 5.0 includes a JMX implementation that is used to provide 
+local and remote administration of a Resin server.
+</p>
+
+<example title="Start Resin and allow local JMX administration">
+win&gt; ./resin.exe -Dcom.sun.management.jmxremote
+unix&gt; bin/resin.sh -Dcom.sun.management.jmxremote
+</example>
+
+<example title="Start jconsole">
+win&gt; jconsole.exe
+unix&gt; jconsole
+
+<i>Choose Resin's JVM from the "Local" list.</i>
+</example>
+
+<example title="Start Resin and allow remote JMX administration">
+win&gt; ./resin.exe -Dcom.sun.management.jmxremote.port=9999
+unix&gt; bin/resin.sh -Dcom.sun.management.jmxremote.port=9999
+</example>
+
+<p>
+Without some configuration effort, the previous command will not work.
+Password configuration and SSL configuration is required by the JDK
+implementation of remote JMX.  Detailed instructions are included in the JDK
+documentation.
+</p>
+
+<p>
+The following is useful for testing, but should be done with caution as the
+port is not protected by password or by SSL, and if not protected by a firewall
+is accessible by anyone who can guess the port number.
+</p>
+
+<example title="Start Resin and remote JMX - disable password checking and SSL">
+
+win&gt; ./resin.exe -Dcom.sun.management.jmxremote.port=9999
+                    -Dcom.sun.management.jmxremote.ssl=false
+                    -Dcom.sun.management.jmxremote.authenticate=false
+
+unix&gt; bin/resin.sh -Dcom.sun.management.jmxremote.port=9999 \
+                      -Dcom.sun.management.jmxremote.ssl=false \
+                      -Dcom.sun.management.jmxremote.authenticate=false
+</example>
+
+<example title="Start jconsole">
+win&gt; jconsole.exe
+unix&gt; jconsole
+
+<i>Enter the host name and port number (9999) on the "Remote" tab</i>
+</example>
+
+<example title="Setting a password for remote JMX access">
+$ cd $JAVA_HOME/jre/lib/management
+$ cp jmxremote.password.template jmxremote.password
+$ chmod u=rw jmxremote.password
+$ vi jmxremote.password
+
+<i>Set a password for "monitorRole" and "controlRole":</i>
+
+monitorRole 12monitor
+controlRole 55control
+</example>
+
+<example title="Start Resin and remote JMX - disable SSL">
+
+win&gt; ./resin.exe -Dcom.sun.management.jmxremote.port=9999
+                    -Dcom.sun.management.jmxremote.ssl=false
+
+unix&gt; bin/resin.sh -Dcom.sun.management.jmxremote.port=9999 \
+                      -Dcom.sun.management.jmxremote.ssl=false
+
+</example>
+
+<example title="Start jconsole">
+win&gt; jconsole.exe
+unix&gt; jconsole
+</example>
+
+<p>
+<i>Enter the host name and port number (9999) on the "Remote" tab</i>
+<i>Enter the username and password on the "Remote" tab</i>
+</p>
+</s1>
+
+<s1 title="Instrumenting Resources">
+
+<p>Instrumenting resources so JMX can manage them consists
+of the following steps:</p>
+
+<ol>
+<li>For a class <code>MyFoo</code>, create an interface <code>MyFooMBean</code> with
+the management interface.
+</li><li>Class <code>MyFoo</code> needs to <var>implement</var> the <code>MyFooMBean</code> interface.
+</li><li>Register <code>MyFoo</code> with the JMX server.
+</li></ol>
+
+<s2 title="Instrumenting a servlet">
+
+<p>Resin will automatically register any servlet which
+implement an MBean interface.  By default, the JMX name will be:</p>
+
+<def>
+web-app:j2eeType=Servlet,name=<var>servlet-name</var>
+</def>
+
+<deftable title="ObjectName attributes">
+<tr><th>Attribute</th><th>Value
+</th></tr><tr><td>j2eeType</td><td>Servlet
+</td></tr><tr><td>WebModule</td><td>the <var>contextPath</var>
+</td></tr><tr><td>J2EEApplication</td><td>the host?
+</td></tr><tr><td>J2EEServer</td><td>the server-id?
+</td></tr></deftable>
+
+<p>The domain is <var>web-app</var>, the type property
+is javax.servlet.Servlet and the name property is the value
+of &lt;servlet-name&gt;.</p>
+
+<p>JMX clients will use the name to manage the servlet.  For example,
+a client might use the pattern <var>web-app:type=javax.servlet.Servlet,*</var>
+to retrieve all managed servlets.</p>
+
+<example title="MyServletMBean.java">
+package test;
+
+public interface MyServletMBean {
+  public int getCount();
+}
+</example>
+
+<example title="MyServlet.java">
+package test;
+
+import java.io.*;
+import javax.servlet.*;
+
+public class MyServlet extends GenericServlet implements MyServletMBean {
+  private int count;
+
+  public int getCount()
+  {
+    return count;
+  }
+
+  public void service(ServletRequest request,
+                      ServletResponse response)
+    throws IOException
+  {
+    PrintWriter out = response.getWriter();
+
+    count++;
+
+    out.println("Hello, world");
+  }
+}
+</example>
+
+</s2>
+
+</s1>
+
+<s1 title="Managing Resources">
+
+<p>Managing resources uses the JMX API, primarily using
+the <code>MBeanServer</code> object.  In Resin, each web-app has
+its own <code>MBeanServer</code>.</p>
+
+<example title="Getting the Count attribute">
+import javax.management.*;
+
+...
+
+MBeanServer server = MBeanServerFactory.createMBeanServer();
+
+ObjectName name = new ObjectName("web-app:j2eeType=javax.servlet.Servlet," +
+                                 "name=hello");
+
+Object value = server.getAttribute(name, "Count");
+
+out.println("Count: " + value);
+</example>
+
+</s1>
+
+<s1 title="Interpreting the proxy cache hit ratio">
+
+<p>
+The proxy cache is Resin's internal proxy cache (in Resin Pro).
+The hit ratio marks what percentage of requests are served out of the
+cache, i.e. quickly, and which percentage are taking the full time.
+</p>
+
+<p>
+The proxy cache hit ratio is useful for seeing if you can improve your
+application's performance with better caching.  For example, if you had
+a news site like www.cnn.com, you should have a high hit rate to make
+sure you're not overtaxing the database.
+</p>
+
+<p>
+If you have a low value, you might want to look at your heavily used
+pages to see if you can cache more.
+</p>
+
+</s1>
+</body>
+</document>

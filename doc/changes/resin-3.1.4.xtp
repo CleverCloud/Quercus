@@ -1,0 +1,91 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.1.4 Release Notes</title>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 3.1.x">
+
+<p>Resin 3.1.x is a development branch.  New capabilities will be added
+along with bug fixes for future versions of the Resin 3.1.x branch.</p>
+
+<p>Deployments which need a Resin version with only bug fixes should
+use the Resin 3.0.x branch.</p>
+
+</s1>
+
+<s1 title="database-default">
+
+<p>The configuration file now accepts &lt;database-default.</p>
+
+</s1>
+
+<s1 title="DatabaseManager">
+
+<p>com.caucho.sql.DatabaseManager allows dynamic allocation of
+database pools.</p>
+
+<p>The two methods are:</p>
+
+<pre>
+  DataSource DatabaseManager.findDatabase(String url);
+
+  DataSource DatabaseManager.findDatabase(String url, String driver);
+</pre>
+
+<p>The first method is only allowed if the driver has a META-INF/services.</p>
+
+</s1>
+
+<s1 title="JMS">
+
+<p>Added new configuration tags for JMS:</p>
+
+<example title="resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;jms-connection-factory jndi-name="jms/ConnectionFactory"/>
+
+  &lt;jms-queue jndi-name="jms/q1" url="memory:"/>
+  &lt;jms-queue jndi-name="jms/q1" url="file:path=WEB-INF/jms"/>
+  &lt;jms-queue jndi-name="jms/q1" url="cluster:path=WEB-INF/jms"/>
+
+  &lt;jms-topic jndi-name="jms/q1" url="memory:"/>
+  &lt;jms-topic jndi-name="jms/q1" url="file:path=WEB-INF/jms"/>
+  &lt;jms-topic jndi-name="jms/q1" url="cluster:path=WEB-INF/jms"/>
+
+&lt;/web-app>
+</example>
+
+<p>JMS also has new MXBeans, JmsQueueMXBean and JmsTopicMXBean.</p>
+
+</s1>
+
+<s1 title="Admin">
+
+<p>Added resin_admin_insecure to allow sites to require SSL for admin.</p>
+
+</s1>
+
+<s1 title="logging enhancements">
+
+<p>The logging timestamp now allows %{thread} and %{env}.</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+  &lt;log name="" level="fine" path="stdout:"
+       timestamp="[%H:%M:%S.%s] {%{thread} %{env}} "/>
+
+  ...
+&lt;/resin>
+</example>
+
+</s1>
+
+</body>
+</document>

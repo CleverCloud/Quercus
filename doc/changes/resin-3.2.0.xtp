@@ -1,0 +1,271 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.2.0 Release Notes</title>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 3.2.x">
+
+<p>Resin 3.2.x is now the development branch.  Due to the addition of
+new features, it may be more unstable than the production branch.</p>
+
+<p>The 3.1.x branch is the stable branch.</p>
+
+</s1>
+
+<s1 title="access logging">
+
+<ul>
+<li>The access-log tag now has a hostname-dns-lookup attribute for Apache
+compatibility.</li>
+</ul>
+
+</s1>
+
+<s1 title="amber">
+
+<ul>
+<li>Added persistence-unit-default and persistence-unit to
+persistence-manager.  By default, Resin no longer starts Amber automatically.
+A &lt;persistent-unit> is required to start Amber.</li>
+</ul>
+
+</s1>
+
+<s1 title="bam">
+
+<p>The <a href="../doc/bam.xtp">BAM documentation</a> has been updated.</p>
+
+<ul>
+<li><a href="../doc/env-tags.xtp#bam-service">bam-service</a> now easily
+configures BAM services similar to ejb-message-bean.</li>
+<li>Bam services are now queued and can be used as SEDA services.</li>
+<li>The BAM API has been refactored for simplification.</li>
+<li>SimpleBamService implementations can use annotations like
+<var>@QueryGet</var> to implement handlers directly without dispatching.</li>
+<li><code>BamClient</code> is now available for easy client connection.
+Sending of messages is now a two step process.</li>
+<li><code>bam_send_message</code> is now available for PHP scripts.</li>
+<li>The "caucho.php:" service now allows BamServices to be written as PHP
+scripts.</li>
+</ul>
+
+</s1>
+
+<s1 title="cluster (session) persistent store">
+
+<ul>
+<li>Major refactoring to improve startup performance and handling of
+large sessions.</li>
+<li>Sessions now default to serialization using Hessian.</li>
+<li>Allow save-backup='false' in cases where you don't want to save backups,
+but do want to enable the cluster store so peer servers can obtain the
+current value.</li>
+</ul>
+
+</s1>
+
+<s1 title="comet/socket/thread refactor">
+
+<p>Resin's socket and thread management has been reworked considerably to
+support larger numbers of concurrent servers.  In our performance checkout
+of Resin 3.2.0 we were able to <a href="http://blog.caucho.com/?p=48">load
+Resin with 25,000 simultaneous clients</a>.</p>
+
+</s1>
+
+<s1 title="config getenv">
+
+<p>The configure can now use ${getenv['foo']} to get environment variables.</p>
+
+</s1>
+
+<s1 title="-Dcaucho.smallmem">
+
+<p>The -Dcaucho.smallmem command-line argument tells Resin to shrink its
+buffer sizes for a small-memory footprint.  For example, the main internal
+buffer size shrinks from 16k to 1k.</p>
+
+</s1>
+
+<s1 title="debian">
+
+<p>Resin Professional can now be installed as a Debian package.  The package
+download is at <a href="http://caucho.com/download/">http://caucho.com/download/</a></p>
+
+<example title="Example: debian install">
+unix> sudo dpkg -i resin-pro-3.2.0.deb
+</example>
+
+</s1>
+
+<s1 title="deployment">
+
+<p>.war files can now be deployed from the command-line.</p>
+
+<example title="Example: deploy">
+unix: java -jar $RESIN_HOME/lib/pro.jar -conf conf/resin.xml \
+         deploy test.war
+</example>
+
+</s1>
+
+<s1 title="development-mode-error-page">
+
+<p>The default stack trace display for application exceptions is now
+controlled by the <a href="../doc/cluster-tags.xtp#development-mode-error-page">&lt;development-mode-error-page></a> tag and defaults
+to false.  When it's false, users will see a generic error message
+reporting the server and time, but no other information.</p>
+
+</s1>
+
+<s1 title="distribution changes">
+
+<p>The Resin jars have been combined to make embedding Resin easier, i.e.
+avoiding massive classpaths.  You'll normally only need to add 3 jars to
+your classpath to embed Resin.</p>
+
+<ul>
+<li>JavaEE jars have been combined into javaee-16.jar</li>
+<li>Resin jars have been combined into resin.jar</li>
+<li>Resin-Pro jars have been combined into pro.jar</li>
+</ul>
+
+<p>resin.xml is the new name for resin.conf.  The old name will still work.
+The change to resin.xml will help editors and mail programs recognize the XML
+syntax of the resin.xml more easily.</p>
+
+<p>The /resin-admin code has been moved into ${resin.root}/doc/admin.</p>
+
+</s1>
+
+<s1 title="dynamic servers">
+
+<p>Resin now has the capability to add servers to a cluster dynamically.
+Each cluster will have a core of static servers and a pool of dynamic
+servers.</p>
+
+</s1>
+
+<s1 title="eclipse">
+
+<p>The eclipse plugin has been updated and is now distributed with
+the Resin maven repository.</p>
+
+</s1>
+
+<s1 title="ivy-loader">
+
+<p>Resin now includes an experimental &lt;ivy-loader> that loads jars
+directly from an ivy-repository.  The ivy-loader tag specifies the jars
+required by the web-app, which Resin will use to load from the repository.
+Currently, the ivy-loader does not automatically download jars from
+the repository site, just from the ivy cache.</p>
+
+</s1>
+
+<s1 title="jsf debugging">
+
+<p><a href="../doc/jsf.xtp">Resin's JSF</a> now has an
+"enable-developer-aid" attribute to display data about the current state
+of a JSF page for debugging.</p>
+
+<example title="Example: WEB-INF/resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;jsf enable-developer-aid="true"/>
+
+&lt;/web-app>
+</example>
+
+</s1>
+
+<s1 title="jms cluster">
+
+<ul>
+<li>The cluster store now has a backup attribute, to save backup values
+across the cluster.</li>
+<li>The cluster store can now use remote JNDI to grab the defined queue.</li>
+</ul>
+
+</s1>
+
+<s1 title="log rotation">
+
+<p>Logs can now use rollover-cron for more precise rollover times.</p>
+
+</s1>
+
+<s1 title="mail notification log-handler">
+
+<p>Resin now includes a mail notification handler, documented in
+the <a href="../doc/config-log.xtp#mail">log configuration</a>.
+Administrators can
+config Resin to send emails for WARNING and SEVERE log messages.</p>
+</s1>
+
+<s1 title="quercus">
+
+<ul>
+<li>many misc bug fixes</li>
+<li>Added "late static binding"</li>
+</ul>
+
+</s1>
+
+<s1 title="resin-admin">
+
+<ul>
+<li>The admin now lets you start/stop/restart a webapp.  It requires a
+SSL connection to be enabled.</li>
+
+<li>The Resin-Pro admin now includes graphs for memory, cpu, and threads.</li>
+
+<li>The Resin admin now includes request info and thread dumps, so you
+can see the status of the slowest requests.</li>
+
+<li>Added "jmx" panel to display all mbeans and attribues.</li>
+
+</ul>
+
+</s1>
+
+<s1 title="rewrite-dispatch">
+
+<s2 title="dispatcher-type">
+
+<p>rewrite-dispatch now allows a dispatcher-type element, letting you
+use rewrite-dispatch for forwards as well as requests.</p>
+
+</s2>
+
+<s2 title="forward and absolute-target">
+
+<p>rewrite-dispatch &lt;forward> now allows an absolute-target so child
+web-apps can redirect to a peer.</p>
+
+</s2>
+
+<s2 title="dispatch target">
+
+<p>rewrite-dispatch &lt;dispatch> now allows a target, so rewriting
+can act exactly like a normal request, not a servlet forward.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="ssl (self-signed certificates)">
+
+<p>The &lt;jsse-ssl> tag now includes a "self-signed-certificate-name"
+attribute, letting you open a SSL port for administration without requiring
+explicit certificate generation.</p>
+
+</s1>
+
+</body>
+</document>

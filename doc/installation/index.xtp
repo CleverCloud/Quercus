@@ -1,0 +1,460 @@
+<document>
+  <header>
+    <product>resin</product>
+    <version>Resin 4.0</version>
+    <title>Resin Installation</title>
+
+    <description>
+      <p><b><em>Resin Step-by-Step Installation Guide</em></b>  
+      If you've decided that you're ready to deploy Resin for 
+      production, this page will guide you through the steps
+      to install this powerful application server system-wide.
+      You'll see where we recommend installing the various components
+      of Resin as well as some basic production tuning tips.
+      </p>
+    </description>
+  </header>
+
+  <body>
+
+    <localtoc/>
+<s1 title="Resin Server Installation">
+<p><b>This page is for you if you: </b></p>
+<ul>
+  <li>Are evaluating Resin</li>
+  <li>Want to do local application development with Resin</li>
+  <li>Have evaluated Resin and are ready to install system-wide</li>
+</ul>
+<p>
+This page leads you step-by-step through the installation of Resin.  
+After going through these steps, you'll have a full Java and PHP 
+Application Server able to serve even the most demanding web sites.
+</p>
+
+<p><b>You'll learn:</b></p>
+<ul>
+  <li>How to install Resin system-wide</li>
+  <li>The recommended installation locations for Resin</li>
+  <li>How to run the Resin administration application</li>
+</ul>
+
+<s2 title="Preparing for installation">
+<ol>
+<li>Install JDK 1.6 or later.  You'll need to set the JAVA_HOME
+variable in your shell or link /usr/java to the Java home
+directory.</li>
+<li>Download the latest version of Resin 4 from the <a
+href="http://www.caucho.com/download">Resin download page</a>.
+Grab the Professional version if:
+<ul>
+  <li>You have purchased a Resin Professional license.</li>
+  <li>You have obtained an evaluation Resin Professional license.</li>
+  <li>
+    You are considering purchasing Resin Professional (without
+    a license, Resin Professional simply downgrades to the open 
+    source functionality).  This will make it easier to upgrade in the 
+    future.
+  </li>
+</ul>
+</li>
+<li>Unzip or untar the Resin download.  If you downloaded Resin
+Professional, it will unzip into resin-pro-4.x.x/, otherwise it
+will download into resin-4.x.x/.</li>
+</ol>
+</s2>
+
+<s2 title="Installing Resin on Unix or Mac OS X">
+<p>
+If you're installing Resin on Windows, you can skip to the next section.
+If you're installing Resin on Ubuntu or Debian and want to use the .deb
+packaged version of Resin, skip to the end of this section.
+</p>
+
+<s3 title="Configuring the build process for Resin">
+<p>
+Next we'll change into the Resin directory we just unpacked to
+configure and build the server.  The Java portions of Resin are
+already compiled, but this step will build additional C-based
+components of Resin that provide additional functionality such as:
+</p>
+<ul>
+  <li>A faster IO library, including massive keepalive support *</li>
+  <li>Support for OpenSSL *</li>
+  <li>The ability to run as a non-priviledged user for security</li>
+  <li>Connector modules for Apache</li>
+</ul>
+<p>
+(* only available in Resin Professional)
+</p>
+<p>
+The following command installs Resin and its files into the recommended
+locations on the file system:
+</p>
+<example>
+./configure --prefix=/usr/local/resin \
+            --with-resin-root=/var/www \
+            --with-resin-log=/var/log/resin \
+            --with-resin-conf=/etc/resin
+</example>
+
+<p>
+This will configure Resin to install in <var>/usr/local/resin</var>,
+with support for OpenSSL if it was detected, but without support
+for Apache.  If you want to use Apache or another 3rd party HTTP
+server in front of Resin (unrecommended), please take a look
+at our <a href="install-3rd-party.xtp">third-party HTTP server
+setup documentation</a>.  If you need to configure other options
+with Resin, now is the time to do it.  Please consult the <a
+href="configure.xtp">reference to all the configuration options</a>.
+</p>
+
+<p>
+Once you've run the configuration successfully, the configure script
+will display a summary like the following:
+</p>
+<example>
+Resin Configuration summary:
+
+  RESIN_HOME: /usr/local/resin
+      root: /var/www
+      conf: /etc/resin/conf
+      log : /var/log/resin
+      init: /etc/init.d/resin
+
+  + epoll() for keepalives
+  + OpenSSL 0.9.8g 19 Oct 2007
+      OpenSSL include: /usr/include
+      OpenSSL lib: /usr/lib
+      OpenSSL libraries:  -lssl -lcrypto
+
+  JAVA_HOME: /usr/lib/jvm/java-6-sun
+    + 32-bit JNI in -I/usr/lib/jvm/java-6-sun/include \
+                    -I/usr/lib/jvm/java-6-sun/include/linux
+      JNI CFLAGS: -g -O2 -DPOLL -DEPOLL -D_POSIX_PTHREAD_SEMANTICS \
+                  -DHAS_SOCK_TIMEOUT -DHAS_JVMTI
+</example>
+</s3>
+
+<s3 title="Building and Installing Resin">
+<p>Now that you've configured the Resin build process, all you need to
+do is build and install! To build, just run</p>
+<example>
+make
+</example>
+<p>If this step went well, you'll now need to install the Resin files as
+the root user:</p>
+<example>
+sudo make install
+</example>
+<p>Where ever you install Resin to, we'll refer to that directory as
+<b>resin.home</b>.</p>
+<p>
+If you have a license file for Resin, save it in <var>/usr/local/resin/licenses</var>
+</p>
+</s3>
+
+<s3 title="Installing Resin using the .deb package on Ubuntu and Debian">
+<p>
+We provide a Debian packaged version of Resin that Debian and Ubuntu
+users can take advantage of.  It performs all of the installation
+steps above for you and creates all the recommended server and
+content directories.  Simply download from the <a
+href="http://caucho.com/download">Resin download page</a> and install
+using dpkg.
+</p>
+<p>
+Alternatively, you can add Caucho's Debian repository to your system's
+repositories to use automated update tools like Synaptic and apt-get.
+To do this, add the following line to your <var>/etc/apt/sources.list</var>
+</p>
+<example>
+deb http://caucho.com/download/debian/ unstable universe
+deb http://caucho.com/download/debian/ unstable multiverse 
+</example>
+<p>
+After adding this line, update your local repository cache by running:
+</p>
+<example>
+apt-get update
+</example>
+<p>
+Finally, install Resin Professional using the following:
+</p>
+<example>
+apt-get install resin-pro
+</example>
+<p>
+If you have a license file for Resin, save it in <var>/usr/local/resin/licenses</var>
+</p>
+<p>
+Or install Resin Open Source with this command:
+</p>
+<example>
+apt-get install resin
+</example>
+</s3>
+</s2>
+
+<s2 title="Installing Resin on Windows">
+<p>
+The native libraries that are included with Resin are precompiled
+for Windows in both 32-bit and 64-bit mode.  These libraries provide:
+</p>
+<ul>
+  <li>A faster IO library, including massive keepalive support *</li>
+  <li>Support for OpenSSL *</li>
+  <li>Connector modules for Apache/IIS</li>
+</ul>
+<p>
+(* only available in Resin Professional)
+</p>
+
+<ol>
+<li>Download the latest version of Resin 4 from the <a
+href="http://www.caucho.com/download">Resin download page</a>.
+Grab the Professional version if:
+<ul>
+  <li>You have purchased a Resin Professional license.</li>
+  <li>You have obtained an evaluation Resin Professional license.</li>
+  <li>
+    You are considering purchasing Resin Professional (without
+    a license, Resin Professional simply downgrades to the open 
+    source functionality).  This will make it easier to upgrade in the 
+    future.
+  </li>
+</ul>
+</li>
+<li>Unzip or untar the Resin download.  If you downloaded Resin
+Professional, it will unzip into resin-pro-4.x.x\, otherwise it
+will download into resin-4.x.x\.
+</li>
+<li>Move the directory from the previous step to <var>C:\Resin</var>
+</li>
+<li>Run <var>C:\Resin\setup.exe</var></li>
+<li>If you have a license file for Resin, save it in <var>C:\Resin\licenses</var></li>
+</ol>
+</s2>
+</s1>
+
+<s1 title="Resin Content Installation">
+<p>Once your have the Resin server installed, you can start installing your
+content.</p>
+
+<s2 title="Content from the top down">
+<p>Resin and JavaEE organize content into "web applications" or
+webapps. As an administrator, your developers have probably provided
+you with a webapp in the form of a .war file or a webapp directory.
+In the Resin root directory is a special subdirectory named
+<code>webapps</code> which is a <b>webapp deploy directory</b>.
+Deploying applications in Resin is as easy as copying a .war
+file or web application directory to one of these webapp deploy
+directories. Resin detects the applications and deploys them
+automatically.</p>
+
+<figure src="content-directories.png"/>
+
+<p>
+In the directory structure above, notice the special webapp
+directories named "ROOT".  These will map to the "/" (root)
+application.  Other webapps will map to their name.  For example,
+"wordpress" will map to "http://www.example.com/wordpress".
+</p>
+</s2>
+
+<s2 title="Permanent content locations">
+
+<p>Resin is configured to use the content directory structure show above
+by default.  In the examples, the Resin <b>root directory</b> is 
+<var>/var/www</var>.  This directory is also the recommended content root
+for Unix.  For Windows, the recommended content root is <var>C:\www</var>.
+To specify the root directory to Resin, you pass it on the
+command line when starting the server.  For example:
+</p>
+
+<example>
+java -jar ${resin.home}/lib/resin.jar --root-directory /var/www start
+</example>
+
+<p>
+If you use the Unix startup scripts mentioned in the next section, they
+automatically specify the root and log directories.
+</p>
+
+</s2>
+</s1>
+
+<s1 title="Starting Resin">
+<s2 title="Creating Unix startup scripts for Resin">
+<p>When you installed using the .deb package or when you ran "make install"
+earlier, the installer created a file named <var>/etc/init.d/resin</var>
+which contains a standard Unix init.d startup file.  This file will start
+Resin when invoked as:
+</p>
+<example>
+/etc/init.d/resin start
+</example>
+<p>Use the tools that came with your system to execute the script
+on startup.  
+</p>
+</s2>
+<s2 title="Installing Resin as a Windows Service">
+<p>
+Resin can be installed as a Windows Service from a setup.exe utility supplied with
+  the distribution. The setup.exe utility requires administrative privileges and will
+  upon start-up ask for administrative privileges.
+</p>
+<figure src="setup-exe.png"/>
+
+<p>To install or remove a service run setup.exe. Setup.exe provides a set of
+configuration options to use with a service. Most option have a
+corresponding resin argument.</p>
+<deftable>
+  <tr>
+    <th>Setup Field</th>
+    <th>Resin option</th>
+    <th>Meaning</th>
+  </tr>
+  <tr>
+    <td>Java Home</td>
+    <td></td>
+    <td>JDK to use with this Resin Service</td>
+  </tr>
+  <tr>
+    <td>Resin Root</td>
+    <td>-root-directory</td>
+    <td>Resin root directory</td>
+  </tr>
+  <tr>
+    <td>Resin Conf</td>
+    <td>-conf</td>
+    <td>Configuration file to use with the instance of Resin Service</td>
+  </tr>
+  <tr>
+    <td>Log Directory</td>
+    <td>-log-directory</td>
+    <td>Directory where the log files for this Resin Service instance will be located</td>
+  </tr>
+  <tr>
+    <td>Service Name</td>
+    <td></td>
+    <td>Unique service name</td>
+  </tr>
+  <tr>
+    <td>Service User</td>
+    <td></td>
+    <td>User name used to run the service. (defaulted to "Local Service")</td>
+  </tr>
+  <tr>
+    <td>Password</td>
+    <td></td>
+    <td>Password to use with the Service User (defaulted to an empty string)</td>
+  </tr>
+  <tr>
+    <td>Preview</td>
+    <td>-preview</td>
+    <td>Specifies if the Resin Service is a staging service</td>
+  </tr>
+  <tr>
+    <td>Watchdog Port</td>
+    <td>-watchdog-port</td>
+    <td>Specifies port for communicating with Resin Watchdog</td>
+  </tr>
+  <tr>
+    <td>JMX Port</td>
+    <td>-jmx-port</td>
+    <td>Specifies port for java JMX connections (JConsole, etc.)</td>
+  </tr>
+  <tr>
+    <td>Debug Port</td>
+    <td>-debug-port</td>
+    <td>Specifies port for remove java debugging</td>
+  </tr>
+</deftable>
+
+<p>
+Note: The service is installed with a manual start-up mode.
+</p>
+
+</s2>
+</s1>
+
+<s1 title="Creating a password for the Resin Administration Console">
+<p>
+One of the most useful tools provided with Resin is the built-in,
+web-based administration console.  This tool provides detailed
+information about the operation of the server, a feature that is 
+very useful to administrators, but one which must be kept secure from
+unauthorized users.  </p>
+<p>
+If you are deploying Resin to a production machine, it's likely
+that you won't be running your browser on the same system as the
+server. In this case, you'll need to configure Resin to allow
+you to access the server remotely.
+</p>
+<ol>
+  <li>Edit <var>/etc/resin/resin.xml</var></li>
+  <li>Change the line:
+    <example>
+&lt;resin:set var="resin_admin_external" value="false"/>
+    </example>
+    <p>to</p> 
+    <example>
+&lt;resin:set var="resin_admin_external" value="true"/>
+    </example>
+  </li>
+  <li>Save <var>/etc/resin/resin.xml</var> and restart the server.</li>
+  <li>Replace "localhost" with the name of your host in the URLs below.</li> 
+</ol>
+<p>
+Now that you're able to access the administration application,
+you have to set up a password and install it.  In order to prove
+that you have access to the machine on which Resin is running,
+the only way to change the password is to create a file with the
+authentication information on that machine.  
+</p>
+<ol>
+<li>Browse to <var>http://localhost:8080/resin-admin/</var><br/><br/>
+</li>
+<li>Enter a username and password in the lower half of the page, then 
+click "Create Configuration File".  The recommended username is "admin".
+
+<figure src="admin-password-create.png"/>
+
+</li>
+<li>After going to the next page, a new "admin-users.xml.generated"
+file has been created for you in the same directory as your
+resin.xml file is located.  (If you followed the directions above,
+this should be in /etc/resin for Unix and C:\Resin\conf for Windows.)
+Just rename this file to admin-users.xml and Resin will use it to
+<figure src="admin-password-save.png"/>
+</li>
+<li>Browse back to <var>http://localhost:8080/resin-admin/</var>.  The
+change you made should force Resin to restart and return a 503 error. 
+Just hit refresh in a few moments to bring up the page again.</li>
+<li>You should now be able to login using the username and password
+that you gave above.</li> 
+</ol>
+</s1>
+
+<s1 title="Troubleshooting">
+<p>If something went wrong above, the first place to check for problems is
+the log.</p>
+<ul>
+  <li>If you are using Unix, look in <var>/var/log/resin/jvm_default.log</var></li>
+  <li>If you are using Windows, look in <var>C:\Resin\log\jvm_default.log</var></li>
+</ul>
+<p>Hopefully, the log message will be clear enough for you to figure out the
+problem.  If not, you have a number of resources available to you to help
+you figure out what's going wrong:</p>
+<ul>
+  <li>The <a href="http://maillist.caucho.com/">Resin mailing list</a>.</li>
+  <li>The <a href="http://forum.caucho.com/">Resin Forums</a>.</li>
+  <li><a href="mailto:presales@caucho.com">Presales technical support</a> for 
+      those considering purchasing Resin Professional.</li>
+  <li><a href="http://store.caucho.com/">Paid technical support</a> directly
+  from the Resin developers.</li>
+</ul>
+</s1>
+
+</body>
+</document>

@@ -1,0 +1,290 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Third-Party Products</title>
+    <type>contents</type>
+
+    <description>
+    <p>Resin's support for third-party libraries and packages is
+    primarily documented at
+    <a href="http://wiki.caucho.com">http://wiki.caucho.com</a>.  This
+    section includes links to the most popular packages.</p>
+    </description>
+  </header>
+
+  <body>
+    <localtoc/>
+
+<s1 title="IDE">
+
+  <s2 title="Common">
+
+<p>Because Resin will detect and reload web-apps automatically, you can
+ configure a Resin web-app to point directly to your IDE's build space.
+When you build the project in the IDE, Resin will automatically pick up
+the changes without any need for a deploy step.</p>
+
+<example title="resin.xml for IDE">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;cluster id="">
+    &lt;server id="">
+      &lt;http port="8080"/>
+    &lt;/server>
+
+    &lt;host id="">
+
+      <b>&lt;web-app id="/test" root-directory="/home/ferg/ws/test/build"/></b>
+
+    &lt;/host>
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+  </s2>
+
+  <s2 title="Eclipse">
+
+<p>See <a href="http://wiki.caucho.com/Eclipse">http://wiki.caucho.com/Eclipse</a></p>
+
+  </s2>
+
+  <s2 title="IntelliJ">
+
+<p>See <a href="http://wiki.caucho.com/IntelliJ">http://wiki.caucho.com/IntelliJ</a></p>
+
+  </s2>
+
+</s1>
+
+<s1 title="Databases">
+
+
+<s2 title="DB2">
+<p>See <a href="http://wiki.caucho.com/Db2">http://wiki.caucho.com/Db2</a></p>
+</s2>
+
+<s2 title="hsqldb">
+
+<ul>
+<li><a href="http://wiki.caucho.com/Hsqldb">http://wiki.caucho.com/Hsqldb</a></li>
+<li><a href="http://hsqldb.sourceforge.net/">hsqldb homepage</a></li>
+</ul>
+
+<p>"hsqldb is a relational database engine written in Java.   It
+offers a small (less than 160k), fast database engine which
+offers both in memory and disk based tables."</p>
+
+</s2>
+
+<s2 title="Informix">
+
+<ul>
+<li>See <a href="http://wiki.caucho.com/Informix">http://wiki.caucho.com/Informix</a></li>
+<li><a href="http://www-3.ibm.com/software/data/informix/tools/jdbc/">IBM Informix drivers</a>
+</li></ul>
+
+<example title="META-INF/resin-web.xml - non-XA">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;database&gt;
+    &lt;name&gt;jdbc/informix&lt;/name&gt;
+    &lt;driver&gt;
+      &lt;type&gt;com.informix.jdbcx.IfxConnectionPoolDataSource&lt;/type&gt;
+      &lt;url&gt;jdbc:informix-sqli://123.45.67.89:1533/<em>dbname</em>&lt;/url&gt;
+      &lt;init-param param-name="INFORMIXSERVER" param-value="myserver"/&gt;
+      &lt;user&gt;<em>username</em>&lt;/user&gt;
+      &lt;password&gt;<em>password</em>&lt;/password&gt;
+    &lt;/driver&gt;
+  &lt;/database&gt;
+
+&lt;/web-app>
+</example>
+
+<example title="META-INF/resin-web.xml - XA">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;database&gt;
+    &lt;name&gt;jdbc/informix-xa&lt;/name&gt;
+    &lt;xa&gt;true&lt;/xa&gt;
+    &lt;driver type="com.informix.jdbcx.IfxXADataSource"&gt;
+      &lt;url&gt;jdbc:informix-sqli://123.45.67.89:1533/<em>dbname</em>&lt;/url&gt;
+      &lt;init-param param-name="INFORMIXSERVER" param-value="myserver"/&gt;
+      &lt;user&gt;<em>username</em>&lt;/user&gt;
+      &lt;password&gt;<em>password</em>&lt;/password&gt;
+    &lt;/driver&gt;
+    ...
+  &lt;/database&gt;
+
+&lt;/web-app>
+</example>
+
+</s2> <!-- Informix -->
+
+<s2 title="Interbase">
+<p>See <a href="http://wiki.caucho.com/Interbase">http://wiki.caucho.com/Interbase</a></p>
+</s2>
+
+<s2 title="MySQL Connector/J">
+
+<ul>
+<li>See <a href="http://wiki.caucho.com/Mysql">http://wiki.caucho.com/Mysql</a>
+for more information</li>
+</ul>
+
+<example title="META-INF/resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;database&gt;
+    &lt;name&gt;jdbc/mysql&lt;/name&gt;
+      &lt;driver&gt;
+      &lt;type&gt;com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource&lt;/type&gt;
+      &lt;url&gt;jdbc:mysql://localhost:3306/<em>dbname</em>&lt;/url&gt;
+      &lt;user&gt;<em>username</em>&lt;/user&gt;
+      &lt;password&gt;<em>password</em>&lt;/password&gt;
+   &lt;/driver&gt;
+  &lt;/database&gt;
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="Oracle">
+
+<ul>
+<li><a href="http://wiki.caucho.com/Oracle">http://wiki.caucho.com/Oracle</a></li>
+<li><a href="http://otn.oracle.com/tech/java/sqlj_jdbc/htdocs/jdbc_faq.htm">Oracle JDBC Frequently Asked Questions</a>
+</li></ul>
+
+<example title="META-INF/resin-web.xml Oracle JDBC configuration - non-XA">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;database&gt;
+    &lt;name&gt;jdbc/oracle&lt;/name&gt;
+    &lt;driver&gt;
+      &lt;type&gt;oracle.jdbc.pool.OracleConnectionPoolDataSource&lt;/type&gt;
+      &lt;url&gt;jdbc:oracle:thin:@localhost:1521:<em>dbname</em>&lt;/url&gt;
+      &lt;user&gt;<em>username</em>&lt;/user&gt;
+     &lt;password&gt;<em>password</em>&lt;/password&gt;
+    &lt;/driver&gt;
+  &lt;/database&gt;
+
+&lt;/web-app>
+</example>
+
+<p>Note, the XADataSource is only needed for distributed transactions.
+If your transactions only include the single data source, the
+OracleConnectionPoolDataSource will be more efficient.</p>
+
+<example title="META-INF/resin-web.xml Oracle XADataSource JDBC configuration">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;database&gt;
+    &lt;jndi-name&gt;jdbc/oracle-xa&lt;/jndi-name&gt;
+    &lt;xa&gt;true&lt;/xa&gt;
+    &lt;driver&gt;
+      &lt;type&gt;oracle.jdbc.xa.client.OracleXADataSource&lt;/type&gt;
+      &lt;url&gt;jdbc:oracle:thin:@localhost:1521:<em>dbname</em>&lt;/url&gt;
+      &lt;user&gt;<em>username</em>&lt;/user&gt;
+      &lt;password&gt;<em>password</em>&lt;/password&gt;
+    &lt;/driver&gt;
+    ...
+  &lt;/database&gt;
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="PostgreSQL">
+
+<ul>
+<li>See <a href="http://wiki.caucho.com/Postgres">http://wiki.caucho.com/Postgres</a></li>
+<li><a href="http://jdbc.postgresql.org/">PostgreSQL JDBC Drivers</a></li>
+</ul>
+
+<example title="META-INF/resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;database&gt;
+    &lt;name&gt;jdbc/<em>name</em>&lt;/name&gt;
+    &lt;driver&gt;
+      &lt;type&gt;org.postgresql.Driver&lt;/type&gt;
+      &lt;url&gt;jdbc:postgresql://127.0.0.1:5432/<em>dbname</em>&lt;/url&gt;
+      &lt;user&gt;<em>username</em>&lt;/user&gt;
+      &lt;password&gt;<em>password</em>&lt;/password&gt;
+    &lt;/driver&gt;
+  &lt;/database&gt;
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="SQL Server">
+
+<ul>
+<li>See <a href="http://wiki.caucho.com/SQLServer">http://wiki.caucho.com/SQLServer</a></li>
+</ul>
+
+<example title="WEB-INF/resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+   &lt;database&gt;
+     &lt;name&gt;jdbc/sqlserver&lt;/name&gt;
+     &lt;driver type="com.microsoft.jdbcx.sqlserver.SQLServerDataSource"&gt;
+       &lt;serverName&gt;csdevsqla01.office.foo&lt;/serverName&gt;
+       &lt;portNumber&gt;1433&lt;/portNumber&gt;
+       &lt;databaseName&gt;Reports&lt;/databaseName&gt;
+       &lt;user&gt;XXX&lt;/user&gt;
+       &lt;password&gt;YYY&lt;/password&gt;
+       &lt;selectMethod&gt;cursor&lt;/selectMethod&gt;
+     &lt;/driver&gt;
+     &lt;xa&gt;true&lt;/xa&gt;
+  &lt;/database&gt;
+
+&lt;/web-app>
+</example>
+</s2>
+
+<s2 name="sybase" title="Sybase">
+
+<ul>
+<li>See <a href="http://wiki.caucho.com/Sybase">http://wiki.caucho.com/Sybase</a></li>
+</ul>
+
+<example title="WEB-INF/resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;database&gt;
+    &lt;name&gt;jdbc/sybase&lt;/name&gt;
+    &lt;driver type="com.sybase.jdbc2.jdbc.SybConnectionPoolDataSource"&gt;
+      &lt;network-protocol&gt;Tds&lt;/network-protocol&gt;
+      &lt;port-number&gt;5000&lt;/port-number&gt;
+      &lt;server-name&gt;myhost&lt;/server-name&gt;
+      &lt;database-name&gt;mydb&lt;/database-name&gt;
+      &lt;user&gt;XXX&lt;/user&gt;
+      &lt;password&gt;YYY&lt;/password&gt;
+    &lt;/driver&gt;
+  &lt;/database&gt;
+
+&lt;/web-app>
+</example>
+</s2> <!-- sybase -->
+
+</s1>
+
+<s1 title="Groovy">
+
+<p>Groovy information is available at <a href="http://wiki.caucho.com/Groovy">http://wiki.caucho.com/Groovy</a></p>
+
+</s1>
+
+<s1 title="Hibernate">
+
+<p>Hibernate information is available at <a href="http://wiki.caucho.com/Hibernate">http://wiki.caucho.com/Hibernate</a></p>
+
+</s1>
+
+  </body>
+</document>

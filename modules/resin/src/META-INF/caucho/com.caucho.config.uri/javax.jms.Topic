@@ -1,0 +1,4 @@
+memory=com.caucho.jms.memory.MemoryTopic
+file=com.caucho.jms.file.FileTopic
+hmtp=com.caucho.jms.hemp.HempTopic
+jdbc=com.caucho.jms.jdbc.JdbcTopic

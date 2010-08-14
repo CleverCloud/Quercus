@@ -1,0 +1,80 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.3 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="Overview">
+
+<p>Resin 3.0.3 is the first non-beta release of Resin 3.0.x.
+Any bug you find in 3.0.3 should be reported in the
+<a href="http://www.caucho.com/quercus/bugtrack">bugtrack</a>.</p>
+
+<p>Because of the large number of changes from Resin 2.1 to Resin 3.0,
+developers should stress
+test their application with Resin 3.0.3 thoroughly before deploying
+it.</p>
+
+</s1>
+
+<s1 title="Apache/IIS Plugins">
+
+<p>See the <a href="resin-3.0.2.xtp">Resin 3.0.2</a> release notes
+for a more detailed explanation or read
+the <a href="doc|install.xtp">install</a> section.  The plugin
+protocol and configuration has changed  significantly from Resin 2.1.
+Resin 3.0 plugins read their configuration from a configuration
+server, not from the resin.conf directly.</p>
+
+</s1>
+
+<s1 title="Servlet 2.4 and JSP 2.0">
+
+<p>Because both Servlet 2.4 and JSP 2.0 are still in draft stage,
+Resin's support is considered beta.  However, we don't expect
+the specs are likely to change much from the current draft to the
+final draft.</p>
+
+</s1>
+
+<s1 title="XSLT">
+
+<p>The XSLT implementation has changed dramatically, as part of a
+long-needed cleanup.  There shouldn't be any visible changes, although
+new bugs could certainly have crept in.</p>
+
+</s1>
+
+<s1 title="Caching">
+
+<p>Resin's caching now understands "Vary" and "Cache-Control:
+max-age=15".  The "Vary" will help GZip performance and the max-age
+will make it easier to add caching to pages.</p>
+
+</s1>
+
+<s1 title="connection-pool">
+
+<p>Configuration for the connection/thread pool now includes
+spare-thread-max and spare-thread-min, which work like Apache's
+MinSpareServers and MaxSpareServers.  spare-thread-max and
+spare-thread-min specify the min and max number of idle threads that
+Resin tries to keep around ready for new requests.</p>
+
+</s1>
+
+<s1 title="Resin 3.0 Configuration Changes">
+
+<p>The Resin 3.0 configuration has changed significantly from Resin
+2.1, mostly by being stricter.  The <a href="doc|index.xtp">configuration documentation</a> gives more
+details.</p>
+
+</s1>
+
+
+</body>
+</document>

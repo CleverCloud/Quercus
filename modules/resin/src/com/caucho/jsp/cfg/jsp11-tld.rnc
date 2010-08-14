@@ -1,0 +1,54 @@
+
+default namespace local = ""
+namespace local = ""
+
+j2ee_dewey-version = string
+j2ee_fully-qualified-class = string
+j2ee_generic-boolean = string
+j2ee_java-identifier = string
+j2ee_path = string
+j2ee_variable = string
+
+jsp11_attribute = element attribute {
+  element name { j2ee_java-identifier },
+
+  element required { j2ee_generic-boolean }?,
+
+  element rtexprvalue { j2ee_generic-boolean }?
+}
+
+jsp11_bodycontent = element bodycontent {
+  "tagdependent"
+  | "JSP"
+  | "empty"
+}
+
+jsp11_info = element info { string }
+
+jsp11_tag = element tag {
+  element name { string },
+
+  element tagclass { j2ee_fully-qualified-class },
+
+  element teiclass { j2ee_fully-qualified-class }?,
+
+  jsp11_bodycontent?,
+
+  jsp11_info?,
+
+  jsp11_attribute*
+}
+
+jsp11_taglib = element taglib {
+  element tlibversion { j2ee_dewey-version },
+
+  element jspversion { "1.1" },
+
+  element shortname { string },
+
+  element uri { string }?,
+
+  jsp11_info?,
+
+  jsp11_tag+
+}

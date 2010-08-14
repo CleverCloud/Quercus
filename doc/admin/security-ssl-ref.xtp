@@ -1,0 +1,211 @@
+<document>
+<header>
+  <title>SSL Configuration</title>
+  <version>Resin 4.0</version>
+
+  <description>
+<p>
+Resin's HTTP server can use JSSE or OpenSSL for SSL connections.
+</p>
+
+  </description>
+</header>
+<body>
+<reference-legend/>
+<localtoc/>
+<defun title="&lt;openssl>" version="Resin 4.0">
+<parents>http, protocol, cluster-port</parents>
+
+<p>&lt;openssl> configures the port to use OpenSSL for SSL
+support (requires Resin Professional).  OpenSSL is a fast C implementation
+of SSL security used by Apache.  Resin's configuration is OpenSSL
+follows Apache's configuration, so any documentation on installing
+SSL certificates can use documentation for Apache.</p>
+
+<p>
+The <a href="security-ssl.xtp">SSL</a> section of the Security documentation provides a comprehensive overview of SSL.
+</p>
+
+<deftable-childtags>
+<tr>
+  <td>ca-certificate-file</td>
+  <td>Path to a CA certificate file for intermediate CA support</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>ca-certificate-path</td>
+  <td>Path to a directory of CA certificates for intermediate CA support</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>ca-revocation-file</td>
+  <td>Path to a list of revoked CA certificates</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>ca-revocation-path</td>
+  <td>Path to a directory of revoked CA certificates</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>certificate-file</td>
+  <td>Path to the server's SSL certificate</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>certificate-chain-file</td>
+  <td>Path to the certificate chains for client validation.</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>certificate-key-file</td>
+  <td>Path to the server's SSL private key certificate</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>cipher-suite</td>
+  <td>Additions and restrictions to the allowed cryptography ciphers</td>
+  <td>see openssl-tags</td>
+</tr>
+<tr>
+  <td>password</td>
+  <td>Password protecting the public key</td>
+  <td>see openssl-tags</td>
+</tr>
+<tr>
+  <td>protocol</td>
+  <td>Optional restrictions on the SSL protocol</td>
+  <td>see openssl-tags</td>
+</tr>
+<tr>
+  <td>session-cache</td>
+  <td>Boolean enabling caching of SSL sessions for performance</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>session-cache-timeout</td>
+  <td>Timeout for session cache values</td>
+  <td>30s</td>
+</tr>
+<tr>
+  <td>unclean-shutdown</td>
+  <td>Flag indicating that openssl sockets can be shutdown uncleanly</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>verify-client</td>
+  <td>Options for client validation</td>
+  <td>none</td>
+</tr>
+<tr>
+  <td>verify-depth</td>
+  <td>Depth of the client certificate chains to validate</td>
+  <td>unlimited</td>
+</tr>
+</deftable-childtags>
+
+</defun>
+
+
+<defun title="&lt;password> (OpenSSL)" version="Resin 4.0">
+<parents>openssl</parents>
+
+<p>&lt;password> configures the SSL private key certificate password.</p>
+
+</defun>
+
+<defun title="&lt;port>" version="Resin 4.0">
+<parents>http, protocol, server</parents>
+
+<p>The &lt;port> defines the TCP port the HTTP or protocol
+should bind to.</p>
+
+<example title="http port">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="web-tier"&gt;
+    &lt;server id="web-a" address="192.168.1.1" port="6800">
+      &lt;http address="10.0.1.1" port="80"/>
+      &lt;http address="192.168.1.1" port="8080"/>
+    &lt;/server>
+
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;protocol> (OpenSSL)" version="Resin 4.0">
+<parents>openssl</parents>
+
+<p>&lt;protocol> configures the SSL allowed protocols.</p>
+
+</defun>
+
+<defun title="&lt;session-cache> (OpenSSL)" version="Resin 4.0">
+<parents>openssl</parents>
+
+<p>&lt;session-cache> configures the SSL session cache.</p>
+
+</defun>
+
+<defun title="&lt;session-cache-timeout> (OpenSSL)" version="Resin 4.0">
+<parents>openssl</parents>
+
+<p>&lt;session-cache> configures the SSL session cache timeout.</p>
+
+</defun>
+
+
+<defun title="&lt;unclean-shutdown> (OpenSSL)" version="Resin 4.0">
+<parents>openssl</parents>
+
+<p>&lt;unclean-shutdown> configures the OpenSSL unclean shutdown on
+connection close.</p>
+
+</defun>
+
+<defun title="&lt;verify-client> (OpenSSL)" version="Resin 4.0">
+<parents>openssl</parents>
+
+<p>
+&lt;verify-client> sets the client certificate configuration.  If the
+certificate is available, it will be put in the
+javax.servlet.request.X509Certificate request attribute. 
+</p>
+
+<deftable>
+<tr>
+  <td>none</td>
+  <td>do not ask for a client certificate (default)</td>
+</tr>
+<tr>
+  <td>required</td>
+  <td>require a client certificate</td>
+</tr>
+<tr>
+  <td>optional</td>
+  <td>ask for a client certificate if availiable </td>
+</tr>
+<tr>
+  <td>optional-no-ca</td>
+  <td>ask for a client certificate, but do not validate the Certificate Authority</td>
+</tr>
+</deftable>
+
+<example title="Obtaining the client certificate">
+  X509Certificate []certs = (X509Certificate [])
+       request.getAttribute("javax.servlet.request.X509Certificate");
+</example>
+
+</defun>
+<defun title="&lt;verify-depth> (OpenSSL)" version="Resin 4.0">
+<parents>openssl</parents>
+
+<p>&lt;verify-depth> configures the OpenSSL client verification depth.</p>
+
+</defun>
+
+
+</body>
+</document>

@@ -1,0 +1,4 @@
+caucho.jms=com.caucho.hemp.services.BamJmsService
+caucho.log=com.caucho.hemp.services.BamLogService
+caucho.mail=com.caucho.hemp.services.BamMailService
+caucho.php=com.caucho.quercus.lib.bam.BamPhpActor

@@ -1,0 +1,2742 @@
+<document>
+<header>
+  <product>resin</product>
+  <title>resin.xml: Ports, Virtual Hosts, Clustering and Threads</title>
+  <version>Resin 4.0</version>
+
+  <description>
+
+  <p>Describes the resin, server, host, and port configuration in the resin.xml.</p>
+
+  </description>
+</header>
+<body>
+
+<localtoc/>
+
+<s1 title="See Also">
+
+<ul>
+<li>See the <a href="config-ref.xtp">index</a> for a list of all the tags.</li>
+<li>See <a href="deploy-ref.xtp">Web Application</a> configuration for web.xml (Servlet) configuration.</li>
+<li>See <a href="config-env.xtp">Environment</a> configuration for resources: classloader, databases, connectors, and resources.</li>
+<li>See <a href="config-log.xtp">Log</a> configuration for access log configuration, java.util.logging, and stdout/stderr logging.</li>
+</ul>
+
+</s1>
+
+<defun title="&lt;cluster>" version="Resin 3.0">
+<parents>resin</parents>
+
+<p>&lt;cluster> configures a set of servers used for load-balancing and for
+sharing distributed sessions.</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;cluster id="app-tier"&gt;
+    &lt;server id="a" address="192.168.0.1"/>
+    &lt;server id="b" address="192.168.0.2"/>
+
+    &lt;host id="">
+      &lt;web-app-deploy path="webapps"/>
+    &lt;/host>
+  &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<deftable-childtags>
+<tr><td>id</td>
+    <td>Name of the cluster</td>
+    <td>required</td></tr>
+</deftable-childtags>
+
+</defun>
+
+<defun title="&lt;min-free-memory>" version="Resin 3.0">
+<parents>resin</parents>
+
+<p>For reliability, Resin periodically checks the amount of free
+memory available.  When the free memory drops below
+&lt;min-free-memory&gt;, even after garbage collection, Resin will force
+a JVM restart.</p>
+
+<p>In general, application developers should use a heap profiler
+to eliminate memory leaks and OutOfMemoryErrors.  Because an
+OutOfMemoryError can cause severe problems with the application, Resin
+detects the low memory before those errors can be thrown.</p>
+
+<default>1M</default>
+
+</defun>
+
+<defun title="&lt;resin>" version="Resin 3.0">
+      
+<p>&lt;resin> is the top-level configuration tag for
+the resin.xml file.  The &lt;resin&gt;
+tag needs to specify the Resin namespace, to allow for validation
+of the configuration file.</p>
+
+<p>The environment of the top-level &lt;resin&gt; is the global classpath.
+This environment can be important for &lt;log&gt; configuration
+for threads which run with using only the global class loader.
+Because the &lt;resin&gt; environment does not have a dynamic class loader,
+dynamically loaded classes, like custom jars
+in resin/lib are not available.</p>
+
+<example title="resin">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="web-tier"&gt;
+    &lt;server id="">
+      &lt;http address="*" port="8080"/&gt;
+    &lt;/server id="">
+
+    &lt;resin:import path="app-default.xml"/&gt;
+
+    &lt;host id=""/&gt;
+      &lt;web-app id="/"/&gt;
+    &lt;/host&gt;
+  &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<deftable title="EL variables defined by &lt;resin&gt;">
+<tr><th>variable</th>
+    <th>corresponding API</th>
+    <th/></tr>
+<tr><td>resin-home</td>
+    <td>CauchoSystem.getResinHome()</td>
+    <td/></tr>
+<tr><td>server-root</td>
+    <td>CauchoSystem.getServerRoot()</td>
+    <td/></tr>
+</deftable>
+
+</defun>
+
+<defun title="root-directory" version="Resin 3.0">
+<parents>server, host</parents>
+
+<p>Specifies the root directory for the &lt;server&gt; and &lt;host&gt;
+contexts. All EL-style directory paths are relative to
+the root-directory.</p>
+
+</defun>
+
+<defun title="security-manager">
+<p>
+Enable the use of the security manager for the JVM.
+</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core"&gt;
+
+  ...
+  &lt;security-manager/&gt;
+  ...
+</example>
+
+<p>See also:</p>
+<ul>
+<li><a href="securitymanager.xtp">Security Manager</a></li>
+</ul>
+</defun>
+
+<defun title="security-provider">
+<p>
+Add one or more security providers.  Each entry specifies the name of a
+security provider class.  The name is used to instantiate an instance of the
+object, which is then passed to 
+<a javadoc="java.security.Security#addProvider()"/>.
+</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core"&gt;
+
+  ...
+
+  &lt;security-provider&gt;
+    com.sun.net.ssl.internal.ssl.Provider
+  &lt;/security-provider&gt;
+  &lt;security-provider&gt;
+    example.MyProvider
+  &lt;/security-provider&gt;
+
+  ...
+
+</example>
+
+</defun>
+
+<defun title="server" version="Resin 3.0">
+<parents>resin</parents>
+
+<p>Main configuration for the server, configuring ports,
+threads and virtual hosts.</p>
+
+<ul>
+<li>Common resources for all virtual hosts and web-apps.</li>
+<li>Thread pooling</li>
+<li>HTTP and SRUN/Cluster ports</li>
+<li>Caching</li>
+<li>virtual host configuration and common web-app-default</li>
+</ul>
+
+<p>The &lt;server&gt; will generally contain a &lt;class-loader&gt; configuration
+which loads the resin/lib jars dynamically, allowing for system-wide jars
+to be dropped into resin/lib.  &lt;server&gt; configures
+the main dynamic environment.  Database pools common to all virtual hosts,
+for example, should be configured in the &lt;server&gt; block.</p>
+
+<p>The &lt;server&gt; configures the &lt;thread-pool&gt; and a set
+of &lt;http&gt; and &lt;srun&gt; ports which share the thread pool.
+Requests received on those ports will use worker threads from the
+thread pool.</p>
+
+<deftable-childtags>
+<tr><td>alternate-session-url-prefix</td>
+    <td>a prefix to add the session to the beginning of the URL as a path
+        prefix instead of the standard ;jsessionid= suffix. For clients like
+        mobile devices with limited memory, this will allow careful web
+        designers to minimize the page size.</td>
+    <td>null</td></tr>
+<tr><td>keepalive-max</td>
+    <td>the maximum number of keepalive connections</td>
+    <td>512</td></tr>
+<tr><td>keepalive-timeout</td>
+    <td>the maximum time a connection is maintained in the keepalive state</td>
+    <td>120s</td></tr>
+</deftable-childtags>
+
+<example title="alternate-session-url-prefix">
+&lt;server&gt;
+  ...
+  &lt;alternate-session-url-prefix&gt;/~J=&lt;/alternate-session-url-prefix&gt;
+  ...
+</example>
+
+<s2 name="server-el" title="EL variables and functions">
+<deftable title="EL variables defined by &lt;server&gt;">
+<tr><th>variable</th>
+    <th>corresponding API</th></tr>
+<tr><td>serverId</td>
+    <td><i>server</i>.getServerId()</td></tr>
+<tr><td>root-dir</td>
+    <td><i>server</i>.getRootDirectory()</td></tr>
+<tr><td>server-root</td><td><i>server</i>.getRootDirectory()</td></tr>
+</deftable>
+
+<deftable title="EL functions defined by &lt;server&gt;">
+<tr><th>function</th>
+    <th>corresponding API</th></tr>
+<tr><td>jndi</td>
+    <td><a javadoc="com.caucho.naming.Jndi#lookup(String)">Jndi.lookup(String)</a></td></tr>
+</deftable>
+
+</s2>
+</defun> <!-- server -->
+
+<defun title="shutdown-wait-max" version="Resin 3.0">
+<parents>resin</parents>
+
+<p>Configures the maximum time Resin will wait for the server to
+shutdown gracefully before forcing an exit.</p>
+
+<default>60s</default>
+
+</defun>
+
+<defun title="&lt;thread-pool>" version="Resin 3.0">
+<parents>server</parents>
+
+<p>&lt;thread-pool> configures the thread pool shared among all ports.</p>
+
+<deftable-childtags>
+<tr><td>thread-max</td>
+    <td>maximum number of working threads</td>
+    <td>200</td></tr>
+<!--
+<tr><td>spare-thread-max</td><td>maximum number of spare working threads</td><td>20</td></tr>
+-->
+<tr><td>spare-thread-min</td><td>minimum number of spare working threads</td><td>5</td></tr>
+</deftable-childtags>
+
+<p>&lt;thread-max&gt; is the absolute maximum number of connection worker
+threads allowed.  &lt;thread-max&gt; may be limited by OS/JVM
+restrictions, especially the stack size.  -Xss and/or ulimit -s may be
+required for large numbers of threads, e.g. "ulimit -s 2048" on some
+versions of Linux would allow for 1024 total threads in the JVM.</p>
+
+<!--
+<p>&lt;spare-thread-max> and &lt;spare-thread-min> configure Resin's
+adaptive thread pooling.  Resin tries to keep between &lt;spare-thead-min>
+and &lt;spare-thread-max> idle threads available at all time.  Sites
+with large spikes in connection loads may need to increase the
+&lt;spare-thread-min> value.</p>
+-->
+
+<p>&lt;spare-thread-min&gt; configures Resin's
+adaptive thread pooling.  Resin tries to keep &lt;spare-thead-min&gt;
+idle threads available at all time.  Sites
+with large spikes in connection loads may need to increase the
+&lt;spare-thread-min&gt; value.</p>
+
+</defun>
+
+<defun title="user-name" version="Resin 3.0">
+<parents>resin</parents>
+
+<p>Note: at present, this directive is deprecated because of timing
+issues with log file creation and ownership.  It is recommended that
+you use some other method to remap port 80 to port 8080.</p>
+
+<p>Configures the Unix setuid user name used after Resin binds the
+reserved ports as root.</p>
+
+</defun>
+
+<s1 name="common" title="Common Tags">
+
+<p>There are some conventions for tag names that provide similar functionality.</p>
+
+<s2 title="fileset" version="Resin 3.0.7" type="defun">
+
+<p>&lt;fileset&gt; provides the ability to match a set of files.  It is
+modelled after the ant tag by the same name.</p>
+
+<deftable-childtags>
+<tr><td>dir</td>
+    <td>the starting directory</td>
+    <td>required</td></tr>
+<tr><td>include</td>
+    <td>an include pattern</td>
+    <td>do not include all files</td></tr>
+<tr><td>exclude</td>
+    <td>an exclude pattern</td>
+    <td>do not exclude any files</td></tr>
+</deftable-childtags>
+
+<p>A pattern can contain two special characters: '*' and '**'.  '*' matches any
+part of path, but does not match the path separator.  '**' matches any part of
+a path, including the path separator. </p>
+
+<example>
+&lt;fileset dir="lib"&gt;
+  &lt;include name="*.jar"/&gt;
+&lt;/fileset&gt;
+
+MATCH    lib/foo.jar
+MATCH    lib/bar.jar
+NO MATCH lib/baz/foo.jar
+</example>
+
+<example>
+&lt;fileset dir="lib"&gt;
+  &lt;include name="**/*.jar"/&gt;
+&lt;/fileset&gt;
+
+MATCH    lib/foo.jar
+MATCH    lib/bar.jar
+MATCH    lib/baz/foo.jar
+</example>
+
+</s2>
+
+</s1> <!-- common -->
+
+<s1 name="startup-mode" title="Startup and Redeploy Mode">
+
+<p>The <a config-tag="startup-mode"/> is used in a number of places to
+determine the behaviour of a resource when the server starts.</p>
+
+<p>The startup-mode has three values: "automatic", "lazy", and "manual".</p>
+<ul>
+<li>automatic - starts the resource on server start (default)</li>
+<li>lazy - starts the resource on the first use</li>
+<li>manual - waits for JMX to start the resource</li>
+</ul>
+
+<p>The <a config-tag="redeploy-mode"/> is used in a number of places to
+determine the behaviour of a resource when it is replaced or modified while the
+server is running.</p>
+
+<p>The redeploy-mode has two values: "automatic", and "manual".</p>
+<ul>
+<li>automatic - restarts the resource when it is modified (web.xml, *.class, *.war, etc).</li>
+<li>manual - waits for JMX to restart the resource when changes occur.</li>
+</ul>
+
+</s1> <!-- startup-mode -->
+
+<s1 title="See Also">
+
+<ul>
+<li>See the <a href="config-ref.xtp">index</a> for a list of all the tags.</li>
+<li>See &lt;<a href="cluster-ref.xtp">cluster</a>&gt; tag configuration</li>
+</ul>
+
+</s1>
+
+<defun title="&lt;accept-listen-backlog>" version="Resin 3.1">
+<parents>http, connection-port, protocol</parents>
+
+<p>&lt;accept-listen-backlog> configures operating system TCP listen
+queue size for the port.</p>
+
+<p>When a browser connects to a server, the server's operating
+system handles the TCP initialization before handing the socket to
+the server's application.  The operating system will hold the opened
+connections in a small queue, until the application is ready to
+receive them.  When the queue fills up, the operating system will
+start refusing new connections.</p>
+
+<default>100</default>
+
+</defun>
+
+<defun title="&lt;accept-thread-max>" version="Resin 3.1">
+<parents>http, connection-port, protocol</parents>
+
+<p>&lt;accept-thread-max> configures the maximum number of 
+threads listening for new connections on this port.  &lt;accept-thread-max>
+works with &lt;accept-thread-min> to handle spiky loads without
+creating and destroying too many threads.</p>
+
+<p>Socket connections are associated with a thread which handles
+the request.  In Resin, a number of threads wait to accept a new
+connection and then handle the request.  &lt;accept-thread-max>
+specifies the maximum number of threads which are waiting for
+a new connection.</p>
+
+<p>Larger values handle spiky loads better but require more threads
+to wait for the connections.  Smaller values use less threads, but may
+be slower handling spikes.</p>
+
+<default>10</default>
+
+</defun>
+
+<defun title="&lt;accept-thread-min>" version="Resin 3.1">
+<parents>http, connection-port, protocol</parents>
+
+<p>&lt;accept-thread-min> configures the minimum number of 
+threads listening for new connections on this port   &lt;accept-thread-min>
+works with &lt;accept-thread-max> to handle spiky loads without
+creating and destroying too many threads.</p>
+
+<p>Socket connections are associated with a thread which handles
+the request.  In Resin, a number of threads wait to accept a new
+connection and then handle the request.  &lt;accept-thread-min>
+specifies the minimum number of threads which are waiting for
+a new connection.  If many connections appear rapidly with a small
+value of &lt;accept-thread-min>, the application
+may pause until a new thread is available for the new connection.</p>
+
+<p>Larger values handle spiky loads better but require more threads
+to wait for the connections.  Smaller values use less threads, but may
+be slower handling spikes.</p>
+
+</defun>
+
+<defun title="&lt;address>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>The server &lt;address> defines the IP interface for Resin
+cluster communication and load balancing.  It will be an
+internal IP address like 192.168.* for a clustered configuration
+or 127.* for a single-server configuration.  No wild cards are allowed
+because the other cluster servers and load balancer use the address
+to connect to the server.</p>
+
+<default>127.0.0.1</default>
+
+<example title="server address">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="web-tier"&gt;
+    &lt;server-default&gt;
+      &lt;http port="80"/>
+    &lt;/server-default&gt;
+
+    &lt;server id="web-a" address="192.168.1.1" port="6800"/>
+    &lt;server id="web-b" address="192.168.1.2" port="6800"/>
+
+    ...
+  &lt;/cluster>
+
+  &lt;cluster id="app-tier"&gt;
+    &lt;server id="app-a" address="192.168.2.11" port="6800"/>
+    &lt;server id="app-b" address="192.168.2.12" port="6800"/>
+
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;cluster-port>" version="Resin 3.0">
+<parents>server</parents>
+
+<p>&lt;cluster-port> configures the cluster and load balancing socket,
+for load balancing, distributed sessions, and distributed management.</p>
+
+<p>When configuring Resin in a load-balanced cluster, each Resin instance
+will have its own &lt;srun&gt; configuration, which Resin uses for distributed
+session management and for the load balancing itself.</p>
+
+<p>When configuring multiple JVMs, each &lt;srun&gt; has a
+unique &lt;id&gt; which allows the -server command-line to select
+which ports the server should listen to.</p>
+
+<deftable-childtags>
+<tr><td>address</td>
+    <td>hostname of the interface to listen to</td>
+    <td>*</td></tr>
+<tr><td>jsse-ssl</td>
+    <td>configures the port to use JSSE for SSL</td>
+    <td>none</td></tr>
+<tr><td>openssl</td>
+    <td>configures the port to use OpenSSL</td>
+    <td>none</td></tr>
+<tr><td>port</td>
+    <td>port to listen to</td>
+    <td>required</td></tr>
+<tr><td>read-timeout</td>
+    <td>timeout waiting to read from idle client</td>
+    <td>65s</td></tr>
+<tr><td>write-timeout</td>
+     <td>timeout waiting to write to idle client</td>
+     <td>65s</td></tr>
+<tr><td>accept-listen-backlog</td>
+    <td>The socket factory's listen backlog for receiving sockets</td>
+    <td>100</td></tr>
+<tr><td>tcp-no-delay</td>
+    <td>sets the NO_DELAY socket parameter</td>
+    <td>true</td></tr>
+</deftable-childtags>
+
+<p>The class that corresponds to &lt;srun&gt; is <a javadoc="com.caucho.server.cluster.ClusterPort"/></p>
+
+</defun>
+
+<defun title="&lt;group-name>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;group-name> configures the operating system group Resin should
+run as.  Since the HTTP port 80 is protected in Unix, the web server
+needs to start as root to bind to port 80.  For security, Resin should
+switch to a non-root user after binding to port 80.</p>
+
+<example title="resin.xml with user-name">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;cluster id="app-tier">
+
+    &lt;server-default>
+      &lt;http port="80"/>
+
+      &lt;user-name>resin&lt;/user-name>
+      &lt;group-name>www&lt;/group-name>
+    &lt;/server-default>
+
+    &lt;server id="web-a"/>
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;http>" version="Resin 3.0">
+<parents>server</parents>
+
+<p>&lt;http> configures a HTTP or HTTPS port listening for HTTP requests.</p>
+
+<p>When configuring multiple JVMs, each &lt;http&gt; will have a
+unique &lt;server-id&gt; which allows the -server command-line to select
+which ports the server should listen to.</p>
+
+<deftable-childtags>
+<tr><td>address</td>
+    <td>IP address of the interface to listen to</td>
+    <td>*</td></tr>
+<tr><td>port</td>
+    <td>port to listen to</td>
+    <td>required</td></tr>
+<tr><td>tcp-no-delay</td>
+    <td>sets the NO_DELAY socket parameter</td>
+    <td>true</td></tr>
+<tr><td>read-timeout</td>
+    <td>timeout waiting to read from idle client</td>
+    <td>65s</td></tr>
+<tr><td>write-timeout</td>
+    <td>timeout waiting to write to idle client</td>
+    <td>65s</td></tr>
+<tr><td>socket-listen-backlog</td>
+    <td>The socket factory's listen backlog for receiving sockets</td>
+    <td>100</td></tr>
+<tr><td>virtual-host</td>
+    <td>forces all requests to this &lt;http&gt; to use the named virtual host</td>
+    <td>none</td></tr>
+<tr><td>openssl</td>
+    <td>configures the port to use OpenSSL</td>
+    <td>none</td></tr>
+<tr><td>jsse-ssl</td>
+    <td>configures the port to use JSSE for SSL</td>
+    <td>none</td></tr>
+</deftable-childtags>
+
+<p>The <var>virtual-host</var> attribute overrides the browser's
+Host directive, specifying the explicit host and port for
+<code>request.getServerName()</code> and <code>getServerPort()</code>.
+It is not used in most virtual host configurations.
+Only IP-based virtual hosts which wish to ignore the browser's Host
+will use @virtual-host.</p>
+
+</defun>
+
+<defun title="&lt;jvm-arg>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;jvm-arg> configures JVM arguments to be passed to Resin on
+the command line, typically -X memory parameters and -D defines.</p>
+
+<example title="standard jvm-args">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;cluster id="web-tier">
+    &lt;server-default>
+      &lt;jvm-arg>-Xmx512m&lt;/jvm-arg>
+      &lt;jvm-arg>-Xss1m&lt;/jvm-arg>
+      &lt;jvm-arg>-verbosegc&lt;/jvm-arg>
+    &lt;/server-default>
+
+    &lt;server id="app-a" address="192.168.2.10"/>
+
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;jvm-classpath>" version="Resin 3.1.6">
+<parents>server</parents>
+
+<p>&lt;jvm-classpath> adds a classpath entry when starting the JVM.</p>
+
+<example title="adding a classpath">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;cluster id="web-tier">
+    &lt;server-default>
+      &lt;jvm-classpath>/tmp/test-classpath;/jvm-classpath>
+    &lt;/server-default>
+
+    &lt;server id="app-a" address="192.168.2.10"/>
+
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;keepalive-max>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;keepalive-max> configures the maximum number of sockets
+which can be used directly for <g>keepalive</g> connections.
+In Resin Professional, the <g>select manager</g> allows for
+a much larger number of keepalive sockets, since it can detach
+threads from connections.  Without the select manager, each
+connection is associated with a thread.</p>
+
+<p>A value of -1 disables keepalives.</p>
+
+<p>Keepalives are an important TCP technique used with HTTP and
+Resin's load-balancing to avoid the heavy network cost of creating
+a new socket.  Since an initial HTTP request is usually immediately
+followed by extra requests to load files like images and stylesheets,
+it's generally more efficient to keep the socket open for a short time
+instead of creating a new one.  The socket keepalive is even more
+important for Resin's load balancing, to avoid creating extra sockets
+between the web-tier and the app-tier and to make distributed sessions
+more efficient.</p>
+
+<p>Higher values of &lt;keepalive-max> improve network efficiency
+but increase the number of threads waiting for new client data.</p>
+
+<default>100</default>
+
+<example title="keepalive-thread-max in resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="web-tier"&gt;
+    &lt;server-default&gt;
+      &lt;http port="80"/>
+
+      &lt;thread-max>512&lt;/thread-max>
+
+      &lt;keepalive-max>100&lt;/keepalive-max>
+    &lt;/server-default&gt;
+
+    &lt;server id="web-a" address="192.168.0.10"/>
+        ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;keepalive-select-enable>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;keepalive-select-enable> enables the select manager for
+keepalives.  The select manager is a Resin Professional feature allowing
+more keepalives by detaching threads from sockets.</p>
+
+<p>Normally, this should be left enabled.</p>
+
+<default>true</default>
+</defun>
+
+<defun title="&lt;keepalive-select-thread-timeout>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;keepalive-select-thread-timeout> is a short timeout allowing
+the select manager to wait for a keepalive before detaching the
+thread.  This value would not normally be changed.d wou</p>
+
+<default>1s</default>
+</defun>
+
+<defun title="&lt;keepalive-timeout>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;keepalive-timeout> configures how long a keepalive
+connection should wait for a new request before closing.  </p>
+
+<p>Keepalives are used both for HTTP connections and for load-balancing and
+clustering connections.  HTTP connections generally have a single HTML page,
+followed by a number of image requests.  By using keepalives, all the requests
+can use a single socket.  The &lt;keepalive-timeout> should be long
+enough to catch all the HTTP burst requests, but can close after the
+burst is complete.  A value of 5s or 10s is generally sufficient.</p>
+
+<p>The load-balancing and clustering keepalives have a different
+timeout behavior.  Since load-balancing sockets are reused for multiple
+clients, they can have longer timeouts.</p>
+
+<default>10s</default>
+
+<example title="keepalive-thread-max in resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="web-tier"&gt;
+    &lt;server-default&gt;
+      &lt;http port="80"/>
+
+      &lt;thread-max>512&lt;/thread-max>
+
+      &lt;keepalive-max>100&lt;/keepalive-max>
+      &lt;keepalive-timeout>10s&lt;/keepalive-timeout>
+    &lt;/server-default&gt;
+
+    &lt;server id="web-a" address="192.168.0.10"/>
+        ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;load-balance-connect-timeout>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;load-balance-connect-timeout> configures the maximum time
+a client connection to a cluster-port should
+take.  The <a href="clustering-overview.xtp">load balance</a> and
+<a href="config-sessions.xtp">persistent sessions</a> use load-balance-connect-timeout
+to connect to backend or peer servers in the cluster.</p>
+
+<p>Lower values detect failed servers more quickly, but a too-low value
+can timeout too quickly for a live server with some network congestion.</p>
+
+<default>5s</default>
+
+<example title="load-balance-connect-timeout">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="app-tier"&gt;
+        &lt;server-default>
+          &lt;load-balance-connect-timeout>2s&lt;/load-balance-connect-timeout>
+        &lt;/server-default>
+
+        &lt;server id="a" address="192.168.0.10" port="6800"/&gt;
+        &lt;server id="b" address="192.168.0.11" port="6800"/&gt;
+
+        &lt;host id=""&gt;
+          ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;load-balance-recover-time>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;load-balance-recover-time> is the maximum time
+the <a href="clustering-overview.xtp">load balancer</a>
+will consider the server dead after a failure before retrying
+the connection.</p>
+
+<p>Resin uses the load-balance-recover-time to avoid wasting time trying to
+connect to an unavailable app-tier server.</p>
+
+<p>Lower values let the load balancer use a restarted <g>app-tier</g> server
+faster, but lower values also increase the overhead of trying to
+contact unavailable servers.</p>
+
+<default>15s</default>
+
+<example title="load-balance-recover-time">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="app-tier"&gt;
+        &lt;server-default>
+          &lt;load-balance-recover-time>10s&lt;/load-balance-recover-time>
+        &lt;/server-default>
+
+        &lt;server id="a" address="192.168.0.10" port="6800"/&gt;
+        &lt;server id="b" address="192.168.0.11" port="6800"/&gt;
+
+        &lt;host id=""&gt;
+          ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;load-balance-idle-time>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;load-balance-idle-time> is the maximum time
+the <a href="clustering-overview.xtp">load balancer</a>
+and <a href="config-sessions.xtp">distributed sessions</a> will leave an
+idle socket before closing it.</p>
+
+<p>The default value is normally sufficient, since it tracks the
+keepalive of the cluster port.</p>
+
+<p>load-balance-idle-time must be less than the <var>keepalive</var> value of
+the target <a href="port-tags.xtp#cluster-port">cluster-port</a>.</p>
+
+<p>The load balancer and distributed sessions reuse sockets to the
+cluster peer and <g>app-tier</g> servers to improve TCP performance.
+The load-balance-idle-time limits the amount of time those sockets can
+remain idle.</p>
+
+<p>Higher values may improve the socket pooling, but may also increase
+the chance of connecting to a closed server.</p>
+
+<default>keepalive-timeout - 1s</default>
+
+</defun>
+
+<defun title="&lt;load-balance-warmup-time>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>The time the <a href="clustering-overview.xtp">load balancer</a>
+uses to throttle connections to an <g>app-tier</g> server that's just
+starting up.</p>
+
+<p>Java web-applications often start slowly while they initialize caches.
+So a newly-started application will often be slower and consume more
+resources than a long-running application.  The warmup-time increases
+Resin's reliability by limiting the number of requests to a new
+app-tier server until the server has warmed up.</p>
+
+<p>Larger values give the application a longer time to warm up.</p>
+
+<default>60s</default>
+
+<example title="load-balance-warmup-time">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="app-tier"&gt;
+        &lt;server-default>
+          &lt;load-balance-warmup-time>60s&lt;/load-balance-warmup-time>
+        &lt;/server-default>
+
+        &lt;server id="a" address="192.168.0.10" port="6800"/&gt;
+        &lt;server id="b" address="192.168.0.11" port="6800"/&gt;
+
+        &lt;host id=""&gt;
+          ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;load-balance-weight>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>load-balance-weight assigns a load-balance weight to a backend server.
+Servers with higher values get more requests.  Servers with lower
+values get fewer requests.</p>
+
+<p>In some cases, some <g>app-tier</g> servers may be more powerful than
+others.  load-balance-weight lets the load-balancer assign more connections
+to the more powerful machines.</p>
+
+<p>Test and profiling servers can also use load-balance-weight to receive a
+small number of connections for profiling purposes.</p>
+
+<p>Larger values tell the load-balancer to assign more requests to
+the app-tier server.</p>
+
+<default>100</default>
+
+<example title="load-balance-weight">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="app-tier"&gt;
+        &lt;server id="a" address="192.168.0.10" port="6800"/&gt;
+        &lt;server id="b" address="192.168.0.10" port="6800"/&gt;
+
+        &lt;server id="test" address="192.168.0.100" port="6800"&gt;
+            &lt;load-balance-weight>1&lt;/load-balance-weight>
+        &lt;/server>
+
+        &lt;host id=""&gt;
+          ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;memory-free-min>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;memory-free-min> improves server reliability by detecting
+low-memory situations caused by memory leaks and forcing a
+clean server restart.  Since Resin's <g>watchdog</g> service
+reliably restarts the server, a website can improve stability by forcing
+a restart before memory becomes a major problem.  The memory-free-min
+restart will also log a warning, notifying the developers that
+a potential memory leak needs to be resolved.</p>
+
+<p>When free heap memory gets very low, the garbage collector can
+run continually trying to free up extra memory.  This continual
+garbage collection can send the CPU time to 100%, cause the site to
+become completely unresponsive, and yet take a long time before finally
+failing to an out of memory error (forcing an unclean restart).  To avoid this
+situation, Resin will detect the low-memory condition and gracefully
+restart the server when free memory becomes too low.</p>
+
+<p>The ultimate solution to any memory leak issues is to get a
+memory profiler, find the leaking memory and fix it.  &lt;memory-free-min>
+is just a temporary bandage to keep the site running reliably until
+the memory leak can be found and fixed.</p>
+
+<default>1m</default>
+
+<example title="memory-free-min resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="web-tier"&gt;
+    &lt;server-default&gt;
+      &lt;thread-max>512&lt;/thread-max>
+
+      &lt;memory-free-min>1m&lt;/memory-free-min>
+    &lt;/server-default&gt;
+
+    &lt;server id="web-a" address="192.168.0.10"/>
+        ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;port>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>The server &lt;port> defines the TCP port for Resin
+cluster communication and load balancing.  Most server instances
+will use a common port like 6800, while machines with multiple
+servers may use multiple ports like 6800 and 6801.</p>
+
+<default>6800</default>
+
+<example title="multipl servers on a machine ">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="app-tier"&gt;
+    &lt;server id="app-a" address="192.168.1.11" port="6800"/>
+    &lt;server id="app-b" address="192.168.1.11" port="6801"/>
+
+    &lt;server id="app-b" address="192.168.2.12" port="6800"/>
+    &lt;server id="app-c" address="192.168.2.12" port="6801"/>
+
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;port-default>" version="Resin 3.2.1">
+<parents>server</parents>
+
+<p>Defines default port parameters for all &lt;http>, &lt;protocol>, and
+&lt;cluster-port>.</p>
+
+</defun>
+
+<defun title="&lt;protocol>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;protocol> configures custom socket protocols using Resin's thread
+and connection management.</p>
+
+<p>The custom protocol will extend from com.caucho.server.port.Protocol.</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+&lt;cluster id="web-tier"&gt;
+
+  &lt;server id="a"&gt;
+    &lt;protocol address="localhost" port="8888"&gt;
+      &lt;type>example.Magic8BallProtocol&lt;/type>
+    &lt;/port&gt;
+  &lt;/server&gt;
+
+&lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;server>" version="Resin 3.1">
+<parents>cluster</parents>
+
+<p>&lt;server> configures a JVM instance in the cluster.
+Each &lt;server&gt; is uniquely identified by
+its <var>id</var> attribute.  The <var>id</var> will match
+the -server-id command line argument.</p>
+
+<p>The server listens to an internal network address,
+e.g. 192.168.0.10:6800 for clustering, load balancing,
+and administration.</p>
+
+<p>The current server is managed with a
+<a javadoc="com.caucho.management.server.ServerMXBean">ServerMXBean</a>.
+The <g>ObjectName</g> is <var>resin:type=Server</var>.</p>
+
+<p>Peer servers are managed with 
+<a javadoc="com.caucho.management.server.ServerConnectorMXBean">ServerConnectorMXBean</a>. The ObjectName is <var>resin:type=ServerConnector,name=server-id</var>.</p>
+
+<deftable-childtags>
+<tr><td>id</td>
+    <td>unique server identifier</td>
+    <td>required</td></tr>
+<tr><td>address</td>
+    <td>IP address of the cluster port</td>
+    <td>127.0.0.1</td></tr>
+<tr><td>port</td>
+    <td>The cluster port</td>
+    <td>6800</td></tr>
+</deftable-childtags>
+
+<example title="server">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="web-tier"&gt;
+        &lt;server id="a" address="192.168.0.10" port="6800"&gt;
+          &lt;http port="8080"/&gt;
+        &lt;/server&gt;
+
+        &lt;server id="b" address="192.168.0.11" server-port="6800"&gt;
+          &lt;http port="8080"/&gt;
+        &lt;/server&gt;
+
+        &lt;server id="c" address="192.168.0.12" server-port="6800"&gt;
+          &lt;http port="8080"/&gt;
+        &lt;/server&gt;
+
+        &lt;host id=""&gt;
+          ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<p>Main configuration for the server, configuring ports,
+threads and virtual hosts.</p>
+
+<ul>
+<li>Common resources for all virtual hosts and web-apps.</li>
+<li>Thread pooling</li>
+<li>HTTP and SRUN/Cluster ports</li>
+<li>Caching</li>
+<li>virtual host configuration and common web-app-default</li>
+</ul>
+
+<p>The &lt;server&gt; will generally contain a &lt;class-loader&gt; configuration
+which loads the resin/lib jars dynamically, allowing for system-wide jars
+to be dropped into resin/lib.  &lt;server&gt; configures
+the main dynamic environment.  Database pools common to all virtual hosts,
+for example, should be configured in the &lt;server&gt; block.</p>
+
+<p>The &lt;server&gt; configures the &lt;thread-pool&gt; and a set
+of &lt;http&gt; and &lt;srun&gt; ports which share the thread pool.
+Requests received on those ports will use worker threads from the
+thread pool.</p>
+
+<deftable-childtags>
+<tr><td>alternate-session-url-prefix</td>
+    <td>a prefix to add the session to the beginning of the URL as a path
+        prefix instead of the standard ;jsessionid= suffix. For clients like
+        mobile devices with limited memory, this will allow careful web
+        designers to minimize the page size.</td>
+    <td>null</td></tr>
+<tr><td>keepalive-max</td>
+    <td>the maximum number of keepalive connections</td>
+    <td>512</td></tr>
+<tr><td>keepalive-thread-timeout</td>
+    <td>the maximum time a connection is maintained in the keepalive state</td>
+    <td>120s</td></tr>
+</deftable-childtags>
+
+<example title="alternate-session-url-prefix">
+&lt;server&gt;
+  ...
+  &lt;alternate-session-url-prefix&gt;/~J=&lt;/alternate-session-url-prefix&gt;
+  ...
+</example>
+
+<s2 name="server-el" title="EL variables and functions">
+<deftable title="EL variables defined by &lt;server&gt;">
+<tr><th>variable</th>
+    <th>corresponding API</th></tr>
+<tr><td>serverId</td>
+    <td><i>server</i>.getServerId()</td></tr>
+<tr><td>root-dir</td>
+    <td><i>server</i>.getRootDirectory()</td></tr>
+<tr><td>server-root</td><td><i>server</i>.getRootDirectory()</td></tr>
+</deftable>
+
+<deftable title="EL functions defined by &lt;server&gt;">
+<tr><th>function</th>
+    <th>corresponding API</th></tr>
+<tr><td>jndi</td>
+    <td><a javadoc="com.caucho.naming.Jndi#lookup(String)">Jndi.lookup(String)</a></td></tr>
+</deftable>
+
+</s2>
+
+</defun>
+
+<defun title="&lt;server-default>" version="Resin 3.1">
+<parents>cluster</parents>
+
+<p>&lt;server-default> defines default values for
+all &lt;server&gt; instances.  Since most &lt;server> configuration
+is identical for all server instances, the shared configuration belongs
+in a &lt;server-default>.  For example, &lt;http> ports, timeouts,
+JVM arguments, and keepalives are typically identical for all
+server instances and therefore belong in a server-default.</p>
+
+<example title="server">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="web-tier"&gt;
+        &lt;server-default&gt;
+           &lt;thread-max>512&lt;/thread-max>
+
+           &lt;jvm-arg>-Xmx512m -Xss1m&lt;/jvm-arg>
+
+           &lt;http port="8080"/&gt;
+        &lt;/server-default&gt;
+
+        &lt;server id="a" address="192.168.0.10" port="6800"/&gt;
+        &lt;server id="b" address="192.168.0.11" port="6800"/&gt;
+        &lt;server id="c" address="192.168.0.12" port="6800"/&gt;
+
+        &lt;host id=""&gt;
+          ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;shutdown-wait-max>" version="Resin 3.0">
+<parents>server</parents>
+
+<p>&lt;shutdown-wait-max> configures the maximum time the server
+will wait for the graceful shutdown before forcing an exit.</p>
+
+<default>60s</default>
+
+</defun>
+
+<defun title="&lt;socket-timeout>" version="Resin 3.1">
+<parents>http, cluster-port, protocol, server</parents>
+
+<p>&lt;socket-timeout> is the maximum time
+a socket <a href="clustering-overview.xtp">load balancer</a>
+and <a href="config-sessions.xtp">distributed sessions</a> will wait for
+a read or write to a cluster socket.</p>
+
+<p>Crashed servers may never respond to a read request or accept a write.
+The socket-timeout lets Resin recover from these kinds of crashes.</p>
+
+<p>Lower values can detect crashes more quickly, but too-low values may
+report bogus failures when the server machine is just a little slow.</p>
+
+<default>60s</default>
+
+<example title="socket-timeout">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="app-tier"&gt;
+        &lt;server-default>
+          &lt;socket-timeout>60s&lt;/socket-timeout>
+        &lt;/server-default>
+
+        &lt;server id="a" address="192.168.0.10" port="6800"/&gt;
+        &lt;server id="b" address="192.168.0.11" port="6800"/&gt;
+
+        &lt;host id=""&gt;
+          ...
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;thread-idle-max>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;thread-idle-max> configures the maximum number of idle
+threads in the thread pool.  &lt;thread-idle-max> works
+with &lt;thread-idle-min> to maintain a steady number of idle
+threads, avoiding the creation or destruction threads when possible.</p>
+
+<p>&lt;thread-idle-max> should be set high enough beyond
+&lt;thread-idle-min> so a spiky load will avoid
+creating a thread and then  immediately destroying it.</p>
+
+<default>10</default>
+
+<example title="thread-idle-max in resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="web-tier"&gt;
+    &lt;server-default&gt;
+      &lt;thread-max>512&lt;/thread-max>
+
+      &lt;thread-idle-min>10&lt;/thread-idle-min>
+      &lt;thread-idle-max>20&lt;/thread-idle-max>
+
+      &lt;jvm-arg>-Xss1m -Xmx1024m&lt;/jvm-arg>
+    &lt;/server-default&gt;
+
+    &lt;server id="web-a" address="192.168.0.10"/>
+        ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;thread-idle-min>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;thread-idle-min> configures the minimum number of idle
+threads in the thread pool.  &lt;thread-idle-min> helps spiky loads,
+avoiding delays for thread requests by keeping threads ready for future
+requests.  When the number of idle threads drops
+below &lt;thread-idle-min>, Resin creates a new thread.</p>
+
+<p>&lt;thread-idle-min> should be set high enough to deal with load
+spikes.  Since idle threads are relatively inexpensive in modern operating
+systems, having a number of idle threads is not a major resource hog,
+especially since these threads are idle, waiting for a new job.</p>
+
+<p>&lt;thread-idle-min> works together with &lt;thread-idle-max> to
+avoid thread allocation thrashing, i.e. avoiding creating a new thread
+because of &lt;thread-idle-min> and then quickly destroying it
+because of &lt;thread-idle-max>.</p>
+
+<default>5</default>
+
+<example title="thread-idle-min in resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="web-tier"&gt;
+    &lt;server-default&gt;
+      &lt;thread-max>512&lt;/thread-max>
+
+      &lt;thread-idle-min>10&lt;/thread-idle-min>
+      &lt;thread-idle-max>20&lt;/thread-idle-max>
+
+      &lt;jvm-arg>-Xss1m -Xmx1024m&lt;/jvm-arg>
+    &lt;/server-default&gt;
+
+    &lt;server id="web-a" address="192.168.0.10"/>
+        ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;thread-max>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;thread-max> configures the maximum number of threads
+managed by Resin's thread pool.  Resin's thread pool is used
+for connection threads, timers, and Resin worker threads for JMS, JCA
+and EJB.  Since Resin's thread pool only manages Resin threads,
+the actual number of threads in the JVM will be higher.</p>
+
+<p>Modern operating systems can handle a fairly large number of threads,
+so values of 512 or 1024 are often reasonable values for thread-max.  The
+main limitation for thread-max is virtual memory.  Since each thread
+takes up stack space (configured with -Xss), a 32-bit system
+might have a thread limit based on virtual memory.</p>
+
+<p>For example, on Linux the user space is only 2G.  If the heap memory
+is 1024m (-Xmx1024m) and the stack size is 1m (-Xss1m), the maximum
+number of threads is somewhat less than 1024.</p>
+
+<p>In general, JVMs do not handle running out of threads very well, either
+freezing or throwing out of memory errors.  Although it may be necessary
+to limit the number of threads to avoid running out of memory,
+&lt;thread-max> should generally be set to a high value.</p>
+
+<example title="thread-max in resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="web-tier"&gt;
+    &lt;server-default&gt;
+      &lt;thread-max>512&lt;/thread-max>
+
+      &lt;jvm-arg>-Xss1m -Xmx1024m&lt;/jvm-arg>
+    &lt;/server-default&gt;
+
+    &lt;server id="web-a" address="192.168.0.10"/>
+        ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+<default>4096</default>
+
+</defun>
+
+<defun title="&lt;user-name>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;user-name> configures the operating system user Resin should
+run as.  Since the HTTP port 80 is protected in Unix, the web server
+needs to start as root to bind to port 80.  For security, Resin should
+switch to a non-root user after binding to port 80.</p>
+
+<example title="resin.xml with user-name">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;cluster id="app-tier">
+
+    &lt;server-default>
+      &lt;http port="80"/>
+
+      &lt;user-name>resin&lt;/user-name>
+    &lt;/server-default>
+
+    &lt;server id="web-a"/>
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;watchdog-arg>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>The &lt;watchdog-arg> configures arguments for the
+watchdog process.  The watchdog improves reliability by
+monitoring the Resin instance, restarting it if necessary.</p>
+
+<p>The &lt;watchdog-arg> typically is used to enable <g>jconsole</g>
+for the watchdog JVM.</p>
+
+<example title="resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;cluster id="app-tier">
+    &lt;server-default>
+
+      &lt;watchdog-arg>-Dcom.sun.management.jmxremote&lt;/watchdog-arg>
+
+    &lt;/server-default>
+
+    ...
+       
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;watchdog-port>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;watchdog-port> configures the administration port for the
+watchdog JVM.  The watchdog launches the server JVM and monitors its
+health, restarting the JVM when necessary to improve site reliability.
+The command line arguments use the watchdog-port for
+the "start" and "stop" commands to tell the watchdog to start and
+stop the server JVM.  The administration also uses the watchdog port
+for watchdog administration.</p>
+
+<p>The watchdog port will use the same &lt;address> as the server, so it
+will always be an internal network address, never an external internet
+address.</p>
+
+<default>6700</default>
+
+</defun>
+
+<defun title="&lt;cookie-domain>">
+<parents>session-config</parents>
+
+<p>&lt;cookie-domain> configures the host domain to use for sessions,
+i.e. value of the Domain cookie attributes.</p>
+
+<p>By default, browsers only send cookies back to the exact host
+which sent them.  In some virtual host cases, it makes sense to share
+the same cookie value for multiple virtual hosts in the same domain.
+For example, <var>caucho.com</var> might want a single cookie to be
+used for both <var>gryffindor.caucho.com</var>
+and <var>slytherin.caucho.com</var>.  In this case
+the <code>cookie-domain</code> would be set to <var>caucho.com</var>.</p>
+
+<example title="cookie-domain for caucho.com">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="app-tier">
+
+  &lt;host id="caucho.com">
+    &lt;host-alias>gryffindor.caucho.com&lt;/host-alias>
+    &lt;host-alias>slytherin.caucho.com&lt;/host-alias>
+
+    &lt;web-app-default>
+
+      &lt;session-config cookie-domain="caucho.com"/>
+
+    &lt;/web-app-default>
+  &lt;/host>
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;cookie-domain-regexp>">
+<parents>session-config</parents>
+
+<p>&lt;cookie-domain-regexp> configures the host domain to use for sessions,
+i.e. value of the Domain cookie attributes.</p>
+
+<p>
+  This setting serves a case when a single web-app is accessed via a number of domains
+  while session cookie must belong to the domain at requested URI.
+
+  e.g. domains www.foo.com zoo.xyz.foo.com must have cookie set to foo.com
+       while domains www.1-foo.com zoo.xyz.1-foo.com must have cookie set to 1-foo.com
+</p>
+
+<example title="cookie-domain-regexp for foo.com && 1-foo.com">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="app-tier">
+
+  &lt;host id="caucho.com">
+    &lt;host-alias>gryffindor.foo.com&lt;/host-alias>
+    &lt;host-alias>slytherin.foo.com&lt;/host-alias>
+    &lt;host-alias>gryffindor.1-foo.com&lt;/host-alias>
+    &lt;host-alias>slytherin.1-foo.com&lt;/host-alias>
+
+    &lt;web-app-default>
+
+      &lt;session-config cookie-domain-regexp="[^.]*\.[^.]*$"/>
+
+    &lt;/web-app-default>
+  &lt;/host>
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;cookie-length>">
+<parents>session-config</parents>
+
+<p>&lt;cookie-length> sets the length of the generated cookie
+value.  In some rare cases, the cookie-length might need to be shortened
+or the cookie-length might be extended to add randomness to the
+cookie value.  For the most part, this value should be left alone.</p>
+
+<default>14</default>
+
+</defun>
+
+<defun title="&lt;cookie-max-age>">
+<parents>session-config</parents>
+
+<p>&lt;cookie-max-age> sets how long the browser should keep the
+session cookie.</p>
+
+<p>By default, browsers keep cookies as long as they are open.  When
+the browser is restarted, the cookies are dropped.  cookie-max-age
+tells the browser to keep the cookie for a certain time period.
+Applications can make this time "infinite" by setting a large number.</p>
+
+</defun>
+
+<defun title="&lt;cookie-version>">
+<p>&lt;cookie-version> sets the version of the cookie spec for sessions.</p>
+
+<default>1.0</default>
+</defun>
+
+<defun title="&lt;ignore-serialization-errors>">
+<parents>session-config</parents>
+
+<p>&lt;ignore-serialization-errors> is used with persistent sessions
+in certain rare cases where some session data is serializable and other
+data is not serializable.  &lt;ignore-serialization-errors> simply
+skips session values which do not implement <code>java.io.Serializable</code>
+when serializing the session.</p>
+
+<default>false</default>
+
+</defun>
+
+<defun title="&lt;session-config>" version="Servlet 2.2">
+<p>Session configuration parameters.</p>
+
+<deftable-childtags title="Servlet 2.4 definition for session-timeout">
+
+<tr>
+  <td>session-timeout</td>
+  <td>The session timeout in minutes, 0 means never timeout.</td>
+  <td>30 minutes</td>
+</tr>
+</deftable-childtags>
+
+<p>Resin adds a number of <var>session-config</var> tags.</p>
+
+<deftable-childtags title="Resin extensions to session-config">
+<tr>
+  <td>always-load-session</td>
+  <td>Reload data from the store on every request. (resin 1.2)</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>always-save-session</td>
+  <td>Save session data to the store on every request. (resin 1.2)</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>cookie-version</td>
+  <td>Version of the cookie spec for sessions. (resin 1.2)</td>
+  <td>1.0</td>
+</tr>
+<tr>
+  <td>cookie-domain</td>
+  <td>Domain for session cookies. (resin 1.2)</td>
+  <td>none</td>
+</tr>
+<tr>
+  <td>cookie-max-age</td>
+  <td>Max age for persistent session cookies. (resin 2.0)</td>
+  <td>none</td>
+</tr>
+<tr>
+  <td>cookie-length</td>
+  <td>Maximum length of the cookie. (resin 2.1.1)</td>
+  <td>Integer.MAX_VALUE</td>
+</tr>
+<tr>
+  <td>enable-cookies</td>
+  <td>Enable cookies for sessions. (resin 1.1)</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>enable-url-rewriting</td>
+  <td>Enable URL rewriting for sessions. (resin 1.1)</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>ignore-serialization-errors</td>
+  <td>When persisting a session, ignore any values which don't implement java.io.Serializable</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>invalidate-after-listener</td>
+  <td>Invalidate the session after notifying session listeners.</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>reuse-session-id</td>
+  <td>Reuse the session id even if the session has timed out. (resin 2.0.4)</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>save-only-on-shutdown</td>
+  <td>Only save session when the application shuts down. (resin 1.2.3)</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>ssl-cookie-name</td>
+  <td>Set a different cookie name to use for SSL connections, and add the
+      "secure" flag when setting the cookie in the browser.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>session-max</td>
+  <td>Maximum active sessions</td>
+  <td>4096</td>
+</tr>
+<tr>
+  <td>use-persistent-store</td>
+  <td>Uses the current <a href="resin.xtp#persistent-store">persistent-store</a> to save sessions. (resin 3.0.8)</td>
+  <td>none</td>
+</tr>
+</deftable-childtags>
+
+<p>By default, both <code>enable-cookies</code> and
+<code>enable-url-rewriting</code> are true. To force url rewriting, you
+would create a configuration like:</p>
+
+<example>
+&lt;web-app id='/'&gt;
+
+  &lt;session-config
+   enable-cookies='false'
+   enable-url-rewriting='true'/&gt;
+
+&lt;/web-app&gt;
+</example>
+
+<p>The <var>session-timeout</var> and <var>session-max</var> are usually
+used together to control the number of
+sessions.  Sessions are stored in an LRU cache. When the number
+of sessions in the cache fills up past <var>session-max</var>, the
+oldest sessions are recovered.  In addition, sessions idle for
+longer than <code>session-timeout</code> are purged.</p>
+
+<example title="using session-config and session-timeout to control the number of sessions">
+&lt;web-app id='/dir'&gt;
+
+  &lt;session-config&gt;
+     &lt;!-- 2 hour timeout --&gt;
+     &lt;session-timeout&gt;120&lt;/session-timeout&gt;
+     &lt;session-max&gt;4096&lt;/session-max&gt;
+  &lt;/session-config&gt;
+
+&lt;/web-app&gt;
+</example>
+
+<p><var>cookie-length</var> is used to limit the maximum length for
+the session's generated cookie for special situations like WAP devices.
+Reducing this value reduces the randomness in the cookie and increases the
+chance of session collisions.</p>
+
+<p><var>reuse-session-id</var> defaults to true so that Resin can share the session
+id amongst different web-apps.</p>
+
+<p>The class that corresponds to &lt;session-config&gt; is <a javadoc="com.caucho.server.session.SessionManager"/></p>
+
+</defun>
+
+<defun title="&lt;session-max>">
+<parents>session-config</parents>
+
+<p>&lt;session-max> sets the maximum number of sessions stored
+in memory for a particular &lt;web-app>.  The total number of persisted
+sessions may be larger.</p>
+
+<default>4096</default>
+
+</defun>
+
+<defun title="&lt;save-mode>">
+<parents>session-config</parents>
+
+<p>&lt;save-mode> configures when Resin should save a persistence
+session during a request.  The values are:</p>
+
+<deftable>
+<tr>
+  <td>after-request</td>
+  <td>Save the session after the request has been served and completed</td>
+</tr>
+<tr>
+  <td>before-headers</td>
+  <td>Save the session before sending headers to the browser</td>
+</tr>
+<tr>
+  <td>on-shutdown</td>
+  <td>Only save the session when Resin is shutting down</td>
+</tr>
+</deftable>
+
+<p>In some situations, like redirects, a fast browser can send a request
+back to Resin before the session is persisted with the
+<var>after-request</var> save-mode.  If the server is configured
+without <g>sticky sessions</g>, the load balancer might send the request
+to a different server, which may not get the updated session.
+In the situation, either the save-mode should be changed to
+<var>before-headers</var> or sticky sessions should be enabled.</p>
+
+<p>If the save-mode is <var>before-headers</var>, the application should
+take care to make any session changes before sending data to the browser.</p>
+
+<default>after-request</default>
+
+</defun>
+
+<defun title="&lt;session-timeout>">
+<parents>session-config</parents>
+
+<p>&lt;session-timeout> sets how long a &lt;web-app> should keep an
+idle session before invalidating it.  The value is specified in minutes.</p>
+
+<default>30min</default>
+
+</defun>
+
+    <s1 title="Maven Deploy Client">
+      <example title="Configuring the Maven Plugin in a pom.xml file">
+&lt;?xml version="1.0"?>
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+ http://maven.apache.org/maven-v4_0_0.xsd">
+  &lt;modelVersion>4.0.0&lt;/modelVersion>
+  &lt;groupId>com.test&lt;/groupId>
+  &lt;artifactId>test&lt;/artifactId>
+  &lt;packaging>war&lt;/packaging>
+  &lt;version>1.0-SNAPSHOT&lt;/version>
+  &lt;name>test Maven Webapp&lt;/name>
+  &lt;url>http://maven.apache.org&lt;/url>
+
+  &lt;dependencies>
+  ...
+  &lt;/dependencies>
+
+  &lt;pluginRepositories>
+    &lt;pluginRepository>
+      &lt;snapshots>
+        &lt;enabled>true&lt;/enabled>
+        &lt;updatePolicy>always&lt;/updatePolicy>
+        &lt;checksumPolicy>ignore&lt;/checksumPolicy>
+      &lt;/snapshots>
+      &lt;id>caucho&lt;/id>
+      &lt;name>Caucho&lt;/name>
+      &lt;url>http://caucho.com/m2-snapshot&lt;/url>
+    &lt;/pluginRepository>
+  &lt;/pluginRepositories>
+
+  &lt;build>
+    &lt;finalName>foo&lt;/finalName>
+
+    &lt;plugins>
+      &lt;plugin>
+        &lt;groupId>com.caucho&lt;/groupId>
+        &lt;artifactId>resin-maven-plugin&lt;/artifactId>
+        &lt;version>4.0-SNAPSHOT&lt;/version>
+        &lt;configuration>
+          &lt;server>127.0.0.1&lt;/server>
+          &lt;port>8086&lt;/port>
+          &lt;user>foo&lt;/user>
+          &lt;password>test&lt;/password>
+        &lt;/configuration>
+      &lt;/plugin>
+    &lt;/plugins>
+  &lt;/build>
+&lt;/project>
+      </example>
+
+      <deftable title="Maven Mojo Reference">
+        <tr>
+          <th>Mojo</th>
+          <th>Parameter name</th>
+          <th>System property</th>
+          <th>Required?</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <th rowspan="5">Common properties for all Mojos</th>
+          <td>server</td>
+          <td>resin.server</td>
+          <td>Yes</td>
+          <td>N/A</td>
+          <td>The IP or address of the Resin server</td>
+        </tr>
+        <tr>
+          <td>port</td>
+          <td>resin.port</td>
+          <td>Yes</td>
+          <td>N/A</td>
+          <td>The port of the Resin server's HTTP port</td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>resin.user</td>
+          <td>Yes</td>
+          <td>N/A</td>
+          <td>The user to use when logging into the Resin server</td>
+        </tr>
+        <tr>
+          <td>password</td>
+          <td>resin.password</td>
+          <td>Yes</td>
+          <td>N/A</td>
+          <td>The password to use when logging into the Resin server</td>
+        </tr>
+        <tr>
+          <td>commitMessage</td>
+          <td>resin.commitMessage</td>
+          <td>No</td>
+          <td>N/A</td>
+          <td>The commit message to log for any changes to the application repository</td>
+        </tr>
+        <tr>
+          <th rowspan="7">resin:upload-war</th>
+          <td>warFile</td>
+          <td>resin.warFile</td>
+          <td>Yes</td>
+          <td>${project.build.directory}/ ${project.build.finalName}.war (the war file produced for the project)</td>
+          <td>The war file to upload to the Resin server</td>
+        </tr>
+        <tr>
+          <td>stage</td>
+          <td>resin.stage</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The stage to use for the deployed application</td>
+        </tr>
+        <tr>
+          <td>virtualHost</td>
+          <td>resin.virtualHost</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The virtual host to use for the deployed application</td>
+        </tr>
+        <tr>
+          <td>contextRoot</td>
+          <td>resin.contextRoot</td>
+          <td>Yes</td>
+          <td>/${project.build.finalName}<br/>(the "final name" of the project)</td>
+          <td>The context root of the deployed application</td>
+        </tr>
+        <tr>
+          <td>version</td>
+          <td>resin.version</td>
+          <td>No</td>
+          <td>N/A</td>
+          <td>The version to use for the deployed application</td>
+        </tr>
+        <tr>
+          <td>archive</td>
+          <td>resin.archive</td>
+          <td>No</td>
+          <td>false</td>
+          <td>When set to true, an archive tag is set in addition to the main tag.  Can also be an explicit tag.</td>
+        </tr>
+        <tr>
+          <td>writeHead</td>
+          <td>resin.writeHead</td>
+          <td>No</td>
+          <td>true</td>
+          <td>When set to true and using versioning, a "head" tag is also set.</td>
+        </tr>
+        <tr>
+          <th rowspan="10">resin:copy-tag</th>
+          <td>stage</td>
+          <td>resin.stage</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The stage of the target tag</td>
+        </tr>
+        <tr>
+          <td>virtualHost</td>
+          <td>resin.virtualHost</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The virtual host of the target tag</td>
+        </tr>
+        <tr>
+          <td>contextRoot</td>
+          <td>resin.contextRoot</td>
+          <td>Yes (if tag not given)</td>
+          <td>/${project.build.finalName}<br/>(the "final name" of the project)</td>
+          <td>The context root of the target tag</td>
+        </tr>
+        <tr>
+          <td>version</td>
+          <td>resin.version</td>
+          <td>No</td>
+          <td>N/A</td>
+          <td>The version of the target tag</td>
+        </tr>
+        <tr>
+          <td>sourceStage</td>
+          <td>resin.sourceStage</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The stage of the source tag</td>
+        </tr>
+        <tr>
+          <td>sourceVirtualHost</td>
+          <td>resin.sourceVirtualHost</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The virtual host of the source tag</td>
+        </tr>
+        <tr>
+          <td>sourceContextRoot</td>
+          <td>resin.sourceContextRoot</td>
+          <td>Yes (if sourceTag not given)</td>
+          <td>N/A</td>
+          <td>The context root of the source tag</td>
+        </tr>
+        <tr>
+          <td>sourceVersion</td>
+          <td>resin.sourceVersion</td>
+          <td>No</td>
+          <td>N/A</td>
+          <td>The version of the source tag</td>
+        </tr>
+        <tr>
+          <td>tag</td>
+          <td>resin.tag</td>
+          <td>Yes (if contextRoot not given)</td>
+          <td>N/A</td>
+          <td>An explicit target tag</td>
+        </tr>
+        <tr>
+          <td>sourceTag</td>
+          <td>resin.sourceTag</td>
+          <td>Yes (if sourceContextRoot not given)</td>
+          <td>N/A</td>
+          <td>An explicit source tag</td>
+        </tr>
+        <tr>
+          <th rowspan="5">resin:delete-tag</th>
+          <td>stage</td>
+          <td>resin.stage</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The stage of the tag to be deleted</td>
+        </tr>
+        <tr>
+          <td>virtualHost</td>
+          <td>resin.virtualHost</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The virtual host of the tag to be deleted</td>
+        </tr>
+        <tr>
+          <td>contextRoot</td>
+          <td>resin.contextRoot</td>
+          <td>Yes (if tag not given)</td>
+          <td>/${project.build.finalName}<br/>(the "final name" of the project)</td>
+          <td>The context root of the tag to be deleted</td>
+        </tr>
+        <tr>
+          <td>version</td>
+          <td>resin.version</td>
+          <td>No</td>
+          <td>N/A</td>
+          <td>The version of the tag to be deleted</td>
+        </tr>
+        <tr>
+          <td>tag</td>
+          <td>resin.tag</td>
+          <td>Yes (if contextRoot not given)</td>
+          <td>N/A</td>
+          <td>An explicit tag to be deleted</td>
+        </tr>
+        <tr>
+          <th rowspan="5">resin:query-tags
+</th>
+          <td>stage</td>
+          <td>resin.stage</td>
+          <td>Yes (At least one pattern (either stage, virtualHost, contextRoot, version, or pattern) must be given</td>
+          <td>"default"</td>
+          <td>The query pattern for the stage portion of tags in the repository
+</td>
+        </tr>
+        <tr>
+          <td>virtualHost</td>
+          <td>resin.virtualHost</td>
+          <td>Yes (At least one pattern (either stage, virtualHost, contextRoot, version, or pattern) must be given</td>
+          <td>"default"</td>
+          <td>The query pattern for the virtual host portion of tags in the repository</td>
+        </tr>
+        <tr>
+          <td>contextRoot</td>
+          <td>resin.contextRoot</td>
+          <td>Yes (At least one pattern (either stage, virtualHost, contextRoot, version, or pattern) must be given</td>
+          <td>/${project.build.finalName}<br/>(the "final name" of the project)</td>
+          <td>The query pattern for the context root portion of tags in the repository</td>
+        </tr>
+        <tr>
+          <td>version</td>
+          <td>resin.version</td>
+          <td>Yes (At least one pattern (either stage, virtualHost, contextRoot, version, or pattern) must be given</td>
+          <td>N/A</td>
+          <td>The query pattern for the version portion of tags in the repository</td>
+        </tr>
+        <tr>
+          <td>pattern</td>
+          <td>resin.pattern</td>
+          <td>Yes (At least one pattern (either stage, virtualHost, contextRoot, version, or pattern) must be given</td>
+          <td>N/A</td>
+          <td>An explicit query pattern for entire tags in the repository</td>
+        </tr>
+      </deftable>
+    </s1>
+
+    <s1 title="Ant Deploy Client">
+      <example title="Using the Ant tasks">
+&lt;project xmlns:resin="antlib:com.caucho.ant">
+  &lt;-- if resin-ant.jar is not installed locally -->
+  &lt;taskdef uri="antlib:com.caucho.ant"
+           resource="com/caucho/ant/antlib.xml"
+           classpath="path/to/resin-ant.jar"/>
+
+  &lt;resin:upload-war server="192.168.0.10"
+                    port="8080"
+                    user="admin"
+                    password="myadminpass"
+                    warFile="clustered-app.war"
+                    version="1.0"/>
+&lt;/project>
+      </example>
+      <deftable title="Ant Task Reference">
+        <tr>
+          <th>Task name</th>
+          <th>Parameter name</th>
+          <th>Required?</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <th rowspan="5">Common properties for all tasks</th>
+          <td>server</td>
+          <td>Yes</td>
+          <td>N/A</td>
+          <td>The IP or address of the Resin server</td>
+        </tr>
+        <tr>
+          <td>port</td>
+          <td>Yes</td>
+          <td>N/A</td>
+          <td>The port of the Resin server's HTTP port</td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>Yes</td>
+          <td>N/A</td>
+          <td>The user to use when logging into the Resin server</td>
+        </tr>
+        <tr>
+          <td>password</td>
+          <td>Yes</td>
+          <td>N/A</td>
+          <td>The password to use when logging into the Resin server</td>
+        </tr>
+        <tr>
+          <td>commitMessage</td>
+          <td>No</td>
+          <td>N/A</td>
+          <td>The commit message to log for any changes to the application repository</td>
+        </tr>
+        <tr>
+          <th rowspan="7">resin-upload-war (com.caucho.ant.ResinUploadWar)</th>
+          <td>warFile</td>
+          <td>Yes</td>
+          <td>N/A</td>
+          <td>The war file to upload to the Resin server</td>
+        </tr>
+        <tr>
+          <td>stage</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The stage to use for the deployed application</td>
+        </tr>
+        <tr>
+          <td>virtualHost</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The virtual host to use for the deployed application</td>
+        </tr>
+        <tr>
+          <td>contextRoot</td>
+          <td>No</td>
+          <td>/[war file prefix]</td>
+          <td>The context root of the deployed application</td>
+        </tr>
+        <tr>
+          <td>version</td>
+          <td>No</td>
+          <td>N/A</td>
+          <td>The version to use for the deployed application</td>
+        </tr>
+        <tr>
+          <td>archive</td>
+          <td>No</td>
+          <td>false</td>
+          <td>When set to true, an archive tag is set in addition to the main tag.  Can also be an explicit tag.</td>
+        </tr>
+        <tr>
+          <td>writeHead</td>
+          <td>No</td>
+          <td>true</td>
+          <td>When set to true and using versioning, a "head" tag is also set.</td>
+        </tr>
+        <tr>
+          <th rowspan="10">resin-copy-tag (com.caucho.ant.ResinCopyTag)</th>
+          <td>stage</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The stage of the target tag</td>
+        </tr>
+        <tr>
+          <td>virtualHost</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The virtual host of the target tag</td>
+        </tr>
+        <tr>
+          <td>contextRoot</td>
+          <td>Yes (if tag not given)</td>
+          <td>N/A</td>
+          <td>The context root of the target tag</td>
+        </tr>
+        <tr>
+          <td>version</td>
+          <td>No</td>
+          <td>N/A</td>
+          <td>The version of the target tag</td>
+        </tr>
+        <tr>
+          <td>sourceStage</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The stage of the source tag</td>
+        </tr>
+        <tr>
+          <td>sourceVirtualHost</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The virtual host of the source tag</td>
+        </tr>
+        <tr>
+          <td>sourceContextRoot</td>
+          <td>Yes (if sourceTag not given)</td>
+          <td>N/A</td>
+          <td>The context root of the source tag</td>
+        </tr>
+        <tr>
+          <td>sourceVersion</td>
+          <td>No</td>
+          <td>N/A</td>
+          <td>The version of the source tag</td>
+        </tr>
+        <tr>
+          <td>tag</td>
+          <td>Yes (if contextRoot not given)</td>
+          <td>N/A</td>
+          <td>An explicit target tag</td>
+        </tr>
+        <tr>
+          <td>sourceTag</td>
+          <td>Yes (if sourceContextRoot not given)</td>
+          <td>N/A</td>
+          <td>An explicit source tag</td>
+        </tr>
+        <tr>
+          <th rowspan="5">resin-delete-tag (com.caucho.ant.ResinDeleteTag)
+    </th>
+          <td>stage</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The stage of the tag to be deleted</td>
+        </tr>
+        <tr>
+          <td>resin.virtualHost</td>
+          <td>No</td>
+          <td>"default"</td>
+          <td>The virtual host of the tag to be deleted</td>
+        </tr>
+        <tr>
+          <td>contextRoot</td>
+          <td>Yes (if tag not given)</td>
+          <td>N/A</td>
+          <td>The context root of the tag to be deleted</td>
+        </tr>
+        <tr>
+          <td>version</td>
+          <td>No</td>
+          <td>N/A</td>
+          <td>The version of the tag to be deleted</td>
+        </tr>
+        <tr>
+          <td>tag</td>
+          <td>Yes (if contextRoot not given)</td>
+          <td>N/A</td>
+          <td>An explicit tag to be deleted</td>
+        </tr>
+        <tr>
+          <th rowspan="5">resin-query-tags (com.caucho.ant.ResinQueryTags)</th>
+          <td>stage</td>
+          <td>Yes (At least one pattern (either stage, virtualHost, contextRoot, version, or pattern) must be given</td>
+          <td>"default"</td>
+          <td>The query pattern for the stage portion of tags in the repository</td>
+        </tr>
+        <tr>
+          <td>virtualHost</td>
+          <td>Yes (At least one pattern (either stage, virtualHost, contextRoot, version, or pattern) must be given</td>
+          <td>"default"</td>
+          <td>The query pattern for the virtual host portion of tags in the repository</td>
+        </tr>
+        <tr>
+          <td>contextRoot</td>
+          <td>Yes (At least one pattern (either stage, virtualHost, contextRoot, version, or pattern) must be given</td>
+          <td>".*"</td>
+          <td>The query pattern for the context root portion of tags in the repository</td>
+        </tr>
+        <tr>
+          <td>version</td>
+          <td>Yes (At least one pattern (either stage, virtualHost, contextRoot, version, or pattern) must be given</td>
+          <td>N/A</td>
+          <td>The query pattern for the version portion of tags in the repository</td>
+        </tr>
+        <tr>
+          <td>pattern</td>
+          <td>Yes (At least one pattern (either stage, virtualHost, contextRoot, version, or pattern) must be given</td>
+          <td>N/A</td>
+          <td>An explicit query pattern for entire tags in the repository</td>
+        </tr>
+      </deftable>
+    </s1>
+
+<s1 title="See Also">
+
+<ul>
+<li>See the <a href="config-ref.xtp">index</a> for a list of all the tags.</li>
+<li>See &lt;<a href="cluster-ref.xtp">cluster</a>&gt; tag configuration</li>
+</ul>
+
+</s1>
+
+<defun title="&lt;accept-listen-backlog>" version="Resin 3.1">
+<parents>http, connection-port, protocol</parents>
+
+<p>&lt;accept-listen-backlog> configures operating system TCP listen
+queue size for the port.</p>
+
+</defun>
+
+<defun title="&lt;accept-thread-max>" version="Resin 3.1">
+<parents>http, connection-port, protocol</parents>
+
+<p>&lt;accept-thread-max> configures the maximum number of 
+threads listening for new connections on this port.</p>
+
+</defun>
+
+<defun title="&lt;accept-thread-min>" version="Resin 3.1">
+<parents>http, connection-port, protocol</parents>
+
+<p>&lt;accept-thread-min> configures the minimum number of 
+threads listening for new connections on this port.</p>
+
+</defun>
+
+<defun title="&lt;address>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>The &lt;address> defines the IP interface for a port.
+A value of '*' binds to all ports.  Because the &lt;address> is
+specific to a server, it should only be defined in a &lt;server&gt; tag,
+not a &lt;server-default>.</p>
+
+<default>*</default>
+
+<example title="http address">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="web-tier"&gt;
+    &lt;server id="web-a" address="192.168.1.1" port="6800">
+      &lt;http address="10.0.1.1" port="80"/>
+    &lt;/server>
+
+    &lt;server id="web-b" address="192.168.1.2" port="6800">
+      &lt;http address="10.0.1.2" port="80"/>
+    &lt;/server>
+
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;ca-certificate-file> (OpenSSL)" version="Resin 3.1">
+<parents>http, protocol, cluster-port</parents>
+
+<p>&lt;ca-certificate-file> configures the path to a CA certificate
+file for intermediate CA support.</p>
+
+</defun>
+
+<defun title="&lt;ca-certificate-path> (OpenSSL)" version="Resin 3.1">
+<parents>http, protocol, cluster-port</parents>
+
+<p>&lt;ca-certificate-path> configures the path to a CA certificate
+directory for intermediate CA support.</p>
+
+</defun>
+
+<defun title="&lt;ca-revocation-file> (OpenSSL)" version="Resin 3.1">
+<parents>http, protocol, cluster-port</parents>
+
+<p>&lt;ca-revocation-file> configures the path to a list of
+revoked CA certificates.</p>
+
+</defun>
+
+<defun title="&lt;ca-revocation-path> (OpenSSL)" version="Resin 3.1">
+<parents>http, protocol, cluster-port</parents>
+
+<p>&lt;ca-revocation-path> configures the path to a list of
+revoked CA certificates.</p>
+
+</defun>
+
+<defun title="&lt;certificate-file> (OpenSSL)" version="Resin 3.1">
+<parents>http, protocol, cluster-port</parents>
+
+<p>&lt;certificate-file> configures the path to the server's
+SSL certificate.</p>
+
+</defun>
+
+<defun title="&lt;certificate-chain-file> (OpenSSL)" version="Resin 3.1">
+<parents>http, protocol, cluster-port</parents>
+
+<p>&lt;certificate-chain-file> configures the path to the server's
+SSL certificate for OpenSSL.</p>
+
+</defun>
+
+<defun title="&lt;certificate-key-file> (OpenSSL)" version="Resin 3.1">
+<parents>http, protocol, cluster-port</parents>
+
+<p>&lt;certificate-key-file> configures the path to the server's
+SSL private key certificate for OpenSSL.</p>
+
+</defun>
+
+<defun title="&lt;cipher-suite> (OpenSSL)" version="Resin 3.1">
+<parents>http, protocol, cluster-port</parents>
+
+<p>&lt;cipher-suite> configures the path to the server's
+SSL cryptographic ciphers.</p>
+
+</defun>
+
+<defun title="&lt;cluster-port>" version="Resin 3.0">
+<parents>server</parents>
+
+<p>&lt;cluster-port> configures the cluster and load balancing socket,
+for load balancing, distributed sessions, and distributed management.</p>
+
+<p>When configuring Resin in a load-balanced cluster, each Resin instance
+will have its own &lt;srun&gt; configuration, which Resin uses for distributed
+session management and for the load balancing itself.</p>
+
+<p>When configuring multiple JVMs, each &lt;srun&gt; will have a
+unique &lt;server-id&gt; which allows the -server command-line to select
+which ports the server should listen to.</p>
+
+<deftable-childtags>
+<tr><td>address</td>
+    <td>hostname of the interface to listen to</td>
+    <td>*</td></tr>
+<tr><td>jsse-ssl</td>
+    <td>configures the port to use JSSE for SSL</td>
+    <td>none</td></tr>
+<tr><td>openssl</td>
+    <td>configures the port to use OpenSSL</td>
+    <td>none</td></tr>
+<tr><td>port</td>
+    <td>port to listen to</td>
+    <td>required</td></tr>
+<tr><td>socket-timeout</td>
+     <td>timeout waiting to read/write to idle client</td>
+     <td>65s</td></tr>
+<tr><td>accept-listen-backlog</td>
+    <td>The socket factory's listen backlog for receiving sockets</td>
+    <td>100</td></tr>
+<tr><td>tcp-no-delay</td>
+    <td>sets the NO_DELAY socket parameter</td>
+    <td>true</td></tr>
+</deftable-childtags>
+
+<p>The class that corresponds to &lt;srun&gt; is <a javadoc="com.caucho.server.cluster.ClusterPort"/></p>
+
+</defun>
+
+<defun title="&lt;connection-max>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;connection-max> configures the maximum number of 
+concurrent connections on this port.</p>
+
+</defun>
+
+<defun title="&lt;http>" version="Resin 3.0">
+<parents>server</parents>
+
+<p>&lt;http> configures a HTTP or HTTPS port listening for HTTP requests.</p>
+
+<p>When configuring multiple JVMs, each &lt;http&gt; will have a
+unique &lt;server-id&gt; which allows the -server command-line to select
+which ports the server should listen to.</p>
+
+<deftable-childtags>
+<tr><td>address</td>
+    <td>IP address of the interface to listen to</td>
+    <td>*</td></tr>
+<tr><td>port</td>
+    <td>port to listen to</td>
+    <td>required</td></tr>
+<tr><td>tcp-no-delay</td>
+    <td>sets the NO_DELAY socket parameter</td>
+    <td>true</td></tr>
+<tr><td>socket-timeout</td>
+    <td>timeout waiting to write to idle client</td>
+    <td>65s</td></tr>
+<tr><td>accept-listen-backlog</td>
+    <td>The socket factory's listen backlog for receiving sockets</td>
+    <td>100</td></tr>
+<tr><td>virtual-host</td>
+    <td>forces all requests to this &lt;http&gt; to use the named virtual host</td>
+    <td>none</td></tr>
+<tr><td>openssl</td>
+    <td>configures the port to use OpenSSL</td>
+    <td>none</td></tr>
+<tr><td>jsse-ssl</td>
+    <td>configures the port to use JSSE for SSL</td>
+    <td>none</td></tr>
+</deftable-childtags>
+
+<p>The <var>virtual-host</var> attribute overrides the browser's
+Host directive, specifying the explicit host and port for
+<code>request.getServerName()</code> and <code>getServerPort()</code>.
+It is not used in most virtual host configurations.
+Only IP-based virtual hosts which wish to ignore the browser's Host
+will use @virtual-host.</p>
+
+</defun>
+
+<defun title="&lt;jsse-ssl>" version="Resin 3.1">
+<parents>http, protocol, cluster-port</parents>
+
+<p>&lt;jsse-ssl> configures the port to use JSSE for SSL
+support.</p>
+
+<p>
+The <a href="../admin/security.xtp">SSL</a> section of the Security documentation provides a comprehensive overview of SSL.
+</p>
+
+<deftable-childtags>
+<tr>
+  <td>alias</td>
+  <td>Configures the key alias name in the key store file.</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>key-store-file</td>
+  <td>Path to the certificate key store file</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>password</td>
+  <td>Private key password</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>key-store-type</td>
+  <td>Type of the keystore</td>
+  <td>jks</td>
+</tr>
+<tr>
+  <td>key-manager-factory</td>
+  <td>Special factory for creating keys</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>ssl-context</td>
+  <td>Special configuration for the ssl context.</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>verify-client</td>
+  <td>Settings for client validation</td>
+  <td>required</td>
+</tr>
+</deftable-childtags>
+
+</defun>
+
+<defun title="&lt;keepalive-max>" version="Resin 3.1">
+<parents>http, connection-port, protocol</parents>
+
+<p>&lt;keepalive-max> configures the maximum number of 
+keepalives on this port.</p>
+
+</defun>
+
+<defun title="&lt;openssl>" version="Resin 3.1">
+<parents>http, protocol, cluster-port</parents>
+
+<p>&lt;openssl> configures the port to use OpenSSL for SSL
+support (requires Resin Professional).  OpenSSL is a fast C implementation
+of SSL security used by Apache.  Resin's configuration is OpenSSL
+follows Apache's configuration, so any documentation on installing
+SSL certificates can use documentation for Apache.</p>
+
+<p>
+The <a href="../admin/security.xtp">SSL</a> section of the Security documentation provides a comprehensive overview of SSL.
+</p>
+
+<deftable-childtags>
+<tr>
+  <td>ca-certificate-file</td>
+  <td>Path to a CA certificate file for intermediate CA support</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>ca-certificate-path</td>
+  <td>Path to a directory of CA certificates for intermediate CA support</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>ca-revocation-file</td>
+  <td>Path to a list of revoked CA certificates</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>ca-revocation-path</td>
+  <td>Path to a directory of revoked CA certificates</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>certificate-file</td>
+  <td>Path to the server's SSL certificate</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>certificate-chain-file</td>
+  <td>Path to the certificate chains for client validation.</td>
+  <td>optional</td>
+</tr>
+<tr>
+  <td>certificate-key-file</td>
+  <td>Path to the server's SSL private key certificate</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>cipher-suite</td>
+  <td>Additions and restrictions to the allowed cryptography ciphers</td>
+  <td>see openssl-tags</td>
+</tr>
+<tr>
+  <td>password</td>
+  <td>Password protecting the public key</td>
+  <td>see openssl-tags</td>
+</tr>
+<tr>
+  <td>protocol</td>
+  <td>Optional restrictions on the SSL protocol</td>
+  <td>see openssl-tags</td>
+</tr>
+<tr>
+  <td>session-cache</td>
+  <td>Boolean enabling caching of SSL sessions for performance</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>session-cache-timeout</td>
+  <td>Timeout for session cache values</td>
+  <td>30s</td>
+</tr>
+<tr>
+  <td>unclean-shutdown</td>
+  <td>Flag indicating that openssl sockets can be shutdown uncleanly</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>verify-client</td>
+  <td>Options for client validation</td>
+  <td>none</td>
+</tr>
+<tr>
+  <td>verify-depth</td>
+  <td>Depth of the client certificate chains to validate</td>
+  <td>unlimited</td>
+</tr>
+</deftable-childtags>
+
+</defun>
+
+<defun title="&lt;password> (OpenSSL)" version="Resin 3.1">
+<parents>openssl</parents>
+
+<p>&lt;password> configures the SSL private key certificate password.</p>
+
+</defun>
+
+<defun title="&lt;port>" version="Resin 3.1">
+<parents>http, protocol, server</parents>
+
+<p>The &lt;port> defines the TCP port the HTTP or protocol
+should bind to.</p>
+
+<example title="http port">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="web-tier"&gt;
+    &lt;server id="web-a" address="192.168.1.1" port="6800">
+      &lt;http address="10.0.1.1" port="80"/>
+      &lt;http address="192.168.1.1" port="8080"/>
+    &lt;/server>
+
+    ...
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;protocol>" version="Resin 3.1">
+<parents>server</parents>
+
+<p>&lt;protocol> configures custom socket protocols using Resin's thread
+and connection management.</p>
+
+<p>The custom protocol will extend from com.caucho.server.port.Protocol.</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+&lt;cluster id="web-tier"&gt;
+
+  &lt;server id="a"&gt;
+    &lt;protocol address="localhost" port="8888"&gt;
+      &lt;type>example.Magic8BallProtocol&lt;/type>
+    &lt;/port&gt;
+  &lt;/server&gt;
+
+&lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;protocol> (OpenSSL)" version="Resin 3.1">
+<parents>openssl</parents>
+
+<p>&lt;protocol> configures the SSL allowed protocols.</p>
+
+</defun>
+
+<defun title="&lt;session-cache> (OpenSSL)" version="Resin 3.1">
+<parents>openssl</parents>
+
+<p>&lt;session-cache> configures the SSL session cache.</p>
+
+</defun>
+
+<defun title="&lt;session-cache-timeout> (OpenSSL)" version="Resin 3.1">
+<parents>openssl</parents>
+
+<p>&lt;session-cache> configures the SSL session cache timeout.</p>
+
+</defun>
+
+<defun title="&lt;socket-timeout>" version="Resin 3.1">
+<parents>http, cluster-port, protocol, server</parents>
+
+<p>&lt;socket-timeout> overrides the socket timeout from the
+&lt;server>.</p>
+
+</defun>
+
+<defun title="&lt;tcp-no-delay>" version="Resin 3.1">
+<parents>http, protocol, cluster-port</parents>
+
+<p>Sets the tcp-no-delay parameter.</p>
+
+</defun>
+
+<defun title="&lt;unclean-shutdown> (OpenSSL)" version="Resin 3.1">
+<parents>openssl</parents>
+
+<p>&lt;unclean-shutdown> configures the OpenSSL unclean shutdown on
+connection close.</p>
+
+</defun>
+
+<defun title="&lt;verify-client> (OpenSSL)" version="Resin 3.1">
+<parents>openssl</parents>
+
+<p>
+&lt;verify-client> sets the client certificate configuration.  If the
+certificate is available, it will be put in the
+javax.servlet.request.X509Certificate request attribute. 
+</p>
+
+<deftable>
+<tr>
+  <td>none</td>
+  <td>do not ask for a client certificate (default)</td>
+</tr>
+<tr>
+  <td>required</td>
+  <td>require a client certificate</td>
+</tr>
+<tr>
+  <td>optional</td>
+  <td>ask for a client certificate if availiable </td>
+</tr>
+<tr>
+  <td>optional-no-ca</td>
+  <td>ask for a client certificate, but do not validate the Certificate Authority</td>
+</tr>
+</deftable>
+
+<example title="Obtaining the client certificate">
+  X509Certificate []certs = (X509Certificate [])
+       request.getAttribute("javax.servlet.request.X509Certificate");
+</example>
+
+</defun>
+
+<defun title="&lt;verify-depth> (OpenSSL)" version="Resin 3.1">
+<parents>openssl</parents>
+
+<p>&lt;verify-depth> configures the OpenSSL client verification depth.</p>
+
+</defun>
+
+</body>
+</document>

@@ -1,0 +1,136 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.11 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="hessianProxy">
+
+<p>HessianProxyFactory has a setOverloadEnable(enable) flag.  Overloading
+is disabled by default.</p>
+
+</s1>
+
+<s1 title="CGIServlet adds executable attribute">
+
+<p>The CGI servlet has a new executable attribute to specify the
+program to execute the CGI script with.</p>
+
+<example>
+&lt;servlet servlet-name="php-cgi"
+         servlet-class="com.caucho.servlets.CGIServlet"&gt;
+  &lt;init&gt;
+    &lt;executable&gt;/usr/local/bin/php&lt;/executable&gt;
+  &lt;/init&gt;
+&lt;/servlet&gt;
+</example>
+
+</s1>
+
+<s1 title="OpenSSL unclean-shutdown">
+
+<p>Added unclean-shutdown flag to openssl configuration to handle issues
+with broken browsers.</p>
+
+</s1>
+
+<s1 title="&lt;user-name&gt; on Linux">
+
+<p>The new Linux threading model still does not properly implement
+setuid for threaded programs.  So &lt;user-name&gt; has been disabled
+for Linux.  Linux uses should use iptables or an equivalent port mapper
+to avoid the need for running as root to bind to port 80.</p>
+
+</s1>
+
+<s1 title="ResinConfigServer current">
+
+<p>A "current" value for ResinConfigServer uses gethostname for the
+proper connection.</p>
+
+</s1>
+
+<s1 title="rewrite">
+
+<p>Added forbidden, not-found, and gone.</p>
+
+</s1>
+
+<s1 title="DirectoryServlet enable">
+
+<pre>
+&lt;servlet servlet-name="directory"
+         servlet-class="com.caucho.servlets.DirectoryServlet"&gt;
+  &lt;init enable="false"/&gt;
+&lt;/servlet&gt;
+</pre>
+
+</s1>
+
+<s1 title="expand-cleanup-filset">
+
+<p>The expansion directives (web-app-deploy) now allow an
+expand-cleanup-fileset to specify which files should be deleted on a
+new .war deploy.</p>
+<pre>
+&lt;web-app-deploy path="webapps"&gt;
+  &lt;expand-cleanup-fileset&gt;
+    &lt;exclude&gt;WEB-INF/data/**&lt;/exclude&gt;
+  &lt;/expand-cleanup-fileset&gt;
+&lt;/web-app-deploy&gt;
+</pre>
+
+</s1>
+
+<s1 title="resin:set has default attribute">
+
+<p>resin:set can now have a default attribute.  For default, resin:set will
+only set the variable if it has no other value.</p>
+
+</s1>
+
+<s1 title="cmp-field auto-generate='false'">
+
+<p>The CMP 2.1 cmp-field now has an optional auto-generate='false'
+attribute to handle the situation where '0' is an allowed primary key value.
+</p>
+
+</s1>
+
+<s1 title="persistent-store timeout">
+
+<p>Persistent store objects now respect the session timeout values.
+The no longer have longer timeouts when passivated.  Previously,
+the session timeout only applied to memory-based objects.</p>
+
+</s1>
+
+<s1 title="expand-cleanup-fileset">
+
+<p>Expansions (war, ear, host) can now specify which files, if any, should
+be cleaned up on a fresh expansion.</p>
+
+<example>
+&lt;web-app-deploy path="webapps"&gt;
+  &lt;expand-cleanup-fileset&gt;
+    &lt;exclude&gt;WEB-INF/data/**&lt;/exclude&gt;
+  &lt;/expand-cleanup-fileset&gt;
+&lt;/web-app-deploy&gt;
+</example>
+
+</s1>
+
+<s1 title="Acknowledgements">
+
+<p>Special thanks to Nancy Deschenes and G Homicki
+of <a href="http://www.spiders.com">Objective Consulting, Inc</a> for
+identifying numerous fixes to the CGIServlet.</p>
+
+</s1>
+
+</body>
+</document>

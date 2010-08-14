@@ -1,0 +1,1560 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Virtual Hosting</title>
+    <description>
+<p>A Resin server can serve many virtual hosts, each with
+its own servlets and documents.  The configuration is flexible,
+allowing dynamic host deployment in a <code>hosts</code> directory
+or using explicit &lt;host> tags for additional control and security,
+and compatibility with existing Apache sites, enabling easy upgrades
+and evaluation for PHP servers to Quercus.</p>
+    </description>
+
+  </header>
+
+  <body>
+    <localtoc/>
+
+<s1 title="Overview">
+
+<p>Virtual hosts are multiple internet domains served by the same
+Resin server.  Because one JVM handles all the domains, its more memory
+and processing efficient, as well as sharing IP addresses.  With Resin,
+adding virtual hosts can as easy as creating a directory
+like <code>/var/www/hosts/foo.com</code> and setting up the DNS name.
+Explicit virtual host is also possible to match existing layouts, like
+matching a <code>/var/www/htdocs</code> configuration when migrating
+a PHP mediawiki or wordpress site to use <a href="../examples/quercus.xtp">Quercus</a>
+for security and performance.</p>
+
+<p>The virtual host will contain one or
+more <a href="deploy-ref.xtp">web-apps</a> to serve the host's contents.
+Simple sites will use a fixed root webapp, like the Apache-style
+<code>/var/www/htdocs</code>.  More complicated sites can use a
+<code>webapps</code>-style directory.</p>
+
+<p>Each virtual host belongs to a
+Resin &lt;cluster>, even if the
+cluster has only a single server.</p>
+
+<p>For example, a Resin server might manage both the
+<code>www.gryffindor.com</code> and <code>www.slytherin.com</code> domains,
+storing the content in separate directories (/var/www/gryffindor and
+/var/www/slytherin), and using a single IP address for both domains.
+In this scenario, both www.gryffindor.com and www.slytherin.com are
+registered with the standard domain name service registry as having the IP
+address <code>192.168.0.13</code>.  When a user types in the url
+<code>http://www.gryffindor.com/hello.jsp</code> in their browser,
+the browser will send the HTTP request to the IP address
+<code>192.168.0.13</code> and send an additional HTTP header for the
+gryffindor host, "Host: www.gryffindor.com".  When Resin receives the request
+it will grab the host header, and dispatch the request to the configured
+virtual host.</p>
+
+<example title="Example: HTTP request headers">
+C: GET /test.jsp HTTP/1.1
+C: Host: www.gryffindor.com
+C:
+</example>
+
+<ol>
+<li>host name</li>
+<li>host aliases</li>
+<li>optional host.xml</li>
+<li>root directory</li>
+<li>web-applications</li>
+<li>configuration environment</li>
+<li>logging</li>
+</ol>
+
+</s1>
+
+<s1 title="Dynamic virtual hosts">
+
+<p>Resin can deploy virtual hosts automatically by scanning a host
+deployment directory for virtual host content.  Each sub-directory in
+the <code>hosts</code> directory will cause Resin to create a new
+virtual host.  To customize the configuration, you can
+add a <code>host.xml</code> in the host's root directory for shared
+databases, beans or security, or to add
+<a href="http-virtual-hosts-ref.xtp#host-alias">&lt;host-alias></a> names.
+</p>
+
+<p>You can add hosts dynamically to a running server just by creating
+a new host directory.  Resin periodically scans the <code>hosts</code>
+directory looking for directory changes.  When it detects a new host directory,
+it will automatically start serving files from the new virtual hosts.</p>
+
+<p>If you add a <code>default</code> directory in the <code>hosts</code>,
+Resin will use it to serve all unknown virtual hosts.  The default host is
+handy for simple servers with only a single virtual host and for sites
+where the virtual host is handled in software, like Drupal. If the
+<code>default</code> directory is missing, Resin will
+return <code>404 Not Found</code> for any unknown virtual hosts.</p>
+
+<example title="Example: virtual host directory structure">
+/var/www/hosts/www.gryffindor.com/
+                                 host.xml
+                                 log/access.log
+                                 webapps/ROOT/index.jsp
+                                 webapps/ROOT/WEB-INF/resin-web.xml
+				 
+/var/www/hosts/www.slytherin.com/
+                                host.xml
+                                log/access.log
+                                webapps/ROOT/index.php
+                                webapps/ROOT/WEB-INF/resin-web.xml
+				 
+/var/www/hosts/default/
+                      host.xml
+                      log/access.log
+                      webapps/ROOT/index.php
+                      webapps/ROOT/WEB-INF/resin-web.xml
+
+</example>
+
+<s2 title="host-aliasing for dynamic hosts">
+
+<p>Often, the same virtual host will respond to multiple names, like
+<code>www.slytherin.com</code> and <code>slytherin.com</code>.  One
+name is the primary name and the others are aliases.  In Resin, the
+primary name is configured by the <a href="http-virtual-hosts-ref.xtp#host-name">&lt;host-name></a> tag and aliases are configured
+by <a href="http-virtual-hosts-ref.xtp#host-alias">&lt;host-alias></a>.  In a dynamic
+host configuration, the directory name is used as the <code>host-name</code>
+by default, and aliases are declared in the <code>host.xml</code>.</p>
+
+<example title="Example: www.slytherin.com/host.xml">
+&lt;host xmlns="http://caucho.com/ns/resin">
+  &lt;host-name>www.slytherin.com&lt;/host-name>
+  &lt;host-alias>slytherin.com&lt;/host-alias>
+  &lt;host-alias>quidditch.slytherin.com&lt;/host-alias>
+&lt;/host>
+</example>
+
+<p>Since the <code>host.xml</code> is shared for all web-applications in
+the host, you can also use it to configure shared resources like security
+logins, shared databases, and shared resources.</p>
+
+</s2>
+
+<s2 title="host-deploy configuration">
+
+<p>The <a href="http-virtual-hosts-ref.xtp#host-deploy">&lt;host-deploy></a> tag configures
+the dynamic virtual hosting specifying the directory where Resin should
+scan for virtual hosts.  Because Resin does not automatically add default
+configuration, you will need to also add configuration for the
+<code>host.xml</code>, <code>app-default.xml</code> and
+<code>web-app-deploy</code>.  Although it's a bit more verbose, the
+no-default rule makes Resin more secure and debuggable.  If an item like
+a &lt;web-app> is missing, Resin will return <code>404 Not Found</code> for
+security.  Because all configuration is explicit, it's ultimately traceable
+to the <code>resin.xml</code> which makes debugging more reliable.</p>
+
+<p>Shared host configuration goes in the
+<a href="http-virtual-hosts-ref.xtp#host-default">&lt;host-default></a> tag.  In this
+case, we've added an optional <code>host.xml</code> for configuration,
+an access log in <code>log/access.log</code> and a standard
+<code>webapps</code> directory.  The standard servlets and file handling
+come from the <code>app-default.xml</code> file.  If you omit either the
+app-default.xml or the webapps, you will see <code>404 Not Found</code> for
+any requests.</p>
+
+<p>The example below is a complete, working <code>resin.xml</code> listening
+to HTTP at port 8080.  The <a href="clustering-overview.xtp">cluster</a>
+consists of a single server.  It includes a &lt;<a config-tag="development-mode-error-page"/>&gt; to help debugging
+the configuration.  Many sites will omit the error-page to
+hide configuration details in case an error occurs on a live site.</p>
+
+<example title="Example: /etc/resin/resin.xml host-deploy configuration">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+          xmlns:resin="urn:java:com.caucho.resin"&gt;
+&lt;cluster id="app-tier">
+  &lt;server id="app-a" address="192.168.1.13" port="6800">
+    &lt;http port="8080"/>
+  &lt;/server>
+
+  &lt;development-mode-error-page/>
+
+  &lt;resin:import path="${__DIR__}/app-default.xml"/>
+  
+  &lt;host-default&gt;
+    &lt;resin:import path="host.xml" optional="true"/>
+
+    &lt;access-log path="log/access.log"/>
+	
+    &lt;web-app-deploy path="webapps"/&gt;
+  &lt;/host-default&gt;
+
+  <b>&lt;host-deploy path="hosts"&gt;
+  &lt;/host-deploy&gt;</b>
+  
+&lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<p>Any directory created in <code>${resin.root}/hosts</code> will now
+become a virtual
+host. You can also place a .jar file in <code>${resin.root}/hosts</code>, it is expanded to
+become a virtual host.</p>
+
+<example>
+${resin.root}/hosts/www.gryffindor.com/
+${resin.root}/hosts/www.gryffindor.com/webapps/ROOT/index.jsp
+${resin.root}/hosts/www.gryffindor.com/webapps/foo/index.jsp
+
+${resin.root}/hosts/www.slytherin.com.jar
+</example>
+
+<p>Jar libraries and class files that are shared amongst all webapps in the host
+can be placed in <code>lib</code> and <code>classes</code> subdirectories of the host:</p>
+
+<example>
+${resin.root}/hosts/www.gryffindor.com/lib/mysql-connector-java-3.1.0-alpha-bin.jar 
+${resin.root}/hosts/www.gryffindor.com/classes/example/CustomAuthenticator.java
+</example>
+
+<p>More information is available in the configuration documentation
+for &lt;<a href="http-virtual-hosts-ref.xtp#host-deploy">host-deploy</a>&gt;
+and &lt;<a href="http-virtual-hosts-ref.xtp#host-default">host-default</a>&gt;.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Explicit Virtual Hosting">
+
+<p>In a more structured site, you can take complete control of the
+virtual host configuration and configure each virtual host explicitly.
+Existing sites wanting to upgrade to Resin or sites with extra security needs
+may prefer to configure each &lt;host>  in the resin.xml. For
+example, a PHP Drupal site evaluating <a href="../examples/quercus.xtp">Quercus</a> to
+improve performance and security might use the explicit &lt;host> to
+point to the existing <code>/var/www/htdocs</code> directory.</p>
+
+<p>In the explicit configuration, each virtual host has its
+own <a href="http-virtual-hosts-ref.xtp#host">host</a> block.  At the very least, each host
+will define the <var>id</var> specifying the host name and a root web-app.
+A <a config-tag="root-directory"/> is often used to provide a host specific
+root for logfiles.</p>
+
+<p>As with the dynamic hosting, servlets and web-apps must be configured
+either in a &lt;host-default> or explicitly.  If they are missing, Resin
+will return a <code>404 Not Found</code> for security.  The host id=""
+is the default host and will serve any request that doesn't match other
+hosts.  If you don't have a default host, Resin will return a
+<code>404 Not Found</code> for any unknown host.</p>
+
+<p>The following sample configuration defines an explicit virtual hosts
+www.slytherin.com and a default host, each with its own
+root directory, access-log and a single explicit
+<a href="deploy-ref.xtp">&lt;web-app></a> in the <code>htdocs</code>
+directory.  The default virtual host is configured just like a typical
+Apache configuration, so it can be used to upgrade an Apache/PHP site
+to use <a href="../examples/quercus.xtp">Quercus</a> for security and performance.</p>
+
+<example title="Example: /etc/resin/resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+        xmlns:resin="urn:java:com.caucho.resin">
+        
+&lt;cluster id="app-tier">
+  &lt;server id="app-a" address="192.168.1.10" port="6800"&gt;
+    &lt;http port="8080"/>
+  &lt;/server>
+
+  &lt;development-mode-error-page/>
+
+  &lt;resin:import path="${__DIR__}/app-default.xml"/>
+
+  &lt;host id="">
+    &lt;root-directory&gt;/var/www&lt;/root-directory&gt;
+
+    &lt;access-log path="logs/access.log"/>
+
+    &lt;web-app id="" root-directory="htdocs"/>
+  &lt;/host>
+
+  &lt;host id="www.slytherin.com">
+    &lt;host-alias>slytherin.com&lt;/host-alias>
+    
+    &lt;root-directory&gt;/var/slytherin&lt;/root-directory&gt;
+
+    &lt;access-log path="logs/access.log"/>
+
+    &lt;web-app id="" root-directory="htdocs"/>
+  &lt;/host>
+
+&lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<p>Browsing http://gryffindor.caucho.com/test.php will look for
+/var/www/htdocs/test.php.</p>
+
+<p>Browsing http://slytherin.caucho.com/test.php will look for
+/var/slytherin/htdocs/test.php.</p>
+
+</s1>
+
+<s1 title="Server per virtual host">
+
+<p>In some ISP setups, it may make sense to assign a server for each
+virtual host.  The isolation of web-apps may not be
+sufficient; each host needs a separate JVM.  In this configuration,
+each &lt;host> belongs to its own &lt;cluster> and has a dedicated
+&lt;server>.  Normally, this configuration will operate using load-balancing,
+so the load-balance server will dispatch requests as appropriate.</p>
+
+<p>For further security restrictions, see
+the <a href="starting-resin-watchdog.xtp">watchdog</a> section.  ISPs can also
+use the watchdog to assign different &lt;user-name> values for each
+host and can even create chroot directories for each JVM.</p>
+
+<p>A front-end web server receives all requests, and is configured to
+dispatch to back-end Resin server that correspond to the host name.</p>
+
+<figure src="config-jvmpervirtualhost.png" width="481" height="145"/>
+
+<s2 title="Back-end JVMs">
+
+<p>Each host is placed in its own &lt;cluster> with a dedicated
+&lt;server>.  Since the server listens to a TCP port for load-balancing
+and clustering messages, each server on the maching needs a different
+server port.</p>
+
+<p>In this example, the virtual hosts <code>www.gryffindor.com</code> and
+<code>www.slytherin.com</code> each get their own server.  The backend
+clusters have their own virtual host.  The frontend load-balancer dispatches
+the <a href="clustering-overview.xtp">&lt;resin:LoadBalance></a> tags
+to the backend.</p>
+
+<p>This example is split into two blocks to emphasize the frontend and
+backend.  Typically, they will both actually be in the same resin.xml
+to ensure consistency.</p>
+
+<example title="Example: /etc/resin/resin.xml for backend">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+          xmlns:resin="urn:java:com.caucho.resin">
+
+  &lt;cluster-default>
+    &lt;resin:import path="${resin.home}/conf/app-default.xml"/>
+    
+    &lt;host-default>
+      &lt;web-app-deploy path="webapps"/>
+    &lt;/host-default>
+  &lt;/cluster-default>
+
+  &lt;cluster id="gryffindor&gt;
+    &lt;server id="gryffindor" host="localhost" port="6800"/&gt;
+
+    &lt;host id="www.gryffindor.com"&gt;
+  
+      &lt;root-directory&gt;/var/www/gryffindor&lt;/root-directory&gt;
+
+    &lt;/host&gt;
+  &lt;/cluster&gt;
+
+  &lt;cluster id="slytherin"&gt;
+    &lt;server id="slytherin" host="localhost" port="6801"/&gt;
+
+    &lt;host id="www.slytherin.com"&gt;
+  
+      &lt;root-directory&gt;/var/www/slytherin&lt;/root-directory&gt;
+
+    &lt;/host&gt;
+  &lt;/cluster&gt;
+
+  &lt;cluster id="web-tier">
+    &lt;!-- see below -->
+    ...
+  &lt;/cluster>
+
+&lt;/resin&gt;
+</example>
+
+<p>Each back-end server is started separately:</p>
+
+<example title="Example: starting backend servers">
+unix&gt; java -jar lib/resin.jar -server gryffindor start
+unix&gt; java -jar lib/resin.jar -server slytherin start
+</example>
+
+<example title="Example: stopping backend servers">
+unix&gt; java -jar lib/resin.jar -server gryffindor stop
+unix&gt; java -jar lib/resin.jar -server slytherin stop
+</example>
+</s2>
+
+<s2 title="Resin web-tier load balancer">
+
+<p>The host-specific back-end servers are ready to receive requests on their srun
+ports.  A third Resin server can be used as the front-end load-balancer.
+It receives all requests and dispatches to the back-end servers.</p>
+
+<figure src="config-jvmpervirtualhost-resin.png" width="481" height="145"/>
+
+<p>The Resin web server is configured using <a href="http-rewrite.xtp">rewrite</a> with a <a href="clustering-overview.xtp">&lt;resin:LoadBalance</a> directive to dispatch to the back-end server.  A cluster is
+defined for each back-end host, so that the
+&lt;load-balance> knows how to find them.</p>
+
+<example title="Example: /etc/resin/resin.xml for front-end web server">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+     xmlns:resin="urn:java:com.caucho.resin">
+     
+  &lt;cluster id="web-tier"&gt;
+    &lt;server-default>
+      &lt;http port="80"/&gt;
+    &lt;/server-default>
+
+    &lt;server id="web" address="192.168.2.1" port="6800"/&gt;
+
+    &lt;host id="gryffindor.com"&gt;
+      &lt;web-app id="/"&gt;
+
+        &lt;resin:LoadBalance regexp="" cluster="gryffindor"/>
+
+      &lt;/web-app>
+    &lt;/host>
+
+    &lt;host id="slytherin.com"&gt;
+      &lt;web-app id="/"&gt;
+
+        &lt;resin:LoadBalance regexp="" cluster="slytherin"/>
+
+      &lt;/web-app>
+    &lt;/host>
+  &lt;/cluster&gt;
+
+  &lt;cluster id="gryffindor"&gt;
+    &lt;server id="gryffindor" address="192.168.2.2" port="6800"/>
+
+    &lt;host id="www.gryffindor.com">
+      ...
+    &lt;/host>
+  &lt;/cluster&gt;
+
+  &lt;cluster id="slytherin"&gt;
+    &lt;server id="slytherin" address="192.168.2.2" port="6801"/>
+
+    ...
+  &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<s3 title="Starting the servers on Unix">
+
+<p>The front-end server JVM is started similar to the back-end JVMs:</p>
+
+<example title="Example: starting the load balancer" >
+unix&gt; java -jar lib/resin.jar -server web -conf conf/resin.xml start
+...
+unix&gt; java -jar lib/resin.jar -server web -conf conf/resin.xml stop
+</example>
+
+</s3> <!-- unix startup -->
+
+<s3 title="Starting the servers on Windows">
+<p>With Windows, each JVM is installed as a service. Service is installed using
+  setup.exe graphical utility. It's possible to install a number of Resin
+  services each using a unique name. The name will need to be supplied into
+  'Service Name' field.</p>
+
+<figure src="setup-exe.png"/>
+
+<p>You will either need to reboot the machine or start the service from the
+Control Panel/Services panel to start the server. On a machine reboot, NT will
+automatically start the service.</p>
+
+<p>There is a bug in many JDKs which cause the JDK to exit when the
+administrator logs out. JDK 1.4 and later can avoid that bug if the JDK is
+started with -Xrs.</p>
+
+</s3> <!-- windows startup -->
+
+</s2> <!-- resin frontend -->
+
+</s1> <!-- jvm per virtual host -->
+
+<s1 title="Configuration tasks">
+
+<s2 title="host naming">
+
+<p>The virtual host name can be configured by
+an explicit <a href="http-virtual-hosts-ref.xtp#host-name">&lt;host-name></a>, 
+a <a href="http-virtual-hosts-ref.xtp#host-alias">&lt;host-alias></a>,
+a <a href="http-virtual-hosts-ref.xtp#host-alias-regexp">&lt;host-alias-regexp></a>,
+by the <a href="http-virtual-hosts-ref.xtp#host">&lt;host></a> tag or 
+implicitly by the <a href="http-virtual-hosts-ref.xtp#host-deploy">&lt;host-deploy></a>.
+For explicit configuration styles, the host name and alias
+configuration will generally be in the resin.xml.  For dynamic configuration,
+the host aliases will typically be in an included <code>host.xml</code> inside
+the host directory.</p>
+
+<p>The default host catches all unmatches hosts.  Simpler sites will
+use the default host for all requests, while security-conscious sites
+may remove the default host entirely.  If the default host is not configured,
+Resin will return a <code>404 Not Found</code>.</p>
+
+</s2>
+
+<s2 title="host.xml">
+
+<p>The <code>host.xml</code> is an optional file where virtual hosts can
+put host-common configuration.  The <code>host.xml</code>
+is a good place for shared resources like authentication, database pools
+or host-wide <a href="config-candi.xtp">beans and services</a>.  It's also a
+location for the &lt;host-alias> in a dynamic hosting configuration.</p>
+
+<p>The <code>host.xml</code> is configured in a &lt;host-deploy>
+or &lt;host-default> by adding a
+<a config-tag="resin:import">&lt;resin:import></a> tag
+specifying the host.xml name and location.  Because the &lt;host-default>
+applies the &lt;resin:import> to every virtual host, it becomes a common
+system-wide configuration file.</p>
+
+</s2>
+
+<s2 title="web-applications">
+
+<p>Hosts must define <a href="deploy-ref.xtp">web-apps</a> in order to
+serve files, servlets, or PHP pages.  If the host is missing all
+webapps, Resin will return <code>404 Not Found</code> for all requests
+make to the host.</p>
+
+<p>Both explicit <a href="deploy-ref.xtp#web-app">&lt;web-app></a> and
+dynamic <a href="deploy-ref.xtp#web-app-deploy">web-app-deploy</a> tags
+are used to configure webapps.  The explicit style is generally used for
+Apache-style configuration, while the dynamic style is generally used for
+Java app-server .war configuration.</p>
+
+<p>Remember, Resin's default servlets like the file, JSP, and PHP servlets
+also need to be defined before they're used.  So all Resin configuration
+files need to have a &lt;resin:import> of the <code>conf/app-default.xml</code>
+configuration file either in the &lt;cluster> or in a
+shared &lt;cluster-default>.  If the app-default.xml is missing, Resin will
+not serve static files, JSP, or PHP, and will not even look in the
+WEB-INF for resin-web.xml, classes, or lib.</p>
+
+</s2>
+
+</s1>
+
+
+<s1 title="IP-Based Virtual Hosting">
+
+<p>While Resin's virtual hosting is primarily aimed at named-based
+virtual hosts, it's possible to run Resin with IP-Based virtual hosts.</p>
+
+<p>With IP virtual hosting, each &lt;http&gt; block is configured
+with the virtual host name.  This configuration will override any
+virtual host supplied by the browser.</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+&lt;cluster id="web-tier">
+  &lt;server id="a"&gt;
+
+    &lt;http address="192.168.0.1" port="80"
+          virtual-host="slytherin.caucho.com"/&gt;
+
+    &lt;http address="192.168.0.2" port="80"
+          virtual-host="gryffindor.caucho.com"/&gt;
+
+  &lt;/server>
+
+  ...
+
+  &lt;host id="slytherin.caucho.com"&gt;
+    ...
+  &lt;/host&gt;
+&lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</s1>
+
+<s1 title="Internationalization">
+
+<p>Resin's virtual hosting understands host names encoded using
+rfc3490 (Internationalizing Domain Names in Applications).  This support
+should be transparent.  Just specify the virtual host as usual, and
+Resin will translate the brower's encoded host name
+the unicode string.</p>
+
+<p>Support, of course, depends on the browser.  <a href="http://devedge.netscape.com/viewsource/2003/idn/">Mozilla 1.4</a> supports the encoding.
+
+</p></s1>
+
+<s1 title="Virtual Hosts with Apache or IIS">
+
+<p>A common configuration uses virtual hosts with Apache or IIS.
+As usual, Apache or IIS will pass matching requests to Resin.</p>
+
+<s2 title="Apache">
+<p>The Resin JVM configuration with Apache is identical to the
+standalone configuration.  That similarity makes it easy to debug the
+Apache configuration by retreating to Resin standalone if needed.</p>
+
+<p>The <var>ServerName</var> directive in Apache is vital to make Resin's
+virtual hosting work.  When Apache passes the request to Resin, it
+tells Resin the <var>ServerName</var>.  Without the <var>ServerName</var>,
+Resin can get very confused which host to serve.</p>
+
+<example title="httpd.conf">
+LoadModule caucho_module /usr/local/apache/libexec/mod_caucho.so
+
+ResinConfigServer localhost 6802
+
+&lt;VirtualHost 127.0.0.1&gt;
+  ServerName gryffindor.caucho.com
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost 192.168.0.1&gt;
+  ServerName slytherin.caucho.com
+&lt;/VirtualHost&gt;
+</example>
+
+<note>You'll the LoadModule must appear before
+the ResinConfigServer for Apache to properly understand the
+ResinConfigServer command.  If they're missing, Apache will send
+an error.</note>
+</s2>
+
+
+<s2 title="Apache front-end">
+
+<p>The host-specific back-end JVMs are ready to receive requests on their srun
+ports.  Apache is the front-end server, and is configured to dispatch to the
+appropriate back-end Resin JVM for the host: </p>
+
+<figure src="config-jvmpervirtualhost-apache.png" width="481" height="145"/>
+
+<example title="httpd.conf">
+&lt;VirtualHost 127.0.0.1&gt;
+  ServerName gryffindor.caucho.com
+  ResinConfigServer 192.168.0.10 6800
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost 192.168.0.1&gt;
+  ServerName slytherin.caucho.com
+  ResinConfigServer 192.168.0.11 6800
+&lt;/VirtualHost&gt;
+</example>
+
+<p>When you restart the Apache web server, you can look at
+<var>http://gryffindor/caucho-status</var>
+and <var>http://slytherin/caucho-status</var> to check
+your configuration.  Check that each virtual host is using the
+server <var>address</var> and <var>port</var> that you expect.</p>
+</s2>
+
+<!--
+<s2 title="IIS">
+<p>Configuration and installation for IIS virtual sites is discussed in the <a href="../install/install-3rd-party.xtp">IIS installation</a> section.</p>
+</s2>
+-->
+</s1> <!-- with Apache or IIS -->
+
+<s1 title="Testing virtual hosts">
+<p>During development and testing, it is often inconvenient or impossible to
+use real virtual host names that are registered as internet sites, and resolve
+to an internet-available IP address.    OS-level features on the test client
+machine can be used to map a virtual host name to an IP address.  
+
+</p><p>For example, developers often run the Resin server and the test client
+(usually a browser) on the same machine.  The OS is configured to map the "www.gryffindor.com" and
+"www.slytherin.com" names to "127.0.0.1", pointing these host names back to
+computer that the client is running on.</p>
+
+<p>Unix users edit the file <code>/etc/hosts</code>:</p>
+
+<example title="/etc/hosts">
+127.0.0.1       localhost
+
+127.0.0.1       www.gryffindor.com
+127.0.0.1       www.slytherin.com
+</example>
+<p>Windows user edit the file <code>C:\WINDOWS\SYSTEM32\DRIVERS\ETC\HOSTS</code>:</p>
+
+<example title="C:\WINDOWS\SYSTEM32\DRIVERS\ETC\HOSTS">
+127.0.0.1       localhost
+
+127.0.0.1       www.gryffindor.com
+127.0.0.1       www.slytherin.com
+</example>
+
+</s1>
+
+<defun title="&lt;access-log>" version="Resin 2.1">
+<parents>cluster, host, web-app</parents>
+
+<p>&lt;access-log> configures the access log file.</p>
+
+<p>As a child of <a config-tag="web-app"/>, overrides the
+definition in the <a config-tag="host"/> that the web-app is
+deployed in. As a child of <a config-tag="host"/>, overrides the
+definition in the <a config-tag="server"/> that the host is
+in.</p>
+
+<deftable title="&lt;access-log> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>archive-format</td>
+  <td>the format for the archive filename when a rollover occurs,
+        see <a href="#rollover">Rollovers</a>.
+  </td>
+  <td>see below</td>
+</tr>
+<tr>
+  <td>format</td>
+  <td>Access log format.</td>
+  <td>see below</td>
+</tr>
+<tr>
+  <td>hostname-dns-lookup</td>
+  <td>log the dns name instead of the IP address (has a performance hit).</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>path</td>
+  <td>Output path for the log entries,
+see <a href="logging-ref.xtp#path">"Log Paths"</a>.</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>rollover-period</td>
+  <td>how often to rollover the log.  Specify in days (15D), weeks (2W), 
+        months (1M), or hours (1h). See <a href="#rollover">Rollovers</a>. 
+  </td>
+  <td>none</td>
+</tr>
+<tr>
+  <td>rollover-size</td>
+  <td>maximum size of the file before a rollover occurs, in bytes (50000), 
+        kb (128kb), or megabytes (10mb).  
+        See <a href="#rollover">Rollovers</a>.
+  </td>
+  <td>1mb</td>
+</tr>
+<tr>
+  <td>resin:type</td>
+  <td>a class extending <a javadoc="com.caucho.server.log.AccessLog"/>
+        for custom logging
+  </td>
+  <td>com.caucho.server.log.AccessLog</td>
+</tr>
+<tr>
+  <td>init</td>
+  <td>Resin-IoC initialization for the custom class</td>
+  <td>n/a</td>
+</tr>
+</deftable>
+
+<def title="&lt;access-log> schema">
+element access-log {
+  auto-flush?
+  &amp; archive-format?
+  &amp; auto-flush-time?
+  &amp; exclude?
+  &amp; format?
+  &amp; path?
+  &amp; rollover-count?
+  &amp; rollover-period?
+  &amp; rollover-size?
+  &amp; init?
+}
+</def>
+
+<p>The default archive format is
+</p><pre>
+  <var>path</var> + ".%Y%m%d" or
+  <var>path</var> + ".%Y%m%d.%H" if rollover-period &lt; 1 day.
+</pre>
+
+<p>The access log formatting variables follow the Apache variables:</p>
+<!-- duplicated in config-log.xtp, cluster.xtp, http-virtual-hosts-ref.xtp -->
+<deftable title="format patterns">
+<tr>
+  <th>Pattern</th>
+  <th>Description</th>
+</tr>
+<tr><td>%b</td>
+    <td>result content length</td></tr>
+<tr><td>%D</td>
+    <td>time taken to complete the request in microseconds (since 3.0.16)</td></tr>
+<tr><td>%h</td>
+    <td>remote IP addr</td></tr>
+<tr><td>%{<var>xxx</var>}i</td>
+    <td>request header <var>xxx</var></td></tr>
+<tr><td>%{<var>xxx</var>}o</td>
+    <td>response header <var>xxx</var></td></tr>
+<tr><td>%{<var>xxx</var>}c</td>
+    <td>cookie value <var>xxx</var></td></tr>
+<tr><td>%n</td>
+    <td>request attribute</td></tr>
+<tr><td>%r</td>
+    <td>request URL</td></tr>
+<tr><td>%s</td>
+    <td>status code</td></tr>
+<tr><td>%{<var>xxx</var>}t</td>
+    <td>request date with optional time format string.</td></tr>
+<tr><td>%T</td>
+    <td>time taken to complete the request in seconds</td></tr>
+<tr><td>%u</td>
+    <td>remote user</td></tr>
+<tr><td>%U</td>
+    <td>request URI</td></tr>
+</deftable>
+
+<p>The default format is:</p>
+
+<def title="default access log format">
+"%h %l %u %t \"%r\" %&gt;s %b \"%{Referer}i\" \"%{User-Agent}i\""
+</def>
+
+<p><var>resin:type</var> allows for custom logging.  Applications can
+extend a custom class from <a javadoc="com.caucho.http.log.AccessLog"/>.  
+<a href="config-candi.xtp">Resin CanDI initialization</a> can be used to set bean
+parameters in the custom class.</p>
+
+<example title="Example: &lt;access-log> in host configuration">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="app-tier">
+
+  &lt;host id=""&gt;
+    &lt;access-log path='log/access.log'&gt;
+      &lt;rollover-period&gt;2W&lt;/rollover-period&gt;
+    &lt;/access-log&gt;
+  &lt;/host>
+&lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<example title="Example: custom access log">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+&lt;cluster id="app-tier">
+
+  &lt;host id='foo.com'&gt;
+
+    &lt;access-log>
+      &lt;test:MyLog xmlns:test="urn:java:test">
+                 path='${resin.root}/foo/error.log'
+                 rollover-period='1W'&gt;
+          &lt;test:foo&gt;bar&lt;/test:foo&gt;
+      &lt;/test:MyLog>
+    &lt;/access-log>
+    ...
+  &lt;/host&gt;
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+    
+<defun title="&lt;ear-deploy>">
+<parents>host, web-app</parents>
+
+<p>Specifies ear expansion.</p>
+
+<p>ear-deploy can be used in web-apps to define a subdirectory
+for ear expansion.</p>
+
+<deftable title="&lt;ear-deploy> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>archive-path</td>
+  <td>The path to the directory containing ear files</td>
+  <td>path</td>
+</tr>
+<tr>
+  <td>ear-default</td>
+  <td>resin.xml default configuration for all ear files, e.g. configuring
+database, JMS or EJB defaults.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>expand-cleanup-fileset</td>
+  <td>Specifies the files which should be automatically deleted when a
+new .ear version is deployed.</td>
+  <td></td>
+</tr>
+<tr>
+  <td>expand-directory</td>
+  <td>directory where ears should be expanded</td>
+  <td>value of <var>path</var></td>
+</tr>
+<tr>
+  <td>expand-prefix</td>
+  <td>automatic prefix of the expanded directory</td>
+  <td>_ear_</td>
+</tr>
+<tr>
+  <td>expand-suffix</td>
+  <td>automatic suffix of the expanded directory</td>
+  <td></td>
+</tr>
+<tr>
+  <td>lazy-init</td>
+  <td>if true, the ear file is only started on first access</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>path</td>
+  <td>The path to the deploy directory</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>redeploy-mode</td>
+  <td>"automatic" or "manual".  If automatic, detects new .ear files
+automatically and deploys them.</td>
+  <td>automatic</td>
+</tr>
+<tr>
+  <td>url-prefix</td>
+  <td>optional URL prefix to group deployed .ear files</td>
+  <td></td>
+</tr>
+</deftable>
+
+<def title="&lt;ear-deploy> schema">
+element ear-deploy {
+  path
+  &amp; archive-directory?
+  &amp; ear-default?
+  &amp; expand-cleanup-fileset?
+  &amp; expand-directory?
+  &amp; expand-path?
+  &amp; expand-prefix?
+  &amp; expand-suffix?
+  &amp; lazy-init?
+  &amp; redeploy-mode?
+  &amp; require-file*
+  &amp; url-prefix?
+}
+</def>
+
+</defun>
+
+<defun title="&lt;error-page>" version="Resin 3.1">
+<parents>cluster, host, webapp</parents>
+
+<p>&lt;error-page> defines a web page to be displayed when an error occurs
+outside of a web-app.
+Note, this is not a default error-page, i.e. if
+an error occurs inside of a &lt;web-app&gt;, the error-page for
+that web-app will be used instead.</p>
+
+<p>See <a href="deploy-ref.xtp#error-page">webapp: error-page</a>.</p>
+
+</defun>
+
+<defun title="&lt;host>" version="Resin 3.0">
+<parents>cluster</parents>
+
+<p>&lt;host> configures a virtual host.  Virtual hosts must be
+configured explicitly.</p>
+
+<deftable title="&lt;host> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr><td>id</td>
+    <td>primary host name</td>
+    <td>none</td></tr>
+<tr><td>regexp</td>
+    <td>Regular expression based host matching</td>
+    <td>none</td></tr>
+<tr><td>host-name</td>
+    <td>Canonical host name</td>
+    <td>none</td></tr>
+<tr><td>host-alias</td>
+    <td>Aliases matching the same host</td>
+    <td>none</td></tr>
+<tr><td>secure-host-name</td>
+    <td>Host to use for a redirect to SSL</td>
+    <td>none</td></tr>
+<tr><td>root-directory</td>
+    <td>Root directory for host files</td>
+    <td>parent directory</td></tr>
+<tr><td>startup-mode</td>
+    <td>'automatic', 'lazy', or 'manual', see <a config-tag="startup-mode"/></td>
+    <td>automatic</td></tr>
+</deftable>
+
+<example title="Example: explicit host in resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="">
+
+&lt;host host-name="www.foo.com"&gt;
+  &lt;host-alias&gt;foo.com&lt;/host-alias&gt;
+  &lt;host-alias&gt;web.foo.com&lt;/host-alias&gt;
+
+  &lt;root-directory&gt;/opt/www/www.foo.com&lt;/root-directory&gt;
+
+  &lt;web-app id="/" document-directory="webapps/ROOT"&gt;
+    
+  &lt;/web-app&gt;
+  ...
+&lt;/host&gt;
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+<example title="Example: regexp host in resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="">
+
+&lt;host regexp="([^.]+)\.foo\.com"&gt;
+  &lt;host-name&gt;${host.regexp[1]}.foo.com&lt;/host-name&gt;
+
+  &lt;root-directory&gt;/var/www/hosts/www.${host.regexp[1]}.com&lt;/root-directory&gt;
+
+  ...
+&lt;/host&gt;
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+<p>It is recommended that any &lt;host&gt; using a regexp include
+a &lt;host-name&gt; to set the canonical name for the host.</p>
+
+</defun>
+
+<defun title="&lt;host-alias>">
+
+<p>&lt;host-alias> defines a URL alias for matching HTTP requests.
+Any number of &lt;host-alias> can be used for each alias.</p>
+
+<p>The host-alias can be used either in the resin.xml or in
+a host.xml when use host-deploy together with resin:import.</p>
+
+<def title="&lt;host-alias> schema">
+element host-alias {
+  string
+}
+</def>
+
+<example title="Example: host-alias in the resin.xml">
+&lt;resin xmlns="http://caucho.com">
+&lt;cluster id="">
+
+  &lt;host id="www.foo.com" root-directory="/var/www/foo.com">
+    &lt;host-alias>foo.com&lt;/host-alias>
+
+    &lt;web-app id=""/>
+  &lt;/host>
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+<p>Since the &lt;host-deploy> and &lt;host> tags lets you add a
+host.xml file to customize configuration, the &lt;host-alias> can
+also fit in the custom host.xml page.</p>
+
+<example title="Example: host-alias in a /var/www/hosts/foo/host.xml">
+&lt;host xmlns="http://caucho.com">
+
+  &lt;host-name>www.foo.com&lt;/host-name>
+  &lt;host-alias>foo.com&lt;/host-alias>
+
+  &lt;web-app id="" root-directory="htdocs"/>
+
+&lt;/host>
+</example>
+
+</defun>
+
+<defun title="&lt;host-alias-regexp>">
+
+<p>&lt;host-alias-regexp> defines a regular expression for matching
+URLs for a given virtual host.</p>
+
+<def title="&lt;host-alias-regexp> schema">
+element host-alias-regexp {
+  string
+}
+</def>
+
+<example title="Example: host-alias-regexp in the resin.xml">
+&lt;resin xmlns="http://caucho.com">
+&lt;cluster id="">
+
+  &lt;host id="www.foo.com" root-directory="/var/www/foo.com">
+    &lt;host-alias-regexp>.*foo.com&lt;/host-alias-regexp>
+
+    &lt;web-app id=""/>
+  &lt;/host>
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;host-default>" version="Resin 3.0">
+<parents>cluster</parents>
+
+<p>&lt;host-default> configures defaults for a virtual host.</p>
+
+<p>The host-default can contain any of the host configuration tags.
+It will be used as defaults for any virtual host.</p>
+
+</defun>
+
+<defun title="&lt;host-deploy>" version="Resin 3.0.4">
+<parents>cluster</parents>
+
+<p>&lt;host-deploy> configures an automatic deployment directory
+for virtual host.</p>
+
+<deftable title="&lt;host-deploy> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>archive-directory</td>
+  <td>path to the archive directory</td>
+  <td>path</td>
+</tr>
+<tr>
+  <td>path</td>
+  <td>path to the deploy directory</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>expand-cleanup-fileset</td>
+  <td>an ant-style fileset defining which directories to cleanup when
+an archive is redeployed</td>
+  <td></td>
+</tr>
+<tr>
+  <td>expand-directory</td>
+  <td>path to the expansion directory</td>
+  <td>path</td>
+</tr>
+<tr>
+  <td>host-default</td>
+  <td>defaults for the expanded host</td>
+  <td></td>
+</tr>
+<tr>
+  <td>host-name</td>
+  <td>the default hostname, based on the directory</td>
+  <td>${name}</td>
+</tr>
+</deftable>
+
+<def title="&lt;host-deploy> schema">
+element host-deploy {
+  archive-directory?
+  &amp; expand-cleanup-fileset?
+  &amp; expand-directory?
+  &amp; host-default?
+  &amp; host-name?
+  &amp; path?
+}
+</def>
+
+<p>The following example configures <var>/var/www/hosts</var> as
+a host deployment directory.  Each virtual host will have a
+<var>webapps</var> directory for .war deployment.  So the directory
+<var>/var/www/hosts/www.foo.com/webapps/bar/test.jsp</var> would
+serve the URL <var>http://www.foo.com/bar/test.jsp</var>.</p>
+
+<example title="&lt;host-deploy>">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;cluster id="app-tier">
+    &lt;root-directory>/var/www&lt;/root-directory>
+
+    &lt;host-deploy path="hosts">
+      &lt;host-default>
+        &lt;resin:import path="host.xml" optional="true"/>
+
+        &lt;web-app-deploy path="webapps"/>
+      &lt;/host-default>
+    &lt;/host-deploy>
+  &lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;host-name>">
+
+<p>&lt;host-name> defines the canonical name for a virtual host.
+The &lt;host-name> will be used in Resin's logging, management, and
+is available in the host's variables.</p>
+
+<def title="&lt;host-host> schema">
+element host-name {
+  string
+}
+</def>
+
+</defun>
+
+<defun title="Resources" version="Resin 3.1">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>All <a href="config-overview.xtp">Resource tags</a> are
+available to the &lt;host&gt;, for example, resources
+like &lt;database&gt; or &lt;authenticator>.  Resources defined at
+the host level are available for all web-apps in the host.</p>
+
+<example title="Example: shared database in host">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="app-tier"&gt;
+     &lt;server id="a" .../>
+
+     &lt;host id="www.foo.com">
+        &lt;database jndi-name="jdbc/test"&gt;
+            &lt;driver type="org.postgresql.Driver"&gt;
+                &lt;url&gt;jdbc:postgresql://localhost/test&lt;/url&gt;
+                &lt;user&gt;caucho&lt;/user&gt;
+            &lt;/driver&gt;
+        &lt;/database&gt;
+
+        &lt;web-app-default path="webapps"/>
+    &lt;/host&gt;
+  &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;rewrite-dispatch>" version="Resin 3.1">
+<parents>cluster, host, web-app</parents>
+
+<p>&lt;rewrite-dispatch&gt; defines a set of rewriting rules for
+dispatching and forwarding URLs.  Applications can use these rules
+to redirect old URLs to their new replacements.</p>
+
+<p>See <a href="http-rewrite-ref.xtp">rewrite-dispatch</a> for more
+details.</p>
+
+<example title="rewrite-dispatch">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id="app-tier"&gt;
+
+    &lt;host host-name="www.foo.com">
+      &lt;rewrite-dispatch&gt;
+        &lt;redirect regexp="^/foo" target="/index.php?foo="/&gt;
+      &lt;/rewrite-dispatch&gt;
+    &lt;/host&gt;
+
+  &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;root-directory>" version="Resin 3.1">
+
+<p>&lt;root-directory> configures the virtual host's filesystem root.</p>
+
+<p>Because the virtual host's root will typically contain non-public files like
+log files, all web-apps should have a path below the host.</p>
+
+<def title="&lt;root-directory> schema">
+element root-directory {
+  string
+}
+</def>
+
+</defun>
+
+<defun title="&lt;secure-host-name>">
+
+<p>&lt;secure-host-name> sets a host-name or URL to be used for secure
+redirection.  For some security configurations, Resin needs to redirect from
+an insecure site to a secure one.  The &lt;secure-host-name> configures
+the host to redirect to.</p>
+
+<p>See <a href="security-overview.xtp">Resin security</a>.</p>
+
+<def title="&lt;secure-host-name> schema">
+element secure-host-name {
+  string
+}
+</def>
+
+</defun>
+
+<defun title="&lt;web-app>">
+<parents>host, web-app</parents>
+
+<p>&lt;web-app> configures a web application.</p>
+
+<deftable title="&lt;web-app> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>id</td>
+  <td>The url prefix selecting this application.</td>
+  <td>n/a</td>
+</tr>
+<tr>
+  <td>url-regexp</td>
+  <td>A regexp to select this application.</td>
+  <td>n/a</td>
+</tr>
+<tr>
+  <td>document-directory</td>
+  <td>The document directory for
+the application, corresponding to a url of <var>/<i>id</i>/</var>. A relative path is relative to the <a config-tag="root-directory"/> of the containing <a config-tag="host"/>.  Can use regexp replacement variables.</td><td>A relative path constricted with the id or the regexp match
+</td>
+</tr>
+<tr>
+  <td>startup-mode</td>
+  <td>'automatic', 'lazy', or 'manual', see <a config-tag="startup-mode"/></td>
+  <td>automatic</td>
+</tr>
+<tr>
+  <td>redeploy-mode</td>
+  <td>'automatic' or 'manual', see <a config-tag="redeploy-mode"/></td>
+  <td>automatic</td>
+</tr>
+</deftable>
+
+<p>When specified by <var>id</var>, the application will be initialized on
+server start.  When specified by <var>url-regexp</var>, the application
+will be initialized at the first request.  This means that
+<var>load-on-startup</var> servlets may start later than expected for
+<var>url-regexp</var> applications.</p>
+
+<p>The following example creates a web-app for /apache
+using the Apache htdocs directory to serve pages.</p>
+
+<example title="Example: custom web-app root" >
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="app-tier">
+
+&lt;host id=''&gt;
+  &lt;web-app id='/apache' root-directory='/usr/local/apache/htdocs'&gt;
+
+  ...
+
+&lt;/host&gt;
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+<p>The following example sets the root web-app to the IIS
+root directory. </p>
+
+<example title="Example: IIS root directory">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="app-tier">
+&lt;host id=''&gt;
+
+  &lt;web-app id='/' root-directory='C:/inetpub/wwwroot'&gt;
+
+&lt;/host>
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+<p>When the <var>web-app</var> is specified with a <var>url-regexp</var>,
+<var>root-directory</var> can use replacement variables (<var>$2</var>).</p>
+
+<p>In the following, each user gets his or her own independent
+application using <var>~user</var>.</p>
+
+<example title="Example: web-app root based on regexps">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="app-tier">
+
+  &lt;host id=''&gt;
+
+    &lt;web-app url-regexp='/~([^/]*)'
+             root-directory='/home/$1/public_html'&gt;
+
+    ...
+
+    &lt;/web-app&gt;
+
+&lt;/host&gt;
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+</defun>
+
+<defun title="&lt;web-app-default>">
+<parents>cluster, host, web-app</parents>
+
+<p>&lt;web-app-default> configures common values for all web applications.</p>
+</defun>
+
+<defun title="&lt;web-app-deploy>" type="defun">
+<parents>host, web-app</parents>
+
+<p>Specifies war expansion.</p>
+
+<p>web-app-deploy can be used in web-apps to define a subdirectory
+for war expansion.  The tutorials in the documentation
+use web-app-deploy to allow servlet/tutorial/helloworld to be an
+independent war file.</p>
+
+<deftable title="&lt;web-app-deploy> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>archive-directory</td>
+  <td>directory containing the .war files</td>
+  <td>value of <var>path</var></td>
+</tr>
+<tr>
+  <td>expand-cleanup-fileset</td>
+  <td>defines the files which should be automatically deleted
+when an updated .war expands</td>
+  <td>all files</td>
+</tr>
+<tr>
+  <td>expand-directory</td>
+  <td>directory where wars should be expanded</td>
+  <td>value of <var>path</var></td>
+</tr>
+<tr>
+  <td>expand-prefix</td>
+  <td>prefix string to use when creating the expansion directory, e.g. _war_</td>
+  <td></td>
+</tr>
+<tr>
+  <td>expand-suffix</td>
+  <td>prefix string to use when creating the expansion directory, e.g. .war</td>
+  <td></td>
+</tr>
+<tr>
+  <td>path</td>
+  <td>The path to the webapps directory</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td>redeploy-check-interval</td>
+  <td>How often to check the .war files for a redeploy</td>
+  <td>60s</td>
+</tr>
+<tr>
+  <td>redeploy-mode</td>
+  <td>"automatic" or "manual"</td>
+  <td>automatic</td>
+</tr>
+<tr>
+  <td>require-file</td>
+  <td>additional files to use for dependency checking for auto restart</td>
+  <td></td>
+</tr>
+<tr>
+  <td>startup-mode</td>
+  <td>"automatic", "lazy" or "manual"</td>
+  <td>automatic</td>
+</tr>
+<tr>
+  <td>url-prefix</td>
+  <td>url-prefix added to all expanded webapps</td>
+  <td>""</td>
+</tr>
+<tr>
+  <td>versioning</td>
+  <td>if true, use the web-app's numeric suffix as a version</td>
+  <td>false</td>
+</tr>
+<tr>
+  <td>web-app-default</td>
+  <td>defaults to be applied to expaned web-apps</td>
+  <td></td>
+</tr>
+<tr>
+  <td>web-app</td>
+  <td>overriding configuration for specific web-apps</td>
+  <td></td>
+</tr>
+</deftable>
+
+<def title="&lt;web-app-deploy> schema">
+element web-app-deploy {
+  archive-directory?
+  &amp; expand-cleanup-fileset?
+  &amp; expand-directory?
+  &amp; expand-prefix?
+  &amp; expand-suffix?
+  &amp; path?
+  &amp; redeploy-check-interval?
+  &amp; redeploy-mode?
+  &amp; require-file*
+  &amp; startup-mode?
+  &amp; url-prefix?
+  &amp; versioning?
+  &amp; web-app-default*
+  &amp; web-app*
+}
+</def>
+
+<s2 title="Overriding web-app-deploy configuration">
+
+<p>The web-app-deploy can override configuration for an expanded war with
+a matching &lt;web-app&gt; inside the &lt;web-app-deploy&gt;.  The
+&lt;document-directory&gt; is used to match web-apps.</p>
+
+<example title="Example: resin.xml overriding web.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="">
+&lt;host id="">
+
+&lt;web-app-deploy path="webapps"&gt;
+  &lt;web-app context-path="/wiki"
+              document-directory="wiki"&gt;
+    &lt;context-param database="jdbc/wiki"&gt;
+  &lt;/web-app&gt;
+&lt;/web-app-deploy&gt;
+
+&lt;/host>
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+</s2>
+
+<s2 title="versioning">
+
+<p>The versioning attribute of the &lt;web-app-deploy> tag improves web-app
+version updates by enabling a graceful update of sessions.  The web-apps
+are named with numeric suffixes, e.g. foo-10, foo-11, etc, and can be
+browsed as /foo.  When a new version of the web-app is deployed, Resin
+continues to send current session requests to the previous web-app.  New
+sessions go to the new web-app version.  So users will not be aware of
+the application upgrade.</p>
+
+</s2>
+
+</defun>
+
+</body>
+</document>

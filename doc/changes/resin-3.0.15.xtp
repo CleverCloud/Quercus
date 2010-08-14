@@ -1,0 +1,140 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.15 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="EL field expression">
+
+<p>In configuration files, EL field expressions like \${smtp.mail.host}
+now directly refer to the system property.</p>
+
+</s1>
+
+<s1 title="cluster changes">
+
+<p>The active cluster is now selected implicitly with a matching
+server-id.  This will allow some configurations with multiple
+&lt;cluster&gt; items to avoid multiple resin.conf file..</p>
+
+<example>
+...
+&lt;server&gt;
+  &lt;cluster&gt;
+    &lt;srun server-id="a" host="192.168.0.10" port="6802"/&gt;
+    &lt;srun server-id="b" host="192.168.0.11" port="6802"/&gt;
+  &lt;/cluster&gt;
+
+  &lt;cluster&gt;
+    &lt;srun server-id="c" host="192.168.0.20" port="6802"/&gt;
+    &lt;srun server-id="d" host="192.168.0.21" port="6802"/&gt;
+  &lt;/cluster&gt;
+&lt;/server&gt;
+...
+</example>
+
+</s1>
+
+<s1 title="xa">
+
+<p>The &lt;xa&gt; tag now defaults to true.  If true, connections automatically
+participate in distributed transactions.  If false, the database connections
+do not participate in distributed transactions.</p>
+
+</s1>
+
+<s1 title="xa-forbid-same-rm">
+
+<p>New attribute to the &lt;database&gt; to workaround issues with Oracle
+drivers and distributed transactions.</p>
+
+</s1>
+
+<s1 title="JSP with older web.xml">
+
+<p>When a pre-servlet 2.4 web.xml is used, JSP files will not
+use EL expressions by default.</p>
+
+</s1>
+
+<s1 title="Custom AccessLog">
+
+<p>Custom access logs can now extend AbstractAccessLog.</p>
+
+</s1>
+
+<s1 title="FileServlet">
+
+<p>Added character-encoding init-param for a default character encoding.</p>
+
+</s1>
+
+<s1 title="pid file">
+
+<p>The default name of the pid file now uses the -server argument.</p>
+
+</s1>
+
+<s1 title="server.root">
+
+<p>server.root is now the preferred variable name for the server root.</p>
+
+</s1>
+
+<s1 title="ejb-server">
+
+<p>ejb-server has been changed to allow multiple ejb-server instances.
+In the case of Amber/EJB3, the EntityManager name is assignable with
+entity-manager-jndi-name.</p>
+
+<p>See <a href="http://caucho.com/wiki/display/RESIN/ejb-server">ejb-server</a> on
+the wiki.</p>
+
+<p>The &lt;ear-default&gt; tag and the resin-application.xml now
+supports a &lt;ejb-server-jndi-name&gt; to specify an
+alternate &lt;ejb-server&gt; for the .ear file.</p>
+
+</s1>
+
+<s1 title="access-log time in microseconds">
+
+<p>The access log format string now supports '%D' to measure the time
+taken in microseconds (actual accuracy is milliseconds).</p>
+
+</s1>
+
+<s1 title="Eclipse compiler">
+
+<p>&lt;javac compiler="eclipse"/&gt; is now supported.</p>
+
+</s1>
+
+<s1 title="EnvironmentLogger.removeHandle">
+
+<p>Environment-specific logging handles can now be removed.</p>
+
+</s1>
+
+<s1 title="AmberTableCache">
+
+<p>An amber bean now allows an @AmberTableCache annotation to specify
+the read-only and cache timeout attributes.</p>
+
+</s1>
+
+<s1 title="Special Thanks">
+
+<p>Special thanks to Fiaz Hossain for suggesting a fix for the
+EnvironmentLogger.removeHandle functionality.</p>
+
+<p>Special thanks to Branko Granar for significant enhancements to
+the mod_caucho debugging.</p>
+
+</s1>
+
+</body>
+</document>

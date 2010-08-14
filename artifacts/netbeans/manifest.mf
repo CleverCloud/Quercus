@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: com.caucho.netbeans/1
+OpenIDE-Module-Layer: com/caucho/netbeans/resources/layer.xml
+OpenIDE-Module-Localizing-Bundle: com/caucho/netbeans/resources/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0

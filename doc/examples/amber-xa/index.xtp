@@ -1,0 +1,247 @@
+<document>
+  <header>
+    <title>CMP Transactions</title>
+        <description>
+          <p>Demonstrates protecting database updates using some basic transaction patterns.</p>
+
+          <p>Topics:</p>
+          <ul>
+            <li>Stateless session beans for transaction management
+            </li><li>UserTransaction for direct control of transactions
+            </li><li>REQUIRED for updating methods
+            </li><li>SUPPORTS for read-only methods
+          </li></ul>
+
+          <p>See also:</p>
+          <ul>
+            <li>The <a href="../cmp-basic-field/index.xtp">basic field CMP tutorial</a> for the basics of creating entity beans.
+            </li>
+<!--
+            <li>The <a href="../resin-xa/index.xtp">ResinEnhanced transaction</a> example for a simpler alternative to session beans.
+          </li>
+-->
+          </ul>
+        </description>
+    <type>tutorial</type>
+    <tutorial-startpage>xa</tutorial-startpage>
+  </header>
+
+  <body>
+    <summary/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr><td><viewfile-link file="WEB-INF/web.xml"/>
+    </td><td>web.xml configuration
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/Course.java"/>
+    </td><td>The course bean
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/SwapBean.java"/>
+    </td><td>The swap stateless session bean
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/Swap.java"/>
+    </td><td>The swap stateless session interface
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/SwapServlet.java"/>
+    </td><td>The swap servlet
+</td></tr></deftable>
+</s1>
+
+<s1 title="Course Entity Definition">
+<s2 title="Database Schema">
+
+<example title="course.sql">
+CREATE TABLE ejb3_xa_courses (
+  id INTEGER PRIMARY KEY auto_increment,
+
+  course VARCHAR(250),
+  teacher VARCHAR(250)
+);
+
+INSERT INTO basic_courses VALUES('Potions', 'Severus Snape');
+INSERT INTO basic_courses VALUES('Transfiguration', 'Minerva McGonagall');
+</example>
+
+</s2>
+
+<s2 title="Bean Implementation">
+
+<p>The Course is identical to
+the <a href="../cmp-basic-field">basic field bean</a>.  It uses
+FIELD enhancement to define the database columns.
+
+<example title="Course.java">
+@Entity(access=FIELD)
+@Table(name="ejb3_xa_courses")
+public class Course {
+
+  @Id(generate=AUTO)
+  @Column(name="id")
+  private int _id;
+
+  @Basic
+  @Column(name="course")
+  private String _course;
+
+  @Basic
+  @Column(name="teacher")
+  private String _teacher;
+}
+</example>
+
+</p></s2>
+</s1>
+
+<s1 title="Session Bean Implementation">
+
+<example title="SwapBean.java">
+import static javax.ejb.TransactionAttributeType.REQUIRED;
+
+@javax.ejb.Stateless(name="swap")
+public class SwapBean implements Swap {
+
+  @javax.ejb.TransactionAttribute(REQUIRED)
+  public void swap(Course a, Course b)
+  {
+    String teacher = a.getTeacher();
+    a.setTeacher(b.getTeacher());
+    b.setTeacher(teacher);
+  }
+}
+</example>
+
+<s2 title="TransactionAttribute REQUIRED">
+
+<p>The TransactionAttribute marks the transaction type of
+the method.  The two most common types are REQUIRED and SUPPORTS.
+A REQUIRED method expects to modify the data and wants to ensure
+the update is consistent.  A SUPPORTS method will only read data, so it
+can avoid the overhead of a transaction.</p>
+
+<p>A transaction is the database equivalent of a <code>synchronized</code>
+lock.  Transactions are somewhat more complicated locks because they need to
+work with multiple machines and possibly multiple databases, but they're
+still just sophisticated locks.  The typical transaction patterns are similar
+to familiar lock patterns.</p>
+
+<p>A REQUIRED attribute tells Resin that the method must be protected
+by a transaction.  In this case, the swap needs protection from
+simultaneous threads trying to swap at the same time.</p>
+
+<p>A SUPPORTS attribute would tell Resin that the method doesn't need a
+transaction, but the method should join any transaction that already exists.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Swap Servlet">
+
+<example title="SwapServlet.java">
+import javax.ejb.EntityManager;
+import javax.transaction.UserTransaction;
+
+public class CourseServlet extends HttpServlet {
+  @javax.ejb.Inject
+  private EntityManager _manager;
+
+  @javax.ejb.Inject
+  private UserTransaction _uTrans;
+
+  @javax.ejb.EJB(name="swap")
+  private Swap _swap;
+
+  ...
+
+  private void doService(PrintWriter out)
+    throws Exception
+  {
+    CourseBean []course = new CourseBean[2];
+
+    course[0] = (CourseBean) _manager.find("CourseBean", new Integer(1));
+    course[1] = (CourseBean) _manager.find("CourseBean", new Integer(2));
+
+    // swap the courses using the session bean
+    _swap.swap(course[0], course[1]);
+
+    // swap using a user transaction
+    _uTrans.begin();
+    try {
+      String teacher = course[0].getTeacher();
+      course[0].setTeacher(course[1].getTeacher());
+      course[1].setTeacher(teacher);
+    } finally {
+      _uTrans.commit();
+    }
+  }
+}
+</example>
+
+<s2 title="Dependency Injection">
+
+<p>The servlet needs to lookup the EntityManager, UserTransaction,
+and the Swap bean in JNDI.</p>
+
+<deftable>
+<tr><th>Object</th><th>JNDI
+</th></tr><tr><td>EntityManager</td><td>java:comp/EntityManager
+</td></tr><tr><td>UserTransaction</td><td>java:comp/UserTransaction
+</td></tr><tr><td>Swap</td><td>java:comp/env/ejb/swap
+</td></tr></deftable>
+
+<p>Since Resin's servlets understand the EJB 3.0
+injection annotations, the tutorial can just annotate the setters and
+let Resin configure them.  In other cases, it may be necessary to
+put the JNDI lookup in the servlet's <code>init()</code> method.</p>
+
+</s2>
+
+<s2 title="SessionBean swap">
+
+<p>The first swap in the tutorial switches the teachers using
+a stateless session bean.</p>
+
+<example>
+// swap the courses using the session bean
+_swap.swap(course[0], course[1]);
+</example>
+
+<p>Because the <code>swap</code> method was marked as transaction REQUIRED,
+Resin will start a transaction if none already exists.  If the method exits cleanly, Resin will commit the transaction.  If the method throws a
+RuntimeException, Resin will roll the transaction back.</p>
+
+<p>The <code>swap</code> method will throw a runtime exception if the
+transaction fails to commit.  For example, the databse might detect a
+deadlock and roll the transaction back.</p>
+
+</s2>
+
+<s2 title="UserTransaction swap">
+
+<p>The second swap in the tutorial restores the teachers using
+the underlying <code>UserTransaction</code>.  It's essentially identical
+to the work that the transaction REQUIRED swap method provides.
+In fact, Resin implements the REQUIRED annotation using UserTransaction.
+</p>
+
+<example>
+_uTrans.begin();
+try {
+  String teacher = course[0].getTeacher();
+  course[0].setTeacher(course[1].getTeacher());
+  course[1].setTeacher(teacher);
+} finally {
+  _uTrans.commit();
+}
+</example>
+
+<p>The main differences between the two are the added capabilities of the REQUIRED.</p>
+
+<ul>
+<li>REQUIRED automatically rolls back on a RuntimeException
+</li><li>REQUIRED joins any existing transaction.  In contrast,
+UserTransaction throws an exception if called in a transaction.
+</li></ul>
+
+</s2>
+</s1>
+
+  </body>
+</document>

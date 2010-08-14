@@ -1,0 +1,33 @@
+<document>
+<header>
+  <product>resin</product>
+  <title>Resources/JNDI/JCA FAQ</title>
+  <description>
+  </description>
+</header>
+
+<body>
+<localtoc/>
+
+
+<s1 title="Can I link one JNDI name to another?" type="faq">
+<description>
+My application is coded to find a UserTransaction using the name
+"java:comp/env/UserTransaction", is there some way that I can link that name to
+"java:comp/UserTransaction", like a symbolic link on a Unix filesystem?
+</description>
+
+<p>The <a config-tag="jndi-link"/> tag can be used for this purpose.</p>
+
+<example>
+&lt;jndi-link&gt;
+  &lt;jndi-name&gt;java:comp/env/UserTransaction&lt;/jndi-name&gt;
+  &lt;foreign-name&gt;java:comp/UserTransaction&lt;/foreign-name&gt;
+&lt;/jndi-link&gt;
+</example>
+
+</s1>
+
+
+</body>
+</document>

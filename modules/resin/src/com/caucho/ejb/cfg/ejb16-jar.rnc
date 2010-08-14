@@ -1,0 +1,598 @@
+default namespace javaee = "http://java.sun.com/xml/ns/javaee"
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+namespace l = ""
+
+include "classpath:com/caucho/config/cfg/javaee.rnc"
+
+## javaee_boolean = string
+## javaee_string = string
+## javaee_path = string
+javaee_class = string
+## javaee_java-identifier = string
+cmp-field-type-Type = string
+
+ejb16_abstract-schema-name = element abstract-schema-name { string }
+
+ejb16_activation-config-property = element activation-config-property {
+  attribute id { string }?,
+  element activation-config-property-name { string },
+  element activation-config-property-value { string }
+}
+
+ejb16_activation-config = element activation-config {
+  attribute id { string }?,
+  ejb16_description*,
+  ejb16_activation-config-property+,
+  ejb16_deployment-extension*
+}
+
+ejb16_application-exception = element application-exception {
+  attribute id { string }?,
+  ejb16_exception-class,
+  ejb16_rollback?,
+  ejb16_inherited?
+}
+
+ejb16_around-invoke = element around-invoke {
+  ejb16_class?,
+  ejb16_method-name
+}
+
+ejb16_assembly-descriptor = element assembly-descriptor {
+  attribute id { string }?,
+  javaee_security-role*,
+
+  ejb16_method-permission*,
+  ejb16_container-transaction*,
+  ejb16_interceptor-binding*,
+  ejb16_message-destination*,
+  ejb16_exclude-list?,
+  ejb16_application-exception*
+}
+
+ejb16_business-remote = element business-remote {
+  string
+}
+
+ejb16_business-local = element business-local {
+  string
+}
+
+ejb16_class = element class {
+  string
+}
+
+ejb16_cmp-field = element cmp-field {
+  attribute id { string }?,
+  ejb16_description*,
+  element field-name { javaee_java-identifier },
+  ejb16_deployment-extension*
+}
+
+ejb16_cmp-version = element cmp-version {
+  "1.x" | "2.x"
+}
+
+ejb16_cmr-field = element cmr-field {
+  attribute id { string }?,
+  ejb16_description*,
+  element cmr-field-name { javaee_string },
+  element cmr-field-type { string }?,
+  ejb16_deployment-extension*
+}
+
+ejb16_container-transaction = element container-transaction {
+  attribute id { string }?,
+  ejb16_description*,
+  ejb16_method+,
+  element trans-attribute { "Bean" | "Container" }
+}
+
+ejb16_deployment-extension = element deployment-extension { string }
+
+ejb16_description = element description { string }
+
+ejb16_display-name = element display-name { string }
+
+ejb16_ejb-class = element ejb-class {
+  javaee_class
+}
+
+ejb16_ejb-client-jar = element ejb-client-jar { string }
+
+ejb16_ejb_env =
+  javaee_jndi-environment-refs-Group,
+
+  javaee_security-role-ref*,
+
+  ejb16_security-identity?
+
+ejb16_ejb-jar = element ejb-jar {
+  attribute id { string }?,
+
+  attribute version { "3.1" },
+
+  attribute xsi:schemaLocation { string }?,
+
+  attribute metadata-complete { string }?,
+
+  ejb16_module-name?,
+
+  javaee_description-Group,
+
+  ejb16_enterprise-beans?,
+
+  ejb16_interceptors?,
+
+  ejb16_relationships?,
+
+  ejb16_assembly-descriptor?,
+
+  ejb16_ejb-client-jar?,
+
+  ejb16_deployment-extension*
+}
+
+##ejb-ref = element ejb-ref { string }
+##ejb-local-ref = element ejb-local-ref { string }
+
+ejb16_ejb-name = element ejb-name {
+  string
+}
+
+ejb16_ejb-relation = element ejb-relation {
+  attribute id { string }?,
+
+  ejb16_description*,
+
+  element ejb-relation-name { string }?,
+
+  ejb16_ejb-relationship-role,
+
+  ejb16_ejb-relationship-role
+}
+
+ejb16_ejb-relationship-role = element ejb-relationship-role {
+  attribute id { string }?,
+
+  ejb16_description*,
+
+  element ejb-relationship-role-name { javaee_string }?,
+
+  element multiplicity { "One" | "Many" },
+
+  element cascade-delete { empty }?,
+
+  ejb16_relationship-role-source,
+
+  ejb16_cmr-field?
+}
+
+ejb16_enterprise-beans = element enterprise-beans {
+  attribute id { string }?,
+
+  (ejb16_session
+  | ejb16_entity
+  | ejb16_message-driven)+
+}
+
+ejb16_entity = element entity {
+  attribute id { string }?,
+
+  javaee_description-Group,
+
+  ejb16_ejb-name,
+
+  ejb16_mapped-name?,
+
+  ejb16_home?,
+
+  ejb16_remote?,
+
+  ejb16_local-home?,
+
+  ejb16_local?,
+
+  ejb16_ejb-class,
+
+  ejb16_persistence-type,
+
+  ejb16_prim-key-class,
+
+  ejb16_reentrant,
+
+  ejb16_cmp-version?,
+
+  ejb16_abstract-schema-name?,
+
+  ejb16_cmp-field*,
+
+  ejb16_primkey-field?,
+
+  ejb16_ejb_env,
+
+  ejb16_security-identity?,
+
+  ejb16_query*
+}
+
+ejb16_exception-class = element exception-class {
+  string
+}
+
+ejb16_exclude-list = element exclude-list {
+  attribute id { string }?,
+
+  ejb16_description*,
+
+  ejb16_method+
+}
+
+ejb16_home = element home {
+  javaee_class
+}
+
+ejb16_icon = element icon {
+  string
+}
+
+ejb16_init-method = element init-method {
+  attribute id { string }?,
+
+  element create-method { string },
+
+  element bean-method { string }
+}
+
+ejb16_interceptor = element interceptor {
+  attribute id { string }?,
+
+  ejb16_description*,
+
+  element interceptor-class { string },
+
+  ejb16_around-invoke*,
+
+  ejb16_ejb_env,
+
+  ejb16_post-activate*,
+
+  ejb16_pre-passivate*
+}
+
+ejb16_interceptors = element interceptors {
+  attribute id { string }?,
+
+  ejb16_description*,
+
+  ejb16_interceptor+
+}
+
+ejb16_interceptor-binding = element interceptor-binding {
+  attribute id { string }?,
+
+  ejb16_description*,
+
+  ejb16_ejb-name,
+
+  (element interceptor-class { string }*
+  | ejb16_interceptor-order),
+
+  element exclude-default-interceptors { javaee_boolean }?,
+
+  element exclude-class-interceptors { javaee_boolean }?,
+
+  ejb16_method?
+}
+
+ejb16_interceptor-order = element interceptor-order {
+  attribute id { string }?,
+
+  element interceptor-class { string }+
+}
+
+ejb16_local = element local {
+  javaee_class
+}
+
+ejb16_local-home = element local-home {
+  javaee_class
+}
+
+ejb16_mapped-name = element mapped-name {
+  string
+}
+
+ejb16_message-destination = element message-destination {
+  ejb16_description*,
+
+  ejb16_display-name*,
+
+  ejb16_icon*,
+
+  element message-destination-name { string },
+
+  ejb16_deployment-extension*,
+
+  ejb16_mapped-name*
+}
+
+ejb16_message-destination-link
+  = element message-destination-link { javaee_class }
+
+ejb16_message-destination-ref = element message-destination-ref {
+  ejb16_description*,
+
+  element message-destination-ref-name { string },
+
+  ejb16_message-destination-type,
+
+  element message-destination-usage {
+    "Consumes" | "Produces" | "ConsumesProduces"
+  },
+
+  element message-destination-link { string }?,
+
+  javaee_resource-Group,
+
+  ejb16_deployment-extension*
+}
+
+ejb16_message-destination-type = element message-destination-type { string }
+
+ejb16_message-driven = element message-driven {
+  attribute id { string }?,
+
+  javaee_description-Group,
+
+  ejb16_ejb-name,
+
+  ejb16_mapped-name?,
+
+  ejb16_ejb-class?,
+
+  element messaging-type { javaee_class }?,
+
+  ejb16_timeout-method?,
+
+  ejb16_transaction-type?,
+
+  ejb16_message-destination-type?,
+
+  ejb16_message-destination-link?,
+
+  ejb16_activation-config?,
+
+  ejb16_around-invoke*,
+
+  ejb16_ejb_env
+}
+
+ejb16_method-intf = element method-intf {
+  "Home" 
+ | "Remote"
+ | "LocalHome"
+ | "Local"
+ | "ServiceEndpoint"
+}
+
+
+ejb16_method-name = element method-name {
+  string
+}
+
+ejb16_method-param = element method-param { string }
+
+ejb16_method-params = element method-params {
+  attribute id { string }?,
+
+  ejb16_method-param*
+}
+
+ejb16_method-permission = element method-permission {
+  attribute id { string }?,
+
+  ejb16_description*,
+
+  (javaee_role-name+
+  | element unchecked { empty }),
+
+  ejb16_method*
+}
+
+ejb16_method = element method {
+  attribute id { string }?,
+
+  ejb16_description*,
+
+  ejb16_ejb-name?,
+
+  ejb16_method-intf?,
+
+  ejb16_method-name,
+
+  ejb16_method-params?
+}
+
+ejb16_module-name = element module-name { string }
+
+ejb16_named-method-Type =
+  attribute id { string }?,
+
+  ejb16_method-name,
+
+  ejb16_method-params?
+  
+ejb16_persistence-type = element persistence-type {
+  "Container" | "Bean"
+}
+
+ejb16_post-activate = element post-activate {
+  javaee_lifecycle-callback-Type
+}
+
+ejb16_pre-passivate = element pre-passivate {
+  javaee_lifecycle-callback-Type
+}
+
+ejb16_prim-key-class = element prim-key-class {
+  javaee_class
+}
+
+ejb16_primkey-field = element primkey-field { string }
+
+ejb16_query = element query {
+  attribute id { string }?,
+
+  ejb16_description*,
+
+  ejb16_query-method,
+
+  element result-type-mapping { "Local" | "Remote" }?,
+
+  element ejb-ql { string }
+}
+
+ejb16_query-method = element query-method {
+  attribute id { string }?,
+
+  ejb16_method-name,
+
+  ejb16_method-params
+}
+
+ejb16_reentrant = element reentrant {
+  "True" | "False"
+}
+
+ejb16_relationship-role-source = element relationship-role-source {
+  attribute id { string }?,
+
+  ejb16_description*,
+
+  ejb16_ejb-name
+}
+
+ejb16_relationships = element relationships {
+  attribute id { string }?,
+
+  ejb16_description*,
+
+  ejb16_ejb-relation+,
+
+  ejb16_deployment-extension*
+}
+
+ejb16_remote = element remote {
+  javaee_class
+}
+
+##resource-env-ref = element resource-env-ref { string }
+##resource-ref = element resource-ref { string }
+
+##role-name = element role-name { string }
+
+ejb16_remove-method = element remove-method {
+  attribute id { string }?,
+
+  element bean-method { ejb16_named-method-Type },
+
+  element retain-if-exception { string }?
+}
+
+ejb16_rollback = element rollback {
+  string
+}
+
+ejb16_inherited = element inherited {
+  string
+}
+
+ejb16_init-on-startup = element init-on-startup {
+  string
+}
+
+ejb16_local-bean = element local-bean {
+  string
+}
+
+ejb16_security-identity = element security-identity {
+  ejb16_description*,
+
+  (element use-caller-identity { empty }
+
+  | javaee_run-as)
+}
+
+##security-role-ref = element security-role-ref { string }
+
+##service-ref = element service-ref { string }
+
+ejb16_session = element session {
+  attribute id { string }?,
+
+  javaee_description-Group,
+
+  ejb16_ejb-name,
+
+  ejb16_mapped-name?,
+
+  ejb16_home?,
+
+  ejb16_remote?,
+
+  ejb16_local-home?,
+
+  ejb16_local?,
+
+  ejb16_local-bean?,
+
+  ejb16_business-local*,
+
+  ejb16_business-remote*,
+
+  element service-endpoint { javaee_class }?,
+
+  ejb16_ejb-class?,
+
+  element session-type { "Stateful" | "Stateless" }?,
+
+  ejb16_timeout-method?,
+
+  ejb16_init-method*,
+
+  ejb16_remove-method*,
+
+  ejb16_transaction-type?,
+
+  ejb16_around-invoke*,
+
+  ejb16_ejb_env,
+
+  ejb16_post-activate*,
+
+  ejb16_pre-passivate*,
+
+  javaee_security-role-ref*,
+
+  ejb16_security-identity?,
+
+  ejb16_init-on-startup?
+}
+
+ejb16_timeout-method = element timeout-method {
+  ejb16_named-method-Type
+}
+
+ejb16_trans-attribute = element trans-attribute {
+  "NotSupported" 
+ | "Supports"
+ | "Required"
+ | "RequiresNew"
+ | "Mandatory"
+ | "Never"
+}
+
+ejb16_transaction-type = element transaction-type { "Bean" | "Container" }
+
+  

@@ -1,0 +1,464 @@
+<document>
+<header>
+  <product>resin</product>
+  <title>resin.xml: top-level configuration</title>
+  <version>Resin 4.0</version>
+
+  <description>
+
+    <p>
+      The top-level &lt;resin> tag contains any &lt;<a
+      config-tag="cluster"/>&gt; defined for a deployment.  It also
+      provides an resources for class-loaders, logging and shared
+      resources.
+    </p>
+
+  </description>
+</header>
+<body>
+
+<localtoc/>
+
+<defun title="&lt;cluster>" version="Resin 3.0">
+<parents>resin</parents>
+
+<p>&lt;cluster> configures a set of servers used for load-balancing and for
+sharing distributed sessions.</p>
+
+<ul>
+  <li>See the &lt;<a config-tag="cluster"/>> tag for more details
+about the cluster contents.</li>
+<li>See the &lt;<a config-tag="server"/>> tag for more details
+about the server contents.</li>
+</ul>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;cluster id="app-tier"&gt;
+    &lt;server id="a" address="192.168.0.1"/>
+    &lt;server id="b" address="192.168.0.2"/>
+
+    &lt;host id="">
+      &lt;web-app-deploy path="webapps"/>
+    &lt;/host>
+  &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<deftable title="&lt;cluster> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>id</td>
+  <td>Name of the cluster</td>
+  <td>required</td>
+</tr>
+</deftable>
+
+</defun>
+
+<defun title="&lt;cluster-default>" version="Resin 3.1">
+<parents>resin</parents>
+
+<p>&lt;cluster-default> configures common configuration for all
+clusters.</p>
+</defun>
+
+<defun title="&lt;environment-system-properties>">
+<default>true</default>
+
+<p>By default, Resin's <code>System.getProperties()</code> is
+environment-dependent, so the settings in on web-app do not affect the
+properties in any other web-app.  Some sites may need to disable
+this virtualization capability, when using certain JVM agents.</p>
+
+<def title="&lt;environment-system-properties> schema">
+element environment-system-properties {
+  r_boolean-Type
+}
+</def>
+
+</defun>
+
+<defun title="&lt;resin>" version="Resin 3.0">
+      
+<p>&lt;resin> is the top-level configuration tag for
+the resin.xml file.  The &lt;resin&gt;
+tag needs to specify the Resin namespace, to allow for validation
+of the configuration file.</p>
+
+<p>The environment of the top-level &lt;resin&gt; is the global classpath.
+This environment can be important for &lt;log&gt; configuration
+for threads which run with using only the global class loader.
+Because the &lt;resin&gt; environment does not have a dynamic class loader,
+dynamically loaded classes, like custom jars
+in resin/lib are not available.</p>
+
+<def title="&lt;resin> schema">
+element resin {
+  <var>env resources</var>
+  &amp; cluster*
+  &amp; cluster-default*
+  &amp; environment-system-properties?
+  &amp; management?
+  &amp; min-free-memory?
+  &amp; resin-data-directory?
+  &amp; root-directory?
+  &amp; security-manager?
+  &amp; security-provider?
+  &amp; watchdog-manager?
+}
+</def>
+
+
+<example title="Example: minimal resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core">
+  &lt;root-directory>/var/www&lt;/root-directory>
+
+  &lt;cluster id="web-tier"&gt;
+    &lt;server id="">
+      &lt;http address="*" port="8080"/&gt;
+    &lt;/server>
+
+    &lt;resin:import path="app-default.xml"/&gt;
+
+    &lt;host id="">
+      &lt;web-app id="" root-directory="/var/www/htdocs"/&gt;
+    &lt;/host&gt;
+  &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="Resources" version="Resin 3.1">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>All Resource tags are
+available to the &lt;host&gt;, for example, resources
+like &lt;database&gt; or &lt;authenticator>.  Resources defined at
+the host level are available for all web-apps in the host.</p>
+
+<example title="Example: shared database in resin">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;database jndi-name="jdbc/test"&gt;
+    &lt;driver type="org.postgresql.Driver"&gt;
+      &lt;url&gt;jdbc:postgresql://localhost/test&lt;/url&gt;
+      &lt;user&gt;caucho&lt;/user&gt;
+    &lt;/driver&gt;
+  &lt;/database&gt;
+
+  &lt;cluster id="app-tier"&gt;
+     ...
+  &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+</defun>
+
+<defun title="&lt;resin-data-directory>" version="Resin 4.0.0">
+<parents>resin</parents>
+
+<p>&lt;resin-data-directory> specifies the location of Resin's administration
+and data files, including persistent caching, sessions, and administration
+logs.</p>
+
+<def title="&lt;resin-data-directory> schema">
+element resin-data-directory {
+  r_path-Type
+}
+</def>
+
+</defun>
+
+<defun title="&lt;root-directory>" version="Resin 3.0">
+<parents>resin, cluster, host, web-app</parents>
+
+<p>&lt;root-directory> specifies the base directory
+for the contexts. All EL-style directory paths are relative to
+the root-directory.</p>
+
+<def title="&lt;root-directory> schema">
+element root-directory {
+  r_path-Type
+}
+</def>
+
+</defun>
+
+<defun title="&lt;security-manager>">
+<p>
+&lt;security-manager> enables the use of the security manager for the JVM.
+Because the JVM security manager is very slow, we generally do not
+recommend enabling it for server applications.  Instead, see the
+<a href="starting-resin-watchdog.xtp">watchdog</a> configuration for alternative
+methods for securiting the JVM in ISP configurations.
+</p>
+
+<def title="&lt;security-manager> schema">
+element security-manager {
+  r_boolean-Type
+}
+</def>
+
+<example title="Example: enabling security-manager">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+  ...
+  &lt;security-manager/&gt;
+  ...
+</example>
+
+</defun>
+
+<defun title="&lt;security-provider>">
+<p>
+&lt;security-provider> adds one or more security providers.  Each entry
+specifies the name of a security provider class.  The name is used
+to instantiate an instance of the
+object, which is then passed to 
+<a javadoc="java.security.Security#addProvider()">Security.addProvider</a>.
+</p>
+
+<def title="&lt;security-provider> schema">
+element security-provider {
+  string
+}
+</def>
+
+<example title="Example: adding custom security providers">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core"&gt;
+
+  ...
+
+  &lt;security-provider&gt;
+    com.sun.net.ssl.internal.ssl.Provider
+  &lt;/security-provider&gt;
+  &lt;security-provider&gt;
+    example.MyProvider
+  &lt;/security-provider&gt;
+
+  ...
+
+</example>
+
+</defun> <!-- security-provider -->
+
+<defun title="Variables">
+
+<s2 title="java">
+
+<deftable title="java properties">
+<tr>
+  <th>Property</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>version</td>
+  <td>Returns the JDK version from the java.version property</td>
+</tr>
+</deftable>
+
+</s2>
+
+<s2 title="resin">
+
+<deftable title="resin properties">
+<tr>
+  <th>Property</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>address</td>
+  <td>The machine's address as returned by InetAddress</td>
+</tr>
+<tr>
+  <td>conf</td>
+  <td>The path to the resin.xml</td>
+</tr>
+<tr>
+  <td>home</td>
+  <td>The --resin-home value, i.e. the location of the Resin installation</td>
+</tr>
+<tr>
+  <td>homeName</td>
+  <td>The local hostname as returned by InetAddress</td>
+</tr>
+<tr>
+  <td>id</td>
+  <td>The --serverId command line value (see serverId)</td>
+</tr>
+<tr>
+  <td>isProfessional()</td>
+  <td>True if Resin professional is installed and licensed</td>
+</tr>
+<tr>
+  <td>root</td>
+  <td>The --resin-root value, i.e. the site's deployment directory</td>
+</tr>
+<tr>
+  <td>serverId</td>
+  <td>The --serverId command line value</td>
+</tr>
+<tr>
+  <td>version</td>
+  <td>The Resin version</td>
+</tr>
+<tr>
+  <td>versionDate</td>
+  <td>The compilation date of Resin</td>
+</tr>
+</deftable>
+
+</s2>
+
+<s2 title="system">
+
+<p>The ${system} variable return the <code>System.getProperties()</code>
+value.</p>
+
+<example title="Example: returning -Dfoo=bar">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+      xmlns:resin="http://caucho.com/ns/resin/core">
+
+  &lt;resin:message>${system['foo']}&lt;/resin:message>
+
+  ...
+&lt;/resin>
+</example>
+
+</s2>
+
+</defun>
+
+<defun title="watchdog">
+
+<p>The &lt;watchdog> tag is used in ISP-style
+configurations where the &lt;watchdog-manager> is configured separately
+from the resin.xml instances, and where the configuration file is generally
+not readable by the instance users.</p>
+
+<p>The &lt;watchdog> tag corresponds to the &lt;server> tag in standard
+resin.xml configurations, and specifies the resin.xml, the root directory
+and resin-user.</p>
+
+<deftable title="&lt;watchdog> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>chroot</td>
+  <td>calls chroot before starting the Resin process</td>
+  <td></td>
+</tr>
+<tr>
+  <td>group-name</td>
+  <td>setgid value for unix systems</td>
+  <td></td>
+</tr>
+<tr>
+  <td>java-exe</td>
+  <td>java executable to use for the Resin instance</td>
+  <td>java</td>
+</tr>
+<tr>
+  <td>java-home</td>
+  <td>JAVA_HOME value for the Resin instance</td>
+  <td></td>
+</tr>
+<tr>
+  <td>open-port</td>
+  <td>list of ports the watchdog should open for the Resin instance, e.g.
+for ports that require root access</td>
+  <td></td>
+</tr>
+<tr>
+  <td>resin.xml</td>
+  <td>Path to the resin.xml file for the Resin instance</td>
+  <td>same as for watchdog</td>
+</tr>
+<tr>
+  <td>resin-root</td>
+  <td>Root directory for the Resin instance</td>
+  <td>same as for watchdog</td>
+</tr>
+</deftable>
+
+<def title="&lt;watchdog> schema">
+element watchdog {
+  attribute id { string }
+  &amp; chroot?
+  &amp; group-name?
+  &amp; java-exe?
+  &amp; java-home?
+  &amp; jvm-arg*
+  &amp; resin.xml?
+  &amp; resin-root?
+  &amp; open-port { address &amp; port }*
+  &amp; user-name?
+}
+</def>
+
+</defun>
+<defun title="watchdog-manager">
+
+<p>For ISP configurations, &lt;watchdog-manager> is used for a separate
+resin.xml just to configure the watchdog-manager itself.  The
+&lt;watchdog-manager> selects the &lt;user-name>, &lt;resin.xml>,
+ports, and Resin home directories before giving access to the user's
+Resin instance.</p>
+
+<deftable title="&lt;watchdog-manager> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr>
+  <td>watchdog</td>
+  <td>Watchdog configuration for a Resin instance, corresponding to a &lt;server> in the resin.xml</td>
+  <td></td>
+</tr>
+<tr>
+  <td>watchdog-address</td>
+  <td>The TCP address the watchdog-manager listens for start, stop, status</td>
+  <td>127.0.0.1</td>
+</tr>
+<tr>
+  <td>watchdog-default</td>
+  <td>Defaults applied to all watchdog instances</td>
+  <td></td>
+</tr>
+<tr>
+  <td>watchdog-jvm-arg</td>
+  <td>JVM arguments for the watchdog-manager when launched</td>
+  <td></td>
+</tr>
+<tr>
+  <td>watchdog-port</td>
+  <td>The TCP port the watchdog-manager listens for start, stop, status</td>
+  <td>6700</td>
+</tr>
+</deftable>
+
+<def title="&lt;watchdog-manager> schema">
+element watchdog-manager {
+  watchdog*
+  &amp; watchdog-address?
+  &amp; watchdog-default*
+  &amp; watchdog-jvm-arg*
+  &amp; watchdog-port?
+}
+</def>
+
+</defun>
+
+</body>
+</document>

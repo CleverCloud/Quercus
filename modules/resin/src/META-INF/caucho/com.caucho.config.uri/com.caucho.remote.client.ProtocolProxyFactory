@@ -1,0 +1,2 @@
+burlap=com.caucho.remote.burlap.BurlapProtocolProxyFactory
+hessian=com.caucho.remote.hessian.HessianProtocolProxyFactory

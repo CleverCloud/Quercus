@@ -1,0 +1,203 @@
+<document>
+<header>
+<product>resin</product>
+<title>Internationalization (i18) in PHP/Quercus</title>
+<description>
+<p>
+This i18n tutorial goes through the process of internationalizing a PHP
+application.
+</p>
+</description>
+   <type>tutorial</type>
+   <tutorial-startpage>i18n.php</tutorial-startpage>
+</header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+    <td><viewfile-link file="i18n.php"/></td>
+    <td>The i18n example page</td>
+</tr>
+<tr>
+    <td><viewfile-link file="locale/de_DE/LC_MESSAGES/messages.po"/></td>
+    <td>German translations</td>
+</tr>
+<tr>
+    <td><viewfile-link file="locale/en_AU/LC_MESSAGES/messages.po"/></td>
+    <td>Australian translations</td>
+</tr>
+<tr>
+    <td><viewfile-link file="locale/fr_CA/LC_MESSAGES/messages.po"/></td>
+    <td>French translations</td>
+</tr>
+</deftable>
+</s1>
+
+<s1 title="Internationalization in PHP/Quercus">
+
+<s2 title="Introduction">
+
+<p>For most PHP applications, internationalization simply means using gettext
+to prepare the application for translations.  Gettext works by creating
+seperate files for the translations.  Places that contains strings will call a
+gettext function to lookup translations that reside in files separate from the
+source code.</p>
+
+<p>The following tutorial goes through the the steps in internationalizing a
+simple PHP program in Quercus, Caucho Technology's PHP implementation in
+Java.</p>
+
+</s2>
+
+<s2 title="Simple PHP Application">
+
+<p>Below is a non-internationalized PHP script that outputs a standard English greeting and a date in US format:</p>
+
+<example>
+&lt;?php
+
+  echo "Good morning";
+
+  printf("%d/%d/%d", 10, 31, 2006);
+
+?>
+
+</example>
+
+<p>Our goal is to internationalize this script so that the greeting and date will be in the user's language and format (even though the date can be formatted in the user's locale more easily by other methods, the date in this example will be instrumental in highlighting a common issue with the ordering of variables in another language).</p>
+
+</s2>
+
+<s2 title="Preparing translation files">
+
+<p>First off, The developer would need to extract the strings from the above script into a .po file.  The developer can do this manually or the downloadable <a href="http://www.gnu.org/software/gettext/">
+GNU gettext utilities</a> can do the extraction automatically.</p>
+
+<p>To extract all the double-quoted strings from the script, run the command line xgettext utility:</p>
+
+<example>
+  $xgettext -a filename.php
+
+</example>
+
+<p>This will give a human-readable messages.po file like the one below:</p>
+
+<example>
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR &lt;EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-26 02:10-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME &lt;EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE &lt;LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=<b>CHARSET</b>\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: i18n.php:3
+msgid "Good morning"
+msgstr ""
+
+#: i18n.php:5
+msgid "%d/%d/%d"
+msgstr ""
+
+</example>
+
+<p>The string right after msgstr will be the string that gettext returns as the
+translation for that msgid string.  Before giving the .po file to the translators,
+the developer needs to set the CHARSET, or character set, of the
+original/translated strings.  The translators should type their translations
+in this character set.  The most common character set is "UTF-8".</p>
+
+<p>Because Quercus natively supports Unicode, Quercus will decode from this character set into Unicode automatically.</p>
+
+<p>Usually, the next step would be to create a machine oriented .mo file from a .po file.  However, this step may be skipped because Quercus' gettext library can read both .po and .mo files.  It is best sticking with the .po text files because they are human-readable.</p>
+
+</s2>
+
+<s2 title="Modifying the script">
+
+<s3 title="Translated .po file (simplified)">
+<example>
+
+# Canadian French (fr_CA)
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+#: i18n.php:3
+msgid "Good morning"
+msgstr "Bonjour"
+
+#: i18n.php:5
+msgid "[_0]/[_1]/[_2]"
+msgstr "[_1]/[_0]/[_2]"
+
+</example>
+</s3>
+
+<s3 title="Internationalized script">
+<example>
+&lt;?php
+
+  bindtextdomain("messages", "./locale");
+
+  echo _("Good morning");
+
+  echo _("[_0]/[_1]/[_2]", 10, 31, 2006);
+
+?>
+</example>
+</s3>
+
+<p>The most noticeable difference is that printf is not used anymore and that "%d%d%d" has been changed to "[_0]/[_1]/[_2]".  Because printf placeholders are not unique and their positions may change in another language, we cannot use printf.  Instead, we use Quercus gettext ordered placeholders.  Quercus will substitute "[_0]" with the first parameter, "[_1]" with the second, and so on.  As seen in the .po file, "[_0]/[_1]/[_2]" has been rearranged to "[_1]/[_0]/[_2]" to represent the day/month/year format as opposed to month/day/year.</p>
+
+<p>We need to call bindtextdomain() before any gettext functions to specify the base directory of the translation files.  The first argument to bindtextdomain() is the domain.  The domain is simply the prefix of the translation filenames.  The default domain is "messages", but it can be changed with the textdomain() function.</p>
+
+<p>The underscore function is an alias of gettext().  It will always use the default gettext settings.  Since we're using the underscore function, we should name all our translations files "messages.po".</p>
+
+</s2>
+
+<s2 title="Organizing translation files">
+
+<p>Translation files should be placed in the following directory hierarchy:</p>
+
+<example>
+  {base directory}/{locale}/{category}/{domain}.po
+
+</example>
+
+<p>The default category is "LC_MESSAGES".  For our example, suppose we have 3 translations: German, Australian English, and Canadian French.  They should be placed in the following directories:</p>
+
+<example>
+  ./locale/de_DE/LC_MESSAGES/messages.po
+  ./locale/en_AU/LC_MESSAGES/messages.po
+  ./locale/fr_CA/LC_MESSAGES/messages.po
+</example>
+
+<p>The locale is made up of the ISO language code and the ISO country code.  Gettext will pick the language depending on the locale of the host machine.  If the translation file is not found for this locale, then the original string is returned as-is.  The locale can be changed manually, for example, to Canadian French by:</p>
+
+<example>
+  setlocale(LC_MESSAGES, "fr_CA");
+
+</example>
+
+</s2>
+
+</s1>
+
+</body>
+</document>

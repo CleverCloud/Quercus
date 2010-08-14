@@ -1,0 +1,24 @@
+<ivysettings>
+  <caches useOrigin="true"/>
+
+  <resolvers>
+
+    <filesystem name="caucho">
+      <artifact pattern="../../lib/[artifact].[type]"/>
+    </filesystem>
+
+    <ibiblio name="terracotta"
+             root="http://download.terracotta.org/maven2"
+             m2compatible="true"/>
+
+    <ibiblio name="default"
+             root="http://repo1.maven.org/maven2/"
+             m2compatible="true"/>
+
+  </resolvers>
+
+  <modules>
+    <module organisation="com.caucho.*" name=".*" resolver="caucho"/>
+    <module organisation="org.terracotta.*" name=".*" resolver="terracotta"/>
+  </modules>
+</ivysettings>

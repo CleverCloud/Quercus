@@ -1,0 +1,24 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin Administration</title>
+    <type>contents</type>
+    <description>
+
+<p>The /resin-admin web-app provides an administration overview of a
+Resin server.  Resin-Pro users can obtain information across the entire
+cluster, profile a running Resin instance, and obtain thread dumps and
+heap dumps.</p>
+
+<p>All Resin users should familiarize themselves with the thread dump,
+profile, and heap capabilities.</p>
+
+    </description>
+  </header>
+
+  <body>
+
+<summary/>
+
+  </body>
+</document>

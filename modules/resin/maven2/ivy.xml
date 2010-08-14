@@ -1,0 +1,16 @@
+<ivy-module version="2.0">
+  <info organisation="com.caucho"
+        module="resin"
+	revision="@VERSION@">
+    <license name="GPL"/>
+  </info>
+
+  <dependencies>
+    <dependency org="com.caucho" name="resin-hessian" rev="@VERSION@"/>
+    <dependency org="com.caucho" name="resin-javaee" rev="@VERSION@"/>
+    
+    <dependency org="javax.activation" name="activation" rev="1.1"/>
+    <dependency org="javax.annotation" name="jsr250-api" rev="1.0"/>
+    <dependency org="javax.mail" name="mail" rev="1.4"/>
+  </dependencies>
+</ivy-module>

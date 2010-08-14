@@ -1,0 +1,29 @@
+default namespace r = "http://caucho.com/ns/resin"
+
+include "env.rnc"
+include "webbeans.rnc"
+
+start = w_beans | compat_beans | r_beans
+
+r_beans = element beans {
+  r_env-Content
+
+  & r_alternatives*
+}
+
+r_alternatives = element alternatives {
+  w_class*
+  & w_stereotype*
+}
+
+r_decorators = element decorators {
+  r_class*
+}
+
+r_interceptors = element interceptors {
+  r_class*
+}
+
+r_stereotype = element stereotype {
+  string
+}

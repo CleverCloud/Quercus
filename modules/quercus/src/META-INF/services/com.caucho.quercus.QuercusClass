@@ -1,0 +1,47 @@
+com.caucho.quercus.lib.date.DateTime
+com.caucho.quercus.lib.date.DateTimeZone
+com.caucho.quercus.lib.db.Mysqli
+com.caucho.quercus.lib.db.OracleOciCollection
+com.caucho.quercus.lib.db.OracleOciLob
+com.caucho.quercus.lib.db.PDO provides PDO
+com.caucho.quercus.lib.db.PDOException provides PDO
+com.caucho.quercus.lib.ExceptionClass as Exception
+com.caucho.quercus.lib.Java
+com.caucho.quercus.lib.jms.JMSQueue
+com.caucho.quercus.lib.Memcache provides memcache
+com.caucho.quercus.lib.reflection.Reflection provides Reflection
+com.caucho.quercus.lib.reflection.ReflectionClass provides Reflection
+com.caucho.quercus.lib.reflection.ReflectionException provides Reflection
+com.caucho.quercus.lib.reflection.ReflectionExtension provides Reflection
+com.caucho.quercus.lib.reflection.ReflectionFunction provides Reflection
+com.caucho.quercus.lib.reflection.ReflectionFunctionAbstract provides Reflection
+com.caucho.quercus.lib.reflection.ReflectionMethod provides Reflection
+com.caucho.quercus.lib.reflection.ReflectionObject provides Reflection
+com.caucho.quercus.lib.reflection.ReflectionParameter provides Reflection
+com.caucho.quercus.lib.reflection.ReflectionProperty provides Reflection
+com.caucho.quercus.lib.reflection.Reflector provides Reflection
+com.caucho.quercus.lib.simplexml.SimpleXMLElement provides SimpleXML
+com.caucho.quercus.lib.spl.ArrayAccess
+com.caucho.quercus.lib.spl.ArrayIterator
+com.caucho.quercus.lib.spl.ArrayObject
+com.caucho.quercus.lib.spl.Countable
+com.caucho.quercus.lib.spl.Iterator
+com.caucho.quercus.lib.spl.IteratorAggregate
+com.caucho.quercus.lib.spl.OuterIterator
+com.caucho.quercus.lib.spl.RecursiveIterator
+com.caucho.quercus.lib.spl.SeekableIterator
+com.caucho.quercus.lib.spl.Serializable
+com.caucho.quercus.lib.spl.Traversable
+com.caucho.quercus.lib.dom.DOMAttr provides dom
+com.caucho.quercus.lib.dom.DOMComment provides dom
+com.caucho.quercus.lib.dom.DOMDocument provides dom
+com.caucho.quercus.lib.dom.DOMElement provides dom
+com.caucho.quercus.lib.dom.DOMEntityReference provides dom
+com.caucho.quercus.lib.dom.DOMImplementation provides dom
+com.caucho.quercus.lib.dom.DOMProcessingInstruction provides dom
+com.caucho.quercus.lib.dom.DOMText provides dom
+com.caucho.quercus.lib.dom.DOMXPath provides dom
+com.caucho.quercus.lib.pdf.PDF
+com.caucho.quercus.lib.resin.MBeanServer
+com.caucho.quercus.lib.xml.XmlReader
+com.caucho.quercus.lib.xml.XMLWriter

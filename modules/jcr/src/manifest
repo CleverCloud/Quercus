@@ -1,0 +1,6 @@
+Extension-Name: javax.jcr
+Specification-Vendor: Sun Microsystems, Inc
+Specification-Version: 1.0.1
+Implementation-Vendor-Id: com.caucho
+Implementation-Vendor: Caucho Technology, Inc
+Implementation-Version: 3.0.20

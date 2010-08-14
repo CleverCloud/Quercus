@@ -1,0 +1,637 @@
+default namespace r = "http://caucho.com/ns/resin"
+namespace l = ""
+
+include "ejb-jar.rnc"
+include "classpath:com/caucho/config/cfg/env.rnc"
+
+start = ejb14_ejb-jar | ejb15_ejb-jar | ejb16_ejb-jar | r_ejb-jar | l_ejb-jar | l_resin-ejb
+
+r_boolean = string
+
+r_boolean-literal = element boolean-literal {
+  (attribute true { string } | element true { string })
+  & (attribute false { string } | element false { string })
+}
+
+l_ejb-jar = element l:ejb-jar {
+  r_any-Group
+}
+
+l_resin-ejb = element l:resin-ejb {
+  r_any-Group
+}
+
+r_abstract-schema-name = element abstract-schema-name { string }
+
+r_abstract-sql-type =
+  attribute abstract-sql-type { string }
+  | element abstract-sql-type { string }
+
+r_activation-config-property = element activation-config-property {
+  (attribute activation-config-property-name { string }
+   | element activation-config-property-name { string }),
+
+  (attribute activation-config-property-value { string }
+   | element activation-config-property-value { string })
+}
+
+r_activation-config = element activation-config {
+  r_description*,
+
+  r_activation-config-property+,
+
+  r_deployment-extension*
+}
+
+r_assembly-descriptor = element assembly-descriptor {
+  r_security-role*,
+  r_method-permission*,
+  r_container-transaction*,
+  r_message-destination*,
+  r_exclude-list?,
+  r_deployment-extension*
+}
+
+r_cache-size =
+  attribute cache-size { string } | element cache-size { string }
+
+r_cache-timeout =
+  attribute cache-timeout { string } | element cache-timeout { string }
+
+r_cmp-field = element cmp-field {
+  r_description*,
+  (attribute field-name { string } | element field-name { string }),
+  r_deployment-extension*,
+  (r_sql-column?
+   & r_abstract-sql-type?
+   & (attribute auto-generate { r_boolean }
+      | element auto-generate { r_boolean })?
+  )
+}
+
+r_cmp-version = element cmp-version {
+  "1.x" | "2.x"
+}
+
+r_cmr-field = element cmr-field {
+  r_description*,
+  (attribute cmr-field-name { string } | element cmr-field-name { string }),
+  (attribute cmr-field-type { string } | element cmr-field-type { string })?,
+  r_sql-column*,
+  r_deployment-extension*
+}
+
+## r_connection-factory =
+##   attribute connection-factory { string }
+##   | element connection-factory { string }
+
+r_container-transaction = element container-transaction {
+  r_description*,
+  r_method+,
+  element trans-attribute { "Bean" | "Container" }
+}
+
+## r_deployment-extension = element deployment-extension { string }
+
+## r_description =
+##  attribute description { string }
+##   | element description { string }
+
+r_destination =
+  attribute destination { string }
+  | element destination { string }
+
+## r_display-name =
+##  attribute display-name { string }
+##  | element display-name { string }
+
+## generic ejb bean, i.e. refers to either entity or session
+r_ejb-bean = element ejb-bean {
+  r_description?
+  & r_display-name?
+  & r_icon?
+  & r_ejb-name
+  & r_ejb_env
+  & r_mapped-name?
+  & r_security-identity?
+}
+
+r_ejb-class =
+  attribute ejb-class { string }
+  | element ejb-class { string }
+
+r_ejb-client-jar =
+  attribute ejb-client-jar { string }
+  | element ejb-client-jar { string }
+
+r_ejb-ref-Link = element ejb-ref {
+    r_ejb-ref-name
+    & r_mapped-name?
+  }
+r_ejb_env =
+  r_env-entry*
+  & r_ejb-ref*
+  & r_ejb-local-ref*
+  & r_jndi-link*
+  & r_service-ref*
+  & r_security-identity*
+  & r_security-role-ref*
+  & r_resource-ref*
+  & r_resource-env-ref*
+  & r_message-destination-ref*
+
+r_ejb-jar = element ejb-jar {
+  attribute l:version { "2.1" }?,
+
+  r_description?,
+
+  r_display-name?,
+
+  r_icon?,
+
+  r_enterprise-beans?,
+
+  r_relationships?,
+
+  r_assembly-descriptor?,
+
+  r_ejb-client-jar?,
+
+  (r_query-function*
+
+  & r_boolean-literal?)
+}
+
+##r_ejb-ref = element ejb-ref { string }
+
+##r_ejb-local-ref = element ejb-local-ref { string }
+
+r_ejb-name =
+  attribute ejb-name { string }
+  | element ejb-name { string }
+
+r_ejb-relation = element ejb-relation {
+  (r_description*,
+
+   (attribute ejb-relation-name { string }
+    | element ejb-relation-name { string })?,
+
+   r_sql-table?,
+
+   r_ejb-relationship-role,
+
+   r_ejb-relationship-role,
+
+   r_deployment-extension*)
+  | (r_description?
+    & (attribute ejb-relation-name { string }
+       | element ejb-relation-name { string })?
+
+    & (attribute sql-table { string }
+       | element sql-table { string })?
+
+    & (attribute source-ejb { string }
+       | element source-ejb { string })
+
+    & (attribute source-field { string }
+       | element source-field { string })
+
+    & r_source-sql-column*
+
+    & (attribute source-cascade-delete { string }
+       | element source-cascade-delete { string })?
+
+    & (attribute source-multiplicity { string }
+       | element source-multiplicity { string })?
+
+    & (attribute source-order-by { string }
+       | element source-order-by { string })?
+
+    & (attribute target-ejb { string }
+       | element target-ejb { string })
+
+    & (attribute target-field { string }
+       | element target-field { string })?
+
+    & r_target-sql-column*
+
+    & (attribute target-cascade-delete { string }
+       | element target-cascade-delete { string })?
+
+    & (attribute target-multiplicity { string }
+       | element target-multiplicity { string })?
+
+    & (attribute target-order-by { string }
+       | element target-order-by { string })?)
+}
+
+r_ejb-relationship-role = element ejb-relationship-role {
+  r_description*,
+
+  (attribute ejb-relationship-role-name { string }
+   | element ejb-relationship-role-name { j2ee_string })?,
+
+  (attribute multiplicity { "One" | "Many" }
+   | element multiplicity { "One" | "Many" })?,
+
+  (attribute cascade-delete { empty }
+   | element cascade-delete { empty })?,
+
+  r_relationship-role-source,
+
+  r_cmr-field?,
+
+  r_sql-column*,
+
+  (attribute order-by { string }
+   | element order-by { string })?,
+
+  r_deployment-extension*
+}
+
+r_enterprise-beans = element enterprise-beans {
+  (r_session
+
+  | r_entity
+
+  | r_message-driven
+
+  | r_ejb-bean)*
+}
+
+r_entity = element entity {
+  r_description?,
+
+  r_display-name?,
+
+  r_icon?,
+
+  r_ejb-name,
+
+  r_mapped-name?,
+
+  r_home?,
+
+  r_remote?,
+
+  r_local-home?,
+
+  r_local?,
+
+  r_ejb-class?,
+
+  r_persistence-type?,
+
+  r_prim-key-class?,
+
+  r_reentrant?,
+
+  r_cmp-version?,
+
+  (r_abstract-schema-name? & r_sql-table?),
+
+  r_cmp-field*,
+
+  r_primkey-field?,
+
+  r_ejb_env,
+
+  r_security-identity?,
+
+  r_query*,
+
+  (r_cache-size?
+
+   & r_cache-timeout?
+
+   & r_read-only?
+
+   & r_method-Config*),
+
+  r_deployment-extension*
+}
+
+## r_env-entry = element env-entry {
+##  (attribute env-entry-name { string } | element env-entry-name { string }),
+##  (attribute env-entry-type { string } | element env-entry-type { string }),
+##  (attribute env-entry-value { string } | element env-entry-value { string })?
+## }
+
+r_exclude-list = element exclude-list {
+  r_description*,
+
+  r_method+
+}
+
+##r_home =
+##  attribute home { j2ee_class }
+##  | element home { j2ee_class }
+
+##r_icon =
+##  attribute icon { string }
+##  | element icon { string }
+
+##r_local =
+##  attribute local { string }
+##  | element local { j2ee_class }
+
+##r_local-home =
+##  attribute local-home { string }
+##  | element local-home { string }
+
+##r_message-destination = element message-destination {
+##  r_description*
+##
+##  & r_display-name*
+##
+##  & r_icon*
+##
+##  & (attribute message-destination-name { string }
+##   | element message-destination-name { string })
+##
+##  & r_deployment-extension*
+##
+##  & r_mapped-name
+## }
+
+## r_mapped-name =
+##  attribute mapped-name { string }
+##  | element mapped-name { string }
+
+## r_message-destination-link = element message-destination-link { j2ee_class }
+
+## r_message-destination-ref = element message-destination-ref {
+##  r_description*
+##
+##  & (attribute message-destination-ref-name { string }
+##     | element message-destination-ref-name { string })
+##
+##  & r_message-destination-type
+##
+##  & element message-destination-usage {
+##      "Consumes" | "Produces" | "ConsumesProduces"
+##    }
+##
+##  & (attribute message-destination-link { string }
+##     | element message-destination-link { string }?)
+##
+##  & r_deployment-extension*
+##
+##  & r_foreign-name?
+## }
+
+r_message-destination-type = element message-destination-type { string }
+
+r_message-driven = element message-driven {
+  r_description?,
+
+  r_display-name?,
+
+  r_icon?,
+
+  r_ejb-name,
+
+  r_ejb-class,
+
+  element messaging-type { j2ee_class }?,
+
+  r_transaction-type?,
+
+  r_message-destination-type?,
+
+  r_message-destination-link?,
+
+  r_activation-config?,
+
+  (r_connection-factory?
+
+   & r_destination?
+
+   & r_subscription-name?
+
+   & r_ejb_env)
+}
+
+r_method = element method {
+  r_description*,
+
+  r_ejb-name,
+
+  r_method-intf?,
+
+  r_method-name,
+
+  r_method-params?
+}
+
+r_method-Config = element method {
+  r_signature
+
+  & (attribute query-loads-bean { r_boolean-Type }
+     | element query-loads-bean { r_boolean-Type })?
+
+  & (attribute resin-isolation { string }
+     | element resin-isolation { string })?
+
+  & r_read-only?
+
+  & (attribute trans-attribute { string }
+     | element trans-attribute { string })?
+}
+
+r_method-intf-Values =
+  "Home" 
+ | "Remote"
+ | "LocalHome"
+ | "Local"
+ | "ServiceEndpoint"
+
+r_method-intf =
+  attribute method-intf { r_method-intf-Values }
+  | element method-intf { r_method-intf-Values }
+
+r_method-name =
+  attribute method-name { string }
+  | element method-name { string }
+
+r_method-param = element method-param { string }
+
+r_method-params = element method-params {
+  r_method-param*
+}
+
+r_method-permission = element method-permission {
+  r_description*,
+
+  (r_role-name+
+  | attribute unchecked {}
+  | element unchecked { empty }),
+
+  r_method*
+}
+  
+r_persistence-type = element persistence-type {
+  "Container" | "Bean"
+}
+
+r_prim-key-class = element prim-key-class {
+  j2ee_class
+}
+
+r_primkey-field = element primkey-field { string }
+
+r_query = element query {
+  r_description*,
+
+  (attribute query-method { string } | r_query-method),
+
+  (attribute result-type-mapping { "Local" | "Remote" }
+   | element result-type-mapping { "Local" | "Remote" })?,
+
+  (attribute ejb-ql { string } | element ejb-ql { string }),
+
+  r_deployment-extension*
+}
+
+r_query-function = element query-function {
+  r_description?
+
+  & r_signature
+
+  & r_sql?
+}
+
+r_query-method = element query-method {
+  string
+  | (r_method-name,
+
+     r_method-params?,
+
+     r_deployment-extension*)
+}
+
+r_read-only =
+  attribute read-only { r_boolean-Type }
+  | element read-only { r_boolean-Type }
+
+r_reentrant = element reentrant {
+  "True" | "False"
+}
+
+r_relationship-role-source = element relationship-role-source {
+  r_description*,
+
+  r_ejb-name
+}
+
+r_relationships = element relationships {
+  r_description*,
+
+  r_ejb-relation+,
+
+  r_deployment-extension*
+}
+
+## r_remote = element remote {
+##  j2ee_class
+## }
+
+## r_resource-env-ref = element resource-env-ref { string }
+## r_resource-ref = element resource-ref { string }
+
+##r_role-name =
+##  attribute role-name { string }
+##  | element role-name { string }
+
+r_security-identity = element security-identity {
+  r_description*,
+
+  (element use-caller-identity { empty }
+
+  | r_run-as)
+}
+
+## r_security-role = element security-role { string }
+
+## r_security-role-ref = element security-role-ref { string }
+
+## r_service-ref = element service-ref { string }
+
+r_session = element session {
+  r_description?,
+
+  r_display-name?,
+
+  r_icon?,
+
+  r_ejb-name,
+
+  r_mapped-name?,
+
+  r_home?,
+
+  r_remote?,
+
+  r_local-home?,
+
+  r_local?,
+
+  element service-endpoint { j2ee_class }?,
+
+  r_ejb-class?,
+
+  element session-type { "Stateful" | "Stateless" }?,
+
+  r_transaction-type?,
+
+  r_ejb_env,
+
+  r_deployment-extension*
+}
+
+r_signature = 
+  attribute signature { string } | element signature { string }
+
+r_sql =
+  attribute sql { string }
+  | element sql { string }
+
+r_sql-column =
+  attribute sql-column { string }
+  | element sql-column {
+      attribute references { string }?,
+      (string | attribute value { string } | element value { string })
+    }
+
+r_sql-table =
+  attribute sql-table { string }
+  | element sql-table { string }
+
+r_source-sql-column = 
+  attribute source-sql-column { string }
+  | element source-sql-column {
+      attribute references { string }?,
+      (string | attribute value { string } | element value { string })
+    }
+
+r_subscription-name =
+  attribute subscription-name { string }
+  | element subscription-name { string }
+
+r_target-sql-column = 
+  attribute target-sql-column { string }
+  | element target-sql-column {
+      attribute references { string }?,
+      (string | attribute value { string } | element value { string })
+    }
+
+r_trans-attribute = element trans-attribute {
+  "NotSupported" 
+ | "Supports"
+ | "Required"
+ | "RequiresNew"
+ | "Mandatory"
+ | "Never"
+}
+
+r_transaction-type = element transaction-type { "Bean" | "Container" }

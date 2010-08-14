@@ -1,0 +1,24 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+
+  <!--
+     - Export the service as a Hessian service
+    -->
+  <servlet-mapping url-pattern="/hessian/greeting"
+                   servlet-class="example.GreetingImpl">
+    <protocol uri="hessian:"/>
+    
+    <init>
+      <greeting>Hello from resin-web.xml</greeting>
+    </init>
+  </servlet-mapping>
+
+  <!--
+     - Define the client
+    -->
+  <remote-client interface="example.GreetingAPI"
+                 uri="hessian:url=${webApp.url}/hessian/greeting"/>
+
+  <servlet-mapping url-pattern="/client/greeting"
+                   servlet-class="example.GreetingClientServlet"/>
+
+</web-app>

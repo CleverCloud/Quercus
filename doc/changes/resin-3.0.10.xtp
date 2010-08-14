@@ -1,0 +1,441 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.10 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="resin:type requires namespace">
+
+<p>The configuration file validator is now more strict about the
+namespace of resin:type.  The resin prefix must be defined as:</p>
+
+<example>
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core"&gt;
+  ...
+</example>
+
+</s1>
+
+<s1 title="resin:message replaces resin:log">
+
+<p>resin:message replaces resin:log
+since &lt;resin:log&gt; and &lt;log&gt; conflicted.  resin:log is now deprecated.
+</p>
+</s1>
+
+<s1 title="cluster-store has been removed">
+
+<p>Use persistent-store instead.</p>
+
+</s1>
+
+<s1 title="UserConnection.discardConnection()">
+
+<p>Added com.caucho.sql.UserConnection.discardConnection() to allow
+termination of broken connections undetected by the ping functionality.</p>
+
+</s1>
+
+<s1 title="saving connection stack traces">
+
+<p>For debugging, when database connections aren't closed, the
+allocation stack traces are now automatically saved for subsequenct
+allocations.</p>
+
+</s1>
+
+<s1 title="cookie-http-only">
+
+<p>Adds the <a href="http://msdn.microsoft.com/workshop/author/dhtml/httponly_cookies.asp">HttpOnly</a>
+flag to all cookies generated in a web-app to avoid
+cross-site scripting attacks.</p>
+
+</s1>
+
+<s1 title="lazy-servlet-validate">
+
+<p>If true, Resin will only check that the servlet-class exists when it's
+actually used.  Normally, Resin will validate the
+servlet-class immediately.</p>
+
+</s1>
+
+<s1 title="ssl-session-cookie">
+
+<p>ssl-session-cookie specifies an alternate session cookie for use in
+secure connections.  This prevents the possibiliy of snooping the
+non-SSL connection and then replaying the session cookie.</p>
+
+</s1>
+
+<s1 title="ear-deploy, war-deploy">
+
+<p>ear-deploy and war-deploy now have an expand-prefix to select
+the expansion prefix, e.g. _ear_.</p>
+
+<p>Also added require-file.</p>
+
+<example>
+&lt;ear-deploy path="deploy"
+            expand-prefix=""
+            require-file="META-INF/application.xml"/&gt;
+
+&lt;war-deploy path="deploy"
+            expand-prefix=""
+            require-file="WEB-INF/web.xml"/&gt;
+</example>
+
+</s1>
+
+<s1 title="server-header">
+
+<p>The &lt;server&gt; section now accepts a &lt;server-header&gt; to override
+the Server response header.</p>
+
+</s1>
+
+<s1 title="Class reloading">
+
+<p>Class reloading is now available for Resin-OS and can be used
+with agentlib</p>
+
+</s1>
+
+<s1 title="CauchoConfigCacheDirectory">
+
+<p>Apache directive to set the cached mapping file.</p>
+
+</s1>
+
+<s1 title="keepalive-max">
+
+<p>&lt;http&gt; now has a &lt;keepalive-max&gt; attribute.</p>
+
+</s1>
+
+<s1 title="merge: VFS schema">
+
+<p>Path values now support a merge schema.  The merge path is
+a collection of paths, like a classpath.  The syntax is: "merge:(foo/bar;baz)", i.e. it uses ';' as a path separator.</p>
+
+<p>The most important use of the merge schema is for a web-app
+document-directory, allowing for development or customization enhancements
+without affecting the raw web-app.</p>
+
+<example>
+&lt;web-app id="foo" document-directory="merge:(../custom-foo;foo)"/&gt;
+</example>
+
+</s1>
+
+<s1 title="@TransactionAttribute and  AOP MethodInterceptor">
+
+<p>The EJB 3.0 @TransactionAttribute capability is now available for
+any Java class.  It is no longer restricted to SessionBeans.</p>
+
+<p>The @TransactionAttribute
+support can now be applied to any bean without any Resin-specific
+annotations.  In addition, the attribute class is configurable.</p>
+
+<example title="example/MyClass.java">
+package example;
+
+import javax.ejb.TransactionAttribute;
+
+public class MyClass {
+  ...
+  @TransactionAttribute
+  public void myFoo()
+  {
+    ...
+  }
+}
+</example>
+
+<example title="resin-web.xml">
+&lt;web-xml xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;classloader&gt;
+    &lt;enhancer&gt;
+      &lt;method annotation="javax.ejb.TransactionAttribute"
+               type="com.caucho.transaction.enhancer.TransactionEnhancer"/&gt;
+    &lt;/enhancer&gt;
+  &lt;/classloader&gt;
+
+  ...
+&lt;/web-xml&gt;
+</example>
+
+<p>The enhancer also supports AOP Alliance MethodInterceptors, allowing
+for custom annotations.</p>
+
+<example title="resin-web.xml">
+&lt;web-xml xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;classloader&gt;
+    &lt;enhancer&gt;
+      &lt;method annotation="example.MyAnnotation"
+               type="example.MyMethodInterceptor"/&gt;
+    &lt;/enhancer&gt;
+  &lt;/classloader&gt;
+
+  ...
+&lt;/web-xml&gt;
+</example>
+
+
+<example title="example.MyMethodInterceptor" language="java">
+package example;
+
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+
+public class MyMethodInterceptor implements MethodInterceptor {
+  public Object invoke(MethodInvocation inv) throws Throwable
+  {
+    System.out.println("&lt;method>");
+    try {
+      return inv.proceed();
+    } finally {
+      System.out.println("&lt;/method>");
+    }
+  }
+}
+</example>
+
+</s1>
+
+<s1 title="log mbean-name">
+
+<p>Logs can now have an mbean-name.</p>
+
+<example>
+&lt;log name="qa.Test" mbean-name="type=Log,name=qa.Test"
+        path="log/test.log" level="fine"/&gt;
+</example>
+
+<p>The MBean interface is com.caucho.log.mbean.LogMBean.</p>
+
+</s1>
+
+<s1 title="META-INF/resin-ejb-jar.xml">
+
+<p>Added resin-ejb-jar.xml for EJBs.  Resin already parses META-INF/foo.ejb files.</p>
+
+</s1>
+
+<s1 title="shutdown-wait-max">
+
+<p>shutdown-wait-max is now also a configurable item in the &lt;resin&gt; block.
+It's necessary to set the &lt;resin&gt; value as well as the &lt;web-app&gt; value.</p>
+
+</s1>
+
+<s1 title="lazy web-app and idle-time">
+
+<p>Lazy web-apps (start-mode="lazy"), are now automatically undeployed
+when idle-time is expired (default 2h).</p>
+
+</s1>
+
+<s1 title="resin.jar startup">
+
+<p>To allow for resin.conf to configure the JVM parameters, resin.jar
+for Resin-Professional now can start a Resin daemon.</p>
+
+<example>
+unix&gt; java -jar lib/resin.jar start
+...
+unix&gt; java -jar lib/resin.jar stop
+</example>
+
+</s1>
+
+<s1 title="bind-ports-after-start">
+
+<p>If true, listen to the http ports after the server is done initializing.</p>
+</s1>
+
+<s1 title="multipart form">
+
+<p>The multipart form processing can now accept a "caucho.multipart.form.upload-max" request attribute to set the size on a per-request basis.</p>
+
+<p>The multipart form error now returns a "caucho.multipart.form.error.size".</p>
+
+</s1>
+
+<s1 title="error-page in server">
+
+<p>error-page is now allowed in &lt;server&gt; to handle &lt;busy&gt; pages.</p>
+
+</s1>
+
+<s1 title="rewrite-dispatch">
+
+<p>The dispatch functionality of mod_rewrite has been added.  Currently,
+it only supports redirect.</p>
+
+<example>
+&lt;rewrite-dispatch&gt;
+  &lt;redirect regexp='^/foo' target='http://www.foo.com'/&gt;
+&lt;/rewrite-dispatch&gt;
+</example>
+
+</s1>
+
+<s1 title="rewrite-real-path">
+
+<p>The real-path functionality of mod_rewrite has been added.  It
+applies to the getRealPath mapping.</p>
+
+<example>
+&lt;rewrite-real-path&gt;
+  &lt;rewrite regexp='/(foo)' replacement='/-$1-$0'/&gt;
+&lt;/rewrite-real-path&gt;
+</example>
+
+</s1>
+
+<s1 title="programmatic DBPool">
+
+<p>The DBPool can now be used to create Pools programmatically.  It's
+still strongly recommended to use the configuration file instead.</p>
+
+<example>
+TestDriver driver = new TestDriver();
+
+DBPool pool = new com.caucho.sql.DBPool();
+pool.setJndiName("test");
+pool.setJDBCDriver(driver);
+pool.setURL("jdbc:test:foo");
+pool.init();
+</example>
+
+</s1>
+
+<s1 title="servlet-mapping schema">
+
+<p>The servlet-mapping schema was incorrect for the Resin namespace.
+The correct order is servet-name, url-pattern.</p>
+
+</s1>
+
+<s1 title="invocation-cache-size">
+
+<p>New &lt;server&gt; parameters: invocation-cache-size and invocation-cache-max-url-size (default 256)</p>
+
+</s1>
+
+<s1 title="client-read-timeout">
+
+<p>The client-read-timeout is now available in cluster-definition.</p>
+
+</s1>
+
+<s1 title="caching">
+
+<p>The caching backing has changed to a more efficient backing store.</p>
+
+</s1>
+
+<s1 title="cache/max-entry-size">
+
+<p>The &lt;cache&gt; has a new parameter: max-entry-size.</p>
+
+</s1>
+
+
+<s1 title="cluster session">
+
+<p>The cluster session store has changed to a more efficient backing store.</p>
+
+</s1>
+
+<s1 title="Configuration">
+
+<s2 title="resin:type">
+
+<p>resin:type can now be used in more places, for example in string values,
+allowing custom classes to computer values.</p>
+
+<example>
+&lt;driver type="com.foo.DataSource"&gt;
+  &lt;url&gt;jdbc:foo://localhost&lt;/url&gt;
+  &lt;password resin:type="foo.Password"&gt;Xm91/zI==&lt;/password&gt;
+&lt;/driver&gt;
+</example>
+
+<example title="foo/Password.java">
+package foo;
+
+public class Password {
+  String _value;
+
+  public void addText(String value)
+  {
+    _value = value;
+  }
+
+  public Object replaceObject()
+  {
+    return decode(_value);
+  }
+}
+</example>
+</s2>
+
+<s2 title="resin:resource">
+
+<p>&lt;resin:resource&gt; (and &lt;resource&gt;) now allow a var="foo" attribute,
+which sets configuration variables.  This lets configuration files set
+temporary resources without using jndi.</p>
+
+<p>In the following example, the MyBean object has a <code>setData</code>
+method.  The resin:resource creates a temporary variable.</p>
+
+<example>
+&lt;my-bean xmlns:resin="http://caucho.com/ns/resin/core"&gt;
+  &lt;resin:resource var="foo" type="qa.MyResource"/&gt;
+
+  &lt;data&gt;${foo}&lt;/data&gt;
+&lt;/my-bean&gt;
+</example>
+
+<p>resin:resource is now allowed anywhere, including in a custom bean.</p>
+
+</s2>
+
+<s2 title="com.caucho.config.Config">
+
+<p>The com.caucho.config.Config facade now makes it easy to use
+Resin's dependency-injection configuration machinery for custom classes.
+The <code>configure</code> method takes a Java object and
+an <code>InputStream</code> to the configuration file and
+configures the object.</p>
+
+<example>
+InputStream is = new FileInputStream("conf.xml");
+try {
+  Config.configure(myObject, is);
+} finally {
+  is.close();
+}
+</example>
+
+</s2>
+
+</s1>
+
+<s1 title="Acknowledgements">
+
+<p>Thanks to Dave Brosius for locating bugs in XML parsing, EJB-QL, and Amber query caching.</p>
+
+<p>Thanks to Bin for adding the batch compilation capability to JspCompiler.</p>
+
+</s1>
+
+</body>
+</document>

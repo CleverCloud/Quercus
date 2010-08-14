@@ -1,0 +1,255 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>MBean listeners</title>
+    <type>tutorial</type>
+    <description>
+      <p>
+      Example showing configuration of MBean event listeners.
+      </p>
+    </description>
+ <tutorial-startpage>listener</tutorial-startpage>
+  </header>
+
+<body>
+
+<summary/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr><td><viewfile-link file="WEB-INF/web.xml"/>
+    </td><td>Configures the JMX-managed bean
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/Listener.java"/>
+    </td><td>The listener bean implementation.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/ListenerMBean.java"/>
+    </td><td>The management interface for the listener.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/Emitter.java"/>
+    </td><td>The emitter bean implementation.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/EmitterMBean.java"/>
+    </td><td>The management interface for the emitter.
+</td></tr><tr><td><viewfile-link file="WEB-INF/classes/example/ListenerServlet.java"/>
+    </td><td>Using the managed bean.
+</td></tr></deftable>
+</s1>
+
+<s1 title="Emitter and Listener">
+
+<p>JMX provides a general notification capability where MBean
+<var>emitters</var> send data to MBean <var>listeners</var>.  Any managed
+bean can be an emitter or a listener by implementing the
+proper interfaces.  The listeners are hooked up to the emitters either
+in the configuration file or through MBeanServer calls.</p>
+
+<s2 title="Listener">
+
+<p>A listener implements <code>NotificationListener</code> to receive
+<code>Notification</code> events.  The notification contains information
+for the type of the notification, the sender of the notification, and
+any notification-specific information.</p>
+
+<p>The listener implements the single <code>handleNotification</code>
+method.  It's parameters are the notification and an opaque
+<var>handback</var> object.  The <var>handback</var> is specified during
+the listener registration and can be any information the listener
+wants.</p>
+
+<example title="Listener.java">
+package example;
+
+import javax.management.NotificationListener;
+import javax.management.Notification;
+
+public class Listener
+  implements NotificationListener, ListenerMBean {
+  private int _count;
+
+  public void handleNotification(Notification notif,
+                                 Object handback)
+  {
+    _count++;
+  }
+
+  public int getNotificationCount()
+  {
+    return _count;
+  }
+}
+</example>
+
+</s2>
+
+<s2 title="Emitter">
+
+<p>The Emitter sends notifications.  Any managed bean which implements
+the <code>NotificationEmitter</code> interface can be an emitter.  Many
+Emitters will extend the <code>NotificationBroadcasterSupport</code>,
+although this is not required.</p>
+
+<p><code>NotificationBroadcasterSupport</code> will handle the logic
+for adding and removing listeners as well as sending notifications to
+the proper listener.  By extending
+<code>NotificationBroadcasterSupport</code>, the emitter only needs to
+call <code>sendNotification</code> to send the notification.</p>
+
+<p>The first argument for the <code>Notification</code> is the notification
+type.  Because each emitter can send multiple notifications, the type
+tells the listener which event has happened.</p>
+
+<p>The second argument is typically the <code>ObjectName</code> for
+the emitter.  Often, emitters will use
+the <code>MBeanRegistration</code> interface to find out the
+<code>ObjectName</code>.</p>
+
+<example title="Emitter.java">
+package example;
+
+import javax.management.NotificationBroadcasterSupport;
+import javax.management.Notification;
+
+/**
+ * Implements an MBean which sends notifications.
+ */
+public class Emitter extends NotificationBroadcasterSupport
+  implements EmitterMBean {
+  private long _sequence;
+  
+  /**
+   * Sends a notification.
+   */
+  public void send()
+  {
+    Notification notif;
+
+    notif = new Notification("example.send", this, _sequence++);
+
+    sendNotification(notif);
+  }
+}
+</example>
+
+</s2>
+
+<s2 title="web.xml configuration">
+
+<p>The web.xml (or resin.conf) configures the resource with the
+&lt;resource&gt; tag just as with
+<a href="doc|ioc-bean.xtp">other resources</a>.  The resources is
+registered as an MBean by specifying an <var>mbean-name</var>.
+</p>
+
+<example title="web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;resource mbean-name="example:name=emitter"
+            type="example.Emitter"&gt;
+  &lt;/resource&gt;
+
+  &lt;resource mbean-name="example:name=listener"
+            type="example.Listener"&gt;
+    &lt;listener mbean-name="example:name=emitter" handback="tutorial"/&gt;
+  &lt;/resource&gt;
+&lt;/web-app&gt;
+</example>
+
+<deftable>
+<tr><th>tag</th><th>description
+</th></tr><tr><td>resource</td><td>defines the resource
+</td></tr><tr><td>mbean-name</td><td>the MBean name of the resource
+</td></tr><tr><td>type</td><td>the class name of the resource bean
+</td></tr><tr><td>listener</td><td>registers the mbean with a notification emitter mbean
+</td></tr><tr><td>handback</td><td>a custom object to be passed back to the listener
+</td></tr></deftable>
+
+</s2>
+
+<s2 title="Using the listener">
+
+<p>This example provides a <code>send()</code> method to
+trigger a notification, but most notifications occuring when
+specific events occur, e.g. when a pool fills up.</p>
+
+<p>In this case, invoking the <code>send()</code> method triggers
+the notification which will be sent to any waiting listeners.  Calling
+<code>listener.getNotificationCount()</code> checks that the listener
+is getting called back.</p>
+
+<example title="ListenerServlet.java">
+public class ListenerServlet extends GenericServlet {
+  private EmitterMBean _emitter;
+  private ListenerMBean _listener;
+
+  public void setEmitter(EmitterMBean emitter)
+  {
+    _emitter = emitter;
+  }
+
+  public void setListener(ListenerMBean listener)
+  {
+    _listener = listener;
+  }
+
+  public void service(ServletRequest request,
+		      ServletResponse response)
+    throws ServletException, IOException
+  {
+    PrintWriter out = response.getWriter();
+    
+    _emitter.send();
+
+    out.println("listener count: " + _listener.getNotificationCount());
+  }
+}
+</example>
+<results title="output">
+count: 15
+</results>
+<results title="log">
+[15:37:15.545] notification(type=example.send,handback=tutorial)
+[15:37:16.624] notification(type=example.send,handback=tutorial)
+[15:37:17.453] notification(type=example.send,handback=tutorial)
+</results>
+
+</s2>
+
+<s2 title="Configuration with Dependency Injection">
+
+<p>The ListenerServlet example follows the
+Dependency Injection pattern.  Resin's web.xml will assemble the
+correct EmitterMBean and ListenerMBean.  Using the Dependency Injection
+pattern simplifies the servlet, makes it more configurable,
+and more testable.</p>
+
+<p>The configuration takes advantage of the "mbean:" JNDI scheme in Resin.
+The name following "mbean:" is used to lookup the mbean instance.  The
+"mbean:" scheme then constructs a proxy for the mbean.  The proxy
+of the JNDI lookup is then passed to <code>setEmitter</code>
+and <code>setListener</code>.</p>
+
+<example title="web.xml">
+&lt;servlet-mapping url-pattern="/listener"
+                 servlet-class="example.ListenerServlet"&gt;
+  &lt;init&gt;
+    &lt;emitter&gt;\${jndi:lookup("mbean:example:name=emitter")}&lt;/emitter&gt;
+    &lt;listener&gt;\${jndi:lookup("mbean:example:name=listener")}&lt;/listener&gt;
+  &lt;/init&gt;
+&lt;/servlet-mapping&gt;
+</example>
+
+</s2>
+
+</s1>
+
+<s1 title="Compatibility">
+
+<p>Notifications and listeners are part of the JMX standard.
+Client MBean proxies are standard and can be generated
+with <code>javax.management.MBeanServerInvocationHandler</code>
+</p>
+
+<p>The &lt;resource&gt; configuration is Resin-specific.  The support
+for the Dependency Injection for servlet configuration
+and the "mbean:" JNDI scheme are also Resin-specific.</p>
+
+</s1>
+
+  </body>
+</document>

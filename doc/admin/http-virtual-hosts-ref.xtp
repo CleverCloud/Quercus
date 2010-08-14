@@ -1,0 +1,34 @@
+<document>
+<header>
+  <title>&lt;host>: Virtual Host configuration</title>
+  <version>Resin 4.0</version>
+
+  <description>
+
+  <p>Describes the virtual host configuration tags.</p>
+
+  </description>
+</header>
+<body>
+<reference-legend/>
+
+<localtoc/>
+
+<include-defun name="access-log"/> 
+<include-defun name="ear-deploy"/> 
+<include-defun name="error-page"/> 
+<include-defun name="host-alias"/> 
+<include-defun name="host-alias-regexp"/> 
+<include-defun name="host-default"/> 
+<include-defun name="host-deploy"/> 
+<include-defun name="host-name"/> 
+<include-defun name="redeploy-mode"/> 
+<include-defun name="root-directory"/>
+<include-defun name="secure-host-name"/>
+<include-defun name="startup-mode"/>
+<include-defun name="web-app"/>
+<include-defun name="web-app-default"/>
+<include-defun name="web-app-deploy"/>
+
+</body>
+</document>

@@ -1,0 +1,3 @@
+memory=com.caucho.jms.memory.MemoryQueue
+file=com.caucho.jms.file.FileQueue
+jdbc=com.caucho.jms.jdbc.JdbcQueue

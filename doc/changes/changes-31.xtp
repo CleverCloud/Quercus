@@ -1,0 +1,2316 @@
+<document>
+<header>
+<title>Resin Change Log</title>
+</header>
+<body>
+
+<s1 title="Resin Change Log">
+
+<p>
+<a href="changes-2.xtp">Resin 2.1 changes</a>
+</p>
+
+<s2 title="3.1.7 snapshot">
+<ul>
+<li>webapp: versioning wasn't handling ROOT-1.0.war properly (#2668, rep by A Servidio)</li>
+<li>mod_caucho: build issue with Apache 1.3 (#2655, rep by maxpil)</li>
+<li>proxy: ProxyServlet support for x-forwarded-for (#2638, rep by remilon)</li>
+<li>proxy: ProxyServlet was not properly passing repeated headers (#2637, rep by remilon)</li>
+<li>admin: ping thread failure should only send page results at fine level (#2640, rep by remilon)</li>
+<li>quercus: mantis issue with compress_handler missing (ob_start callback) (#2575, rep by stargazer)</li>
+<li>webbeans: amber loading timing issue with webbeans (#2642, rep by markus)</li>
+<li>quercus: missing synchronization on getJavaClassDefinition (#2632, rep by stbu)</li>
+<li>servlet: RequestWrapper needs to use getRequest() instead of _request (#2651, rep by azenkov)</li>
+<li>boot: resin-root not properly handled (#2652, rep by Alex Sharaz)</li>
+<li>amber: EntityManagerFactory init must be lazy for 3rd party providers (#2648, rep by wesley)</li>
+</ul>
+</s2>
+
+<s2 title="3.1.6">
+<ul>
+<li>quercus: class static field syncronization issues</li>
+<li>quercus: initialization syncronization issues</li>
+<li>ioc: data-source not properly using JNDI lookup (rep by Stargazer)</li>
+<li>(2008-05-02) quercus: eval must return null for missing return (rep by Matthew Schmidt)</li>
+<li>quercus: $SERVER['REQUEST_URI'] calculation with forward [clean_urls on drupal] (rep by Matthew Schmidt)</li>
+<li>rewrite: forwards with query improperly cached (rep by Matthew Schmidt)</li>
+<li>(2008-04-30) quercus: SimpleXMLElement getField could throw NPE (rep by Matthew Schmidt)</li>
+<li>jsp: permission issues with WEB-INF/work could cause 404 instead of servlet exception (#2635, rep by mauricev)</li>
+<li>boot: updates for missing configuration attributes</li>
+<li>boot: update startup log message for better VM version logging (#2633, rep by stbu)</li>
+<li>multipart form not properly handling multiple uploads (#2578, rep by waiwong)</li>
+<li>admin: web-app added statistics-enable to enable web-app statistics (#2625, rep by Marty Messer)</li>
+<li>(2008-04-26) jsp: JspPrecompileListener not properly handling &lt;fileset> (#2615, rep by stbu)</li>
+<li>boot: WatchdogClient.launchManager needs -Xrs for windows (#2566, rep by mledom)</li>
+<li>boot: watchdog restart requires delay between stop and start (#2564)</li>
+<li>LruCache issue with nullpointer key (#2621, rep by zhaoxingyun)</li>
+<li>ssl: config error message needs to be logged at cluster level (#2602)</li>
+<li>boot: jvm-arg inside resin:if was throwing config exceptions (#2617, rep by Mattias Jiderhamn)</li>
+<li>jca: add max-connections and max-active-time to connection-factory (#2618, rep by wesley)</li>
+<li>jms: add com.caucho.jms.queue.JmsBlockingQueue for 3rd party jms (#2619, rep by wesley)</li>
+<li>servlet: update cache clearing/timing to avoid servlet-mapping race condition (#2611, rep by Charles Lyons)</li>
+<li>configure: add $JAVA_HOME/../Headers/jvmti.h check for MacOS-X (#2612, rep by markus)</li>
+<li>ejb: add class dependency checking for generated beans (#2600, rep by Carljohan Carlsson)</li>
+<li>jsf: JSF simple example not working (#2388, rep by pthl)</li>
+<li>quercus: support for (?i) subexpressions (#2614, rep by Paul Fischer)</li>
+<li>servlet: GzipFilter fix for allow-content-type (#2608, rep by azenkov)</li>
+<li>resin-ioc: add resin:param to allow custom constructors (#2414)</li>
+<li>(2008-04-17) quercus: fsockopen allows host:port as the host string (#2603, rep by billybigpotatoes)</li>
+<li>quercus: use getRealPath for php-ini in QuercusServlet (#2605, rep by sgraf)</li>
+<li>quercus: var_dump takes multiple args (#2508, rep by etzel)</li>
+<li>quercus: mysql_fetch_field updates to handle table aliasing</li>
+<li>quercus: xml_parse needs to allow unassigned character values for Mediawiki import/export (#2592)</li>
+<li>quercus: DOM constants needed for Mediawiki 1.12</li>
+<li>watchdog: add &lt;jvm-classpath></li>
+<li>(2008-04-16) quercus: json was not working with SimpleXmlElement (#2569, rep by Matthew Schmidt)</li>
+<li>quercus: xml_get_current_column_number (#2574, #2604, rep by P Fischer)</li>
+<li>amber: @OneToOne persist cascade issues (#2599, rep by tsv)</li>
+<li>amber: startup timing issues.  the codegen must occur before the database is selected</li>
+<li>jsp: body tag interaction with jsp:include and i18n (#2581, rep by T Fukuda)</li>
+<li>(2008-04-11) response.sendRedirect should encode in utf-8 (#2580, rep by Sanjeev)</li>
+<li>admin: added .war manifest as a JMX value (#2462)</li>
+<li>jms: polling issues with jdbc store (#2570, rep by J Deffenbaugh)</li>
+<li>rewrite: add exists condition (#2328, rep by Arthur Naylor)</li>
+<li>amber: update classloader order (#2588, rep by Riccardo Cohen)</li>
+<li>quercus: xml_set_element_handler with empty string callback was causing UnsupportedOperationException (#2591, rep by P Fisher)</li>
+<li>host: allow host-alias-regexp in host.xml (#2582, rep by kenjrwalker)</li>
+<li>amber: multiple @OneToMany annotations were ignored (#2586, rep by Charles Lyons)</li>
+<li>amber: mysql shouldn't use RETURN_GENERATED_KEYS when no @GeneratedId (#2579, rep by Charles Lyon)</li>
+<li>admin: update log_ reloading for remove/restart (#2568, rep by wesley)</li>
+<li>boot: jmx defines must be set by boot process (#2567)</li>
+<li>ejb: stateless calls to self do not invoke interceptors (#2529, rep by Daniel D'Alessandro)</li>
+<li>win32 service: nullpointer due to PATH changes to support win64 (#2470, rep by Sharad Kelkar)</li>
+<li>versioning: nullpointer in WebApp.stop() with versioning (#2565, rep by stbu)</li>
+<li>amber: class changes not picked up for reevaluation (#2562, rep by tsv)</li>
+<li>loader: restricted synchronized block on DynamicClassLoader to reduce blocking (rep by Knut Forkalsrud)</li>
+<li>(2008-03-31) config: connection-max and keepalive-select-max should default to infinite (#2555, rep by paulberto)</li>
+<li>config: connection-max belongs in &lt;server> (#2555, rep by paulberto)</li>
+<li>admin: add thresholds for stat-service</li>
+<li>jmx: jmx operations need to occur in classloader context of the mbean (#2556, rep by Karl Goldstein)</li>
+<li>admin: add thread dumps for cpu load and ping failure (#2428)</li>
+<li>cache: update miss rate to better reflect total caching (#2505)</li>
+<li>openssl: ssl_write updates for SSL_ERROR_WANT_READ and SSL_ERROR_WANT_WRITE (#2465, rep by D Ngo)</li>
+<li>resin.conf: ejb-server in ear-default should not have data-source (#2472, rep by stbu)</li>
+<li>jsp: disable caching of "static" jsp pages (#2548, rep by david-peterson)</li>
+<li>hessian: resource counting for SqlDateDeserializer (#2494, rep by gtong)</li>
+<li>hessian: add content-type for servlet (#2500, rep by mccloud35)</li>
+<li>jni: write on linux was not properly retrying on EINTR/EAGAIN (#2521, rep by cytown)</li>
+<li>versioning: issues with cookies managing the versioning (#2519, rep by stbu)</li>
+<li>install: add resin.conf.orig to build (#2533, rep by norlab)</li>
+<li>server: add url-length-max configuration (#2431, rep by A C De Baca)</li>
+<li>boot: add watchdog-address (#2717, rep by Eric Kreiser)</li>
+<li>cache: check web-app startup when adding new cache entry (#2474, rep by Martin Thompson)</li>
+<li>amber: serialization of beans with hessian (#2515, rep by Riccardo Cohen)</li>
+<li>hessian: handing of InputStream.read with Hessian2 encoding (#2535, rep by Ray Erdelyan)</li>
+<li>session: handle ClusterObject.isDead() state when object is loaded (#2477, rep by Matt Hansen)</li>
+<li>session: distributed session synchronization needs to occur after the appliction has started (#2447, rep by Cameron Stokes)</li>
+<li>(2008-03-21) quercus: cleanup list can't use SoftReference (#2542, rep by Matt Johnston)</li>
+<li>jsp: dependency generation could mistakenly add classpath: for root-based JSP files (#2486, rep by L Geller)</li>
+<li>rewrite-dispatch: query string resulted in added getParameterValues value (#2464, rep by zdavis)</li>
+<li>quercus: regexp a &lt;= Integer.MAX_VALUE test is unstable for some JIT/OS, so use a &lt;= Integer.MAX_VALUE - 1 (#2526, rep by Chris Chen)</li>
+<li>jsp: application, session, and request are not EL implicit objects (#2499, rep by B Whitehead)</li>
+<li>config: redeploy-mode needs to be allowed in &lt;host-default> (#2538, rep by G Perales)</li>
+<li>(2008-03-20) admin: profiling issue with MacOSX (#2480, rep by Javier Vegas)</li>
+<li>boot: 64-bit windows does not use -d64 flag (#2501, rep by fesse)</li>
+<li>amber: native query needs to use column names (#1716)</li>
+<li>amber: @OneToMany was ignoring fetch annotation (#2423, rep by Daniel Spangler)</li>
+<li>amber: @PersistenceUnit was not initialized before binding @Component (#2498, rep by wesley)</li>
+<li>config: updated resource-ref schema to match JavaEE 5 (#2143, rep by Gary Zhu)</li>
+<li>ssl: add cipher-suites to jsse-ssl (#2360, rep by Jay Ballinger)</li>
+<li>webapp/jmx: add Version attribute to WebAppMXBean (#2463)</li>
+<li>ioc: add WebBeansContainer.getBeansOfType (#2413)</li>
+<li>jsp: pageContext ELResolver wasn't handling getType properly (#2451, rep by anloci)</li>
+<li>install: with --prefix, copy php, plugins and ext-webapp-lib (#2473, rep by stbu)</li>
+<li>hessian: hessian method overloading cost needs to be long (#2466, rep by zipeg)</li>
+<li>boot: add chroot as watchdog capability (#2426)</li>
+<li>boot: increase fd max when possible (#2467)</li>
+<li>shutdown-wait-max had incorrect rnc schema (#2492)</li>
+<li>ejb: conflict between ejb-jar.xml and ejb-stateless-bean (#2479, rep by Gary Zhu)</li>
+<li>ioc: jar order should not affect injection (#2490, rep by Andreas Fischer)</li>
+<li>boot: remove watchdog requirement that server's resin.conf must match (#2484, rep by Chris Chen)</li>
+<li>(2008-03-04) jsf: Bean classes must have a zero-argument with com.sun.rave.faces.data.ResultSetPropertyResolver (#2364)</li>
+<li>added scheduled-task to improve cron scheduling (#2311, #2475, rep by netsql3)</li>
+<li>xa: Synchronization exception in beforeCompletion() could prevent rollback (#2454, rep by ddalessa)</li>
+<li>ioc: interceptors not properly handling thrown exceptions (#2483, rep by wesley)</li>
+<li>amber: @PersistenceContext fixes with third-party JPA providers (#2435, #2482, rep by Matt Johnson)</li>
+</ul>
+</s2>
+
+<s2 title="3.1.5 - 2008-02-27">
+<ul>
+<li>(2008-02-26) config: whitespace-only element config with resin:import (rep by Jan Kriesten)</li>
+<li>win32: rewrite-real-path replacement issues with windows backslashes (#2444, rep by stbu)</li>
+<li>(2008-02-20) build aclocal.m4 missing from .gz</li>
+<li>classloader: system classloader changes to support Terracotta</li>
+<li>log: resin:log compatibility - (should use resin:message instead) (#2443, rep by stbu)</li>
+<li>database: UserStatement.clearWarnings missing null check (#2439, rep by ckchris)</li>
+<li>watchdog: logs created in pwd instead of root-directory (#2437, rep by ckchris)</li>
+<li>admin: cluster.php syntax errors (#2441, rep by stbu)</li>
+<li>admin: ManagementAuthenticator was not checking user for null before copy (#2248, rep by stbu)</li>
+<li>(2008-02-15) clustering: updated logging for btree insert exceptions (#2403, rep by gjvc)</li>
+<li>build: distribution missing aclocal.m4 (#2421, rep by norlab)</li>
+<li>webbeans: ScopeAdapter beans need to throw a config-time error if zero-arg constructor is missing (#2332, rep by wesley)</li>
+<li>access-log: add logging for bad requests, e.g. 400s (#2266, rep by jornsvendsen)</li>
+<li>rewrite: rewrite rules at the server level need to log to the default webapp's access logger (#2395, rep by D Peterson)</li>
+<li>logging: contained &lt;logger> needs to act like top-level loggers (#2327, rep by John Franey)</li>
+<li>database: vary pool round-robin by cluster index (#2358, rep by M Stacks)</li>
+<li>jstl: c:redirect was not properly handling context="/" (#2379, rep by wimsie)</li>
+<li>servlet: validation of servlet-class needs to be lazy because of .war libraries with missing classes (#2391, rep by ckchris)</li>
+<li>hessian/burlap: when unable to find classes, log warning before returning HashMap (#2387, rep by pagedn)</li>
+<li>database: jdbc connection should not be returned to pool if exception occurs (#2313)</li>
+<li>jmx: ServerConnector for the self-server is now registered in JMX (#2354)</li>
+<li>win64: added build for isapi_srun, resin_os, resin, resinssl (#2331, #2330, rep by K. Puaa)</li>
+<li>watchdog: refactor to handle frozen OS process/kill -9 (#2410, rep by Daniel Lopez)</li>
+<li>watchdog: add "kill" to force a process kill (#2411, rep by Daniel Lopez)</li>
+<li>admin: admin host needs to skip default configuration (#2405, rep by ckchris)</li>
+<li>gzip filter not properly handling reset() (#2389, rep by T Truong)</li>
+<li>jmx: unregisterMBean was not working properly (#2390, rep by J Smyth)</li>
+<li>custom access-log was not having destroy() called (#2373, rep by M Thomson)</li>
+<li>add &lt;mail> config for javamail (#2329, rep by Ron Pitts) [<a href="http://caucho.com/resin/doc/env-tags.xtp#mail">mail configuration</a>]</li>
+<li>jmx: add AccessLogMXBean with flush() operation (#2342, rep by Michael O'Dea)</li>
+<li>jmx: classloader updates to support JDK 1.6 jconsole</li>
+<li>jmx: use only GlobalMBeanServer for all Resin mbean server instances (#2380, rep by J Smyth)</li>
+<li>(2008-02-11) config: init-param was not stripping spaces for param-value (#2384, rep by hifish)</li>
+<li>deploy: versioning deploy wasn't handling '-foo' for non-numeric (#2365, rep by gjvc) [<a href="http://caucho.com/resin/doc/webapp-deploy.xtp">webapp deploy</a>]</li>
+<li>ejb: method-level security (#1845, rep by Kevin Wimmer)</li>
+<li>thirdparty: Hudson integration with security (#2320, rep by netsql2) [<a href="http://wiki.caucho.com/Hudson">wiki: Hudson and Resin</a></li>
+<li>(2008-02-08) jsf: fast-jsf automatically disabled when not using Resin's JSF (#2351)</li>
+<li>resin.conf: change default to use &lt;prologue> and put resin:import after the web-app-default (#2402)</li>
+<li>watchdog: &lt;watchdog-port>${port}&lt;/watchdog-port> was not supported (#2401, rep by friedeks)</li>
+<li>regression: ${resinHome} variable was missing (#2374, rep by stargazer)</li>
+<li>wicket: EnhancerManager needs to handle proxies named "Foo$" (#2382, rep by Jan Kriesten)</li>
+<li>filters must be initialized before servlets (@386, rep by killnine)</li>
+<li>jsp: taglib analysis issue with doEndTag (#2378, rep by wimsie)</li>
+<li>jms/db: sql limit was ignored for backing store (#2337, rep by Erlende Akre)</li>
+<li>jsp: dependency checking of fmt.tld updated to use classpath (#2363, rep by M Gleeson)</li>
+<li>configure: update ACLOCAL and AUTOMAKE to avoid version dependencies (#2396, rep by norlab)</li>
+<li>support: added ResinWebApplication, and ResinComponentInjector for wicket [<a href="http://wiki.caucho.com/Wicket">Wicket with Resin</a>]</li>
+<li>(2008-02-05) jms: basic BlockingQueue support [<a href="http://caucho.com/resin/doc/resin-messaging.xtp">Resin Messaging</a>] (#2310)</li>
+<li>(2008-02-02) embed: classpath config file lookup depended on Resin</li>
+<li>(2008-02-01) regression cleanup</li>
+<li>(2008-01-30) support: Wicket support for Resin/WebBeans for WebApplication object [<a href="http://wiki.caucho.com/Wicket">wiki: Resin and Wicket</a>]</li>
+<li>jca: AssociationResourceAdapter fixes for Jackrabbit [<a href="http://wiki.caucho.com/Jackrabbit">wiki: Resin and Jackrabbit</a>] (#2346, rep by pegli)</li>
+<li>load-balance: update timeout counting from app-tier (#2639, rep by Anthony Balandran)</li>
+<li>configure: libtool fixes on build machine</li>
+<li>ejb: message driven bean support for NOT_SUPPORTED XA (#2308, rep by ddalessa)</li>
+<li>ioc/config: system properties like 'foo.bar' were not properly resolved (#2361, rep by Curtis Taylor)</li>
+<li>webbeans/ejb @Interceptor refactor (#2344, rep by wesley)</li>
+<li>httpd.sh: update JAVA_HOME handling (#2343, rep by tusker)</li>
+<li>admin: admin password is now configured through the &lt;management> user (#2316, #2315)</li>
+<li>ejb: webbeans and session bean merge for security, xa, and interception [<a href="http://caucho.com/resin/doc/resin-ioc.xtp">resin-ioc</a></li>
+<li>access-log: add auto-flush-time as a configuration parameter (rep by Michael O'Dea)</li>
+<li>(2008-01-14) added com.caucho.resin.ResinEmbed embedding [<a href="http://caucho.com/resin/doc/resin-embedding.xtp">Resin Embedding</a>]</li>
+<li>plugins: add spring/webbeans bridge [<a href="http://wiki.caucho.com/Spring">wiki: Spring and Resin/WebBeans</a>]</li>
+<li>plugins: add ant Jspc task [<a href="http://wiki.caucho.com/Ant">wiki: Ant and Resin</a>] (#97, rep by D Becker)</li>
+<li>plugins: add struts2 ObjectFactory support [<a href="http://wiki.caucho.com/Struts2">wiki: Struts2 and Resin</a>]</li>
+<li>plugins: add maven2 resin:run and resin:jspc [<a href="http://wiki.caucho.com/Maven2">wiki: Maven2 and Resin</a>] (#2231, rep by Daniel Glenn)</li>
+<li>cache: add clearExpires to clear the expire time, but not the cache (#2300)</li>
+<li>add com.caucho.filters.MD5Filter (#1668, rep by E Bowman)</li>
+<li>security: authenticator needs to work with webbeans/jpa (#2304, rep by Andreas Fischer)</li>
+<li>rewrite-dispath proxy now has target field (#2171)</li>
+<li>burlap: use getDeserializer pattern matching Hessian (#2298, rep by M Vandamme)</li>
+<li>configure: build updates for solaris (#2050, #2294, #2295, rep by ksvee, np23dcx, norlab)</li>
+<li>flash: SocketPolicyProtocol now falls back to HTTP, allowing port 80 (#2291, rep by Vic Cekvenich)</li>
+<li>access-log: add &lt;exclude>\.gif$&lt;/exclude> to access-log (#2157, rep by B Cleave)</li>
+<li>hessian: improve error message with non-hessian response (#2200, rep by pelikt1)</li>
+<li>openssl: cleanup of SSL_free code to ensure no link to old connection (#2188, rep by J Kaur)</li>
+<li>isapi: send 503 on timeout to Resin (#2264, rep by T Fukuda)</li>
+<li>update jdbc wrappers for jdk 6 (#2189, rep by koreth)</li>
+<li>xa: issues with PoolItem handling XA_RDONLY (#2227, rep by mackd2)</li>
+<li>jsf: faces-config.xml needs to allow multiple render-kit (#2278, rep by Andreas Fischer)</li>
+<li>jsf: faces-config.xml needs to allow multiple el-resolver tags (#2287, rep by Andreas Fischer)</li>
+<li>boot: boot issues with IBM JDK and java.class.path (#2284, rep by Surekha Bhartiya)</li>
+<li>xml: update DOMBuilder to handle null prefixes (#2286, fixed! by atifmk)</li>
+<li>admin: missing resin_admin_insecure needs to redirect to https only on port 80 or with host-secure (#2244, rep by B Cleave)</li>
+<li>jsp: fragment generation with scripting elements must support request (#2261, rep by extremia)</li>
+<li>watchdog: NPE check for missing server</li>
+<li>resin-admin: login failure needs to report error message (#2263)</li>
+<li>load-balance: start warmup timeout immediately (#2241, rep by A Balandran)</li>
+<li>security-manager: disable custom PolicyImpl (#2281, rep by norlab)</li>
+<li>load-balance: support load-balance-recover-time=0s (#2279, rep by A Balandran)</li>
+<li>classloader updates to help support Terracotta (#1970, rep by S Sozonoff)</li>
+<li>windows security was not allowing directory servlet (#2228, rep by drsskelkar)</li>
+<li>add startup-priority to web-app to force startup order (#2204, rep by S Patronis)</li>
+<li>hessian: issues with deserializing StackTraceElement (#2273, rep by kitepad)</li>
+<li>hessian: change default setChunkedPost to true (#2225, #2260, rep by L Geller, ckchris)</li>
+<li>soap/jaxrpc: removed javax.xml.ws from jaxrpc.jar (#2270, rep by plsoft)</li>
+<li>(2007-12-31) admin: update tables for log storage to improve startup time (#2161, rep by koreth)</li>
+<li>WebBeans add xwork2 support as com.caucho.xwork2.ResinObjectFactory</li>
+<li>WebBeans: add createTransient to support framework object factories</li> 
+<li>mod_caucho: not properly grabbing backup server from session (#2268, rep by D Wigenfors)</li>
+<li>EJB initialization order vs Amber (rep by Bill Au)</li>
+<li>mod_caucho config reload of servers could leak memory (#2247, rep by vladdy)</li>
+<li>(2007-12-18) Quercus: compiled-mode generation of array(&amp;$foo) (#2258, rep by koreth)</li>
+<li>Quercus: clear definition cache on page reload (#2252, rep by koreth)</li>
+<li>Quercus: regexp fix for Drupal 6</li>
+<li>Quercus: .smap files larger than 64k cannot be merged (#2146, rep by koreth)</li>
+<li>JAX replacement issue with FactoryLoader and win32 (#2187, fixed! by dibo)</li>
+<li>JNI gave misleading error message when license was not available (#2235)</li>
+<li>Keepalive must only use a single check when preparing response to avoid confusing the load balancer (#2262)</li>
+<li>JNI/std.c: on some servers an EAGAIN on send is like EINTR (#2239, rep by B Cleave)</li>
+<li>thread-idle-min and thread-idle-max defaults need lazy init (#2229, rep by mate)</li>
+<li>LoadBalance: load-balance-warmup-time=0 not properly skipping warmup (#2240, rep by A Balandran)</li>
+<li>LoadBalance: client disconnect from browser was causing failover (#2236, rep by A Balandran)</li>
+<li>Quercus: improve exception reporting in interpreted mode</li>
+<li>Quercus: handle A::$f() calls (#2257, rep by jredden)</li>
+<li>Quercus: handle IllegalStateException thrown by JDBC on close (#2184, rep by koreth)</li>
+<li>Quercus: "15" &amp; 3 not properly converted (#2251, rep by koreth)</li>
+<li>Quercus: class static fields need to be stored in Env (#2253, rep by koreth)</li>
+<li>Quercus: array_key_exists (#2254, fixed! by koreth)</li>
+<li>XmlDocumentFactory needs setSchema (#2174, rep by sgudiboina)</li>
+<li>JCA: updated &lt;connector> syntax (#2209, rep by Serge Sozonoff)</li>
+<li>Quercus: added spring_bean("...")</li>
+<li>Quercus: htmlentities handled incorrecty between mod_php and quercus (#2348, rep by rvt)</li>
+<li>Quercus: strcmp function fails with comparing comparing empty strings with numbers (#2356, rep by rvt)</li>
+<li>Quercus: Cannot create a BigDecimal, seems to call wrong constructor (#2345, rep by gorck)</li>
+<li>Quercus: xml_parse_into_struct exceptions (#2353, rep by rvt)</li>
+<li>Quercus: append string operation cannot be doen with a string is retreived from file_get_contents (#2350, rep by rvt)</li>
+<li>Quercus: oracle module reporting incorrect extension name (#2338, rep by buckyball)</li>
+<li>Quercus: drupal - table temp_search_sids already exists (CREATE TEMPORARY TABLE) (#2293, rep by Dan)</li>
+</ul>
+</s2>
+
+<s2 title="3.1.4 - Dec 5, 2007">
+<ul>
+<li>isapi plugin needs to set fKeepConn=0 for non-200 responses (#2150, rep by Ove Halset)</li>
+<li>load-balance issues with short cookies (#2221, rep by B Cleave)</li>
+<li>watchdog issues with multiple servers and configuration files (#2212, rep by Bill Au)</li>
+<li>watchdog-password (#2201, rep by Chris Chen)</li>
+<li>jndi-appconfig sanitization (#2215, rep by Coolflame Wu and Alan Lee)</li>
+<li>viewfile sanitization of file attribute (#2214)</li>
+<li>response.getCharacterEncoding must return iso-8859-1 as a default (#2180, rep by Takahiro Fukuda)</li>
+<li>keepalive/chunking: chunking error when exact buffer match reported by Confluence (#2131, rep by Chris Chen)</li>
+<li>added backup attribute to server, with meaning the same as load-balance-weight='1' (#2178)</li>
+<li>jsp: tag-file pageEncoding not properly picked up (#2170, rep by Takahiro Fukuda)</li>
+<li>database: update error message when driver does not have URL (#2173, rep by B Au)</li>
+<li>comet: API cleanup, isClosed() replaces isActive()</li>
+<li>(2007-11-25) quercus: Dependency printing not properly handling static paths (#2185, rep by koreth)</li>
+<li>jsp: allow EL expression for non-rtexprvalue String for old-style JSTL (#2112, rep by T Harris)</li>
+<li>jms: add JmsQueueMXBean and JmsTopicMXBean (#2049, rep by P Tripathy)</li>
+<li>hessian: HessianProxy updates to simplify subclassing (#2155, fixed! by mate)</li>
+<li>hessian: sendCollectionType now affects Maps (#2149, rep by mate)</li>
+<li>session - always-load-session would load for static pages (#2154, rep by copart)</li>
+<li>amber: misc @EmbeddedId issues (#2037, rep by Sergey Plehov)</li>
+<li>amber: @NamedQuery and inheritance were conflicting (#2053, rep by Sergey Plehov)</li>
+<li>admin: snapshot resin.conf changed to resin_admin_insecure (#2145)</li>
+<li>amber: inheritance auto-gen columns generated improper inserts (#2054, rep by Sergey Plehov)</li>
+<li>amber: allow JPA with other providers (#2041, rep by Sergey Plehov)</li>
+<li>quercus: required expr missing from function not properly generated (#2139, rep by koreth)</li>
+<li>hessian: object definition ('O') should use string for type (#2142, rep by Charlie Groves)</li>
+<li>rewrite-dispatch forward and redirect should use query-string (#1997, rep by Jan Kriesten)</li>
+<li>Add DatabaseManager.findDatabase(url) (#1932, rep by Geoff Hendry)</li>
+<li>form encoding needs to default to character-encoding, not url-character-encoding (#2140, rep by refactor)</li>
+<li>hessian: use Integer.valueOf instead of new Integer (#2138, rep by regor)</li>
+<li>resource-ref validation schema incorrect (#2143, rep by Gary Zhu)</li>
+<li>(2007-11-04) admin: add root-directory and uptime for web-app (#2043, rep by stbu)</li>
+<li>amber: hessian serialization for @OneToMany was incorrect (#2118, rep by Daniel Spangler)</li>
+<li>ProxyCacheMXBean.clearCacheByPattern (#2115, rep by B Youngblood)</li>
+<li>cache: change from uncacheable to cacheable was not properly detected (#2113, rep by paulberto)</li>
+<li>ssl: added crypto-device to openssl (#2046, rep by V Vyas)</li>
+<li>JCA .rar wasn't loading native libraries (#1846, rep by Ray Cromwell)</li>
+<li>config should defer jsse-ssl for &lt;http> until server-specific startup (#2020, rep by Mike Wynholds)</li>
+<li>rewrite-dispatch secure='true' should affect sendRedirect (#1996, rep by Michael Wang)</li>
+<li>configure: updated config.guess to support ppc64 (#2114, rep by Tamas Perlaky)</li>
+<li>session: unserializable login principal should not be serialized (#2011, rep by K Fetterman)</li>
+<li>build: class cleanup (#2051, rep by koreth)</li>
+<li>build: split version from resin compilation (#2088, rep by koreth)</li>
+<li>resin-admin: added resin_admin_insecure, defaulting to true to require SSL (#2007)</li>
+<li>hessian: Java calendars not properly serialized (#2106, rep by rhodepc)</li>
+<li>Config schema validation could not handle spaces in path (#2117, rep by taylorc)</li>
+<li>(2007-10-30) quercus: mysql_query error detection was not detecting connection close (#2138, rep by koreth)</li>
+<li>LruCache removeTail synchronization issue (#2130, rep by Matthew Schmidt)</li>
+<li>quercus: fwrite for socket automatically flushes (#2120, rep by koreth)</li>
+<li>quercus: HashMap adapter wasn't properly implementing copy() for APC (#2121, rep by koreth)</li>
+<li>quercus: mysql_fetch should append LONGVARCHAR as binary instead of letting mysql convert it (rep by koreth)</li>
+<li>quercus: StringBuilderValue.append(byte[]) wasn't converting to char properly (rep by koreth, #2119)</li>
+<li>quercus: regexp fixes (#2124, rep by koreth)</li>
+<li>jms: ListenerResource needs listener-max (#2047, rep by D McAndrew)</li>
+<li>(2007-10-25) load-balance failover logging was showing incorrect target server info (#2098, rep by stbu)</li>
+<li>add secure="true" to cluster-port (#2104, rep by Takahiro Fukuda)</li>
+<li>&lt;http> and &lt;cluster-port> socket-timeout were not using &lt;server-default> values (#2110, rep by B Choate)</li>
+<li>jsf: attribute-extension wasn't properly ignored (#2111, rep by borisk)</li>
+<li>&lt;load-balance> add &lt;strategy> tag (#2100, rep by stbu)</li>
+<li>Added remote-enable-cookie to &lt;management> to replace remote-enable (#2085, rep by stbu)</li>
+<li>Windows file URL with Java uses file:/c:/foo, not file:///c:/foo (#2086, rep by Matt Ledom)</li>
+<li>Verify that proxy-cache file was properly removed on startup (#2065, rep by Mike Waldman)</li>
+<li>resin-admin needs to use Server->CurrentTime to avoid clock skew (#2099, rep by stbu)</li>
+<li>Quercus: forbid include of non-file.</li>
+<li>Quercus: updated support for large binary data (php5) (#2101, rep by koreth)</li>
+<li>Quercus: stubs for getrusage, memory_get_usage, memory_get_peak_usage (#2102, rep by koreth)</li>
+<li>Quercus: mysql_close was automatically allocating connections (#2103, rep by koreth)</li>
+<li>logging now allows %{thread} and %{env}</li>
+<li>Quercus: output buffering with callback not properly handling false (#2091, rep by koreth)</li>
+<li>Quercus: NPE in Env connection close updates (#2093, rep by koreth)</li>
+<li>Quercus: mysql_fetch_assoc should use metaData.getColumnLabel if available (#2080, rep by koreth)</li>
+<li>Quercus: $this->x does not trigger __get and __set (#1965, rep by rjc)</li>
+<li>Quercus: mysql_connect flags were not getting passed to driver (#2075, rep by koreth)</li>
+<li>httpd.sh had wrong path to resin.jar (rep by koyama)</li>
+<li>Quercus: StringStream not return proper utf-8 length for read() (#1903, rep by S Sozonoff)</li>
+<li>Quercus: http_build_query requires arg_separator (#1906, rep by ssozonoff)</li>
+<li>Quercus: basename nullpointer check (#1837, rep by dizzle)</li>
+<li>(2007-10-16) Add &lt;database-default> (#1108, rep by koreth)</li>
+<li>Quercus: regexp "/u" flag with Drupal install issues (#2069, rep by jims)</li>
+<li>Quercus: regexp rewrite for performance and PHP extensions</li>
+</ul>
+</s2>
+
+<s2 title="3.1.3 - October 7, 2007">
+<ul>
+<li>SSIServlet needs to return text/html (#2000, rep by K Fetterman)</li>
+<li>SSIServlet needs to return 404 for file not found (#1999, rep by K Fetterman)</li>
+<li>cache changes to avoid threading issues (#1992, rep by David Peterson)</li>
+<li>hessian: added debug="true" flag to HessianServlet, to log at level="fine"</li>
+<li>hessian: added HessianDebugInputStream and HessianDebugOutputStream</li>
+<li>hessian: field list deserialization with non-matching classes (#2026, rep by mfsiddiq)</li>
+<li>hessian: field object deserialization with non-matching classes (#2015, rep by Mark Church)</li>
+<li>hessian: Collection deserializer not properly handling 'v' (#2028, rep by Jerome Landreau)</li>
+<li>session saving was still attemped after invalidation (#2031, rep by jkriesten)</li>
+<li>jar caching method was slower than previous method (rep by Sean Patronis)</li>
+<li>jsf: handle NPE thrown by facelets ELContext in EL evaluation (#2013, rep by Matt Raible)</li>
+<li>jsf: older faces-config.xml used xmlns="http://java.sun.com/JSF/Configuration" (#2010, rep by Matt Raible)</li>
+<li>(2007-09-20) quercus: file parsed data with unicode.semantics='0' need to be php5 strings, not php6 binary strings (#1938, #1975, rep by chillout, kim)</li>
+<li>(2007-09-17) initial comet implementation (#1945, rep by M Thompson)</li>
+<li>quercus: mysql varbinary data with unicode.semantics=false (#1898, rep by rjc)</li>
+<li>quercus: i18n unicode.semantics updates</li>
+<li>added web-app-deploy versioning for session hot-deploy improvements (#1058)</li>
+<li>(2007-09-10) isapi: pass client-read-timeout to isapi_srun.dll (#1862, rep by Takahiro Fukuda)</li>
+<li>multiple access-logs were causing rollover issues (#1947, rep by brianb08)</li>
+<li>db-pool: add max-idle-count to connection pool (#1891, rep by Matthew Schmidt)</li>
+<li>db-pool: idle cleanup and additional ConnectionPoolMXBean atributes (#1891, rep by Matthew Schmidt)</li>
+<li>load-balance: update retry and failover logic (#1939, rep by Bradley Van Cleave)</li>
+<li>session: cleanup TempStream for session serialization (#1764, rep by Jan Kriesten)</li>
+<li>hessian: hessianlib.py update (#1880, rep by jboulon)</li>
+<li>mod_caucho: add backup costs to the round robin selection (rep by Katrin Koppert)</li>
+<li>HttpProxyServlet now checks failRecoverTime and connection count (#1158, rep by S Nagar)</li>
+<li>jdbc-pool: add JdbcDriver with start()/stop() to allow database backup rollover (#1604, rep by Rich Dredge)</li>
+<li>jsp: getSpecificationVersion() needs to return 2.1 (#1990, rep by stbu)</li>
+<li>added keepalive-connection-time-max to limit keepalives (#1830, rep by sf)</li>
+<li>timing issues with session invalidation (#1897, rep by Bradley Van Cleave)</li>
+<li>Path.getURL() on windows needs to convert "/:/" to "//" (#1982, rep by debae)</li>
+<li>session: update invalidation to ensure invalidation drops session (#1951)</li>
+<li>session: cluster session load on startup needs to detect invalidations (#1544, rep by Jacky)</li>
+<li>access-log missing rollover-count setter (#1985, rep by stbu)</li>
+<li>change build.xml to -Xmx512m (#1986, rep by chris_se)</li>
+<li>jstl: add filter to x:parse (#1944, rep by M Thompson)</li>
+<li>session: add request attribute caucho.session-server-id as a distributed session owner hint (#1912, rep by Mike Wynholds)</li>
+<li>write error content even if output is flushed, i.e. suppress forward() not allowed error (#1954)</li>
+<li>ssl: cipher string not properly cleared on close (#1927, rep by directi)</li>
+<li>security-manager config was missing @PostConstruct (#1934, rep by norlab)</li>
+<li>admin: resin_admin_localhost changed to resin_admin_external (#1976)</li>
+<li>amber: pstmt.setNull(..., Types.NULL) is not supports by MSSql (#1926, rep by Matt Ledom)</li>
+<li>jsp: rtexprvalue allowed in fragments (#1893, rep by Matthew Schmidt)</li>
+<li>session: cluster store was not updated for new TempBuffer size (#1911, rep by Ethan Larson)</li>
+<li>boot: update init.resin script for ubuntu (#1549)</li>
+<li>jni: ./configure PROXY_LIBS needs -lc for debian (#1806, #1924, rep by engberg, F Caso)</li>
+<li>NamedDispatcherImpl.include needs to call res.init instead of res.setRequest (#1971, rep by karl)</li>
+<li>windows issue with webapps (rep by Ed Hollingsworth)</li>
+<li>(2007-08-27) xpath: compatibility issues with Xerces in comparison exprs (#1943, rep by M Thompson)</li>
+<li>jsp: PageContextWrapper needs to clear the ELContext on reuse (#1908, rep by timur)</li>
+<li>win32: httpd.exe adds -user, -password, -name, -full-name (#1162, rep by mattp)</li>
+<li>win32: httpd.exe fixes as windows service (#1913, #1804, rep by briandeng, EUgene Kovnatsky)</li>
+<li>jsf: sessionScope EL wasn't working properly with RI (#1928, rep by mypda)</li>
+<li>persistent session load should not trigger valeUnbound (#1820, rep by calmman)</li>
+<li>bind-ports-after-start now enables listen (#1925, rep by M Schmidt)</li>
+<li>hessian: allow InputStream as final argument and as result for file upload/download (#1948, rep by Compl Yue Still)</li>
+<li>xpath: compatibility issues with Xerces in comparison exprs (#1858, #1943, rep by M Thompson, B Au)</li>
+<li>jsp: deferred EL handling did not properly detect .tld JSP version (#1909, rep by timur)</li>
+<li>jsp: validation needs to generate page="%= ... %" for page="&lt;%= ... %"> (#1917, rep by Michael Sengbusch)</li>
+<li>jsp: EL toBoolean() was inverting result (#1931, rep by dheggie)</li>
+<li>install: Makefile.in needs to change to $(LIBEXEC) to handle 64-bit installs (#1929, rep by copart)</li>
+<li>Change Content-Length size for POST to 64 bits (rep by Aaron Freeman)</li>
+<li>boot: LD_LIBRARY_PATH needs to be updated from environment (#1928, rep by ekreiser)</li>
+<li>boot: update httpd.sh to support chkconfig (#1863, rep by Eddie Anzalone)</li>
+<li>xml: QDeepNodeList.item needs to check for null (#1916, rep by ccwf)</li>
+<li>FileServlet needs to use crc64 as etag (rep by Rafael Munoz)</li>
+<li>Added full-url-regexp to rewrite-dispatch for url+query-string matching (#1833, rep by sf)</li>
+<li>welcome-file-list should not affect getRequestURL (#1848, rep by Yaroslav Sokolov)</li>
+<li>jsp: add support for import="static qa.Foo.*" (#1892, rep by Matthew Schmidt)</li>
+<li>ResinBoot now looks for -D arguments to command-line and propagates them to children</li> 
+<li>Request.getInputStream should not check the encoding (#1874, rep by Leos)</li>
+<li>createXMLStreamReader needs to deal with null charsetName (#1823, rep by jkriesten)</li>
+<li>JspCompiler now has -compiler flag to choose compiler (#1877, rep by A Deshpande)</li>
+<li>JspCompiler should default to compiling the app dir (#1870, rep by A Deshpande)</li>
+<li>EJBCompiler wasn't properly initializing the environment (#1878, rep by S Croco)</li>
+<li>hessian: BigDecimal wasn't properly updating reference (#1817, rep by Peter Henderson)</li>
+<li>cookie-length now includes the cluster characters (#1825)</li>
+<li>rewrite-dispatch now supports resin:import with dynamic updates (#1834, rep by sf)</li>
+<li>jsp: prelude and coda were not setting taglib prefixes (#1840, rep by sergek)</li>
+<li>resin.root needs to be set by Watchdog (#1869, rep by Brian Burke)</li>
+<li>update development.conf and ORB initialization (#1883, rep by guduri)</li>
+<li>hessian: issue with float args vs Serializable[] (#1894, rep by Rick Bray)</li>
+<li>quercus: fgets newline recognition fixes including use of auto_detect_line_endings</li>
+<li>quercus: abstract __construct was creating invalid compiled code</li>
+<li>quercus: interface_exists() implemented, class_exists() fixed</li>
+<li>quercus: precedence with ! and instanceof</li>
+<li>quercus: database access fixed for JSR223 (#1859, rep by toomasr)</li>
+</ul>
+</s2>
+
+<s2 title="3.1.2 - July 18, 2007">
+<ul>
+<li>JNI: solaris does not understand setsocketopt socket timeout (#1855, rep by T Corning)</li>
+<li>HttpProxyServlet needs to use matchesIgnoreCase for Connection header check (#1856, rep by H Shih)</li>
+<li>Hessian: issue with deserialization with replicated types (#1854, rep by remilon)</li>
+<li>added serialization-type to session-config allowing for "hessian" and "java" (rep by Jan Kriesten, #1868)</li>
+<li>(2007-07-02) Add TransactionManager compatibility for UserTransaction (not intended for application use) (#1814, rep by Takahiro Fukuda)</li>
+<li>setHeader("Connection", "close") will close the keepalive (#1829, rep by sf)</li>
+<li>multipart form needs to override query string values (#1831, rep by sf)</li>
+<li>quercus: array sort() with floats</li>
+<li>quercus: new self::$foo() (#1811, rep by Kibo)</li>
+<li>quercus: preg_match backreferences (#1562, rep by obaltz)</li>
+<li>quercus: /u option for preg functions</li>
+<li>quercus: pligg php application (#1800, rep by C Whalley)</li>
+<li>quercus: added php functions to query info on Quercus environment</li>
+<li>quercus: will not append an empty string to a non-empty one (#1712)</li>
+<li>quercus: Java exceptions can now be caught (#1455)</li>
+<li>quercus: implemented idate() (#1721)</li>
+<li>quercus: implemented get_included_files (#1262)</li>
+<li>quercus: implemented headers_list() (#1797)</li>
+<li>quercus: date() day of the week format ('w') was off by 1 (#1809)</li>
+<li>quercus: cases where an error did not print out location of error</li>
+<li>quercus: exec() and similar functions for *nix and Windows (#1812)</li>
+<li>quercus: cases where database connections were not being closed (#1749)</li>
+<li>quercus: characters being quoted for Drupal (#1790)</li>
+<li>quercus: int overflow in unserialize() (#1638)</li>
+<li>quercus: to allow '&lt;?' to open php code (#1729)</li>
+<li>quercus: allow object comparisons (#1459)</li>
+<li>quercus: ob module outputing garbage(#1755, #1763)</li>
+<li>quercus: SimpleXML (#1752)</li>
+<li>quercus: gallery 2.1 Warning: Assertion "!empty($key)" failed (#1744)</li>
+<li>quercus: unescaped backslash in character literals (#1738)</li>
+<li>quercus: Quercus producing invalid Java code (#1731)</li>
+<li>quercus: MediaWiki file upload parent directory does not exist (#1745)</li>
+<li>quercus: isset() (#1728)</li>
+<li>quercus: $_POST being overwrited by query string (#1732)</li>
+<li>setSecurityProvider added to ResinConfig (#1815)</li>
+<li>amber: caching issues with SoftReferences (#1816, rep by frankhung)</li>
+<li>quercus: QDate change for week of year (#1810)</li>
+<li>error-page could operate on wrapped request (#1325, rep by slonopatamus)</li>
+<li>sessions now persist using Hessian2 (#1764, rep by Jan Kriesten)</li>
+<li>admin: basic support for clustered administration (#1165, rep by Serge Knystautas)</li>
+<li>Update load balancing to take slow/frozen servers into account (#1766, rep by Kevin MacClay)</li>
+<li>hessian: overload should add param types (#1621, rep by hixxxxx)</li>
+<li>sendRedirect needs to set Content-Type header for some firewalls (#1805, rep by M Hanson)</li>
+<li>amber: change auto-gen sequence initialization order (#1718)</li>
+<li>ssi: add SSIFilter (#1760, rp by sergek)</li>
+<li>ssi: add support config errmsg (#1768, rep by Bill Au)</li>
+<li>ssi: add support for SSIServlet as included servlet (#1768, rep by Bill Au)</li>
+<li>add &lt;machine> configuration to better distribute session backups (#1294, rep by R Dredge)</li>
+<li>(2007-06-17) hessian: add X509Encryption and X509Signature for WS-Security capabilities (#1793, rep by Serge Merzliakov)</li>
+<li>amber: add support for OFFSET and LIMIT for CMP backward compat (#1794, rep by frankhung)</li>
+<li>database idle pool is now lifo to better handle load-balancing drivers (#1672)</li>
+<li>isapi_srun: enable keepalive (#1802, rep by M Weinig)</li>
+<li>isapi_srun: update uri decoding for utf-8 characters (#1629, rep by P. Sankar)</li>
+<li>httpd.exe issues on win32 with spaces in RESIN_HOME directory (#1554)</li>
+<li>quercus: MediaWiki was escaping html that should be allowed</li>
+<li>jsp: fragment issues with ValueExpression code generation (#1785, rep by timur)</li>
+<li>hessian: allow disabling of Serializable check with setAllowNonSerializable (#1796, rep by Jean-Francois Poilpret)</li>
+<li>hessian: classloader fixes in HessianProxyFactory (#1795, rep by vladi5)</li>
+<li>Added &lt;secure> override for &lt;http> to handle load-balancers/proxies (#1792)</li>
+<li>boot: WatchdogManager stop needs to use server-id only to handle multiple conf files (#1781, rep by M Schmidt)</li>
+<li>Add thread-executor-task-max to &lt;server> to configure ExecutorService (#1762, rep by D Berry and G Zhu)</li>
+<li>quercus: parsing of "&lt;foo();>" (#1729, rep by obaltz)</li>
+<li>HmuxLoadBalanceServlet should not call sendError when response is committed (#1789, rep by Bradley Van Cleave)</li>
+<li>jsp: EL functions not properly initialized on reload (#1788, rep by Matthew Schmidt)</li>
+<li>hessian: updates for new Hessian 2.0 draft</li>
+<li>ResinWatchdog should not configure environment, e.g. &lt;log> (#1778, rep by Alex Lorberg)</li>
+<li>XMLStreamWriterImpl.writeDTD added implementation (#1757, rep by anotherbug)</li>
+<li>hessian: MicroHessian updates for Java ME libraries (#1742, rep by Jazz Mack Smith)</li>
+<li>reduce default watchdog footprint (#1782, rep by Rick Ross)</li>
+<li>requestDestroyed needs to be able to get session (#1775, rep by A Deshpande)</li>
+<li>mod_caucho: updates to handle '%25' url encoding (#1661, rep by resinossi)</li>
+<li>nullpointer check for null servlet name in FilterMapping (#1783, rep by everflux)</li>
+<li>configure.in updates for ibm jdk (#1370, rep by Lucien)</li>
+<li>configure.in updates for jrockit-64 and solaris-64 (#1117, #1640, rep by cms, David Sourcy)</li>
+<li>admin: change login to use forms to work with Apache/IIS (#1611, #1636, rep by dennislewis18, pat75007)</li>
+<li>ssl: openssl password can be omitted (#1736, rep by Brian Woods)</li>
+<li>hessian: fixed HessianServlet init() recursive loop (#1779, rep by Vic Cekvenich)</li>
+<li>Change BTree uniqueness error message (#1690)</li>
+<li>mod_caucho: add ssl support for hmux protocol (#1496, rep by J Edwards)</li>
+<li>jstl: x:forEach with default namespace (#1646, rep by urutora90)</li>
+<li>jsp: sendError() issue with flush="true" and interaction with cached subpages (#1740, rep by johnhughbowen)</li>
+<li>hessian: add support for streaming, i.e. resetReferences() (#1626, rep by Ben Hood)</li>
+<li>hessian: add support for Collections.singletonMap (#1657, rep by dbrakhane)</li>
+<li>ProfilerServlet memory issues (#1623, rep by Bill Au)</li>
+<li>add web-app disable-cross-context (#1577, rep by Yidong Fang)</li>
+<li>rewrite: add 192.168 syntax support for remote-addr (#1735, rep by koyama)</li>
+<li>hessian: array deserialization with Calendar (#1743, rep by Stefan Fleiter)</li>
+<li>hessian: array deserialization with interface arrays, e.g. Serializable[] (#1614, rep by ldesegur)</li>
+<li>boot: JNI/Pro classloader must be used for JniFilePath (#1758, rep by Steven Garrett)</li>
+<li>Add dependency checking for MergePath (#1488, rep by Kimberly Nicholls)</li>
+<li>GzipFilter now disables itself when servlet sets Content-Encoding to avoid double compression (#1761, rep by jkriesten)</li>
+<li>jndi-link updates to properly set hashtable properties (#1739, rep by hazurek)</li>
+<li>hessian: HessianSkeleton.invoke needs to skip 'c' header for backwards compat (#1458, rep by Alon Salant)</li>
+<li>boot: propagate -d64 for 64-bit systems (#1759, rep by Alex Lorberg)</li>
+<li>boot: added &lt;java-exe> to select java executable (#1769, #1767 rep by C Ward)</li>
+<li>jndi: alias java:/comp to java:comp for Spring (#1603, rep by aadi deshpande)</li>
+<li>session: allow custom session in AbstractHttpResponse.writeHeaders (#1580, rep by Takahiro Fukuda)</li>
+<li>jsp: TagData.getAttributeString not properly returning nulls (#1557, rep by Simona Borello)</li>
+<li>servlet: getParameter encoding of query string char-encoding default (#1596, rep by Yonik Seeley)</li>
+<li>select-manager now uses epoll on Linux (#1518, rep by Greg Schroeder)</li>
+<li>jsp: response.getBufferSize() reporting (#1539, rep by Andrew Marcuse)</li>
+<li>rewrite-dispatch add &lt;proxy> option (#1445, rep by Daniel Lopez)</li>
+<li>amber: missing Java string escapes in SQL generation (#1438, rep by spoty)</li>
+<li>mod_caucho: Added CauchoStickySessions (#1423, rep by M Marich)</li>
+<li>multiple security-constraint/http-method issues (#1419, rep by Keith Fetterman)</li>
+<li>add strict-mapping to servlet-mapping (#1377, rep by Jonah Benton)</li>
+<li>Jar modification was not properly clearning dependency (#1296, rep by ngiudici)</li>
+<li>hessian: update protected methods to allow application extensions (#1627, rep by Ben Hood)</li>
+<li>session: add &lt;distribution-id> configuration to session-config (#1593, rep by hypefiend)</li>
+<li>server: add PortMXBean.stop() and start() (#1259, rep by Bryan Choate)</li>
+<li>(2007-05-24) security: update form-login with session timeout issue (#1674, rep by bthakkar)</li>
+<li>&lt;dependency> tag was not getting initialized (#1632, rep by Clint Harris</li>
+<li>jstl: sql tags with EL and old-style web.xml issues (#1589, rep by Josh Rehman)</li>
+<li>watchdog: copy environment from parent to child (#1733, fixed! by gjvc)</li>
+<li>cluster: lower logging level to info for socket failure (#1750, rep by Kippert)</li>
+<li>jsp: jspx encoding defaults need to be UTF-8 (#1708, rep by ccwf)</li>
+<li>jsp: JSTL issue with EL and old-style web-app (rep by Victor, #1348)</li>
+<li>ejb: cmr-many-to-one column calculation error message cleaned up (#1540, rep by chesspoker)</li>
+<li>virtual-host: virtual host regexp issues with windows (#1689, rep by S. Avogadro)</li>
+<li>server: add socket listen() capability so ports only listen after init (#1676, rep by S Pannell)</li>
+<li>server: isIgnoreClientDisconnect needs null check (#1737, rep by lmgelberg)</li>
+<li>server: thread-idle-min error message was incorrect (#1724, rep by copart)</li>
+<li>jsp: tag file and JSP EL function issues (#1730, rep by webvir)</li>
+</ul>
+</s2>
+
+<s2 title="3.1.1 - May 7, 2007">
+<ul>
+<li>FileServlet: windows security validation for bad URLs</li>
+<li>DB pool: add close-dangling-connections (#1707)</li>
+<li>Cache: add rewrite-vary-as-private for IE caching bug (#1581, rep by sergek)</li>
+<li>Amber: @GeneratedValue with MS SQLServer was not working #1702 (rep by Michael Sengbusch)</li>
+<li>Quercus: file uploads (#1434, #1435, #1615, rep by D Berry, M Bopp, snb)</li>
+<li>Amber: createNativeQuery(String sql) i.e. missing mapping was throwing NPE (#1687, rep by Michael Sengbusch)</li>
+<li>Amber: native queries with parameters (#1691, rep by Michael Sengbusch)</li>
+<li>(2007-04-24) SSL: add OpenSSL_add_all_algorithms() during initialization (#1670, rep by thintz)</li>
+<li>Servlet listener needs to handle description tag (#1635, rep by dpasek)</li>
+<li>JSP: issues with tag class validation with generics (#1677, rep by L Kaminsky)</li>
+<li>Session: verify session-max is valid (#1678)</li>
+<li>JSP: i18n issue with filters (#1686, fixed! by gzhu)</li>
+<li>Amber: @OneToMany in subclass (#1576, rep by bregnvig)</li>
+<li>Amber: with multiple data-sources (#1680, rep by Michael Sengbusch)</li>
+<li>Update ping mailer for mail-subject (#1564, rep by Abdul Karim)</li>
+<li>Hessian: add missing synchronization for HashMaps (#1588, rep by bjornm)</li>
+<li>DBPool: pooled connections with passwords could have race condition (rep by Sean Patronis)</li>
+<li>JMX: EnvironmentMBeanServer vs MBeanView deadlock (#1543, rep by lschumacher)</li>
+<li>mod_caucho/caucho-status updates</li>
+<li>database ping-query added (#1641, rep by Andrew Jacobs)</li>
+<li>ClassLoader getResources fix (#1643)</li> 
+<li>Filter mapping with getNamedDispatcher (#1634, rep by dpasek)</li>
+<li>jsp multiple taglib definition issue (#1595, rep by Murthy Ch)</li>
+<li>jsp tag/scriptlet parse issue (#1653, rep by webvir)</li>
+<li>(2007-04-02) Servlet listener needs to handle description tag (#1635, rep by dpasek)</li>
+<li>Amber: enhanced classes with &lt;resource> (#1622, rep by jarnbjo)</li>
+<li>JSP: restore velocity syntax (#1612, rep by T. Weihs)</li>
+<li>JSP: resin-c:out namespace wasn't created for validation. (#1631, rep by Steve Ferguson)</li>
+<li>OpenSSL: Add call to OpenSSL_add_all_algorithms (fixed! by Tom Hintz)</li>
+<li>Expect: 100-continue handling with Resin's load balancer (rep by A Balandran, #1648)</li>
+<li>JSP: $\{...}  wasn't generating proper namespace for validation (rep by Matthew Schmidt, #1647)</li>
+<li>(2007-03-07) ConnectionPool timeout defaults incorrect (#1586, rep by gschemmel)</li>
+<li>web-app description/display-name order is arbitrary (#1599, rep by kamleshjkl)</li>
+<li>character-encoding now controls default encoding for writers (#1563, rep by asklxf)</li>
+<li>Add header conditions for rewrite-dispatch (#1547)</li>
+<li>Add throttle-concurrent-max to &lt;http></li>
+<li>ping was missing @PostConstruct</li>
+<li>logging: formatted exception logs must keep the thrown exception (#1361, rep by rydenius)</li>
+<li>Quercus: updates to locking (#1504, rep by at4u)</li>
+<li>Amber: entities may have protected constructors (#1447, rep by KnisterPeter)</li>
+<li>Quercus: toLong and toDouble need implementation for Java objects (#1397, rep by dberry)</li>
+<li>session activate/passivate should call HttpSessionActivationListener for attribute values, not valueBound (#1402, rep by slonopatamus)</li>
+<li>boot: add --log-directory as command-line argument (#1537, rep by Rick Mann)</li>
+<li>Quercus: QuercusServlet needs init-param for database (#1535, rep by Markus Wolf)</li>
+<li>fixed extra error messages generated on resin.conf restart (#1405, rep by M Marich)</li>
+<li>mod_caucho: add windows read timeout for dead sockets (#1490, rep by T Fukuda)</li>
+<li>Quercus: add __CLASS__ support (#1443, rep by KnisterPeter)</li>
+<li>Servlet: getContext should normalize url (#1450, rep by lina)</li>
+<li>JSP jsp:forward wasn't picking up EL (#1453, rep by Katrin Kippert)</li>
+<li>getServerPort not properly calculated with virtual-host (#1509, rep by justinwcs)</li>
+<li>Amber: mapped-superclass/metadata-complete is optional (rep by Costin Leau)</li>
+<li>server-header needs to be used for error pages (#1491, rep by Larry Gelberg)</li>
+<li>tree-loader getResources() needs to return all matching jars (#1516, rep by KnisterPeter)</li>
+<li>Resin's JSTL needs to use the http://java.sun.com/jsp/jstl/core namespace (#1487, rep by John Rehman)</li>
+<li>Log rollover thread spawn needs to be at priority level.</li>
+</ul>
+</s2>
+
+<s2 title="3.1.0 - Dec 21, 2006">
+<ul>
+<li>server-header should be used for error messages when specified (#1491, rep by Larry Gelberg)</li>
+<li>rewrite-dispatch was not properly applying top-level filters (#1392, rep by M Marich)</li>
+<li>&lt;database> &lt;driver> needs to validate &lt;init-param> with driver type (#1520, rep by Shane Cruz)</li>
+<li>JPA: bytecode enhancement needs to handle LocalVariableTable (#1512, rep by jarnbjo)</li>
+<li>JMS: resin_jms_message should not use 'connection' as column name for MySQL 5 (#1511, rep by jarnbjo)</li>
+<li>continuous errors with dangling connections in amber when using cmp relations (#1495, rep by plehov)</li>
+<li>./configure changes for 64bit detection (#1465, rep by K Paulson)</li>
+<li>(2006-12-03) Quercus: marshaling of null for Java objects: Byte, Integer, etc (#1444, rep by KnisterPeter)</li>
+<li>OpenSSL: nullpointer when loading ssl fails (#1442, rep by Anoop Achuthan)</li>
+<li>expand-directory in web-app-deploy generated confusing error message (#1452, rep by gjvc)</li>
+<li>Make transaction manager visible for Spring (#1425, rep by buzzterrier)</li>
+<li>Quercus: count("asdf") should return 1. (#1483, rep by Salz)</li>
+<li>Quercus: null checking on file_exists (#1430, rep by Anoop Achuthan)</li>
+<li>Amber: inheritance fixes (#1454, rep by KnisterPeter)</li>
+<li>work-dir wasn't configuring properly (#1409, rep by ckchris)</li>
+<li>Amber/EJB: ejb-server was overriding persistent-manager's data-source (#1456, rep by spoty)</li>
+<li>Amber: 99 fields were overflowing the generated code (#1440, rep by spoty)</li>
+<li>Quercus: mysqli_connection should return false with a connection error (#1401, rep by dberry)</li>
+<li>access log: getNewline() adds check for windows is line.separator is null isntead of defaulting to \n (#1449, rep by Chris Head)</li>
+<li>Cache: max-entry-size was being ignored (#1474, rep by Kalev Sullakatko)</li>
+<li>Quercus: marshal String[] properly (#1463, rep by KnisterPeter)</li>
+<li>JSP: .tag attribute with inner classes were not working (#1479, rep by stevejf7)</li>
+<li>Quercus: rework for final javax.script API (#1473, rep by George Moschovitis)</li>
+<li>Quercus: set_exception_handler (#1400, rep by awatt)</li>
+<li>isapi_srun must turn off chunking for non-200 responses (#1460, ve6eei)</li>
+<li>filter needs to allow id field (#1468, rep by mogsie)</li>
+<li>EJB/CMP: ejbSelect needs to close result set in finally block (#1303)</li>
+<li>EJB: change hessian stub generation location to work/ejb (#1301 rep by Steve Baugus)</li>
+<li>mod_caucho: avoid premature error validation on non-blocking connect() failure for Solaris (#1415, rep by L Kaminsky)</li>
+<li>Changed Jar.create synchronization so the remoteEvent will occur outside the sync (#1428, rep by mabbott)</li>
+<li>JMX: getter/setter swapped for Introspector when no getter (#1390, rep by maltem)</li>
+<li>JSP: EL issues with .jspx files (#1433, rep by ccwf)</li>
+<li>Add resin.version and resin.versionDate to EL variables (rep by Bill Au)</li>
+<li>mod_caucho updates to avoid extra dispatch requests (rep by Steve Baugus)</li>
+<li>Amber now throws correct exceptions for non-entity arguments (#1380)</li>
+<li>JSP: BeanELResolver needs to check for null getter (rep by Matthew Schmidt)</li>
+<li>Log rotation now buffers during archiving</li>
+<li>Add DBPool.closeIdleConnections() (#1394, rep by M Young)</li>
+<li>Apache: added ResinSessionCookie and ResinSessionUrlPrefix (#1376, rep by Steve Baugus)</li>
+<li>Validation for save-mode and always-save-session. (#1386, rep by justinwcs)</li>
+<li>Hessian: specialized serializers were not adding references (#1417, rep by jjviana)</li>
+<li>JSP 2.1</li>
+<li>Servlet 2.5</li>
+<li>(2006-10-06) Quercus: realpath must strip trailing slash (#1261, rep by koreth)</li>
+<li>Quercus: highlight_file (#720)</li>
+<li>Quercus: fsockopen must return BinaryInput/BinaryOutput (#1383, rep by David Berry)</li>
+<li>Quercus: JavaValue.toString() was stripping '@' (#1388, rep by David Berry)</li>
+<li>jsp:useBean in tag file was using unavailable objects (#1389, rep by Matthew Schmidt)</li>
+<li>JSP tag file adds attributes as java variables (#1389, rep by Matthew Schmidt)</li>
+<li>session persistence requires original request (rep by Takahiro Fukuda)</li>
+<li>cookie-append-server-index should append exact index (rep by Serge Knystautas, #1346)</li>
+<li>(2006-09-20) mod_caucho issues with config server (rep by Steve Baugus)</li>
+<li>session write at finish was clearing useCount too early, causing spurious session failures (rep by Ed Hollingsworth)</li>
+<li>Disable select-manager for win32 because of socket limits (#1344, rep by Olaf Fentsch)</li>
+<li>IntMap wasn't handling deletes properly for ThrottleFilter (#1356, rep by sksamuel)</li>
+<li>Change to addByteCodeEnhancer (#1157, rep by Costin Leau)</li>
+<li>Add DynamicClassLoader.getNewTempClassLoader() (#1157, rep by Costin Leau)</li>
+<li>Additional CodeSource fixes for JSPWiki (#1333, fixed! by ajaquith2)</li>
+<li>ClassEntry for hot reloading needs to reset the dependency (#1345, rep by WIll Jaynes)</li>
+<li>QDate needs to look up "GMT" not "UTC" to handle French locales (#1340, rebp by jiib75)</li>
+<li>JSP validation of tag variables needs to handle inner classes (rep by Bill Au)</li>
+<li>(2006-09-13) mod_caucho needs to update cached file for large dependency-check-interval (rep by Steve Baugus)</li>
+<li>EJB/Amber create/getter/setter issues (#1265, rep by gzhu)</li>
+<li>EJB: ejb-entry was not properly applied for EJB entity beans (#1322, rep by gzhu)</li>
+<li>javax.el behavior incorrect for b.bogus (#1327, rep by slonopatamus)</li>
+<li>Add ConnectionPoolMXBean.clear() to clear idle connections in the pool (#1314, rep by Sergiy Proskuryakov)</li>
+<li>Update resin.conf change logic to avoid restart race condition (#1269, rep by Nick Berry)</li>
+<li>servlet-mapping url-regexp wasn't working with welcome-file-list (#1298, rep by marcelloh)</li>
+<li>&lt;jvm-args> defines boot parameters (#1218)</li>
+<li>SessionManager was created for closed web-app (#1295, rep by sks)</li>
+<li>Connection pool needs to rollback after resetting the connection isolation for Oracle (#1208, rep by Will Jaynes)</li>
+<li>Amber: added named parameters to JPA-QL (#1063, rep by Keith Fetterman) </li>
+<li>Removed unnecessary #include "jvmdi.h" for resin-pro (#1313, rep by bdoperations)</li>
+<li>./configure heuristics to catch IBM JDK 64-bit (#1311, rep by bdoperations)</li>
+<li>Amber query with named parameters was not implemented (#1063, rep by keith)</li>
+<li>Amber NEW was not implemented in the SELECT clause (#1215, rep by fbertra)</li>
+<li>Amber JOIN was not implemented in the FROM clause (#1214, rep by fbertra, Francois Bertrand)</li>
+<li>&lt;database> prepared statement caching shouldn't cache with resultType (#1310, rep by gzhu)</li>
+<li>JNDI now throws NameNotFoundException instead of returning null (#1134, rep by Jan Heise)</li>
+<li>Get certificates for code signing from jar files (#1008, solved by Andrew)</li>
+<li>Hessian null float constructor was using Double instead (#1306, rep by Rick Mann)</li>
+<li>Hessian constructor cost could overflow with too many args (#1305, rep by Rick Mann)</li>
+<li>&lt;log level="finer"> should also set the logger level (#1290, rep by brantd95)</li>
+<li>JSP EL function returning void was generating junk for output (#1281, rep by slonopatamus)</li>
+<li>mod_caucho reading cached localhost_6800 with headers</li>
+<li>mod_caucho and 100-continue</li>
+<li>mod_caucho and session-cookie value (#1279)</li>
+<li>mod_caucho stripping of ;jsessionid= wasn't working</li>
+<li>(2006-08-07) ejb-server jndi-name for local name wasn't handled properly (#1276, rep by Andrew Barson and Matt Pangaro)</li>
+<li>isapi_srun.dll changed to default 6802 (#1274, rep by mindlink)</li>
+<li>license signature fixes (rep by Matt Pangaro)</li>
+</ul>
+
+</s2>
+
+<s2 title="3.0.20 - Aug 1, 2006">
+<ul>
+<li>removeAttribute(PAGE_SCOPE) was removing all attributes (#1271, rep by planetpratt)
+</li><li>redeploy-mode is allowed in web.xml
+</li><li>HotDeploy was forcing restart when multiple files changed simultaneously (rep by Bill Au)
+</li><li>JNI compilation issues on win32
+</li><li>JSP: PageContext may remove *.class on Error when recompile-on-error is false (#1258, rep by Jay Ballinger, vc)
+</li><li>(2006-07-20) Change close/restart logic to test for closing instead of closed (rep by Nicholas Berry) 
+</li><li>Quercus: comparison with '.' wasn't converting properly (#1257, rep by koreth)
+</li><li>Quercus: isModified pwd needs to be static Quercus to avoid chdir issues (#655)
+</li><li>Quercus: basic Java Map support (#1109, #1228, rep by koreth, akdeivanaathan)
+</li><li>Quercus: add smtp_user and smtp_password
+</li><li>Quercus: dbpool generation for wasn't creating unique name (#1241, rep by koreth)
+</li><li>Quercus: each after end of array (#1233, rep by koreth)
+</li><li>Quercus: crypt salt issue with mantis
+</li><li>Hessian: add HessianProxyFactory.create method with classloader (rep by Eike Stepper)
+</li><li>rewrite-dispatch needs to handle http vs https (#1251, rep by Jill Wetzler)
+</li><li>Quercus: token module needs to expose "tokenizer" extension (#1232, rep by koreth)
+</li><li>Quercus: preg_split with null group (#1240, rep by George Cox)
+</li><li>Quercus: get_resource_type (#1156, rep by demian)
+</li><li>Quercus: update set_file_buffer to BinaryStream (#1242, rep by koreth)
+</li><li>Amber: resolve nullpointer in map lookup (#1149, rep by plehov)
+</li><li>Amber: introspection wasn't looking at parent classes (#1090, rep by Alex Cruise)
+</li><li>File.mkdirs needs to be synchronized (rep by Dave Winterbourne)
+</li><li>OpenSSL client cert not properly populating javax.servlet (#1185, rep by mattp)
+</li><li>Fixes for JDK 1.4 compatibility (#1201, rep by vbavin)
+</li><li>(2006-07-05) Quercus: performance work for includes (rep by koreth)
+</li><li>EL: "1.0" was not properly interpreted as double (#1225, rep by Jill Wetzler)
+</li><li>Quercus: token_name and token_get_all (#746, #1182, rep by koreth)
+</li><li>Quercus: improve error message when database driver missing (#1113, rep by koreth)
+</li><li>Quercus: shell_exec (#1205)
+</li><li>transactions with db-pool and max-idle-time (#1136, rep by Takahiro Fukuda)
+</li><li>c:set issue with jstl (rep by Nicholas Berry)
+</li><li>hmux issues with forward and response not skipping final bytes (#1190, mpavel)
+</li><li>GzipFilter wasn't handling late changes of status properly (#1087, rep by Frank Nestel)
+</li><li>Quercus: _GET/_POST needs to handle i18n (#1193, rep by artem)
+</li><li>Quercus: handle while(false) (#1176, rep by koreth)
+</li><li>Quercus: fetch with SQLException should return null (#1221, rep by artem)
+</li><li>OneToMany fetchType had incorrect default (rep by Christopher Stach)
+</li><li>mod_caucho.c should return the actual status code in caucho_request (#1075, fixed! by Rudy D'Hauwe)
+</li><li>BundleManager must not add '/' prefix (#1110)
+</li><li>wrapper.pl enhancements to clean up shutdown (#1194, rep by slamb)
+</li><li>HttpProxyServlet not properly handling 100 Continue (#1171)
+</li><li>mod_caucho should always obey dead-time even in config updates (#1174, rep by jdane)
+</li><li>Hessian: add setChunkedPost option to HessianProxyFactory (#1149, rep by Alon Salant)
+</li><li>Quercus: register_long_arrays (#992, rep by tyson)
+</li><li>Quercus: mail (#617)
+</li><li>Quercus: openlog, syslog (#699, #700)
+</li><li>Quercus: fopen can use include path (#631)
+</li><li>Quercus: add strict option (#621)
+</li><li>JSP: preliminary trim-directive-whitespaces (#1204, rep by Bill Au)
+</li><li>Hessian: added enum support for both Hessian 1 and 2 (#1209, rep by Thomas Wang)
+</li><li>Catch exceptions thrown by compileBatch so following classes can be compiled (rep by Bill Au)
+</li><li>Improved error message for &lt;database&gt; max-active-time close and attempted use (#1137, rep by Neil Fradkin)
+</li><li>JSP: Allow tablespace as JDBC JMS parameter (#1077, rep by Tom Gennaro)
+</li><li>resin:import was not establishing proper environment context (#1060, rep by Bill Au)
+</li><li>Check for invalid j_uri for j-security-check (#1206, rep by De Leeuw Thierry)
+</li><li>Avoid javax. and java. differences from changing ClassDependency (#1044, rep by Serge Knystautas)
+</li><li>ErrorPageManager should log servlet errors as log level="warning" (#1184, rep by Bill Au)
+</li><li>Hessian: string chunk can't end in high surrogate (#1203, rep by Thomas Wang)
+</li><li>JSP: x:parse needs to use Reader instead of input stream (#1083, rep by jrg745)
+</li><li>Added -javaagent, etc to wrapper.pl (#1211)
+</li><li>Missing synchronized on _mbeans in MBeanView (#1183, rep by lschumacher)
+</li><li>wrapper.pl should have pro.jar before resin.jar (#1202, rep by Bill Au)
+</li><li>Quercus: global $$foo (#1216)
+</li><li>EJB: Check for null in EjbSessionBean.deployServer (#1138, rep by Andrew Barton)
+</li><li>(2005-06-23) Hessian 2.0 draft implementation (#2006, rep by Mattias Arbin)
+</li><li>Added session-manager save-mode='before-flush' (#936, rep by Michael Harper)
+</li><li>Added client-connect-timeout as a load balancing configuration (#1168, #1195, rep by jornsvendsen, Serge Knystautas)
+</li><li>JMX/Admin: expand/complete ClusterClientMBean
+</li><li>JMX/Admin: removed Server as a context
+</li><li>(2005-06-14) Added jaf to distribution
+</li><li>java.util.logging.Logger getLevel() should return null if unassigned (#1085, rep by Bill Au)
+</li><li>java.util.logging Logger add &lt;logger&gt; (#1186, rep by Michael Earl)
+</li><li>java.util.logging Logger defaults to INFO (#1186, rep by Michael Earl)
+</li><li>java.util.logging significant fixes to logger vs handler level (#1186, rep by Michael Earl)
+</li><li>Quercus: is_subclass_of (#1180, rep by koreth)
+</li><li>Quercus: parent::foo(1,2,3,4,5,6) generated code (#1177, rep by koreth)
+</li><li>Quercus: dirname/__FILE__ issue (#1135, rep by Alex Sharaz)
+</li><li>Quercus: set_time_limit(0) should be treated as infinite (#1178, rep by koreth)
+</li><li>Quercus: adding double + long incorrect (#1179, rep by koreth)
+</li><li>Add load-balance-weight, client-slow-start-time, client-max-idle-time, client-fail-recover-time (#1168, rep by Serge Knystautas)
+</li><li>Jdk15Compat was missing astore_0 for _resin_compat_class (#1159, rep by L Plaetinck)
+</li><li>Added session support for triplicate, i.e. two backups (#1088, rep by wet745)
+</li><li>JMS: changed blobs for oracle to use RETENTION
+</li><li>(2006-06-02) isapi plugin issue waiting for non-post (#1150, rep by Matt Pangaro)
+</li><li>(2006-05-31) HttpProxyServlet needs to clear attributes on reading response (#1143, rep by Anoop Achuthan)
+</li><li>Quercus: mysql_query regression with UPDATE (#1131, rep by koreth)
+</li><li>TransactionManagerImpl._transactionList was not properly synchronized (#1151, rep by Matt Pangaro)
+</li><li>Added implementation for java.util.logging.LogManager.getLoggerNames() (#1124, rep by eahollin)
+</li><li>Quercus: self::foo from static method not properly handling q_this (#1145, rep by koreth)
+</li><li>Quercus: add str_ireplace (#1152, rep by koreth)
+</li><li>Quercus: multidimensional array unset wasn't copy-on-write (#1155, rep by koreth)
+</li><li>max-close-statements was not in the .rnc (rep by Takahir Fukuda)
+</li><li>(2006-05-22) Quercus: while (1) must handle java "statement not reached" (#1139, rep by koreth)
+</li><li>Quercus: mktime timezone issues (#1132, rep by koreth)
+</li><li>Quercus: Exception.getMessage() support (#1142, rep by koreth)
+</li><li>Quercus: __get, __set, __call (#638, #645)
+</li><li>Quercus: define(FOO, 1) was defining FOO as "FOO" (#1140, rep by koreth)
+</li><li>Quercus: basic abstract, interface implementation
+</li><li>(2006-05-22) Quercus: crc32 returns unsigned (#1133, rep by koreth)
+</li><li>Quercus: pack/unpack (#1102, rep by koreth)
+</li><li>Quercus: microtime fixes (#1119, fixed! by koreth)
+</li><li>Quercus: basic try .. catch support (#1120, 1121, 1062, rep by koreth)
+</li><li>(2006-05-19) Quercus: string comparison issues (#1125, rep by koreth)
+</li><li>Quercus: return ref evaluation for Java calls weren't calling methods (#1123, rep by koreth)
+</li><li>Quercus: complete module exception refactoring (#1122, rep by koreth)
+</li><li>Quercus: gregoriantojd (#1116)
+</li><li>Quercus: ServerArrayValue lazy fill was filling each time (rep by koreth)
+</li><li>(2006-05-16) Quercus: resources should be usable as keys (#1114, rep by koreth)
+</li><li>Quercus: fsockopen and fgets needs to return cr-lf (#1115, rep by koreth)
+</li><li>Quercus: fsockopen (#1104, rep by koreth)
+</li><li>(2006-05-15) Quercus: add server-name to &lt;init&gt; to populate $_SERVER (#1105, rep by koreth)
+</li><li>Quercus: debug_backtrace for interpreted mode (#1124, rep by koreth)
+</li><li>Quercus: compilation problems in basic throw statement (#1098, rep by koreth)
+</li><li>Quercus: static function called from static function (#1099, rep by koreth)
+</li><li>Quercus: &lt;?PHP is case-insensitive (#1107, rep by koreth)
+</li><li>Quercus: '-' and '+' sometimes converted double to long (#1093, rep by koreth)
+</li><li>Quercus: double array references should be converted to integer (#1100, rep by koreth)
+</li><li>Quercus: '%' always returns an integer (#1106, rep by koreth)
+</li><li>Quercus: array_merge should return null on null argument (#1103, rep by koreth)
+</li><li>Quercus: null.toArray should return empty array (#1103, rep by koreth)
+</li></ul>
+</s2>
+
+<s2 title="3.0.19 - May 15, 2006">
+<ul>
+<li>(2006-05-11) getResources for library-loader and tree-loader weren't picking up directories like META-INF/ (#1052, #1095)
+</li><li>Cache: vary crc64 regression
+</li><li>resin.conf changes need to restart entire server
+</li><li>Quercus: Gallery2 running
+</li><li>Quercus: Java() regression failures (rep by Vic Cekvenich)
+</li><li>(2006-05-10) Amber: EntityManager.find should return null if no object (#1080, rep by fbertra)
+</li><li>Amber: CMP 2.1 loading was improperly casting (#1071, rep by Christian Amott)
+</li><li>el-ignored with tagx and el-ignored check in attribute vs body (rep by Gary Doughty)
+</li><li>Static JSP taglib was generating incorrect fragment code (rep by Bryan Davis)
+</li><li>ServletException should implement getCause() in terms of getRootCause() (#1076, rep by J Dane)
+</li><li>(2006-05-02) AbstractRotateLog uses truncate instead of remove for old file
+</li><li>stdout.log rotation file name for size overflow uses incorrect time (rep by Bill Au, #1054)
+</li><li>Important security issue on windows involving web-app-deploy (affects 3.0.17 and 3.0.18)
+</li><li>Quercus: eval() needs access to the symbol table and "this" (rep by Jack Zhang)
+</li><li>(2006-04-14) ToCharResponseAdapter should not close the underlying writer on close (#989, rep by Tony Field)
+</li><li>CGI was sending output through PrintWriter instead of OutputStream (#1035, rep by mineral)
+</li><li>Added aliases and java type for ISO-8859-10 (rep by Michael Young)
+</li><li>AbstractHttpResponse.finish was not ignoring client disconnect (#1045, rep by Mattias Jiderhamn)
+</li><li>LdapAuthenticator (#666, rep by Rudy D'Hauwe);
+</li><li>Basic SSI support with SSIServlet (#205)
+</li><li>JSP/tag file compilation issue (#1037, rep by Serge Knystautas)
+</li><li>ISAPI handling of 100-continue and flushing not properly reading 'f' response (#982, rep by assurone)
+</li><li>Added connection-error-page for IIS (#911, rep by mitch)
+</li><li>Add build rule to convert .rnc to .xsd for Resin schema (#410)
+</li><li>JMS: postgres issue in creating ephemeral tables (#1034, #1041, rep by peden, Bryan Davis)
+</li><li>./configure changes for x86_64 (#915, rep by teemupo)
+</li><li>Redeploy of Host was not clearing caches (#979, rep by sks)
+</li><li>Added database/wrap-statements (#957, rep by Shawn Laubach)
+</li><li>Profilers supports ?sort=count (#829, rep by T Moorer)
+</li><li>Quercus: "public static" wasn't getting parsed (rep by Patrick)
+</li><li>JSTL: changes to support Xalan/Xerces with fast-jstl (#889)
+</li><li>SSL: added support for ca-revocation (#935, rep by YouchunChen)
+</li><li>Open transactions now closed on shutdown (#934, rep by Thomas Gennaro)
+</li><li>JSP: EL wasn't promoting "3.9" to double properly (#919, rep by m5)
+</li><li>Quercus: add APC API
+</li><li>Quercus: auto_prepend_file, auto_append_file (#616)
+</li><li>Quercus: JavaClass::foo, i.e. Java static functions (#584)
+</li><li>Quercus: print not properly parsed as expr (#1039, rep by THomas Moorer)
+</li><li>XML: external DTD not reading encoding (#916, rep by GreenEyed)
+</li><li>XML: DOMBuilder improperly adding DOCTYPE (#945, rep by Jim Spring)
+</li><li>incorrect initialization of allocation table for session (#999, rep by doughty)
+</li><li>win32 httpd.exe not properly clearing bind sockaddr_in (#1038, rep by wet745)
+</li><li>ProfileServlet now allows format=xml (#539, rep by Bill Au)
+</li><li>file-store with redeploy was sending warning message (#1020, rep by Mattias Jiderhamn)
+</li><li>&lt;host&gt; with id="" and hostName treats id as host-alias (#1017, rep by tderouin)
+</li><li>add &lt;prologue&gt; to &lt;web-app&gt; for classloaders (#1027, rep by gwagenknect)
+</li><li>add resource-default for .rar files (#416, #662, #663 rep by George Cox)
+</li><li>Add basic session MBean information (#314, rep by Serge Knystautas)
+</li><li>MergePath was returning incorrect path for missing file (#281, rep by david)
+</li><li>Add redeploy-check-interval (#242, rep by pburleson)
+</li><li>Amber/CMP: get collection needs to reinitialize the AmberConnection (#997, rep by nquery)
+</li><li>Amber/CMP: CacheConnection cannot be reused. (#998, rep by nquery)
+</li><li>Hessian: Calendar needs special serialization (#1023, rep by R Mann)
+</li><li>CMP: cached entity beans were not rechecking the database on findByPrimaryKey (#1003, #1012, rep by Christian Amott)
+</li><li>Amber: create/update was not in XA properly (#971, #1013 rep by gzhu, P Budzik)
+</li><li>(2006-04-03) JSP: add print-null-as-blank (#899, rep by koreth)
+</li><li>Hessian: Improve error reporting for 401 (#988, rep by igor)
+</li><li>possible sync issue on session shutdown (#974 rep by CHanan Bruanstein)
+</li><li>/WEB-INF needs to return 404 NOT FOUND (#1032)
+</li><li>CronResource did not properly handle DST (#1033)
+</li><li>roles support for JaasAuthenticator with getRoles and isUserInRole (#995)
+</li><li>log with path="stdout:" cannot be rotated, so should give error messages (#958, rep by Gary Doughty)
+</li><li>logout of one session in a SSO should log out all (#599, rep by Vinny)
+</li><li>added log message when initialization complete (#902, rep by rudy)
+</li><li>rollover-count is allowed in &lt;log&gt; (#833, rep by T Moorer)
+</li><li>path-format with *.gz can write directly to gzip (#345)
+</li><li>Servlet close events (session and listener) must be called before resources are closed (#987, rep by volga)
+</li><li>For JSP, config.getServletName() should return the JSP name (#1006, rep by briandeng)
+</li><li>JMS: setNull incorrect type in send (#1028, rep by peden)
+</li><li>welcome-file-list was not applied to forward/include (#463, rep by mw46)
+</li><li>HEAD with 404 (#1026, rep by mattryall)
+</li><li>Burlap deserializer wasn't deserializing "Object a;" fields properly (#1015, rep by Jerry Tian)
+</li><li>Support for @com.caucho.loader.RequireReload (#194, rep by Serge Knystautas)
+</li><li>Apache 2.2 configure needs to use APR_BINDIR and $\{apr_bin}/apr-config (#1024, rep by lilmatt)
+</li><li>chunked encoding for isapi (#1007, #1018, #968 rep by Warren Bailey)
+</li><li>rewrite-redirect is now allowed for the &lt;server&gt; block (#85, rep by tzaperas)
+</li><li>using unitialized variable for iis install-as (#1006, rep by Sergiy Proskuryakov)
+</li><li>(2006-03-28) ./configure changes for Apache 2.2 (#869, rep by Leonid Kaminsky)
+</li><li>./configure needs to set apache_exe from apxs when available (#996, rep by pomo)
+</li><li>Add basic IGNORE support for XML (#962)
+</li><li>@EJB and @Inject need to work with inheritance (#952)
+</li><li>EJB 2.1 synchronization with the database is via java:comp/env/persistence/PersistenceContext/resin-ejb (#904, rep by koreth)
+</li><li>synchronization issues with access.log (#927, rep by Han)
+</li><li>jspx namespace with http: URI was causing exception while looking for tag (#993, rep by jrg745)
+</li><li>JSTL wasn't handling {0,number,currency} properly (#931, rep by Keith Fetterman)
+</li><li>use select-manager instead of enable-select-manager (#973)
+</li><li>rewrite-dispatch at &lt;host&gt; level wasn't grabbing the application (#1010, rep by Bill Au)
+</li><li>JMX: ArrayType.getElementOpenType was not properly defined (#994, rep by duchene)
+</li><li>jvmti code needs to release jvmti instance 
+</li><li>welcome-file-list with unknown servlet causes nullpointer (#976, rep by marcelloh)
+</li><li>Refactored Amber to use javax.persistence (#943, rep by koreth)
+</li><li>JSP files can be injected with J2EE annotations
+</li><li>setTextContent needed on DOM Node (#985, rep by Bill Au)
+</li><li>Update thread pool to use stack instead of ring to improve spike handling (#905, rep by Christopher Stach)
+</li><li>Add environment-system-properties flag for jinfo issues (#151, #411 rep by Kirk Rasmussen)
+</li><li>XPath cache was holding objects from old classloaders (#951, rep by Mattias Jiderhamn)
+</li><li>web-app merging for webapps/ROOT was improperly handling id="/" (rep by Keith Fetterman)
+</li><li>enable-select-manager had incorrect order in ServletServer (#967, rep by Rudy D'hauwe)
+</li><li>Amber: refactor for javax.persistence draft update
+</li><li>Hessian: use setChunkedStreamingMode when available (#955, rep by Alon Salant)
+</li><li>Use SoftReference to handle JSP memory issues with many pages (#600, rep by Uwe Schaefer)
+</li><li>Allow EL expression with missing web.xml (#941, rep by tinyspace)
+</li><li>Add missing synchronized in ServletManager.addServlet (#946, rep by Fiaz Hossain)
+</li><li>httpd.exe wasn't allocating enough space for the -J args count (#947, #948, #959, rep by Ed Hollingsworth)
+</li><li>&lt;database&gt; should support ManagedConnectionFactory (#221, #224, rep by D Rice)
+</li></ul>
+</s2>
+
+<s2 title="3.0.18 - Feb 23, 2006">
+<ul>
+<li>ConnectionPool needs to be a lifo to avoid accumulating too many pool items (rep b Kaminsky Leonid)
+</li><li>max-create-connections wasn't included in DBPool (rep by Kaminsky Leonid)
+</li><li>(2006-02-15) mod_caucho was not properly handling check-interval larger than 32-bits (#926, rep by Mutsubu Inayama)
+</li><li>Changes in ./configure and Makefile for MacOSX EGREP libtool issue (#432, rep by jdane)
+</li><li>(2006-02-09) class-loader can now appear anywhere, not just first element (#924, rep by dlcr)
+</li><li>Amber inheritance needs to work with CMR (#301, rep by Francois Bertrand)
+</li><li>JMX Notifications on restart (#195, #237, rep by Erik Hartenian, Glenn Rush)
+</li><li>fmt:param wasn't printing children for validation (#893, rep by Ed Hollingsworth)
+</li><li>Apache2 mod_caucho needs to grab REDIRECT_URL and REDIRECT_QUERY_STRING (#87, rep by A Jacklin)
+</li><li>change escaping of command line argument for WIN32 service installation (#141, rep by Steve Arbour)
+</li><li>Hessian: improved cost calculation for constructors (#134, rep by Marc Ewert)
+</li><li>Hessian: swallow exceptions when calling getters (#57, rep by Alon Salant)
+</li><li>HttpProxyServlet needs to rewrite redirects (#51, rep by J Banister)
+</li><li>added allow-content-type and deny-content-type to GzipFilter (#119, #826, rep by Anupam Bagchi)
+</li><li>JSP tag try-catch-finally not generating safe variable (#908, rep by koreth)
+</li><li>Added threading library detection code for freebsd (#485, rep by spatula1)
+</li><li>java.util.Map as field wasn't properly introspected and error reported for CMP (#544, rep by p0p0lam)
+</li><li>Amber delete in transaction was ignoring recreation of same object (#462, rep by nquery)
+</li><li>ejbSelect was not properly converting return types (#860, rep by Andrew Barton)
+</li><li>byteCodeClassScanner not properly extending byte arrays (#837, fixed! by koreth)
+</li><li>Amber setNull for binary arrays wasn't using proper java.sql.Types (#871, fixed! by koreth)
+</li><li>EJB was not allowing get/setServer as fields (#865, rep by dlcr)
+</li><li>Added load-tld-on-init parameter to JspServlet
+</li><li>ServletContext.getURL should use exists() instead of canRead() to test for validity (#906, rep by jmhong)
+</li><li>jsp:include withing SimpleTag wasn't picking up encoding (#864, rep by Andrey Grebnev) 
+</li><li>JspCompiler should ignore errors in initalizing the Application object (#587, rep by bb)
+</li><li>session data must be persisted before sendRedirect (#503)
+</li><li>Response.flushBuffer must flush response to client (#497)
+</li><li>sort session attributes on serialization for CRC issues (#821, fixed! by Mark Adams)
+</li><li>persistent store forced extra access_time updates (#821, fixed! by Mark Adams)
+</li><li>config parser needs to ignore DocumentType (#588, rep by bb)
+</li><li>added expand-suffix to web-app-deploy (#664, rep by George Cox)
+</li><li>add session-config/cookie-append-server-index (#706, rep by Serge Knystautas)
+</li><li>add min/max to profiler (#540, rep by Bill Au)
+</li><li>added system information to log file (#488)
+</li><li>added war-deploy as alias for web-app-deploy (#661, rep by George Cox)
+</li><li>Python implementation of Hessian bug fixes (#413, rep by Tim Peoples)
+</li><li>Handling UTF-8 characters over 0x10000 (#507)
+</li><li>Filters need the init() called at startup time (#494)
+</li><li>JSTL x:transform needs to handle body content flushing properly (#456, rep by urutora90)
+</li><li>HttpSession.setExpireInterval wasn't updating persistent session interval (#457, rep by Serge Knystautas)
+</li><li>forward must merge both old and new query string (#898, #876 rep by Sunil Racherla)
+</li><li>.tld loading required for JSF (#146, rep by prakashhegde)
+</li><li>XmlAuthenticator issue with passwords.xml changes (#475)
+</li><li>XmlAuthenticator wasn't handling empty userName (#494, rep by Shane Cruz)
+</li><li>ListenerResource must only spawn one listener for topics (#427, rep by martin)
+</li><li>body tag output flushes were disabling internal proxy cache (#279, rep by quotemedia)
+</li><li>tag-file issues with circular dynamic-attributes (#268, rep by Caleb Richardson)
+</li><li>Improve error message for failing connect-to-socket call (#225, rep by david)
+</li><li>multiple filter wrappers and forward were not handled properly (#243, rep by T Fukada)
+</li><li>Change error message for missing .tld file (#239)
+</li><li>ServletServer wasn't getting the ClusterContainer from its own classloader (#231, rep by K MacClay)
+</li><li>-server-root wasn't setting server.root properly on windows (#389, #495, rpe by martin, Keith Fetterman)
+</li><li>Fixed getResourceAsStream issue with spaces in classpath (#64, #598, rep by E Bowman, Kai Virkki Efecte)
+</li><li>wrapper.pl kill enhancment (#52, fixed! by B Bernstein)
+</li><li>JSTL XPath wasn't properly handling namespaces (#23, rep by jjongsma)
+</li><li>c:forEach wasn't properly restoring var with variables in request (#373, rep by bregnvig)
+</li><li>BundleManager wasn't finding properties in .jar files (fixed! by drice)
+</li><li>conn.isClosed() was throwing IllegalStateException (#564)
+</li><li>ExpiresFilter was not accepting IoC configuration (#890, rep by Serge Knystautas)
+</li><li>includes of .jspx files were not keeping namespaces (#872, rep by Bill Au)
+</li><li>JspCompiler wasn't properly setting isXml for jspx (#872, rep by Bill Au)
+</li><li>MysqlXAConnector cannot handle local transaction optimization (#894, rep by Brandon Cruz)
+</li><li>(2006-01-24) tag attribute of String[] wasn't set properly (#885, rep by tipiirai)
+</li><li>use-persistent-store error message needing Resin Professional (#558, rep by K Fetterman)
+</li><li>Add log message when searching classpath for .tld files (#888)
+</li><li>failed setuid now gives warning message
+</li><li>refactored fragment allocation for cache backing store to avoid timing issues
+</li><li>changed shutdown/restart code to use timed socket connections
+</li><li>Added warning message when srun index does not match expected value (#484)
+</li><li>backing store locking/timing issues causing trouble with cluster store (#848, rep by C Amott)
+</li><li>lifecycle/ResinServer was not distinguishing between destroying and destroyed (#878, found! by Mark Lai)
+</li><li>Add auto-flush attribute to access-log (#820, rep by Rick Ross)
+</li><li>duplicate &lt;log&gt; were outputting duplicate results (#877, rep by Mark Lai)
+</li><li>(2006-01-10) Added enable-select-manager
+</li><li>virtual hosts not handled by resin were not properly left to Apache (#846, #576 rep by borisk, Roberto Pesenato)
+</li><li>exceptions in resources should show stack trace (#445)
+</li><li>Check for null getParameterValues in DispatchRequest (#493)
+</li><li>AbstractRolloverLog had JDK 1.5 dependency (#498)
+</li><li>Added UserPreparedStatement.toString() (#523)
+</li><li>Add -pid-dir to wrapper.pl (#384)
+</li><li>wrapper.pl fixes for stdin being closed (#400, rep by ptuckey)
+</li><li>WIN32 doesn't support SNDTIMEO/RCVTIMEO (rep by Michael Quigley)
+</li><li>Configuration needs to ignore protected setters (#863, rep by Bill Au)
+</li><li>Quercus: version_compare fixes (#610, rep by Stefano Bagnara)
+</li><li>XML parser needs to detect missing whitespace between attributes (#472, rep by M Duchovny)
+</li><li>64-bit detection for JNI needs to be distinguished from 64-bit for plugins (rep by Leonid Kaminsky)
+</li><li>Added &lt;moved-permanently&gt; to &lt;rewrite-dispatch&gt; (#403, rep by A Achuthan)
+</li><li>java.util.logging now uses the System property "file.encoding" to encode strings (#322, rep by Han)
+</li><li>Host with id="*" wasn't automatically started (#849, rep by Jean-Francois Lamy)
+</li><li>./configure not properly detecting Apache 2 vs Apache 1 (#429)
+</li><li>ParseTagManager methods need to be synchronized for JSP compilation on server startup (#704, rep by Bryan Davis)
+</li><li>FileServlet needs to get character-encoding from init-param (#583, rep by Anoop Achuthan)
+</li><li>BigDecimal.ZERO is a JDK 1.5 constant (#858, rep by Vinny)
+</li><li>AbstractLogRollover should not use java.util.logging for messages to avoid deadlock (#851, rep by Thomas Moorer)
+</li><li>plugins should not dispatch automatically if no ResinConfigServer (#3, rep by M Muenke)
+</li><li>./configure script wasn't adding resinssl on solaris (#665, rep by Mark Demma)
+</li><li>jsp:include/jsp:forward not properly handling runtime expressions (#852, rep by Rudy D'hauwe)
+</li><li>PageContext.removeAttribute must handle invalid session (#703, rep by Bryan Davis)
+</li><li>Amber entities not properly detached at end of context (#824, rep by C Amott)
+</li><li>(2006-01- 10) chdir/pwd fixes
+</li><li>Added Remote-IP to HTTP debugging (rep by Michael O'Dea)
+</li><li>Quercus: sprintf reworked to handle format incompatibilies (#553, rep by Stefano Bagnara)
+</li><li>Quercus: var_export (#647)
+</li><li>(2006-01-06) Quercus: get_defined_functions (#556, rep by Stefano Bagnara)
+</li><li>Quercus: func_get_args copy/ref issues (#607, rep by Stefano Bagnara)
+</li><li>Quercus: $_FILES, is_uploaded_file, move_uploaded_file (#652, 
+</li><li>Persistent session block reference count not properly updated (#596, rep by Keith Fetterman)
+</li><li>Quercus: added mcrypt (#606)
+</li><li>Quercus: round has optional argument (#612, rep by Stefano Bagnara)
+</li><li>Quercus: table/column metadata encapsulated for mysql
+</li><li>Quercus: get_declared_classes (#605)
+</li><li>Quercus: extra arguments should be logged, not PHP warning (#512, rep by Stefano Bagnara)
+</li><li>Quercus: strtr and with longer strings (#534, rep by Stefano Bagnara)
+</li><li>Quercus: HTTP_COOKIE_VARS (#569)
+</li><li>Quercus: regexp support for :alnum: (#597)
+</li><li>Quercus: added alternate syntax (#536, rep by Stefano Bagnara)
+</li><li>Quercus: objects extend ArrayValue
+</li><li>Quercus: session_set_save_handler (#511, rep by Stefano Bagnara)
+</li><li>Quercus: setlocale, array_merge_recursive (#529, #533 rep by Stefano Bagnara)
+</li><li>Quercus: generating line numbers for compiled PHP code
+</li><li>Quercus: $_SERVER is writeable (#563, rep by Stefano Bagnara)
+</li><li>Quercus: const values in interpolated associative arrays parsed wrong (#586)
+</li><li>Quercus: register_shutdown_function (#551, #573, rep by Stefano Bagnara)
+</li><li>Quercus: === for arrays was implemented improperly (#560, rep by Stefano Bagnara)
+</li><li>Quercus: recognize $\{$foo} (#562, rep by Anoop K Achuthan)
+</li><li>Quercus: method_exists, exec, parse_str (#568, #574, #552)
+</li><li>Quercus: mysql_fetch_field shouldn't switch catalog when null (#554, rep by Stefano Bagnara)
+</li><li>Quercus: parse priority with ?: and += (#524)
+</li><li>Quercus: reserved words: $echo, $require, $or, $and, $xor (#537, #531, #530 rep by Stefano Bagnara)
+</li><li>Quercus: date issues with 'st', 'nd', 'rd' (#548)
+</li><li>Quercus: serialization of array added extra ';' (#555, fixed! by Stefano Bagnara)
+</li><li>Quercus: _SERVER['REQUEST_URI'] needs query string (#550, rep by Stefano Bagnara)
+</li></ul>
+</s2>
+
+<s2 title="3.0.17 - Dec 22, 2005">
+<ul>
+<li>(2005-12-22) Quercus: add parse_url (#508, rep by Stefano Bagnara)
+</li><li>(2005-12-20) Multiple hosts combine by host-name, not root-directory (#489)
+</li><li>.tld parsing should not evaluate EL expressions (#499)
+</li><li>Added file/cluster store logging for length of serialized object (#522)
+</li><li>Quercus: unset allows multiple arguments (#509, rep by Stefano Bagnara)
+</li><li>Quercus: stdClass wasn't found from script (#513, rep by Stefano Bagnara)
+</li><li>Quercus: $return is not a reserved name (#514, rep by Stefano Bagnara)
+</li><li>Quercus Apache module: apache_note, apache_request_headers, virtual, getallheaders (#516, rep by Stefano Bagnara)
+</li><li>Added check for JDK 1.5 ($\{java.isJjava15()}) for Quercus
+</li></ul>
+</s2>
+
+<s2 title="3.0.16 - Dec 10, 2005">
+<ul>
+<li>(2005-12-10) Caching no longer automatically adds Expires and Cache-Control
+</li><li>merge hosts based on host-name, not root-directory
+</li><li>(2005-12-07) conn.isClosed() should not throw an exceptiono (#453)
+</li><li>Offset bug in session/cache fragment store (#460, #480, #4, rep by K Fetterman, C Amott, A Balandran)
+</li><li>jmx validation needs to check vs 1.5 
+</li><li>cache-mapping adds max-age and s-max-age
+</li><li>cache-mapping adds url-regexp (#440, rep by B Yang)
+</li><li>_collections in jms.ConnectionFactoryImpl needs to be synchronized (#401, rep by T Gennaro)
+</li><li>pageContext.findAttribute was throwing IllegalArgumentException for invalidated session (rep by B Davis)
+</li><li>welcome-file mapping was caching query parameters (#486, rep by Joshua Manton)
+</li><li>httpd.exe buffers sizes need increasing (#435)
+</li><li>when detect error while writing cache, disable keepalive and close
+</li><li>sockets and SSL changed to use blocking instead of non-blocking (#476)
+</li><li>Hosts with unset root-directory were getting merged without warning (#474, rep by L Geller)
+</li><li>Digest auth was requiring quoted string at end of client response (#420, Dustin Stallings)
+</li><li>DOM needs to add the DocumentType as the first value for a parsed XML (#284, rep by foolfish)
+</li><li>(2005-11-15) QEntity and QNotation were returning bad values for getNodeType (#424)
+</li><li>Added mime-type for xsl files (#444, rep by rdhauwe)
+</li><li>always-load-session now forces a load, ignoring clustering information (#439)
+</li><li>fmt:param wasn't accepting RT expressions (#464, rep by zgia)
+</li><li>EL expressions should be enabled if there is no web.xml (RSN-503, rep by Bin Sun)
+</li><li>JSTL fast was requiring &lt;jsp/&gt; tag (RSN-492)
+</li><li>AmberManager was requiring JDK 1.5 (RSN-504, rep by Kaven Lin and Takahiro Fukuda)
+</li><li>Change order of ssl and crypt in ./configure (rep by Mattias Jiderhamn)
+</li></ul>
+</s2>
+
+<s2 title="3.0.15 - Nov 15, 2005">
+<ul>
+<li>(2005-11-14) -stdout/-stderr need to initialize the stream (rep by Keith Fettermann)
+</li><li>Sessions should be closed before servlets (rep by Michael Fortin)
+</li><li>Caching fixes for s-maxage and Vary cookies
+</li><li>Keepalive bookkeeping cleanup
+</li><li>Caching backend fixes for fragment allocation
+</li><li>(2005-10-10) Added Connection.sendBroadcast for broadcast events (rep by Kirk Rasmussen, RSN-429)
+</li><li>Added protocolCloseEvent to ServerRequest (rep by Kirk Rasmussen, RSN-429)
+</li><li>HttpStream needs a wrapper to avoid closing twice and allowing pooling (rep by Esahu Morales)
+</li><li>Amber IN(foo.next.bar) wasn't properly supported (rep by Christian Amott, RSN-439)
+</li><li>HttpPath lookup recursive loop (rep by Ajit Puthiyavettle)
+</li><li>(05-09-30) Apache1 mod_caucho needs REQUEST_CHUNKED_DECHUNK (rep by Darren Chapman, RSN-453)
+</li><li>sendRedirect wasn't closing the output (RSN-325)
+</li><li>isapi_srun was producing inaccurate error message when unable to connect backend (rep by Jean-Francois Lamy, RSN-408)
+</li><li>Add getPreparedStatement to UserPreparedStatement (rep by James Kucharski, RSN-402)
+</li><li>getResource wasn't properly looking up resources in classloader parent (rep by masayuki takahashi, RSN-395)
+</li><li>Hessian/Burlap now requires java.io.Serializable of serialized classes (rep by Thaddeus Dombrowski, RSN-443)
+</li><li>If client disconnects in mod_caucho, clean up server stream properly (rep by yBranko Gracnar, RSN-420)
+</li><li>@OneToOne bidirectional is now allowed (rep by Francois Bertrand, RSN-406)
+</li><li>Added _FILE_OFFSET_BITS=64 to Linux JNI compilation (rep by Bill Au, RSN-388)
+</li><li>HostRegexp wasn't properly matching secondary regexps (rep by Shane Cruz, RSN-417)
+</li><li>ByteCodeParser wasn't grabbing method exceptions properly (rep by Marcus Richardson, RSN-437)
+</li><li>JSP 2.0 .tag file wasn't assigning properly for 'value' attribute (rep by William Wallis, RSN-424)
+</li><li>XML CDATA wasn't supporting xfffd (rep by Tom Davies, RSN-418)
+</li><li>Adding an index.jsp was not properly detected. (rep by P Barry, RSN-415)
+</li><li>JSP 2.0 .tag file was not allowing Java reserved names as attributes (rep by Jeroen van Vianen, RSN-433)
+</li><li>JSP files need to add .tld dependency (rep by Ajit Puthiyavettle, RSN-423)
+</li><li>Missing JSP adapter declaration for 1.2/2.0 tag files (rep by Andrey Grebnev, RSN-436)
+</li><li>Single-signon timeout was affecting other sessions (rep by K Wimmer, RSN-404)
+</li><li>Allow EL expression \${foo.bar} to refer to system property "foo.bar"
+</li><li>100-continue response needs to be flushed (rep by T Fukuda, RSN-414)
+</li><li>Caching updated to obey disk-size attribute (rep by Craig Lurey, RSN-412)
+</li><li>bug in LruCache.removeTail preventing true LRU removal
+</li><li>use mail.smtp.host and mail.smtp.port for mailto: (rep by A Sharaz, RSN-409);
+</li><li>jsp tld-dir wasn't picked up properly (rep by J Benton, RSN-425)
+</li><li>Implicit cluster selection is now available (rep by Bill Au, RSN-416)
+</li><li>JSP tag file issue with dynamic properties and scriptlets (rep by D Rice, RSN-419)
+</li><li>Changed meaning of &lt;xa&gt; to mean the connection should participate in a transaction (default true)
+</li><li>Added xa-forbid-same-rm to avoid Oracle join issues (rep by Patrick Burleson, RSN-426)
+</li><li>(2005-09-12) Remove deadlock in AccessLogWriter (rep by studdugie, RSN-421)
+</li><li>sendError after flush is an illegal state
+</li><li>Set-Cookie for version 1 needs to set max-age and path
+</li><li>Host ETag needs to be set even on initial call (rep by Keith Fetterman)
+</li><li>Update issues with mod_caucho (rep by Keith Fetterman) 
+</li><li>XmlAuthenticator.addRole must be public (rep by A Puthiyavettle, RSN-405)
+</li><li>Allow AbstractAccessLog overriding (rep by Serge Knystautas, RSN-400)
+</li><li>Cleaned up FastCGIServlet for socket reuse (rep by A Achuthan, RSN-363)
+</li><li>Added character-encoding init value to FileServlet (rep by E Bowman, RSN-387)
+</li><li>LoopTagSupport should use getLoopStatus() in implementation (rep by Erik Boye, RSN-401)
+</li><li>Added &lt;restart-mode&gt; to &lt;server&gt; (RSN-396)
+</li><li>dependency tag was using wrong implementation class (rep by Will Jaynes, RSN-403)
+</li><li>MessageDrivenBeans not properly freeing received messages (rep by T Gennaro, RSN-380)
+</li><li>Enhanced mod_caucho debugging (rep by Branko Granar, RSN-381)
+</li><li>Call setURL on java.sql.Driver when available (rep by Kirk Rasmussen, RSN-293)
+</li><li>The default .pid file now uses the value from the -server argument (RSN-50)
+</li><li>path-format issues with stdout-log and stderr-log (RSN-334)
+</li><li>mod_caucho configuration updates need to recycle sockets (rep by Michael McDonald, RSN-378)
+</li><li>Configuration errors now send severe errors instead of warnings (rep by Bill Au, RSN-336)
+</li><li>Add warning if a web-app's directory is the same as resin.home (RSN-393)
+</li><li>$\{server.root} and $\{host.root} are now prefered variable names
+</li><li>c:if wasn't handling var parameter properly (rep by Ralph Schaer, RSN-392)
+</li><li>PageContext wasn't properly restoring stream from SimpleTag (rep by Sergey Zubtcovskii, RSN-375)
+</li><li>EL expressions weren't marshalling to String properly (rep by Alex Grief, RSN-370)
+</li><li>EJB/Amber ManyToMany wasn't properly supporting order-by (rep by Christian Amott, RSN-311)
+</li><li>EnvAmberManager needs to be separate per ejb-server (rep by Christian Amott, RSN-308)
+</li><li>(Aug 11, 2005) Significant changes to session and cache persistence store
+</li><li>Improved error message in wrapper.pl.in when JAVA_HOME isn't set and PATH doesn't contain java (rep by Ryan Fields, RSN-367)
+</li><li>Use Lifecycle in ResinServer
+</li><li>&lt;host&gt; and &lt;host-deploy&gt; are properly merged (rep by Ivan Jouikov, RSN-360)
+</li><li>Explicit &lt;web-app&gt; can override the webapps context-path (rep by Abhijit Naiksatam, RSN-364)
+</li><li>FastCGIServer must parse "200 OK" as setStatus(200) (rep by Jason Foreman, RSN-366)
+</li><li>JNI memory allocation was using incorrect size on 64-bit servers (rep by Tom Hintz and Stephen Henrie, RSN-250, RSN-374)
+</li><li>JniServerSocketImpl _fd must be assigned inside a synchronization (rep by Tom Hintz, RSN-250)
+</li><li>DynamicClassLoader.loadClass must be synchronized (rep by Joseph Toth, RSN-373)
+</li><li>RunnerRequest was not properly clearing the isSecure flag on each request (rep by David Rice, RSN-137)
+</li><li>Use dependency-check-interval for webapps update checking (rep by Vincent Massol, RSN-186)
+</li><li>xsi:schemaLocation should be optional (rep by Vojtech Habarta, RSN-358)
+</li><li>xsl:template needs to allow override (rep by C Yttesen, RSN-310)
+</li><li>setuid order changed to appear after ports (rep by Mark Abbott, RSN-306)
+</li><li>Amber-managed entity beans weren't properly cache timing out (rep by christian amott, RSN-313)
+</li><li>RotateStream default period and size must be infinite (rep by Bill Au, RSN-315)
+</li><li>Period of "-1" turns into infinite (rep by Bill Au, RSN-315)
+</li><li>Amber query cache should not be limited to first 25 items (rep by christian amott, RSN-328)
+</li><li>read-only Entity beans should not be reloaded in a transaction (rep by christian amott, RSN-330)
+</li><li>JavacErrorParser now uses the javac enconding instead of file.encoding (rep by T Fukuda, RSN-332)
+</li><li>jsp:directive.include wasn't working with jspx (rep by Dmitry Savenko)
+</li><li>Updated default log rollover size to 2G (rep by Bill Au)
+</li><li>Fixed race condition in ResinServer.close (fixed! by Fiaz Hossain)
+</li><li>Added setRestartOnClose to ResinServer (rep by Fiaz Hossain, RSN-350)
+</li><li>Added EnvironmentLogger.removeHandler (rep by Fiaz Hossain, RSN-351)
+</li><li>Need to change MDB and session shutdown order to properly close response (rep by Guenther Wieser, RSN-365)
+</li><li>Added %D to access-log format to allow for millisecond timing (rep by Bert Ano)
+</li><li>Added override of resolveProxyClass in ContextLoaderObjectInputStream (rep by Gunther Wieser, RSN-345)
+</li><li>Fixed pthread_mutex_lock define in Solaris to mutex_lock (Joe Dane, RSN-343)
+</li><li>JNI calls require JNICALL and JNIEXPORT (rep by Chanan J Braunstein, RSN-341)
+</li><li>pro Makefile.in was missing resin_os (rep by Bill Au)
+</li><li>Added IOExceptionWrapper to catch Hessian errors (rep by Patrick Lightbody)
+</li><li>Added support for Amber ORDER BY with many-to-one relations (rep by A Barton, RSN-86)
+</li><li>Added compiler="eclipse" to &lt;javac&gt;
+</li></ul>
+</s2>
+
+<s2 title="3.0.14 - July 5, 2005">
+<ul>
+<li>(2005-05-30) package version check needs to allow more recent versions (rep by Jan Kriesten, RSN-327)
+</li><li>Fixed EntityManager compatibility issue with JDK 1.4 (rep by Christian Amott, RSN-321)
+</li><li>mod_caucho host-&gt;etag must only be set when configuration is properly updated
+</li><li>expand-cleanup-fileset needs to merge with explicit &lt;web-app&gt; (rep by Bill Au)
+</li><li>Updated AccessLog flushing to avoid threading/locking hotspot
+</li><li>RemoteFilesystem needs to validate .war digest at end of transmission to avoid sending data partial .war files (rep by Patrick Burleson, RSN-290)
+</li><li>QDocument importFragment of DocumentFragment wasn't looking at proper node to copy (rep by James Howe, RSN-259)
+</li><li>Updated AccessLog flushing to avoid buffer corruption (rep by studdugie)
+</li><li>mod_caucho.c needs to check for null headers[i].val (fixed! by Klas Lindfors)
+</li><li>Updated configure script to properly create and remove temp file (rep by Mark Abbott)
+</li><li>Update ClassDependency to use getDeclaredXXX and to recursively check parent classes
+</li><li>(2005-06-15) resin:include wasn't properly enabled (rep by Greg Schroeder)
+</li><li>run.cpp set_jdk_args was missing resin_home parameter (fixed! by Patrick Burleson)
+</li><li>&lt;servlet&gt; needs to allow both &lt;init&gt; and &lt;init-param&gt; (rep by Kirk Rasmussen)
+</li><li>Update JDKReader to support java.io encodings if Charset doesn't support (rep by T Fukuda)
+</li><li>(2005-06-10) Added numeric support to internal database
+</li><li>backed out Context.lookup exception changes to minimize 3.0.14 disruption
+</li><li>Changed x-anonymous caching so the external headers are always no-cache (rep by Kirk Rasmussen)
+</li><li>session timeout was using incorrect access-window from persistent-store instead of session-config (rep by B Davis)
+</li><li>jni_vfs.c pthread_lock #define needs to change to pthread_mutex_lock (rep by Tom Hintz)
+</li><li>session store not properly configured in SessionManager
+</li><li>reversed stdout: change, continues to work as before (rep by Keith Fetterman)
+</li><li>keepalive timing issue keeping track of keepalive threads (rep by Malte Muenke)
+</li><li>(2005-05-26) EJBCompiler should be able to work even through transactions aren't available (rep by Kirk Rasmussen)
+</li><li>sendError from inside error page must not go through ErrorManager (rep by Massimo Mirabito)
+</li><li>Amber DoubleType.setParameter wasn't handling the double type property (rep by Mieke Mocke)
+</li><li>--with-openssl wasn't properly setting SSL_INCLUDE and SSL_LIB (rep by Forrest Girouard)
+</li><li>Jar wasn't properly catching and retrying for changed .jar files (rep by Shane Cruz)
+</li><li>EjbConfig.BeanComparator.compareTo needs to be a total order for sort() to work (rep by Kirk Rasmussen)
+</li><li>Context.lookup needs to throw NameNotFoundException (rep by Kapil)
+</li><li>error page with sendError or rethrow causes error page trouble (rep by Amit Jain)
+</li><li>JspCompiler needs to check for valid -app-dir and report a message (rep by Kapil)
+</li><li>Encoding needs to return KOI8-R instead of KOI8_R for CharSet.forName (rep by Boris Kovalenko)
+</li><li>rewrite-dispatch was missing from web-app schema (rep by Anoop Achuthan)
+</li><li>Node.getBaseURI() isn't available in JDK 1.4 (rep by Bin Sun)
+</li><li>(2005-05-25) JMS null pointers for empty bodies (rep by Thomas Gennaro)
+</li><li>JMS null pointer when headers null (fixed! by Thomas Gennaro)
+</li><li>HessianServlet wasn't calling in.setSerializerFactory (rep by John Didion)
+</li><li>host-name can now accept EL values (rep by David Becker)
+</li><li>JMS mysql had invalid column type (rep by Kapil)
+</li><li>Cache expansion issue in LongKeyLruCache not observing powers of 2
+</li><li>mod_caucho fixes for 404 issues reading backend map
+</li><li>mod_caucho wasn't reading length properly from the no-change response
+</li><li>Avoid SetByteArrayRegion entirely (rep by J Tullett)
+</li><li>JMS MemoryQueue issues with QueueBrowser (rep by Thomas Gennaro)
+</li><li>Table row allocation clock not properly reset 
+</li><li>BTree methods not properly synchronized
+</li><li>BTree remove wasn't properly creating WriteBlocks and saving changes
+</li><li>BTree remove logic wasn't merging blocks
+</li><li>(2005-05-18) cache, range, and chunked bug - pdf issues (rep by Chanan Braunstein)
+</li><li>Updated wrapper.pl and httpd.exe to set -Dresin.home and -Dserver.home to RESIN_HOME and SERVER_HOME (rep by Suresh Sastry)
+</li><li>./configure script was using libcrypt instead of libcrypto (rep by Forrest Girouard)
+</li><li>transport-guarantee redirect wasn't adding query string properly (fixed! by David Becker)
+</li><li>JSP EL sessionScope NPE when session="false" (rep by Bin Sun)
+</li><li>Added cookie-module-cluster to session-config defaulting to false (rep by Anupam Bagchi)
+</li><li>session timeout must match persistent timeout (rep by Forrest Girouard)
+</li><li>filter-class validation was using old BeanUtil instead of Config (rep by Zhenlei Cai)
+</li><li>isapi_srun.dll issues with flushing (rep by Jason Fotinatos and Clark Archer)
+</li><li>GzipFilter now accepts deflate as well as gzip (rep by Anupam Bagchi)
+</li><li>Added TaskResource
+</li><li>__FILE__ is available in the config file for the current file (rep by Glen)
+</li><li>stdout: and stderr: use the original system.out.  They are no longer affected by &lt;stdout&gt; and &lt;stderr&gt; (rep by David Becker)
+</li><li>(2006-05-16) UserPoolItem used IllegalStateException(Throwable) which isn't available on JDK 1.4 (rep by Patrick Burleson)
+</li><li>Added read-data-source and xa-data-source to ejb-server
+</li><li>refactor amber to handle multiple ejb-server blocks (rep by Francois Bertrand)
+</li><li>mod_caucho.c compilation problems with solaris
+</li><li>ByteCodeClassScanner needs to swallow .class parse exceptions and log the error
+</li><li>Amber boolean fields now allowed as booleans in queries
+</li><li>PingMailer wasn't allowed as resin:type to ping (rep by T Moorer)
+</li><li>resin:type must override createXXX method
+</li><li>Add LIKE support to internal database
+</li><li>persist() should ignores duplicate entities
+</li><li>Allow reverse ordering of CMP 2.1 map (rep by H Grace)
+</li><li>@ManyToOne JoinColumn was ignoring nullable and unique (rep by Igor A Tarasov)
+</li><li>Check for nullpointer in Jmx.copyContextProperties (rep by D Becker)
+</li><li>JSP not properly handling backslash in rtexprvalue (rep by Klaus Friedel)
+</li><li>Changed default keepalive timeout to 60s
+</li></ul>
+</s2>
+
+<s2 title="3.0.13 - May 6, 2005">
+<ul>
+<li>(2005-05-04) missing lock on mod_caucho configuration read
+</li><li>Response flushing could occur early on echo
+</li><li>(2005-05-03) IP logging for hmux wasn't setting proper IP (rep by Allen Firstenberg)
+</li><li>(2005-05-02) EJB initialization wasn't properly setting parent class loaders for servers (rep by Patrick Burleson)
+</li><li>ELParser wasn't consistent in the copy order (rep by Caleb Richardson)
+</li><li>Improve EJB error message with missing setter
+</li><li>Added setReadTimeout to HessianProxyFactory (rep by John Didion)
+</li><li>EL functions weren't converting char parameters properly (rep by Thorbjorn Anderson)
+</li><li>continuous redeploy on .war/.ear failure has changed with the deploy refactoring (rep by Patrick Burleson)
+</li><li>ROOT.war handling was not handling case-insensitive properly (rep by J Rogers)
+</li><li>JaasAuthenticator has misleading error message for missing login-module (rep by Jan Heise)
+</li><li>c:forEach issues with step != 0 (rep by T Palmer)
+</li><li>cleaned up StoreManager.getServerList() for startup (rep by Mirko Herzog)
+</li><li>EnvironmentProperties.put needs to allow for non-string values (rep by Zhenlei Cai)
+</li><li>Hessian ref writing wasn't creating proper integers (fixed! by Andy Nahapetian)
+</li><li>resin:message needs attribute for name in .rnc (rep by D Becker)
+</li><li>.ear module needs to allow id (rep by Patrick Burleson)
+</li><li>JdbcMessage needs to set autoincrement data before testing for table (fixed! by Mircea Crisan)
+</li><li>Hessian deserializers were not properly cached (fixed! by John Didion)
+</li><li>session timeouts must match persistent session timeout
+</li><li>DynamicClassLoader should ignore .class files which cannot be parsed (rep by Bryan Davis)
+</li><li>active-wait-time is now configurable (rep by Michael O'Dea)
+</li><li>JSP fragments weren't properly assigning the tag's context (rep by Bear Bibeault)
+</li><li>FileServlet wasn't handling If-Modified-Since sent by IE (rep by Anupam Bagchi)x
+</li><li>(2005-04-26) On Win32, use GetPrimitiveArrayCritical for get_byte_array_region (rep by Brian Deng and Joel Firehammer)
+</li><li>Hessian/EJB now supports forwarded transactions
+</li><li>_toByte not properly initialized in ToByteResponseStream
+</li><li>JSP issues with c:forEach and proper tag parent initialization (rep by Serge Knystautas)
+</li><li>description was missing from relation-role (rep by Igor Tarasov)
+</li><li>HmuxLoadBalanceServlet needs to retry timed out (rep by Scott Nelson)
+</li><li>(2005-04-10) Fixes to backup index calculation for '-' and '_'
+</li><li>JMX toString() and hashCode() need to allow invocation (rep by Jason Chaffee)
+</li><li>Refactored file and cluster persistent store to share common persistent backing
+</li><li>Moved common JMX/Environment handling code to EnvironmentDeployController
+</li><li>Changed default access log rollover size to 1G.
+</li><li>Reordered ObjectName so type is always first
+</li><li>Added MBeanHandle to allow proxies as return values of MBeans
+</li><li>(2005-04-04) ClusterStream wasn't tracking connections accurately (rep by Scott Nelson)
+</li><li>Add HmuxLoadBalanceServlet logging (rep by Scott Nelson)
+</li><li>Reworked DeployController to make JMX common
+</li><li>(2005-04-02) Add round-robin strategy to HmuxLoadBalanceServlet (rep by Dan Schwalbe)
+</li><li>clustered store wasn't properly invalidating remote
+</li><li>clustered session id problem with overflow of 64 (rep by Dan Schwalbe)
+</li><li>Added config: scheme and RemoteFilesystemServlet
+</li><li>ClassDependency needs to sort Exception
+</li><li>Allow resin:type in openssl password (rep by John Didion)
+</li><li>Added multipart form upload check for full disk (rep by Paul Nakada)
+</li><li>JMX wasn't registering the JMX delegate properly (rep by Jason Chaffee)
+</li><li>JDK 1.4 compat must remove LocalVariableTypeTable and fix LocalVariableTable for jikes 1.22 (rep by Joel Firehammer)
+</li><li>Caching db.Store needs to close RandomAccessFile, since RandomAccessFile doesn't seem to have a finalizer
+</li><li>Added static com.caucho.server.resin.Resin.shutdown() (rep by 
+</li><li>Hessian readResolve/writeReplace were requiring public (rep by Josh Helmer)
+</li><li>(2005-03-21) AccessLog for hmux was printing remote IP for local machine, not client (rep by Markus Ken Moriyama)
+</li><li>Cluster communication issues with keepalive
+</li><li>removed DynamicClassLoader finalizer to help GC
+</li><li>Thread threads on web-app restart to avoid ThreadLocal issues (rep by Bill Au)
+</li><li>Adding missing jaxrpc API methods (rep by Fiaz Hossain)
+</li><li>Adding missing saaj API methods
+</li><li>added &lt;connection&gt; config to &lt;database&gt;
+</li><li>relaxng performance cleanup
+</li><li>./configure compilation with broken openssl (rep by Mark Abbott)
+</li><li>i18n virtual issue with dots (rep by Itera Denmark)
+</li><li>Attributes.getValue(uri,localName) and null namespace issues (rep by Scott Lamb)
+</li><li>EJB/CMP was creating sequences even when create-database-tables='false' (rep by Christian Amott)
+</li><li>Fixed mapping of "/*" for plugins. (rep by Olaf Jentsch)
+</li><li>Added cluster client management to disable particular backends (rep by T Stray and Gary Doughty)
+</li><li>Added sample iptables in contrib
+</li><li>Cleaned up 503 failover for HmuxLoadBalanceServlet (rep by A Sade and J Robinson)
+</li><li>ResinConfigServer was losing host and timeout information
+</li><li>Added driver-type to database driver configuration
+</li><li>persistent-store now included as default resin.conf
+</li><li>i18n was using javaName instead of the encoding which was failing for KOI8-R
+</li><li>HmuxRequest needs the header capacity increased to 256
+</li><li>ignore-client-disconnect was ignored
+</li><li>added path-format to access-log (rep by Matthew Schmidt)
+</li><li>Added archive-path to web-app (rep by D Rice)
+</li><li>Amber extended to handle more than 64 fields (rep by christian)
+</li><li>detect illegal "xmlns:" attribute (rep by Jeroen van Vianen)
+</li><li>log non-serializable values put into sessions
+</li><li>EJB server start() changed to an environment callback for timing (rep by Andrea Mari)
+</li><li>ExpressionEvaluator was ignoring FunctionMapper
+</li><li>Add host-alias-regexp
+</li><li>make LinkProxy serializable
+</li><li>in .ear files, the manifest classpath entry is added to the ent-app environment
+</li><li>XSLT handling of default namespace (rep by James Howe)
+</li><li>Removed poll_read from accept
+</li><li>Added com.caucho.jms.resource.ListenerResource and com.caucho.jms.resource.MessageSenderResource.
+</li><li>Added var to &lt;resource&gt;
+</li><li>Added $\{root.*} EL variables
+</li><li>Refactor of server.config
+</li><li>Hello, world tutorial order of servlet-name and url-pattern
+</li><li>PageContextImpl must call responseAdapter.finish(), not close() (rep by Bryan Davis)
+</li><li>"ru" was using cp1251 instead of ISO-8859-5 (rep by Dmitry Tsigelnik)
+</li><li>(2005-02-28) mod_caucho issues with keepalive (rep by Gary Doughty)
+</li><li>Refactor of server.deploy
+</li></ul>
+</s2>
+
+<s2 title="3.0.12 - Feb 15, 2005">
+<ul>
+<li>JspCompiler needs to understand environment values like javac (rep by Hong Wu)
+</li><li>OpenSSL issue: QJniServerSocket was using JDK 1.5-only method (rep by Gary Doughty)
+</li><li>removed Page finalize method
+</li></ul>
+</s2>
+
+<s2 title="3.0.11 - Feb 15, 2005">
+<ul>
+<li>isapi keepalive backed out due to issues with chunked encoding
+</li><li>(2005-02-14) JSP char buffer issues with large buffers (rep by Markus Ken Moriyama and Bryan Davis)
+</li><li>setup.exe changes for Windows 2003 (rep by Jonathan Cavadini)
+</li><li>(2005-02-08) set content-length: 0 on 304 responses (rep by Takahiro Fukuda)
+</li><li>taglib-location needs to handle "file:/..." values (rep by Bill Au)
+</li><li>isapi_srun.dll issues with g_config initialization (rep by Amos Shapira)
+</li><li>Multiple changes in .smap/line numbering
+</li><li>JSP .tag files weren't validating properly (rep by Alon Salant)
+</li><li>logging in HmuxRequest wasn't handling offset correctly (rep by Oscar Sumano)
+</li><li>isapi_srun.cpp wasn't allowing keepalive (rep by Frank Nestel and Jens Gerhard)
+</li><li>(2005-01-27) synchronization issue with class loader and entry cache (rep by Thorkild Stray and Charles Reid)
+</li><li>(2005-01-26) CGIServlet error status wasn't reported correctly (fixed! by Nancy Deschenes and G Homicki)
+</li><li>CGIServlet needs to handle Location like sendRedirect (fixed! by Nancy Deschenes and G Homicki)
+</li><li>CGIServlet needs to throw exception for non-zero exit status (fixed! by Nancy Deschenes and G Homicki)
+</li><li>CGIServlet needs to search to handle path_info (fixed! by Nancy Deschenes and G Homicki)
+</li><li>CGIServlet needs to change the directory (fixed! by Nancy Deschenes and G Homicki)
+</li><li>include request.getHeaderNames wasn't handling if-modified-since properly (rep by Stephen Henrie)
+</li><li>mod_caucho updates to handle manual hosts (rep by A Jacklin)
+</li><li>HttpProxyServlet was not handling reset connections properly (rep by J Banister)
+</li><li>Issues with JDK 1.4 compatibility conversion (rep by Bryan Davis)
+</li><li>Config exceptions now logged with stack trac. (rep by Patrick Burleson)
+</li><li>MessageServer.Consumer.destroy() must check for session null before closing (rep by Patrick Burleson)
+</li><li>byte[] values for CMP were not properly handled (rep by Alvin Lau)
+</li><li>allow directory webapps/foo.war/ to represent /foo (rep by Patrick Burleson)
+</li><li>(2005-01-21) Improve Hessian error message when sending overloaded arguments (rep by Christian Campo)
+</li><li>IIOP marshall was using write_abstract_interface instead of write_object for Session objects (rep by Andrea Mari)
+</li><li>Added logging to print restart information on halt (rep by Ann Marie Gunther).
+</li><li>CGIServlet has new "executable" attribute (rep by Greg Brondo)
+</li><li>Added unclean-shutdown to openssl configuration
+</li><li>Added Amber load, create, update logging
+</li><li>Improved thread naming
+</li><li>AbstractParser needs to distinguish between top-stream and substream (rep by S Aiken)
+</li><li>Forbid user-name on all Linux, since it's not properly implemented. (rep by Allon Bendavid)
+</li><li>JSP namespace declarations weren't generated for %@ taglib (rep by Ari Savolainen)
+</li><li>Updated ResinStatusServlet to handle global JMX values (rep by Neil Fradkin)
+</li><li>HmuxRequest needs to break large responses into chunks (rep by Bryan Davis)
+</li><li>Last-Modified check should allow +0000 as synonym of GMT (rep by Scott Yancey)
+</li><li>Changed validation messages to include namespace when necessary (rep by Jared Cook)
+</li><li>ResinConfigServer of "current" uses gethostname
+</li><li>ContextImpl.list needs to pass "" instead of null for null list (rep by Andrea Mari)
+</li><li>Added forbidden, gone, and not-found to rewrite-invocation
+</li><li>FastCGIServlet needs more than one keepalive socket (rep by Chem)
+</li><li>CacheEntry wasn't removed when replaced
+</li><li>encodeURL shouldn't alter ?a=b (rep by Alexk)
+</li><li>JspCompiler was assuming JMX environment which was unavailable for a standalone call (rep by Hong Wu)
+</li><li>(2005-01-18) Add logging of Hessian server-side errors (rep by Christian Campo)
+</li><li>Burlap/Hessian deserialization with Object.class wasn't picking up types (fixed! by Mat McGowan)
+</li><li>Added error reporting when Hessian setting of a field fails (rep by ramk5101)
+</li><li>HessianRuntimeException needs to implement getCause() (fixed! by Christian Campo)
+</li><li>Hessian ArrayDeserializer needs to return the actual array type (fixed! by Christian Campo)
+</li><li>Hessian throwables should use the actual throwable class (rep by Christian Campo)
+</li><li>JspPrecompileInstance with -conf wasn't creating application properly (rep by Hong Wu)
+</li><li>HessianProxy needs conn.disconnect (rep by Steen Jansdal)
+</li><li>ServletServer was starting ClusterDef ports
+</li><li>Added enable to DirectoryServlet
+</li><li>Added default to resin:set
+</li><li>Added XsltFilter getResult to improve customization
+</li><li>Check for httpd2 for Apache2 on SuSE (rep by Don Coleman)
+</li><li>getWriter needs to set the checkError() value (rep by Dorel Vaida)
+</li><li>EJB message beans need separate JNDI environment for each bean (rep by Patrick Burleson and Ilker Egilmez)
+</li><li>web-app-deploy now allows for expand-cleanup-fileset (rep by Benoit Lubek)
+</li><li>eliminated plugin recursive loop with host_name="" (rep by Bryan Davis)
+</li><li>(2005-01-14) ExpandEntry wasn't handling null digest values (rep by Dmitri Rakitine)
+</li><li>./configure test for openssl on solaris needs proxy libs (rep by Mark Abbott)
+</li><li>compilation cleanup for saaj (rep by Jeroen van Vianen)
+</li><li>broken ejb in .ear file should display errors in the webapps
+</li><li>.war and ejb .jar files in .ear need to recognize the Class-Path (rep by Patrick Burleson)
+</li><li>eliminated need to retroweaver, fixing .class for jdk14, jikes, and jrockit
+</li><li>(2005-01-11) HostContainer.getErrorApplication needs to set servlet-name
+</li><li>changed "ru" locale to default to ISO-8859-5 (rep by Dmitry Tsigelnik)
+</li><li>host/web-app regexp need to add mbeans properly
+</li><li>web-app tld specification must override default .jar/.tld definition (rep by Jeff Turner)
+</li><li>Hessian char serialization changed to use String consistently (rep by Dimitri Minich)
+</li><li>Amber should not pick up Hibernate files (rep by Jan Heise)
+</li><li>Compilation changes for JDK 1.5.0_01 (rep by Jeroen van Vianen)
+</li><li>FastCGIServlet should handle "status" as special return code
+</li><li>Fix EL equality checking for objects
+</li><li>JSP 404 checking could forwarding twice, resulting in incorrect access log
+</li><li>Connections not properly checking for port closure on request
+</li><li>Multiple ClusterStore synchronization issues
+</li><li>Error in validation of MDB: activation-config-property (rep by Andreas Mueller)
+</li><li>(2005-01-05) persistent store needs to respect the session timeout, not have a longer one
+</li><li>added cmp-field auto-generate="false" to disable autogen (rep by Richard Yee)
+</li><li>(2005-01-03) change database validation 
+</li><li>cluster-store database threading fixes for index
+</li><li>JSP buffer cleanup 
+</li><li>host regexp was instantiating too many JMX values (rep by Shane Cruz)
+</li><li>Combined keepaliveBegin/keepalive in Port for reliability (rep by Dave Mollenhoff)
+</li><li>Added connection-max to http/srun ports (rep by Dave Mollenhoff)
+</li></ul>
+</s2>
+
+<s2 title="3.0.10 - Dec 20, 2004">
+<ul>
+<li>Amber @OneToMany must handle parameterized types. (rep by Carlos Pita)
+</li><li>EnvironmentProperties.put needed to implement Object-argument methods (rep by Chris Pratt)
+</li><li>Add javac max-batch to configure the number of .java compiled (rep by Yaakov Chaikin)
+</li><li>ContextImpl.composeName reversed prefix and suffix (rep by N Yurchenko)
+</li><li>HmuxLoadBalanceServlet was not detecting closed clients properly (rep by Leonid Geller)
+</li><li>resin:type and resin:import need their namespaces (rep by Robert Koberg)
+</li><li>(2004-12-06) licenses should be allowed in the -server-root (rep by chem)
+</li><li>Amber fields were initialized before properly sorting, causing potential field swapping
+</li><li>Jar reload requires the jar files be closed (rep by Chris Chen)
+</li><li>getMethod in EjbBean needs to check concrete superclasses before interfaces (rep by Jan Gregor)
+</li><li>rotate-log with period and size need to work together (rep by S. Higgins)
+</li><li>DynamicClassLoader should cache resource URLs
+</li><li>Application buildInvocation needs to cache the filter chain
+</li><li>BundleManager needs TimedCache
+</li><li>ClassDependency digest sorting must distinguish overriding methods
+</li><li>ClassDependency and Depend should use CRC64
+</li><li>filters calling JSP including HTML were using getOutputStream (rep by Matt Raible)
+</li><li>resource-ref must validate JNDI at Application init (rep by Matt Raible)
+</li><li>flush() in WrapperResponseStream should not automatically allocate an OutputStream (rep by Matt Raible)
+</li><li>jstl was still picking up Resin's JSTL implementation (rep by John Hyun)
+</li><li>transaction timeout must only mark the transaction as rollback-only (rep by Po Cheung)
+</li><li>Listeners in web.xml should override .tld listeners (rep by Matt Raible) 
+</li><li>If connections aren't closed, save the allocating source automatically
+</li><li>application listener destroy must be called after session listener destroy
+</li><li>xsl:decimal-format wasn't escaping &amp;apos; properly (rep by Rick Meyer)
+</li><li>request.getServerName() must return the Host value, not the canonical name
+</li><li>c:param should work as grandchild of c:import (rep by Steve Swing)
+</li><li>c:param in c:import wasn't encoding '%' as '%25' (rep by Dean H)
+</li><li>EJB wasn't generating code for inner classes properly (rep by Jan Gregor)
+</li><li>Added cookie-http-only (rep by Knut Forkalsrud)
+</li><li>jsp-directive-page wasn't setting the default page-encoding (rep by Chris Chen)
+</li><li>LocaleSupport wasn't handling fmt:bundle prefix (rep by Steve Swing)
+</li><li>Avoid potential timing problem with AbstractHttpRequest.getSessionManager (rep by Neil Fradkin)
+</li><li>fmt:bundle not working properly with fallback locale (rep by Charles Fu)
+</li><li>Add lazy-servlet-validate for ISPs (rep by J Robinson)
+</li><li>auto-consraint with no roles is equivalent to forbidden (rep by Hiroaki Kawai)
+</li><li>transport-guarantee was not enforced in combination with form-login
+</li><li>Added &lt;ssl-session-cookie&gt;
+</li><li>JSTL fmt:setLocale wasn't handling variant (rep by Paul Egli)
+</li><li>Accept Foo$Bar as &lt;tag-class&gt;
+</li><li>portlet-10.jar needs to be compiled with JDK 1.4
+</li><li>JspCompiler now compiles batches of JSP files (fixed! by Bin)
+</li><li>Added require-file to ear-deploy and war-deploy (rep by Patrick Burleson)
+</li><li>Added expand-prefix to ear-deploy and war-deploy (rep by Patrick Burleson)
+</li><li>Amber query with trailing tokens were not printed as early as possible
+</li><li>abstract-schema-name needs to check for conflicts
+</li><li>Added &lt;server-header&gt; to override Server: Resin/foo (rep by Adam Ratica)
+</li><li>%T option wasn't properly counting the expired time for keepalives (rep by Jan)
+</li><li>XmlAuthenticator setPassword wasn't properly setting principal (rep by Dave Brosius)
+</li><li>XmlApplicationPath setRoot wasn't setting root (rep by Dave Brosius)
+</li><li>JMX TimerJob wasn't setting nbOccurrences properly (rep by Dave Brosius)
+</li><li>PasswordCredential wasn't properly assigning mcf (rep by Dave Brosius)
+</li><li>amber UnaryExpr isBoolean had improper test (rep by Dave Brosius)
+</li><li>Application.addSecurityRole was missing (rep by Joe Bissen)
+</li><li>HotSwap should work with -jdwp - only available with JDK 1.5
+</li><li>mod_caucho wasn't properly handling 503 for virtual hosts when Resin down (rep by K Fetterman)
+</li><li>(2004-11-26) Added keepalive-max to &lt;host&gt; (rep by Dane Foster)
+</li><li>UserConnection.addStatement NPE (rep by Dimitri Rakitine)
+</li><li>gzip filter and include were not interacting properly with caching (rep by Scott Yancey)
+</li><li>Added "merge:" schema (rep by Takahiro Fukuda)
+</li><li>JMS/JCA wasn't reusing pooled items properly (rep by Bryan Davis)
+</li><li>Changes for JMS Oracle compatibility with Topics (rep by Bryan Davis)
+</li><li>Added message-consumer-max to ejb-server for message queue parallelism (rep by C Cao)
+</li><li>(2004-11-18) JMS compatibility with Oracle (rep by Bryan Davis)
+</li><li>Connection UserPoolItem must store original transaction for delisting (rep by Dimitri Rakitine) 
+</li><li>Store fragment locking on wrong object
+</li><li>Statement overflow for pooled connection (rep by Dimitri Rakitine)
+</li><li>UserPoolItem/PoolItem issues with multiple transaction enlisting (rep by Dimitri Rakitine)
+</li><li>OneToMany for fields wasn't generating proper code
+</li><li>Burlap Base64 was incorrect (fixed! by kellegous)
+</li><li>hashCode in CachedQueryKey has potential NPE (fixed! by Dave Brosius)
+</li><li>XML parsing of ATTLIST wasn't checking "ID" properly (fixed! by Dave Brosius)
+</li><li>EJB-QL BETWEEN wasn't handling NOT correctly (fixed! by Dave Brosius)
+</li><li>Need to allow description in &lt;web-app&gt; (rep by Keith Fetterman)
+</li><li>Added mbean-name to &lt;log&gt; 
+</li><li>com.caucho.security.PolicyImpl needs to handle null ProtectionDomain from RMI (rep by Damien Mascord)
+</li><li>ThreadPool startConnection was returning false when it should wait for connection (rep by Dave Moellenhoff)
+</li><li>Cleaned log message for JSSE socket with no client certificate (rep by javatester)
+</li><li>Context parent classloader not properly set for host regexp (rep by R Clifton)
+</li><li>304 was adding Expires for non-cached configuration (rep by javatester)
+</li><li>Improved error reporting on JniFilePathImpl (rep by E Ceccarelli)
+</li><li>JMS ObjectMessage deserialization requires context loader (rep by A Nyhren)
+</li><li>Added META-INF/resin-ejb-jar.xml (rep by P FitzPatrick)
+</li><li>shutdown-wait-max was not properly catching interruptions to wait for web-app timeout (rep by D Turakhi)
+</li><li>(2004-11-08) fixes to the new proxy caching code
+</li><li>(2004-11-07) lazy web-app now has idle-time for undeploy
+</li><li>lazy web-app with startup errors are not automatically restarted by alarm
+</li><li>Increased default characters for session cookie-length to 16
+</li><li>Updated session cookie generation to enhance randomness
+</li><li>.class dynamic reload was not correctly releasing class definition (rep by Gary Doughty)
+</li><li>License init order needed changing to handle IBM JDK (rep by Gary Doughty)
+</li><li>HmuxRequest needs to handle keepalives properly by ignoring Connection: close (rep by Chip Yamasaki)
+</li><li>ThreadPool needs to call interrupted() before wait (rep by Javier Ordonez)
+</li><li>added resin.jar startup to Resin-Pro with resin.conf parsing (rep by F Garcia)
+</li><li>Added bind-ports-after-start (rep by Bryan Barkeley)
+</li><li>Explicit web-app in resin.conf must override the webapps/ROOT
+</li><li>Multipart form now returns caucho.multipart.form.error.size (rep by Ryan Choi)
+</li><li>Multipart form now accepts caucho.multipart.form.upload-max (rep by Ryan Choi)
+</li><li>Updated i18n to handle java.nio.charset.Charset (rep by Koichi Takehara)
+</li><li>cluster-store updated to avoid massive dump on startup (rep by Felipe Garcia)
+</li><li>Added &lt;error-page&gt; at server level for busy messages (rep by Craig Lurey)
+</li><li>Added rewrite-dispatch (rep by Trieu Truong)
+</li><li>Added rewrite-real-path (rep by Trieu Truong)
+</li><li>Added capability for DBPool to create runtime pools (rep by Craig Lurey)
+</li><li>JSP SMAP problems with included files (rep by Louis Calisi)
+</li><li>JSP error-page with filters had ClassCastException (rep by Bryan Barkeley)
+</li><li>Check for stdout-log setting to stdout (rep by Bill Au)
+</li><li>OpenSSL needs to listen to specific host interface
+</li><li>servlet-mapping order was incorrect in .rnc file
+</li><li>(2004-10-19) .smap fixes for .jsp scriptlets (rep by Louis Calisi)
+</li><li>use .smap for ErrorPageManager instead of LineMap (rep by Louis Calisi)
+</li><li>&lt;ping&gt; socket timeout needs to accept Period (rep by Bill Au)
+</li><li>updated JNI to properly handle read-timeout and write-timeout (rep by Jud McKee)
+</li><li>updated ssl write handling to handle client disconnects (rep by Jud McKee)
+</li><li>HessianOutput.writeRef was incorrect (rep by Toby)
+</li><li>allow resin:type in string values (rep by Bob Rhodes)
+</li><li>removed unnecessary copies for file and caching writes
+</li><li>converted cluster to use internal database
+</li><li>converted caching to use internal inodes from database
+</li><li>limit the allowed URL size in the query cache
+</li><li>fmt:param wasn't properly printing XML version for validation (rep by Matt Raible)
+</li><li>x:parse wasn't recognizing doc attribute for JSTL (rep by John Hyun)
+</li><li>JSTL custom tags weren't checking for isScripting (rep by Jason Chaffee)
+</li><li>client-read-timeout needed in cluster-definition (rep by Girish Rathor)
+</li><li>solaris resin.h needs to define socketclose to close (rep by Richard Fein)
+</li><li>run-at servlets were not properly closed on web-app shutdown (rep by Gary Doughty)
+</li><li>Allow for paths like MergePath in document-directory (rep by Patrick Lightbody
+</li><li>Disable JSP .static pages to simplify precompilation (rep by Randy Eckhoff)
+</li><li>added support for char-caching of includes
+</li><li>added dispatch-wraps-filters
+</li><li>SC_SWITCHING_PROTOCOLS typo (rep by Nancy Deschenes)
+</li></ul>
+</s2>
+
+<s2 title="3.0.9 - Oct 1, 2004">
+<ul>
+<li>(2004-10-01) Application needs to have _configException test as part of isModified()
+</li><li>pages generating sessions default to non-cacheable
+</li><li>JSP taglib issue with doEndTag returning bogus value (rep by Alpesh)
+</li><li>Fix Date second issues in HTTP response (rep by Ben Tyler)
+</li><li>multiple issues with resin:set, host context, and PathBuilder (rep by Will Jaynes)
+</li><li>missing null checks in JNI SSL code (rep by Andrew Marcuse)
+</li><li>validation of &lt;filter-mapping&gt; with Resin namespace flipped order filter-name order (rep by Olaf Krische)
+</li><li>request variables not available in JSP tag files (rep by Jason Chaffee)
+</li><li>tag files weren't receiving proper request and response values from wrapped PageContextImpl (rep by Jason Chaffee)
+</li><li>External compiler should discard missing paths from compilation classpath to avoid warnings (rep by David Soleno)
+</li><li>wrapper.pl wasn't properly handling pid removal (rep by Jason Chaffee)
+</li><li>Cache/Range fixes
+</li><li>Range fixes for multiple range values
+</li><li>(2004-09-15) Refactoring distribution into Resin/Resin-Pro
+</li><li>Connection.isClosed was throwing illegal state exception (rep by Philip Lau)
+</li><li>(2004-09-10) JMX fixes to support jconsole
+</li><li>HessianMicroInput was still looking for &lt;value&gt; (rep by Tomasz Lempart)
+</li><li>When client cert returned, use CLIENT_CERT_AUTH from getAuthType() (rep by Keith Fetterman)
+</li><li>Added tld-file-set (rep by Sean Moore)
+</li><li>HTTP Range fixes
+</li><li>persistent store should not automatically save empty sessions
+</li><li>JSP session="false" should still allow pageContext.findAttribute with session (rep by Jason Chaffee)
+</li><li>204 and 304 should allow for content-length (rep by Jason Chaffee)
+</li><li>Added AlwaysModified dependency to dispatching errors to avoid getting stuck on startup
+</li><li>(2004-09-02) enhanced JspCompiler to handler -conf (rep by Frank Millstrong)
+</li><li>fixed synchronization of access log for rollover (rep by A Marcuse)
+</li><li>updated EL to look for public interface when method isn't public
+</li><li>cleanup of servlet-mapping with Resin restart
+</li><li>Added verify-client for jsse (rep by Dung Huynh)
+</li><li>added burlap: JNDI
+</li><li>instantiation testing needs to return better message for broken runtime classes (rep by Richard Yee)
+</li><li>resin.conf needs to handle public interface but private classes
+</li><li>isapi_srun service restart fixes (rep by Linden Anderson)
+</li><li>Hessian serialization of home interfaces fixed (rep by hsim)
+</li><li>AccessLog timing cleanup (rep by Anupam Begchi)
+</li><li>SecurityRoleMapFilterChain loop bug (rep by Ross Lamont)
+</li><li>ClassDependency needs to sort the fields and methods (rep by Markus Baron)
+</li><li>(2004-08-25) added &lt;alias&gt; to jsse configuration (rep by Christian Meunier)
+</li><li>added dependency-check-interval to &lt;jsp&gt; (rep by ernest Mecham)
+</li><li>Apache2 mod_caucho wasn't accepting chunked encoding (rep by Mandel AndrAcceas)
+</li><li>isapi_srun.dll changes to fix IIS logging issues (rep by Matt Illston)
+</li><li>(2004-08-11) Range support needs to deal with multipart/byteranges (rep by Paul Ryan)
+</li><li>(2004-08-06) WebAppConfig used String.contains which only exists in JDK 1.5 (rep by Allon Bendavid)
+</li><li>Added filter-mapping capability to include/exclude (rep by Ivan Jouikov)
+</li><li>Added Hessian send-collection-type flag to avoid sending the type (rep by Juergen Holler)
+</li><li>Fixed Solaris OpenSSL initialization (rep by Richard Fein)
+</li><li>Added Hessian/Burlap ServiceContext.getHeader (rep by Simone Bordet)
+</li><li>Added OpenSSL checks to ./configure
+</li><li>(2004-07-30) -with-openssl-lib wasn't setting -lssl (rep by Richard Fein)
+</li><li>Added stylesheet cache for XSL (rep by Stephen Henrie)
+</li><li>Distributed sessions not checking for empty (rep by Warwick Poole)
+</li><li>Updated blob search using Types.BINARY (rep by Warwick Poole)
+</li><li>XSL transformer doesn't handle QNode with baseURI == null (rep by Leandro Fernandez)
+</li><li>(2004-07-26) Path.getURL needs to escape '#' and '%' (rep by Chris Donnelly)
+</li><li>.tag files with scriptlets and dynamic attributes weren't handled (rep by Matthias Ernst)
+</li><li>./configure will now check for libsso.so as weel as libssl.a and libssl.dylib
+</li><li>Change SSL client handshake errors to ClientDisconnectException (rep by Menashe Duchovny)
+</li><li>&lt;web-app&gt; with url-regexp and common document-directory was breaking context-path (rep by 
+</li><li>Better error message for use-persistent-store without cluster
+</li><li>Better error message for OpenSSL with missing JNI library (rep by Ben Booble)
+</li><li>ResinStatusServlet added invocation and proxy hit ratio (rep by Bill Au)
+</li><li>ResinStatusServlet added cluster client information (rep by Warwick Poole)
+</li><li>x:transform with systemId was forcing recompile (rep by S Henrie)
+</li><li>Updated ./configure for Solaris and sun compiler (rep by Mark Femal)
+</li><li>transaction timeout wasn't properly reset at end of context
+</li><li>(2004-07-21) JSP 1.2 allows xmlns="http://java.sun.com/JSP/TagLibraryDescriptor" (rep by Frank Millstrong)
+</li><li>Caching with disconnect and include was producing null caches
+</li><li>Changed names of default servlets to "resin-file" (rep by Suavi Ali Demir)
+</li><li>servlet-mapping with default servlet-name should default to url-pattern
+</li><li>infinite loop with JMX isInstanceOf (rep by Mark Abbott)
+</li><li>Timing issue with end of transaction vs pool timeout (rep by Dimitri Rakitine)
+</li><li>Apache Basic auth needs to take precedence (rep by Keith Fetterman)
+</li><li>(2004-07-13) JSP .tag files not recompile on JSP changes (rep by Alon Salant)
+</li><li>JSP recompilation on tag changes (rep by Hiroshi Iwatani)
+</li><li>LinkedHashMap with EL issue (rep by Rob A)
+</li><li>./configure was using "==" instead of "=" (rep by J Xia)
+</li><li>http read issues with Content-Length and offset != 0 (rep by Alon Salant and Jason Chaffee)
+</li><li>(2004-07-01) Substantial EJB refactoring in progress
+</li><li>c:forEach with array less than begin attribute should ignore body (rep by Bin)
+</li><li>XPath gt with node set reversed args (rep by Sondre Bjornebekk)
+</li><li>jsp:include with jsp:param wasn't catching scripting (rep by Willy Dockx)
+</li><li>jsp:include with null jsp:param wasn't handling null properly (rep by Jeroen van Vianen)
+</li><li>HttpServletRequestWrapper throws IllegalArgumentException (rep by Hiroshi Iwatani)
+</li><li>./configure added twice to resin-3.0.8 (rep by Jean-Baptiste Quenot)
+</li><li>XML EntityResolver wasn't opening source with system id property (rep by Jared Cook)
+</li><li>./configure with Apache2 on solaris wasn't picking up LD_SHLIB (rep by Dustin Tenney)
+</li><li>JSP taglib BeanInfo needs to override default bean (rep by Bryan Davis)
+</li><li>The directory-servlet should only be looked up once (rep by Adam Ratica)
+</li><li>Added validate-taglib-schema for &lt;jsp&gt; (rep by j huynh)
+</li><li>Added "on" as a value for j_user_cookie_auth (rep by Don Coleman)
+</li><li>Add &lt;allow-servlet-el&gt; to default resin.conf (rep by Wai Wong)
+</li><li>Class hot-redeploy was disabled (rep by Stephen Henrie)
+</li><li>Need to unwind from UserTransaction.begin() when error (rep by Dimitri Rakitine)
+</li><li>Added TransactionEnhancer
+</li><li>Removed unnecessary thread.interrupt() in JavaCompiler
+</li><li>Removed extra lock on LruCache.clear()
+</li></ul>
+</s2>
+
+<s2 title="3.0.8 - Jun 8, 2004">
+<ul>
+<li>(2004-06-08) Win32 locking issues in jni_vfs.c
+</li><li>JMX StandardMBean overrides (rep by David Dunkley)
+</li><li>BodyContext.clearBody must not be abstract (rep by Matthias Ernst)
+</li><li>JMX MBeanOperationInfo equals needs overriding (rep by David Dunkley)
+</li><li>BasicDeserializer needs to handle character (rep by S Monson)
+</li><li>QDocument validation with null namespace in createElementNS (rep by Mattias Ernst)
+</li><li>resin:choose and resin:set s/b allowed in &lt;resin&gt; and &lt;server&gt;
+</li><li>Added --enable-64bit support for Solaris (rep by Michael O'Dea)
+</li><li>(2004-06-04) fn:length support for array (rep by Jeroen van Vianen)
+</li><li>JNI/native changes to accomodate 64-bit jni
+</li><li>(2004-06-03) resin:include regression issues with relative paths (rep by Greg Schroeder)
+</li><li>xml parse fixes related to namespaces and DOM attributes
+</li><li>(2004-05-28) Misc memory fixes
+</li><li>Relax jar manifest checking (rep by Matthias Ernst)
+</li><li>Updated JMX StandardMBean implementation
+</li><li>Added ThrottleFilter
+</li><li>Jar depend caching needs to be cleared when the jar changes
+</li><li>(2004-05-24) Alarm priority queue impl changed to heap
+</li><li>Added "hessian:" JNDI URL
+</li><li>Resin's main MBeanServer must be a proxy
+</li><li>(2004-05-20) .war reloading fixes
+</li><li>TempCharReader.read() method not returning correct length (rep by Sunil Kamath)
+</li><li>host-deploy undeploy (rep by cornwell)
+</li><li>(2004-05-17) Missing ZipFile close for TldParsing
+</li><li>Added adaptive LRU
+</li><li>Fixed IIOP exception marshalling (rep by Andrea Mari)
+</li><li>JSP flushing issues: removed JspBufferedWriter (rep by 
+</li><li>added --disable-ssl to ./configure (rep by Michael O'Dea)
+</li><li>Cleaned up UserConnection automatic statement closing
+</li><li>Cached XML parsing for web.xml (to reduce memory use)
+</li><li>(2004-05-07) On windows, need to strip trailing '.' and space from URL segments
+</li><li>log rollover can compress to .gz (rep by E Ceccarelli)
+</li><li>AbstractHttpResponse.isIgnoreClientDisconnect needs to check _originalRequest
+</li><li>AccessLog rollover fixes (rep by Andrew M)
+</li><li>important bug fix with win32 keepalives (rep by Kelvin Xu)
+</li><li>mod_caucho problems with virtual hosts fixed (rep by Chris Smith)
+</li><li>load balancing with sticky sessions was ignoring dead time (rep by Ben Sinclair)
+</li><li>Hessian/Burlap need to handle private constructors
+</li><li>file servlet with NOT_MODIFIED and cache-mapping needs to set expires (rep by Alon Salant)
+</li><li>Hessian support for java.io.File
+</li><li>resin:set wasn't handling var/value attributes
+</li><li>(2004-05-06) Added day-of-week to cron (rep by E. Ceccarelli)
+</li><li>FastCGI/PHP fixes (rep by Dan Aloma)
+</li><li>ear deployment wasn't showing up in /caucho-status (rep by B Bothwell)
+</li><li>Added message-driven proxy to merge *.ejb files (rep by Alon Salant)
+</li><li>Deadlock fixed with ExpandDeploy
+</li><li>wrapped encodeURL for include needs to go to parent
+</li><li>regression issue with contextInitialized() (rep by Jeroen van Vianen)
+</li><li>(2004-04-30) startup-mode, redeploy-mode and JMX control of web-apps (rep by David Solano)
+</li><li>Fixed LruCache NPE (rep by Dave Moellenhoff)
+</li><li>session in-use must be tested on timeout (rep by Gary Doughty and Mattias J)
+</li><li>fixed OpenSSL session cache initialization (rep by D Orrell)
+</li><li>fixed OpenSSL verification depth checking
+</li><li>web-app in web-app-deploy overrides defaults (rep by Mark Church)
+</li><li>XPath nodeSet values need to return NodeList (rep by Mattias J)
+</li><li>Session invalidate issues with file-store (rep by Bernd Eggink and Alon Salant)
+</li><li>ELFormatter patterns should be relative to the current context
+</li><li>Added validation for verify-client
+</li><li>ResinStatusServlet was displaying the "current" host twice
+</li><li>check for null with OPENSSL_INCLUDE in configure.in (rep by Keith Fetterman)
+</li><li>DOM importNode infinite loop (rep by H Mullings)
+</li><li>Added support for separate Apache APR directory (rep by Don Coleman)
+</li><li>Fixed XML regression error for doctype 
+</li><li>Fixed NPE in ResinStatusServlet (rep by Eric Hauser)
+</li><li>(2004-04-20) Add setId to ServletConfigImpl
+</li><li>tld listener need to start on application start, not first JSP - needed for JSF (rep by Joe Dane)
+</li><li>Added SSL_load_client_CA_file for ca-certificate-file support (rep by D Orrell)
+</li><li>XSL from DOMSource or SAXSource needs CRC-64 caching for Hibernate (rep by Jeroen van Vianen)
+</li><li>Vector wasn't properly read by Hessian
+</li><li>Add ClearCacheByPattern (rep by John Crossman)
+</li><li>lazy validation of tag classes
+</li><li>BodyTag optimization issues with Tag's doStartTag() returning BUFFERED (rep by Viktor Panassov)
+</li><li>regexp-mapping with mismatch should return 404 (rep by Dave Moellenhoff)
+</li><li>regexp-mapping has null for servlet-class (rep by Dave Moellenhoff)
+</li><li>GC cleanup
+</li><li>(2004-04-15) Cluster issues with backup servers (rep by Remilon)
+</li><li>Catch connection errors in Hessian/Burlap proxy to allow for failover (rep by Andrew Wason)
+</li><li>EL array not properly handling out of bounds exception
+</li><li>Improved OpenSSL error messages.
+</li><li>HmuxLoad balancer now fails over to backup on 503
+</li><li>Send 503 busy message when load balancer can't connect to backend (rep by Thomas Eichberger)
+</li><li>Automatically save allocation stack traces once a missing close() is found
+</li><li>cleanup of JNI select for IIS (rep by Muthu Shanmugam)
+</li><li>Added RuntimeExceptionWrapper to GzipFilter (rep by Dave Moellenhoff)
+</li><li>RotateStream now allows rollover-size with rollover-period 
+</li><li>JSP error page reporting shouldn't throw the IllegalStateException when data is flushed (rep by Jennifer Leong)
+</li><li>Added cluster client configuration
+</li><li>Inner &lt;log&gt; should override outer &lt;log&gt; (rep by Lon Tierney)
+</li><li>JSP validator for custom tag wasn't printing attributes (rep by Jeroen van Vianen) 
+</li><li>validator printing for JSTL wasn't escaping quotes (rep by Fyodor Golos)
+</li><li>jsp20-tld.rnc was using wrong init-param definition (rep by Fyodor Golos)
+</li><li>(2004-04-07) Added logging to Lifecycle
+</li><li>include wrapper needs to take care of filtered responses (rep by Ales Perme and Jeroen van Vianen)
+</li><li>Missing getVariableResolver in PageContextImpl (rep by Adam Megacz)
+</li><li>added read-timeout and write-timeout
+</li><li>session timeout without always-save-session (rep by Mattias J)
+</li><li>context-param should not use EL by default (rep by Martin Cordova)
+</li><li>xsl:import of duplicate files was causing conflicts (rep by Lon Tierney)
+</li><li>added #define for ssl.c for OpenSSL 0.9.6 vs 0.9.7 messages (rep by Andrew Marcuse)
+</li><li>Reduced Jar caching need by handling Class depend as a special case (rep by Erich Oliphant)
+</li><li>(2004-03-31) regression issues with filters and Writer/OutputStream
+</li><li>(2004-03-30) GzipFilter and close (rep by Dave Moellenhoff)
+</li><li>Issues with GzipFilter and resetting (rep by Dave Moellenhoff)
+</li><li>(2004-03-29) Classes from Jar now only check Jar file for depend
+</li><li>jsp:scriptlet in jspx was limited to 1k (rep by Vladimir Nicolici)
+</li><li>UTF8Writer off-by-one in capacity check (rep by Dave Moellenhoff)
+</li><li>XsltFilter shouldn't change the output stream when an exception is thrown (rep by Lon Tierney)
+</li></ul>
+</s2>
+
+<s2 title="3.0.7 - Mar 25, 2004">
+<ul>
+<li>updated GzipStream close (rep by Dave Moellenhoff)
+</li><li>(2004-03-24) JspPrecompileServlet handling sub-web-apps (rep by George Cox)
+</li><li>PingThread wasn't properly shutting down the server
+</li><li>(2004-03-23) error-page mapping problems (rep by Dave Moellenhoff)
+</li><li>PI handling in JSPX pages (rep by Robert Koberg)
+</li><li>error-page handling of top servlet exception (rep by Dave Moellenhoff)
+</li><li>XsltFilter path lookup changes (rep by Lon Tierney)
+</li><li>(2004-03-19) major changes relating to OutputStream vs PrintWriter (rep by Dave Moellenhoff)
+</li><li>war expand path issues with "_" and name (rep by Lon Tierney)
+</li><li>PrintWriter vs OutputStream changes for JSP and Servlets
+</li><li>(2004-03-16) Issues with JSP buffer size and includes (rep by Vladimir Nicolici and Dave Moellenoff)
+</li><li>OpenSSL wasn't catching ClientDisconnect properly (rep by Chris van Zwynsvoorde)
+</li><li>ClassEntry cache in DynamicClassLoader can't be lru or softreference (rep by Lon Tierney)
+</li><li>fdatasync should be fsync (rep by Lon Tierney)
+</li><li>Added TLD &lt;listener&gt; support (rep by Aaron R)
+</li><li>(2004-03-15) jni_vfs.c problem with accept (rep by Eric Raymond)
+</li><li>comments and pi were causing problems with node builder (rep by Andreas Mueller)
+</li><li>Win32 JNI issues with directories and FileServlet (rep by Dave Ford and Vince Law)
+</li><li>temporary patch to security-manager handling (rep by Greg Griffing)
+</li><li>Caching issues with Body tag include (rep by Vladimir Nicolici)
+</li><li>JMX name shouldn't be "" for default host for JDK 1.5 (rep by Jeroen van Vianen)
+</li><li>c:param shouldn't need to be direct child of c:url (rep by Jeroen van Vianen)
+</li><li>jsp:setProperty with BigDecimap property type support (rep by ChrisP)
+</li><li>(2004-03-12) XsltFilter update to support Xalan (rep by Lon Tierney)
+</li><li>XsltFilter needs to search classpath (rep by Lon Tierney)
+</li><li>JMX ObjectName params can have spaces
+</li><li>Updated QDocument.importNode (rep by Sailor Zhang)
+</li><li>Fixed potential cross-site scripting issue (rep by Vernon Adams)
+</li><li>ear needs to read MANIFEST.MF for Class-Path (rep by Joshua Swartz)
+</li><li>Added xsl:sort case-order (rep by Lon Tierney)
+</li><li>Added nativeChmod to resin.def (rep by Jeroen van Vianen)
+</li><li>ELParseExtension should extend JSP ELParseExtension
+</li><li>(2004-03-09) StreamPrintWriter wasn't overriding write(String) (rep by Kevin Oliver)
+</li><li>(2004-03-01) Significant reworking of Deploy code
+</li><li>Quercus StructuredText needs additional check for javascript: (rep by Vladimir Nicolici)
+</li><li>c:forEach with validation and no items wasn't printing correctly
+</li><li>c:forEach issues with contained tags
+</li><li>FileSetType with no include should default to include all
+</li><li>.ear files were not redeployed automatically (rep by Douglas Padian)
+</li><li>Added JspPrecompileResource for batch precompilation (rep by Dave Moellenhoff)
+</li><li>Allow file-store in &lt;session-config&gt; (rep by Markus Baron)
+</li><li>i18n issues with JSP include (rep by Markus Baron)
+</li><li>JSP line number issues on windows (rep by Bin)
+</li><li>jsp:include with flush="false" and wrapped response wasn't flushed properly (rep by Markus Baron)
+</li><li>Added TABLESWITCH and LOOKUPSWITCH to code analyzer (rep by Adam Megacz)
+</li><li>Added XA log
+</li><li>library-loader should accept .jar as path and &lt;fileset&gt; (rep by Vitali K.)
+</li><li>Cleaned up WorkManager start vs schedule (rep by Javier Ordonez)
+</li><li>Bean-style serialization for Hessian/Burlap (rep by Nicholas Averseng)
+</li><li>(2004-02-13) jsp:include flush="false" with tags issue
+</li><li>updated plugin_ignore so first match isn't required (rep by Larry Leszczynski)
+</li><li>xsl:template issues with name and match
+</li><li>Added Apache 2.0 support for Location-distinct ResinConfigServer (rep by Javier Ordonez)
+</li><li>MBeanServerImpl was missing getDomains() (rep by Mike Perham)
+</li><li>Added Hessian/Burlap convenience methods (rep by Nicholas Averseng)
+</li><li>Added Hessian/Burlap fault reporting enhancement (fixed! by Nicholas Averseng)
+</li><li>Added security-role-ref to servlet
+</li><li>lazy-init to &lt;host&gt; and &lt;host-deploy&gt;
+</li><li>Add sub &lt;web-app&gt; capability 
+</li><li>Burlap/Hessian writeReplace and readResolve messed up refs (rep by Nicholas Averseng)
+</li><li>Switch to IdentityHashMap for Burlap/Hessian refs (rep by Nicholas Averseng)
+</li><li>added readCall, readHeader, readMethod for Burlap/Hessian (rep by Nicholas Averseng)
+</li><li>Missing EL syntax checking (rep by daver)
+</li><li>MessageFormatter needs to unwrap exception (rep by Thomas Zehetbauer)
+</li><li>Logger.setLevel needs to update the level (rep by Matthias Ernst)
+</li><li>Jmx parse properties needs to set "" for null value (rep by Mike Perham)
+</li><li>GzipStream needs to propagate close (rep by Dave Moellenhoff)
+</li><li>Added restart() &amp; other JMX data to WebAppMBean and HostMBean (rep by Mark Knowles)
+</li><li>JMX fixes to support JDK 1.5
+</li><li>XmlTransformTag.doEndTag was swallowing exceptions (rep by Markus)
+</li><li>session.invalidate() nullpointer with missing authentication (rep by Markus)
+</li><li>NodeBuilder can now configure File attributes (rep by Giles Parnell)
+</li><li>JSTL sql:setDataSource didn't support the driver attribute (rep by David Campbell)
+</li><li>Added &lt;backup-driver&gt; to &lt;database&gt; (rep by Vic Cekvenich)
+</li><li>XAResource.end wasn't called on each connection for isSameRM pool items (rep by Andreas Muller)
+</li><li>BundleManager.create() wasn't saving itself in the local environment
+</li><li>EL getter throwing exception shouldn't absorb the error (rep by Dave Ford)
+</li><li>allow-servlet-el was missing from Resin 3.0 (rep by Adam Megacz)
+</li><li>mod_caucho wasn't receiving srun backup configuration
+</li><li>(2004-02-02) JSP with extends wasn't getting automatically reloaded (rep by Assaf Urieli)
+</li><li>Fixed issues with logout and JdbcStore or FileStore (rep by Gary Doughty)
+</li><li>MBeanConstructorInfo was stubbed out (rep by Randy Jackson)
+</li><li>SAXParser, even with validating as false, should handle XML defaults (rep by Robert Sfeir)
+</li><li>In a .tag file, jspContext.getAttribute("xxx", REQUEST_SCOPE) had nullpointer (rep by jvdsandt)
+</li><li>(2004-02-02) Changes to PingThread to minimize the possible freezes
+</li><li>Fixed cluster-definition and cluster-ref implementation
+</li><li>fix for OpenSSL certificate memory leak (fixed! by David Orrell)
+</li><li>Test for conn = 0 for possible nullpointer in QJniSocket
+</li><li>JSP needs to be recompiled when XML tag changes (rep by Jeroen van Vianen)
+</li><li>Removed HmuxLoadBalanceServlet dependency on CauchoRequest
+</li><li>Manual Apache configuration restored for mod_caucho (rep by Robert Sfeir)
+</li><li>distributed-store with multiple http ports and hw load balancer wasn't matching distributed object names
+</li><li>(2004-01-28) Allow LogManager.addLogger for custom logs (rep by David Soleno)
+</li><li>Added multiple &lt;logger&gt; as children of &lt;log&gt;
+</li><li>(2004-01-26) Added socket-listen-backlog to port (rep by Tim Craycroft)
+</li><li>compiling-loader can now batch compilation, defaulting to true
+</li><li>resin:set, resin:if, and resin:choose are now added
+</li><li>resource class not found now displays the current classpath (rep by Jeroen van Vianen)
+</li><li>error-page was unwrapping too many exceptions for exception-type (rep by Dave Moellenhoff)
+</li><li>misc JCA fixes to support SwiftMQ (rep by Andreas Mueller)
+</li><li>connector xsi:schemaLocation was missing from rnc (rep by Andreas Mueller)
+</li><li>getAuthType should return null when no user is logged in (rep by Keith Fetterman)
+</li><li>&lt;server&gt; EL variable was missing
+</li><li>Updated Makefile for installation with --prefix (rep by Joshua Nye)
+</li><li>JSSE needs to catch the getPeerCertificates exception (rep by Dave Moellenhoff)
+</li><li>Enhanced JniSelectManager for adaptive timeout (rep by Dave Moellenhoff)
+</li><li>Added keepalive-max and keepalive-timeout to &lt;server&gt; (rep by Dave Moellenhoff)
+</li><li>empty attributes with jspx should print the "" value (rep by Jeroen van Vianan)
+</li><li>On Unix, WEB-INF from wars are expanded at 0750 (rep by Keith Fetterman)
+</li><li>URL-rewritten session id should never be reused (rep by Edoardo Ceccarelli)
+</li></ul>
+</s2>
+
+<s2 title="3.0.6 - Jan 20, 2004">
+<ul>
+<li>Win32 linking issue with resin.dll (rep by Andrea Mari) 
+</li><li>servlet-mapping with url-regexp was causing NullPointer (rep by Dave Moellenhoff)
+</li><li>include needs to inherit the parent's character encoding (rep by Nicholas Avenseng)
+</li><li>optional taglib namespace declaration in jsp:root wasn't picking up JSTL functions (rep by Jeroen van Vianen)
+</li><li>removed compile-loader deadlock
+</li><li>ssl.c ERR_print_errors_cb isn't in openssl-0.9.6 (rep by Joshua Nye)
+</li></ul>
+</s2>
+
+<s2 title="3.0.5 - Jan 15, 2004">
+<ul>
+<li>(2004-01-14) Cleaned up .rnc for trang (rep by Robert Koberg)
+</li><li>PolicyImpl.init() must be called in EnvironmentClassLoader.init to handle the SecurityManager
+</li><li>Complications with authentication logout and persistent store (rep by Gary Doughty)
+</li><li>JstlFmtMessage wasn't calling generatePrologue on JstlFmtParam (rep by Matt Raible)
+</li><li>UserDataConstraint was missing setDocument (rep by Matt Raible)
+</li><li>&lt;jsp:output doctype-system&gt; was missing (rep by jvdsandt)
+</li><li>updated servlet config to use getConstructors() instead of getDeclaredConstructors
+</li><li>Add codeSource to loaded classes (rep by Eelco)
+</li><li>allow multiple host deploy (rep by Daniel Bjuhr)
+</li><li>cleanup to "make install" target (rep by Perry tew)
+</li><li>XSLT wasn't escaping backslashes properly in attributes
+</li><li>JSTL forEach issue with SimpleTag (rep by Allen Firstenberg)
+</li><li>transport-guarantee case was incorrect, should be uppercase (rep by Keith Fetterman)
+</li><li>added support for Expect: 100-continue (rep by David Hemphill)
+</li><li>(2004-01-09) fmt:number currencyCode was stubbed out (rep by Phil Smy)
+</li><li>JSP $\{..} should not escape values
+</li><li>enhance jstl format bundle caching (rep by Jamie McCrindle)
+</li><li>cleanup of isapi_srun filters 
+</li><li>getClass().getResource(".") wasn't working for jars in directory-loader
+</li><li>servlet-mapping url-regexp needs to become &lt;servlet-regexp&gt; (rep by Rob Geddes)
+</li><li>Improved error checking for OpenSSL on Linux (rep by jvdsandt)
+</li><li>setgid needs to occur before getuid() == uid test (rep by Allen Firstenberg)
+</li><li>JSP destroyed pages would not be recompiled (rep by 
+</li><li>JSP "extends" pages weren't catching updates (rep by Assaf U)
+</li><li>multiple c:forEach with nested tag wasn't declared properly (rep by Jason Purcell)
+</li><li>VarStatus isLast wasn't checking the final iterator (rep by Jason Purcell)
+</li><li>(2003-12-16) isapi_srun.dll fixes for headers with trailing spaces (rep by Mark Kocsis)
+</li><li>c:forEach with varStatus wasn't optimizing properly in jsp:attribute or jsp:body (rep by Bin)
+</li><li>ClientDisconnectException should not be thrown for a read. (rep by Charbel El-Achkar)
+</li><li>(2003-12-11) Reversed doAfterBody "fix".  The 2.0 JSP spec is explicit about doAfterBody not being called in this case.
+</li><li>dom.jar needs to be added to the distribution (rpe by Jonah Liebert)
+</li><li>Added unconditional to XsltFilter (rep by Jeroen van Vianen)
+</li><li>If-Modified-Since wasn't available from forward pages (rep by Sacha Prins)
+</li><li>xsl:copy-of with entity references (rep by Nancy Deschenes)
+</li><li>Change APR_HAS_THREADS test in mod_caucho (rep by Allen Firstenberg)
+</li><li>Save config between Apache startup
+</li><li>user-name/group-name were in wrong place in default resin.conf (rep by Allen Firstenberg)
+</li><li>access.log w/o JNI wasn't printing IP correctly (rep by William Au)
+</li><li>XPath 2*.01 wasn't parsed correctly (rep by Mike Kupritz)
+</li><li>Apache sticky sessions was incorrectly parsing Cookie
+</li><li>Added plugin_ignore to mod_caucho/isapi_srun
+</li><li>JSP mapping to same real path should generate same .class (rep by Jim Frenette)
+</li><li>cleanup hessian/burlap method mangling (rep by Nicholas Aversang)
+</li><li>fmt:fmtNumber wasn't handling null values property (rep by Jason Purcell)
+</li><li>XsltFilter should use the JAXP factory create methods (rep by Nancy Deschenes)
+</li><li>Added CauchoStatus to httpd.conf (rep by Jonah Liebert)
+</li><li>Added IISPriority to resin.ini (rep by Shane Baldacchino)
+</li><li>stream.c compilation bug with -DOPENSSL (rep by Joern Heid)
+</li><li>c:forEach needs explicit java.util.Iterator (rep by J Purcell)
+</li><li>doAfterBody needs calling in empty tags (rep by Phil Smy)
+</li><li>(2003-11-26) Recompiled against gnuwin32 openssl
+</li><li>Adding missing JSTL support files (rep by Jason Purcell)
+</li><li>Added validation syntax and fixed r_any support (rep by Phil Smy)
+</li><li>Added Apache VirtualHost support for ResinConfigServer
+</li><li>Set the client disconnect logging to finer (rep by Hugo Zhu)
+</li><li>Added getName() in DBPool (rep by William Au)
+</li><li>JSP handling of null namespace (rep by Jeroen van Vianen)
+</li><li>x:if and x:when need node context for x:foreach (rep by Phil Smy)
+</li><li>Custom tag analysis with end tag issues
+</li><li>Added transaction-timeout configuration to &lt;database&gt;
+</li><li>doclet needs to escape &lt;
+</li><li>security and cache
+</li><li>Performance updates for JSP body getString() (rep by Jean-Philippe Encausse)
+</li><li>Added date weight to search spider (rep by Keith Fetterman)
+</li><li>JSP validation message loop was using 'i' instead of 'j'
+</li><li>Removed order dependency on &lt;host&gt; configuration (rep by Allen Firstenberg)
+</li><li>Added EL escaping
+</li><li>Cache path wasn't created property 
+</li><li>Fixed file descriptor leak with keepalive disconnect
+</li><li>Changed IPV6 test in jni_vfs.c (rep by Gary Doughty)
+</li><li>(2003-11-18) min-free-memory belongs in &lt;resin&gt;, not &lt;server&gt; (rep by Dewang Shah)
+</li><li>Improved servlet constructor-checking error messages (rep by Milut)
+</li><li>(2003-11-12) Added maxCreateConnection to connection pool to limit initial connection hits
+</li><li>Added save-allocation-stack-trace to connection pool (rep by Justin Van Vorst)
+</li><li>Changed error message when j_security_check is missing
+</li><li>sql:param wasn't accepting null values
+</li><li>Tag file throws clause needs Throwable not Exception (rep by Eric Savage)
+</li><li>META-INF/services was missing from new build (rep by Fyodor Golos)
+</li><li>JSP with unused tag variable was undeclared but assigned (rep by Dragisa Krsmanovic)
+</li></ul>
+</s2>
+
+<s2 title="3.0.4 - Nov 6, 2003">
+<ul>
+<li>(2003-11-06) clear() should be special-cased for Amber collections (rep by Andrew Lienhard)
+</li><li>custom error pages should eliminate the MSIE hack
+</li><li>flushBuffer addition to StreamImpl/ResponseStream
+</li><li>(2003-10-28) threading fixes in jni_vfs.c
+</li><li>Regression issues with resin-doc and win32 (rep by Bin)
+</li><li>Added shutdown-wait-max to configure how long to wait for requests to complete (rep by Jean-Francois Lamy)
+</li><li>(2003-10-17) HmuxRequest wasn't properly initializing _isSecure (rep by Sacha Stanton)
+</li><li>JniFileStream was returning inaccurate value for getAvailable(), messing up Jira (rep by Chris Chen)
+</li><li>LoopTagSupport needs to implement LoopTag in jstl-11.jar (rep by Jason Purcell)
+</li><li>isapi_srun.dll was missing latest protocol updates for large post (rep by 
+</li><li>Windows file handling wasn't correctly dealing with file:///c:/foo.test (rep by Tower) 
+</li><li>Changed srun timeout and documented srun parameters (rep by Marty)
+</li><li>Error checking missing for &lt;servlet&gt; in &lt;http-server&gt; (rep by Marty)
+</li><li>RotateLog trouble with stdout/stderr (rep by Chris Chen and Jean-Francois Lamy)
+</li><li>XA/local-transaction timeout cleanup with JCA pool (rep by Martin Weinig)
+</li><li>Eliminated dialog boxes for normal -install and -remove (rep by James Bond)
+</li><li>CGI stderr is handled as warning and exception (rep by Oli)
+</li><li>Added JavaMail configuration support
+</li><li>webapps handling with case-insensitive wasn't picking up directories (rep by Dave Ford)
+</li><li>documentation default.xsl was including wrong header (rep by Bin)
+</li><li>(2003-10-11) Added host-deploy (rep by Jonas Angelin)
+</li><li>public zero-arg constructor message needs to wrap exception (rep by Lluis Turro)
+</li><li>Added prepared-statement-cache-size for &lt;database&gt; (rep by Juergen Hoeller)
+</li><li>Added IPV6 support for Unix (rep by Mark Renouf)
+</li><li>snapshot wasn't recompiled for win32 causing JNI issues (rep by Bin)
+</li><li>Added com.caucho.log.SyslogHandler (rep by Leonard Krivopaltsev)
+</li><li>Added flushBuffer to AbstractHttpResponse to take care of include annoyance
+</li><li>updates to wrapper.pl (rep by Nick Johnson)
+</li><li>&lt;log&gt; can specify custom &lt;handler&gt; directly
+</li><li>resin:type now accepts args
+</li><li>server-root and resin-home were not properly set when SERVER_ROOT and RESIN_HOME differ (rep by Francois Bertrand)
+</li><li>(2003-10-07) \${app.name} now returns main war name for war expansion (rep by John Crossman)
+</li><li>Added web-app-default as content of web-app-deploy
+</li><li>Added ThreadPool and let Alarm use the thread pool so Alarm can handle longer-lived tasks
+</li><li>zero-argument constructor error needs log (rep by Alex Schonfeld)
+</li><li>jsp:plugin width and height missing (rep by Andreas Fischer)
+</li><li>add servlet-mapping support for plugin_match (rep by Jean-Baptiste Quenot)
+</li><li>isapi_srun wasn't handling SSL properly
+</li><li>Clean up doc/href-map.xml link
+</li><li>Cleaned up openssl support for windows
+</li><li>install.sh needed to change to ResinConfigServer (rep by Jean-Baptiste Quenot)
+</li><li>On JRocket, the freeMemory calculation can't use maxMemory (rep by Jay Sissom)
+</li><li>Support i18n decoding of Host encoded with IDN, internationalized domain names (rep by Stefan Praszalowicz)
+</li><li>&lt;%@ include %&gt; JSP wasn't included in depend list 
+</li><li>EL expression issues in jspx
+</li><li>cleanup for ignore-client-disconnect (rep by Bingqiang)
+</li><li>Added servlet-regexp to support old url-regexp pattern (rep by Dave Moellenhoff)
+</li><li>JSP should use the old page until the new page is compiled (rep by Peter Axelsson)
+</li><li>WebDAV root parameter wasn't handled with init style (rep by Alon Salant)
+</li><li>getRequestDispatcher shouldn't encode parameters in utf8 (rep by stefan)
+</li><li>RewriteFilter now detects redirect cases to redirect to http://www.bar.com (rep by Kirk Rasmussen)
+</li><li>Apache2 cleaned up forwarding after rewriting ;jsessionid
+</li><li>Made the jsp servlet in app-default.xml load-on-startup to initialize JspFactory (rep by Claude Honnore)
+</li><li>Added support for CLIENT-CERT login.
+</li></ul>
+</s2>
+
+<s2 title="3.0.3 - Sep 22, 2003">
+<ul>
+<li>(2003-09-22) Fixed Base64 tail encoding
+</li><li>Fixed passwords and digest login
+</li><li>Increase plugin TCP buffer sizes for POST (rep by Jonah Liebert)
+</li><li>(2003-09-16) strip-spaces must actually remove whitespace nodes
+</li><li>Basic .ear with ejb support
+</li><li>Moved JSTL to separate jar file (rep by Serge Knystautas)
+</li><li>Cocoon fixes
+</li><li>Cache the JdbcAuthenticator isInRole
+</li><li>Fixes relating to x:transform and XSLT InputSource with system id (rep by Charles Fu)
+</li><li>Apache 2 install.sh now supports conf.d (rep by Tauren Mills)
+</li><li>Add use-parent-handlers to &lt;log&gt; (rep by Jeff Miller)
+</li><li>Added &lt;formatter&gt; to log config (rep by Jeff Miller)
+</li><li>Added cr-lf to WebDavServlet (rep by Michael Traunau)
+</li><li>Added virtual-host to http (rep by Steven Tower)
+</li><li>Added archive-format to log and allow paths in archive-format
+</li><li>fixed memory leak in connection
+</li><li>(2003-08-21) ./configure was automatically include apache even when not specified (rep by Bill Griffith)
+</li><li>fixed c:import issues with encoding and include() 
+</li><li>thread-max added to &lt;server&gt;
+</li><li>ignore-client-disconnect added to &lt;server&gt;
+</li><li>cleaned up session listener destroyed event with tcp-store (rep by Gary Doughty)
+</li><li>Added servlet-mapping extension allowing concurrent definition (rep by Dave Moellenhoff)
+</li><li>.class change detection wasn't properly handing recompilation (rep by Dave Moellenhoff)
+</li><li>Changed ./configure LD_FLAGS order, so Resin's guesses are after apxs
+</li><li>XSL transformations with zero-argument *Source (rep by Jonathan Gray)
+</li><li>XML parsing add support for PE referring to external system resource (Bernd Eggink)
+</li><li>XML now serializes with as externalizable XML (rep by Simone Avogadro)
+</li><li>Add support for JSTL 1.1 urls
+</li><li>x:forEach wasn't setting implicit node (rep by Gordon Conrad)
+</li><li>&lt;java&gt; support missing from application.xml (rep by George Cox)
+</li><li>setDescription missing from ear application.xml (rep by George Cox)
+</li><li>(2003-08-13) Handle recursive JSP tag files (rep by Matthias Ernst)
+</li><li>Allow for custom PasswordDigest in &lt;authenticator&gt; (rep by Thorbjoern Andersen)
+</li><li>FileServlet with null directory wasn't sending 404 (rep by Dave Moellenhoff)
+</li><li>include() should change methods to GET except for POST (rep by Charles Fu)
+</li><li>web-app-deploy with foo.war in web-app
+</li><li>Resin servlets and filters now support bean-style init
+</li><li>Fixes to memory check (rep by Dave Moellenhoff)
+</li><li>Cache now understands Vary
+</li><li>Added overridable allowGzip() method so subclasses could create more complex rules (rep by Mikal Todd)
+</li><li>&lt;srun&gt; wasn't handling host property (rep by Maria Grazia Arienta)
+</li><li>IIS plugin support for status code (fixed by Efri Nattel)
+</li></ul>
+</s2>
+
+<s2 title="3.0.2-beta - Aug 4, 2003">
+<ul>
+<li>JMX StandardMBean invoke should allow nulls as the signature (rep by Knut Forkalsrud)
+</li><li>JMX ReflectionException needs a getCause (rep by Knut Forkalsrud)
+</li><li>(2003-07-28) ISAPI plugin support
+</li><li>Win32 support for bin/resin.dll
+</li><li>Class reload avoiding app reload
+</li><li>(2003-07-22) Basic ResinStatusServlet support
+</li><li>JMX 1.1
+</li><li>JSP 2.0
+</li><li>Servlet 2.4
+</li><li>Message Bean configuration fixes (rep by Charbel El-Achkar)
+</li><li>Loaded JSR-045 into .class
+</li><li>(2003-06-23) JAAS LoginModule.
+</li><li>DBPool now uses JCA.
+</li><li>Basic JMX implementation.
+</li><li>BufferedJspWriter needs to be initialized in initialization, not constructor (rep by Matthias Ernst)
+</li><li>Thrown SQLException with stmt.close() should close connection
+</li><li>Avoid normalization in web-app-expand names (rep by Jean-Francois Lamy)
+</li><li>use-cookie is now sufficient for JdbcAuthenticator to enable cookies
+</li><li>cluster store protocol needs to handle SSL (rep by Anthony Tonns)
+</li></ul>
+</s2>
+
+<s2 title="3.0.1-beta - May 15, 2003">
+<ul>
+<li>(2003-05-12) While cache is being updated, other requests get the old cached value
+</li><li>(2003-05-06) &lt;resource&gt; wasn't understanding replaceObject
+</li><li>setParent issues with SimpleTag vs Tag (rep by Robert)
+</li><li>Make ./configure --prefix work (rep by Alexey Ivanov)
+</li><li>(2003-04-22) Changed JSP buffer model (rep by Hans Bergsten)
+</li><li>Added com.caucho.resources.CronResource
+</li><li>resin-web-xml.rnc was using method instead of http-method in web-resource-collection
+</li><li>Class loaders now extend URLClassLoader
+</li><li>Added security-provider to &lt;resin&gt; (rep by Heather Rogers)
+</li><li>Added com.caucho.servlets.HttpProxyServlet
+</li><li>LogConfig changes for backward compat: href (rep by Heather Rogers)
+</li><li>TldAttribute was missing setDescription (rep by Thomas Zehetbauer)
+</li><li>Cleaned up lifecycle of web-app, host, environment, etc.
+</li><li>(2003-03-20) memory and reliability checking
+</li><li>(2003-03-18) JdbcStore should give priority to BLOB (rep by Jon Cochran)
+</li><li>added BootstrapContext.createTimer()
+</li><li>Quit HTTP method on all characters than space (32) (rep by Kaile Riser)
+</li><li>Compilation warnings now go to log.warning (rep by Max Kutny)
+</li><li>Changed detection of apache1 vs apache2 version (rep by Sonny Picket)
+</li><li>form-error-page, when not configured properly or broken, wasn't returning a good error messages
+</li><li>added cipher-suite to openssl
+</li><li>Adding CRC check for tcp-sessions (rep by Nathan Mehl)
+</li><li>XML validating parser needs to pass defaults to attributes (rep by Steve Holt)
+</li><li>resin/lib loader should look at subdirectories (rep by Max Kutny)
+</li><li>UnavailableException in load-on-startup prevents web-app from starting (rep by Max Kutny)
+</li><li>Added &lt;secure-host-name&gt; for transport-guarantee (rep by Juan Yep)
+</li><li>&lt;host-name&gt; with port will set the value of getServerPort() (rep by Allon Bendavid)
+</li><li>JSP allow setA(String) to override setA(double) in setProperty
+</li><li>Allow direct rename of webdav files (rep by Pieter Schoenmakers)
+</li><li>Added app.regexp to know EL values (rep by Sam Dash)
+</li><li>For JSP/XML print &lt;br /&gt; (rep by Tim Jervis)
+</li><li>made burlap inherit from hessian so serialization can be shared
+</li></ul>
+</s2>
+
+<s2 title="3.0.0 - Feb 13, 2003">
+<ul>
+<li>fixed XTP dependency check interval
+</li><li>(2003-02-04) Added current time to cookie generation when cookie-length &gt; 12
+</li><li>added require-source to &lt;compiling-loader&gt; (rep by Max Kutny)
+</li><li>Allow error-page in &lt;host&gt; (rep by Leonardo Brondani Schenkel)
+</li><li>ConnectionPoolDataSource can not be used with &lt;xa/&gt; (rep by Max Kutny)
+</li><li>getAssociatedStylesheetWith DOMSource (rep by Uma Shinde)
+</li><li>(2003-01-08) added jsp/ignore-el-exception, defaulting to true (rep by Fyodor Golos)
+</li><li>wrapper.pl -Dxx defines must be after command line (rep by Gary Doughty)
+</li><li>(2003-01-01) servlet/jsp regressions essentially clean!
+</li><li>(2002-12-17) Check that DBPool driver classes can be instantiated (rep by Max Kutny)
+</li><li>Spy needs to support XA and PooledConnectionDataSource (rep by Max Kutny)
+</li><li>Upgraded CharBuffer for performance (rep by Alan Berezin)
+</li><li>WarApplicationEntry.warExpand needs to be protected by a lock (rep by Jason Chaffee)
+</li><li>Changed session to use Hashtable instead of HashMap (rep by Martin Williams)
+</li><li>(2002-12-03) SSL needs to be pluggable (rep by Martin Cordova)
+</li><li>Hot deploy of .war should not affect other .war files (rep by Jason Chaffee)
+</li><li>Added JavaCompiler.getLock() to eliminate double compilation (rep by mimo)
+</li><li>Added SingleThreadModel pooling (rep by Henry van den Broek)
+</li><li>Log when Jndi.bindDeep rebinds over and old object (rep by Brian Wilson and Max Kutny)
+</li><li>if war expansion fails, retry
+</li><li>jspc support for jsp: tags 
+</li><li>better handling of case-insensitive and context-path (rep by Davide Frigerio)
+</li><li>add tld-dir to &lt;jsp&gt; to restrict search (rep by Frank Nestel)
+</li><li>case-insensitive added to allow support for MacOS (rep by Jim Frenette)
+</li><li>Persistent sessions need to create subdirectory (rep by Fyodor Golos) 
+</li><li>(2002-09-16) log integration with java.util.logging
+</li><li>Add sticky-sessions config to LoadBalanceServlet (rep by Matthew Ling)
+</li><li>Only use apxs flags in ./configure when can't determine otherwise (rep by Jan Christian)
+</li><li>CGI fixes/enhancements (rep by Kenkichi Mahara)
+</li><li>Hessian handling of large (&gt; 32k) byte values (rep by James Ralston)
+</li><li>(2002-08-26) Major refactoring
+</li><li>AcceptPool now uses stack instead of ring (rep by Ian Holsman)
+</li><li>SecurityContext.setProvider needs try ... finally to restore (rep by KIR)
+</li><li>Detecting WEB-INF filesystem loops when searching for .tld (rep by Frank Nestel)
+</li><li>Removed static methods from XmlPrinter (rep by Enrique Lamas)
+</li><li>prelude and coda
+</li><li>Basic JSR-45 .smap file generation
+</li><li>(2002-07-30) added taglib functions to JSP EL
+</li><li>(2002-07-29) Partial refactoring of com.caucho.jsp classes
+</li><li>JSP: Initial cut of JSP EL
+</li><li>JSP: Initial cut of dynamic attributes
+</li><li>JSP: Initial cut of SimpleTag
+</li></ul>
+</s2>
+
+<p>
+<a href="changes-2.xtp">JDK 1.2 changes</a>
+<a href="changes-1.xtp">older changes</a>
+</p>
+</s1>
+</body>
+</document>

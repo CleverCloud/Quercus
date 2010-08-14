@@ -1,0 +1,252 @@
+<document>
+    <header>
+        <product>resin</product>
+        <version>Resin 4.0</version>
+        <title>Open Solaris Installation Instructions</title>
+
+        <description>
+            <p>
+                <b>
+                    <em>Resin for OpenSolaris Step-by-Step Installation Guide
+                    </em>
+                </b>
+                If you've decided that you're ready to deploy Resin for
+                production, this page will guide you through the steps
+                to install this powerful application server system-wide.
+                You'll see where we recommend installing the various components
+                of Resin as well as some basic production tuning tips.
+            </p>
+        </description>
+    </header>
+
+    <body>
+        <localtoc/>
+        <s1 title="Resin Server Installation on Solaris">
+            <p>
+                <b>This page is for you if you:</b>
+            </p>
+            <ul>
+                <li>Are evaluating Resin</li>
+                <li>Want to do local application development with Resin</li>
+                <li>Have evaluated Resin and are ready to install system-wide
+                </li>
+                <li>Want to install Resin on Solaris / OpenSolaris Systems</li>
+            </ul>
+            <p>
+                This page leads you step-by-step through the installation of
+                Resin.
+                After going through these steps, you'll have a full Java and PHP
+                Application Server able to serve even the most demanding web
+                sites.
+            </p>
+
+            <p>
+                <b>You'll learn:</b>
+            </p>
+            <ul>
+                <li>What you'll need to install for Resin to work on your system
+                </li>
+                <li>What you'll need to install for Resin to compile on your
+                    system
+                </li>
+                <li>How to install Resin system-wide</li>
+                <li>The recommended installation locations for Resin</li>
+                <li>How to run the Resin administration application</li>
+            </ul>
+
+            <s2 title="Attention!">
+                This guide is still an early working draft. Use at your own
+                risk!
+            </s2>
+
+
+            <s2 title="Preparing for installation">
+
+                Before actually installing Resin4, we need some packages to be
+                installed on your system first.
+                <br/>
+
+                In OpenSolaris do this by going to
+                System -&gt; Administration -&gt; Package Manager.<br/>
+                Install the following Packages:
+                <ul>
+                    <li>SUNWopenssl<br/>
+                        (optional, if you don't want
+                        to compile your own OpenSSL)
+                    </li>
+                    <li>SUNWgcc</li>
+                    <li>SUNWbinutils</li>
+                    <li>SUNWj6dev</li>
+                    <li>SUNWant</li>
+                </ul>
+
+
+
+
+            </s2>
+
+            <s2 title="Compiling + Installing OpenSSL">
+                <p>Notice: You only have to do this if you don't selected the
+                SUNWopenssl package in the Package Manager.</p>
+
+                <p>
+                Download OpenSSL 0.9.8o (or newer) from
+                <a href="http://www.openssl.org">http://www.openssl.org</a>
+                to a folder of your choice.
+                </p>
+                <p>
+                Change to the directory where you've saved the openssl tar.gz
+                bundle, then extract it
+                and compile it for your environment.
+                <example>
+                    gunzip openssl-0.9.8o.tar.gz
+                    tar xf openssl-0.9.8o.tar
+                    cd openssl-0.9.8o
+                    ./Configure --prefix=/usr/local/openssl solaris-x86-gcc
+                    shared
+                    make
+                    su
+                    make install
+                </example>
+                </p>
+            </s2>
+
+            <s2 title="Installing Resin">
+
+                Download the current version of Resin Pro (at the time of this
+                writing, 4.0.8 is current), extract and compile it:
+
+                <example>
+                    unzip resin-pro-4.0.8.zip
+                    cd resin-pro-4.0.8
+                </example>
+
+
+                as of this writing there is a small issue with Solaris and
+                linking.
+                Open the files
+
+                <ul>
+                    <li>
+                        modules/c/src/resin/Makefile.in
+                    </li>
+                    <li>
+                        modules/c/src/resin_os/Makefile.in
+                    </li>
+                    <li>
+                    modules/c/src/resinssl/Makefile.in
+                    </li>
+                </ul>
+
+                and change the line
+                <pre>
+                    LDFLAGS_SHLIB=@LDFLAGS_SHLIB@
+                </pre>
+
+                to
+
+                <pre>
+                    LDFLAGS_SHLIB=@LDFLAGS_SHLIB@ -mimpure-text
+                </pre>
+
+                then configure and compile your Resin Application Server:
+
+                <example>
+                    ./configure --prefix=/usr/local/resin
+                    make
+                </example>
+
+                Now we first create the required user directories, so we later
+                don't have to run make install as root (and prevent an infinite
+                loop bug)
+                <example>
+                    pfexec mkdir /usr/local/resin
+                    pfexec chown YOURUSER /usr/local/resin
+                    pfexec touch /etc/init.d/resin
+                    pfexec chown YOURUSER /etc/init.d/resin
+                </example>
+
+                Now simply install it:
+                <example>
+                    make install #this currently makes an infinite loop if the
+                    directories don't exist or are not writable
+                </example>
+
+                now reassign the directories and files to root again
+
+                <example>
+                    pfexec chown root /usr/local/resin -R
+                    pfexec chown root /etc/init.d/resin
+                </example>
+            </s2>
+
+
+            <s2 title='Setting up native service starting'>
+
+                <example>
+                    cp opensolaris/* / -R
+
+                    svccfg -v import /var/svc/manifest/network/http-resin4.xml
+                    svcadm enable network/http:resin4
+                    svcs | grep resin4
+                </example>
+
+            </s2>
+
+
+            <s2 title="Starting the Resin Application Server">
+
+                Simply start the Resin Application Server by executing the
+                init-Script with the pfexec utility:
+
+                <example>
+                    pfexec /etc/init.d/resin start
+                </example>
+
+                Make sure Resin is started by either
+
+
+                typing these commands in your shell:
+
+                <example>
+                    ps -ef | grep java | grep resin
+                </example>
+
+                should print exactly two lines like these
+                <example>
+                    domdorn 21479 21476 11 21:40:20 pts/2 0:05
+                    /usr/jdk/instances/jdk1.6.0/bin/java -Xmx512m
+                    -Dresin.server=1 -Djava.util.logg
+                    domdorn 21476 1 0 21:40:17 pts/2 0:03
+                    /usr/jdk/instances/jdk1.6.0/bin/java -Dresin.watchdog=
+                    -Djava.util.logging.mana
+                </example>
+
+
+                or simply pointing your Web-Browser to
+                <a href="http://localhost:8080/">http://localhost:8080/</a>
+
+            </s2>
+
+            <s2 title="Stopping the Resin Application Server">
+                Stopping the Resin Application Server works the same way like
+                starting it, with the pfexec utility:
+
+                <example>
+                    pfexec /etc/init.d/resin stop
+                </example>
+            </s2>
+
+            make sure the server is stopped by executing the following command
+
+            <example>
+                ps -ef | grep java | grep resin
+            </example>
+
+            which should return no rows.
+
+        </s1>
+
+
+    </body>
+</document>

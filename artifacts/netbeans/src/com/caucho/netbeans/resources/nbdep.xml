@@ -1,0 +1,8 @@
+<netbeans-deployment>
+    <disconnected-string>resin:http://localhost:8080</disconnected-string>
+
+    <web-context-root>
+        <xpath>/</xpath>
+        <prop-name>contextRoot</prop-name>
+    </web-context-root>
+</netbeans-deployment>

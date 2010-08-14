@@ -1,0 +1,118 @@
+<jsf-taglib xmlns="http://caucho.com/ns/resin">
+  <uri>http://java.sun.com/jsf/html</uri>
+
+  <jsf-tag>
+    <name>column</name>
+    <component-class>javax.faces.component.html.HtmlColumn</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>commandButton</name>
+    <component-class>javax.faces.component.html.HtmlCommandButton</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>commandLink</name>
+    <component-class>javax.faces.component.html.HtmlCommandLink</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>dataTable</name>
+    <component-class>javax.faces.component.html.HtmlDataTable</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>form</name>
+    <component-class>javax.faces.component.html.HtmlForm</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>graphicImage</name>
+    <component-class>javax.faces.component.html.HtmlGraphicImage</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>inputHidden</name>
+    <component-class>javax.faces.component.html.HtmlInputHidden</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>inputSecret</name>
+    <component-class>javax.faces.component.html.HtmlInputSecret</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>inputText</name>
+    <component-class>javax.faces.component.html.HtmlInputText</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>inputTextarea</name>
+    <component-class>javax.faces.component.html.HtmlInputTextarea</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>message</name>
+    <component-class>javax.faces.component.html.HtmlMessage</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>messages</name>
+    <component-class>javax.faces.component.html.HtmlMessages</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>outputFormat</name>
+    <component-class>javax.faces.component.html.HtmlOutputFormat</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>outputText</name>
+    <component-class>javax.faces.component.html.HtmlOutputText</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>panelGrid</name>
+    <component-class>javax.faces.component.html.HtmlPanelGrid</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>panelGroup</name>
+    <component-class>javax.faces.component.html.HtmlPanelGroup</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>selectBooleanCheckbox</name>
+    <component-class>javax.faces.component.html.HtmlSelectBooleanCheckbox</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>selectManyCheckbox</name>
+    <component-class>javax.faces.component.html.HtmlSelectManyCheckbox</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>selectManyListbox</name>
+    <component-class>javax.faces.component.html.HtmlSelectManyListbox</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>selectManyMenu</name>
+    <component-class>javax.faces.component.html.HtmlSelectManyMenu</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>selectOneListbox</name>
+    <component-class>javax.faces.component.html.HtmlSelectOneListbox</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>selectOneMenu</name>
+    <component-class>javax.faces.component.html.HtmlSelectOneMenu</component-class>
+  </jsf-tag>
+
+  <jsf-tag>
+    <name>selectOneRadio</name>
+    <component-class>javax.faces.component.html.HtmlSelectOneRadio</component-class>
+  </jsf-tag>
+</jsf-taglib>

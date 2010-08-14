@@ -1,0 +1,160 @@
+<document>
+<header>
+  <product>resin</product>
+  <title>JMS Messaging in Quercus - Sending messages</title>
+  <type>tutorial</type>
+  <tutorial-startpage>send-message.php</tutorial-startpage>
+</header>
+
+<body>
+<localtoc/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <th>File</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/resin-web.xml"/></td>
+  <td>resin-web.xml configuration</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/META-INF/beans.xml"/></td>
+  <td>Java Injection marker file to start bean scanning</td>
+</tr>
+<tr>
+  <td><viewfile-link file="send-message.php"/></td>
+  <td>PHP script sending the message.</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/MyListener.java"/></td>
+  <td>Java message bean listener receiving the message.</td>
+</tr>
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/MessageStore.java"/></td>
+  <td>Singleton service bean storing the received messages.</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="Using JMS in Quercus">
+
+<p>
+Quercus offers a simplified messaging interface built upon JMS.  This 
+functionality makes it possible to send and receive messages using either
+the Resin JMS implementation or any other messaging service with a JMS
+implementation.  Many features of JMS are designed for message-driven
+services which make sense in the Java world, but are not appropriate for
+PHP.  This tutorial focuses on sending messages.
+</p>
+
+</s1>
+
+<s1 title="Sending JMS messages from a PHP script">
+
+<p>
+In this example, the script checks a POST variable "message" and if
+it is set, sends the value of that variable to a JMS queue.  A Message
+Driven Bean (MDB) receives these messages and records them.  The record
+is displayed by a servlet.
+</p>
+
+<example title="Example: PHP sending script">
+&lt;?php
+
+if (isset($_POST["message"])) {
+  $queue = java_bean("Queue");
+
+  if (! $queue) {
+    echo "Unable to get message queue!\n";
+  } else {
+    if ($queue-&gt;offer($_POST["message"]) == TRUE) {
+      echo "Successfully sent message '" . $_POST["message"] . "'";
+    } else {
+      echo "Unable to send message '" . $_POST["message"] . "'";
+    }
+  }
+}
+
+?>
+</example>
+
+<p>
+The programming model of the Quercus JMS interface is first to
+get access to the queue using the <code>java_bean()</code> call.
+<code>java_bean</code> will look for the named bean in the
+resin-web.xml, in this case our queue.  Since the Queue implements
+the <code>java.util.concurrent.BlockingQueue</code> API, the PHP script
+can send data to the queue directly using <code>offer()</code> and
+receive messages with <code>poll()</code>.
+</p>
+
+</s1>
+
+<s1 title="Configuring JMS for PHP and Java">
+
+<p>
+JMS requires two resources: A <code>Queue</code> and a
+<code>ConnectionFactory</code>.  Both are
+configured in <viewfile-link file="WEB-INF/resin-web.xml"/>.
+The <code>ConnectionFactory</code> is used to connect to all the
+<code>Queue</code>s and only one of them needs to be set up.</p>
+
+<s2 title="MemoryQueue configuration">
+
+<p>
+The example uses the queue named <code>Queue</code>.
+</p>
+
+<example title="Example: Queue configuration in resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+           xmlns:resin="urn:java:com.caucho.resin">
+
+  &lt;jms:MemoryQueue>
+    &lt;Named>Queue&lt;/Named>
+  &lt;/jms:MemoryQueue>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+<s2 title="ConnectionFactory configuration">
+
+<example title="Example: ConnectionFactory configuration in resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+           xmlns:resin="urn:java:com.caucho.resin">
+
+  &lt;resin:JmsConnectionFactory/>
+
+&lt;/web-app>
+</example>
+
+<p>
+The complete configuration is in 
+<viewfile-link file="WEB-INF/resin-web.xml"/>.
+</p>
+
+</s2>
+
+<s2 title="Message Bean configuration">
+
+<example title="Example: MyListener configuration in resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"
+           xmlns:resin="urn:java:com.caucho.resin">
+
+  &lt;ejb-message-bean class="example.MyListener">
+    &lt;destination>#{Queue}&lt;/destination>
+  &lt;/ejb-message-bean>
+
+&lt;/web-app>
+</example>
+
+</s2>
+
+</s1>
+
+</body>
+</document>

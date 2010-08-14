@@ -1,0 +1,134 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 4.0.1 Release Notes</title>
+    <description>
+<ul>
+<li>CanDI major refactor to match major changes to the JSR-299
+specification.</li>
+<li>Servlet 3.0  early access implementation, including replacing Resin's
+experimental comet support with Servlet 3.0 async</li>
+<li>Quercus Pro support for other application servers, and increased
+support for Google App Engine.</li>
+<li>Stability and performance work for clustered caching and sessions</li>
+</ul>
+
+    </description>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 4.0.1 Overview">
+
+<p>The focus of Resin 4.0.1 development was the following:</p>
+<ul>
+<li>CanDI major refactor to match major changes to the JSR-299
+specification.</li>
+<li>Servlet 3.0  early access implementation, including replacing Resin's
+experimental comet support with Servlet 3.0 async</li>
+<li>Quercus Pro support for other application servers, and increased
+support for Google App Engine.</li>
+<li>Stability and performance work for clustered caching and sessions</li>
+</ul>
+
+<p>Resin 4.0.x is the active development branch.  Due to the addition of
+new features, it may be more unstable than the production branch.</p>
+
+<p>The 3.1.x branch is the stable branch.</p>
+
+</s1>
+
+<s1 title="Servlet 3.0 Early Access">
+
+<p>Resin 4.0.1 has implemented the Servlet 3.0 draft specification as
+an early access release.  Importantly, Resin's server
+push/comet support has changed to the Servlet
+<a href="http://caucho.com/resin-javadoc/javax/servlet/AsyncContext.html">AsyncContext</a> model.  Developers who have used Resin's experimental comet API
+should see the <a href="../examples/servlet-comet/index.xtp">new comet
+using AsyncContext tutorial</a>. Future Resin versions will concentrate on
+the AsyncContext API and will eventually drop the experimental API.</p>
+
+</s1>
+
+<s1 title="Resin 10,000">
+
+<p>Resin's concurrent connections have been tested up to 10,000
+simultaneous keepalive connections and 10,000 simultaneous Servlet 3.0
+AsyncContext connections on Linux systems.  Resin's direct support
+for Linux EPOLL enables this large-scale keepalive support.
+</p>
+
+</s1>
+
+<s1 title="Java Injection (JSR-299, CanDI)">
+
+<p>The Java Injection specification has been updated considerably from Resin 4.0.0
+to Resin 4.0.1.  Most of the spec changes have been on the SPI side with a complete
+new SPI for custom configuration.</p>
+
+<p>The packaging has also changed, with the main package now being
+<a href="http://caucho.com/resin-javadoc/javax/enterprise/inject/package.html">javax.enterprise.inject</a>.</p>
+
+<p>The <a href="http://caucho.com/projects/candi">CanDI project page</a>
+gives more information, including a link to a CanDI tutorial.</p>
+
+</s1>
+
+<s1 title="/resin-admin">
+
+<p>We've added /resin-admin features to improve visibility to the server, 
+  development and debugging, and adminstration.</p>
+
+<p>A new "graphs" tab lets you view recent statistics from the servers.
+When viewed from the first triad server, statistics from all the servers in
+the cluster are available.</p>
+
+<p>A new "SQL" tab allows you to browse the schema and make queries to 
+any configured database pool in the server.</p>
+
+<p>A new "Wizards" tab helps new users configure various parts of the
+server by showing XML syntax and options.  Currently only database pool
+configuration is supported, with other wizards coming in future releases.
+</p>
+
+</s1>
+
+<s1 title="Watchdog">
+
+<p>The command-line to start Resin now requires an explicit "console" for
+console-mode, because some users were using unix background processing instead
+of using the "start" command.</p>
+
+<p>The watchdog-Resin socket now uses HMTP/BAM for communication.  On
+shutdown, this lets the watchdog close Resin gracefully before forcing
+an exit.</p>
+
+</s1>
+
+<s1 title="Distributed Deployment">
+
+<p>The distributed deployment reliability has been enhanced by adding
+automatic retry on restart.  If a triad server is not yet available when
+a server starts, Resin will continue retry the server until the triad is
+up and available.</p>
+
+</s1>
+
+<s1 title="Ubuntu/Debian 64-bit packages">
+
+<p>.deb packages are now provided for both Resin Open Source and Resin
+Professional for 32-bit and 64-bit x86 architectures.</p>
+
+</s1>
+
+<s1 title="Quercus: Availability on other Application Servers">
+
+<p>Quercus Professional is now available on any JavaEE application server
+with the quercus-pro.war download.</p>
+
+</s1>
+
+</body>
+</document>

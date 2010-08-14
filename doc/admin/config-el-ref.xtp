@@ -1,0 +1,74 @@
+<document>
+<header>
+<product>resin</product>
+<title>Resources: class loaders, environment and IoC</title>
+<version>Resin 4.0</version>
+
+<description>
+<p>Environment tags configure class-loaders, logging, authentication
+and resources like databases, JMS queues, EJB servers, and web service
+clients.  Many of the resources are stored in JNDI or in EL variables
+for later assembly.</p>
+
+<p>Any environment resource can appear in any
+of Resin environments: &lt;resin>, &lt;cluster>, &lt;host> and &lt;web-app>.
+Resources configured at parent levels are shared among all children,
+so a database can share connection pools for all web-apps or an
+authenticator can provide single-signon.</p>
+
+</description>
+</header>
+
+<body>
+<reference-legend/>
+
+<localtoc/>
+
+<include-defun name="authenticator" />
+<include-defun name="bean" />
+<include-defun name="case-insensitive" />
+<include-defun name="character-encoding" />
+<include-defun name="class-loader" />
+<include-defun name="compiling-loader" />
+<include-defun name="connection-factory" />
+<include-defun name="database" />
+<include-defun name="database-default" />
+<include-defun name="dependency" />
+<include-defun name="dependency-check-interval" />
+<include-defun name="ejb-message-bean" />
+<include-defun name="ejb-server" />
+<include-defun name="ejb-stateful-bean"/>
+<include-defun name="ejb-stateless-bean"/>
+<include-defun name="env-entry" />
+<include-defun name="fileset"/>
+<include-defun name="javac" />
+<include-defun name="jms-connection-factory" />
+<include-defun name="jndi-link" />
+<include-defun name="jpa-persistence" />
+<include-defun name="library-loader" />
+<include-defun name="log" />
+<include-defun name="logger" />
+<include-defun name="mail" />
+<include-defun name="reference" />
+<include-defun name="remote-client"/>
+<include-defun name="resin:choose"/>
+<include-defun name="resin:if"/>
+<include-defun name="resin:import"/>
+<include-defun name="resin:message"/>
+<include-defun name="resin:set"/>
+<include-defun name="resource" />
+<include-defun name="resource-adapter" />
+<include-defun name="resource-deploy" />
+<include-defun name="resource-ref" />
+<include-defun name="scheduled-task"/>
+<include-defun name="servlet-hack" />
+<include-defun name="simple-loader" />
+<include-defun name="stderr-log" />
+<include-defun name="stdout-log" />
+<include-defun name="system-property" />
+<include-defun name="temp-dir" />
+<include-defun name="tree-loader" />
+<include-defun name="work-dir" />
+
+</body>
+</document>

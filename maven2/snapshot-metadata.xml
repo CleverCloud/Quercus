@@ -1,0 +1,11 @@
+<metadata>
+  <groupId>com.caucho</groupId>
+  <artifactId>@ARTIFACT@</artifactId>
+  
+  <versioning>
+    <latest>@VERSION@</latest>
+    <versions>
+      <version>@VERSION@</version>
+    </versions>
+  </versioning>
+</metadata>

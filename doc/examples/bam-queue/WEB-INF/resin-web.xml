@@ -1,0 +1,11 @@
+<web-app xmlns="http://caucho.com/ns/resin"
+	 xmlns:example="urn:java:example"
+	 xmlns:resin="urn:java:com.caucho.resin">
+
+  <example:ExampleService>
+    <resin:BamService name="bam-java-queue@localhost"/>
+  </example:ExampleService>
+  
+</web-app>
+
+  

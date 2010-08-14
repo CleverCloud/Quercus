@@ -1,0 +1,161 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.1.2 Release Notes</title>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 3.1.x">
+
+<p>Resin 3.1.x is a development branch.  New capabilities will be added
+along with bug fixes for future versions of the Resin 3.1.x branch.</p>
+
+<p>Deployments which need a Resin version with only bug fixes should
+use the Resin 3.0.x branch.</p>
+
+</s1>
+
+<s1 title="Amber/JPA">
+
+<p>In Resin 3.1.2, Amber is the first production release 
+with full support for JPA.</p>
+
+<p>Essentially, Amber passes the JPA TCK. Both persistence 
+context types are supported: TRANSACTION and EXTENDED. Also, 
+potential issues including persistence unit configurations, 
+cascading operations and query portability have been reviewed.</p>
+
+</s1>
+
+<s1 title="Connections">
+
+<s2 title="startup listen()">
+
+<p>On startup, Resin Professional now only calls <code>listen()</code>
+after initialization has completed.  The new <code>listen()</code>
+functionality also lets JMX applications stop and start backend servers.
+The <code>PortMXBean</code> now has <code>start()</code> and
+<code>stop()</code> methods.</p>
+
+<p>The new capability keeps load balancers from sending requests to an
+initializing server.</p>
+
+</s2>
+
+<s2 title='Application setHeader("Connection", "close")'>
+
+<p>Applications can close a keepalive with the
+Connection: close header.  This capability is only for advanced
+users with particular needs.  Almost all application should continue
+to use the default behavior.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Hessian 2.0">
+
+<p>The Hessian 2.0 draft has been updated.  While the new draft is compatible
+with Hessian 1.0, it is not compatible with previous versions of the draft
+due to encoding changes.</p>
+
+<s2 title="Hessian 2.0 Envelopes">
+
+<p>Hessian 2.0 now allows streams to be wrapped in an envelope.  Three
+predefined Envelopes are now available:</p>
+
+<ul>
+<li>com.caucho.hessian.io.Deflation</li>
+<li>com.caucho.hessian.security.X509Encryption</li>
+<li>com.caucho.hessian.security.X509Signature</li>
+</ul>
+
+</s2>
+
+<s2 title="streaming">
+
+<p>Streaming support is now available in the Hessian API with the addition
+of <code>resetReferences()</code></p>
+
+</s2>
+
+</s1>
+
+<s1 title="mod_caucho">
+
+<p>mod_caucho now supports CauchoStickySessions as a configuration item, so
+sites can disable the sticky-session capability.</p>
+
+</s1>
+
+<s1 title="boot">
+
+<p>Added &lt;java-exe> to the resin.conf file to select
+the Java executable.</p>
+
+</s1>
+
+<s1 title="admin">
+
+<p>The /resin-admin now has a cluster section for cross-cluster information
+display.</p>
+
+</s1>
+
+<s1 title="JDBC database pooling">
+
+<p>The JDBC database pooling algorithm has changed to LIFO to better support
+load-balancing JDBC drivers.</p>
+
+</s1>
+
+<s1 title="Load-Balancing">
+
+<p>The ResinLoadBalancer algorithm has changed to better handle servers
+which are temporarily busy or not accepting connections.</p>
+
+</s1>
+
+<s1 title="session">
+
+<p>Sessions may now use Hessian2 for serialization (serialization-type="hessian").
+For many applications, this will reduce the serialization size significantly.
+</p>
+
+<p>The session backing store is now more efficient for sessions between
+128 bytes and 4096 bytes, by adding a dynamic mini-fragment size.
+Previously, sessions between 128 bytes and 4096 would always use 8k of
+persistent store.  In 3.1.2, the sessions are stored in 256-byte chunks,
+reducing overhead for medium-sized sessions.</p>
+
+</s1>
+
+<s1 title="Quercus">
+
+<s2 title="Applications Running on Quercus">
+
+<ol>
+
+<li>DokuWiki 2007-06-26</li>
+<li>Dragonfly CMS 9.0.6.1.7</li>
+<li>Drupal 5.1</li>
+<li>Gallery2 2.2.2</li>
+<li>Joomla 1.0.12</li>
+<li>Mantis 1.0.8</li>
+<li>MediaWiki 1.10.0</li>
+<li>Openads 2.0.11-pr1</li>
+<li>Phorum 5.1.23</li>
+<li>phpBB 2.0.22</li>
+<li>Smarty Template Engine 2.6.18</li>
+<li>Wordpress 2.2</li>
+</ol>
+
+</s2>
+
+</s1>
+
+</body>
+</document>

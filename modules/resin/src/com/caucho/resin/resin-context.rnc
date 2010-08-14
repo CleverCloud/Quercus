@@ -1,0 +1,78 @@
+default namespace r = "http://caucho.com/ns/resin"
+
+namespace w = "http://java.sun.com/xml/ns/javaee"
+namespace xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+include "classpath:com/caucho/config/cfg/env.rnc"
+
+start = r_beans | w_beans
+
+r_beans = element beans {
+  r_env-Content
+
+  & rb_alternatives?
+  
+  & rb_decorators?
+  
+  & rb_interceptors?
+  
+  & rb_system*
+}
+
+rb_alternatives = element alternatives {
+  rb_class*
+  & rb_stereotype*
+}
+
+rb_class =
+  attribute class { string }
+  | element class { string }
+
+rb_decorators = element decorators {
+  rb_class*
+}
+
+rb_interceptors = element interceptors {
+  rb_class*
+}
+
+rb_stereotype = element stereotype {
+  string
+}
+
+rb_system = element system {
+  r_env-Content
+}
+
+## javaee webbeans
+
+w_alternatives = element w:alternatives {
+  w_class*
+  & w_stereotype*
+}
+
+w_class =
+  attribute w:class { string }
+  | element w:class { string }
+
+w_decorators = element w:decorators {
+  w_class*
+}
+
+w_stereotype =
+  attribute w:stereotype { string }
+  | element w:stereotype { string }
+
+w_interceptors = element w:interceptors {
+  w_class*
+}
+
+w_beans = element w:beans {
+  attribute xsi:schemaLocation { string }?
+  
+  & w_decorators?
+  
+  & w_alternatives?
+  
+  & w_interceptors?
+}

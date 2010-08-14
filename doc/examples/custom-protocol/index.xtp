@@ -1,0 +1,308 @@
+<document>
+<header>
+<product>resin</product>
+<type>tutorial</type>
+<title>Custom Protocol Handling</title>
+
+<description>
+<p>This tutorial shows the usage of the Resin server architecture to handle a
+custom protocol.  Resin handles the TCP connections, multi-threading,  and the
+request object pooling.  The application implements a class that reads from a
+stream and writes to a stream.</p>
+
+<p>Professor Trelawny once got a student to make a Magic8Ball,
+used for prophecy.  Originally it was used with a simple web interface.  Now
+Trelawny wants to provide a <var>magic8ball</var> protocol server on the Hogwart's
+public web server.  The <var>magic8ball</var> protocol is at the same level as
+<var>http</var> or <var>smtp</var>, it sit's directly on top of TCP/IP.</p>
+
+</description>
+
+</header>
+<body>
+
+<summary/>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr><td><viewfile-link file="src/example/Magic8Ball.java"/>
+    </td><td>The orignal Magic8Ball class, it knows nothing about the code that uses it.
+</td></tr><tr><td><viewfile-link file="src/example/Magic8BallProtocol.java"/>
+    </td><td>The implementation of <a javadoc="com.caucho.server.port.Protocol"/> that Resin uses to create a Request object.
+</td></tr><tr><td><viewfile-link file="src/example/Magic8BallRequest.java"/>
+    </td><td>The implementation of interface <a javadoc="com.caucho.server.port.ServerRequest"/> that represents a single request.
+</td></tr><tr><td><viewfile-link file="src/example/Parser.java"/>
+    </td><td>protocol-specific parsing class to parse the ReadStream and determine commands.
+</td></tr><tr><td><viewfile-link file="src/example/AbstractCommand.java"/>
+    </td><td>protocol-specific abstract base class for commands.
+</td></tr><tr><td><viewfile-link file="src/example/SetProphetCommand.java"/>
+    </td><td>protocol-specific Command to set the prophet to use for the magic 8 ball.
+</td></tr><tr><td><viewfile-link file="src/example/AskCommand.java"/>
+    </td><td>protocol-specific Command to ask the magic 8 ball for a prophecy.
+</td></tr><tr><td><viewfile-link file="build.xml"/>
+    </td><td>Ant build file
+
+</td></tr></deftable>
+</s1>
+
+<s1 title="The advantage of using Resin's server architecture">
+
+<p>Implementation of a protocol at the level that <var>magic8ball</var> is at
+normally requires a large amount of bug-prone code, such as code
+for handling tcp/ip connections, multi-threading, and request object reuse.
+Resin provides a simple way to handle protocols without requiring the
+implementation of that code. </p>
+
+<p>Applications take advantage of Resin's highly tested and configurable server
+architecture and only need to implement some simple objects.  Two classes are
+required, one which extends the abstract class <a javadoc="com.caucho.server.port.Protocol"/> and one which implements the
+interface <a javadoc="com.caucho.server.port.ServerRequest"/>.</p>
+</s1>
+
+<s1 title="com.caucho.server.port.Protocol">
+
+<p>A custom class derived from 
+<a javadoc="com.caucho.server.port.Protocol"/>
+is a factory that produces custom Request objects.</p>
+
+<p>The Protocol passes a 
+<a javadoc="com.caucho.server.connection.Connection"/> 
+object to the Request object it creates.  The Request object uses the
+<code>Connection</code> to obtain a read stream and a write stream.</p>
+
+<p>The example in this tutorial is simple, it's main purpose is to override the
+<code>createRequest</code> method to return an instance of the
+<code>example.Magic8BallRequest</code> request handling object. </p>
+
+<example file="src/example/Magic8BallProtocol.java">
+  ...
+
+  /**
+   * Create a Magic8BallRequest object for the new thread.
+   */
+  public ServerRequest createRequest(Connection conn)
+  {
+    return new Magic8BallRequest(this, conn);
+  }
+
+  ...
+</example>
+
+<p>It also stores and returns the protocol name.</p>
+<example file="src/example/Magic8BallProtocol.java">
+  private String _protocolName = "magic8ball";
+
+  ...
+
+  /**
+   * Return the protocol name.
+   */
+  public String getProtocolName()
+  {
+    return _protocolName;
+  }
+  
+  /**
+   * Set the protocol name.
+   */
+  public void setProtocolName(String name)
+  {
+    _protocolName = name;
+  }
+</example>
+
+</s1>
+
+<s1 title="com.caucho.server.port.ServerRequest">
+
+<p><a javadoc="com.caucho.server.port.ServerRequest"/> is the interface
+used for implementing the class that handles a request.  This is where the bulk
+of the work is done.</p>
+ 
+<p>The method <code>handleRequest()</code> is called for each request.
+Implementations should <i>not</i> assume that a new request object is created
+for each new connection from a client.  Resin may reuse a request object once
+it has finished handling a request.  It is guaranteed, however, that the
+<code>handleRequest()</code> method of a given instance will only be handling a
+single request at a time.</p>
+
+<p>This means that any member variables must be initialized at the
+beginning of the code in <code>handleRequest()</code>.</p>
+
+<p>The first step in handleRequest() is usually to obtain a <a javadoc="com.caucho.vfs.ReadStream"/> and a <a javadoc="com.caucho.vfs.WriteStream"/> from the Connection that was
+stored with the constructor.  These streams are used to read raw data from the client and write raw data to the client.</p>
+
+<p>This tutorial then goes on to initialize a parser and perform appropriate
+commands, depending on what is submitted by the client.  The readStream is used
+to determine what to do, and the writeStream is used to send the response.  The
+implementation here depends on the protocol that is being supported.</p>
+
+<example file="src/example/Magic8BallRequest.java">
+  ...
+
+  /**
+   * Handle a new connection.  The controlling Server may call
+   * handleRequest again after the connection completes, so the
+   * implementation must initialize any variables for each connection.
+   */
+  public boolean handleRequest() throws IOException
+  {
+    ReadStream readStream = _conn.getReadStream();
+    WriteStream writeStream = _conn.getWriteStream();
+
+    try {
+      _parser.init(readStream);
+
+    ...
+
+        if (error != null) {
+          writeStream.print("ERROR: ");
+          writeStream.println(_parser.getError());
+          break;
+        }
+        else if (result != null) {
+          writeStream.print("RESULT: ");
+          writeStream.println(result);
+        }
+
+    ...
+
+    } catch (Throwable e) {
+      log.log(Level.WARNING, e.toString(), e);
+    }
+
+    return false;
+  }
+
+</example>
+
+</s1>
+
+<s1 title="Deployment and Configuration">
+
+<p>The protocol is handled at the <i>server</i> level in the Resin Environment
+hierarchy.  This means that the code has to be available to the appropriate
+classloader.  A jar with your code in it can be placed in
+<code>$RESIN_HOME/lib/</code>, for example
+<code>$RESIN_HOME/lib/magic8ball.jar</code>.</p>
+
+<p>The use of the Protocol class is configured with <a config-tag="port"/> and
+<a config-tag="protocol"/>.</p>
+
+<example title="Custom protocol configuration in resin.conf">
+  &lt;server&gt;
+
+    ...
+
+    &lt;!-- The magic8ball port --&gt;
+    &lt;port id='' host='*' port='8888'&gt;
+      &lt;protocol resin:type="example.Magic8BallProtocol"/&gt;
+    &lt;/port&gt;
+
+</example>
+
+</s1>
+
+<s1 title="Demo">
+
+<p>This tutorial has to be deployed by hand in your installation of 
+Resin.</p>
+
+<s2 title="1. find the tutorial">
+<p>The filesystem location of this tutorial is at the top of this page.</p>
+</s2>
+
+<s2 title="2. add the entry to resin.conf">
+<example title="Custom protocol configuration in resin.conf">
+  &lt;server&gt;
+
+    ...
+
+    &lt;!-- The magic8ball port --&gt;
+    &lt;port id='' host='*' port='8888'&gt;
+      &lt;protocol resin:type="example.Magic8BallProtocol"/&gt;
+    &lt;/port&gt;
+
+</example>
+</s2>
+
+<s2 title="3. build and deploy the library">
+
+<p>To run the demo, you can find the <code>build/magic8ball.jar</code> file and
+copy it to <code>$RESIN_HOME/lib/</code>.</p>
+
+<p>An <code>ant</code> build file is provided.  Calling "ant deploy" will build the jar and deploy it in <code>$RESIN_HOME/lib/magic8ball.jar</code></p>
+
+</s2>
+
+<s2 title="4. start Resin or wait for a restart">
+
+<p>Start Resin, or if it is already running wait for it to notice the new
+library and restart.  The default Resin configuration will notice the new jar
+file (eventually) and restart itself.  If you are impatient you can stop and
+start the server yourself.</p>
+
+<example title="Example output from Resin showing the magic8ball protocol port">
+Starting Resin on Tue, 23 Sep 2003 15:40:16 -0500 (GMT-05:00)
+[15:40:17.920] Loaded Socket JNI library.
+[15:40:38.871] http listening to *:8080
+[15:40:59.831] magic8ball listening to *:8888
+...
+</example>
+
+</s2>
+
+<s2 title="5. test using telnet">
+
+<p>The simplest way to test a protocol like the <code>magic8ball</code> is to use
+telnet.</p>
+
+<example title="Telnet test of the magic8ball protocol">
+$ <b>telnet localhost 8888</b>
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+<b>ASK</b>
+RESULT: trelawney says "The future for you is very dire"
+<b>ASK</b>
+RESULT: trelawney says "You must not leave the room"
+<b>SET-PROPHET classic</b>
+RESULT: prophet set to `classic'
+<b>ASK</b>
+RESULT: classic says "It is certain"
+<b>SET-PROPHET kingwu</b>
+RESULT: prophet set to `kingwu'
+<b>ASK</b>
+RESULT: kingwu says "THE CREATIVE works sublime success, Furthering through perseverance."
+<b>SET-PROPHET xxxxx</b>
+RESULT: prophet set to `xxxxx'
+<b>ASK</b>
+RESULT: xxxxx says "a false prophet is never wise"
+<b>QUIT</b>
+ERROR: Unknown command `QUIT'
+Connection closed by foreign host.
+</example>
+</s2>
+</s1>
+
+<s1 title="Compatibility">
+
+<p>The <a javadoc="com.caucho.server.port.Protocol"/> and
+<a javadoc="com.caucho.server.port.ServerRequest"/> classes are of
+course Resin specific.  The <a javadoc="com.caucho.vfs.ReadStream"/> and
+<a javadoc="com.caucho.vfs.ReadStream"/> are as well.</p>
+
+<p>If portability is a concern, implement a class that is similar in
+functionality to <a javadoc="com.caucho.server.port.ServerRequest"/>.
+Code that class to get passed a <a javadoc="java.io.InputStream"/> and a
+<a javadoc="java.io.OutputStream"/>.  A bare-bones Resin-specific
+<code>Protocol</code> and <code>ServerRequest</code> can be used as a thin
+wrapper to your custom <var>Request</var> class, and the Resin's ReadStream and
+WriteStream can be passed as the <code>InputStream</code> and
+<code>OutputStream</code>.  When porting to another application server (if they
+provide this kind of functionality) you can code a thin-wrapper specific to
+that app-server that uses your custom Request class.</p> 
+
+</s1>
+</body>
+</document>

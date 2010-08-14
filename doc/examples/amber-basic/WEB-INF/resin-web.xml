@@ -1,0 +1,12 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+  <!--
+     - configuration for the JNDI server.
+    -->
+  <ejb-server data-source="jdbc/resin" create-database-schema="true"/>
+
+  <!--
+     - configuration for the client.
+    -->
+  <servlet servlet-name="basic" servlet-class="example.CourseServlet"/>
+  <servlet-mapping url-pattern="/basic" servlet-name="basic"/>
+</web-app>

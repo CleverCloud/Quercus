@@ -1,0 +1,123 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.1.1 Release Notes</title>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 3.1.x">
+
+<p>Resin 3.1.x is a development branch.  New capabilities will be added
+along with bug fixes for future versions of the Resin 3.1.x branch.</p>
+
+<p>Deployments which need a Resin version with only bug fixes should
+use the Resin 3.0.x branch.</p>
+
+</s1>
+
+<s1 title="Amber/JPA">
+
+<p>A number of bugs in Amber have 
+been fixed in Resin 3.1.1. If you were trying JPA 
+with Resin 3.1, we strongly recommend that you upgrade 
+to the latest version.</p>
+
+<p>The current stage is recommended if you want 
+to create applications with JPA or if you are
+moving applications to JPA. Either way, it will be
+worth the effort since you will not need to wait
+until the next official release to start developing
+applications.</p>
+
+<p>For now, the default persistence context type
+(TRANSACTION) is fully supported, while the EXTENDED type
+is not yet implemented, but will be included with the next
+release. Also, with the next release, we are expecting 
+significant performance gains when compared to other 
+JPA implementations.</p>
+
+</s1>
+
+<s1 title="Quercus">
+
+<p>Quercus is now faster in both interpreted and compiled mode, 
+due to smarter handling of strings and faster function calls.</p>
+
+<p>Java classes are now treated the same as PHP classes.
+This means that PHP classes can now extend Java classes and you
+can instantiate a Java class using the 'new CLASSNAME()' syntax.</p>
+
+<p>Quercus supports the Quercus-only 'import' keyword within
+PHP scripts.  It is used to automatically import Java classes
+and PHP classes when needed.</p>
+
+<p>Quercus supports the overloading of Java functions.
+Quercus will determine which function to call based on the number
+and type of arguments passed in.</p>
+
+<p>PHP's try-catch will now catch Java Exceptions.</p>
+
+</s1>
+
+<s1 title="rewrite-dispatch">
+
+<p>Header conditions are now available in rewrite-dispatch.</p>
+
+<example>
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;rewrite-dispatch>
+    &lt;redirect regexp="/test" target="/google">
+      &lt;require header="Referer" regexp="google"/>
+    &lt;/redirect>
+  &lt;/rewrite-dispatch>
+
+&lt;/web-app>
+</example>
+
+</s1>
+
+<s1 title="Command line arguments: --log-directory">
+
+<p>Resin 3.1.1 adds a --log-directory argument to configure
+the location for the watchdog-manager.out and jvm-*.log files.</p>
+
+<p>The log directory is relative to the --root-directory and defaults to "log".</p>
+
+</s1>
+
+<s1 title="JAXB, JAX-WS, and SAAJ">
+<p>Resin 3.1.1 features development versions of JAXB, JAX-WS, and SAAJ.  All
+of the most common features have been implemented, except for Java code
+generation from Schema or WSDL.</p>
+
+<p>Resin's JAX-WS and Service-Oriented Architecture (SOA) features easy
+deployment for services and proxy creation for clients.</p>
+</s1>
+
+<s1 title="Administration Enhancements">
+
+<p>Resin's administration page has been cleaned up and now includes
+new features including:</p>
+
+<ul>
+<li>Thread dumps</li>
+<li>Profiling</li>
+<li>Heap dumps</li>
+<li>Cache statistics</li>
+</ul>
+
+<p>The profiling has a relatively low overhead, so many deployments can
+use it on live servers to get accurate performance information.</p>
+
+<p>We strongly recommend Resin users look at the
+new administration features.</p>
+
+</s1>
+
+
+</body>
+</document>

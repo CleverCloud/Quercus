@@ -1,0 +1,114 @@
+Copyright (c) 1998-2008 Caucho Technology. All Rights Reserved.
+
+This is the README file for Resin 4.0(tm)
+=========================================
+
+The documentation included with Resin is in XTP format starting at
+http://localhost:8080/resin-doc/index.xtp.
+
+The full documentation is also available online at
+http://www.caucho.com/resin if you have trouble getting started.
+
+Questions should go to our mailing list or forums.
+
+  http://maillist.caucho.com  -- mailing lists
+  http://forum.caucho.com     -- forum
+  http://bugs.caucho.com      -- bug reports
+
+I) Licensing/Support
+--------------------
+
+For pricing and licensing information for Resin 4.0 Professional,
+see http://www.caucho.com/sales/.  Resin Professional contains additional
+performance and reliability features beyond the Resin Open Source version.
+
+Resin 4.0 Open Source is released under the GPL.
+
+Resin licenses do not include technical support. However, we offer several
+technical support options to fit your support and budget needs.
+
+  http://www.caucho.com/sales  -- licenses and support
+
+II) Preconditions
+-----------------
+
+1) Resin needs a Java JDK before it can run.  Resin 4.0 works with 
+JDK 1.6 or greater.
+
+Some locations for JDKs include:
+
+  http://java.sun.com      -- Sun's site
+
+2) On Windows, you'll need an unzip tool available at http://www.winzip.com
+
+III) Getting Started
+--------------------
+
+The included HTTP/1.1 server makes it easy to evaluate Resin, JSP
+and servlets.  Just start it up.  The default configuration
+file is found in resin-4.0.x/conf/resin.xml.
+
+1) On Unix, you'll want to build the JNI libraries:
+
+   resin-4.0.x> ./configure --prefix=`pwd`
+   resin-4.0.x> make
+   resin-4.0.x> make install
+
+2) To start the server:
+
+     unix> java -jar lib/resin.jar start
+
+   or
+
+     C:\> java -jar lib/resin.jar start
+
+   The server listens to port 8080.  Port 8080 is the default specified
+   in the configuration file resin-4.0.x/conf/resin.xml
+
+3) Usually, Resin can find the JDK, but you may need to set JAVA_HOME in some
+   configurations. 
+
+   Starting Resin with -verbose is a great way to see what environment
+   Resin is running.
+
+4) Browse http://localhost:8080 or equivalently http://127.0.0.1:8080.
+
+5) Go through the documentation at http://localhost:8080/resin-doc
+
+6) For JSP, create test.jsp in resin-4.0.x/webapps/ROOT/test.jsp and browse
+   http://localhost:8080/test.jsp.
+
+   Resin serves files from resin-4.0.x/webapps/ROOT/ in the default
+   configuration.  All files with the extension '.jsp' are interpreted
+   as jsp files.
+
+7) For PHP, create test.php in resin-4.0.x/webapps/ROOT/test.php and browse
+   http://localhost:8080/test.php.
+
+8) To deploy a war file, place the file in resin-4.0.x/webapps/foo.war
+   Resin will expand the war file, and the application will be available
+   with the url http://localhost:8080/foo/
+
+   Resin supports the development of applications without requiring a war
+   file deployment.  Create a directory resin-4.0.x/webapps/bar to
+   correspond to url http://localhost:8080/bar/.  Java source files
+   placed in resin-4.0.x/webapps/bar/classes/ are automatically compiled
+   by Resin.
+
+   resin-4.0.x/webapps/bar/index.jsp
+     --> http://localhost:8080/bar/
+     --> http://localhost:8080/bar/index.jsp
+
+   resin-4.0.x/webapps/bar/WEB-INF/web.xml
+     -- servlet/jsp configuration file
+
+   resin-4.0.x/webapps/bar/WEB-INF/resin-web.xml
+     -- Resin specific configuration
+
+   resin-4.0.x/webapps/bar/WEB-INF/classes/example/HelloServlet.java
+     -- java source file, automatically compiled by Resin
+
+9) An administration application is available at
+   http://localhost:8080/resin-admin
+   Instructions are provided for setting a password.
+

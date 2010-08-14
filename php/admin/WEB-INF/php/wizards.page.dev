@@ -1,0 +1,214 @@
+<?php
+/**
+ * SQL display
+ */
+
+require_once "WEB-INF/php/inc.php";
+require_once "WEB-INF/php/wizard.php";
+?>
+<h1>Configuration wizards</h1>
+<p>
+This page features wizards that guide you through the process of
+creating various Resin configurations. These wizards <strong><em>do not
+add this configuration to your active Resin configuration</em></strong>,
+they simply help you with the XML syntax and show you the available
+options.  Once you have created an XML snippet using a wizard, you'll 
+need to place this configuration into the appropriate file (e.g.
+resin.xml, host.xml, or resin-web.xml). Note that adding configuration
+to a running Resin instance may cause a restart of a webapp, a host, or
+even the entire server.  These wizards do not change your configuration
+so that you have control over when these changes happen.
+</p>
+<?php
+
+$wizard_form = new WizardRootForm("db_wizard", 
+                                  "Database Pool Configuration Wizard", 
+                                  "database");
+$wizard_form->add_child(new WizardTextField("jndi-name",  
+                                            "JNDI Name", 
+                                            /* required = */true,
+                                            /* default = */'N/A',
+                                            "jndi-name"));
+
+$driver_form = new WizardSubForm("driver_form", "Driver Parameters", "driver");
+$driver_field = new WizardChoiceField("driver", 
+                                      "JDBC Driver Class", 
+                                      /* required = */true,
+                                      /* default = */'N/A',
+                                      "type");
+$driver_field->set_title(" -- Common Drivers -- ");
+$driver_field->add_choice(
+    new Choice("com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource",
+               "<b>URL syntax:</b> " .
+               "jdbc:mysql://&lt;host>:&lt;port>/&lt;dbname>",
+               "http://wiki.caucho.com/Mysql"));
+$driver_field->add_choice(
+    new Choice("oracle.jdbc.pool.OracleConnectionPoolDataSource",
+               "<b>URL syntax:</b> " .
+               "jdbc:oracle:thin:@&lt;host>:&lt;port>:&lt;dbname>",
+               "http://wiki.caucho.com/Oracle"));
+$driver_field->add_choice(
+    new Choice("oracle.jdbc.xa.client.OracleXADataSource",
+               "<b>URL syntax:</b> " .
+               "jdbc:oracle:thin:@&lt;host>:&lt;port>:&lt;dbname>",
+               "http://wiki.caucho.com/Oracle"));
+$driver_field->add_choice(
+    new Choice("org.postgresql.Driver",
+               "<b>URL syntax:</b> " .
+               "jdbc:postgresql://&lt;host>:&lt;port>/&lt;dbname>",
+               "http://wiki.caucho.com/Postgres"));
+$driver_field->add_choice(
+    new Choice("com.microsoft.jdbcx.sqlserver.SQLServerDataSource",
+               "<b>URL syntax:</b> " .
+               "jdbc:sqlserver://&lt;host>:&lt;port>;databaseName=&lt;dbname>",
+               "http://wiki.caucho.com/SQLServer"));
+
+
+$driver_form->add_child($driver_field);
+$driver_form->add_child(new WizardTextField("url", 
+                                            "Database URL", 
+                                            /* required = */true,
+                                            /* default = */'N/A',
+                                            "url"));
+$driver_form->add_child(new WizardTextField("user", 
+                                            "User", 
+                                            /* required = */false,
+                                            /* default = */'N/A',
+                                            "user"));
+$driver_form->add_child(new WizardTextField("password", 
+                                            "Password", 
+                                            /* required = */false,
+                                            /* default = */'N/A',
+                                            "password"));
+
+$wizard_form->add_child($driver_form);
+
+$options_form = new WizardOptionalForm("db_options", "Pool Options");
+$options_form->add_children(array(
+    new WizardPeriodField("connection-wait-time", 
+                          "Connection Wait Time", 
+                          /* required = */false, 
+                          /* default = */"10m",
+                          "connections-wait-time",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#connection-wait-time"),
+    new WizardBooleanField("close-dangling-connections",
+                          "Close Dangling Connections",
+                          /* required = */false, 
+                          /* default = */"true",
+                          "close-dangling-connections",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#close-dangling-connections"),
+    new WizardPeriodField("max-active-time", 
+                          "Max Active Time", 
+                          /* required = */false, 
+                          /* default = */"6h",
+                          "max-active-time",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#max-active-time"),
+    new WizardNumberField("max-close-statements", 
+                          "Max close statements", 
+                          /* required = */false, 
+                          /* default = */256,
+                          "max-close-statements",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#max-close-statements"),
+    new WizardNumberField("max-connections", 
+                          "Max connections", 
+                          /* required = */false, 
+                          /* default = */128,
+                          "max-connections",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#max-connections"),
+    new WizardNumberField("max-create-connections", 
+                          "Max create connections", 
+                          /* required = */false, 
+                          /* default = */5,
+                          "max-create-connections",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#max-create-connections"),
+    new WizardPeriodField("max-idle-time", 
+                          "Max idle time", 
+                          /* required = */false, 
+                          /* default = */"30s",
+                          "max-idle-time",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#max-idle-time"),
+    new WizardNumberField("max-overflow-connections", 
+                          "Max connections", 
+                          /* required = */false, 
+                          /* default = */128,
+                          "max-overflow-connections",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#max-overflow-connections"),
+    new WizardPeriodField("max-pool-time", 
+                          "Max pool time", 
+                          /* required = */false, 
+                          /* default = */"24h",
+                          "max-pool-time",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#max-pool-time"),
+    new WizardBooleanField("ping",
+                          "Ping", 
+                          /* required = */false, 
+                          /* default = */"false",
+                          "ping",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#ping"),
+    new WizardTextField(  "ping-table",
+                          "Ping table", 
+                          /* required = */false, 
+                          /* default = */"N/A",
+                          "ping-table",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#ping-table"),
+    new WizardTextField(  "ping-query",
+                          "Ping query", 
+                          /* required = */false, 
+                          /* default = */"N/A",
+                          "ping-query",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#ping-query"),
+    new WizardPeriodField("ping-interval", 
+                          "Ping interval", 
+                          /* required = */false, 
+                          /* default = */"1s",
+                          "ping-interval",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#ping-interval"),
+    new WizardNumberField("prepared-statement-cache-size",
+                          "Prepared statement cache size",
+                          /* required = */false, 
+                          /* default = */0,
+                          "prepared-statement-cache-size",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#prepared-statement-cache-size"),
+    new WizardBooleanField("save-allocation-stack-trace",
+                          "Save allocation stack track", 
+                          /* required = */false, 
+                          /* default = */"false",
+                          "save-allocation-stack-trace",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#save-allocation-stack-trace"),
+    new WizardBooleanField("spy",
+                          "Spy connections",
+                          /* required = */false, 
+                          /* default = */"false",
+                          "spy",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#spy"),
+    new WizardNumberField("transaction-timeout",
+                          "Transaction timeout",
+                          /* required = */false, 
+                          /* default = */-1,
+                          "transaction-timeout",
+                          "http://www.caucho.com/resin/doc/database-tags.xtp#transaction-timeout"),
+));
+
+$wizard_form->add_child($options_form);
+
+function database_config_processor($form, $userdata)
+{
+  echo "<h3>Configuration Snippet</h3>\n";
+  echo "<p>This database configuration can be used in a resin-web.xml as ";
+  echo "shown below or in other Resin configuration files such as resin.xml ";
+  echo "or depending on the environment in which you want to configure ";
+  echo "the pool.</p>";
+  echo "<pre>\n";
+  $database_xml = indent($form->generate_xml(), 2);
+  $resin_web_xml = 
+    "<web-app xmlns='http://caucho.com/ns/resin'>\n" .
+    $database_xml .
+    "\n  <!-- additional web-app configuration -->\n\n" .
+    "</web-app>\n";
+  echo str_replace("<", "&lt;", $resin_web_xml);
+  echo "</pre>\n";
+}
+
+$wizard_form->process("database_config_processor");
+
+?>

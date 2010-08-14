@@ -1,0 +1,118 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.14 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="Wiki">
+
+<p>Resin now has a <a href="http://www.caucho.com/wiki">wiki</a>.</p>
+
+</s1>
+
+<s1 title="Configuration functions">
+
+<p>The configuration file EL can now support a library of
+predefined functions.  The new functions are:</p>
+
+<ul>
+<li>class_exists(name) - returns true if the class is loadable
+</li><li>jndi(name) - equivalent to jndi:lookup
+</li><li>jndi_lookup(name) - equivalent to jndi
+</li></ul>
+
+</s1>
+
+<!-- feature reverted
+<section title="Context.lookup">
+
+<p>The JNDI lookup() method now throws a NameNotFoundException if the
+name does not exist.</p>
+
+</section>
+-->
+
+<s1 title="cookie-modulo-cluster">
+
+<p>The cluster encoding in the session cookie is now controllable by
+cookie-module-cluster, defaulting to false.</p>
+
+<p>If true, session cookie values
+can start with modulo values of the index.  So a two server cluster
+could generate 'a', 'c', 'e', g', etc. for the index='1' server.</p>
+
+<p>If false, the session cookie value matches the cluster index.
+So the two server cluster would only generate the 'a' prefix.</p>
+
+</s1>
+
+<s1 title="isapi_srun.dll">
+
+<p>Important flusing/buffering issues with isapi_srun.dll fixed.</p>
+
+</s1>
+
+<s1 title="GzipFilter">
+
+<p>GzipFilter now understands "deflate" as well as "gzip".  "gzip" has
+priority, currently.</p>
+
+</s1>
+
+<s1 title="TaskResource">
+
+<p>There is now a task resource for launching a thread for
+long-running initialization objects.  The work task just needs
+to implement java.lang.Runnable.</p>
+
+<example>
+&lt;resource type="com.caucho.resources.TaskResource"&gt;
+  &lt;init&gt;
+    &lt;work resin:type="qa.TestWork"/&gt;
+  &lt;/init&gt;
+&lt;/resource&gt;
+</example>
+
+</s1>
+
+<s1 title="__FILE__">
+
+<p>The EL variable \${__FILE__} is now available, referring to the
+current configuration file.</p>
+
+</s1>
+
+<!-- feature reverted
+
+<section title="stdout: and stderr:">
+
+<p>The stdout: and stderr: VFS schemes now use the original values of
+System.out and System.err.  They are no longer affected by the &lt;stdout> and &lt;stderr> items.</p>
+
+</section>
+
+-->
+
+<s1 title="cache/enable-range">
+
+<p>Added an enable-range attribute to the &lt;cache&gt;, defaulting to true.
+Makes it possible to disable the range support if necessary.</p>
+</s1>
+
+<s1 title="ejb-server/read-data-source">
+
+<p>Added read-data-source and xa-data-source to &lt;ejb-server&gt;.
+In some cases, deployments may use a different &lt;database&gt; configuration
+for read-only requests, e.g. a &lt;database&gt; with multiple
+load-balanced &lt;driver&gt; blocks, but use a different &lt;database&gt; for
+the writes and transactions.
+</p>
+
+</s1>
+
+</body>
+</document>

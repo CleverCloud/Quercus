@@ -1,0 +1,16 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+  <!--
+  <jsf enable-developer-aid="true"/>
+  -->
+  
+  <servlet>
+    <servlet-name>jsf</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>jsf</servlet-name>
+    <url-pattern>*.jsf</url-pattern>
+  </servlet-mapping>
+
+</web-app>

@@ -1,0 +1,131 @@
+<document>
+<header>
+<product>resin</product>
+<title>JSP Compilation</title>
+<keywords>
+  <keyword>jsp</keyword>
+  <keyword>compile</keyword>
+  <keyword>precompile</keyword>
+</keywords>
+<description>
+<p>JSP compilation causes the compilation of JSP files before they are first
+accessed on a live server.</p> 
+</description>
+</header>
+
+<body>
+
+<summary/>
+
+<s1 name="precompile" title="JspPrecompileListener">
+<p>Unless explicitly compiled ahead of time, JSP files are compiled the first
+time they are accessed.  On large production sites, or in situations involving
+complicated JSP files, compilation may cause unacceptable delays to users first
+accessing the JSP page.</p>
+
+<p>
+Resin provides a <code>JspPrecompileListener</code> that causes jsp to be compiled when the web application starts.
+As an alternative, Resin also provides a <code>JspCompiler</code> that is used
+to explicitly compile jsp files before they are accessed for the first time.
+</p>
+
+
+<p><a href="javadoc|com.caucho.jsp.JspPrecompileListener|"/> is a <a href="javadoc|javax.servlet.ServletContextListener|">ServletContextListener</a>
+that compiles jsp files when the web-app starts.  It is activated using the 
+&lt;listener&gt; Servlet configuration tag in web.xml.</p>
+
+<p>The following configuration causes Resin to compile all files in the web-app
+that have an extension of .jsp or .jspx when the application first starts.</p>
+
+<example title="WEB-INF/web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;listener&gt;
+    &lt;listener-class&gt;com.caucho.jsp.JspPrecompileListener&lt;/listener-class&gt;
+    &lt;init&gt;
+      &lt;extension&gt;jsp&lt;/extension&gt;
+      &lt;extension&gt;jspx&lt;/extension&gt;
+    &lt;/init&gt;
+  &lt;/listener&gt;
+&lt;/web-app&gt;
+</example>
+
+<p>It can also be configured in resin.xml to apply to all web-app's.</p>
+
+<example title="resin.xml">
+&lt;web-app-default&gt;
+  &lt;listener&gt;
+    &lt;listener-class&gt;com.caucho.jsp.JspPrecompileListener&lt;/listener-class&gt;
+    &lt;init&gt;
+      &lt;extension&gt;jsp&lt;/extension&gt;
+      &lt;extension&gt;jspx&lt;/extension&gt;
+      &lt;extension&gt;xtp&lt;/extension&gt;
+    &lt;/init&gt;
+  &lt;/listener&gt;
+&lt;/web-app-default&gt;
+</example>
+
+<p>You can also use a <a config-tag="fileset"/> for more control over which jsp are precompiled:</p>
+
+<example title="resin.xml">
+&lt;web-app&gt;
+  &lt;listener&gt;
+    &lt;listener-class&gt;com.caucho.jsp.JspPrecompileListener&lt;/listener-class&gt;
+    &lt;init&gt;
+      &lt;fileset&gt;
+        &lt;include&gt;**/*.jsp&lt;/include&gt;
+        &lt;exclude&gt;/a.jsp&lt;/exclude&gt;
+        &lt;exclude&gt;/foo/c.jsp&lt;/exclude&gt;
+      &lt;/fileset&gt;
+    &lt;/init&gt;
+  &lt;/listener&gt;
+&lt;/web-app&gt;
+</example>
+
+<p>
+The first line includes all jsp's,  it's the same as specifying
+<code>jsp</code>. The following lines exclude specific jsp.
+</p>
+
+</s1>
+<s1 title="JspCompiler">
+
+<p><a href="javadoc|com.caucho.jsp.JspCompiler|"/> is used to compile JSP.</p>
+
+<deftable-parameters>
+<tr><td>class-dir</td><td>the destination class directory</td><td>the system work path
+</td></tr><tr><td>app-dir</td><td>the root directory of an application to compile</td><td>required
+</td></tr><tr><td>xml</td><td>if true then XML is the default parser</td><td>false
+</td></tr><tr><td>prelude</td><td>add a prelude include</td><td>none
+</td></tr><tr><td>coda</td><td>add a coda include</td><td>none
+</td></tr><tr><td>tag</td><td>classname specifying a tag to compile</td><td>none
+</td></tr></deftable-parameters>
+
+<s2 name="cmdline" title="Command line usage of JspCompile">
+
+<p>Command line usage accepts arguments that correspond to the parameters
+available to the parameters of the <code>JspCompiler</code> class.</p>
+
+<example title="command line">
+unix&gt; java com.caucho.jsp.JspCompiler -app-dir "/opt/www/foo" test/foo.jsp
+</example>
+
+<p>com.caucho.jsp.JspCompiler accepts a -conf argument, which
+points to a xml configuration file:</p>
+                                   
+<example title="compile-app.xml">  
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;app-dir&gt;/opt/www/webapps/foo&lt;/app-dir&gt;
+  &lt;xml&gt;true&lt;/xml&gt;
+&lt;/web-app&gt;
+</example>
+
+<example title="command line with compile-app.xml conf file">
+unix&gt; java com.caucho.jsp.JspCompiler -conf /opt/resin/compile-app.xml" test/foo.jsp
+</example>
+
+</s2>
+
+</s1>
+
+</body>
+</document>

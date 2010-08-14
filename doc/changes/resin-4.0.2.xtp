@@ -1,0 +1,137 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 4.0.2 Release Notes</title>
+    <description>
+<ul>
+<li>CanDI updates to match changes to the JSR-299 and JSR-330 specifications.</li>
+<li>Servlet 3.0 early access updates</li>
+<li>Continued EJB Lite development</li>
+<li>Clustered/Cloud .war deployment enhancements,
+including staging, versioning, and ant/maven tasks.</li>
+<li>Regression (QA) cleanup and stress test work to bring Resin 4.0.2 up to
+a production level.</li>
+<li>WebSocket, HMTP and JMTP support.</li>
+<li>JMS clustered singleton queue and clustered topics</li>
+<li>/resin-admin support for REST-based management tools such as nagios.</li>
+<li>Enhanced /resin-admin monitoring to better illustrate the server status.</li>
+<li>HTTP Proxy and FastCGI load balancing with failover.</li>
+<li>Eclipse plugin enhancements.</li>
+</ul>
+
+    </description>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 4.0.2 Overview">
+
+<p>The focus of Resin 4.0.2 development was the following:</p>
+<ul>
+<li>CanDI updates to match changes to the JSR-299 and JSR-330 specifications.</li>
+<li>Servlet 3.0 early access updates</li>
+<li>Continued EJB Lite development</li>
+<li>Clustered/Cloud .war deployment enhancements,
+including staging, versioning, and ant/maven tasks.</li>
+<li>Regression (QA) cleanup and stress test work to bring Resin 4.0.2 up to
+a production level.</li>
+<li>WebSocket, HMTP and JMTP support.</li>
+<li>JMS clustered singleton queue and clustered topics</li>
+<li>/resin-admin support for REST-based management tools such as nagios.</li>
+<li>Enhanced /resin-admin monitoring to better illustrate the server status.</li>
+<li>HTTP Proxy and FastCGI load balancing with failover.</li>
+<li>Eclipse plugin enhancements.</li>
+</ul>
+
+<p>Resin 4.0.x is the active development branch.</p>
+</s1>
+
+<s1 title="Servlet 3.0 Early Access">
+
+<p>Resin 4.0.2 continues work on the Servlet 3.0 draft specification as
+an early access release.</p>
+
+</s1>
+
+<s1 title="Java Injection (JSR-299, JSR-330, CanDI)">
+
+<p>The Java Injection specification has changed significantly between 4.0.1
+and 4.0.2. Resin now supports the JSR-330 annotations for Java Injection.</p>
+
+<p>The main changes are repackaging and renaming of the key injection
+annotations to match JSR-299.  The
+<a href="../examples/ioc-binding/index.xtp">Java Injection Tutorial</a>
+has been updated for the new injections.</p>
+
+</s1>
+
+<s1 title="Clustered JMS Queues and Topics">
+
+<p>Resin's clustering now includes support for clustered queues and topics.
+The primary clustered queue is a singleton queue with failover. The clustered
+topics notify all servers in a cluster pod.</p>
+
+</s1>
+
+<s1 title="/resin-admin">
+
+<p>We've added /resin-admin features to improve visibility to the server, 
+  development and debugging, and adminstration.</p>
+
+<p>The "summary" tab now includes statistical gathered as the server is
+running including request counts, request times, CPU time, netstat reports,
+and database activity.</p>
+
+<p>A "postmortem" tab helps debugging of a server crash by displaying
+the server state at the time just before a restart.</p>
+
+<p>Customized statistics gathering based on JMX is now available through
+the &lt;jmx> and &lt;jmx-delta> tags of the &lt;resin:StatManager> service.</p>
+
+<p>Customizable REST pages are now available through /resin-admin using PHP
+to script the gathered data. The REST capability is intended for integration
+with administration tools like Nagios.</p>
+
+</s1>
+
+<s1 title="Distributed Deployment">
+
+<p>Distributed deployment has been enhanced with staging and versioning
+capabilities, and integrated with the development flow with ant and maven
+tasks.</p>
+
+<p>A new application version can be deployed with the following process:</p>
+
+<ol>
+<li>Upload the .war contents transactionally to the server (but not activated yet)</li>
+<li>Deploy and test a "staging" version on a single machine.</li>
+<li>Activate the .war for the production servers.</li>
+</ol>
+
+</s1>
+
+<s1 title="Quercus: Availability on other Application Servers">
+
+<p>Quercus development in 4.0.2 has focused on bugs fixes and QA regression
+cleanup.</p>
+
+</s1>
+
+<s1 title="WebSocket, HMTP, and JMTP support">
+
+<p>Resin 4.0.2 now includes support for the HTML 5 WebSocket protocol, which
+is a fully-bidirectional TCP connection established using HTTP handshaking,
+allowing for true interactive applications with HTML 5 browsers.</p>
+
+<p>On top of WebSockets, we've created JMTP and HMTP as a programmable
+messaging layer. JMTP (JSON Message Transport Prototocol) and
+HMTP (Hessian Message Transport Protocol) provide general
+messaging, RPC, and publish/subscribe capabilities in a clean, simple
+interface.</p>
+
+</s1>
+
+</body>
+</document>

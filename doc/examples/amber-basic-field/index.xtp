@@ -1,0 +1,511 @@
+<document>
+  <header>
+    <product>resin-ee</product>
+    <title>Field-based Persistent Objects</title>
+        <description>
+          <p>Amber's persistence based on JPA (the Java Persistence
+Architecture)  supports a field-based relational model: each Java field
+represents a database column.  The tutorial shows the configuration,
+classes, and client code for a single-table entity. </p>
+        </description>
+    <type>tutorial</type>
+    <tutorial-startpage>basic</tutorial-startpage>
+  </header>
+
+  <body>
+    <localtoc/>
+
+<s1 title="Overview">
+
+<p>Amber provides a Java model for a relational database,
+following the Java Persistence standard.</p>
+
+<p>A typical project starts planning with the
+relational database schema and matching the Java model to that schema.
+This data-driven approach contrasts with a transparent persistent
+object approach which starts with Java classes and then tries to
+create storage to match the Java model, an approach more typical
+of object-oriented databases.  While the transparent persistence model
+may be appropriate for some applications, the persistence specification
+wisely leaves
+transparent persistence to other products and specifications, and
+concentrates on the relational database model.</p>
+
+<p>In a way, Amber simply provides an extension
+to SQL queries, returning fully-populated Java objects instead of
+just returning primitive values like Strings.  That somewhat
+understates Amber's capabilities since the Java objects are live,
+updating the database in a object-oriented fashion, and also provides
+caching.  Still, viewing Amber as a SQL extension supporting
+relations and objects is a good starting model.</p> 
+
+<p>The tutorial uses "entity" to mean a persistent object.</p>
+
+</s1>
+
+<s1 title="Files in this tutorial">
+<deftable>
+<tr>
+  <th>File</th>
+  <th>Description</th>
+</tr>
+
+<tr>
+  <td><viewfile-link file="WEB-INF/resin-web.xml"/></td>
+  <td>resin-web.xml configuration</td>
+</tr>
+
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/META-INF/persistence.xml"/></td>
+  <td>META-INF/persistence.xml configuration</td>
+</tr>
+
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/Course.java"/></td>
+  <td>The course bean</td>
+</tr>
+
+<tr>
+  <td><viewfile-link file="WEB-INF/classes/example/CourseServlet.java"/></td>
+  <td>The course servlet</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="Database Model">
+
+<p>The tutorial's design begins with its database model.  The
+table is a collection of school courses, each with an assigned teacher.
+The table has an integer primary key "id" and two string data fields, "course"
+and "teacher".</p>
+
+<example title="Example: course.sql">
+CREATE TABLE amber_basic_courses (
+  id INTEGER PRIMARY KEY auto_increment,
+
+  course VARCHAR(250),
+  teacher VARCHAR(250)
+);
+
+INSERT INTO amber_basic_courses VALUES('Potions', 'Severus Snape');
+INSERT INTO amber_basic_courses VALUES('Transfiguration', 'Minerva McGonagall');
+</example>
+
+<p>To judge the complexity of Amber, it's useful to compare the Amber
+Java model to the simplest possible Java model.  The simple model
+has a single class, <code>Course</code>, for the table and three fields for the
+table's columns.</p>
+
+<example title="Example: Course.java - minimal Java model">
+package example;
+
+public class Course {
+  private int id;
+  private String course;
+  private String teacher;
+}
+</example>
+
+<p>The minimal class is missing any description of its intended use as a
+persistent object, information needed for maintainable code.
+In theory, a persistent object tool could use the minimal class
+automatically, but without more information, the source doesn't
+properly describe the class behavior.  Fortunately, the JDK 1.5
+metadata annotations can describe the persistence information in
+a maintainable, self-documenting way.</p>
+
+<p>Of course, those annotations might have default values and should
+be overridable by an optional XML configuration file, but it's
+necessary to annotate the intended function of the entity in the Java
+source itself to properly document and validate the Java code.</p>
+
+</s1>
+
+<s1 title="Overview">
+
+<p>To find and enhance a persistent Java bean, Amber follows the following
+procedure.
+
+</p><ol>
+<li>&lt;ejb-server&gt; in the resin-web.xml configures Amber to start looking for persistence.xml in the classpath.
+</li><li>The persistence.xml in WEB-INF/classes/META-INF tells Amber to create a persistence-unit named "example".
+</li><li>The "example" persistence-unit contains a class example.CourseBean
+</li><li>Amber enhances example.CourseBean as a persistent object.
+</li></ol>
+
+<p>By the end of initialization time, Amber has enhanced CourseBean and
+made it available to the application in the persistence-unit "example".</p>
+
+<p>A servlet will then lookup the CourseBean with the following procedure:</p>
+
+<ol>
+<li>Obtain an EntityManager for the persistence unit either using WebBeans @In (or @Named) or using the @PersistenceUnit injection annotation.</li>
+<li>Use the EntityManager to find the instance of the bean.</li>
+</ol>
+
+</s1>
+
+<s1 title="Persistent Object Implementation">
+
+<p>The minimal Java class needs the following annotations to
+produce a maintainable persistent object:</p>
+
+<ul>
+<li>A annotation to mark the class as persistent.</li>
+<li>An annotation naming the relational table for the class.</li>
+<li>An annotation to mark the primary key and any auto-generation capability.
+</li>
+<li>Annotations to mark each persistent field.</li>
+<li>Annotations naming the columns for the table.
+</li>
+</ul>
+
+<p>The following code shows the Amber annotations for the course
+entity.  As a quick comparison with the minimal Java class shows,
+Amber is close to the simplest possible implementation of the
+Java model which provides the necessary annotations in the list.</p>
+
+
+<example title="Example: Course.java">
+package example;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name="amber_basic_course")
+public class Course {
+  @Id
+  @Column(name="id")
+  @GeneratedValue
+  private int _id;
+
+  @Basic
+  @Column(name="course")
+  private String _course;
+
+  @Basic
+  @Column(name="teacher")
+  private String _teacher;
+
+  public String course()
+  {
+    return _course;
+  }
+
+  public String teacher()
+  {
+    return _teacher;
+  }
+}
+</example>
+
+<p>The example uses the <code>course()</code>
+and <code>teacher()</code> methods to emphasize that the
+field accesses to _course and _teacher are live, i.e. they
+read and write the database values directly.  (Under the covers, Amber
+uses bytecode enhancement to make this work.)</p>
+
+<s2 title="@Entity - marking the class as persistent">
+
+<p>Course uses the @Entity to mark the Java class as a field-based
+persistent object.</p>
+
+<p><a href="doc|amber.xtp#@Entity">@javax.persistence.Entity</a> declares
+a Java class as an entity bean.</p>
+
+<p>Since the @Id annotation marks a field, the bean's fields
+are persistent.  Only the bean itself or its children may access the
+fields.  Other classes must use the bean's methods, like getters or
+setters, to indirectly access the fields.</p>
+
+<p>If the @Id annotation had marked a property method,
+the methods would be enhanced. </p>
+
+</s2>
+
+<s2 title="@Table - naming the table">
+
+<p><a href="doc|amber-table.xtp#@Table">@javax.persistence.Table</a> specifies
+the SQL database table name to be used.  If <code>@Table</code> is
+unspecified, Amber will use the class name as the table name.</p>
+
+<example title="Example: @Table">
+@javax.persistence.Table(name="amber_basic_course")
+</example>
+
+</s2>
+
+<s2 title="@Id - marking the primary key">
+
+<p>The <a href="doc|amber-table.xtp#@Id">@Id</a> attribute marks the
+bean's primary key.  The <code>EntityManager.find</code> method
+looks up a bean instance with the primary key, and relations use
+the primary key to link beans together.</p>
+
+<example title="Example: key configuration">
+@Id
+@Column(name="id")
+@GeneratedValue
+private int _id;
+</example>
+
+<p>The optional <code>@GeneratedValue</code> specifies automatic
+generation of primary keys when beans are created.  The default
+strategy <code>AUTO</code> generates primary keys depending on the database.
+Postgres, for example, will use a SEQUENCE, while Resin's built-in
+database will use an auto_increment IDENTITY.</p>
+
+<p>The optional <a href="doc|amber-table.xtp#@Column">@Column</a> annotation specifies the
+SQL column name.  The default SQL column for an @Id is
+the property name.</p>
+
+</s2>
+
+<s2 title="@Basic - marking a persistent field">
+
+<p>The <a href="doc|amber-table.xtp#@Basic">@Basic</a> attribute
+marks a basic data column like a string or integer or double.</p>
+
+<example title="Example: data column definition">
+@Basic 
+@Column (name="course")
+private String _course;
+</example>
+
+</s2>
+
+<s2 title="@Column - naming the column">
+
+<p>The optional <a href="doc|amber-table.xtp#@Column">@Column</a>
+annotation specifies SQL column name.
+For a @Basic field, the
+default column name is the field name.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Creating an entry">
+
+<p>With Amber, you create a new database row by creating the model
+object and then calling <code>persist()</code> on the
+<code>EntityManager</code>.  The <code>EntityManager</code> is the main
+facade for creating, querying and removing JPA objects.  Normally,
+the application will use injection to get an <code>EntityManager</code>.</p>
+
+<example title="Example: Creating an instance">
+import javax.persistence.EntityManager;
+import javax.webbeans.In;
+
+public class MyServlet {
+  @In EntityManager _manager;
+
+  public void create()
+  {
+    _manager.getTransaction().begin();
+    try {
+      _manager.persist(new Course("Potions", "Severus Snape"));
+    } finally {
+      _manager.getTransaction().commit();
+    }
+  }
+}
+</example>
+
+<p>As mentioned above, the servlet gets its <code>EntityManager</code>
+using WebBeans injection annotated by <code>@In</code> since there is only
+one <code>EntityManager</code> in the application.</p>
+
+<p>The <code>persist()</code> must be enclosed in a transaction, as required
+by the JPA specification.  The transaction ensures that the database update
+is safe and consistent.  In this example, we've used an explicit transaction.
+Many applications will use session beans to handle the transactions
+automatically.</p>
+
+</s1>
+
+<s1 title="Finding a row by the primary key">
+
+<p>Once the Course is in the database, we can read it by its primary key using
+the <code>EntityManager</code> <code>find()</code> method.</p>
+
+<example title="Example: Find by primary key">
+import javax.persistence.EntityManager;
+import javax.webbeans.In;
+
+public class MyServlet {
+  @In EntityManager _manager;
+
+  public void find(PrintWriter out)
+  {
+    Course course = _manager.find(Course.class, 1);
+
+    out.println(course.course + " " + course.teacher());
+  }
+}
+</example>
+
+<p>Notice that the read doesn't require a transaction.  In fact, Amber generally
+caches reads and only accesses the database when the
+cache expires or the data changes.</p>
+
+<p>Of course, the find method is generally only useful if you already
+know the primary key.  Usually, your application will need to query
+the database using some other criteria, like the name of the Course.</p>
+
+</s1>
+
+<s1 title="Example: Querying the data">
+
+<p>The client servlet queries the database for all courses and lists
+them.  It uses the <code>EntityManager</code> API to create a
+<code>Query</code> and uses the <code>Query</code> to obtain the results.</p>
+
+
+<example title="CourseServlet.java">
+import javax.persistence.*;
+import javax.webbeans.In;
+
+public class CourseServlet extends HttpServlet {
+  @In
+  private EntityManager _manager;
+
+  public void service(HttpServletRequest req, HttpServletResponse res)
+    throws java.io.IOException, ServletException
+  {
+    PrintWriter out = res.getWriter();
+
+    res.setContentType("text/html");
+
+    out.println("&lt;h3&gt;Course Details&lt;/h3&gt;");
+
+    Query query = _manager.createQuery("SELECT o FROM Course o");
+    
+    for (Course course : (List&lt;Course&gt;) query.listResults()) {
+      out.println("course: " + course.course() + "&lt;br&gt;");
+      out.println("teacher: " + course.teacher() + "&lt;br&gt;");
+      out.println("&lt;br&gt;");
+    }
+  }
+}
+</example>
+<results>
+&lt;h3>Course Details&lt;/h3>
+course: Potions
+instructor: Severus Snape
+
+course: Transfiguration
+instructor: Minerva McGonagall
+</results>
+
+<s2 title="EntityManager">
+
+<p><code>EntityManager</code> is the primary interface for
+finding, querying, adding and deleting persistent beans.  You can use
+the WebBeans <code>@In</code> annotation or use the older
+<code>@PersistenceContext</code> annotation.</p>
+
+<example>
+@PersistenceContext(name="example")
+</example>
+
+</s2>
+
+<s2 title="Query">
+
+<p><code>Query</code> acts like a <code>PreparedStatement</code> in
+JDBC.  It saves a parsed SQL query and allows for parameters.</p>
+
+<example>
+Query query = _manager.createQuery("SELECT o FROM Course o");
+</example>
+
+<p>The SQL used for EJB 3.0 is an enhanced database SQL.  The query
+can return objects directly ("SELECT&#160;o") and it can traverse
+relations ("o.next.data").  In most other respects, it can be thought
+of as regular SQL.</p>
+
+<example>
+List list = query.listResults();
+</example>
+
+<p>The query returns its values with <code>listResults()</code>.
+Queries which return a single value can
+use <code>getSingleResult()</code>.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Removing an entry">
+
+<p>Finally, the application will use <code>remove()</code> in
+the <code>EntityManager</code> object to remove the entry.</p>
+
+<example title="Example: Removing an instance">
+import javax.persistence.EntityManager;
+import javax.webbeans.In;
+
+public class MyServlet {
+  @In EntityManager _manager;
+
+  public void remove(Course course)
+  {
+    _manager.getTransaction().begin();
+    try {
+      _manager.remove(course);
+    } finally {
+      _manager.getTransaction().commit();
+    }
+  }
+}
+</example>
+
+<p>The <code>remove()</code> must be enclosed in a transaction, just like
+the <code>persist()</code> call.  Again, the transaction ensures that
+the database update is safe and consistent.</p>
+
+</s1>
+
+<s1 title="Resin Configuration">
+
+<p>The Resin configuration is fairly straightforward.  Resin needs to
+start the ejb-server, configure the JDBC data-source, and list the
+beans that will be used.</p>
+
+<example title="Example: WEB-INF/resin-web.xml">
+&lt;web-app&gt;
+  &lt;!-- server configuration --&gt;
+  &lt;persistence-manager data-source="jdbc/resin"/&gt;
+
+  &lt;servlet servlet-name="basic" servlet-class="example.CourseServlet"/&gt;
+
+  &lt;servlet-mapping url-pattern="/basic" servlet-name="basic"/&gt;
+&lt;/web-app&gt;
+</example>
+
+<p>The &lt;persistence-manager&gt; configures Amber support.</p>
+
+</s1>
+
+<s1 title="persistence.xml">
+
+<p>The persistence.xml lives in META-INF/persistence.xml.  Since
+we're developing in WEB-INF/classes, the file will be in
+WEB-INF/classes/persistence.xml.</p>
+
+<example title="WEB-INF/classes/META-INF/persistence.xml">
+&lt;persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0"&gt;
+  &lt;persistence-unit name="example"&gt;
+    &lt;class&gt;example.CourseBean&lt;/class&gt;
+
+    &lt;exclude-unlisted-classes/&gt;
+  &lt;/persistence-unit&gt;
+&lt;/persistence&gt;
+</example>
+
+</s1>
+
+  </body>
+</document>

@@ -1,0 +1,640 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Server Caching</title>
+    <description>
+      <p>Server caching can speed dynamic pages to
+        near-static speeds.   When pages created by database
+        queries only change every 15 minutes, e.g. CNN or Wikipedia
+        or Slashdot, Resin can cache the results and serve them
+        like static pages.  Because Resin's caching only depends on
+        HTTP headers, it will work for any JSPs, servlet
+        or PHP page.response.</p>
+
+      <p>Resin's caching operates like a proxy cache, looking at HTTP
+        headers to compare hash codes or digests or simply caching for
+        a static amount of time.  Since the proxy cache follows the HTTP
+        standards, applications like Mediawiki will automatically see
+        dramatic performance improvement with no extra work.  You can even
+        cache REST-style GET requests.</p>
+
+      <p>Because the cache supports advanced headers like "Vary", it can
+        cache different versions of the page depending on the browser's
+        capabilities.  Gzip-enabled browsers will get the cached compressed
+        page while more primitive browsers will see the plan page.  With
+        "Vary: Cookie", you can return a cached page for anonymous users,
+        and still return a custom page for logged-in users.</p>
+    </description>
+  </header>
+
+  <body>
+    <localtoc/>
+
+<s1 title="Overview">
+
+<p>For many applications, enabling the proxy cache can
+improve your application's performance dramatically.
+When Quercus runs Mediawiki with caching enabled,
+Resin can return results as fast as static pages.  Without caching,
+the performance is significantly slower.</p>
+
+<deftable title="Mediawiki Performance">
+<tr>
+  <th>Cache Performance</th>
+  <th>Non-Cache Performance</th>
+</tr>
+<tr>
+  <td>4316 requests/sec</td>
+  <td>29.80 requests/sec</td>
+</tr>
+</deftable>
+
+<p>To enable caching, your application will need to set a few HTTP headers.
+While a simple application can just set a timed cache with <var>max-age</var>,
+a more sophisticated application can generate page hash digests with
+<var>ETag</var> and short-circuit repeated <var>If-None-Match</var>
+responses.</p>
+
+<p>If subsections of your pages are cacheable but the main page is not,
+you can cache servlet includes just like caching top-level pages.  Resin's
+include processing will examine the headers set by your include servlet
+and treat them just like a top-level cache.</p>
+
+</s1>
+
+<s1 title="HTTP Caching Headers">
+
+<deftable title="HTTP Server to Client Headers">
+<tr>
+  <th width='40%'>Header</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>Cache-Control: private</td>
+  <td>Restricts caching to the browser only, forbidding proxy-caching.</td>
+</tr>
+<tr>
+  <td>Cache-Control: max-age=<em>n</em></td>
+  <td>Specifies a static cache time in seconds for both the browser
+and proxy cache.</td>
+</tr>
+<tr>
+  <td>Cache-Control: s-maxage=<em>n</em></td>
+  <td>Specifies a static cache time in seconds for the proxy cache only.</td>
+</tr>
+<tr>
+  <td>Cache-Control: no-cache</td>
+  <td>Disables caching entirely.</td>
+</tr>
+<tr>
+  <td>ETag: <em>hash or identifier</em></td>
+  <td>Unique identifier for the page's version.  Hash-based values are
+better than date/versioning, especially in clustered configurations.</td>
+</tr>
+<tr>
+  <td>Last-Modified: <em>time of modification</em></td>
+  <td>Accepted by Resin's cache, but not recommended in clustered
+configurations.</td>
+</tr>
+<tr>
+  <td>Vary: <em>header-name</em></td>
+  <td>Caches the client's header, e.g. Cookie, or Accept-encoding</td>
+</tr>
+</deftable>
+
+<deftable title="HTTP Client to Server Headers">
+<tr>
+  <th>Header</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>If-None-Match</td>
+  <td>Specifies the ETag value for the page</td>
+</tr>
+<tr>
+  <td>If-Modified-Since</td>
+  <td>Specifies the Last-Modified value for the page</td>
+</tr>
+</deftable>
+
+
+<s2 title="Cache-Control: max-age">
+
+<p>Setting the <var>max-age</var> header will cache the results
+for a specified time.  For heavily loaded pages, even setting short
+expires times can significantly improve performance.
+Pages using sessions should set a "Vary: Cookie" header, so 
+anonymous users will see the cached page, while logged-in users
+will see their private page.</p>
+
+<example title="Example: 15s cache">
+&lt;%@ page session="false" %&gt;
+&lt;%! int counter; %&gt;
+&lt;%
+response.addHeader("Cache-Control", "max-age=15");
+%&gt;
+Count: &lt;%= counter++ %&gt;
+</example>
+
+<p><var>max-age</var> is useful for database generated pages which are
+continuously, but slowly updated.  To cache with a fixed content, i.e.
+something which has a valid hash value like a file, you can
+use <var>ETag</var> with <var>If-None-Match</var>.</p>
+
+</s2>
+
+<s2 title="ETag and If-None-Match">
+
+<p>The <var>ETag</var> header specifies a hash or digest code for the
+generated page to further improve caching.  The browser or cache
+will send the <var>ETag</var> as a <var>If-None-Match</var> value when it
+checks for any page updates.  If the page is the same, the application will
+return a 304 NOT_MODIFIED response with an empty body.  Resin's FileServlet
+automatically provides this capability for static pages.  In general, the
+ETag is the most effective caching technique, although it requires a bit
+more work than <var>max-age</var>.</p>
+
+<p>To handle clustered servers in a load-balanced configuration, the
+calculated <var>ETag</var> should be a hash of the result value,
+not a timestamp or version.  Since each server behind a load balancer will
+generate a different timestamp for the files, each server would produce
+a different tag, even though the generated content was identical.  So either
+producing a hash or ensuring the <var>ETag</var> value is the same is
+critical.</p>
+
+<p><var>ETag</var> servlets will often also use &lt;cache-mapping>
+configuration to set a <var>max-age</var> or <var>s-maxage</var>.  The
+browser and proxy cache will cache the page without revalidation until
+<var>max-age</var> runs out. When the time expires, it will use
+<var>If-None-Match</var> to revalidate the page.</p>
+
+<p>When using <var>ETag</var>, your application will need to look for the
+<var>If-None-Match</var> header on incoming requests.  If the value is the
+same, your servlet can return 304 NOT-MODIFIED.  If the value differs,
+you'll return the new content and hash.</p>
+
+<example title="Example: ETag servlet">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class MyServlet extends HttpServlet
+{
+  public void doGet(HttpServletRequest req, HttpServletResponse res)
+  {
+    String etag = getCurrentEtag();
+
+    String ifNoneMatch = req.getHeader("If-None-Match");
+
+    if (ifNoneMatch != null &amp;&amp; ifNoneMatch.equals(etag)) {
+      res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+      return;
+    }
+
+    res.setHeader("ETag", etag);
+
+    ... // generate response
+  }
+}
+</example>
+
+<example title="Example: HTTP headers for ETag match">
+C: GET /test-servlet HTTP/1.1
+
+S: HTTP/1.1 200 OK
+S: ETag: xm8vz29I
+S: Cache-Control: max-age=15s
+S: ...
+
+C: GET /test-servlet HTTP/1.1
+C: If-None-Match: xm8vz29I
+
+S: HTTP/1.1 304 Not Modified
+S: Cache-Control: max-age=15s
+S: ...
+</example>
+
+<example title="Example: HTTP headers for ETag mismatch">
+C: GET /test-servlet HTTP/1.1
+C: If-None-Match: UXi456Ww
+
+S: HTTP/1.1 200 OK
+S: ETag: xM81x+3j
+S: Cache-Control: max-age=15s
+S: ...
+</example>
+
+</s2>
+
+<s2 title="Expires">
+
+<p>Although max-age tends to be easier and more flexible, an application
+can also set the <var>Expires</var> header to enable caching, when the
+expiration date is a specific time instead of an interval.
+For heavily loaded pages, even setting short
+expires times can significantly improve performance.  Sessions should
+be disabled for caching.</p>
+
+<p>The following example sets expiration for 15 seconds.  So the
+counter should update slowly.</p>
+
+<example title="Example: expires">
+&lt;%@ page session="false" %&gt;
+&lt;%! int counter; %&gt;
+&lt;%
+long now = System.currentTimeMillis();
+response.setDateHeader("Expires", now + 15000);
+%&gt;
+Count: &lt;%= counter++ %&gt;
+</example>
+
+<p><var>Expires</var> is useful for database generated pages which are
+continuously, but slowly updated.  To cache with a fixed content, i.e.
+something which has a valid hash value like a file, you can
+use <var>ETag</var> with <var>If-None-Match</var>.</p>
+
+</s2>
+
+<s2 title="If-Modified-Since">
+
+<p>The <var>If-Modified-Since</var> headers let you cache based on an
+underlying change date.  For example, the page may only change when an
+underlying source page changes.  Resin lets you easily use 
+<var>If-Modified</var> by overriding methods in HttpServlet or
+in a JSP page.</p>
+
+<p>Because of the clustering issues mentioned in the ETag section, it's
+generally recommended to use ETag and If-None-Match and avoid
+If-Modified-Since.  In a load balanced environment, each backend server
+would generally have a different Last-Modified value, while would effectively
+disable caching for a proxy cache or a browser that switched from one
+backend server to another.</p>
+
+<p>The following page only changes when the underlying 'test.xml'
+page changes.</p>
+
+<example>
+&lt;%@ page session="false" %&gt;
+&lt;%!
+int counter;
+
+public long getLastModified(HttpServletRequest req)
+{
+  String path = req.getRealPath("test.xml");
+  return new File(path).lastModified();
+}
+%&gt;
+Count: &lt;%= counter++ %&gt;
+</example>
+
+<p><var>If-Modified</var> pages are useful in combination with the
+<var>cache-mapping</var> configuration.</p>
+
+</s2>
+
+<s2 title="Vary">
+
+<p>In some cases, you'll want to have separate cached pages for the same URL
+depending on the capabilities of the browser.  Using gzip compression is
+the most important example.  Browsers which can understand
+gzip-compressed files receive the compressed page while simple browsers
+will see the uncompressed page.  Using the "Vary" header, Resin can
+cache different versions of that page.</p>
+
+<example title="Example: vary caching for on gzip">
+&lt;%
+  response.addHeader("Cache-Control", "max-age=3600");
+  response.addHeader("Vary", "Accept-Encoding");
+%&gt;
+
+Accept-Encoding: &lt;%= request.getHeader("Accept-Encoding") %&gt;
+</example>
+
+<p>The "Vary" header can be particularly useful for caching anonymous
+pages, i.e. using "Vary: Cookie".  Logged-in users will get their custom
+pages, while anonymous users will see the cached page.</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Included Pages">
+
+<p>Resin can cache subpages even when the top page can't be cached.
+Sites allowing user personalization will often design pages with
+<var>jsp:include</var> subpages.  Some subpages are user-specific and can't
+be cached.  Others are common to everybody and can be cached.</p>
+
+<p>Resin treats subpages as independent requests, so they can be
+cached independent of the top-level page.  Try the following, use the
+first <var>expires</var> counter example as the included page.  Create a
+top-level page that looks like:</p>
+
+<example title="Example: top-level non-cached page">
+&lt;% if (! session.isNew()) { %&gt;
+&lt;h1&gt;Welcome back!&lt;/h1&gt;
+&lt;% } %&gt;
+
+&lt;jsp:include page="expires.jsp"/&gt;
+</example>
+
+<example title="Example: cached include page">
+&lt;%@ page session="false" %&gt;
+&lt;%! int counter; %&gt;
+&lt;%
+response.setHeader("Cache-Control", "max-age=15");
+%&gt;
+Count: &lt;%= counter++ %&gt;
+</example>
+
+</s1>
+
+<s1 title="Caching Anonymous Users">
+
+<p>The Vary header can be used to implement anonymous user caching.  If a user
+is not logged in, he will get a cached page.  If he's logged in, he'll
+get his own page.  This feature will not work if anonymous users are
+assigned cookies for tracking purposes.</p>
+
+<p>To make anonymous caching work, you must set the <var>Vary: Cookie</var>
+If you omit the Vary header, Resin will use
+the <var>max-age</var> to cache the same page for every user.</p>
+
+<example title="Example: 'Vary: Cookie' for anonymous users">
+&lt;%@ page session="false" %&gt;
+&lt;%! int _counter; %&gt;
+&lt;%
+response.addHeader("Cache-Control", "max-age=15");
+response.addHeader("Vary", "Cookie");
+
+String user = request.getParameter("user");
+%&gt;
+User: &lt;%= user %&gt; &lt;%= counter++ %&gt;
+</example>
+
+<p>The top page must still set the <var>max-age</var> or
+<var>If-Modified</var> header, but Resin will take care of deciding if the
+page is cacheable or not.  If the request has any cookies, Resin will
+not cache it and will not use the cached page.
+If it has no cookies, Resin will use the cached page.</p>
+
+<p>When using Vary: Cookie, user tracking cookies will make the
+page uncacheable even if the page is the same for all users.
+Resin chooses to cache or not based on the existence of any cookies
+in the request, whether they're used or not.</p>
+
+</s1>
+
+<s1 title="Configuration">
+
+<defun title="cache">
+<parents>cluster</parents>
+
+<p>&lt;cache> configures the proxy cache (requires Resin Professional).  The
+proxy cache improves performance by caching the output of servlets,
+jsp and php pages.  For database-heavy pages, this caching can improve
+performance and reduce database load by several orders of magnitude.</p>
+
+<p>The proxy cache uses a combination of a memory cache and a disk-based
+cache to save large amounts of data with little overhead.</p>
+
+<p>Management of the proxy cache uses the
+<a javadoc="com.caucho.management.server.ProxyCacheMXBean">ProxyCacheMXBean</a>.</p>
+
+<deftable title="&lt;cache> Attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Description</th>
+  <th>Default</th>
+</tr>
+<tr><td>path</td>
+    <td>Path to the persistent cache files.</td>
+    <td>cache/</td></tr>
+<tr><td>disk-size</td>
+    <td>Maximum size of the cache saved on disk.</td>
+    <td>1024M</td></tr>
+<tr><td>enable</td>
+    <td>Enables the proxy cache.</td>
+    <td>true</td></tr>
+<tr><td>enable-range</td>
+    <td>Enables support for the HTTP Range header.</td>
+    <td>true</td></tr>
+<tr><td>entries</td>
+    <td>Maximum number of pages stored in the cache.</td>
+    <td>8192</td></tr>
+<tr><td>max-entry-size</td>
+    <td>Largest page size allowed in the cache.</td>
+    <td>1M</td></tr>
+<tr><td>memory-size</td>
+    <td>Maximum heap memory used to cache blocks.</td>
+    <td>8M</td></tr>
+<tr><td>rewrite-vary-as-private</td>
+    <td>Rewrite Vary headers as Cache-Control: private to avoid browser
+and proxy-cache bugs (particularly IE).</td>
+    <td>false</td></tr>
+</deftable>
+
+<def title="&lt;cache> schema">
+element cache {
+  disk-size?
+  &amp; enable?
+  &amp; enable-range?
+  &amp; entries?
+  &amp; path?
+  &amp; max-entry-size?
+  &amp; memory-size?
+  &amp; rewrite-vary-as-private?
+}
+</def>
+
+<example title="Example: enabling proxy cache">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+    &lt;cluster id="web-tier"&gt;
+        &lt;cache entries="16384" disk-size="2G" memory-size="256M"/&gt;
+
+        &lt;server id="a" address="192.168.0.10"/&gt;
+
+        &lt;host host-name="www.foo.com"&gt;
+    &lt;/cluster&gt;
+&lt;/resin&gt;
+</example>
+
+<s2 title="rewrite-vary-as-private">
+
+<p>Because not all browsers understand the Vary header, Resin can rewrite
+Vary to a Cache-Control: private.  This rewriting will cache the page
+with the Vary in Resin's proxy cache, and also cache the page in the browser.
+Any other proxy caches, however, will not be able to cache the page.</p>
+
+<p>The underlying issue is a limitation of browsers such as IE.  When IE
+sees a Vary header it doesn't understand, it marks the page as uncacheable.
+Since IE only understands "Vary: User-Agent", this would mean IE would
+refuse to cache gzipped pages or "Vary: Cookie" pages.</p>
+
+<p>With the &lt;rewrite-vary-as-private> tag, IE will cache the page
+since it's rewritten as "Cache-Control: private" with no Vary at all.
+Resin will continue to cache the page as normal.</p>
+
+</s2>
+
+</defun> <!-- cache -->
+
+<s2 title="cache-mapping">
+
+<p><var>cache-mapping</var> assigns a <var>max-age</var>
+and <var>Expires</var> to a cacheable page, i.e. a page with an <var>ETag</var>
+or <var>Last-Modified</var> setting.  It does not affect <var>max-age</var> or
+<var>Expires</var> cached pages.  The FileServlet takes
+advantage of <var>cache-mapping</var> because it provides the
+ETag servlet.</p>
+
+<p>Often, you want a long Expires time for a page to a browser.  For
+example, any gif will not change for 24 hours.  That keeps browsers
+from asking for the same gif every five seconds; that's especially
+important for tiny formatting gifs.  However, as soon as that page or
+gif changes, you want the change immediately available to any new
+browser or to a browser using reload.</p>
+
+<p>Here's how you would set the Expires to 24 hours for a gif, based
+on the default FileServlet.</p>
+
+<example title="Example: caching .gif files for 24h">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;cache-mapping url-pattern='*.gif'
+                 expires='24h'/&gt;
+&lt;/web-app&gt;
+</example>
+
+<p>The <var>cache-mapping</var> automatically generates the Expires
+header.  It only works for cacheable pages setting If-Modified or
+ETag.  It will not affect pages explicily setting Expires or
+non-cacheable pages.  So it's safe to create a cache-mapping
+for <var>*.jsp</var> even if only some are cacheable.</p>
+
+</s2>
+</s1>
+
+<s1 title="Debugging caching">
+
+<p>When designing and testing your cached page, it's important to see
+how Resin is caching the page.  To turn on logging for caching, you'll
+add the following to your resin.xml:</p>
+
+<example title="Example: adding caching log">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+
+  &lt;logger name="com.caucho.server.cache" level="fine"/>
+
+  ...
+
+&lt;/resin>
+</example>
+
+<p>The output will look something like the following:</p>
+
+<results>
+[10:18:11.369] caching: /images/caucho-white.jpg etag="AAAAPbkEyoA" length=6190
+[10:18:11.377] caching: /images/logo.gif etag="AAAAOQ9zLeQ" length=571
+[10:18:11.393] caching: /css/default.css etag="AAAANzMooDY" length=1665
+[10:18:11.524] caching: /images/pixel.gif etag="AAAANpcE4pY" length=61
+
+...
+
+[10:18:49.303] using cache: /css/default.css
+[10:18:49.346] using cache: /images/pixel.gif
+[10:18:49.348] using cache: /images/caucho-white.jpg
+[10:18:49.362] using cache: /images/logo.gif
+</results>
+
+</s1>
+
+<s1 title="Administration">
+
+<s2 title="/resin-admin">
+
+<s3 title="block cache miss ratio">
+
+<p>The block cache miss ratio tells how often Resin needs to access the
+disk to read a cache entry.  Most cache requests should come from memory
+to improve performance, but cache entries are paged out to disk when the
+cache gets larger.  It's very important to keep the &lt;memory-size> tag
+of the &lt;cache> large enough so the block cache miss ratio is small.</p>
+
+</s3>
+
+<s3 title="proxy cache miss ratio">
+
+<p>The proxy cache miss ratio measures how often cacheable pages must
+go to their underlying servlet instead of being cached.  The miss ratio
+does not measure the non-cacheable pages.</p>
+
+</s3>
+
+<s3 title="invocation miss ratio">
+
+<p>The invocation miss ratio measures how often Resin's invocation cache
+misses.  The invocation cache is used for both cacheable and non-cacheable
+pages to save the servlet and filter chain construction.  A miss of the
+invocation cache is expensive, since it will not only execute the servlet,
+but also force the servlet and filter chain to be rebuilt.  The &lt;entries>
+field of the &lt;cache> controlls the invocation miss ratio.</p>
+
+</s3>
+
+</s2>
+
+<s2 title="BlockManagerMXBean">
+
+<p>BlockManagerMXBean returns statistics about the block cache.  Since Resin's
+block cache is used for the proxy cache as well as clustered sessions and
+JMS messages, the performance of the block cache is very important.  The
+block cache is a memory/paging cache on top of a file-based backing store.
+If the block cache misses, a request needs to go to disk, otherwise it
+can be served directly from memory.</p>
+
+<def title="BlockManagerMXBean ObjectName">
+resin:type=BlockManager
+</def>
+
+<def title="BlockManagerMXBean.java">
+public interface BlockManagerMXBean {
+  public long getBlockCapacity();
+
+  public long getHitCountTotal();
+  public long getMissCountTotal();
+}
+</def>
+
+</s2>
+
+<s2 title="ProxyCacheMXBean">
+
+<p>The ProxyCacheMXBean provides statistics about the proxy cache as well
+as operations to clear the cache.  The hit and miss counts tell how
+effectively the cache is improving performance.</p>
+
+<def title="ProxyCacheMXBean ObjectName">
+resin:type=ProxyCache
+</def>
+
+<def title="ProxyCacheMXBean.java">
+public interface ProxyCacheMXBean {
+  public long getHitCountTotal();
+  public long getMissCountTotal();
+
+  public CacheItem []getCacheableEntries(int max);
+  public CacheItem []getUncacheableEntries(int max);
+
+  public void clearCache();
+  public void clearCacheByPattern(String hostRegexp, String urlRegexp);
+  public void clearExpires();
+}
+</def>
+
+</s2>
+
+</s1>
+
+  </body>
+</document>

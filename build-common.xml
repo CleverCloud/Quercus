@@ -1,0 +1,1449 @@
+<project basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+  <property environment="env"/>
+
+  <property file="local.properties"/>
+
+  <!--
+  <property name="resindir" location="${basedir}/../resin"/>
+  -->
+  <property name="resindir" location="."/>
+  <property name="prodir" location="${basedir}/../pro"/>
+
+  <property name="install" location="${basedir}/"/>
+  <property name="resin.install" location="${resindir}/"/>
+
+  <property name="modules" location="${basedir}/modules"/>
+  <property name="resin.modules" location="${resindir}/modules"/>
+
+  <property name="artifacts" location="${basedir}/artifacts"/>
+  <property name="resin.artifacts" location="${resindir}/artifacts"/>
+
+  <property name="src" location="${basedir}/src"/>
+  <property name="ext" location="${resindir}/modules/ext"/>
+  <property name="maven.lib" location="${resindir}/maven-lib"/>
+  <property name="doc" location="${resindir}/doc"/>
+
+  <property name="build" location="${install}/build"/>
+
+  <property name="lib" location="${install}/lib"/>
+  <property name="resin.lib" location="${resin.install}/lib"/>
+
+  <property name="resin.http" value="8080"/>
+  <property name="resin.https" value="8443"/>
+
+  <property name="clientlib" location="${install}/clientlib"/>
+
+  <property name="dist" location="${install}/dist"/>
+  <property name="resin.dist" location="${resin.install}/dist"/>
+
+  <property name="javac.verbose" value="off"/>
+  <property name="javac.debug" value="on"/>
+  <property name="javac.optimize" value="off"/>
+  <property name="javac.deprecation" value="off"/>
+  <property name="javac.nowarn" value="on"/>
+  <property name="javac.memoryMaximumSize" value="512m"/>
+
+  <property name="javac.source" value="1.5"/>
+  <property name="javac.target" value="1.5"/>
+
+  <property name="jar.compress" value="false"/>
+  <!--
+  <property name="jar.index" value="true"/>
+  -->
+  <property name="jar.update" value="true"/>
+
+  <property name="promodules" location="${basedir}/../pro/modules"/>
+  <property name="jdkapi.href" value="http://java.sun.com/javase/6/docs/api"/>
+
+  <property name="shell" value="bash"/>
+
+  <property name="debian.stability" value="unstable"/>
+
+  <target name="update">
+    <!-- <mkdir dir="${maven.lib}"/>-->
+    <artifact:dependencies filesetId="dependency.classpath">
+      <pom file="maven.xml"/>
+    </artifact:dependencies>
+
+    <mkdir dir="${maven.lib}"/>
+    <copy todir="${maven.lib}">
+      <fileset refid="dependency.classpath"/>
+      <mapper type="flatten"/>
+    </copy>
+  </target>
+
+  <target name="tstamp">
+    <tstamp/>
+    <tstamp>
+      <format property="date" pattern="EEE, dd MMM yyyy hh:mm:ss zzz"/>
+    </tstamp>
+    <tstamp>
+      <format property="vdate" pattern="yyyyMMdd'T'hhmmss"/>
+    </tstamp>
+    <tstamp>
+      <format property="snapshotdate" pattern="yyMMdd"/>
+    </tstamp>
+  </target>
+
+  <target name="init" depends="tstamp">
+    <property name="product" value="Resin"/>
+    <property name="shortproduct" value="resin"/>
+    
+    <condition property="maven.version" value="${version}">
+      <isset property="version"/>
+    </condition>
+    <property name="maven.version" value="4.0-SNAPSHOT"/>
+    
+    <condition property="maven.metadata.template" value="release">
+      <isset property="version"/>
+    </condition>
+    <property name="maven.metadata.template" value="snapshot"/>
+    
+    <condition property="maven.m2" value="m2">
+      <isset property="version"/>
+    </condition>
+    <property name="maven.m2" value="m2-snapshot"/>
+    <property name="maven.root" value="${resin.dist}/${maven.m2}"/>
+    
+    <property name="version" value="4.0.s${snapshotdate}"/>
+    <property name="dist.name" value="${shortproduct}-${version}"/>
+
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build}/webapps"/>
+    <mkdir dir="${build}/ext-webapp-lib"/>
+    <mkdir dir="${build}/plugins"/>
+    <mkdir dir="${maven.lib}"/>
+
+    <condition property="unix">
+      <os family="unix"/>
+    </condition>
+  </target>
+
+  <target name="version">
+    <copy file="${modules}/resin/src/com/caucho/Version.tmpl"
+          tofile="${modules}/resin/src/com/caucho/Version.java"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${version}"/>
+        <filter token="DATE" value="${date}"/>
+        <filter token="VERSION_DATE" value="${vdate}"/>
+      </filterset>
+    </copy>
+
+    <copy file="${modules}/c/src/common/version.h.in"
+          tofile="${modules}/c/src/common/version.h"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${version}"/>
+        <filter token="DATE" value="${date}"/>
+        <filter token="VERSION_DATE" value="${vdate}"/>
+      </filterset>
+    </copy>
+  </target>
+
+  <target name="module">
+    <property name="module.src" value="${modules}/${module.name}/src"/>
+    <property name="module.build" value="${modules}/${module.name}/classes"/>
+    <property name="module.dist" value="${modules}/${module.name}/dist"/>
+    <property name="module.jar" value="${module.name}.jar"/>
+
+    <property file="${module.src}/module.properties"/>
+
+    <mkdir dir="${module.build}" />
+
+    <copy todir="${module.build}"
+          preservelastmodified="true"
+          overwrite="true">
+      <fileset dir="${module.src}">
+        <include name="**/*.afm"/>
+        <include name="**/*.ftld"/>
+        <include name="**/*.php"/>
+        <include name="**/*.properties"/>
+        <include name="**/*.rnc"/>
+        <include name="**/*.tld"/>
+        <include name="**/*.xml"/>
+        <include name="**/*.xsl"/>
+        <include name="**/jaxb.index"/>
+        <include name="**/namespace"/>
+        <include name="META-INF/**"/>
+      </fileset>
+    </copy>
+
+    <javac srcdir="${module.src}" destdir="${module.build}"
+           fork="true" 
+           verbose="${javac.verbose}" 
+           debug="${javac.debug}" optimize="${javac.optimize}"
+           deprecation="${javac.deprecation}" nowarn="${javac.nowarn}"
+           source="${javac.source}"
+           target="${javac.target}"
+           excludes="**/.svn/**"
+           memoryMaximumSize="${javac.memoryMaximumSize}">
+      <classpath>
+        <dirset dir="${resin.modules}">
+           <include name="*/classes"/>
+        </dirset>
+        <dirset dir="${modules}">
+           <include name="*/classes"/>
+        </dirset>
+        <fileset dir="${ext}">
+          <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${maven.lib}">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+
+    <mkdir dir="${module.dist}" />
+
+    <jar jarfile="${module.dist}/${module.jar}"
+         compress="${jar.compress}" index="${jar.index}" update="${jar.update}"
+         manifest="${module.src}/manifest">
+      <fileset dir="${module.build}">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <!--
+     - artifact compile
+    -->
+  <target name="artifact">
+    <property name="artifact.src" value="${artifacts}/${artifact.name}/src"/>
+    <property name="artifact.maven" value="${artifacts}/${artifact.name}/maven2"/>
+    <property name="artifact.build" value="${artifacts}/${artifact.name}/classes"/>
+    <property name="artifact.dist" value="${artifacts}/${artifact.name}/dist"/>
+    <property name="artifact.lib" value="${artifacts}/${artifact.name}/lib"/>
+    <property name="artifact.ext" value="jar"/>
+    <property name="artifact.jar" value="resin-${artifact.name}.${artifact.ext}"/>
+
+    <property file="${artifact.src}/module.properties"/>
+
+    <mkdir dir="${artifact.build}" />
+
+    <copy todir="${artifact.build}"
+          preservelastmodified="true"
+          overwrite="true">
+      <fileset dir="${artifact.src}">
+        <include name="**/*.xml"/>
+        <include name="**/*.xsll"/>
+        <include name="**/*.rnc"/>
+        <include name="**/*.tld"/>
+        <include name="**/*.ftld"/>
+        <include name="**/*.afm"/>
+        <include name="**/*.properties"/>
+        <include name="**/jaxb.index"/>
+        <include name="META-INF/**"/>
+      </fileset>
+    </copy>
+
+    <copy tofile="${artifact.build}/META-INF/maven/caucho.com/pom.xml"
+          file="${artifact.maven}/pom.xml"
+          preservelastmodified="true"
+          overwrite="true">
+        <filterset>
+          <filter token="VERSION" value="${maven.version}"/>
+          <filter token="DATE" value="${date}"/>
+          <filter token="VERSION_DATE" value="${vdate}"/>
+        </filterset>
+    </copy>
+
+    <javac srcdir="${artifact.src}" destdir="${artifact.build}"
+           fork="true" 
+           verbose="${javac.verbose}" 
+           debug="${javac.debug}" optimize="${javac.optimize}"
+           deprecation="${javac.deprecation}" nowarn="${javac.nowarn}"
+           source="${javac.source}"
+           target="${javac.target}"
+           excludes="**/.svn/**"
+           memoryMaximumSize="${javac.memoryMaximumSize}">
+      <classpath>
+        <dirset dir="${modules}">
+          <include name="*/classes"/>
+       </dirset>
+        <fileset dir="${artifacts}/${artifact.name}">
+          <include name="lib/**/*.jar"/>
+       </fileset>
+        <fileset dir="${ext}">
+          <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${maven.lib}">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+
+    <mkdir dir="${artifact.dist}" />
+
+    <jar jarfile="${artifact.dist}/${artifact.jar}"
+         compress="${jar.compress}" index="${jar.index}" update="${jar.update}"
+         manifest="${artifact.src}/manifest">
+      <fileset dir="${artifact.build}">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+      </fileset>
+    </jar>
+  </target>
+
+
+  <target name="csharp" depends="init">
+    <property name="module.name" value="csharp"/>
+    <property name="module.src" value="${modules}/${module.name}/src"/>
+    <property name="module.build" value="${modules}/${module.name}/classes"/>
+    <property name="module.dist" value="${lib}"/>
+
+    <mkdir dir="${module.build}" />
+    
+    <path id="cs-path">
+      <fileset dir="${module.src}">
+         <include name="**/*.cs"/>
+      </fileset>
+    </path>
+
+    <exec executable="gmcs" dir="${module.build}">
+       <arg value="-target:module"/>
+       <arg value="-out:${lib}/Hessian.netmodule"/>
+       <!--
+       <arg pathref="cs-path"/>
+       -->
+       <arg value="-recurse:${module.src}/**.cs"/>
+    </exec>
+  </target>
+
+  <!--
+     - distribution rules
+    -->
+
+  <!--
+  <target name="webapps" depends="init, quercus">
+  </target>
+
+  <target name="doc" depends="init">
+    <mkdir dir="${install}/webapps"/>
+
+    <jar jarfile="${install}/webapps/resin-doc.war"
+         compress="true" index="${jar.index}" update="${jar.update}">
+
+      <fileset dir="doc">
+        <exclude name="**/WEB-INF/work/**"/>
+        <exclude name="**/WEB-INF/pre_work/**"/>
+        <exclude name="**/WEB-INF/db/**"/>
+        <exclude name="**/WEB-INF/classes/**/*.class"/>
+        <exclude name="**/WEB-INF/tmp/**"/>
+        <exclude name="**/.cvsignore"/>
+        <exclude name="**/.svnignore"/>
+      </fileset>
+    </jar>
+  </target>
+  -->
+
+  <macrodef name="generate-pdf">
+    <attribute name="name"/>
+
+    <sequential>
+
+      <mkdir dir="${build}/pdf/@{name}"/>
+
+      <java classname="com.caucho.xtpdoc.Printer" fork="true" 
+            output="${build}/pdf/@{name}/@{name}.tex" logError="true"
+            dir="${doc}">
+        <jvmarg value="-Djava.awt.headless=true"/>
+        <arg file="${doc}/@{name}.xml"/>
+        <classpath>
+          <pathelement location="${java.home}/../lib/tools.jar"/>
+          <dirset dir="${modules}">
+            <include name="*/classes"/>
+          </dirset>
+          <fileset dir="${modules}/ext">
+            <include name="**/*.jar"/>
+          </fileset>
+        </classpath>
+      </java>
+
+      <exec dir="${build}/pdf/@{name}" executable="pdflatex">
+        <arg file="${build}/pdf/@{name}/@{name}.tex" />
+      </exec>
+
+      <!-- One more time for the reference setting... -->
+      <exec dir="${build}/pdf/@{name}" executable="pdflatex">
+        <arg file="${build}/pdf/@{name}/@{name}.tex" />
+      </exec>
+
+    </sequential>
+  </macrodef>
+
+<!--
+  <target name="pdf" depends="init">
+    <delete dir="${build}/pdf" />
+    <mkdir dir="${build}/pdf/images"/>
+
+    <apply executable="convert" dir="." dest="${build}/pdf/images">
+      <fileset dir="${doc}/images">
+        <include name="*.gif" />
+        <include name="*.jpg" />
+        <include name="*.png" />
+      </fileset>
+      <srcfile/>
+      <targetfile/>
+      <mapper>
+        <globmapper from="*.gif" to="*.pdf"/>
+        <globmapper from="*.jpg" to="*.pdf"/>
+        <globmapper from="*.png" to="*.pdf"/>
+      </mapper>
+    </apply>
+
+    <generate-pdf name="book"/>
+  </target>
+  -->
+
+  <target name="relaxng">
+    <mkdir dir="xsd"/>
+    
+    <java classname="com.thaiopensource.relaxng.translate.Driver" fork='true'>
+       <classpath>
+          <fileset dir="lib">
+            <include name="*.jar" />
+          </fileset>
+       </classpath>
+       <arg line="${modules}/resin/classes/com/caucho/server/resin/resin.rnc"/>
+       <arg line="xsd/resin.xsd"/>
+    </java>
+    
+    <java classname="com.thaiopensource.relaxng.translate.Driver" fork='true'>
+       <classpath>
+          <fileset dir="lib">
+            <include name="*.jar" />
+          </fileset>
+       </classpath>
+       <arg line="${modules}/resin/classes/com/caucho/server/webapp/resin-web-xml.rnc"/>
+       <arg line="xsd/resin-web-xml.xsd"/>
+    </java>
+  </target>
+  
+  <!--
+     - artifact dist
+    -->
+  <target name="artifact.dist.macro">
+    <property name="artifact.src" value="${artifacts}/${artifact.name}/src"/>
+    <property name="artifact.build" value="${artifacts}/${artifact.name}/classes"/>
+    <property name="artifact.dist" value="${artifacts}/${artifact.name}/dist"/>
+    <property name="artifact.jar" value="resin-${artifact.name}.jar"/>
+
+    <property file="${artifact.src}/module.properties"/>
+
+    <mkdir dir="${resin.dist}/${dist.name}/project-jars"/>
+    
+    <copy tofile="${resin.dist}/${dist.name}/project-jars/resin-${artifact.name}-${version}.jar"
+          file="${artifact.dist}/${artifact.jar}"/>
+  </target>
+	  
+  <target name="resin.dist.jar"
+          depends="compile">
+    <property name="dist.name" value="${shortproduct}-${version}"/>
+
+    <mkdir dir="${dist}/${dist.name}/lib"/>
+    <mkdir dir="${dist}/${dist.name}/compat"/>
+
+    <!--
+       - javaee-16.jar
+      -->
+    <jar destfile="${dist}/${dist.name}/lib/javaee-16.jar">
+      <fileset dir="${resin.modules}/ejb/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jca/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jcache/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jms/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jpa/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/servlet16/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+
+      <!--
+      <fileset dir="${resin.modules}/jsf/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      -->
+      
+      <fileset dir="${resin.modules}/jstl/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jta/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/jws/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/webbeans/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+    </jar>
+
+
+    <!--
+       - resin.jar
+      -->
+    <jar destfile="${dist}/${dist.name}/lib/resin.jar"
+         manifest="${resin.modules}/resin/src/manifest">
+      <fileset dir="${resin.modules}/resin/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/kernel/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/hessian/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/quercus/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+      
+      <fileset dir="${resin.modules}/junit/classes">
+        <exclude name="**/.*"/>
+      </fileset>
+    	
+      <fileset dir="${resin.modules}/eclipselink/classes">
+        <exclude name="**/.*"/>
+      </fileset>    	
+    	
+      <fileset dir="${resin.artifacts}/ant/classes">
+        <exclude name="**/.*"/>
+      </fileset>    	
+    </jar>
+  </target>
+
+  <target name="resin.artifacts.dist" depends="init">
+    <!--
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="cxf"/>
+      <param name="artifacts" value="${resin.artifacts}"/>
+    </antcall>
+    -->
+    <!--
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="mule"/>
+      <param name="artifacts" value="${resin.artifacts}"/>
+    </antcall>
+    -->
+
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="spring"/>
+      <param name="artifacts" value="${resin.artifacts}"/>
+    </antcall>
+    
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="wicket"/>
+      <param name="artifacts" value="${resin.artifacts}"/>
+    </antcall>
+<!--    
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="xfire"/>
+      <param name="artifacts" value="${resin.artifacts}"/>
+    </antcall>
+    -->
+    
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="xwork2"/>
+      <param name="artifacts" value="${resin.artifacts}"/>
+    </antcall>
+  </target>
+  
+  <target name="resin.dist.build" 
+          depends="compile, configure, resin.dist.jar">
+    <property name="dist.name" value="${shortproduct}-${version}"/>
+
+    <mkdir dir="${dist}/${dist.name}"/>
+    
+    <copy tofile="${install}/conf/resin.xml.orig"
+          file="${resin.install}/conf/resin.xml"/>
+
+    <copy todir="${dist}/${dist.name}"
+          preservelastmodified="true"
+          overwrite="true">
+      <fileset dir="${resin.install}">
+        <exclude name="**/*~"/>
+        <exclude name="**/.cvsignore"/>
+        <exclude name="**/.svnignore"/>
+        <exclude name="**/*.swp"/>
+        <exclude name="**/WEB-INF/work/**"/>
+        <exclude name="**/WEB-INF/tmp/**"/>
+        <exclude name="**/WEB-INF/db/**"/>
+        <exclude name="**/lib/Regex.jar"/>
+        <exclude name="**/lib/bcel*.jar"/>
+        <exclude name="**/lib/jace.jar"/>
+        <exclude name="**/*.o"/>
+        <exclude name="**/*.so"/>
+        <exclude name="**/*.jnilib"/>
+        <exclude name="**/*.pdf"/>
+        <exclude name="**/*.graffle"/>
+        <exclude name="**/*.lo"/>
+        <exclude name="**/*.svnignore"/>
+        <exclude name="**/*.svn"/>
+        <exclude name="**/.*/**"/>
+        <exclude name="**/.cvsignore"/>
+        <exclude name="**/*.swp"/>
+        <exclude name="**/WEB-INF/work/**"/>
+        <exclude name="**/WEB-INF/pre_work/**"/>
+        <exclude name="**/WEB-INF/tmp/**"/>
+        <exclude name="**/WEB-INF/db/**"/>
+        <exclude name="**/admin-users.xml"/>
+        <exclude name="**/*~"/>
+
+        <include name="automake/**"/>
+        <include name="compat/lib/javaee-15.jar"/>
+        <include name="conf/**"/>
+        <include name="contrib/**"/>
+        <include name="init.d/**"/>
+	<!--
+        <include name="doc/**"/>
+        <include name="php/**"/>
+	-->
+        <include name="modules/**/src/**"/>
+        <include name="modules/ext/activation.jar"/>
+        <include name="modules/ext/javamail-141.jar"/>
+        <include name="modules/ext/jsr88.jar"/>
+        <include name="modules/ext/jsr173_1.0_api.jar"/>
+        <include name="modules/ext/webservices-api.jar"/>
+        <include name="modules/ext/webservices-extra-api.jar"/>
+        <include name="maven-lib"/>
+        <include name="win32/**"/>
+        <include name="win64/**"/>
+        <include name="bin/**"/>
+        <include name="xsd/**"/>
+	
+        <include name="lib/activation.jar"/>
+        <include name="lib/activation.LICENSE"/>
+        <include name="lib/eclipselink.jar"/>
+        <include name="lib/hibernate-validation-api-4.0.2.GA.jar"/>
+        <include name="lib/javamail-141.jar"/>
+        <include name="lib/javamail-14.LICENSE"/>
+        <!--
+        <include name="lib/jcache.jar"/>
+        <include name="lib/jaxstream-15.jar"/>
+        -->
+        <include name="lib/jsf-api.jar"/>
+        <include name="lib/jsf-impl.jar"/>
+        <include name="lib/jsf.LICENSE"/>
+        <include name="lib/webutil.jar"/>
+        <include name="lib/webservices-api.jar"/>
+        <include name="lib/webservices-extra-api.jar"/>
+        <include name="lib/webservices.LICENSE"/>
+
+	<!--
+        <include name="webapps/resin-doc.war"/>
+	-->
+        <include name="webapps/ROOT/index.jsp"/>
+
+        <include name="LICENSE"/>
+        <include name="README"/>
+        <include name="build.xml"/>
+        <include name="build-common.xml"/>
+        <include name="configure.ac"/>
+        <include name="configure"/>
+        <include name="aclocal.m4"/>
+        <include name="Makefile.am"/>
+        <include name="Makefile.in"/>
+        <include name="resin.exe"/>
+        <include name="setup.exe"/>
+        <include name="description-pak"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${resin.dist}/${dist.name}/doc/resin-doc">
+      <fileset dir="${resin.install}/doc">
+        <exclude name="**/*~"/>
+        <exclude name="**/.cvsignore"/>
+        <exclude name="**/.svnignore"/>
+        <exclude name="**/WEB-INF/pre_work/**"/>
+        <exclude name="**/WEB-INF/tmp/**"/>
+        <exclude name="**/WEB-INF/db/**"/>
+      </fileset>
+    </copy>
+    
+    <copy todir="${dist}/${dist.name}/doc">
+      <fileset dir="${resin.install}/php">
+        <exclude name="**/*~"/>
+        <exclude name="**/.cvsignore"/>
+        <exclude name="**/.svnignore"/>
+        <exclude name="**/WEB-INF/pre_work/**"/>
+        <exclude name="**/WEB-INF/tmp/**"/>
+        <exclude name="**/WEB-INF/db/**"/>
+	
+        <include name="admin/**"/>
+        <include name="config/**"/>
+      </fileset>
+    </copy>
+
+    <!--
+    <copy todir="${dist}/${dist.name}/plugins"
+          preservelastmodified="true"
+          overwrite="true">
+      <fileset dir="${resin.install}/lib">
+        <include name="resin-ant.jar"/>
+        <include name="resin-richfaces.jar"/>
+        <include name="netbeans-plugin.nbm"/>
+      </fileset>
+    </copy>
+    -->
+
+    <!--
+    <copy todir="${dist}/${dist.name}/ext-webapp-lib"
+          preservelastmodified="true"
+          overwrite="true">
+      <fileset dir="${resin.install}/lib">
+        <include name="resin-support.jar"/>
+      </fileset>
+    </copy>
+    -->
+
+    <chmod perm="ugo+rx">
+      <fileset dir="${dist}/${dist.name}">
+        <include name="configure"/>
+        <include name="bin/resin.sh"/>
+        <include name="automake/missing"/>
+        <include name="automake/install-sh"/>
+        <include name="automake/config.sub"/>
+        <include name="automake/config.guess"/>
+        <include name="automake/mkinstalldirs"/>
+      </fileset>
+    </chmod>
+    
+    <antcall target="resin.artifacts.dist" inheritRefs="true"/>
+
+    <mkdir dir="${dist}/${dist.name}/licenses"/>
+    <mkdir dir="${dist}/${dist.name}/project-jars"/>
+    <mkdir dir="${dist}/${dist.name}/keys"/>
+    <mkdir dir="${dist}/${dist.name}/ext-lib"/>
+    <!--
+    <mkdir dir="${dist}/${dist.name}/ext-webapp-lib"/>
+    -->
+    <mkdir dir="${dist}/${dist.name}/ivy2"/>
+    <!--
+    <mkdir dir="${dist}/${dist.name}/plugins"/>
+      -->
+    <mkdir dir="${dist}/${dist.name}/log"/>
+  </target>
+  
+  <target name="dist.package" depends="init">
+    <patternset id="dist">
+      <exclude name="**/Makefile"/>
+      <exclude name="**/*.o"/>
+      <exclude name="**/*.so"/>
+      <exclude name="**/*.jnilib"/>
+      <exclude name="**/*.pdf"/>
+      <exclude name="**/*.graffle"/>
+      <exclude name="**/*.lo"/>
+      <exclude name="**/*.svnignore"/>
+      <exclude name="**/*.svn"/>
+      <exclude name="**/.*/**"/>
+      <exclude name="**/.cvsignore"/>
+      <exclude name="**/*.swp"/>
+      <exclude name="**/WEB-INF/work/**"/>
+      <exclude name="**/WEB-INF/pre_work/**"/>
+      <exclude name="**/WEB-INF/tmp/**"/>
+      <exclude name="**/WEB-INF/db/**"/>
+      <exclude name="**/*~"/>
+
+      <include name="${dist.name}/automake/**"/>
+      <include name="${dist.name}/compat/**"/>
+      <include name="${dist.name}/conf/**"/>
+      <include name="${dist.name}/contrib/**"/>
+      <include name="${dist.name}/doc/**"/>
+      <include name="${dist.name}/init.d/**"/>
+      <include name="${dist.name}/lib/**"/>
+      <include name="${dist.name}/project-jars/**"/>
+      <include name="${dist.name}/webapps/**"/>
+
+      <include name="${dist.name}/LICENSE"/>
+      <include name="${dist.name}/README"/>
+      <include name="${dist.name}/Makefile.am"/>
+      <include name="${dist.name}/Makefile.in"/>
+      <include name="${dist.name}/aclocal.m4"/>
+
+      <include name="${dist.name}/modules/c/src/**"/>
+      <include name="${dist.name}/licenses"/>
+      <include name="${dist.name}/keys"/>
+    </patternset>
+
+    <patternset id="dist.bin">
+      <include name="${dist.name}/**/*.dll"/>
+      <include name="${dist.name}/**/*.exe"/>
+      <include name="${dist.name}/bin/*.sh"/>
+      <include name="${dist.name}/bin/*.pl"/>
+      <include name="${dist.name}/configure"/>
+      <include name="${dist.name}/configure.ac"/>
+    </patternset>
+
+    <patternset id="dist.src">
+      <include name="${dist.name}/**"/>
+      
+      <include name="${dist.name}/lib/activation.jar"/>
+      <include name="${dist.name}/lib/javamail-14.jar"/>
+      <include name="${dist.name}/lib/jsf-api.jar"/>
+
+      <exclude name="${dist.name}/webapps/*.war"/>
+      <exclude name="${dist.name}/lib/**"/>
+      <exclude name="**/*.lo"/>
+      <exclude name="**/*.o"/>
+      <exclude name="**/*.so"/>
+      <exclude name="**/*.jnilib"/>
+      <exclude name="**/*.pdf"/>
+      <exclude name="**/*.graffle"/>
+    </patternset>
+
+    <delete file="${dist}/${shortproduct}-${version}.zip"/>
+    <delete file="${dist}/${shortproduct}-${version}-src.zip"/>
+    <delete file="${dist}/${shortproduct}-${version}.tar.gz"/>
+    <delete file="${dist}/${shortproduct}-${version}-src.tar.gz"/>
+
+    <delete file="${dist}/hessian-${version}.jar"/>
+    <delete file="${dist}/hessian-${version}-src.jar"/>
+    <delete file="${dist}/hessian-test.jar"/>
+
+    <zip destfile="${dist}/${shortproduct}-${version}.zip">
+      <zipfileset dir="${dist}">
+        <patternset refid="dist"/>
+      </zipfileset>
+      <zipfileset dir="${dist}" filemode="775">
+        <patternset refid="dist.bin"/>
+      </zipfileset>
+    </zip>
+
+    <zip destfile="${dist}/${shortproduct}-${version}-src.zip"
+         basedir="${dist}">
+      <patternset refid="dist.src"/>
+    </zip>
+
+    <tar destfile="${dist}/${shortproduct}-${version}.tar.gz"
+         longfile="gnu" compression="gzip">
+      <tarfileset dir="${dist}">
+        <patternset refid="dist"/>
+      </tarfileset>
+      <tarfileset dir="${dist}" mode="775">
+        <patternset refid="dist.bin"/>
+      </tarfileset>
+    </tar>
+
+    <tar destfile="${dist}/${shortproduct}-${version}-src.tar.gz"
+         basedir="${dist}" longfile="gnu" compression="gzip">
+      <patternset refid="dist.src"/>
+    </tar>
+
+    <jar destfile="${dist}/hessian-${version}.jar">
+      <fileset dir="${resin.modules}/hessian/classes">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+        <exclude name="*~"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="com/caucho/hessian/EJBServlet.class"/>
+        <exclude name="com/caucho/hessian/HessianContextFactory.class"/>
+        <exclude name="com/caucho/burlap/EJBServlet.class"/>
+        <exclude name="com/caucho/burlap/BurlapContextFactory.class"/>
+        <exclude name="com/caucho/hessian/test/**"/>
+        <include name="com/caucho/kernel/CharBuffer.class"/>
+        <include name="com/caucho/kernel/CharBuffer$CBInputStream.class"/>
+        <include name="com/caucho/kernel/CharSegment.class"/>
+        <include name="com/caucho/hessian/**"/>
+        <include name="com/caucho/burlap/**/"/>
+        <include name="com/caucho/services/**"/>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="apache.license"/>
+      </fileset>
+    </jar>
+
+    <jar destfile="${dist}/hessian-${version}-src.jar">
+      <fileset dir="${resin.modules}/hessian/src">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+        <exclude name="*~"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="com/caucho/hessian/EJBServlet.java"/>
+        <exclude name="com/caucho/hessian/HessianContextFactory.java"/>
+        <exclude name="com/caucho/burlap/EJBServlet.java"/>
+        <exclude name="com/caucho/burlap/BurlapContextFactory.java"/>
+        <include name="com/caucho/hessian/**"/>
+        <include name="com/caucho/burlap/**"/>
+        <include name="com/caucho/services/**"/>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="apache.license"/>
+      </fileset>
+    </jar>
+
+    <jar destfile="${dist}/hessian-applet-${version}.jar">
+      <fileset dir="${resin.modules}/hessian/classes">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+        <exclude name="*~"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="com/caucho/hessian/io/Hessian2*"/>
+        <exclude name="com/caucho/hessian/io/HessianDebug*"/>
+        <include name="com/caucho/kernel/CharBuffer.class"/>
+        <include name="com/caucho/kernel/CharBuffer$CBInputStream.class"/>
+        <include name="com/caucho/kernel/CharSegment.class"/>
+        <include name="com/caucho/hessian/io/**"/>
+        <include name="com/caucho/hessian/client/**"/>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="apache.license"/>
+      </fileset>
+    </jar>
+
+    <jar destfile="${dist}/hessian-test.jar">
+      <fileset dir="${resin.modules}/hessian/classes">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+        <exclude name="*~"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/.svn/**"/>
+        <include name="com/caucho/hessian/test/**"/>
+      </fileset>
+      <fileset dir="${resin.modules}/hessian/src">
+        <exclude name=".cvsignore"/>
+        <exclude name=".svnignore"/>
+        <exclude name="*~"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/.svn/**"/>
+        <include name="com/caucho/hessian/test/**"/>
+      </fileset>
+    </jar>
+
+    <copy tofile="${dist}/${shortproduct}-4_0-snap.zip"
+          file="${dist}/${shortproduct}-${version}.zip"/>
+
+    <copy tofile="${dist}/${shortproduct}-4_0-snap.tar.gz"
+          file="${dist}/${shortproduct}-${version}.tar.gz"/>
+
+    <copy tofile="${dist}/${shortproduct}-4_0-snap-src.zip"
+          file="${dist}/${shortproduct}-${version}-src.zip"/>
+
+    <copy tofile="${dist}/${shortproduct}-4_0-snap-src.tar.gz"
+          file="${dist}/${shortproduct}-${version}-src.tar.gz"/>
+  </target>
+
+  <target name="maven2-artifact">
+    <property name="jar.name" value="${module.name}.jar"/>
+    
+    <antcall target="maven2-module" inheritRefs="true">
+      <param name="module.dir" value="${artifacts}"/>
+      <param name="jar" value="${artifacts}/${module.name}/dist/${jar.name}"/>
+    </antcall>
+  </target>
+    
+  <target name="maven2-module">
+    <property name="module.dir" value="${modules}"/>
+    <property name="module.src" value="${module.dir}/${module.name}/src"/>
+    <property name="jar.name" value="${module.name}.${module.ext}"/>
+    <property name="maven.name" value="resin-${module.name}"/>
+    <property name="maven.dist" value="${maven}/${maven.name}/${maven.version}"/>
+    <property name="jar" value="${lib}/${jar.name}"/>
+
+    <mkdir dir="${maven.dist}"/>
+
+    <antcall target="maven2-jar" inheritRefs="true">
+      <param name="pom.xml" value="${module.dir}/${module.name}/maven2/pom.xml"/>
+      <param name="ivy.xml" value="${module.dir}/${module.name}/maven2/ivy.xml"/>
+    </antcall>
+  </target>
+
+  <target name="maven2-jar">
+    <!-- PARAMETERS -->
+    <!--
+         maven.name
+         maven.jar
+         ivy.xml
+         pom.xml
+    -->
+    <property name="maven.dist" value="${maven}/${maven.name}/${maven.version}"/>
+    <property name="module.ext" value="jar"/>
+
+    <copy file="${pom.xml}"
+          tofile="${maven.dist}/${maven.name}-${maven.version}.pom"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${maven.version}"/>
+        <filter token="DATE" value="${date}"/>
+        <filter token="VERSION_DATE" value="${vdate}"/>
+      </filterset>
+    </copy>
+
+    <checksum file="${maven.dist}/${maven.name}-${maven.version}.pom"
+              algorithm="sha1"/>
+    <checksum file="${maven.dist}/${maven.name}-${maven.version}.pom"
+              algorithm="md5"/>
+
+    <copy file="${jar}"
+          tofile="${maven.dist}/${maven.name}-${maven.version}.${module.ext}"
+          preservelastmodified="true"
+          overwrite="true"/>
+
+    <checksum file="${maven.dist}/${maven.name}-${maven.version}.${module.ext}"
+              algorithm="sha1"/>
+    <checksum file="${maven.dist}/${maven.name}-${maven.version}.${module.ext}"
+              algorithm="md5"/>
+
+    <copy file="${ivy.xml}"
+          tofile="${maven.dist}/ivy-${maven.version}.xml"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${maven.version}"/>
+        <filter token="DATE" value="${date}"/>
+        <filter token="VERSION_DATE" value="${vdate}"/>
+      </filterset>
+    </copy>
+
+    <copy file="maven2/${maven.metadata.template}-metadata.xml"
+          tofile="${maven}/${maven.name}/maven-metadata.xml"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${maven.version}"/>
+        <filter token="DATE" value="${date}"/>
+        <filter token="VERSION_DATE" value="${vdate}"/>
+        <filter token="ARTIFACT" value="${maven.name}"/>
+      </filterset>
+    </copy>
+    
+    <checksum file="${maven}/${maven.name}/maven-metadata.xml"
+              algorithm="sha1"/>
+    <checksum file="${maven}/${maven.name}/maven-metadata.xml"
+              algorithm="md5"/>
+
+  </target>
+
+  <target name="artifact.dist" depends="init">
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="cxf"/>
+    </antcall>
+    
+    <!--
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="mule"/>
+    </antcall>
+    -->
+
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="spring"/>
+    </antcall>
+    
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="wicket"/>
+    </antcall>
+    
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="xfire"/>
+    </antcall>
+    
+    <antcall target="artifact.dist.macro" inheritRefs="true">
+      <param name="artifact.name" value="xwork2"/>
+    </antcall>
+  </target>
+
+  <target name="dist.configure.make" depends="dist">
+    <exec dir="${dist}/${dist.name}" executable="./configure">
+      <arg value="--prefix=/opt/resin"/>
+    </exec>
+
+    <exec dir="${dist}/${dist.name}" executable="make"/>
+  </target>
+
+  <target name="dist.rpm" depends="dist.configure.make">
+    <exec dir="${dist}/${dist.name}" executable="checkinstall">
+      <arg line="-R --install=no --fstrans=yes -y" />
+    </exec>
+
+    <copy todir="${dist}">
+      <fileset dir="${dist}/RPMS">
+        <include name="**/*.rpm"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <!--
+     - debian
+    -->
+  
+  <target name="debian-libexec" depends="init">
+    <property name="libexec" value="${resin.dist}/libexec"/>
+    
+    <delete dir="${libexec}"/>
+    <mkdir dir="${libexec}"/>
+    
+    <copy todir="${libexec}" preservelastmodified="true">
+      <fileset dir="${resin.install}">
+	<include name="automake/*"/>
+	<include name="configure.ac"/>
+	<include name="configure"/>
+	<include name="Makefile.am"/>
+	<include name="Makefile.in"/>
+	<include name="aclocal.m4"/>
+
+	<include name="init.d/resin.in"/>
+	
+	<include name="modules/c/src/Makefile.in"/>
+	
+	<include name="modules/c/src/apache1/*.c"/>
+	<include name="modules/c/src/apache1/*.h"/>
+	<include name="modules/c/src/apache1/Makefile.in"/>
+	
+	<include name="modules/c/src/apache2/*.c"/>
+	<include name="modules/c/src/apache2/*.h"/>
+	<include name="modules/c/src/apache2/Makefile.in"/>
+	
+	<include name="modules/c/src/common/*.c"/>
+	<include name="modules/c/src/common/*.h"/>
+	<include name="modules/c/src/common/Makefile.in"/>
+	
+	<include name="modules/c/src/resin_os/*.c"/>
+	<include name="modules/c/src/resin_os/*.h"/>
+	<include name="modules/c/src/resin_os/Makefile.in"/>
+	
+	<include name="modules/c/src/resin/Makefile.in"/>
+	<include name="modules/c/src/resinssl/Makefile.in"/>
+      </fileset>
+
+      <fileset dir="${install}">
+	<include name="modules/c/src/resin/*.c"/>
+	<include name="modules/c/src/resin/*.h"/>
+	<include name="modules/c/src/resinssl/*.c"/>
+	<include name="modules/c/src/resinssl/*.h"/>
+      </fileset>
+
+    </copy>
+    
+    <chmod perm="ugo+rx">
+      <fileset dir="${libexec}">
+        <include name="configure"/>
+      </fileset>
+    </chmod>
+
+    <exec dir="${libexec}" executable="/bin/sh">
+      <arg value="configure"/>
+      <arg value="--prefix=${libexec}"/>
+    </exec>
+    
+    <exec dir="${libexec}" executable="make">
+    </exec>
+    
+    <exec dir="${libexec}" executable="make">
+      <arg value="install"/>
+    </exec>
+  </target>
+
+  <target name="debian" depends="debian-libexec,debian-perm">
+    <exec executable="${basedir}/debian-perm">
+      <arg value="-r"/>
+    </exec>
+      
+    <delete dir="dist-debian"/>
+    
+    <mkdir dir="dist-debian/var/log/resin"/>
+    
+    <mkdir dir="dist-debian/var/www/webapps/ROOT"/>
+    
+    <mkdir dir="dist-debian/etc/resin"/>
+    <copy todir="dist-debian/etc/resin"
+          preservelastmodified="true"
+          overwrite="true">
+      <fileset dir="${resin.install}/conf">
+        <!--
+        <include name="admin-users.xml"/>
+        -->
+        <include name="app-default.xml"/>
+      </fileset>
+    </copy>
+    
+    <copy tofile="dist-debian/etc/resin/resin.xml"
+          file="${resin.install}/conf/resin.xml.in"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="HTTP_PORT" value="80"/>
+        <filter token="HTTPS_PORT" value="8443"/>
+      </filterset>
+    </copy>
+    
+    <copy tofile="dist-debian/etc/init.d/resin"
+          file="${resin.install}/init.d/resin.in"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="JAVA_HOME" value="/usr/lib/jvm/java-6-sun"/>
+        <filter token="JAVA_EXE" value="$JAVA_HOME/bin/java"/>
+        <filter token="resin_home" value="/usr/share/resin"/>
+        <filter token="resin_root" value="/var/www"/>
+        <filter token="resin_log" value="/var/log/resin"/>
+        <filter token="resin_conf" value="/etc/resin"/>
+      </filterset>
+    </copy>
+    
+    <chmod perm="ugo+rx">
+      <fileset dir="dist-debian">
+        <include name="etc/init.d/resin"/>
+      </fileset>
+    </chmod>
+
+    <mkdir dir="dist-debian/usr/share/${shortproduct}-${version}/lib"/>
+    <mkdir dir="dist-debian/usr/share/${shortproduct}-${version}/keys"/>
+    <mkdir dir="dist-debian/usr/share/${shortproduct}-${version}/licenses"/>
+    
+    <copy todir="dist-debian/usr/share/${shortproduct}-${version}"
+          preservelastmodified="true"
+          overwrite="true">
+      <fileset dir="${dist}/${shortproduct}-${version}">
+        <include name="lib/activation.jar"/>
+        <include name="lib/javaee-16.jar"/>
+        <include name="lib/javamail-141.jar"/>
+        <!--
+        <include name="lib/jaxstream-15.jar"/>
+        -->
+        <include name="lib/jaxrpc-15.jar"/>
+        <include name="lib/jsf-12.jar"/>
+        <include name="lib/pro.jar"/>
+        <include name="lib/resin.jar"/>
+        <include name="lib/webutil.jar"/>
+      </fileset>
+      
+      <fileset dir="${resin.install}">
+        <include name="bin/resin.sh"/>
+      </fileset>
+      
+      <fileset dir="${resin.install}/dist/libexec">
+        <include name="**"/>
+        <exclude name="aclocal.m4"/>
+        <exclude name="automake"/>
+        <exclude name="automake/**"/>
+        <exclude name="*config*"/>
+        <exclude name="init.d"/>
+        <exclude name="init.d/**"/>
+        <exclude name="libtool"/>
+        <exclude name="Makefile*"/>
+        <exclude name="modules"/>
+        <exclude name="modules/**"/>
+      </fileset>
+
+      <fileset dir="${basedir}">
+        <include name="LICENSE"/>
+      </fileset>
+    </copy>
+
+    <chmod perm="ugo+rx">
+      <fileset dir="dist-debian/usr/share/${shortproduct}-${version}">
+        <include name="configure"/>
+        <include name="bin/resin.sh"/>
+      </fileset>
+    </chmod>
+
+    <exec executable="ln">
+      <arg value="-s"/>
+      <arg value="${shortproduct}-${version}"/>
+      <arg value="dist-debian/usr/share/resin"/>
+    </exec>
+    
+    <copy todir="dist-debian/var/www"
+          preservelastmodified="true"
+          overwrite="true">
+      <fileset dir="${dist}/${shortproduct}-${version}">
+        <include name="doc/**"/>
+      </fileset>
+    </copy>
+
+    <copy todir="dist-debian/var/www/webapps/ROOT"
+          preservelastmodified="true"
+          overwrite="true">
+      <fileset dir="${basedir}/../resin/webapps/ROOT">
+        <include name="index.jsp"/>
+        <include name="favicon.ico"/>
+      </fileset>
+    </copy>
+
+    <exec executable="uname" outputproperty="debian.architecture">
+      <arg value="-m"/>
+ 
+      <redirector>
+        <outputfilterchain>
+          <replacestring from="i486" to="i386"/>
+          <replacestring from="i586" to="i386"/>
+          <replacestring from="i686" to="i386"/>
+          <replacestring from="x86_64" to="amd64"/>
+        </outputfilterchain>
+      </redirector>
+    </exec>
+
+    <copy file="${install}/debian/control.in"
+          tofile="dist-debian/DEBIAN/control">
+      <filterset>
+        <filter token="VERSION" value="${version}"/>
+        <filter token="ARCHITECTURE" value="${debian.architecture}"/>
+      </filterset>
+    </copy>
+
+    <copy file="${install}/debian/conffiles"
+          tofile="dist-debian/DEBIAN/conffiles"/>
+
+    <copy file="${install}/debian/postinst"
+          tofile="dist-debian/DEBIAN/postinst"/>
+
+    <chmod perm="755" file="dist-debian/DEBIAN/postinst"/>
+
+    <copy file="${install}/debian/prerm"
+          tofile="dist-debian/DEBIAN/prerm"/>
+
+    <chmod perm="755" file="dist-debian/DEBIAN/prerm"/>
+
+    <exec executable="${basedir}/debian-perm"/>
+
+    <delete dir="${dist}/debian/dists/${debian.stability}/${debian.component}/binary-${debian.architecture}"
+            failonerror="false"/>
+
+    <mkdir dir="${dist}/debian/dists/${debian.stability}/${debian.component}/binary-${debian.architecture}"/>
+        
+    <exec executable="dpkg">
+      <arg value="-b"/>
+      <arg value="dist-debian"/>
+      <arg value="${dist}/debian/dists/${debian.stability}/${debian.component}/binary-${debian.architecture}/${shortproduct}_${version}-${debian.architecture}.deb"/>
+    </exec>
+
+    <exec executable="dpkg-scanpackages"
+          dir="${dist}/debian"
+          output="${dist}/debian/dists/${debian.stability}/${debian.component}/binary-${debian.architecture}/Packages"
+          logError="true">
+      <arg value="dists/${debian.stability}/${debian.component}/binary-${debian.architecture}"/>
+    </exec>
+
+    <exec executable="gzip">
+      <arg value="${dist}/debian/dists/${debian.stability}/${debian.component}/binary-${debian.architecture}/Packages"/>
+    </exec>
+  </target>
+
+  <target name="debian-src" depends="init">
+    <exec executable="${basedir}/debian-perm">
+      <arg value="-r"/>
+      <arg value="dist-debian-src"/>
+    </exec>
+      
+    <delete dir="dist-debian-src"/>
+    
+    <mkdir dir="dist-debian-src/usr/local/share/resin"/>
+    
+    <copy todir="dist-debian-src/usr/local/share/resin"
+          preservelastmodified="true"
+          overwrite="true">
+      <fileset dir="${resindir}">
+        <exclude name="**/classes/**"/>
+        <exclude name="**/dist/**"/>
+        <exclude name="**/*~"/>
+        <exclude name="**/*.class"/>
+        <exclude name="**/.svn/*"/>
+
+        <include name="modules/**"/>
+        <include name="conf/**"/>
+        <include name="artifacts/**"/>
+      </fileset>
+    </copy>
+
+    <copy file="${install}/debian/control"
+          tofile="dist-debian-src/DEBIAN/control"/>
+    
+    <exec executable="${basedir}/debian-perm"/>
+        
+    <exec executable="dpkg">
+      <arg value="-b"/>
+      <arg value="dist-debian-src"/>
+      <arg value="${dist}/${shortproduct}-src_${version}-i386.deb"/>
+    </exec>
+  </target>
+
+  <target name="debian-perm" depends="init">
+    <copy file="c/debian-perm.c.in"
+          tofile="c/debian-perm.c"
+          preservelastmodified="true"
+          overwrite="true">
+      <filterset>
+        <filter token="RESIN_ROOT" value="${shortproduct}-${version}"/>
+      </filterset>
+    </copy>
+
+    <exec executable="cc">
+      <arg value="-o"/>
+      <arg value="debian-perm"/>
+      <arg value="c/debian-perm.c"/>
+    </exec>
+  </target>
+
+  <target name="clean" depends="init">
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+    <delete>
+      <fileset dir="${modules}">
+        <include name="*/classes/**"/>
+        <include name="*/dist/**"/>
+      </fileset>
+    </delete>
+    <delete>
+      <fileset dir="${artifacts}">
+        <include name="*/classes/**"/>
+        <include name="*/dist/**"/>
+      </fileset>
+    </delete>
+    <delete>
+      <fileset dir="${lib}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </delete>
+    <delete>
+      <fileset dir=".">
+        <include name="**/*.class"/>
+      </fileset>
+    </delete>
+  </target>
+
+  <target name="distclean" depends="init, clean, win32clean">
+    <delete dir="${install}/conf"/>
+    <delete dir="${lib}"/>
+    <delete dir="${maven.lib}"/>
+    <delete dir="${clientlib}"/>
+    <delete dir="${install}/unix"/>
+
+    <delete dir="${install}/log"/>
+    <delete dir="${install}/bin"/>
+    <delete dir="${install}/doc/WEB-INF"/>
+    <delete dir="${install}/cache"/>
+    <delete dir="${install}/php/quercus-war/WEB-INF/lib"/>
+  </target>
+
+  <target name="win32clean" if="win32">
+    <delete dir="${install}/win32"/>
+    <delete dir="${install}/win64"/>
+  </target>
+
+</project>
+

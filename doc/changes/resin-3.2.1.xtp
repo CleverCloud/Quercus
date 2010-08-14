@@ -1,0 +1,79 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.2.1 Release Notes</title>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 3.2.1">
+
+<p>Resin 3.2.x is now the development branch.  Due to the addition of
+new features, it may be more unstable than the production branch.</p>
+
+<p>The 3.1.x branch is the stable branch.</p>
+
+</s1>
+
+<s1 title="Security">
+
+<p>mod_caucho includes fixes for a potential denial-of-service issue with
+bogus virtual hosts.  The symptoms include an exceptionally
+large /tmp/localhost_6800 file.  Workarounds for previous versions involve
+deleting the /tmp/localhost_6800 file and restarting Resin.</p>
+
+<p>Resin 3.2.1 includes a fix for a potential XSS issue
+with UTF-7 encoding.</p>
+
+</s1>
+
+<s1 title="Quercus">
+
+<p>The 3.2.1 release of Quercus includes a large number of bug fixes,
+including 88 listed in the Quercus ChangeLog.</p>
+
+<p>Quercus now runs Moodle, a popular educational framework.</p>
+
+</s1>
+
+<s1 title="Comet">
+
+<p>The internal support for Comet and Keepalives have been significantly
+reworked, further improving Comet performance in long-polling configurations.
+Since these changes affect all requests, Comet and non-comet, these changes
+have the largest chance of added instability.</p>
+
+<p>The new comet changes include initial support for Servlet 3.0 Comet API.
+Both Servlet 3.0 Comet API and Resin's native Comet API are supported.</p>
+
+</s1>
+
+<s1 title="Hessian 2.0">
+
+<p>Significant updates to the Hessian 2.0 draft protocol, improving the
+efficiency and simplicity of the bytecode allocation.  These changes are
+all internal to the protocol itself, so users will not notice any
+API changes.  However, clients and servers must both use the most recent
+draft since earlier versions are not compatible.</p>
+
+</s1>
+
+<s1 title="OSGi">
+
+<p>Resin 3.2.1 includes an OSGi server integrated with Resin's
+WebBeans and embedded in the standard Resin environment.  OSGi bundles
+are automatically loadable from Ivy repositories and can export to the
+local web-app.</p>
+
+<ul>
+<li>Basic OSGi implementation.</li>
+<li>OSGi/Ivy integration</li>
+<li>OSGi/WebBeans integration</li>
+</ul>
+
+</s1>
+
+</body>
+</document>

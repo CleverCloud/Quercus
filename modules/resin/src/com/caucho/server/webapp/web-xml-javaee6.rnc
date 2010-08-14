@@ -1,0 +1,349 @@
+default namespace javaee = "http://java.sun.com/xml/ns/javaee"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+include "classpath:com/caucho/config/cfg/javaee.rnc"
+
+javaee_auth-constraint = element auth-constraint {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  javaee_role-name*
+}
+
+javaee_dispatcher = element dispatcher {
+  "FORWARD"
+  | "REQUEST"
+  | "INCLUDE"
+  | "ERROR"
+  | "ASYNC"
+}
+
+javaee_error-page = element error-page {
+  attribute id { string }?,
+
+  (element error-code { string }
+   | element exception-type { javaee_fully-qualified-class }),
+
+  element location { string }
+}
+
+javaee_filter = element filter {
+  attribute id { string }?,
+
+  javaee_description-Group,
+
+  javaee_filter-name,
+
+  element filter-class { javaee_fully-qualified-class },
+  
+  element async-supported { javaee_boolean }?, 
+
+  javaee_init-param*
+}
+
+javaee_filter-mapping = element filter-mapping {
+  attribute id { string }?,
+
+  javaee_filter-name,
+
+  (javaee_url-pattern | javaee_servlet-name)+,
+
+  javaee_dispatcher*
+}
+
+javaee_filter-name = element filter-name {
+  string
+}
+
+javaee_form-login-config = element form-login-config {
+  attribute id { string }?,
+
+  element form-login-page { string },
+
+  element form-error-page { string }
+}
+
+javaee_http-method-type =
+  "GET"
+  | "POST"
+  | "PUT"
+  | "DELETE"
+  | "HEAD"
+  | "OPTIONS"
+  | "TRACE"
+
+
+javaee_http-method = element http-method {javaee_http-method-type}
+
+javaee_http-method-omission = element http-method-omission {javaee_http-method-type}
+
+javaee_jsp-config = element jsp-config {
+  attribute id { string }?,
+
+  javaee_taglib*,
+
+  javaee_jsp-property-group*
+}
+
+javaee_jsp-property-group = element jsp-property-group {
+  attribute id { string }?,
+
+  javaee_description-Group,
+
+  javaee_url-pattern+,
+
+  element el-ignored { javaee_boolean }?,
+
+  element page-encoding { javaee_string }?,
+
+  element scripting-invalid { javaee_boolean }?,
+
+  element is-xml { javaee_boolean }?,
+
+  element include-prelude { javaee_path }*,
+
+  element include-coda { javaee_path }*,
+
+  element deferred-syntax-allowed-as-literal { javaee_boolean }?,
+
+  element trim-directive-whitespaces { javaee_boolean }?,
+
+  element default-content-type { javaee_string }?,
+
+  element buffer { javaee_string }?,
+
+  element error-on-undeclared-namespace { javaee_boolean }?
+
+}
+
+javaee_listener = element listener {
+  attribute id { string }?,
+
+  javaee_description-Group,
+
+  element listener-class { javaee_fully-qualified-class }
+}
+
+javaee_locale-encoding-mapping = element locale-encoding-mapping {
+  attribute id { string }?,
+
+  element locale { string },
+
+  element encoding { string }
+}
+
+javaee_locale-encoding-mapping-list = element locale-encoding-mapping-list {
+  attribute id { string }?,
+
+  javaee_locale-encoding-mapping+
+}
+
+javaee_login-config = element login-config {
+  attribute id { string }?,
+
+  element auth-method { string }?,
+
+  element realm-name { string }?,
+
+  javaee_form-login-config?
+}
+
+javaee_mime-mapping = element mime-mapping {
+  attribute id { string }?,
+
+  element extension { string },
+
+  element mime-type { string }
+}
+
+javaee_security-constraint = element security-constraint {
+  attribute id { string }?,
+
+  javaee_display-name*,
+
+  javaee_web-resource-collection+,
+
+  javaee_auth-constraint?,
+
+  javaee_user-data-constraint?
+}
+
+javaee_servlet-mapping = element servlet-mapping {
+  attribute id { string }?,
+
+  javaee_servlet-name,
+
+  javaee_url-pattern+
+}
+
+javaee_servlet = element servlet {
+  attribute id { string }?,
+
+  javaee_description-Group,
+
+  javaee_servlet-name,
+
+  (element servlet-class { javaee_fully-qualified-class }
+   | element jsp-file { string }),
+
+  element async-supported { javaee_boolean }?, 
+
+  javaee_init-param*,
+
+  element load-on-startup { string }?,
+
+  element run-as { string }?,
+
+  javaee_security-role-ref*
+}
+
+javaee_servlet-name = element servlet-name {
+  string
+}
+
+javaee_session-config = element session-config {
+  attribute id { string }?,
+
+  element session-timeout { string }?
+}
+
+javaee_taglib = element taglib {
+  attribute id { string }?,
+
+  element taglib-uri { javaee_string },
+
+  element taglib-location { javaee_path }
+}
+
+javaee_transport-guarantee = element transport-guarantee {
+   "NONE"
+ | "INTEGRAL"
+ | "CONFIDENTIAL"
+}
+
+javaee_url-pattern = element url-pattern { string }
+
+javaee_user-data-constraint = element user-data-constraint {
+  attribute id { string }?,
+
+  javaee_description*,
+
+  javaee_transport-guarantee
+}
+
+javaee6_web-app-Content =
+  javaee_description-Group*
+
+  & element name{ javaee_string }?
+
+  & javaee6_ordering?
+
+  & element distributable { empty }?
+
+  & element context-param { javaee_param-value-Type }*
+
+  & javaee_filter*
+
+  & javaee_filter-mapping*
+
+  & javaee_listener*
+
+  & javaee_servlet*
+
+  & javaee_servlet-mapping*
+
+  & javaee_session-config?
+
+  & javaee_mime-mapping*
+  
+  & javaee_module-name?
+
+  & javaee_welcome-file-list?
+
+  & javaee_error-page*
+
+  & javaee_jsp-config?
+
+  & javaee_security-constraint*
+
+  & javaee_login-config?
+
+  & javaee_security-role*
+
+  & javaee_jndi-environment-refs-Group
+
+  & javaee_message-destination*
+
+  & javaee_locale-encoding-mapping-list?
+
+javaee6_web-app = element web-app {
+  attribute id { string }?,
+
+  attribute version { "3.0" },
+
+  attribute xsi:schemaLocation { string }?,
+
+  attribute metadata-complete { javaee_boolean }?,
+
+  javaee6_web-app-Content
+}
+
+javaee6_web-fragment = element web-fragment {
+  attribute metadata-complete { javaee_boolean }?,
+
+  javaee6_web-app-Content
+}
+
+javaee6_ordering =
+   javaee6_web-app-absolute-ordering
+ | javaee6_web-fragment-ordering
+
+javaee6_web-app-absolute-ordering = element absolute-ordering {
+  element name { javaee_string }*
+  
+  & element others { empty }?
+}
+
+javaee6_web-fragment-ordering = element ordering {
+  element before {
+    element name { string }*
+
+    & element others { empty }?
+  }?
+  
+  & element after {
+    element name { string }*
+
+    & element others { empty }?
+  }?
+
+  & element name { string }*
+}
+
+javaee_web-resource-collection = element web-resource-collection {
+  attribute id { string }?,
+
+  element web-resource-name { string },
+
+  javaee_description*,
+
+  javaee_url-pattern+,
+
+  (javaee_http-method*
+   | javaee_http-method-omission*)
+}
+
+javaee_welcome-file = element welcome-file {
+  attribute id { string }?,
+
+  string
+}
+
+javaee_welcome-file-list = element welcome-file-list {
+  attribute id { string }?,
+
+  javaee_welcome-file+
+}

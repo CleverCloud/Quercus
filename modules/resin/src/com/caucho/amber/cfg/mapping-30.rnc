@@ -1,0 +1,610 @@
+
+default namespace j2ee = "http://java.sun.com/xml/ns/persistence/orm"
+namespace local = ""
+
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+
+start = orm30_entity-mappings
+
+t_boolean = string
+t_class = string
+
+## gen-type "TABLE", "SEQUENCE", "IDENTITY", "AUTO"
+
+orm30_entity-mappings = element entity-mappings {
+  attribute version { "1.0" },
+
+  attribute xsi:schemaLocation { string }?,
+
+  element description { string }?,
+
+  orm30_persistence-unit-metadata?,
+
+  element package { string }?,
+
+  element schema { string }?,
+
+  element catalog { string }?,
+
+  element access { "PROPERTY" | "FIELD" }?,
+
+  orm30_sequence-generator*,
+
+  orm30_table-generator*,
+
+  orm30_named-query*,
+
+  orm30_named-native-query*,
+
+  orm30_sql-result-set-mapping*,
+
+  orm30_mapped-superclass*,
+
+  orm30_entity*,
+
+  orm30_embeddable*
+}
+
+orm30_persistence-unit-metadata = element persistence-unit-metadata {
+  element xml-mapping-metadata-complete { t_boolean }?,
+
+  orm30_persistence-unit-defaults?
+}
+
+orm30_persistence-unit-defaults = element persistence-unit-defaults {
+  element schema { string }?,
+
+  element catalog { string }?,
+
+  element access { "PROPERTY" | "FIELD" }?,
+
+  element cascade-persist { t_boolean }?,
+
+  orm30_entity-listeners?
+}
+
+orm30_entity = element entity {
+  attribute name { string }?,
+
+  attribute class { string },
+
+  attribute access { "PROPERTY" | "FIELD" }?,
+
+  attribute metadata-complete { t_boolean }?,
+
+  element description { string }?,
+
+  orm30_table?,
+
+  orm30_secondary-table*,
+
+  orm30_primary-key-join-column*,
+
+  orm30_id-class?,
+
+  orm30_inheritance?,
+
+  orm30_discriminator-value?,
+
+  orm30_discriminator-column?,
+
+  orm30_sequence-generator?,
+
+  orm30_table-generator?,
+
+  orm30_named-query*,
+
+  orm30_named-native-query*,
+
+  orm30_sql-result-set-mapping?,
+
+  element exclude-default-listeners { t_boolean }?,
+
+  element exclude-superclass-listeners { t_boolean }?,
+
+  orm30_entity-listeners?,
+
+  orm30_pre-persist?,
+
+  orm30_post-persist?,
+
+  orm30_pre-remove?,
+
+  orm30_post-remove?,
+
+  orm30_pre-update?,
+
+  orm30_post-update?,
+
+  orm30_post-load?,
+
+  orm30_attribute-override*,
+
+  orm30_association-override*,
+
+  orm30_attributes?
+}
+
+orm30_attributes = element attributes {
+  (orm30_id? | orm30_embedded-id?),
+
+  orm30_basic*,
+
+  orm30_version*,
+
+  orm30_many-to-one*,
+
+  orm30_one-to-many*,
+
+  orm30_one-to-one*,
+
+  orm30_many-to-many*,
+
+  orm30_embedded*,
+
+  orm30_transient*
+}
+
+orm30_entity-listeners = element entity-listeners {
+  orm30_entity-listener*
+}
+
+orm30_entity-listener = element entity-listener {
+  attribute class { t_class },
+
+  orm30_pre-persist?,
+
+  orm30_post-persist?,
+
+  orm30_pre-remove?,
+
+  orm30_post-remove?,
+
+  orm30_pre-update?,
+
+  orm30_post-update?,
+
+  orm30_post-load?
+}
+
+orm30_pre-persist = element pre-persist {
+  attribute method-name { string }
+}
+
+orm30_post-persist = element post-persist {
+  attribute method-name { string }
+}
+
+orm30_pre-remove = element pre-remove {
+  attribute method-name { string }
+}
+
+orm30_post-remove = element post-remove {
+  attribute method-name { string }
+}
+
+orm30_pre-update = element pre-update {
+  attribute method-name { string }
+}
+
+orm30_post-update = element post-update {
+  attribute method-name { string }
+}
+
+orm30_post-load = element post-load {
+  attribute method-name { string }
+}
+
+orm30_hint = element hint {
+  attribute name { string },
+
+  attribute value { string }
+}
+
+orm30_named-query = element named-query {
+  attribute name { string },
+
+  element query { string },
+
+  orm30_hint*
+}
+
+orm30_named-native-query = element named-native-query {
+  attribute name { string },
+
+  attribute result-class { t_class }?,
+
+  attribute result-set-mapping { string }?,
+
+  element query { string },
+
+  orm30_hint*
+}
+
+orm30_sql-result-set-mapping = element sql-result-set-mapping {
+  attribute name { string },
+
+  orm30_entity-result*,
+
+  orm30_column-result*
+}
+
+orm30_entity-result = element entity-result {
+  attribute entity-class { t_class },
+
+  attribute discriminator-column { string }?,
+
+  orm30_field-result*
+}
+
+orm30_field-result = element field-result {
+  attribute name { string },
+
+  attribute column { string }
+}
+
+orm30_column-result = element column-result {
+  attribute name { string }
+}
+
+orm30_table = element table {
+  attribute name { string }?,
+
+  attribute catalog { string }?,
+
+  attribute schema { string }?,
+
+  orm30_unique-constraint*
+}
+
+orm30_secondary-table = element secondary-table {
+  attribute name { string },
+
+  attribute catalog { string }?,
+
+  attribute schema { string }?,
+
+  orm30_primary-key-join-column*,
+
+  orm30_unique-constraint*
+}
+
+orm30_unique-constraint = element unique-constraint {
+  element column-name { string }+
+}
+
+orm30_column = element column {
+  attribute name { string }?,
+
+  attribute unique { t_boolean }?,
+
+  attribute nullable { t_boolean }?,
+
+  attribute insertable { t_boolean }?,
+
+  attribute updatable { t_boolean }?,
+
+  attribute column-definition { string }?,
+
+  attribute table { string }?,
+
+  attribute length { t_int }?,
+
+  attribute precision { t_int }?,
+
+  attribute scale { t_int }?
+}
+
+orm30_join-column = (
+  attribute name { string }?,
+
+  attribute referenced-column-name { string }?,
+
+  attribute unique { t_boolean }?,
+
+  attribute nullable { t_boolean }?,
+
+  attribute insertable { t_boolean }?,
+
+  attribute updatable { t_boolean }?,
+
+  attribute column-definition { string }?,
+
+  attribute table { string }?
+)
+
+orm30_attribute-override = element attribute-override {
+  attribute name { string },
+
+  orm30_column
+}
+
+orm30_association-override = element association-override {
+  attribute name { string },
+
+  (element join-column { orm30_join-column })+
+}
+
+orm30_id-class = element id-class {
+  attribute class { t_class }
+}
+
+orm30_id = element id {
+  attribute name { string },
+
+  orm30_column?,
+
+  orm30_generated-value?,
+
+  orm30_temporal?,
+
+  orm30_table-generator?,
+
+  orm30_sequence-generator?
+}
+
+orm30_embedded-id = element embedded-id {
+  attribute name { string },
+
+  orm30_attribute-override*
+}
+
+orm30_transient = element transient {
+  attribute name { string }
+}
+
+orm30_version = element version {
+  attribute name { string },
+
+  orm30_column?,
+
+  orm30_temporal?
+}
+
+orm30_basic = element basic {
+  attribute name { string },
+
+  attribute fetch { "EAGER", "LAZY" }?,
+
+  attribute optional { t_boolean }?,
+
+  orm30_column?,
+
+  (orm30_lob | orm30_temporal | orm30_enumerated)?
+}
+
+orm30_lob = element lob {
+  string
+}
+
+orm30_temporal = element temporal {
+  "DATE" | "TIME" | "TIMESTAMP"
+}
+
+orm30_enumerated = element enumerated {
+  "ORDINAL" | "STRING"
+}
+
+orm30_many-to-one = element many-to-one {
+  attribute name { string},
+
+  attribute target-entity { string }?,
+
+  attribute fetch { "EAGER" | "LAZY" }?,
+
+  attribute optional { t_boolean }?,
+
+  ((element join-column { orm30_join-column })* | orm30_join-table?),
+
+  orm30_cascade?
+}
+
+orm30_cascade = element cascade {
+  element cascade-all { t_boolean }?,
+
+  element cascade-persist { t_boolean }?,
+
+  element cascade-merge { t_boolean }?,
+
+  element cascade-remove { t_boolean }?,
+
+  element cascade-refresh { t_boolean }?
+}
+
+orm30_one-to-one = element one-to-one {
+  attribute name { string},
+
+  attribute target-entity { string }?,
+
+  attribute fetch { "EAGER" | "LAZY" }?,
+
+  attribute optional { t_boolean }?,
+
+  attribute mapped-by { string }?,
+
+  (orm30_primary-key-join-column* |
+
+   (element join-column { orm30_join-column })* |
+
+   orm30_join-table?),
+
+  orm30_cascade?
+}
+
+orm30_one-to-many = element one-to-many {
+  attribute name { string },
+
+  attribute target-entity { string }?,
+
+  attribute fetch { "EAGER" | "LAZY" }?,
+
+  attribute mapped-by { string }?,
+
+  orm30_order-by?,
+
+  orm30_map-key?,
+
+  (orm30_join-table? | (element join-column { orm30_join-column })*),
+
+  orm30_cascade?
+}
+
+orm30_join-table = element join-table {
+  attribute name { string }?,
+
+  attribute catalog { string }?,
+
+  attribute schema { string }?,
+
+  (element join-column { orm30_join-column })*,
+
+  (element inverse-join-column { orm30_join-column })*,
+
+  (element unique-constraint { orm30_unique-constraint })*
+}
+
+orm30_many-to-many = element many-to-many {
+  attribute name { string }?,
+
+  attribute target-entity { string }?,
+
+  attribute fetch { "EAGER" | "LAZY" }?,
+
+  attribute mapped-by { string }?,
+
+  orm30_order-by?,
+
+  orm30_map-key?,
+
+  orm30_join-table?,
+
+  orm30_cascade?
+}
+
+orm30_generated-value = element generated-value {
+  attribute strategy { "TABLE", "SEQUENCE", "IDENTITY", "AUTO" }?,
+
+  attribute generator { string }?
+}
+
+orm30_map-key = element map-key {
+  attribute name { string }
+}
+
+orm30_order-by = element order-by {
+  string
+}
+
+orm30_inheritance = element inheritance {
+  attribute strategy { "SINGLE_TABLE" | "JOINED" | "TABLE_PER_CLASS" }?
+}
+
+orm30_discriminator-value = element discriminator-value {
+  string
+}
+
+orm30_primary-key-join-column = element primary-key-join-column {
+  attribute name { string }?,
+
+  attribute referenced-column-name { string }?,
+
+  attribute column-definition { string }?
+}
+
+orm30_discriminator-column = element discriminator-column {
+  attribute name { string }?,
+
+  attribute discriminator-type { "STRING" | "CHAR" | "INTEGER" }?,
+
+  attribute column-definition { string }?,
+
+  attribute length { t_int }?
+}
+
+orm30_embeddable = element embeddable {
+  attribute class { string },
+
+  attribute access { "PROPERTY" | "FIELD" }?,
+
+  attribute metadata-complete { t_boolean }?,
+
+  element description { string },
+
+  (element attributes { orm30_embeddable-attributes })?
+}
+
+orm30_embeddable-attributes = element embeddable-attributes {
+  orm30_basic*,
+
+  orm30_transient*
+}
+
+orm30_embedded = element embedded {
+  attribute name { string },
+
+  orm30_attribute-override*
+}
+
+orm30_mapped-superclass = element mapped-superclass {
+  attribute class { string },
+
+  attribute access { "FIELD" | "PROPERTY" }?,
+
+  attribute metadata-complete { t_boolean }?,
+
+  element description { string }?,
+
+  orm30_id-class?,
+
+  element exclude-default-listeners { t_boolean }?,
+
+  element exclude-superclass-listeners { t_boolean }?,
+
+  orm30_entity-listeners?,
+
+  orm30_pre-persist?,
+
+  orm30_post-persist?,
+
+  orm30_pre-remove?,
+
+  orm30_post-remove?,
+
+  orm30_pre-update?,
+
+  orm30_post-update?,
+
+  orm30_post-load?,
+
+  orm30_attributes?
+}
+
+orm30_sequence-generator = element sequence-generator {
+  attribute name { string },
+
+  attribute sequence-name { string }?,
+
+  attribute initial-value { t_int }?,
+
+  attribute allocation-size { t_int }?
+}
+
+orm30_table-generator = element table-generator {
+  attribute name { string },
+
+  attribute table { string }?,
+
+  attribute catalog { string }?,
+
+  attribute schema { string }?,
+
+  attribute pk-column-name { string }?,
+
+  attribute value-column-name { string }?,
+
+  attribute pk-column-value { string }?,
+
+  attribute initial-value { t_int }?,
+
+  attribute allocation-size { t_int }?
+}

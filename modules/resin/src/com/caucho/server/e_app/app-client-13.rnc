@@ -1,0 +1,23 @@
+default namespace j2ee13 = ""
+namespace local = ""
+
+include "classpath:com/caucho/config/cfg/j2ee13.rnc"
+
+start = j2ee13_application-client
+
+j2ee13_application-client = element application-client {
+  attribute id { string }?,
+
+  j2ee13_description-Group,
+
+  j2ee13_env-entry*,
+
+  j2ee13_ejb-ref*,
+
+  j2ee13_resource-ref*,
+
+  j2ee13_resource-env-ref*,
+
+  element callback-handler { j2ee13_fully-qualified-class }?
+}
+

@@ -1,0 +1,765 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin Administration</title>
+    <type>contents</type>
+    <description>
+
+<p>The /resin-admin web-app provides an administration overview of a
+Resin server.  Resin-Pro users can obtain information across the entire
+cluster, profile a running Resin instance, and obtain thread dumps and
+heap dumps.</p>
+
+<p>All Resin users should familiarize themselves with the thread dump,
+profile, and heap capabilities.</p>
+
+    </description>
+  </header>
+
+  <body>
+
+<localtoc/>
+
+<s1 title="/resin-admin web-app">
+
+<p>The /resin-admin web-app provides an administration overview of a
+Resin server.  Resin-Pro users can obtain information across the entire
+cluster, profile a running Resin instance, and obtain thread dumps and
+heap dumps.</p>
+
+<s2 title="Configuring /resin-admin">
+
+<p>Since /resin-admin is just a web-app implemented with Quercus/PHP,
+enabling it is just adding an appropriate &lt;web-app> tag.</p>
+
+<p>For security, you will also need to add a &lt;user> to
+the &lt;management> section of the resin.xml.  The password will be
+a MD5 hash.  By default, the /resin-admin web-app provides a form
+for generating the hash codes.  You will need to copy the generated
+password into the resin.xml.  This guarantees that you have access
+to the resin.xml itself to add any users.  In other words, the configuration
+is very cautious about security issues to enable the administration.</p>
+
+<example title="resin.xml /resin-admin configuration">
+&lt;resin xmlns="http://caucho.com/ns/resin"
+       xmlns:resin="http://caucho.com/ns/resin/core"&gt;
+
+  &lt;management>
+     &lt;user name="harry" password="MD5HASH=="/>
+  &lt;/management>
+
+&lt;cluster id="">
+&lt;host id="">
+
+  &lt;web-app id="/resin-admin" root-directory="${resin.home}/doc/admin">
+     &lt;prologue>
+        &lt;resin:set var="resin_admin_external" value="false"/>
+        &lt;resin:set var="resin_admin_insecure" value="true"/>
+     &lt;/prologue>
+  &lt;/web-app>
+
+&lt;/host>
+&lt;/cluster>
+&lt;/resin>
+</example>
+</s2>
+
+<s2 title="/resin-admin summary tab">
+
+<p>The summary tab provides a basic overview of the Resin instance.
+Resin-Pro users can see the summary page of each server in a cluster.</p>
+
+<p>The overview section shows basic configuration information
+like the server-id, Resin version, Resin home, memory information,
+and how long the instance has been up.  It's useful as a basic
+check to verify the configuration and see if the server is having any
+problems.</p>
+
+<s3 title="Thread pool">
+
+<p>The thread pool give the current state of Resin's threads.</p>
+
+</s3>
+
+<s3 title="TCP ports">
+
+<p>The TCP ports gives information about the HTTP, HTTPS, and cluster ports,
+showing how many threads are active and also how many connections are
+in various keepalive states.</p>
+
+</s3>
+
+<s3 title="Server Connectors - Load Balancing">
+
+<p>The Server Connectors section is the main section for load balancing.
+It will give an overview of any failures in connecting to the backend
+servers, showing the latency and load.</p>
+
+</s3>
+
+<s3 title="Connection pools - Database pooling">
+
+<p>The connection pool section shows the state and history of the database
+pools.</p>
+
+</s3>
+
+<s3 title="WebApps">
+
+<p>The WebApps shows the current state of the active web-apps for
+each virtual host.  In particular, it will show the time and number of
+any 500 errors, letting you track down errors in the log files.</p>
+
+</s3>
+
+</s2>
+
+<s2 title="/resin-admin config tab">
+
+<p>The config tag summarizes Resin's internal configuration.  This tab
+can be useful to double-check that the values in the resin.xml and
+web.xml match the expected values.</p>
+
+</s2>
+
+<s2 title="/resin-admin threads tab">
+
+<p>The threads tab is a critical debugging tab.  It shows the state
+and stack trace of every thread in the JVM, grouped by functionality.
+If the server ever freezes or moves slowly, use the thread tab as your
+first resource for figuring out what's going on in the system.</p>
+
+<p>All Resin users should familiarize themselves with the thread dump
+for their application.  It's very important to understand the
+normal, baseline status, so if something does go wrong, you'll know
+what looks different.</p>
+
+<p>In particular, any freeze or slowness of Resin should immediately
+suggest looking at the thread page.</p>
+
+</s2>
+
+<s2 title="/resin-admin cpu profile tab">
+
+<p>The cpu profile tab lets you gather basic profiling information on
+a running Resin server.  Because the overhead is low, it's even possible
+to run a profile on a deployment server, which will give much better
+information about the performance of your system than any artificial
+benchmarks.</p>
+
+<p>With Resin's integrated profiling, there's no excuse to skip the
+profiling step for your application.</p>
+
+</s2>
+
+<s2 title="/resin-admin heap dump tab">
+
+<p>The heap dump tab lets you gather a heap memory information at any
+time, giving you critical information at times when you may not have
+a dedicated profiler available.</p>
+
+</s2>
+
+
+</s1>
+
+<s1 title="Admin topics">
+<s2 title="Interpreting the proxy cache hit ratio">
+
+<p>
+The proxy cache is Resin's internal proxy cache (in Resin Pro).
+The hit ratio marks what percentage of requests are served out of the
+cache, i.e. quickly, and which percentage are taking the full time.
+</p>
+
+<p>
+The proxy cache hit ratio is useful for seeing if you can improve your
+application's performance with better caching.  For example, if you had
+a news site like www.cnn.com, you should have a high hit rate to make
+sure you're not overtaxing the database.
+</p>
+
+<p>
+If you have a low value, you might want to look at your heavily used
+pages to see if you can cache more.
+</p>
+
+</s2>
+
+</s1>
+
+<s1 title="Resin's JMX Interfaces">
+
+<p>See <a href="http://caucho.com/resin-javadoc/com/caucho/management/server/package-summary.html">com.caucho.management.server JavaDoc</a>.</p>
+
+<ul>
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/BlockManagerMXBean">BlockManagerMXBean</a>
+- performance data for the proxy cache, clustered sessions,
+and JMS queues.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/ConnectionPoolMXBean">ConnectionPoolMXBean</a>
+- JDBC database pools.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/HostMXBean">HostPoolMXBean</a>
+- virtual host management.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/JmsQueueMXBean">JmsQueueMXBean</a>
+- jms queue management.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/JmsTopicMXBean">JmsTopicMXBean</a>
+- jms topic management.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/LoggerMXBean">LoggerMXBean</a>
+- java.util.logging management.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/PortMXBean">PortMXBean</a>
+- http, https, and custom TCP ports.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/ProxyCacheMXBean">ProxyCacheMXBean</a>
+- Resin's integrated proxy cache.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/ResinMXBean">ResinMXBean</a>
+- Parent MXBean for Resin corresponding to the &lt;resin> configuration tag.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/ServerConnectorMXBean">ServerConnectorMXBean</a>
+- client view of a peer server in a cluster.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/ServerMXBean">ServerMXBean</a>
+- information about the JVM <a href="http://wiki.caucho.com/Server">server</a> instance.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/SessionManagerMXBean">SessionManagerMXBean</a>
+- information about a web-app's session manager.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/ThreadPoolMXBean">ThreadPoolMXBean</a>
+- information about Resin's internal thread pool.</li>
+
+<li><a href="http://caucho.com/resin-javadoc/com/caucho/management/server/WebAppMXBean">WebAppMXBean</a>
+- information about a Resin web-app.</li>
+
+</ul>
+
+</s1>
+
+<s1 title="JMX Instrumenting Beans">
+
+<p>Resin's IoC container can register the application's services
+with JMX automatically.  The registered beans will then be available
+in a JMX application like jconsole or through PHP or Java.
+</p>
+
+<ol>
+<li>For a class <code>MyFoo</code>, create an
+interface <code>MyFooXMBean</code> with the management interface.</li>
+<li>Class <code>MyFoo</code> needs to implement
+the <code>MyFooMBean</code> interface.</li>
+<li>When Resin handles the &lt;bean> tag, it will
+register <code>MyFoo</code> with the JMX server.</li>
+</ol>
+
+<s2 title="Instrumenting a bean">
+
+<p>Resin will automatically register any servlet which
+implements an MBean interface.  By default, the JMX name will be:</p>
+
+<def>
+resin:name=<var>name</var>,type=<var>type</var>,Host=<var>name</var>,WebApp=<var>name</var>
+</def>
+
+<deftable title="ObjectName attributes">
+<tr>
+  <th>Attribute</th>
+  <th>Value</th>
+</tr>
+<tr>
+  <td>type</td>
+  <td>The FooMBean name minus the MBean, e.g. "Foo"</td>
+</tr>
+<tr>
+  <td>name</td>
+  <td>the bean's name value</td>
+</tr>
+<tr>
+  <td>Host</td>
+  <td>the virtual host name</td>
+</tr>
+<tr>
+  <td>WebApp</td>
+  <td>the web-app's context path</td>
+</tr>
+</deftable>
+
+<p>The domain is <var>web-app</var>, the type property
+is calculated from the MBean class name and the name property is the value
+of &lt;name&gt;.</p>
+
+<p>JMX clients will use the name to manage the bean.  For example,
+a client might use the pattern <var>web-app:type=Foo,*</var>
+to retrieve the bean.</p>
+
+<example title="MyServiceMBean.java">
+package test;
+
+public interface MyServiceMBean {
+  public int getCount();
+}
+</example>
+
+<example title="MyServlet.java">
+package test;
+
+import java.io.*;
+import javax.servlet.*;
+
+public class MyService implements MyServiceMBean
+{
+  private int _count;
+
+  public int getCount()
+  {
+    return _count;
+  }
+
+  public void doStuff()
+  {
+    _count++;
+  }
+}
+</example>
+
+</s2>
+
+<s2 title="PHP: Displaying and Managing Resources">
+
+<p>The easiest way to display and manage JMX is with PHP.  The /resin-admin
+web-app provides several examples of getting JMX data.</p>
+
+<example title="PHP: Getting the Count attribute">
+&lt;php?
+
+$mbean_server = new MBeanServer();
+
+$service = $mbean_server->query("resin:*,type=MyService");
+
+echo "Service.count: " . $service[0]->Count . "\n";
+
+?>
+</example>
+
+</s2>
+
+</s1>
+
+<s1 title="JMX Console">
+
+<p>
+JDK 5.0 includes a JMX implementation that is used to provide 
+local and remote administration of a Resin server.  The JVM will
+expose JMX if it's started with appropriate <var>-D</var>
+system properties.  For example, <var>-Dcom.sun.management.jmxremote</var>
+will expose JMX to the local machine.</p>
+
+<p>To configure the JVM arguments for Resin, you'll add a &lt;jvm-arg>
+to the resin.xml.  When Resin's <a
+href="http://wiki.caucho.com/Watchdog">Watchdog</a> process starts Resin,
+it will pass along the configured arguments, enabling JMX administration.
+</p>
+
+<example title="Start Resin and allow local JMX administration">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="">
+
+  &lt;server-default>
+    &lt;jvm-arg>-Dcom.sun.management.jmxremote&lt;/jvm-arg>
+  &lt;/server-default>
+
+  ...
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+<example title="Start jconsole">
+win&gt; jconsole.exe
+unix&gt; jconsole
+
+<i>Choose Resin's JVM from the "Local" list.</i>
+</example>
+
+<example title="Start Resin and allow remote JMX administration">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="">
+
+  &lt;server-default>
+    &lt;jvm-arg>-Dcom.sun.management.jmxremote.port=9999&lt;/jvm-arg>
+  &lt;/server-default>
+
+  ...
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+<p>
+Without some configuration effort, the previous command will not work.
+Password configuration and SSL configuration is required by the JDK
+implementation of remote JMX.  Detailed instructions are included in the JDK
+documentation.
+</p>
+
+<p>
+The following is useful for testing, but should be done with caution as the
+port is not protected by password or by SSL, and if not protected by a firewall
+is accessible by anyone who can guess the port number.
+</p>
+
+<example title="Start Resin and remote JMX - disable password checking and SSL">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="">
+
+  &lt;server-default>
+    &lt;jvm-arg>-Dcom.sun.management.jmxremote.port=9999&lt;/jvm-arg>
+    &lt;jvm-arg>-Dcom.sun.management.jmxremote.ssl=false&lt;/jvm-arg>
+    &lt;jvm-arg>-Dcom.sun.management.jmxremote.authenticate=false&lt;/jvm-arg>
+  &lt;/server-default>
+
+  ...
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+<example title="Start jconsole">
+win&gt; jconsole.exe
+unix&gt; jconsole
+
+<i>Enter the host name and port number (9999) on the "Remote" tab</i>
+</example>
+
+<example title="Setting a password for remote JMX access">
+$ cd $JAVA_HOME/jre/lib/management
+$ cp jmxremote.password.template jmxremote.password
+$ chmod u=rw jmxremote.password
+$ vi jmxremote.password
+
+<i>Set a password for "monitorRole" and "controlRole":</i>
+
+monitorRole 12monitor
+controlRole 55control
+</example>
+
+<example title="Start Resin and remote JMX - disable SSL">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+&lt;cluster id="">
+
+  &lt;server-default>
+    &lt;jvm-arg>-Dcom.sun.management.jmxremote.port=9999&lt;/jvm-arg>
+    &lt;jvm-arg>-Dcom.sun.management.jmxremote.ssl=false&lt;/jvm-arg>
+  &lt;/server-default>
+
+  ...
+
+&lt;/cluster>
+&lt;/resin>
+</example>
+
+<example title="Start jconsole">
+win&gt; jconsole.exe
+unix&gt; jconsole
+</example>
+
+<p>
+<i>Enter the host name and port number (9999) on the "Remote" tab</i>
+<i>Enter the username and password on the "Remote" tab</i>
+</p>
+</s1>
+
+<s1 title="stat-service">
+
+<p>Resin 3.1.6 adds a new &lt;stat-service> to the &lt;management tag.
+The &lt;stat-service periodically checks the status of Resin and the JVM
+and can act if certain thresholds are exceeded.  The default check rate
+is every 60s.</p>
+
+<p>The primary statistic that &lt;stat-service> observes is the CPU load
+of the server.  You can set thresholds so Resin will log a thread dump
+if the CPU gets high, e.g. to find and debug a runaway thread.  If necessary,
+you can also have Resin restart if the CPU load gets too high.
+The configuration is documented in <a
+href="security-overview.xtp#Authentication">&lt;resin:AdminAuthenticator></a>.</p>
+
+<example title="Example: CPU thresholds">
+&lt;resin xmlns="http://caucho.com/ns/resin">
+  &lt;management>
+    &lt;stat-service>
+      &lt;unix-load-avg-exit-threshold>10.0&lt;/unix-load-avg-exit-threshold>
+      &lt;cpu-load-log-info-threshold>1.0&lt;/cpu-load-log-info-threshold>
+      &lt;cpu-load-log-warning-threshold>2.0&lt;/cpu-load-log-warning-threshold>
+      &lt;cpu-load-thread-dump-threshold>2.0&lt;/cpu-load-thread-dump-threshold>
+      &lt;sample-period>15s&lt;/sample-period>
+      &lt;thread-dump-interval>10m&lt;/thread-dump-interval>
+    &lt;/stat-service>
+  &lt;/management>
+
+&lt;/resin>
+</example>
+
+</s1>
+
+<s1 title="SNMP">
+
+<p>
+Since 3.1.5, Resin has built-in support for SNMP (Simple Network
+Management Protocol).  This allows Resin to be managed just like any
+network device (e.g. routers) from an SNMP manager application.
+</p>
+
+<s2 title="Enabling SNMP support in Resin">
+
+<p>
+To enable Resin's SNMP service, you'll need to add an SNMP protocol tag
+to your resin.xml under the &lt;server&gt; tag:
+
+<example title="resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id=""&gt;
+    &lt;server-default&gt;
+    
+      &lt;protocol class="com.caucho.server.snmp.SnmpProtocol" port="161"/&gt;
+      
+    &lt;server-default/&gt;
+    
+    ...
+    
+  &lt;cluster/&gt;
+&lt;resin/&gt;
+</example>
+
+This opens up a port that listens for SNMP requests and responds to
+them with an SNMP response.  Currently, Resin can only respond to
+TCP SNMP get-pdu requests.
+</p>
+
+<p>
+By default, the SNMP community string is "public". It can be changed with:
+
+<example>
+&lt;protocol class="com.caucho.server.snmp.SnmpProtocol" port="161"&gt;
+  &lt;init community="<i>insert_password_here</i>"/&gt;
+&lt;protocol/>
+</example>
+</p>
+
+</s2>
+
+<s2 title="MIB Variables">
+
+<p>
+Internally, Resin stores a mapping from SNMP MIB variables to
+MBean attributes.  Requests for a specific MIB variable are simply
+retrievals for the corresponding MBean attribute.  The available MIB
+mappings are hard-coded in Resin and they are:
+</p>
+
+<deftable title="SNMP to MBean mappings">
+<tr>
+  <th>SNMP Object ID</th>
+  <th>SNMP type</th>
+  <th>MBean</th>
+  <th>MBean attribute</th>
+</tr>
+<tr>
+  <td>1.3.6.1.2.1.1.1</td>
+  <td>Octet String</td>
+  <td>resin:type=Resin</td>
+  <td>Version</td>
+</tr>
+<tr>
+  <td>1.3.6.1.2.1.1.3</td>
+  <td>Time Ticks</td>
+  <td>java.lang:type=Runtime</td>
+  <td>UpTime</td>
+</tr>
+<tr>
+  <td>1.3.6.1.2.1.1.5</td>
+  <td>Octet String</td>
+  <td>resin:type=Host,name=default</td>
+  <td>URL</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.1.1</td>
+  <td>Gauge</td>
+  <td>resin:type=Server</td>
+  <td>KeepaliveCountTotal</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.1.2</td>
+  <td>Gauge</td>
+  <td>resin:type=Server</td>
+  <td>RequestCountTotal</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.1.3</td>
+  <td>Gauge</td>
+  <td>resin:type=Server</td>
+  <td>RuntimeMemory</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.1.4</td>
+  <td>Gauge</td>
+  <td>resin:type=Server</td>
+  <td>RuntimeMemoryFree</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.1.5</td>
+  <td>Gauge</td>
+  <td>resin:type=Server</td>
+  <td>ThreadActiveCount</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.1.6</td>
+  <td>Gauge</td>
+  <td>resin:type=Server</td>
+  <td>ThreadKeepaliveCount</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.2.1</td>
+  <td>Gauge</td>
+  <td>resin:type=ThreadPool</td>
+  <td>ThreadActiveCount</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.2.2</td>
+  <td>Gauge</td>
+  <td>resin:type=ThreadPool</td>
+  <td>ThreadCount</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.2.3</td>
+  <td>Gauge</td>
+  <td>resin:type=ThreadPool</td>
+  <td>ThreadIdleCount</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.2.4</td>
+  <td>Gauge</td>
+  <td>resin:type=ThreadPool</td>
+  <td>ThreadIdleMax</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.2.5</td>
+  <td>Gauge</td>
+  <td>resin:type=ThreadPool</td>
+  <td>ThreadIdleMin</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.2.6</td>
+  <td>Gauge</td>
+  <td>resin:type=ThreadPool</td>
+  <td>ThreadMax</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.3.1</td>
+  <td>Gauge</td>
+  <td>resin:type=ProxyCache</td>
+  <td>HitCountTotal</td>
+</tr>
+<tr>
+  <td>1.3.6.1.4.1.30350.3.2</td>
+  <td>Gauge</td>
+  <td>resin:type=ProxyCache</td>
+  <td>MissCountTotal</td>
+</tr>
+</deftable>
+
+</s2>
+
+<s2 title="Defining your own SNMP to MBean mappings">
+
+<p>
+To define your own MIB variables, you'll need to extend the
+<var>com.caucho.server.snmp.SnmpProtocol</var> class and then use that
+class name in the &lt;protocol&gt; tag:
+
+<example title="resin.xml">
+&lt;resin xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;cluster id=""&gt;
+    &lt;server-default&gt;
+    
+      &lt;protocol class="example.MySnmpProtocol" port="161"/&gt;
+      
+    &lt;server-default/&gt;
+    
+    ...
+    
+  &lt;cluster/&gt;
+&lt;resin/&gt;
+</example>
+
+<example title="example.MySnmpProtocol">
+package example;
+
+import com.caucho.server.snmp.*;
+import com.caucho.server.snmp.types.*;
+
+public class MySnmpProtocol extends SnmpProtocol
+{
+  public MySnmpProtocol()
+  {
+    super();
+  
+    addOid(new Oid("1.2.3.4.5",
+                   "<i>my_mbean_object_name</i>",
+                   "<i>my_mbean_attribute</i>",
+                   SnmpValue.OCTET_STRING));
+  }
+}
+
+</example>
+
+<var>"1.2.3.4.5"</var> is the SNMP ID you choose to give to your mapping.
+It should be in dot notation.  <var>SnmpValue.OCTET_STRING</var> is the
+type Resin should return for that attribute.  An abbreviated list of
+the available types are:
+</p>
+
+<deftable>
+<tr>
+  <th>SNMP types</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td>SnmpValue.OCTET_STRING</td>
+  <td>8-bit String</td>
+</tr>
+<tr>
+  <td>SnmpValue.INTEGER</td>
+  <td>signed 32-bit integer</td>
+</tr>
+<tr>
+  <td>SnmpValue.COUNTER</td>
+  <td>unsigned 32-bit integer that only increases, wraps around when overflows</td>
+</tr>
+<tr>
+  <td>SnmpValue.GAUGE</td>
+  <td>unsigned 32-bit integer that may increase and decrease</td>
+</tr>
+<tr>
+  <td>SnmpValue.TIME_TICKS</td>
+  <td>unsigned 32-bit integer representing time measured in hundredths of a second</td>
+</tr>
+<tr>
+  <td>SnmpValue.IP_ADDRESS</td>
+  <td>IP address</td>
+</tr>
+</deftable>
+
+<p>
+For a more complete list, see <a href="http://caucho.com/resin-javadoc/com/caucho/server/snmp/package-summary.html">com.caucho.server.snmp JavaDoc</a>.
+</p>
+
+</s2>
+
+</s1>
+
+  </body>
+</document>

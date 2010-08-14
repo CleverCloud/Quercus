@@ -1,0 +1,137 @@
+<document>
+<header>
+<product>resin</product>
+<title>Environment: Class Loaders</title>
+<version>Resin 4.0</version>
+
+<description>
+<p>Resin organizes resources and classloaders into nested environments.
+Each environment context merges its own configuration with configuration
+inherited from the parent environment.  Each environment context: server,
+host, web-app, etc. may be configured with any of the environment
+configuration tags.
+</p>
+</description>
+</header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Classloaders">
+<defun title="class-loader" occur="*" version="Resin 3.0">
+  <parents>resin, server, host-default, host, web-app-default, web-app</parents>
+  <!-- com.caucho.loader.DynamicLoader -->
+
+<p>Adds dynamic classloaders to the current environment.</p>
+
+<p>Each environment (&lt;server&gt;, &lt;host&gt;, &lt;web-app&gt;) etc,
+can add dynamic classloaders.  The environment will inherit the parent
+classloaders.  Each &lt;class-loader&gt; is comprised of several implementing
+loader items: library-loader for WEB-INF/lib, compiling-loader for
+WEB-INF/classes, even make-loader for more complex auto-compilation.</p>
+
+<example title="&lt;class-loader> in resin-web.xml">
+&lt;web-app xmlns="http://caucho.com/ns/resin"&gt;
+  &lt;prologue>
+    &lt;class-loader&gt;
+      &lt;compiling-loader path="WEB-INF/classes"/&gt;
+
+      &lt;library-loader path="WEB-INF/lib"/&gt;
+    &lt;/class-loader&gt;
+  &lt;/prologue>
+&lt;/web-app&gt;
+</example>
+
+</defun>
+
+<defun title="compiling-loader" occur="*" version="Resin 3.0">
+  <parents>class-loader</parents>
+  <!-- com.caucho.loader.CompilingLoader -->
+
+<p>Configures an auto-compiling <var>WEB-INF/classes</var>-style class loader.</p>
+
+<p>The compiling-loader will automatically compile Java code into .class
+files loading them.</p>
+
+<deftable-childtags>
+<tr><td>args</td><td>Additional arguments to be passed to the Java compiler. Resin 3.0</td><td>none
+</td></tr><tr><td>batch</td><td>If true, multiple changed *.java files will be compiled in a single batch. Resin 3.0.7</td><td>true
+</td></tr><tr><td>encoding</td><td>I18N encoding for the Java compiler. Since Resin 3.0</td><td>none
+</td></tr><tr><td>path</td><td>Filesystem path for the class loader.  Since Resin 3.0</td><td>required
+</td></tr><tr><td>source</td><td>Java source directory. Since Resin 3.0</td><td>value of path
+</td></tr><tr><td>require-source</td><td>If true, .class files without matching .java files will be deleted. Since Resin 3.0</td><td>false
+</td></tr></deftable-childtags>
+
+</defun>
+
+<defun title="library-loader" occur="*" version="Resin 3.0">
+  <parents>class-loader</parents>
+
+<p>Configures a jar library, <var>WEB-INF/lib</var>-style class loader.</p>
+
+<p>The library-loader will add jar files in its path to the current classpath.
+Jar files are recognized wihen they have a filename extension of
+<code>.jar</code> or <code>.zip</code>.</p>
+
+<deftable-childtags>
+<tr><td>path</td><td>Filesystem path for the class loader.  Since Resin 3.0</td><td>required
+</td></tr></deftable-childtags>
+
+<p>See <a javadoc="com.caucho.loader.DirectoryLoader"/>.</p>
+</defun>
+
+<defun title="tree-loader" occur="*" version="Resin 3.0">
+  <parents>class-loader</parents>
+  <!-- com.caucho.loader.TreeLoader -->
+
+<p>Configures a jar library, <var>WEB-INF/lib</var>-style class loader similar to
+<a config-tag="library-loader"/>, but will also find <code>.jar</code> and
+<code>.zip</code> files in subdirectories.</p>
+
+<deftable-childtags>
+<tr><td>path</td><td>Filesystem path for the class loader.  Since Resin 3.0</td><td>required
+</td></tr></deftable-childtags>
+
+<p>See <a javadoc="com.caucho.loader.TreeLoader"/>.</p>
+</defun>
+
+<defun title="make-loader" occur="*" version="Resin 3.0">
+  <parents>class-loader</parents>
+  <!-- com.caucho.loader.MakeLoader -->
+
+<p>Configures a custom make-style loader.</p>
+</defun>
+
+<defun title="servlet-hack" occur="*" version="Resin 3.0">
+  <parents>class-loader</parents>
+
+<p>Use of servlet-hack is discouraged.  Using servlet-hack violates
+the JDK's classloader delegation model and can
+produce surprising ClassCastExceptions.</p>
+
+<p>servlet-hack reverses the normal class loader order.
+Instead of parent classloaders having priority, child classloaders
+have priority.</p>
+
+</defun>
+
+<defun title="simple-loader" occur="*" version="Resin 3.0">
+  <parents>class-loader</parents>
+  <!-- com.caucho.loader.SimpleLoader -->
+
+<p>Configures a simple <var>classes</var>-style class loader.</p>
+
+<p>.class files in the specified directory will be loaded without any
+special compilation steps (in contrast with compiling-loader.)</p>
+
+<deftable-childtags>
+<tr><td>path</td><td>Filesystem path for the class loader.  Since Resin 3.0</td><td>required
+</td></tr><tr><td>prefix</td><td>Class package prefix to only load to a subset of classes. Resin 3.0</td><td>none
+</td></tr></deftable-childtags>
+
+</defun>
+
+</s1>
+</body>
+</document>

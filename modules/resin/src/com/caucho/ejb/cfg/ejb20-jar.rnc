@@ -1,0 +1,36 @@
+# ignore for now
+
+default namespace l = ""
+
+ejb20_abstract-schema-name =
+  attribute abstract-schema-name { string }
+  | element abstract-schema-name { string }
+
+ejb20_acknowledge-mode =
+  attribute acknowledge-mode { string }
+  | element acknowledge-mode { string }
+
+ejb20_assembly-descriptor = element assembly-descriptor {
+  ejb20_security-role*,
+
+  ejb20_method-permission*,
+
+  ejb20_container-transaction*,
+
+  ejb20_exclude-list?
+}
+
+ejb20_cascade-delete =
+  attribute cascade-delete { empty }
+  | element cascade-delete { empty }
+
+ejb20_cmp-field = element cmp-field {
+  ejb20_description?,
+
+  ejb20_field-name
+}
+
+ejb20_cmp-version = 
+  attribute cmp-version { "1.x" | "2.x" }
+  | element cmp-version { "1.x" | "2.x" }
+

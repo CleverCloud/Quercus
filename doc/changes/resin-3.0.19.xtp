@@ -1,0 +1,128 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.0.19 Release Notes</title>
+  </header>
+
+<body>
+
+<summary objsummary="localtoc"/>
+
+<s1 title="Windows Security Update">
+
+<p>Windows users of Resin 3.0.17 or 3.0.18 should upgrade to 3.0.19
+as soon as possible.</p>
+
+</s1>
+
+<s1 title="Quercus: New PHP Applications">
+
+<p>Quercus now starts up <a href="http://www.wordpress.com">Wordpress</a> and
+<a href="http://gallery.menalto.com">Gallery</a>.</p>
+
+</s1>
+
+<s1 title="AccessLog shared-buffer">
+
+<p>The access-log has a new attribute, shared-buffer.  The default
+behavior is to use the shared buffer (the current behavior.)  If
+shared-buffer is disabled, each request will use its own buffer
+for logging requests.  In some situations, the separate buffer may
+reduce locking times.</p>
+
+</s1>
+
+<s1 title="LdapAuthenticator">
+
+<p>dn-prefix, dn-suffix, jndi-dnv, user-attribute, password-attribute</p>
+
+</s1>
+<s1 title="connection-error-page">
+
+<p>The server block now accepts &lt;connection-error-page&gt; for IIS.</p>
+
+</s1>
+
+<s1 title="wrap-statements">
+
+<p>The &lt;database&gt; tag now has a &lt;wrap-statements&gt; tag (default true)
+allowing applications to use the native statement class.</p>
+
+</s1>
+
+<s1 title="prologue">
+
+<p>Added a &lt;prologue&gt; tag to the &lt;web-app&gt;. The prologue is
+web-app configuration which is applied before any &lt;web-app-default&gt;.</p>
+
+<p>The &lt;prologue&gt; lets applications define custom &lt;class-loader&gt;
+in the &lt;web-app&gt; and lets it be applied before the &lt;web-app-default&gt;
+or web.xml.</p>
+
+</s1>
+
+<s1 title="resource-default">
+
+<p>Added &lt;resource-default&gt; tag as a default configuration
+for .rar files, e.g. classpaths.</p>
+
+</s1>
+
+<s1 title="redeploy-check-interval">
+
+<p>Added a redeploy-check-interval to configure how long Resin should
+wait to restart a failed web-app.</p>
+
+</s1>
+
+<s1 title="JaasAuthenticator">
+
+<p>The JaasAuthenticator will now look for <code>isUserInRole</code> and
+<code>getRoles</code> in the Principal returned by the authenticator
+to support the servlet <code>isUserInRole</code> call.
+
+</p></s1>
+
+<s1 title="log/rollover-count">
+
+<p>rollover-count is now allowed for &lt;log&gt;</p>
+
+</s1>
+
+<s1 title="log/path-format">
+
+<p>The path-format option to the logs, including access-log can now
+accept .gz extensions.  The logs will be compressed as they are written.</p>
+
+</s1>
+
+<s1 title="select-manager">
+
+<p>The &lt;select-manager&gt; tag replaces the &lt;enable-select-manager/&gt;
+introduced in 3.0.18.</p>
+
+</s1>
+
+<s1 title="JspServlet">
+
+<p>The number of JSP .class files cached can now be configured in the JSP
+servlet.  This affects the memory usage in the permanent memory space.</p>
+
+<example>
+&lt;servlet servlet-name="resin-jsp"
+            servlet-class="com.caucho.jsp.JspServlet"&gt;
+  &lt;init&gt;
+    &lt;load-tld-on-init&gt;false&lt;/load-tld-on-init&gt;
+    &lt;page-cache-max&gt;1024&lt;/page-cache-max&gt;
+  &lt;/init&gt;
+  &lt;load-on-startup/&gt;
+&lt;/servlet&gt;
+</example>
+
+<p>This fix is related to the OOM/PermMax issues some people have been
+running into with large numbers of JSP files.</p>
+
+</s1>
+
+</body>
+</document>

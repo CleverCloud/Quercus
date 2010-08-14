@@ -1,0 +1,198 @@
+<document>
+  <header>
+    <product>resin</product>
+    <title>Resin 3.1.5 Release Notes</title>
+  </header>
+
+<body>
+
+<localtoc/>
+
+<s1 title="Resin 3.1.x">
+
+<p>Resin 3.1.x is now the stable branch.  Only important bug fixes will
+be applied to new versions of the 3.1.x branch.</p>
+
+<p>For new features, the 3.2.x branch is now the development branch.</p>
+
+</s1>
+
+<s1 title="Resin JSF">
+
+<ul>
+<li>See <a href="../examples/jsf-webbeans/">JSF demo</a></li>
+</ul>
+
+<p>Resin's JSF has been promoted to release status after fixing a
+large number of compatibility issues.
+Resin-JSF aims to be high performance, based on its tight integration
+with Resin's JSP and use of Hessian as a serialization protocol.</p>
+
+</s1>
+
+<s1 title="Quercus">
+
+<ul>
+<li>See <a href="../doc/quercus.xtp">Quercus documentation</a></li>
+</ul>
+
+<p>Quercus has continued to steadily fix bugs and implement PHP functions.</p>
+
+<p>The killer app list has now expanded to five:</p>
+
+<ol>
+<li>MediaWiki 1.12 (wikipedia)</li>
+<li>Wordpress 2.5.1 (blogging)</li>
+<li>Drupal 6.0 (content management system)</li>
+<li>Typo3 (content management system)</li>
+<li>phpBB3 (bulletin board system)</li>
+</ol>
+
+<p>The following comparison is between Resin/Quercus and PHP 5.2 with
+the APC accelerator.  mod_php without the accelerator is much slower.</p>
+
+<deftable title="Quercus Performance vs PHP/APC">
+<tr>
+  <th>Application</th>
+  <th>Resin/Quercus</th>
+  <th>Apache/PHP</th>
+  <th>Difference</th>
+</tr>
+<tr>
+  <td>Hello, World</td>
+  <td>5656 rps</td>
+  <td>2986 rps</td>
+  <td>+89%</td>
+</tr>
+<tr>
+  <td>Mediawiki 1.12</td>
+  <td>28.2 rps</td>
+  <td>22.5 rps</td>
+  <td>+25%</td>
+</tr>
+<tr>
+  <td>Wordpress 2.5.1</td>
+  <td>35.4 rps</td>
+  <td>28.6 rps</td>
+  <td>+24%</td>
+</tr>
+<tr>
+  <td>Drupal 6.0</td>
+  <td>54.3 rps</td>
+  <td>39.6 rps</td>
+  <td>+37%</td>
+</tr>
+<tr>
+  <td>phpBB3</td>
+  <td>121.5 rps</td>
+  <td>77.8 rps</td>
+  <td>+56%</td>
+</tr>
+</deftable>
+
+</s1>
+
+<s1 title="HMTP (Hessian Message Transport Protocol">
+
+<p>Resin 3.1.6 introduces <a href="../doc/hmtp.xtp">HMTP</a>, the Hessian
+Message Transport Protocol. HMTP is designed as a lightweight, asynchronous
+messaging protocol enabling Flash application and other rich interactive
+applications.</p>
+
+<p>HMTP is designed to enable interactive applications such as games,
+administration consoles, stock trading applications, or notification
+protocols like Atom or instant messaging.</p>
+
+<figure src="tictactoe-game.png"/>
+
+</s1>
+
+<s1 title="Resin Messaging">
+
+<ul>
+<li>See <a href="../doc/resin-messaging.xtp">Resin Messaging</a></li>
+</ul>
+
+<p>Added com.caucho.jms.queue.JmsBlockingQueue for 3rd party JMS.
+In 3.1.5, Resin introduced a <code>BlockingQueue</code> interface for
+its own JMS queues to match the &lt;ejb-message-bean> simplified
+message handling.  This change introduces a &lt;bean>
+<code>JmsBlockingQueue</code> which provides the same capabilities for other
+JMS providers.</p>
+
+</s1>
+
+<s1 title="Boot (watchdog)">
+
+<p>For Resin Pro on unix systems, the watchdog automatically increases
+the fd-max value before launching Resin.  In combination with the
+select-manager and <a href="../doc/resin-comet.xtp">Comet</a>, this allows
+a much greater number of simultaneous active threads.</p>
+
+<p>For ISP users of Resin Pro, the watchdog can now execute
+a &lt;chroot> before starting the Resin instance, allowing for
+significantly improved security.</p>
+
+</s1>
+
+<s1 title="scheduled-task">
+
+<p>The new <a href="../doc/resources.xtp">&lt;scheduled-task></a> resource
+allows for timer-based scheduled tasks, controlled by a &lt;cron> expression.
+The task can either be a Runnable bean, an EL method, or a URL.</p>
+
+<example title="Example: midnight cron bean task">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;scheduled-task task="#{taskBean}">
+    &lt;cron>0 0 *&lt;/cron>
+  &lt;/scheduled-task>
+
+&lt;/web-app>
+</example>
+
+</s1>
+
+<s1 title="administration">
+
+<p>For Resin-Pro, the administration task now checks CPU usage every
+minute.  If the usage is high, it will log the CPU uptime.  If it's
+excessive, Resin will automatically produce a thread dump.  It's also
+possible to configure Resin to automatically restart on an excessive
+CPU time.</p>
+
+</s1>
+
+<s1 title="logging">
+
+<p>java.util.Logging configuration has been improved and enhanced by
+adding a &lt;log-handler>, adding new handlers, and improving the
+custom configuration.</p>
+
+<p>The new &lt;log-handler> should replace &lt;log> in most configurations.
+It configures a java.util.logging.Handler and registers it with the
+Logger.  The level in &lt;log-handler> configures only the Handler itself,
+not the Logger (which is how it differs from &lt;log>.)</p>
+
+<p>The new handlers can be configured with the "uri" attribute.
+The following example configures a HMTP handler to send messages to
+the named HMTP destination.</p>
+
+<example title="Example: hmtp handler">
+&lt;web-app xmlns="http://caucho.com/ns/resin">
+
+  &lt;log-handler name="" level="warning" uri="hmtp:">
+    &lt;init to="test@localhost"/>
+  &lt;/log-handler>
+&lt;/web-app>
+</example>
+
+<ul>
+<li>uri="event:" send a WebBeans event using the LogEvent</li>
+<li>uri="jms:" send a JMS message</li>
+<li>uri="hmtp:" send a HMTP message</li>
+</ul>
+</s1>
+
+</body>
+</document>

@@ -1,0 +1,78 @@
+<web-app xmlns="http://caucho.com/ns/resin"
+         xmlns:resin="http://caucho.com/ns/resin/core">
+
+  <class-loader>
+    <simple-loader path="WEB-INF/xsl"/>
+    <compiling-loader path="WEB-INF/classes" source="WEB-INF/src"/>
+  </class-loader>
+
+  <database jndi-name="jdbc/resin">
+    <driver type="com.caucho.db.jdbc.ConnectionPoolDataSourceImpl">
+      <path>WEB-INF/db</path>
+      <remove-on-error/>
+    </driver>
+  </database>
+
+  <resin:set var="doc_context_path" value="${webApp.contextPath}"/>
+
+    <servlet servlet-name="viewfile" 
+             servlet-class="com.caucho.doc.ViewFileServlet">
+    </servlet>
+    <servlet-mapping url-pattern="/viewfile/*" servlet-name="viewfile"/>
+  
+    <system-property javax.xml.stream.XMLOutputFactory="com.caucho.xml.stream.XMLOutputFactoryImpl"/>
+
+    <servlet servlet-name="xtp-doc" 
+             servlet-class="com.caucho.xtpdoc.ResinDocServlet"/>
+    <servlet-mapping url-pattern="*.xtp" servlet-name="xtp-doc"/>
+
+    <servlet servlet-name="reference" 
+             servlet-class="com.caucho.xtpdoc.ReferenceServlet">
+      <init>
+        <reference-document>${webApp.root}/admin/reference.xtp</reference-document>
+      </init>
+    </servlet>
+
+    <servlet-mapping url-pattern="/admin/reference/*" 
+                     servlet-name="reference"/>
+		   
+    <welcome-file-list>
+      <welcome-file>index.xtp</welcome-file>
+      <welcome-file>index.jsp</welcome-file>
+      <welcome-file>index.php</welcome-file>
+      <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+    
+    <web-app-default>
+      <servlet servlet-name="viewfile" 
+               servlet-class="com.caucho.doc.ViewFileServlet"/>
+      <servlet-mapping url-pattern="/viewfile/*" servlet-name="viewfile"/>
+      <inherit-session>true</inherit-session>
+
+      <servlet servlet-name="xtp-doc" 
+               servlet-class="com.caucho.xtpdoc.ResinDocServlet">
+        <init doc-context-path="${doc_context_path}"/>
+      </servlet>
+      <servlet-mapping url-pattern="*.xtp" servlet-name="xtp-doc"/>
+		   
+      <welcome-file-list>
+        <welcome-file>index.xtp</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.php</welcome-file>
+        <welcome-file>index.html</welcome-file>
+      </welcome-file-list>
+    </web-app-default>
+
+  <web-app-deploy url-prefix="/examples"
+                  path="examples"
+                  startup-mode="lazy">
+  </web-app-deploy>
+
+  <servlet servlet-name="javadoc" 
+           servlet-class="com.caucho.doc.JavadocRedirectServlet"/>
+
+  <servlet-mapping url-pattern="/javadoc/*" servlet-name="javadoc"/>
+
+  <resin:import path="WEB-INF/redirect.xml"/>
+</web-app>
+

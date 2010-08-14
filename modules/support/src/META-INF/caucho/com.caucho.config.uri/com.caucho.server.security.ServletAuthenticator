@@ -1,0 +1,1 @@
+acegi=org.acegisecurity.adapters.resin.ResinAcegiAuthenticator

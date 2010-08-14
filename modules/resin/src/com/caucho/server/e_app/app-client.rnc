@@ -1,0 +1,6 @@
+include "app-client-13.rnc"
+include "app-client-14.rnc"
+include "app-client-15.rnc"
+include "resin-app-client.rnc"
+
+start =  j2ee13_application-client | j2ee14_application-client | javaee15_application-client | resin_application-client

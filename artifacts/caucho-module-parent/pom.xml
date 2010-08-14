@@ -1,0 +1,133 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.caucho.modules</groupId>
+  <artifactId>caucho-module-parent</artifactId>
+  <name>caucho-module-parent</name>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+
+  <url>http://modules.caucho.com/doc/${project.groupId}/${project.artifactId}</url>
+
+  <licenses>
+    <license>
+      <name>GNU Library or Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/licenses/lgpl.html</url>
+    </license>
+  </licenses>
+
+  <mailingLists>
+    <mailingList>
+      <name>resin-interest mailing list</name>
+      <subscribe>http://maillist.caucho.com/mailman/listinfo/resin-interest</subscribe>
+      <unsubscribe>http://maillist.caucho.com/mailman/listinfo/resin-interest</unsubscribe>
+      <post>resin-interest@caucho.com.</post>
+      <archive>http://maillist.caucho.com/pipermail/resin-interest/</archive>
+      <otherArchives>
+        <otherArchive>http://www.nabble.com/Resin-f77.html</otherArchive>
+      </otherArchives>
+    </mailingList>
+  </mailingLists>
+
+  <properties>
+    <cauchoModulesDeployUrl>scp://modules.caucho.com/var/www/hosts/modules.caucho.com/webapps/ROOT</cauchoModulesDeployUrl>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>com.caucho</id>
+      <name>com.caucho</name>
+      <url>http://caucho.com/m2</url>
+    </repository>
+  </repositories>
+ 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>index</report>
+              <report>summary</report>
+              <report>dependencies</report>
+              <report>mailing-list</report>
+              <report>issue-tracking</report>
+              <report>license</report>
+              <report>scm</report>
+              <report>project-team</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <distributionManagement>
+    <downloadUrl>http://modules.caucho.com/m2</downloadUrl>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>modules.caucho.com</id>
+      <name>Caucho Modules Repository</name>
+      <url>${cauchoModulesDeployUrl}/m2</url>
+      <layout>default</layout>
+    </repository>
+    <site>
+      <id>modules.caucho.com</id>
+      <name>Caucho Modules Website</name>
+      <url>${cauchoModulesDeployUrl}/doc/${project.groupId}/${project.artifactId}</url>
+    </site>
+  </distributionManagement>
+
+</project>

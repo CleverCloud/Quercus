@@ -1,0 +1,16 @@
+java.lang
+java.util
+javax.annotation
+javax.decorator
+javax.ejb
+javax.enterprise.inject
+javax.enterprise.inject.deployment
+javax.enterprise.context
+javax.enterprise.event
+javax.inject
+javax.interceptor
+javax.jms
+javax.persistence
+javax.servlet.annotation
+javax.sql
+javax.xml.ws

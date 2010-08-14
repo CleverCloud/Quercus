@@ -1,0 +1,24 @@
+Building the Eclipse plugin 
+---------------------------
+1. Build Resin
+
+2. Copy resin.jar from the "dist" target
+   resin/artifacts/eclipse/lib
+
+Within Eclipse...
+
+3. File -> Import 
+   -> General -> Existing Projects into Workspace
+
+4. Choose the root eclipse directory:
+   resin/artifacts/eclipse
+
+5. Repeat with the update site directory:
+   resin/artifacts/eclipse-update-site
+
+5. Expand the resin.update.site project and right click on site.xml.  Select
+   PDE Tools -> Build Site.
+
+6. The contents of resin/artifacts/eclipse-update-site/update-site 
+   should be copied to
+   http://caucho.com/eclipse

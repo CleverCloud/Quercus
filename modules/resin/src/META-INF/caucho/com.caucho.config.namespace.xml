@@ -1,0 +1,16 @@
+<namespaces xmlns="http://caucho.com/ns/resin">
+
+  <namespace name="default"
+             path="META-INF/caucho/com.caucho.config/resin.xml"/>
+
+  <namespace name="http://caucho.com/ns/resin"
+             path="META-INF/caucho/com.caucho.config/resin.xml"/>
+
+  <namespace name="http://caucho.com/ns/resin/core"
+             path="META-INF/caucho/com.caucho.config/core.xml"/>
+
+  <namespace name="urn:java:com.caucho.resin"
+             path="META-INF/caucho/com.caucho.config/urnresin.xml"/>
+
+</namespaces>
+

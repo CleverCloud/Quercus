@@ -1,0 +1,121 @@
+default namespace w = "http://java.sun.com/xml/ns/javaee"
+
+namespace xsi="http://www.w3.org/2001/XMLSchema-instance"
+namespace n=""
+
+start = w_beans | compat_beans
+
+w_Any = text | (attribute * {string} | element * { w_Any })*
+
+w_alternatives = element alternatives {
+  w_class*
+  & w_stereotype*
+}
+
+w_bean-Custom = element * - w:* {
+  (w_bean-Field-Custom*
+
+   & (attribute value { string }
+      | element value { w_Any })*
+  
+   & (attribute name { string }
+      | element Named { attribute value { string }? | string }?)
+  
+   & w_new?
+  
+   & element ApplicationScoped { empty }?
+   & element ConversationScoped { empty }?
+   & element RequestScoped { empty }?
+   & element SessionScoped { empty }?
+   & element Dependent { empty }?
+   
+   & element Production { w_bean-Custom* }?
+   
+   & element Default { empty }?
+   
+   & element Decorates { empty }?
+  )
+  | string
+}
+
+w_bean-Field-Custom = element * - w:* {
+  w_Any
+}
+
+w_binding = element binding {
+  string
+}
+
+w_class = element class {
+  string
+}
+
+w_deploy = element Deploy {
+  w_bean-Field-Custom*
+  & w_standard?
+  & w_production?
+  & w_class*
+  & w_stereotype*
+}
+
+w_decorators = element decorators {
+  w_class*
+}
+
+w_name = element name {
+  string
+}
+
+w_init = element init {
+  w_Any
+}
+
+w_new =
+  attribute new { string }
+  | element new { w_Any }
+
+w_interceptors = element interceptors {
+  w_class*
+}
+
+w_producer = element producer {
+  string
+}
+
+w_production = element Production {
+  empty
+}  
+
+w_stereotype = element stereotype {
+  string
+}
+
+w_type = element type {
+  string
+}
+
+w_scope = element scope {
+  string
+}
+
+w_standard = element Standard {
+  empty
+}  
+
+w_beans = element beans {
+  attribute xsi:schemaLocation { string }?
+  
+  & w_bean-Custom*
+
+  & w_decorators?
+  
+  & w_deploy?
+  
+  & w_alternatives?
+  
+  & w_interceptors?
+}
+
+compat_beans = element n:beans {
+  w_Any
+}

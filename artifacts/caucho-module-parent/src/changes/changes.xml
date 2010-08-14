@@ -1,0 +1,12 @@
+<document>
+  <properties>
+    <title>Changes</title>
+  </properties>
+  <body>
+    <release version="1.0.0" date="2008-06" description="First release">
+      <action dev="sam" type="add">
+        Initial implementation.
+      </action>
+    </release>
+  </body>
+</document>
