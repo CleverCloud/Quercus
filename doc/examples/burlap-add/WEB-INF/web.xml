@@ -1,8 +1,0 @@
-<!--
-   - web.xml configuration file for the Hessian addition example.
-  -->
-<web-app xmlns="http://caucho.com/ns/resin">
-  <servlet servlet-name="math" servlet-class="example.BurlapMathService"/>
-
-  <servlet-mapping url-pattern="/burlap/math" servlet-name="math"/>
-</web-app>

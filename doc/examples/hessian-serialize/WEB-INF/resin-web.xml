@@ -1,4 +1,0 @@
-<web-app xmlns="http://caucho.com/ns/resin">
-  <servlet-mapping url-pattern="/serialize"
-                   servlet-class="example.HessianSerializeServlet"/>
-</web-app>

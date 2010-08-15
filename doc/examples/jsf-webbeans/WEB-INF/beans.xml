@@ -1,7 +1,0 @@
-<beans xmlns="http://java.sun.com/xml/ns/javaee">
-  <!--
-     - The beans.xml marks a class root for Java Injection to search for
-     - managed beans.  Since the example doesn't need to override any
-     - defaults, there's no additional configuration necessary.
-     -->
-</beans>

@@ -1,9 +1,0 @@
-<web-app xmlns="http://caucho.com/ns/resin">
-  <!--
-     - Instantiates the resource.
-     -
-     - The resource start(ctx) method registers a timer which periodically
-     - starts a work task.
-    -->
-  <resource jndi-name="jca/timer" type="example.TimerResource"/>
-</web-app>

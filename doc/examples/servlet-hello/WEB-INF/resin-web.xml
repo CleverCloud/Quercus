@@ -1,7 +1,0 @@
-<web-app xmlns="http://caucho.com/ns/resin">
-  <servlet servlet-name="hello"
-           servlet-class="test.HelloServlet"/>
-
-  <servlet-mapping url-pattern="/hello"
-                   servlet-name="hello"/>
-</web-app>

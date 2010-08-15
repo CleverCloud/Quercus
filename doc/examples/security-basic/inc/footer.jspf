@@ -1,8 +1,0 @@
-<%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core' %>
-
-<%-- include file to make a footer --%>
-
-<hr>
-<table>
-  <tr><td><a href="<c:url value='/index.xtp'/>">documentation for this example</a>
-</table>

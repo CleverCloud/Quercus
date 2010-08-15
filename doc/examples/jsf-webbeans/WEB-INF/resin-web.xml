@@ -1,6 +1,0 @@
-<web-app xmlns="http://caucho.com/ns/resin">
-  <!--
-  <jsf enable-developer-aid="true"/>
-  -->
-
-</web-app>
