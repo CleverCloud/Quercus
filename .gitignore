@@ -1,0 +1,7 @@
+classes/
+dist/
+lib/
+modules/c/src/common/version.h
+modules/csharp/src/common/Version.cs
+modules/kernel/src/com/caucho/Version.java
+modules/resin/src/manifest
