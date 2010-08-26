@@ -1,5 +1,4 @@
 lib/
-modules/c/src/common/version.h
 modules/csharp/src/common/Version.cs
 modules/ecmascript/classes/
 modules/ejb/classes/

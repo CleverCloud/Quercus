@@ -473,17 +473,6 @@
       </filterset>
     </copy>
 
-    <copy file="${modules}/c/src/common/version.h.in"
-          tofile="${modules}/c/src/common/version.h"
-          preservelastmodified="true"
-          overwrite="true">
-      <filterset>
-        <filter token="VERSION" value="${version}"/>
-        <filter token="DATE" value="${date}"/>
-        <filter token="VERSION_DATE" value="${vdate}"/>
-      </filterset>
-    </copy>
-
     <copy file="${modules}/csharp/src/common/Version.cs.in"
           tofile="${modules}/csharp/src/common/Version.cs"
           preservelastmodified="true"
@@ -646,10 +635,6 @@
     -->
     <mkdir dir="${install}/win32/apache-2.0"/>
     <mkdir dir="${install}/win32/apache-2.2"/>
-    <!--
-    <copy todir="${install}/win32/apache-1.3"
-          file="${win32}/resin/modules/c/src/apache1/Apache136/mod_caucho.dll"/>
-	  -->
     <copy todir="${install}/win32"
           file="${win32}/resin/modules/c/src/resin_os/Release/resin_os.dll"/>
     <copy todir="${install}/win64"
@@ -852,18 +837,6 @@
   <target name="dist" depends="dist.clean, configure, compile, update, junit, eclipselink, artifacts, ant, resin.dist.build, dist.package, quercus.war"/>
 
   <target name="configure">
-     <copy tofile="modules/c/src/resin/Makefile.in"
-	   file="${prodir}/modules/c/src/resin/Makefile.in"
-           preservelastmodified="true"
-	   failonerror="false"
-           overwrite="true"/>
-     
-     <copy tofile="modules/c/src/resinssl/Makefile.in"
-	   file="${prodir}/modules/c/src/resinssl/Makefile.in"
-           preservelastmodified="true"
-	   failonerror="false"
-           overwrite="true"/>
-     
      <mkdir dir="automake"/>
      <exec executable="aclocal"/>
      <exec executable="libtoolize">

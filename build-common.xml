@@ -130,17 +130,6 @@
         <filter token="VERSION_DATE" value="${vdate}"/>
       </filterset>
     </copy>
-
-    <copy file="${modules}/c/src/common/version.h.in"
-          tofile="${modules}/c/src/common/version.h"
-          preservelastmodified="true"
-          overwrite="true">
-      <filterset>
-        <filter token="VERSION" value="${version}"/>
-        <filter token="DATE" value="${date}"/>
-        <filter token="VERSION_DATE" value="${vdate}"/>
-      </filterset>
-    </copy>
   </target>
 
   <target name="module">
@@ -782,7 +771,6 @@
       <include name="${dist.name}/Makefile.in"/>
       <include name="${dist.name}/aclocal.m4"/>
 
-      <include name="${dist.name}/modules/c/src/**"/>
       <include name="${dist.name}/licenses"/>
       <include name="${dist.name}/keys"/>
     </patternset>
@@ -1107,36 +1095,7 @@
 	<include name="aclocal.m4"/>
 
 	<include name="init.d/resin.in"/>
-	
-	<include name="modules/c/src/Makefile.in"/>
-	
-	<include name="modules/c/src/apache1/*.c"/>
-	<include name="modules/c/src/apache1/*.h"/>
-	<include name="modules/c/src/apache1/Makefile.in"/>
-	
-	<include name="modules/c/src/apache2/*.c"/>
-	<include name="modules/c/src/apache2/*.h"/>
-	<include name="modules/c/src/apache2/Makefile.in"/>
-	
-	<include name="modules/c/src/common/*.c"/>
-	<include name="modules/c/src/common/*.h"/>
-	<include name="modules/c/src/common/Makefile.in"/>
-	
-	<include name="modules/c/src/resin_os/*.c"/>
-	<include name="modules/c/src/resin_os/*.h"/>
-	<include name="modules/c/src/resin_os/Makefile.in"/>
-	
-	<include name="modules/c/src/resin/Makefile.in"/>
-	<include name="modules/c/src/resinssl/Makefile.in"/>
       </fileset>
-
-      <fileset dir="${install}">
-	<include name="modules/c/src/resin/*.c"/>
-	<include name="modules/c/src/resin/*.h"/>
-	<include name="modules/c/src/resinssl/*.c"/>
-	<include name="modules/c/src/resinssl/*.h"/>
-      </fileset>
-
     </copy>
     
     <chmod perm="ugo+rx">
