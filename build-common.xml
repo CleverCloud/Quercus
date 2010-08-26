@@ -592,8 +592,6 @@
         <include name="modules/ext/webservices-api.jar"/>
         <include name="modules/ext/webservices-extra-api.jar"/>
         <include name="maven-lib"/>
-        <include name="win32/**"/>
-        <include name="win64/**"/>
         <include name="bin/**"/>
         <include name="xsd/**"/>
 	
@@ -1360,7 +1358,7 @@
     </delete>
   </target>
 
-  <target name="distclean" depends="init, clean, win32clean">
+  <target name="distclean" depends="init, clean">
     <delete dir="${install}/conf"/>
     <delete dir="${lib}"/>
     <delete dir="${maven.lib}"/>
@@ -1372,11 +1370,6 @@
     <delete dir="${install}/doc/WEB-INF"/>
     <delete dir="${install}/cache"/>
     <delete dir="${install}/php/quercus-war/WEB-INF/lib"/>
-  </target>
-
-  <target name="win32clean" if="win32">
-    <delete dir="${install}/win32"/>
-    <delete dir="${install}/win64"/>
   </target>
 
 </project>
