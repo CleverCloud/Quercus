@@ -473,16 +473,6 @@
       </filterset>
     </copy>
 
-    <copy file="${modules}/csharp/src/common/Version.cs.in"
-          tofile="${modules}/csharp/src/common/Version.cs"
-          preservelastmodified="true"
-          overwrite="true">
-      <filterset>
-        <filter token="VERSION" value="${version}"/>
-        <filter token="DATE" value="${date}"/>
-        <filter token="VERSION_DATE" value="${vdate}"/>
-      </filterset>
-    </copy>
   </target>
 
   <target name="javaee" depends="ejb, jca, jms, jpa, servlet16, jcache, jstl, jta, jws, inject">
@@ -587,30 +577,6 @@
       <param name="module.dist" value="${lib}"/>
       <!--param name="javac.source" value="1.5"/-->
     </antcall>
-  </target>
-
-  <target name="csharp" depends="init">
-    <property name="module.name" value="csharp"/>
-    <property name="module.src" value="${modules}/${module.name}/src"/>
-    <property name="module.build" value="${modules}/${module.name}/classes"/>
-    <property name="module.dist" value="${lib}"/>
-
-    <mkdir dir="${module.build}" />
-    
-    <path id="cs-path">
-      <fileset dir="${module.src}">
-         <include name="**/*.cs"/>
-      </fileset>
-    </path>
-
-    <exec executable="gmcs" dir="${module.build}">
-       <arg value="-target:module"/>
-       <arg value="-out:${lib}/Hessian.netmodule"/>
-       <!--
-       <arg pathref="cs-path"/>
-       -->
-       <arg value="-recurse:${module.src}/**.cs"/>
-    </exec>
   </target>
 
   <target name="deploy" depends="init, resin">

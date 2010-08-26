@@ -277,31 +277,6 @@
     </jar>
   </target>
 
-
-  <target name="csharp" depends="init">
-    <property name="module.name" value="csharp"/>
-    <property name="module.src" value="${modules}/${module.name}/src"/>
-    <property name="module.build" value="${modules}/${module.name}/classes"/>
-    <property name="module.dist" value="${lib}"/>
-
-    <mkdir dir="${module.build}" />
-    
-    <path id="cs-path">
-      <fileset dir="${module.src}">
-         <include name="**/*.cs"/>
-      </fileset>
-    </path>
-
-    <exec executable="gmcs" dir="${module.build}">
-       <arg value="-target:module"/>
-       <arg value="-out:${lib}/Hessian.netmodule"/>
-       <!--
-       <arg pathref="cs-path"/>
-       -->
-       <arg value="-recurse:${module.src}/**.cs"/>
-    </exec>
-  </target>
-
   <!--
      - distribution rules
     -->
