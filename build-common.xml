@@ -579,7 +579,6 @@
         <include name="compat/lib/javaee-15.jar"/>
         <include name="conf/**"/>
         <include name="contrib/**"/>
-        <include name="init.d/**"/>
 	<!--
         <include name="doc/**"/>
         <include name="php/**"/>
@@ -733,7 +732,6 @@
       <include name="${dist.name}/conf/**"/>
       <include name="${dist.name}/contrib/**"/>
       <include name="${dist.name}/doc/**"/>
-      <include name="${dist.name}/init.d/**"/>
       <include name="${dist.name}/lib/**"/>
       <include name="${dist.name}/project-jars/**"/>
       <include name="${dist.name}/webapps/**"/>
@@ -1066,8 +1064,6 @@
 	<include name="Makefile.am"/>
 	<include name="Makefile.in"/>
 	<include name="aclocal.m4"/>
-
-	<include name="init.d/resin.in"/>
       </fileset>
     </copy>
     
@@ -1123,26 +1119,6 @@
       </filterset>
     </copy>
     
-    <copy tofile="dist-debian/etc/init.d/resin"
-          file="${resin.install}/init.d/resin.in"
-          preservelastmodified="true"
-          overwrite="true">
-      <filterset>
-        <filter token="JAVA_HOME" value="/usr/lib/jvm/java-6-sun"/>
-        <filter token="JAVA_EXE" value="$JAVA_HOME/bin/java"/>
-        <filter token="resin_home" value="/usr/share/resin"/>
-        <filter token="resin_root" value="/var/www"/>
-        <filter token="resin_log" value="/var/log/resin"/>
-        <filter token="resin_conf" value="/etc/resin"/>
-      </filterset>
-    </copy>
-    
-    <chmod perm="ugo+rx">
-      <fileset dir="dist-debian">
-        <include name="etc/init.d/resin"/>
-      </fileset>
-    </chmod>
-
     <mkdir dir="dist-debian/usr/share/${shortproduct}-${version}/lib"/>
     <mkdir dir="dist-debian/usr/share/${shortproduct}-${version}/keys"/>
     <mkdir dir="dist-debian/usr/share/${shortproduct}-${version}/licenses"/>
@@ -1174,8 +1150,6 @@
         <exclude name="automake"/>
         <exclude name="automake/**"/>
         <exclude name="*config*"/>
-        <exclude name="init.d"/>
-        <exclude name="init.d/**"/>
         <exclude name="libtool"/>
         <exclude name="Makefile*"/>
         <exclude name="modules"/>
