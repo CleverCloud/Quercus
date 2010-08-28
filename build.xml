@@ -10,7 +10,7 @@
   <property name="debian.component" value="universe"/>
 
   <target name="compile" 
-          depends="init, hessian, javaee, jaxstream, jcache, portlet, script, resin-kernel, quercus, resin, ecmascript, inject, webutil, conf, ext, j2ee-management, j2ee-deploy">
+          depends="init, hessian, javaee, jaxstream, jcache, portlet, script, resin-kernel, quercus, resin, ecmascript, inject, webutil, ext, j2ee-management, j2ee-deploy">
   </target>
 
   <!--
@@ -46,7 +46,6 @@
         <include name="buildfiles/*.xml"/>
         <include name="icons/**/*.png"/>
         <include name="servers/*.serverdef"/>
-        <include name="conf/**"/>
         <include name="src/**"/>
         <exclude name="src/manifest"/>
       </fileset>
@@ -393,16 +392,6 @@
   </target>
 
   <target name="resin-xml" depends="init">
-    <copy tofile="conf/resin.xml"
-          file="conf/resin.xml.in"
-          preservelastmodified="true"
-          overwrite="true">
-      <filterset>
-        <filter token="HTTP_PORT" value="${resin.http}"/>
-        <filter token="HTTPS_PORT" value="${resin.https}"/>
-      </filterset>
-    </copy>
-    
     <copy tofile="modules/resin/src/manifest"
           file="modules/resin/src/manifest.in"
           preservelastmodified="true"
@@ -592,13 +581,6 @@
         <include name="com/caucho/mbeans/**"/>
       </fileset>
     </jar>
-  </target>
-
-  <target name="conf" depends="init, resin">
-    <copy todir="${install}/conf" preservelastmodified="true">
-      <fileset dir="conf">
-      </fileset>
-    </copy>
   </target>
 
   <target name="ext" depends="init, resin">
@@ -1078,7 +1060,6 @@
   -->
 
   <target name="distclean" depends="init, clean">
-    <delete dir="${install}/conf"/>
     <delete dir="${lib}"/>
     <delete dir="${maven.lib}"/>
     <delete dir="${clientlib}"/>

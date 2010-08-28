@@ -540,9 +540,6 @@
 
     <mkdir dir="${dist}/${dist.name}"/>
     
-    <copy tofile="${install}/conf/resin.xml.orig"
-          file="${resin.install}/conf/resin.xml"/>
-
     <copy todir="${dist}/${dist.name}"
           preservelastmodified="true"
           overwrite="true">
@@ -577,7 +574,6 @@
 
         <include name="automake/**"/>
         <include name="compat/lib/javaee-15.jar"/>
-        <include name="conf/**"/>
         <include name="contrib/**"/>
 	<!--
         <include name="doc/**"/>
@@ -729,7 +725,6 @@
 
       <include name="${dist.name}/automake/**"/>
       <include name="${dist.name}/compat/**"/>
-      <include name="${dist.name}/conf/**"/>
       <include name="${dist.name}/contrib/**"/>
       <include name="${dist.name}/doc/**"/>
       <include name="${dist.name}/lib/**"/>
