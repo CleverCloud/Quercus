@@ -50,7 +50,6 @@ Quercus&#153; Start Page
 </head>
 
 <body>
-<a href="http://www.caucho.com"><img border="0" src="images/caucho-white.jpg"></a>
 
 <p>
 Testing for Quercus&#153;...
