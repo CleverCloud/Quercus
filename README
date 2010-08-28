@@ -1,0 +1,33 @@
+README
+-----------------------------------------------------
+
+1. What is Quercus ?
+2. Why a fork ?
+3. Compiling
+4. Installing
+5. Report an issue
+
+
+I. What is Quercus ?
+-----------------------------------------------------
+Quercus is Caucho Technology’s fast, open-source, 100% Java implementation of the PHP language.
+
+
+II. Why a fork ?
+-----------------------------------------------------
+Clever Cloud has forked the Quercus project, formerly maintained by Caucho, to have a best response for issues and features requests.
+You can find the Git-port of Caucho SVN in the branch 'caucho' : http://github.com/CleverCloud/Quercus/tree/caucho
+
+
+III. Compiling
+-----------------------------------------------------
+
+
+IV. Installing
+-----------------------------------------------------
+
+
+V. Report an issue
+-----------------------------------------------------
+If you find an issue with our version of Quercus, please report it on the GitHub bugtracker : http://github.com/CleverCloud/Quercus/issues
+If the issue comes from Caucho's code, we will copy it on the Caucho's butracker with patches.
