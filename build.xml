@@ -10,7 +10,7 @@
   <property name="debian.component" value="universe"/>
 
   <target name="compile" 
-          depends="init, hessian, javaee, jaxstream, jcache, portlet, script, resin-kernel, quercus, resin, ecmascript, inject, webutil, ext, j2ee-management, j2ee-deploy">
+          depends="init, hessian, javaee, jaxstream, jcache, portlet, script, resin-kernel, quercus, inject">
   </target>
 
   <!--
@@ -24,7 +24,7 @@
     </antcall>
   </target>
 
-  <target name="eclipse" depends="init, resin, resin-kernel, hessian">
+  <target name="eclipse" depends="init, resin-kernel, hessian">
     <property name="eclipse.basedir" location="${artifacts}/eclipse"/>
     <property name="eclipse.build" location="${eclipse.basedir}/build"/>
   
@@ -391,17 +391,6 @@
     </antcall>
   </target>
 
-  <target name="resin-xml" depends="init">
-    <copy tofile="modules/resin/src/manifest"
-          file="modules/resin/src/manifest.in"
-          preservelastmodified="true"
-          overwrite="true">
-      <filterset>
-        <filter token="VERSION" value="${version}"/>
-      </filterset>
-    </copy>
-  </target>
-  
   <target name="script" depends="init">
     <antcall target="module" inheritRefs="true">
       <param name="module.name" value="script"/>
@@ -517,16 +506,7 @@
     </jar>
   </target>
 
-  <target name="resin-compile">
-    <!-- build module -->
-
-    <antcall target="module" inheritRefs="true">
-      <param name="module.name" value="resin"/>
-      <param name="module.dist" value="${lib}"/>
-    </antcall>
-  </target>
-  
-  <target name="resin" depends="init, resin-xml, hessian, jcache, javaee, portlet, script, resin-kernel, resin-compile"/>
+  <!-- <target name="resin" depends="init, resin-xml, hessian, jcache, javaee, portlet, script, resin-kernel, resin-compile"/> -->
 
   <!--
   <target name="jaf" depends="init">
@@ -544,7 +524,7 @@
     </antcall>
   </target>
 
-  <target name="webutil" depends="init, resin">
+  <target name="webutil" depends="init"> <!-- resin dep was deleted -->
     <antcall target="module" inheritRefs="true">
       <param name="module.name" value="webutil"/>
       <param name="module.dist" value="${lib}"/>
@@ -568,7 +548,7 @@
     </antcall>
   </target>
 
-  <target name="deploy" depends="init, resin">
+  <target name="deploy" depends="init"> <!-- resin dep was deleted -->
     <mkdir dir="${clientlib}"/>
     <jar jarfile="${clientlib}/resin-deploy.jar"
          compress="${jar.compress}" index="${jar.index}" update="${jar.update}"
@@ -583,7 +563,7 @@
     </jar>
   </target>
 
-  <target name="ext" depends="init, resin">
+  <target name="ext" depends="init"> <!-- resin dep was deleted -->
     <copy todir="${install}/lib" preservelastmodified="true">
       <fileset dir="${ext}">
       </fileset>
