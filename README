@@ -16,15 +16,17 @@ Quercus is Caucho Technology’s fast, open-source, 100% Java implementation of 
 II. Why a fork ?
 -----------------------------------------------------
 Clever Cloud has forked the Quercus project, formerly maintained by Caucho, to have a best response for issues and features requests.
-You can find the Git-port of Caucho SVN in the branch 'caucho' : http://github.com/CleverCloud/Quercus/tree/caucho
+You can find the Git-port of Caucho SVN here : http://github.com/Kdecherf/resin
 
 
 III. Compiling
 -----------------------------------------------------
+Just launch ant and wait ;-)
 
 
 IV. Installing
 -----------------------------------------------------
+
 
 
 V. Report an issue
