@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.*;
+import java.util.Currency;
+import java.util.Locale;
 import java.lang.Integer;
 
 /**
@@ -64,6 +66,8 @@ public class OptionsModule extends AbstractQuercusModule {
     public static final int PHP_INT_MAX = Integer.MAX_VALUE;
     // PHP int size is in byte representation
     public static final int PHP_INT_SIZE = Integer.SIZE / 8;
+    public static final String CURRENCY_SYMBOL = (Currency.getInstance(Locale.getDefault())).getSymbol();
+    public static final String INT_CURR_SYMBOL = (Currency.getInstance(Locale.getDefault())).toString();
     public static final int ASSERT_ACTIVE = 1;
     public static final int ASSERT_CALLBACK = 2;
     public static final int ASSERT_BAIL = 3;
