@@ -94,7 +94,7 @@ class QITS {
 		    $repl = sprintf('<a href="http://php.net/manual/en/function.%s.php">%s()</a>', strtr($item, array('_' => '-')), $item);
 		    break;
 		case 'classes':
-		    $repl = sprintf('<a href="http://php.net/manual/en/class.%s.php">%s()</a>', strtr($item, array('_' => '-')), $item);
+		    $repl = sprintf('<a href="http://php.net/manual/en/class.%s.php">%s::</a>', strtr($item, array('_' => '-')), $item);
 		    break;
 		case 'methods':
 		    $repl = sprintf('<a href="http://php.net/manual/en/function.%s.php">%s()</a>', strtr($item, array('_' => '-','::'=>'-')), $item);

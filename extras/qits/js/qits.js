@@ -41,15 +41,15 @@ function getImpl(type) {
 	$('<strong />').html(data.stats.t).appendTo($('span',_bt));
 	$(inner2).append(_bt);
 
-	var _bo = $('<div />');
-	$(_bo).addClass('impl').html('Implemented '+type+' : ');
-	$('<span />').html('<strong>'+data.stats.o+'</strong> (<strong>'+data.stats.po+'%</strong>)').appendTo($(_bo));
-	$(inner2).append(_bo);
-
 	var _bi = $('<div />');
 	$(_bi).addClass('ignore').html('Ignored '+type+' : ');
 	$('<span />').html('<strong>'+data.stats.i+'</strong> (<strong>'+data.stats.pi+'%</strong>)').appendTo($(_bi));
 	$(inner2).append(_bi);
+
+	var _bo = $('<div />');
+	$(_bo).addClass('impl').html('Implemented '+type+' : ');
+	$('<span />').html('<strong>'+data.stats.o+'</strong> (<strong>'+data.stats.po+'%</strong>)').appendTo($(_bo));
+	$(inner2).append(_bo);
 
 	// Create tinybox
 	var tbI = $('<div />');
