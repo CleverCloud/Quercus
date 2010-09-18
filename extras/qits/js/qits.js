@@ -30,9 +30,7 @@ function getImpl(type) {
 	var container = $("#"+type);
 	var inner = $('.Inner',container);
 
-	// Remove loading image
-	$('.Loading',container).remove();
-
+	
 	// Create tinybox
 	var tbI = $('<div />');
 	$(tbI).addClass('tb-box').addClass(data.tb).html(getTb(data.tb));
@@ -76,6 +74,10 @@ function getImpl(type) {
 
 	// Show result
 	$(inner).show();
+	
+	// Remove loading image
+	$('.Loading',container).remove();
+
     });
 }
 
