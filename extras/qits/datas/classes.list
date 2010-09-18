@@ -1,3 +1,4 @@
+__php_incomplete_class
 Phar
 PharData
 PharException
@@ -63,6 +64,7 @@ dateperiod
 datetime
 datetimezone
 dir
+directory
 directoryiterator
 domainexception
 domattr
@@ -178,6 +180,7 @@ parentiterator
 pdo
 pdoexception
 pdostatement
+php_user_filter
 rangeexception
 rararchive
 rarentry
@@ -254,6 +257,7 @@ spltempfileobject
 sqlite3
 sqlite3result
 sqlite3stmt
+stdclass
 stomp
 stompexception
 stompframe
