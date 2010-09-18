@@ -1,0 +1,143 @@
+/*
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.1.0
+build: 2026
+*/
+html{}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;}table{border-collapse:collapse;border-spacing:0;}fieldset,img{border:0;}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}li{list-style:none;}caption,th{text-align:left;}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}q:before,q:after{content:'';}abbr,acronym{border:0;font-variant:normal;}sup{vertical-align:text-top;}sub{vertical-align:text-bottom;}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;}input,textarea,select{font-size:100%;}legend{color:#000;}
+
+.clear {
+    clear: both;
+    height: 0px;
+}
+
+strong {
+    font-weight: bold;
+}
+
+img {
+    vertical-align: middle;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.total,.impl,.ignore {
+    font-size: 13px;
+    position: relative;
+    width: 300px;
+}
+.total:hover,.impl:hover,.ignore:hover {
+    background-color: #EFEFEF;
+}
+.total span,.impl span,.ignore span {
+    position: absolute;
+    left: 175px;
+    top: 0px;
+}
+
+.more {
+    margin-top: 25px;
+    margin-bottom: 5px;
+}
+.more a {
+    color: #800000;
+    text-decoration: none;
+    font-weight: bold;
+}
+.more a:hover {
+    color: #CC0000;
+}
+
+.Box {
+    border: 1px solid #999999;
+    padding: 10px;
+    margin: 25px;
+}
+
+.datas {
+    display: none;
+}
+
+.datas ul {
+  float: left;
+  width: 12em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: auto;
+}
+
+.datas li {
+  float: left;
+  width: auto;
+  margin: 0;
+  padding: 1px 5px;
+}
+.datas li a {
+    text-decoration: none;
+    color: #333333;
+}
+.datas li a:hover {
+    color: #CC0000;
+}
+.datas h3 {
+    font-size: 12px;
+    margin: 5px;
+    font-weight: bold;
+    color: #666666;
+}
+
+.Inner {
+    display: none;
+}
+
+
+/* TB Boxes
+**************/
+.tb-box {
+    margin: 25px 0px;
+    padding: 20px 10px 20px 90px;
+    border: 1px solid #000000;
+    background-repeat: no-repeat !important;
+    background-position: 20px center !important;
+    width: 325px;
+    font-size: 13px;
+}
+.tb-box.warn {
+    background: #FDF4BA;
+    color: #FF8000;
+    border-color: #FF8000;
+    font-weight: bold;
+    background-image: url('../images/alert.png');
+}
+.tb-box.error {
+    background: #fdadb3;
+    color: #CC0000;
+    border-color: #CC0000;
+    font-weight: bold;
+    background-image: url('../images/error.png');
+}
+.tb-box.ok {
+    background: #c6fec7;
+    color: #00AA00;
+    border-color: #00AA00;
+    font-weight: bold;
+    background-image: url('../images/success.png');
+}
