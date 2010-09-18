@@ -1,0 +1,16 @@
+com_addref
+com_create_guid
+com_event_sink
+com_get
+com_get_active_object
+com_invoke
+com_isenum
+com_load
+com_load_typelib
+com_message_pump
+com_print_typeinfo
+com_propget
+com_propput
+com_propset
+com_release
+com_set
