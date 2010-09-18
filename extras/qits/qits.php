@@ -22,6 +22,9 @@ class QITS {
 	    case 'classes':
 		$func = 'class_exists';
 		break;
+	    case 'methods':
+		$func = 'method_exists';
+		break;
 	    case 'constants':
 		$func = 'defined';
 		break;
@@ -33,11 +36,24 @@ class QITS {
 	foreach ($this->_list as $function) {
 	    if (in_array($function, $this->_ignore))
 		$this->_stats['i']++;
-	    else if ($func($function))
-		$this->_stats['o']++;
 	    else {
-		$this->_nok[] = $function;
-		$this->_stats['u']++;
+		if ($this->_type == 'methods') {
+		    list($class,$method) = split('::',$function);
+
+		    if ($func($class,$method))
+			  $this->_stats['o']++;
+		    else {
+			$this->_nok[] = $function;
+			$this->_stats['u']++;
+		    }
+		} else {
+		    if ($func($function))
+			$this->_stats['o']++;
+		    else {
+			$this->_nok[] = $function;
+			$this->_stats['u']++;
+		    }
+		}
 	    }
 
 	    $this->_stats['t']++;
@@ -79,13 +95,15 @@ class QITS {
 		    break;
 		case 'classes':
 		    $repl = sprintf('<a href="http://php.net/manual/en/class.%s.php">%s()</a>', strtr($item, array('_' => '-')), $item);
-		    ;
+		    break;
+		case 'methods':
+		    $repl = sprintf('<a href="http://php.net/manual/en/function.%s.php">%s()</a>', strtr($item, array('_' => '-','::'=>'-')), $item);
 		    break;
 		default:
 		    $repl = $item;
 		    break;
 	    }
-	    
+
 	    $buffer['data'][] = $repl;
 	}
 

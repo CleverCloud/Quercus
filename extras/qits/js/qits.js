@@ -12,6 +12,7 @@ $(document).ready(function(){
 
     getImpl('functions');
     getImpl('classes');
+    getImpl('methods');
     getImpl('constants');
 
     getVer();
@@ -30,29 +31,32 @@ function getImpl(type) {
 	var container = $("#"+type);
 	var inner = $('.Inner',container);
 
+	var inner2 = $('<div />');
+	$(inner2).addClass('Inner2').appendTo($(inner));
 	
-	// Create tinybox
-	var tbI = $('<div />');
-	$(tbI).addClass('tb-box').addClass(data.tb).html(getTb(data.tb));
-	$(inner).append(tbI);
-
 	// Show stats
 	var _bt = $('<div />');
 	$(_bt).addClass('total').html('Referenced '+type+' : ');
 	$('<span />').appendTo($(_bt));
 	$('<strong />').html(data.stats.t).appendTo($('span',_bt));
-	$(inner).append(_bt);
+	$(inner2).append(_bt);
 
 	var _bo = $('<div />');
 	$(_bo).addClass('impl').html('Implemented '+type+' : ');
 	$('<span />').html('<strong>'+data.stats.o+'</strong> (<strong>'+data.stats.po+'%</strong>)').appendTo($(_bo));
-	$(inner).append(_bo);
+	$(inner2).append(_bo);
 
 	var _bi = $('<div />');
 	$(_bi).addClass('ignore').html('Ignored '+type+' : ');
 	$('<span />').html('<strong>'+data.stats.i+'</strong> (<strong>'+data.stats.pi+'%</strong>)').appendTo($(_bi));
-	$(inner).append(_bi);
+	$(inner2).append(_bi);
 
+	// Create tinybox
+	var tbI = $('<div />');
+	$(tbI).addClass('tb-box').addClass(data.tb).html(getTb(data.tb));
+	$(inner).append(tbI);
+
+	$('<div />').addClass('clear').appendTo($(inner));
 
 	// Create link for details
 	var more = $('<div />');

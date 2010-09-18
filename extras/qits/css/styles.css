@@ -38,6 +38,11 @@ h2 {
     margin-bottom: 15px;
 }
 
+.Inner2 {
+    float: left;
+    margin: 6px;
+}
+
 .total,.impl,.ignore {
     font-size: 13px;
     position: relative;
@@ -76,19 +81,19 @@ h2 {
 }
 
 .datas ul {
-  float: left;
-  width: 12em;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  width: auto;
+    float: left;
+    width: 12em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: auto;
 }
 
 .datas li {
-  float: left;
-  width: auto;
-  margin: 0;
-  padding: 1px 5px;
+    float: left;
+    width: auto;
+    margin: 0;
+    padding: 1px 5px;
 }
 .datas li a {
     text-decoration: none;
@@ -112,13 +117,13 @@ h2 {
 /* TB Boxes
 **************/
 .tb-box {
-    margin: 25px 0px;
     padding: 20px 10px 20px 90px;
     border: 1px solid #000000;
     background-repeat: no-repeat !important;
     background-position: 20px center !important;
     width: 325px;
     font-size: 13px;
+    float: left;
 }
 .tb-box.warn {
     background: #FDF4BA;
