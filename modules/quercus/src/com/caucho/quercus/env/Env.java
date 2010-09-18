@@ -100,8 +100,10 @@ public class Env
   public static final int B_USER_NOTICE = 10;
   public static final int B_STRICT = 11;
   public static final int B_RECOVERABLE_ERROR = 12;
+  public static final int B_DEPRECATED = 13;
+  public static final int B_USER_DEPRECATED = 14;
 
-  public static final int B_LAST = B_RECOVERABLE_ERROR;
+  public static final int B_LAST = B_USER_DEPRECATED;
 
   public static final int E_ERROR = 1 << B_ERROR;
   public static final int E_WARNING = 1 << B_WARNING;
@@ -117,6 +119,8 @@ public class Env
   public static final int E_ALL = 6143; //(4096 + 2048 - 1)
   public static final int E_STRICT = 1 << B_STRICT;
   public static final int E_RECOVERABLE_ERROR = 1 << B_RECOVERABLE_ERROR;
+  public static final int E_DEPRECATED = 1 << B_DEPRECATED;
+  public static final int E_USER_DEPRECATED = 1 << B_USER_DEPRECATED;
 
   public static final int E_DEFAULT = E_ALL & ~E_NOTICE;
 

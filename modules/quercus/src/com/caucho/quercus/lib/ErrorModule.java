@@ -69,6 +69,8 @@ public class ErrorModule extends AbstractQuercusModule {
   public static final int E_ALL = Env.E_ALL;
   public static final int E_STRICT = Env.E_STRICT;
   public static final int E_RECOVERABLE_ERROR = Env.E_RECOVERABLE_ERROR;
+  public static final int E_DEPRECATED = Env.E_DEPRECATED;
+  public static final int E_USER_DEPRECATED = Env.E_USER_DEPRECATED;
 
   public static final StringValue ARGS = new ConstStringValue("args");
   public static final StringValue CLASS = new ConstStringValue("class");
