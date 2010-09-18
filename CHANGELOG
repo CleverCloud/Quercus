@@ -1,0 +1,13 @@
+ChangeLog for Quercus by Clever Cloud
+-------------------------------------
+
+Version 4.0.10c 18-Sep-2010
+---------------------------
+- Fixing c#4125 : ob_get_clean() does not exec ob_end_clean()
+- Fixing c#4139 : "unknown lexeme:/ in" error when a comment is between 'implements' keyword and '{'
+- Adding URL Rewrite Filter 4.0
+- Adding MySQL Connector 5.1.13 (quercus-war)
+- Fixing #1 : reserved constant PHP_EOL
+- Adding QITS : Quercus Implementation Testing System
+- Adding reserved constants : PHP_INT_MAX, PHP_INT_SIZE, CURRENCY_SYMBOL, INT_CURR_SYMBOL
+- Adding reserved constants : E_DEPRECATED, E_USER_DEPRECATED

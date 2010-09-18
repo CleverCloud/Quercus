@@ -33,11 +33,11 @@ public class QuercusVersion
 { 
   public static String getVersionNumber()
   {
-    return "4.0.7";
+    return "4.0.10c";
   }
 
   public static String getVersionDate()
   {
-    return "20100511";
+    return "20100918";
   }
 }
