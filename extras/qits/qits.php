@@ -82,7 +82,7 @@ class QITS {
 		    ;
 		    break;
 		default:
-		    $repl = '%s';
+		    $repl = $item;
 		    break;
 	    }
 	    
