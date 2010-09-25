@@ -713,8 +713,27 @@ public class StringModule extends AbstractQuercusModule {
 	return implode(env, glueV, piecesV);
     }
 
-    // XXX: lcfirst
+    /**
+     * Lowercases the first character
+     *
+     * @param string the input string
+     */
+    public static StringValue lcfirst(Env env, StringValue string) {
+	if (string == null) {
+	    return env.getEmptyString();
+	} else if (string.length() == 0) {
+	    return string;
+	}
+
+	StringValue sb = string.createStringBuilder();
+
+	sb = sb.append(Character.toLowerCase(string.charAt(0)));
+	sb = sb.append(string, 1, string.length());
+
+	return sb;
+    }
     // XXX: levenshtein
+
     /**
      * Gets locale-specific symbols.
      * XXX: locale charset
