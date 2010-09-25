@@ -86,6 +86,7 @@ public class StringModule extends AbstractQuercusModule {
     private static final Logger log =
 	    Logger.getLogger(StringModule.class.getName());
     private static final L10N L = new L10N(StringModule.class);
+    public static final int CODESET = 14;
     public static final int CRYPT_SALT_LENGTH = 2;
     public static final int CRYPT_STD_DES = 0;
     public static final int CRYPT_EXT_DES = 0;
@@ -99,9 +100,11 @@ public class StringModule extends AbstractQuercusModule {
     public static final int LC_MONETARY = 5;
     public static final int LC_ALL = 6;
     public static final int LC_MESSAGES = 7;
+    public static final int NOEXPR = (10 << 15) + 1;
     public static final int STR_PAD_LEFT = 1;
     public static final int STR_PAD_RIGHT = 0;
     public static final int STR_PAD_BOTH = 2;
+    public static final int YESEXPR = 10 << 15;
     private static final DecimalFormatSymbols DEFAULT_DECIMAL_FORMAT_SYMBOLS;
     private static final BigInteger BIG_TEN = new BigInteger("10");
     private static final BigInteger BIG_2_64 = BigInteger.ONE.shiftLeft(64);
