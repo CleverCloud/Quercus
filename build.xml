@@ -937,6 +937,15 @@
     </copy>
   </target>
 
+  <target name="qits" depends="init">
+      <property name="qits.dir" value="extras/qits"/>
+
+      <copy tofile="${qits.dir}/WEB-INF/lib/resin-kernel.jar"
+          file="lib/resin-kernel.jar"/>
+      <copy tofile="${qits.dir}/WEB-INF/lib/quercus.jar"
+          file="lib/quercus.jar"/>
+  </target>
+
   <target name="quercus.war" depends="init, resin.dist.jar">
     <property name="quercus.dist.name" value="quercus-war-${version}"/>
   
