@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.string;
 
 import java.io.IOException;
@@ -43,197 +42,199 @@ import com.caucho.quercus.lib.ArrayModule;
 import com.caucho.util.L10N;
 import com.caucho.vfs.ByteToChar;
 
-public class StringUtility
-{
-  private static final L10N L = new L10N(StringModule.class);
+public class StringUtility {
 
-  public static Value parseStr(Env env,
-                               CharSequence str,
-                               ArrayValue result,
-                               boolean isRef,
-                               String encoding)
-  {
-    return parseStr(env, str, result, isRef, encoding,
-                    env.getIniBoolean("magic_quotes_gpc"),
-                    Env.DEFAULT_QUERY_SEPARATOR_MAP);
-  }
-  
-  public static Value parseStr(Env env,
-                               CharSequence str,
-                               ArrayValue result,
-                               boolean isRef,
-                               String encoding,
-                               boolean isMagicQuotes,
-                               int []querySeparatorMap)
-  {
-    try {
-      ByteToChar byteToChar = env.getByteToChar();
-      
-      if (encoding != null)
-        byteToChar.setEncoding(encoding);
-      
-      int len = str.length();
+    private static final L10N L = new L10N(StringModule.class);
 
-      for (int i = 0; i < len; i++) {
-        int ch = 0;
-        byteToChar.clear();
-
-        for (; i < len && querySeparatorMap[ch = str.charAt(i)] > 0; i++) {
-        }
-      
-        for (; i < len && (ch = str.charAt(i)) != '='
-             && querySeparatorMap[ch] == 0; i++) {
-          i = addQueryChar(byteToChar, str, len, i, ch);
-        }
-
-        String key = byteToChar.getConvertedString();
-
-        byteToChar.clear();
-
-        String value;
-        if (ch == '=') {
-          for (i++; i < len
-               && querySeparatorMap[ch = str.charAt(i)] == 0; i++) {
-            i = addQueryChar(byteToChar, str, len, i, ch);
-          }
-
-          value = byteToChar.getConvertedString();
-        }
-        else
-          value = "";
-
-        if (isRef) {
-          Post.addFormValue(env, result, key,
-                            new String[] { value }, isMagicQuotes);
-        } else {
-          // If key is an exsiting array, then append
-          // this value to existing array
-          // Only use extract(EXTR_OVERWRITE) on non-array variables or
-          // non-existing arrays
-          int openBracketIndex = key.indexOf('[');
-          int closeBracketIndex = key.indexOf(']');
-          if (openBracketIndex > 0) {
-            String arrayName = key.substring(0, openBracketIndex);
-            arrayName = arrayName.replaceAll("\\.", "_");
-            
-            Value v = env.getVar(arrayName).getRawValue();
-            if (v instanceof ArrayValue) {
-              //Check to make sure valid string (ie: foo[...])
-              if (closeBracketIndex < 0) {
-                env.warning(L.l("invalid array {0}", key));
-                return NullValue.NULL;
-              }
-
-              if (closeBracketIndex > openBracketIndex + 1) {
-                String index = key
-                    .substring(key.indexOf('[') + 1, key.indexOf(']'));
-                v.put(env.createString(index), env.createString(value));
-              } else {
-                v.put(env.createString(value));
-              }
-            } else {
-              Post.addFormValue(env, result, key,
-                                new String[] { value }, isMagicQuotes);
-            }
-          } else {
-            Post.addFormValue(env, result, key,
-                              new String[] { value }, isMagicQuotes);
-          }
-        }
-      }
-
-      if (! isRef) {
-        ArrayModule.extract(env, result,
-                            ArrayModule.EXTR_OVERWRITE,
-                            null);
-      }
-
-      return NullValue.NULL;
-    } catch (IOException e) {
-      throw new QuercusModuleException(e);
+    public static Value parseStr(Env env,
+	    CharSequence str,
+	    ArrayValue result,
+	    boolean isRef,
+	    String encoding) {
+	return parseStr(env, str, result, isRef, encoding,
+		env.getIniBoolean("magic_quotes_gpc"),
+		Env.DEFAULT_QUERY_SEPARATOR_MAP);
     }
-  }
 
-  protected static int addQueryChar(ByteToChar byteToChar,
-                                    CharSequence str,
-                                    int len,
-                                    int i,
-                                    int ch)
-    throws IOException
-  {
-    if (str == null)
-      str = "";
+    public static Value parseStr(Env env,
+	    CharSequence str,
+	    ArrayValue result,
+	    boolean isRef,
+	    String encoding,
+	    boolean isMagicQuotes,
+	    int[] querySeparatorMap) {
+	try {
+	    ByteToChar byteToChar = env.getByteToChar();
 
-    switch (ch) {
-    case '+':
-      byteToChar.addChar(' ');
-      return i;
+	    if (encoding != null) {
+		byteToChar.setEncoding(encoding);
+	    }
 
-    case '%':
-      if (i + 2 < len) {
-        int d1 = StringModule.hexToDigit(str.charAt(i + 1));
-        int d2 = StringModule.hexToDigit(str.charAt(i + 2));
+	    int len = str.length();
 
-        // XXX: d1 and d2 may be -1 if not valid hex chars
-        byteToChar.addByte(d1 * 16 + d2);
+	    for (int i = 0; i < len; i++) {
+		int ch = 0;
+		byteToChar.clear();
 
-        return i + 2;
-      }
-      else {
-        byteToChar.addByte((byte) ch);
-        return i;
-      }
+		for (; i < len && querySeparatorMap[ch = str.charAt(i)] > 0; i++) {
+		}
 
-    default:
-      byteToChar.addByte((byte) ch);
-      return i;
+		for (; i < len && (ch = str.charAt(i)) != '='
+			&& querySeparatorMap[ch] == 0; i++) {
+		    i = addQueryChar(byteToChar, str, len, i, ch);
+		}
+
+		String key = byteToChar.getConvertedString();
+
+		byteToChar.clear();
+
+		String value;
+		if (ch == '=') {
+		    for (i++; i < len
+			    && querySeparatorMap[ch = str.charAt(i)] == 0; i++) {
+			i = addQueryChar(byteToChar, str, len, i, ch);
+		    }
+
+		    value = byteToChar.getConvertedString();
+		} else {
+		    value = "";
+		}
+
+		if (isRef) {
+		    Post.addFormValue(env, result, key,
+			    new String[]{value}, isMagicQuotes);
+		} else {
+		    // If key is an exsiting array, then append
+		    // this value to existing array
+		    // Only use extract(EXTR_OVERWRITE) on non-array variables or
+		    // non-existing arrays
+		    int openBracketIndex = key.indexOf('[');
+		    int closeBracketIndex = key.indexOf(']');
+		    if (openBracketIndex > 0) {
+			String arrayName = key.substring(0, openBracketIndex);
+			arrayName = arrayName.replaceAll("\\.", "_");
+
+			Value v = env.getVar(arrayName).getRawValue();
+			if (v instanceof ArrayValue) {
+			    //Check to make sure valid string (ie: foo[...])
+			    if (closeBracketIndex < 0) {
+				env.warning(L.l("invalid array {0}", key));
+				return NullValue.NULL;
+			    }
+
+			    if (closeBracketIndex > openBracketIndex + 1) {
+				String index = key.substring(key.indexOf('[') + 1, key.indexOf(']'));
+				v.put(env.createString(index), env.createString(value));
+			    } else {
+				v.put(env.createString(value));
+			    }
+			} else {
+			    Post.addFormValue(env, result, key,
+				    new String[]{value}, isMagicQuotes);
+			}
+		    } else {
+			Post.addFormValue(env, result, key,
+				new String[]{value}, isMagicQuotes);
+		    }
+		}
+	    }
+
+	    if (!isRef) {
+		ArrayModule.extract(env, result,
+			ArrayModule.EXTR_OVERWRITE,
+			null);
+	    }
+
+	    return NullValue.NULL;
+	} catch (IOException e) {
+	    throw new QuercusModuleException(e);
+	}
     }
-  }
 
-  public static void addQueryValue(Env env, ArrayValue array,
-                                   String key, String valueStr)
-  {
-    if (key == null)
-      key = "";
-    
-    if (valueStr == null)
-      valueStr = "";
-    
-    int p;
+    protected static int addQueryChar(ByteToChar byteToChar,
+	    CharSequence str,
+	    int len,
+	    int i,
+	    int ch)
+	    throws IOException {
+	if (str == null) {
+	    str = "";
+	}
 
-    Value value = env.createString(valueStr);
+	switch (ch) {
+	    case '+':
+		byteToChar.addChar(' ');
+		return i;
 
-    if ((p = key.indexOf('[')) > 0 && key.endsWith("]")) {
-      String index = key.substring(p + 1, key.length() - 1);
-      key = key.substring(0, p);
+	    case '%':
+		if (i + 2 < len) {
+		    int d1 = StringModule.hexToDigit(str.charAt(i + 1));
+		    int d2 = StringModule.hexToDigit(str.charAt(i + 2));
 
-      Value keyValue = env.createString(key);
+		    // XXX: d1 and d2 may be -1 if not valid hex chars
+		    byteToChar.addByte(d1 * 16 + d2);
 
-      Value part;
+		    return i + 2;
+		} else {
+		    byteToChar.addByte((byte) ch);
+		    return i;
+		}
 
-      if (array != null)
-        part = array.get(keyValue);
-      else
-        part = env.getVar(key);
-
-      if (! part.isArray())
-        part = new ArrayValueImpl();
-
-      if (index.equals(""))
-        part.put(value);
-      else
-        part.put(env.createString(index), value);
-
-      if (array != null)
-        array.put(keyValue, part);
-      else
-        env.setVar(key, part);
+	    default:
+		byteToChar.addByte((byte) ch);
+		return i;
+	}
     }
-    else {
-      if (array != null)
-        array.put(env.createString(key), value);
-      else
-        env.setVar(key, value);
+
+    public static void addQueryValue(Env env, ArrayValue array,
+	    String key, String valueStr) {
+	if (key == null) {
+	    key = "";
+	}
+
+	if (valueStr == null) {
+	    valueStr = "";
+	}
+
+	int p;
+
+	Value value = env.createString(valueStr);
+
+	if ((p = key.indexOf('[')) > 0 && key.endsWith("]")) {
+	    String index = key.substring(p + 1, key.length() - 1);
+	    key = key.substring(0, p);
+
+	    Value keyValue = env.createString(key);
+
+	    Value part;
+
+	    if (array != null) {
+		part = array.get(keyValue);
+	    } else {
+		part = env.getVar(key);
+	    }
+
+	    if (!part.isArray()) {
+		part = new ArrayValueImpl();
+	    }
+
+	    if (index.equals("")) {
+		part.put(value);
+	    } else {
+		part.put(env.createString(index), value);
+	    }
+
+	    if (array != null) {
+		array.put(keyValue, part);
+	    } else {
+		env.setVar(key, part);
+	    }
+	} else {
+	    if (array != null) {
+		array.put(env.createString(key), value);
+	    } else {
+		env.setVar(key, value);
+	    }
+	}
     }
-  }
 }
