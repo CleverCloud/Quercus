@@ -1320,7 +1320,25 @@ public class StringModule extends AbstractQuercusModule {
 	return NumberFormat.getCurrencyInstance(locale).format(value);
     }
 
-    // XXX: nl_langinfo
+    public static String nl_langinfo(Env env, int item) {
+	QuercusLocale money = env.getLocaleInfo().getMonetary();
+
+	Locale locale = money.getLocale();
+
+	DecimalFormatSymbols decimal = new DecimalFormatSymbols(locale);
+	Currency currency = NumberFormat.getInstance(locale).getCurrency();
+
+	String result;
+
+	switch (item) {
+	    default:
+		result = "false";
+		break;
+	}
+
+	return result;
+    }
+
     // XXX: nl2br
     /**
      * Returns a formatted number.
