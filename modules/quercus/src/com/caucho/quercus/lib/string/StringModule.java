@@ -732,7 +732,41 @@ public class StringModule extends AbstractQuercusModule {
 
 	return sb;
     }
-    // XXX: levenshtein
+
+    /**
+     * Calculate Levenshtein distance between two strings
+     *
+     * @param str1 first string
+     * @param str2 second string
+     * @param cost_ins defines the cost of insertion *ignored*
+     * @param cost_rep defines the cost of replacement *ignored*
+     * @param cost_del defines the cost of deletion *ignored*
+     * @return int Levenshtein-Distance between the two argument strings
+     *
+     * TODO adding support of cost_ins, cost_rep and cost_del arguments
+     */
+    public static int levenshtein(String str1, String str2, @Optional int cost_ins, @Optional int cost_rep, @Optional int cost_del) {
+	int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+
+	for (int i = 0; i < dp.length; i++) {
+	    for (int j = 0; j < dp[i].length; j++) {
+
+		dp[i][j] = i == 0 ? j : j == 0 ? i : 0;
+
+		if (i > 0 && j > 0) {
+
+		    if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+			dp[i][j] = dp[i - 1][j - 1];
+		    } else {
+			dp[i][j] = Math.min(dp[i][j - 1] + 1, Math.min(
+				dp[i - 1][j - 1] + 1, dp[i - 1][j] + 1));
+		    }
+
+		}
+	    }
+	}
+	return dp[str1.length()][str2.length()];
+    }
 
     /**
      * Gets locale-specific symbols.
