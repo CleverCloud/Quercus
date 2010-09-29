@@ -1335,7 +1335,7 @@ public class StringModule extends AbstractQuercusModule {
 
 	switch (item) {
 	    default:
-		result = "false";
+		result = Boolean.FALSE.toString();
 		break;
 	}
 
