@@ -70,7 +70,7 @@ public class ExtValueMarshal extends Marshal
     if (value == null || ! value.isset())
       return null;
 
-    // XXX: need QA, added for mantis view bug page
+    // TODO: need QA, added for mantis view bug page
     value = value.toValue();
 
     if (expectedClass.isAssignableFrom(value.getClass()))

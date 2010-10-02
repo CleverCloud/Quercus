@@ -127,7 +127,7 @@ public class ExifModule extends AbstractQuercusModule {
       if (formatName.equals("tiff"))
         return LongValue.create(ImageModule.IMAGETYPE_TIFF_II);
       /*
-      // XXX: check byte order
+      // TODO: check byte order
       if (formatName.equals("tiff"))
       return ImageModule.IMAGETYPE_TIFF_MM;
       */

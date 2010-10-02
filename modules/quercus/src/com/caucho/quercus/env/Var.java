@@ -90,7 +90,7 @@ public class Var extends Value
     if (value.isVar())
       return (Var) value;
     else {
-      // XXX:
+      // TODO:
       
       _value = value;
       

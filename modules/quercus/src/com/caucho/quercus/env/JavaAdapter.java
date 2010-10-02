@@ -131,7 +131,7 @@ abstract public class JavaAdapter extends ArrayValue
       Value key = entry.getKey();
 
       if (key instanceof StringValue) {
-        // XXX: intern?
+        // TODO: intern?
         obj.putField(env, key.toString(), entry.getValue());
       }
     }

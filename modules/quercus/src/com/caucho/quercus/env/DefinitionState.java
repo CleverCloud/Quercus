@@ -158,7 +158,7 @@ public final class DefinitionState {
     ArrayValue internal = _quercus.getDefinedFunctions();
     ArrayValue user = new ArrayValueImpl();
 
-    // XXX: i18n
+    // TODO: i18n
     result.put(new StringBuilderValue("internal"), internal);
     result.put(new StringBuilderValue("user"), user);
 
@@ -267,7 +267,7 @@ public final class DefinitionState {
    */
   public Value addFunction(String name, String lowerName, AbstractFunction fun)
   {
-    // XXX: skip the old function check since the include for compiled
+    // TODO: skip the old function check since the include for compiled
     // pages is already verified.  Might have a switch here?
     /*
     AbstractFunction oldFun = _lowerFunMap.get(lowerName);

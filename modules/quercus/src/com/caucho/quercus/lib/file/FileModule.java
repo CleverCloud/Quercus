@@ -225,7 +225,7 @@ public class FileModule extends AbstractQuercusModule {
     // quercus/160i
 
     try {
-      // XXX: safe_mode
+      // TODO: safe_mode
 
       if (group instanceof LongValue)
         file.changeGroup(group.toInt());
@@ -250,7 +250,7 @@ public class FileModule extends AbstractQuercusModule {
   public static boolean chmod(Env env, Path file, int mode)
   {
     if (! file.canRead()) {
-      // XXX: gallery?
+      // TODO: gallery?
       env.warning(L.l("{0} cannot be read", file.getFullPath()));
 
       return false;
@@ -278,7 +278,7 @@ public class FileModule extends AbstractQuercusModule {
     }
 
     try {
-      // XXX: safe_mode
+      // TODO: safe_mode
 
       if (user instanceof LongValue)
         file.changeOwner(user.toInt());
@@ -302,7 +302,7 @@ public class FileModule extends AbstractQuercusModule {
   {
     // quercus/160l
 
-    // XXX: stubbed
+    // TODO: stubbed
 
     return NullValue.NULL;
   }
@@ -502,7 +502,7 @@ public class FileModule extends AbstractQuercusModule {
       return BooleanValue.FALSE;
 
     try {
-      // XXX: char for i18n and mode = "t"
+      // TODO: char for i18n and mode = "t"
 
       // php/1612
       int ch = is.read();
@@ -541,7 +541,7 @@ public class FileModule extends AbstractQuercusModule {
       if (is == null)
         return BooleanValue.FALSE;
 
-      // XXX: length is never used
+      // TODO: length is never used
       if (length <= 0)
         length = Integer.MAX_VALUE;
 
@@ -1058,7 +1058,7 @@ public class FileModule extends AbstractQuercusModule {
                               int operation,
                               @Optional Value wouldBlock)
   {
-    // XXX: also wouldblock is a ref
+    // TODO: also wouldblock is a ref
 
     if (fileV == null) {
       env.warning(L.l("flock: file is null"));
@@ -1365,7 +1365,7 @@ public class FileModule extends AbstractQuercusModule {
       context = (StreamContextResource) contextV;
 
 
-    // XXX: context
+    // TODO: context
     try {
       ProtocolWrapper wrapper = getProtocolWrapper(env, filename);
 
@@ -1494,7 +1494,7 @@ public class FileModule extends AbstractQuercusModule {
         || "memory".equals(scheme))
       return false;
 
-    // XXX: too restrictive for filters
+    // TODO: too restrictive for filters
     return ! "php".equals(scheme)
            || path.toString().startsWith("php://filter");
   }
@@ -2070,7 +2070,7 @@ public class FileModule extends AbstractQuercusModule {
       return false;
     
     if (Path.isWindows()) {
-      // XXX: PHP appears to be looking for the "MZ" magic number in the header
+      // TODO: PHP appears to be looking for the "MZ" magic number in the header
       String tail = path.getTail();
 
       return tail.endsWith(".exe")
@@ -2189,7 +2189,7 @@ public class FileModule extends AbstractQuercusModule {
 
   public static long linkinfo(Env env, Path path)
   {
-    // XXX: Hack to trigger lstat() in JNI code
+    // TODO: Hack to trigger lstat() in JNI code
     if (path.isLink())
       return path.getDevice();
     else
@@ -2210,7 +2210,7 @@ public class FileModule extends AbstractQuercusModule {
 
     Path path = env.lookupPwd(filename);
 
-    // XXX: Hack to trigger lstat() in JNI code
+    // TODO: Hack to trigger lstat() in JNI code
     path.isLink();
 
     return statImpl(env, path);
@@ -2795,7 +2795,7 @@ public class FileModule extends AbstractQuercusModule {
 
     // quercus/160s
 
-    // XXX: safe_mode
+    // TODO: safe_mode
     try {
       Path path = env.lookupPwd(filename);
 
@@ -3019,7 +3019,7 @@ public class FileModule extends AbstractQuercusModule {
                               @Optional int time,
                               @Optional int atime)
   {
-    // XXX: atime not implemented (it might be > time)
+    // TODO: atime not implemented (it might be > time)
 
     try {
       if (path.exists()) {
@@ -3058,7 +3058,7 @@ public class FileModule extends AbstractQuercusModule {
   {
     // quercus/160p
 
-    // XXX: safe_mode
+    // TODO: safe_mode
     try {
       ProtocolWrapper wrapper = getProtocolWrapper(env, filename);
 

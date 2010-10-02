@@ -108,7 +108,7 @@ public class OutputModule extends AbstractQuercusModule
   public Value flush(Env env)
   {
     try {
-      // XXX: conflicts with dragonflycms install
+      // TODO: conflicts with dragonflycms install
       env.getOriginalOut().flush();
     } catch (IOException e) {
     }
@@ -297,7 +297,7 @@ public class OutputModule extends AbstractQuercusModule
     LongValue type = LongValue.ONE;
     Callable callback = ob.getCallback();
 
-    // XXX: need to replace logic because isInternal appears to be
+    // TODO: need to replace logic because isInternal appears to be
     // specific to ob_, not general to Callback
     /*
     if (callback != null && callback.isInternal())
@@ -311,7 +311,7 @@ public class OutputModule extends AbstractQuercusModule
     else
       name = "default output handler".intern();
     
-    // XXX: there appears to be only one "internal" callback
+    // TODO: there appears to be only one "internal" callback
     if (name.equals("URL-Rewriter"))
       type = LongValue.ZERO;
     
@@ -364,7 +364,7 @@ public class OutputModule extends AbstractQuercusModule
     element.put(env.createString("chunk_size"),
                 LongValue.create(ob.getChunkSize()));
     
-    // XXX: Not sure why we even need to list a size -- PHP doesn't 
+    // TODO: Not sure why we even need to list a size -- PHP doesn't 
     // even seem to respect it.  -1 => infinity?  
     // (Note: "size" == "capacity")
     element.put(env.createString("size"), LongValue.create(-1));

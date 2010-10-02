@@ -434,7 +434,7 @@ public class MysqliResult extends JdbcResultResource {
       case Types.VARCHAR:
         quercusType = MysqliModule.MYSQLI_TYPE_VAR_STRING;
         break;
-        // XXX: may need to revisit default
+        // TODO: may need to revisit default
       default:
         quercusType = MysqliModule.MYSQLI_TYPE_NULL;
         break;
@@ -641,7 +641,7 @@ public class MysqliResult extends JdbcResultResource {
       case Types.VARCHAR:
         quercusType = MysqliModule.MYSQLI_TYPE_VAR_STRING;
         break;
-        // XXX: may need to revisit default
+        // TODO: may need to revisit default
       default:
         quercusType = MysqliModule.MYSQLI_TYPE_NULL;
         break;
@@ -952,7 +952,7 @@ public class MysqliResult extends JdbcResultResource {
       if (length < 0)
         return NullValue.NULL;
 
-      // XXX: i18n
+      // TODO: i18n
       StringBuilderValue sb = new StringBuilderValue();
       sb.ensureAppendCapacity(length);
 

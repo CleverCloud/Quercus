@@ -67,7 +67,7 @@ abstract public class AbstractFunction extends Callback {
   
   public AbstractFunction()
   {
-    // XXX:
+    // TODO:
     _location = Location.UNKNOWN;
   }
 

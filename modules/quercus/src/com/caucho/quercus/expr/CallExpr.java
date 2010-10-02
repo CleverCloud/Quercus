@@ -218,7 +218,7 @@ public class CallExpr extends Expr {
     // php/0249
     QuercusClass oldCallingClass = env.setCallingClass(null);
     
-    // XXX: qa/1d14 Value oldThis = env.setThis(UnsetValue.NULL);
+    // TODO: qa/1d14 Value oldThis = env.setThis(UnsetValue.NULL);
     try {
       env.checkTimeout();
 
@@ -243,7 +243,7 @@ public class CallExpr extends Expr {
     } finally {
       env.popCall();
       env.setCallingClass(oldCallingClass);
-      // XXX: qa/1d14 env.setThis(oldThis);
+      // TODO: qa/1d14 env.setThis(oldThis);
     }
   }
 

@@ -158,7 +158,7 @@ public class QuercusContext
   private long _defCacheHitCount;
   private long _defCacheMissCount;
 
-  // XXX: needs to be a timed LRU
+  // TODO: needs to be a timed LRU
   //private LruCache<String, SessionArrayValue> _sessionMap
   //  = new LruCache<String, SessionArrayValue>(4096);
 
@@ -876,7 +876,7 @@ public class QuercusContext
    */
   public void setIniFile(Path path)
   {
-    // XXX: Not sure why this dependency would be useful
+    // TODO: Not sure why this dependency would be useful
     // Environment.addDependency(new Depend(path));
 
     if (path.canRead()) {
@@ -1200,7 +1200,7 @@ public class QuercusContext
   public QuercusProgram parseEvalExpr(String code)
     throws IOException
   {
-    // XXX: possible conflict with parse eval because of the
+    // TODO: possible conflict with parse eval because of the
     // return value changes
     QuercusProgram program = _evalCache.get(code);
 
@@ -1545,7 +1545,7 @@ public class QuercusContext
         _constantLowerMap = constantLowerMap;
       }
 
-      // XXX: i18n
+      // TODO: i18n
       _constantNameList[id] = name;
 
       // php/1a0g, php/1d06
@@ -1972,10 +1972,10 @@ public class QuercusContext
                || Double.class.equals(obj.getClass())) {
       return DoubleValue.create(((Number) obj).doubleValue());
     } else if (String.class.equals(obj.getClass())) {
-      // XXX: i18n
+      // TODO: i18n
       return new ConstStringValue((String) obj);
     } else {
-      // XXX: unknown types, e.g. Character?
+      // TODO: unknown types, e.g. Character?
 
       return null;
     }

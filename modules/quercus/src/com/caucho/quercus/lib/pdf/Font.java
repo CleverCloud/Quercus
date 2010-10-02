@@ -178,7 +178,7 @@ public class Font {
 
       width += fontChar.getWidth();
 
-      // XXX: kerning
+      // TODO: kerning
 
       prevChar = ch;
     }

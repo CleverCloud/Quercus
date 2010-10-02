@@ -93,7 +93,7 @@ public class ObjectFieldVarExpr extends AbstractVarExpr {
   {
     Value value = _objExpr.evalArg(env, false);
 
-    // XXX: getFieldArg(isTop)
+    // TODO: getFieldArg(isTop)
 
     return value.getFieldArg(env, _nameExpr.evalStringValue(env), isTop);
   }

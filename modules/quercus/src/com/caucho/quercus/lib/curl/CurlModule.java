@@ -877,7 +877,7 @@ public class CurlModule
         curl.setCookie(value.toString());
         break;
       case CURLOPT_COOKIEFILE:
-        // XXX: Netscape cookie format support
+        // TODO: Netscape cookie format support
         ReadStream in = null;
 
         try {

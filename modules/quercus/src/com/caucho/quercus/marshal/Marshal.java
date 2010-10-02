@@ -60,7 +60,7 @@ abstract public class Marshal {
   public static final int THREE = 300;
   public static final int COST_NUMERIC_LOSSY = 300;
 
-  // XXX: to string
+  // TODO: to string
 
   public static final int COST_FROM_NULL = 310;
   public static final int COST_STRING_TO_CHAR_ARRAY = 305;

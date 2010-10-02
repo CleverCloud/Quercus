@@ -492,7 +492,7 @@ public class CompiledObjectValue extends ObjectValue
     if (oldValue != null)
       return oldValue;
 
-    // XXX:
+    // TODO:
     // return new ObjectExtValue(env, map, _cl, getArray());
 
     return this;
@@ -507,7 +507,7 @@ public class CompiledObjectValue extends ObjectValue
     throw new UnsupportedOperationException();
   }
 
-  // XXX: need to check the other copy, e.g. for sessions
+  // TODO: need to check the other copy, e.g. for sessions
 
   /**
    * Serializes the value.

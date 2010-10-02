@@ -136,7 +136,7 @@ public class PostgresStatement extends JdbcStatementResource {
 
       // Make the PHP query a JDBC like query
       // replacing ($1 -> ?) with question marks.
-      // XXX: replace this with Matcher.appendReplacement
+      // TODO: replace this with Matcher.appendReplacement
       // above when StringBuilder is supported.
       queryStr = queryStr.replaceAll("\\$[0-9]+", "?");
 

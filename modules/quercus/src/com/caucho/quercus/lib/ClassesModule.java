@@ -221,7 +221,7 @@ public class ClassesModule extends AbstractQuercusModule {
     return env.getDeclaredClasses();
   }
 
-  // XXX: get_declared_interfaces
+  // TODO: get_declared_interfaces
 
   /**
    * Returns the object's variables

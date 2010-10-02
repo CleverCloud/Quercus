@@ -144,7 +144,7 @@ public class FileReadValue extends FileValue {
   public StringValue readLine(Env env)
     throws IOException
   {
-    // XXX: offset messed up
+    // TODO: offset messed up
 
     if (_is != null)
       return env.createString(_is.readLineNoChop());
@@ -161,7 +161,7 @@ public class FileReadValue extends FileValue {
       return true;
     else {
       try {
-        // XXX: not quite right for sockets
+        // TODO: not quite right for sockets
         return  _is.available() <= 0;
       } catch (IOException e) {
         log.log(Level.FINE, e.toString(), e);

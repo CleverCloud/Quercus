@@ -936,8 +936,8 @@ abstract public class ArrayValue extends Value {
    */
   public void put(String key, String value)
   {
-    // XXX: this needs an Env arg because of i18n
-    // XXX: but some  modules have arrays that are static constants
+    // TODO: this needs an Env arg because of i18n
+    // TODO: but some  modules have arrays that are static constants
     put(StringValue.create(key), StringValue.create(value));
   }
 
@@ -954,7 +954,7 @@ abstract public class ArrayValue extends Value {
    */
   public void put(String key, char value)
   {
-    // XXX: this needs an Env arg because of i18n
+    // TODO: this needs an Env arg because of i18n
     put(StringValue.create(key), StringValue.create(value));
   }
 
@@ -963,7 +963,7 @@ abstract public class ArrayValue extends Value {
    */
   public void put(String key, long value)
   {
-    // XXX: this needs an Env arg because of i18n
+    // TODO: this needs an Env arg because of i18n
     put(StringValue.create(key), LongValue.create(value));
   }
 
@@ -980,7 +980,7 @@ abstract public class ArrayValue extends Value {
    */
   public void put(String key, double value)
   {
-    // XXX: this needs an Env arg because of i18n
+    // TODO: this needs an Env arg because of i18n
     put(StringValue.create(key), new DoubleValue(value));
   }
 
@@ -989,7 +989,7 @@ abstract public class ArrayValue extends Value {
    */
   public void put(String key, boolean value)
   {
-    // XXX: this needs an Env arg because of i18n
+    // TODO: this needs an Env arg because of i18n
     put(StringValue.create(key),
         value ? BooleanValue.TRUE : BooleanValue.FALSE);
   }
@@ -1008,7 +1008,7 @@ abstract public class ArrayValue extends Value {
    */
   public void put(String value)
   {
-    // XXX: this needs an Env arg because of i18n
+    // TODO: this needs an Env arg because of i18n
     put(StringValue.create(value));
   }
 
@@ -1646,7 +1646,7 @@ abstract public class ArrayValue extends Value {
     public Value toValue()
     {
       // The value may be a var
-      // XXX: need test
+      // TODO: need test
       // return _var != null ? _var.toValue() : _value;
 
       return _value.toValue();
@@ -1706,7 +1706,7 @@ abstract public class ArrayValue extends Value {
     {
       Value oldValue = _value;
 
-      // XXX: make OO
+      // TODO: make OO
       /*
       if (value instanceof Var)
         _var = (Var) value;

@@ -509,7 +509,7 @@ public class HtmlModule extends AbstractQuercusModule {
   private static void entity(ArrayValue array, StringValue []map,
                              ArrayValue revMap, int ch, String entity)
   {
-    // XXX: i18n and optimize static variables usage
+    // TODO: i18n and optimize static variables usage
     array.put("" + (char) ch, entity);
     StringValue entityValue = new StringBuilderValue(entity);
     map[ch & 0xffff] = entityValue;
@@ -632,7 +632,7 @@ public class HtmlModule extends AbstractQuercusModule {
     entity(array, map, revMap, 254, "&thorn;");
     entity(array, map, revMap, 255, "&yuml;");
     
-    // XXX: charset, order it.
+    // TODO: charset, order it.
     entity(array, map, revMap, 0x2002, "&ensp;");
     entity(array, map, revMap, 0x2009, "&thinsp;");
     entity(array, map, revMap, 0x2018, "&lsquo;");

@@ -137,7 +137,7 @@ public class JdbcResultResource {
       if (rs != null)
         rs.close();
 
-      // XXX: statement no longer reused?
+      // TODO: statement no longer reused?
       if (stmt != null && conn != null)
         conn.closeStatement(stmt);
 
@@ -1356,7 +1356,7 @@ public class JdbcResultResource {
    */
   public Value toKey()
   {
-    // XXX: phpbb seems to want this?
+    // TODO: phpbb seems to want this?
     return _env
       .createString("JdbcResultResource$" + System.identityHashCode(this));
   }

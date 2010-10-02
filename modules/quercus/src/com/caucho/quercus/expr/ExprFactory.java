@@ -630,7 +630,7 @@ public class ExprFactory {
   {
     BinaryAppendExpr leftAppend;
 
-    // XXX: i18n binary vs unicode issues
+    // TODO: i18n binary vs unicode issues
     /*
     if (left instanceof ToStringExpr)
       left = ((ToStringExpr) left).getExpr();

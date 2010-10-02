@@ -80,7 +80,7 @@ abstract public class StringValue
    */
   public static Value create(String value)
   {
-    // XXX: needs updating for i18n, currently php5 only
+    // TODO: needs updating for i18n, currently php5 only
 
     if (value == null)
       return NullValue.NULL;
@@ -93,7 +93,7 @@ abstract public class StringValue
    */
   public static StringValue create(char value)
   {
-    // XXX: needs updating for i18n, currently php5 only
+    // TODO: needs updating for i18n, currently php5 only
 
     return ConstStringValue.create(value);
 
@@ -110,7 +110,7 @@ abstract public class StringValue
    */
   public static Value create(Object value)
   {
-    // XXX: needs updating for i18n, currently php5 only
+    // TODO: needs updating for i18n, currently php5 only
 
     if (value == null)
       return NullValue.NULL;

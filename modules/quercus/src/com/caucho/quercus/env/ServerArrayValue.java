@@ -389,7 +389,7 @@ public class ServerArrayValue extends ArrayValueImpl
                   _env.createString(queryString));
       }
 
-      // XXX: a better way?
+      // TODO: a better way?
       // getRealPath() returns a native path
       // need to convert windows paths to resin paths
       String root = request.getRealPath("/");

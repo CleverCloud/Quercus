@@ -210,7 +210,7 @@ public class ArrayObject
   {
 
     if ((_flags & STD_PROP_LIST) != 0) {
-      // XXX:
+      // TODO:
       out.print("ArrayObject");
       out.print(' ');
       out.println("Object");
@@ -263,7 +263,7 @@ public class ArrayObject
     String name = object.getClassName();
     
     if ((_flags & STD_PROP_LIST) != 0) {
-      // XXX:
+      // TODO:
       out.println("object(" + name + ") (0) {");
       out.print("}");
 

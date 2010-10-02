@@ -418,7 +418,7 @@ public class ObjectExtValue extends ObjectValue
   {
     Entry entry = getEntry(env, name);
 
-    // XXX: php/09ks, need visibility check
+    // TODO: php/09ks, need visibility check
     if (entry == null) {
       Value oldValue = putFieldExt(env, name, value);
 
@@ -635,7 +635,7 @@ public class ObjectExtValue extends ObjectValue
         if (entry._visibility == FieldVisibility.PRIVATE) {
           QuercusClass cls = env.getCallingClass();
 
-          // XXX: this really only checks access from outside of class scope
+          // TODO: this really only checks access from outside of class scope
           // php/091m
           if (cls != _quercusClass) {
                 env.error(L.l("Can't access private field '{0}::${1}'",
@@ -694,7 +694,7 @@ public class ObjectExtValue extends ObjectValue
 
     _entries[hash] = newEntry;
 
-    // XXX: possibly resize
+    // TODO: possibly resize
 
     return newEntry;
   }
@@ -1023,7 +1023,7 @@ public class ObjectExtValue extends ObjectValue
     return newObject;
   }
 
-  // XXX: need to check the other copy, e.g. for sessions
+  // TODO: need to check the other copy, e.g. for sessions
 
   /*
    * Serializes the value.
@@ -1707,7 +1707,7 @@ public class ObjectExtValue extends ObjectValue
     public Value toValue()
     {
       // The value may be a var
-      // XXX: need test
+      // TODO: need test
       return _value.toValue();
     }
 

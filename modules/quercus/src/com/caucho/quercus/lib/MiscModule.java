@@ -223,7 +223,7 @@ public class MiscModule extends AbstractQuercusModule {
 
       ProcessBuilder processBuilder = new ProcessBuilder(args);
       processBuilder.redirectErrorStream(false);
-      // XXX: security issues?
+      // TODO: security issues?
       processBuilder.directory(new File(env.getShellPwd()));
       final Process process = processBuilder.start();
 
@@ -615,7 +615,7 @@ public class MiscModule extends AbstractQuercusModule {
 
       ProcessBuilder processBuilder = new ProcessBuilder(args);
       processBuilder.redirectErrorStream(false);
-      // XXX: security issues?
+      // TODO: security issues?
       processBuilder.directory(new File(env.getShellPwd()));
       final Process process = processBuilder.start();
 
@@ -679,7 +679,7 @@ public class MiscModule extends AbstractQuercusModule {
 
       ProcessBuilder processBuilder = new ProcessBuilder(args);
       processBuilder.redirectErrorStream(true);
-      // XXX: security issues?
+      // TODO: security issues?
       processBuilder.directory(new File(env.getShellPwd()));
       final Process process = processBuilder.start();
 
@@ -1591,7 +1591,7 @@ public class MiscModule extends AbstractQuercusModule {
       for (int j = 0; j < _length; j++) {
         Value key;
 
-        // XXX: check key type with unicode semantics
+        // TODO: check key type with unicode semantics
 
         if (_name.length() == 0)
           key = LongValue.create(j + 1);

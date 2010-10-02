@@ -213,7 +213,7 @@ public class LargeStringBuilderValue
   @Override
   public StringValue toStringBuilder()
   {
-    // XXX: can this just return this, or does it need to return a copy?
+    // TODO: can this just return this, or does it need to return a copy?
     
     return new LargeStringBuilderValue(_bufferList, _length);
   }
@@ -596,7 +596,7 @@ public class LargeStringBuilderValue
   @Override
   public StringValue append(long v)
   {
-    // XXX: this probably is frequent enough to special-case
+    // TODO: this probably is frequent enough to special-case
     
     return append(String.valueOf(v));
   }

@@ -771,11 +771,11 @@ public class ArrayModule
 
     for (Map.Entry<Value, Value> entry : array.entrySet()) {
       try {
-        // XXX: will this callback modify the array?
+        // TODO: will this callback modify the array?
         result = callable.call(env, result, entry.getValue());
       }
       catch (Exception t) {
-        // XXX: may be used for error checking later
+        // TODO: may be used for error checking later
         log.log(Level.WARNING, t.toString(), t);
         env.warning("An error occurred while invoking the reduction callback");
 
@@ -1060,13 +1060,13 @@ public class ArrayModule
     return DoubleValue.create(sum);
   }
 
-  // XXX: array_udiff
-  // XXX: array_udiff_assoc
-  // XXX: array_udiff_uassoc
+  // TODO: array_udiff
+  // TODO: array_udiff_assoc
+  // TODO: array_udiff_uassoc
 
-  // XXX: array_uintersect
-  // XXX: array_uintersect_assoc
-  // XXX: array_uintersect_uassoc
+  // TODO: array_uintersect
+  // TODO: array_uintersect_assoc
+  // TODO: array_uintersect_uassoc
 
   /**
    * Returns the inputted array without duplicates
@@ -1483,7 +1483,7 @@ public class ArrayModule
     }
   }
 
-  // XXX: compact
+  // TODO: compact
 
   /**
    * Determines if the key is in the array
@@ -1614,7 +1614,7 @@ public class ArrayModule
 
     CompareCallBack cmp;
 
-    // XXX: callback needs to be able to modify array?
+    // TODO: callback needs to be able to modify array?
     cmp = new CompareCallBack(ArrayValue.GET_VALUE, SORT_NORMAL, func, env);
 
     array.sort(cmp, KEY_RESET, STRICT);
@@ -1650,7 +1650,7 @@ public class ArrayModule
       return false;
     }
 
-    // XXX: callback needs to be able to modify array?
+    // TODO: callback needs to be able to modify array?
     array.sort(new CompareCallBack(ArrayValue.GET_VALUE, SORT_NORMAL, func,
                                    env), NO_KEY_RESET, NOT_STRICT);
 
@@ -1684,7 +1684,7 @@ public class ArrayModule
 
     CompareCallBack cmp;
 
-    // XXX: callback needs to be able to modify array?
+    // TODO: callback needs to be able to modify array?
     cmp = new CompareCallBack(ArrayValue.GET_KEY, SORT_NORMAL, func, env);
 
     array.sort(cmp, NO_KEY_RESET, NOT_STRICT);
@@ -1764,7 +1764,7 @@ public class ArrayModule
     return LongValue.create(value.toLong() + step);
   }
 
-  // XXX:You'll need to mark the function as XXX:, because I need to add an
+  // TODO:You'll need to mark the function as XXX:, because I need to add an
   // attribute like @ModifiedSymbolTable and change some analysis of the
   // compilation based on that attribute.
   //
@@ -2536,7 +2536,7 @@ public class ArrayModule
   public static Value array_map(Env env, Callable fun,
                                 ArrayValue arg, Value []args)
   {
-    // XXX: drupal
+    // TODO: drupal
     if (arg == null)
       return NullValue.NULL;
     
@@ -2685,7 +2685,7 @@ public class ArrayModule
             oldValue.put(value);
           }
           else if (value.isArray()) {
-            // XXX: s/b insert?
+            // TODO: s/b insert?
             value.put(oldValue);
           }
           else {
@@ -2790,7 +2790,7 @@ public class ArrayModule
   }
 
 
-  // XXX: Performance Test asort
+  // TODO: Performance Test asort
   /**
    * Sorts the array.
    */
@@ -2810,7 +2810,7 @@ public class ArrayModule
     return BooleanValue.TRUE;
   }*/
 
-  // XXX: Performance Test ksort
+  // TODO: Performance Test ksort
   /**
    * Sorts the array.
    */

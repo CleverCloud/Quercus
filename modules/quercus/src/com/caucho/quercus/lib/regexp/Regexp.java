@@ -165,7 +165,7 @@ public class Regexp {
     
     _flags = flags;
 
-    // XXX: what if unicode.semantics='true'?
+    // TODO: what if unicode.semantics='true'?
     
     if ((flags & Regcomp.UTF8) != 0) {
       _pattern = fromUtf8(pattern);

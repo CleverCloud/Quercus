@@ -260,7 +260,7 @@ public class ImageModule extends AbstractQuercusModule {
     throw new QuercusException("unknown imageType " + imageType);
   }
 
-  // XXX: image2wbmp
+  // TODO: image2wbmp
 
   /**
    * Returns a copy of the current transform
@@ -526,7 +526,7 @@ public class ImageModule extends AbstractQuercusModule {
   public static boolean imageconvolution(QuercusImage image, ArrayValue matrix,
                                          double div, double offset)
   {
-    // XXX: implement div and offset
+    // TODO: implement div and offset
     float[] kernelValues = new float[9];
 
     for (int y = 0; y < 3; y++) {
@@ -1113,7 +1113,7 @@ public class ImageModule extends AbstractQuercusModule {
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldAntiAlias);
       g.setTransform(oldTransform);
 
-      // XXX: incorrect
+      // TODO: incorrect
       ArrayValue value = new ArrayValueImpl();
       value = value.append(LongValue.create(x));
       value = value.append(LongValue.create(y));
@@ -1190,8 +1190,8 @@ public class ImageModule extends AbstractQuercusModule {
     }
   }
 
-  // XXX: imagegrabscreen
-  // XXX: imagegrabwindow
+  // TODO: imagegrabscreen
+  // TODO: imagegrabwindow
 
   /**
    * Enable or disable interlace
@@ -1249,7 +1249,7 @@ public class ImageModule extends AbstractQuercusModule {
    */
   public static boolean imagelayereffect(QuercusImage image, int effect)
   {
-    // XXX: there is no documentation for how this function ought to work
+    // TODO: there is no documentation for how this function ought to work
     // http://us3.php.net/manual/en/function.imagelayereffect.php
     return false;
   }
@@ -1471,7 +1471,7 @@ public class ImageModule extends AbstractQuercusModule {
     return true;
   }
 
-  // XXX: imagesettile
+  // TODO: imagesettile
 
   /**
    * Draw a string horizontally
@@ -1643,7 +1643,7 @@ public class ImageModule extends AbstractQuercusModule {
     throw new QuercusException("not supported");
   }
 
-  // XXX: imagexbm
+  // TODO: imagexbm
 
   /**
    * Embe into single tags.
@@ -2137,7 +2137,7 @@ public class ImageModule extends AbstractQuercusModule {
 
     private void strokeBrushed(Shape shape)
     {
-      // XXX: support "styled brushes" (see imagesetstyle() example on php.net)
+      // TODO: support "styled brushes" (see imagesetstyle() example on php.net)
       Graphics2D g = _graphics;
       FlatteningPathIterator fpi =
         new FlatteningPathIterator(shape.getPathIterator(g.getTransform()), 1);

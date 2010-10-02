@@ -84,7 +84,7 @@ public class ConstArrayValue
     if (_keysArray == null)
       _keysArray = super.keysToArray();
     
-    // XXX: copy?
+    // TODO: copy?
     return _keysArray;
   }
   
@@ -96,7 +96,7 @@ public class ConstArrayValue
     if (_valuesArray == null)
       _valuesArray = super.valuesToArray();
     
-    // XXX: copy?
+    // TODO: copy?
     return _valuesArray;
   }
   

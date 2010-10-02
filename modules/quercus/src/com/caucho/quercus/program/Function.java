@@ -385,7 +385,7 @@ public class Function extends AbstractFunction {
         map.put(arg.getName(), new EnvVarImpl(args[i].toLocalVarDeclAsRef()));
       }
       else {
-        // XXX: php/1708, toVar() may be doing another copy()
+        // TODO: php/1708, toVar() may be doing another copy()
         Var var = args[i].toLocalVar();
 
         if (arg.getExpectedClass() != null

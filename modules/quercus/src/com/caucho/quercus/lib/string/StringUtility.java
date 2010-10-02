@@ -171,7 +171,7 @@ public class StringUtility {
 		    int d1 = StringModule.hexToDigit(str.charAt(i + 1));
 		    int d2 = StringModule.hexToDigit(str.charAt(i + 2));
 
-		    // XXX: d1 and d2 may be -1 if not valid hex chars
+		    // TODO: d1 and d2 may be -1 if not valid hex chars
 		    byteToChar.addByte(d1 * 16 + d2);
 
 		    return i + 2;

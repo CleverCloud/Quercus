@@ -506,7 +506,7 @@ public class QuercusParser {
     ClassDef globalClass = null;
     
     _function = getFactory().createFunctionInfo(_quercus, globalClass, "eval");
-    // XXX: need param or better function name for non-global?
+    // TODO: need param or better function name for non-global?
     _function.setGlobal(false);
 
     Location location = getLocation();
@@ -976,7 +976,7 @@ public class QuercusParser {
     else if (expr instanceof BinaryAppendExpr) {
       BinaryAppendExpr append = (BinaryAppendExpr) expr;
 
-      // XXX: children of append print differently?
+      // TODO: children of append print differently?
 
       createEchoStatements(location, statements, append.getValue());
       createEchoStatements(location, statements, append.getNext());
@@ -1138,7 +1138,7 @@ public class QuercusParser {
     }
 
     do {
-      // XXX: statementList.add(
+      // TODO: statementList.add(
       //    parseTopExpr().createUnset(_factory, getLocation()));
 
       Expr topExpr = parseTopExpr();
@@ -1297,7 +1297,7 @@ public class QuercusParser {
           if (token == ':') {
           }
           else if (token == ';') {
-            // XXX: warning?
+            // TODO: warning?
           }
           else
             throw error("expected ':' at " + tokenName(token));
@@ -1901,7 +1901,7 @@ public class QuercusParser {
       boolean isReference = false;
 
       // php/076b, php/1c02
-      // XXX: save arg type for type checking upon function call
+      // TODO: save arg type for type checking upon function call
       String expectedClass = null;
       if (token != ')'
           && token != '&'
@@ -1927,7 +1927,7 @@ public class QuercusParser {
 
       token = parseToken();
       if (token == '=') {
-        // XXX: actually needs to be primitive
+        // TODO: actually needs to be primitive
         defaultExpr = parseUnary(); // parseTerm(false);
 
         token = parseToken();
@@ -1963,7 +1963,7 @@ public class QuercusParser {
     throws IOException
   {
     // commented out for adodb (used by Moodle and others)
-    // XXX: should only throw fatal error if break statement is reached
+    // TODO: should only throw fatal error if break statement is reached
     //      during execution
 
     if (! _isTop && _loopLabelList.size() == 0 && ! _quercus.isLooseParse())
@@ -4942,7 +4942,7 @@ public class QuercusParser {
     if (isUnicode)
       expr = createString(prefix);
     else {
-      // XXX: getBytes isn't correct
+      // TODO: getBytes isn't correct
       expr = createBinary(prefix.getBytes("iso-8859-1"));
     }
 
@@ -5083,7 +5083,7 @@ public class QuercusParser {
 
   private Expr createString(String lexeme)
   {
-    // XXX: see QuercusParser.parseDefault for _quercus == null
+    // TODO: see QuercusParser.parseDefault for _quercus == null
     if (isUnicodeSemantics())
       return _factory.createUnicode(lexeme);
     else
@@ -5092,7 +5092,7 @@ public class QuercusParser {
 
   private StringValue createStringValue(String lexeme)
   {
-    // XXX: see QuercusParser.parseDefault for _quercus == null
+    // TODO: see QuercusParser.parseDefault for _quercus == null
     if (isUnicodeSemantics())
       return new UnicodeBuilderValue(lexeme);
     else
@@ -5102,7 +5102,7 @@ public class QuercusParser {
   private Expr createBinary(byte []bytes)
     throws IOException
   {
-    // XXX: see QuercusParser.parseDefault for _quercus == null
+    // TODO: see QuercusParser.parseDefault for _quercus == null
     // php/0ch1, php/0350
     // return _factory.createBinary(bytes);
 
@@ -5665,7 +5665,7 @@ public class QuercusParser {
     try {
       int ch;
 
-      // XXX: should really be handled by ReadStream
+      // TODO: should really be handled by ReadStream
       // php/001b
       if (_encoding == null)
         ch = _is.read();

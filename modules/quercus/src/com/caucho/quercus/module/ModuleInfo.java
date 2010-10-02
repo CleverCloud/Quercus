@@ -206,7 +206,7 @@ public class ModuleInfo {
       if (method.getAnnotation(Hide.class) != null)
         continue;
 
-      // XXX: removed for php/0c2o.qa
+      // TODO: removed for php/0c2o.qa
       /**
        Class retType = method.getReturnType();
 
@@ -274,10 +274,10 @@ public class ModuleInfo {
                || Double.class.equals(obj.getClass())) {
       return DoubleValue.create(((Number) obj).doubleValue());
     } else if (String.class.equals(obj.getClass())) {
-      // XXX: need unicode semantics check
+      // TODO: need unicode semantics check
       return new StringBuilderValue((String) obj);
     } else {
-      // XXX: unknown types, e.g. Character?
+      // TODO: unknown types, e.g. Character?
 
       return null;
     }

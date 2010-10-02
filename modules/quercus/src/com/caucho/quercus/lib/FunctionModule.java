@@ -131,7 +131,7 @@ public class FunctionModule extends AbstractQuercusModule {
     if (0 <= index && index < args.length)
       return args[index];
     else {
-      // XXX: warning
+      // TODO: warning
       return NullValue.NULL;
     }
   }
@@ -198,6 +198,6 @@ public class FunctionModule extends AbstractQuercusModule {
     return NullValue.NULL;
   }
 
-  // XXX: register_tick_function
-  // XXX: unregister_tick_function
+  // TODO: register_tick_function
+  // TODO: unregister_tick_function
 }

@@ -331,7 +331,7 @@ public class SessionModule extends AbstractQuercusModule
       env.setIni("session.save_path", newValue);
 
     if (value.isNull() || value.length() == 0) {
-      // XXX: should we create work directory if does not exist?
+      // TODO: should we create work directory if does not exist?
       value = env.createString(env.getWorkDir().getPath());
     }
     

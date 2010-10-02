@@ -327,7 +327,7 @@ public class OptionsModule extends AbstractQuercusModule {
 	return Thread.currentThread().getId();
     }
 
-    // XXX: getopt
+    // TODO: getopt
     /**
      * Stub value for getrusage.
      */
@@ -486,10 +486,10 @@ public class OptionsModule extends AbstractQuercusModule {
 	return LongValue.create(Runtime.getRuntime().maxMemory());
     }
 
-    // XXX: php_ini_loaded_file
-    // XXX: php_ini_scanned_files
-    // XXX: php_logo_guid
-    // XXX: phpcredits
+    // TODO: php_ini_loaded_file
+    // TODO: php_ini_scanned_files
+    // TODO: php_logo_guid
+    // TODO: phpcredits
     /**
      * Returns the sapi type.
      */
@@ -501,7 +501,7 @@ public class OptionsModule extends AbstractQuercusModule {
      * Returns system information
      */
     public static String php_uname(@Optional("'a'") String mode) {
-	// XXX: stubbed
+	// TODO: stubbed
 
 	if (mode == null || mode.equals("")) {
 	    mode = "a";
@@ -773,8 +773,8 @@ public class OptionsModule extends AbstractQuercusModule {
 	}
     }
 
-    // XXX: zend_logo_guid
-    // XXX: zend_thread_id
+    // TODO: zend_logo_guid
+    // TODO: zend_thread_id
     public static String zend_version() {
 	return "2.0.4";
     }

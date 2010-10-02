@@ -364,10 +364,10 @@ public class HashModule extends AbstractQuercusModule {
     return readLength;
   }
   
-  // XXX: hash_update_file
-  // XXX: hash_update_stream
-  // XXX: hash_update
-  // XXX: hash
+  // TODO: hash_update_file
+  // TODO: hash_update_stream
+  // TODO: hash_update
+  // TODO: hash
 
   private static Value hashToValue(Env env, byte []bytes, boolean isBinary)
   {

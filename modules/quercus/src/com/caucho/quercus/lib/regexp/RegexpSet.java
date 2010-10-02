@@ -33,7 +33,7 @@ import java.util.HashMap;
 
 import com.caucho.util.*;
 
-// XXX: non-ascii range not quite correct for unicode, and neither is
+// TODO: non-ascii range not quite correct for unicode, and neither is
 // PHP's /u unicode option
 class RegexpSet {
   static final int BITSET_CHARS = 128;

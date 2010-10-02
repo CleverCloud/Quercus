@@ -263,7 +263,7 @@ abstract public class Expr {
   public Expr createAssignRef(QuercusParser parser, Expr value)
     throws IOException
   {
-    // XXX: need real exception
+    // TODO: need real exception
     String msg = L.l("{0} is an invalid left-hand side of an assignment.",
                      this);
 

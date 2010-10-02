@@ -257,7 +257,7 @@ public class ArrayIterator
       name = obj.getClassName();
     
     if ((_flags & STD_PROP_LIST) != 0) {
-      // XXX:  env.getThis().varDumpObject(env, out, depth, valueSet);
+      // TODO:  env.getThis().varDumpObject(env, out, depth, valueSet);
     }
     else {
       Value arrayValue = _value;

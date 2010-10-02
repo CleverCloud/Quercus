@@ -281,7 +281,7 @@ public class QuercusServletImpl extends HttpServlet
     if (path.isFile())
       return path;
 
-    // XXX: include
+    // TODO: include
 
     String fullPath;
     if (pathInfo != null)

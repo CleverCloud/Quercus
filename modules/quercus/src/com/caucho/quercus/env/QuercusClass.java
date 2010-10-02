@@ -223,7 +223,7 @@ public class QuercusClass extends NullValue {
       
       QuercusClass cl;
 
-      // XXX: php/0cn2, but this is wrong:
+      // TODO: php/0cn2, but this is wrong:
       cl = Env.getInstance().findClass(iface, 
                                        ! isJavaClassDef,
                                        true);
@@ -627,7 +627,7 @@ public class QuercusClass extends NullValue {
       throw new NullPointerException(L.l("'{0}' is a null function", name));
     
     //php/09j9
-    // XXX: this is a hack to get Zend Framework running, the better fix is
+    // TODO: this is a hack to get Zend Framework running, the better fix is
     // to initialize all interface classes before any concrete classes
     AbstractFunction existingFun = _methodMap.getRaw(name);
     
@@ -648,7 +648,7 @@ public class QuercusClass extends NullValue {
       throw new NullPointerException(L.l("'{0}' is a null function", name));
     
     //php/09j9
-    // XXX: this is a hack to get Zend Framework running, the better fix is
+    // TODO: this is a hack to get Zend Framework running, the better fix is
     // to initialize all interface classes before any concrete classes
     AbstractFunction existingFun = _methodMap.getRaw(name);
 

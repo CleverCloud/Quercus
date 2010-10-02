@@ -409,7 +409,7 @@ public class OracleOciLob {
    */
   public boolean getBuffering(Env env)
   {
-    // XXX: we assume buffering is always turned on.
+    // TODO: we assume buffering is always turned on.
     return true;
   }
 
@@ -638,7 +638,7 @@ public class OracleOciLob {
   public boolean setBuffering(Env env,
                               boolean onOff)
   {
-    // XXX: we assume buffering is always turned on.
+    // TODO: we assume buffering is always turned on.
     return true;
   }
 

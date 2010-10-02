@@ -51,7 +51,7 @@ public class CallbackObjectMethod extends Callback {
                               Value obj,
                               StringValue methodName)
   {
-    // XXX: obj and fun should not be mixed
+    // TODO: obj and fun should not be mixed
     
     _methodName = methodName;
     _obj = obj;

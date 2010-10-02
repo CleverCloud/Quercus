@@ -193,7 +193,7 @@ public class StringModule extends AbstractQuercusModule {
 	for (int i = 0; i < length; i++) {
 	    char ch = charset.charAt(i);
 
-	    // XXX: the bitmap eventual might need to deal with unicode
+	    // TODO: the bitmap eventual might need to deal with unicode
 	    if (ch >= 256) {
 		continue;
 	    }
@@ -221,7 +221,7 @@ public class StringModule extends AbstractQuercusModule {
 		bitmap[ch] = true;
 	    }
 
-	    // XXX: handling of '@'?
+	    // TODO: handling of '@'?
 	}
 
 	return bitmap;
@@ -345,7 +345,7 @@ public class StringModule extends AbstractQuercusModule {
 	    end = "";
 	}
 
-	if (chunkLen < 1) // XXX: real exn
+	if (chunkLen < 1) // TODO: real exn
 	{
 	    throw new IllegalArgumentException(L.l("bad value {0}", chunkLen));
 	}
@@ -582,7 +582,7 @@ public class StringModule extends AbstractQuercusModule {
 	return Crypt.crypt(string, salt);
     }
 
-    // XXX: echo
+    // TODO: echo
     /**
      * Explodes a string into an array
      *
@@ -873,7 +873,7 @@ public class StringModule extends AbstractQuercusModule {
 
 	    md.reset();
 
-	    // XXX: iso-8859-1
+	    // TODO: iso-8859-1
 
 	    int ch;
 	    while ((ch = is.read()) >= 0) {
@@ -1342,7 +1342,7 @@ public class StringModule extends AbstractQuercusModule {
 	return result;
     }
 
-    // XXX: nl2br
+    // TODO: nl2br
     /**
      * Returns a formatted number.
      *
@@ -1502,7 +1502,7 @@ public class StringModule extends AbstractQuercusModule {
     /**
      * Converts a RFC2045 quoted printable string to a string.
      */
-    // XXX: i18n
+    // TODO: i18n
     public static String quoted_printable_decode(String str) {
 	if (str == null) {
 	    str = "";
@@ -1810,7 +1810,7 @@ public class StringModule extends AbstractQuercusModule {
 	try {
 	    MessageDigest md = MessageDigest.getInstance("SHA1");
 
-	    // XXX: iso-8859-1
+	    // TODO: iso-8859-1
 
 	    for (int i = 0; i < source.length(); i++) {
 		char ch = source.charAt(i);
@@ -1898,7 +1898,7 @@ public class StringModule extends AbstractQuercusModule {
 	    return v;
 	}
     }
-    // XXX: similar_text
+    // TODO: similar_text
     private static final char[] SOUNDEX_VALUES = "01230120022455012623010202".toCharArray();
 
     public static Value soundex(StringValue string) {
@@ -2571,7 +2571,7 @@ public class StringModule extends AbstractQuercusModule {
 			    log.fine(L.l("'{0}' is a bad sscanf string.", format));
 			    env.warning(L.l("'{0}' is a bad sscanf string.", format));
 
-			    // XXX:
+			    // TODO:
 			    //return isAssign ? LongValue.create(argIndex) : array;
 
 			    break loop;
@@ -2640,7 +2640,7 @@ public class StringModule extends AbstractQuercusModule {
 
 		/*ch = string.charAt(sIndex);
 		if (! isWhitespace(ch)) {
-		// XXX: return false?
+		// TODO: return false?
 		return sscanfReturn(env, array, args, argIndex, isAssign, true);
 		}*/
 
@@ -3027,7 +3027,7 @@ public class StringModule extends AbstractQuercusModule {
 	return i;
     }
 
-    // XXX: str_getcsv
+    // TODO: str_getcsv
     /**
      * replaces substrings.
      *
@@ -6353,7 +6353,7 @@ public class StringModule extends AbstractQuercusModule {
 		return sIndex;
 	    }
 
-	    // XXX: 32-bit vs 64-bit
+	    // TODO: 32-bit vs 64-bit
 	    int val = 0;
 
 	    int sign = 1;

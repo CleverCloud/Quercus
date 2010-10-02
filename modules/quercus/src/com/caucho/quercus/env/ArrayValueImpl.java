@@ -644,7 +644,7 @@ public class ArrayValueImpl extends ArrayValue
   @Override
   public Value getArg(Value index, boolean isTop)
   {
-    if (_isDirty) // XXX: needed?
+    if (_isDirty) // TODO: needed?
       copyOnWrite();
 
     // php/3d42
@@ -1027,7 +1027,7 @@ public class ArrayValueImpl extends ArrayValue
    */
   private Entry createEntry(Value key)
   {
-    // XXX: "A key may be either an integer or a string. If a key is
+    // TODO: "A key may be either an integer or a string. If a key is
     //       the standard representation of an integer, it will be
     //       interpreted as such (i.e. "8" will be interpreted as 8,
     //       while "08" will be interpreted as "08")."

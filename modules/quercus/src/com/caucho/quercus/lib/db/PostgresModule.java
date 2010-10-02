@@ -477,9 +477,9 @@ public class PostgresModule extends AbstractQuercusModule {
       if (conn == null)
         return null;
 
-      // XXX: options has not been implemented yet.
+      // TODO: options has not been implemented yet.
 
-      // XXX: the following PHP note has not been implemented yet.
+      // TODO: the following PHP note has not been implemented yet.
       // Note:  If there are boolean fields in table_name don't use
       // the constant TRUE in assoc_array. It will be converted to the
       // string 'TRUE' which is no valid entry for boolean fields in
@@ -602,7 +602,7 @@ public class PostgresModule extends AbstractQuercusModule {
       if (conn == null)
         return false;
 
-      // XXX: At the time this was implemented, the JDBC driver
+      // TODO: At the time this was implemented, the JDBC driver
       // did not support SQL COPY operations that could simplify
       // the code below.
 
@@ -611,7 +611,7 @@ public class PostgresModule extends AbstractQuercusModule {
         delimiter = "\t";
         delimiterRegex = "\\t";
       } else {
-        // XXX: even the native php version does not seem to do it very well.
+        // TODO: even the native php version does not seem to do it very well.
         throw new UnimplementedException(
             "pg_copy_from with non-default delimiter");
       }
@@ -619,7 +619,7 @@ public class PostgresModule extends AbstractQuercusModule {
       if (nullAs.equals("")) {
         nullAs = "\\N";
       } else {
-        // XXX: even the native php version does not seem to do it very well.
+        // TODO: even the native php version does not seem to do it very well.
         throw new UnimplementedException(
             "pg_copy_from with non-default nullAs");
       }
@@ -699,16 +699,16 @@ public class PostgresModule extends AbstractQuercusModule {
       if (conn == null)
         return null;
 
-      // XXX: At the time this was implemented, the JDBC driver
+      // TODO: At the time this was implemented, the JDBC driver
       // did not support SQL COPY operations that could simplify
       // the code below.
 
-      // XXX: This should be replaced when @Optional("\t") is fixed.
+      // TODO: This should be replaced when @Optional("\t") is fixed.
       if (delimiter.equals("")) {
         delimiter = "\t";
       }
 
-      // XXX: This should be replaced when @Optional("\\N") is fixed.
+      // TODO: This should be replaced when @Optional("\\N") is fixed.
       // Note: according to php.net, it must be \\N, i.e. the
       // two-character sequence: {'\\', 'N'}
       if (nullAs.equals("")) {
@@ -1363,7 +1363,7 @@ public class PostgresModule extends AbstractQuercusModule {
 
       int len = value.toString().length();
 
-      // XXX: check this...
+      // TODO: check this...
       // if (typeName.equals("money")) {
       //  len++;
       // }
@@ -2807,7 +2807,7 @@ public class PostgresModule extends AbstractQuercusModule {
                                               boolean reportError)
   {
     try {
-      // XXX: the PHP api allows conn to be optional but we
+      // TODO: the PHP api allows conn to be optional but we
       // totally disallow this case.
 
       if (conn == null)
@@ -2923,7 +2923,7 @@ public class PostgresModule extends AbstractQuercusModule {
         Integer position = (Integer) errorField;
 
         if (position.intValue() == 0)
-          // XXX: php/431g return BooleanValue.FALSE;
+          // TODO: php/431g return BooleanValue.FALSE;
           return NullValue.NULL;
       }
 
@@ -3462,7 +3462,7 @@ public class PostgresModule extends AbstractQuercusModule {
         conn.setResultResource(result);
         return result;
       } else {
-        // XXX: ??? return type?
+        // TODO: ??? return type?
         return null;
         // return pstmt;
       }
