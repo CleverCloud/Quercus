@@ -536,6 +536,8 @@
       <param name="module.name" value="quercus"/>
       <param name="module.dist" value="${lib}"/>
     </antcall>
+
+    <move file="${lib}/quercus.jar" tofile="${lib}/quercus-core.jar" />
   </target>
 
   <target name="quercus" depends="quercus-dev"/>
@@ -729,7 +731,7 @@
     <delete dir="${dist}/${dist.name}"/>
   </target>
 
-  <target name="dist" depends="dist.clean, configure, compile, update, junit, eclipselink, artifacts, ant, resin.dist.build, dist.package, quercus.war"/>
+  <target name="dist" depends="dist.clean, configure, compile, update, junit, eclipselink, artifacts, ant, resin.dist.build, dist.package, war"/>
 
   <target name="configure">
      <mkdir dir="automake"/>
@@ -942,11 +944,11 @@
 
       <copy tofile="${qits.dir}/WEB-INF/lib/resin-kernel.jar"
           file="lib/resin-kernel.jar"/>
-      <copy tofile="${qits.dir}/WEB-INF/lib/quercus.jar"
+      <copy tofile="${qits.dir}/WEB-INF/lib/quercus-core.jar"
           file="lib/quercus.jar"/>
   </target>
 
-  <target name="quercus.war" depends="init, resin.dist.jar">
+  <target name="war" depends="init">
     <property name="quercus.dist.name" value="quercus-war-${version}"/>
   
     <delete dir="${dist}/${quercus.dist.name}"/>
@@ -955,8 +957,11 @@
     <mkdir dir="${dist}/${quercus.dist.name}"/>
     <mkdir dir="${dist}/${quercus.dist.name}/WEB-INF/licenses"/>
 
-    <copy tofile="${dist}/${quercus.dist.name}/WEB-INF/lib/resin.jar"
-          file="${resin.dist}/${dist.name}/lib/resin.jar"/>
+    <copy tofile="${dist}/${quercus.dist.name}/WEB-INF/lib/resin-kernel.jar"
+          file="${resin.dist}/${dist.name}/lib/resin-kernel.jar"/>
+
+    <copy tofile="${dist}/${quercus.dist.name}/WEB-INF/lib/quercus-core.jar"
+          file="${resin.dist}/${dist.name}/lib/quercus-core.jar"/>
 
     <copy tofile="${dist}/${quercus.dist.name}/WEB-INF/lib/javaee-16.jar"
           file="${resin.dist}/${dist.name}/lib/javaee-16.jar"/>
@@ -968,29 +973,23 @@
           file="${resin.lib}/javamail-141.jar"/>
           
     <copy tofile="${dist}/${quercus.dist.name}/WEB-INF/web.xml"
-          file="${resin.install}/php/quercus-war/WEB-INF/web.xml"/>
-    
-    <copy tofile="${dist}/${quercus.dist.name}/images/caucho-white.jpg"
-          file="${resin.install}/php/quercus-war/images/caucho-white.jpg"/>
-
-    <copy tofile="${dist}/${quercus.dist.name}/images/dragonfly-tiny.png"
-          file="${resin.install}/php/quercus-war/images/dragonfly-tiny.png"/>
+          file="${resin.install}/quercus-war/WEB-INF/web.xml"/>
 
     <copy tofile="${dist}/${quercus.dist.name}/index.php"
-          file="${resin.install}/php/quercus-war/index.php"/>
+          file="${resin.install}/quercus-war/index.php"/>
 
     <copy tofile="${dist}/${quercus.dist.name}/README"
-          file="${resin.install}/php/quercus-war/README"/>
+          file="${resin.install}/quercus-war/README"/>
 
     <jar destfile="${dist}/quercus-${version}.war">
       <fileset dir="${dist}/${quercus.dist.name}">
-        <include name="WEB-INF/lib/resin.jar"/>
+        <include name="WEB-INF/lib/resin-kernel.jar"/>
+        <include name="WEB-INF/lib/quercus-core.jar"/>
         <include name="WEB-INF/lib/inject-16.jar"/>
         <include name="WEB-INF/lib/javamail-141.jar"/>
+        <include name="WEB-INF/lib/javaee-16.jar"/>
         <include name="WEB-INF/licenses"/>
         <include name="WEB-INF/web.xml"/>
-        <include name="images/caucho-white.jpg"/>
-        <include name="images/dragonfly-tiny.png"/>
         <include name="index.php"/>
         <include name="README"/>
       </fileset>
@@ -999,35 +998,8 @@
       </fileset>
     </jar>
     
-    <delete file="${dist}/quercus-${version}-src.jar"/>
-
-    <jar destfile="${dist}/quercus-${version}-src.jar">
-      <fileset dir="${resin.modules}/kernel/src">
-        <exclude name=".cvsignore"/>
-        <exclude name=".svnignore"/>
-        <exclude name="*~"/>
-        <exclude name="**/CVS/**"/>
-        <exclude name="**/.svn/**"/>
-        <include name="com/caucho/**"/>
-      </fileset>
-      <fileset dir="${resin.modules}/quercus/src">
-        <exclude name=".cvsignore"/>
-        <exclude name=".svnignore"/>
-        <exclude name="*~"/>
-        <exclude name="**/CVS/**"/>
-        <exclude name="**/.svn/**"/>
-        <include name="com/caucho/**"/>
-      </fileset>
-      <fileset dir="${basedir}">
-        <include name="LICENSE"/>
-      </fileset>
-    </jar>
-    
     <copy tofile="${dist}/quercus-4_0-snap.war"
           file="${dist}/quercus-${version}.war"/>
-
-    <copy tofile="${dist}/quercus-4_0-snap-src.jar"
-          file="${dist}/quercus-${version}-src.jar"/>
   </target>
 
   <!--
