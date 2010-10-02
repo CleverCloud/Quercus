@@ -194,7 +194,7 @@ public class MbstringModule
                                                   String fromEncodings,
                                                   @Reference Value vars)
   {
-    // XXX: fallback encoding
+    // TODO: fallback encoding
     int tail = fromEncodings.indexOf(',', 1);
 
     if (tail < 0)
@@ -248,7 +248,7 @@ public class MbstringModule
                                          @Optional Value encodingV,
                                          @Optional boolean isStrict)
   {
-    // XXX: strict
+    // TODO: strict
     
     ArrayList<String> encodingList = getDetectOrderList(env, encodingV);   
     
@@ -408,7 +408,7 @@ public class MbstringModule
 
     string = string.convertToUnicode(env, encoding);
 
-    // XXX: option
+    // TODO: option
 
     Value val = RegexpModule.eregImpl(env, ereg, string, null);
 
@@ -848,7 +848,7 @@ public class MbstringModule
                                               StringValue contents,
                                               int status)
   {
-    // XXX: status?
+    // TODO: status?
 
     String toEncoding = getOutputEncoding(env);
 
@@ -875,7 +875,7 @@ public class MbstringModule
     StringModule.parse_str(env, strValue, result);
 
     if (result == null) {
-      // XXX: encode newly added global variables
+      // TODO: encode newly added global variables
       return BooleanValue.TRUE;
     }
     else {
@@ -983,7 +983,7 @@ public class MbstringModule
     if (start < 0 || start > end)
       return str.EMPTY;
 
-    // XXX: not quite exactly the same behavior as PHP
+    // TODO: not quite exactly the same behavior as PHP
     if (start < len && Character.isHighSurrogate(unicodeStr.charAt(start)))
       start--;
 
@@ -1275,7 +1275,7 @@ public class MbstringModule
           break;
       }
       
-      // XXX: surrogate pairs
+      // TODO: surrogate pairs
       decoder.setReplacement("" + (char) value);
     }
     
@@ -1320,7 +1320,7 @@ public class MbstringModule
           break;
       }
       
-      // XXX: surrogate pairs
+      // TODO: surrogate pairs
       encoder.setReplacement("" + (char) value);
     }
     

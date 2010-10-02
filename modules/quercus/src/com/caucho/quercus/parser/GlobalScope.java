@@ -129,7 +129,7 @@ public class GlobalScope extends Scope {
     }
     else {
       // class statically redeclared
-      // XXX: should throw a runtime error?
+      // TODO: should throw a runtime error?
       
       // dummy classdef for parsing only
       cl = _exprFactory.createClassDef(location,

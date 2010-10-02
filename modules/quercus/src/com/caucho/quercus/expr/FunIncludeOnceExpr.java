@@ -47,7 +47,7 @@ public class FunIncludeOnceExpr extends AbstractUnaryExpr {
   {
     super(location, expr);
 
-    // XXX: issues with eval
+    // TODO: issues with eval
     if (! sourceFile.getScheme().equals("string"))
       _dir = sourceFile.getParent();
   }

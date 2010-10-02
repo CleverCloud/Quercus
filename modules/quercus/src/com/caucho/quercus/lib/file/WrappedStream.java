@@ -207,7 +207,7 @@ public class WrappedStream implements BinaryInput, BinaryOutput {
 
   public int read(byte []buffer, int offset, int length)
   {
-    // XXX: shgould be reimplemented
+    // TODO: shgould be reimplemented
 
     Value output;
     
@@ -235,7 +235,7 @@ public class WrappedStream implements BinaryInput, BinaryOutput {
 
   public int read(char []buffer, int offset, int length)
   {
-    // XXX: should be reimplemented
+    // TODO: should be reimplemented
 
     Value output;
     

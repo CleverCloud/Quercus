@@ -224,7 +224,7 @@ public class XmlReader
     if (! streamIsOpen())
       return NullValue.NULL;
 
-    // XXX:  StreamReaderImpl.isAttributeSpecified() only checks for
+    // TODO:  StreamReaderImpl.isAttributeSpecified() only checks for
     // attribute existence.  This should be tested against the atttribute list
     // but couldn't find anything like that in StreamReader.
     return BooleanValue.FALSE;
@@ -282,7 +282,7 @@ public class XmlReader
     try {
       String name = "";
 
-      // XXX: Next line should be "String prefix = _streamReader.getPrefix();"
+      // TODO: Next line should be "String prefix = _streamReader.getPrefix();"
       // but there was a NullPointerException for XMLStreamReaderImpl._name.
 
       // php/4618
@@ -384,7 +384,7 @@ public class XmlReader
     if (! streamIsOpen())
       return NullValue.NULL;
 
-    // XXX: Defaulted for now.
+    // TODO: Defaulted for now.
     return StringValue.create("");
   }
 
@@ -703,7 +703,7 @@ public class XmlReader
       _constConvertMap.put(XMLStreamConstants.END_ENTITY,
                       END_ENTITY);
     */
-    // XXX: XMLStreamConstants.ENTITY_DECLARATION is 17 in the BAE docs
+    // TODO: XMLStreamConstants.ENTITY_DECLARATION is 17 in the BAE docs
     // but is 15 in the Resin implementation.
     _constConvertMap.put(XMLStreamConstants.ENTITY_DECLARATION,
                          ENTITY); // ENTITY used twice

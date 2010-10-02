@@ -60,10 +60,10 @@ public class ApacheModule extends AbstractQuercusModule {
     return false;
   }
 
-  // XXX: apache_get_modules
-  // XXX: apache_get_version
-  // XXX: apache_getenv
-  // XXX: apache_lookup_uri
+  // TODO: apache_get_modules
+  // TODO: apache_get_version
+  // TODO: apache_getenv
+  // TODO: apache_lookup_uri
 
   /**
    * Gets and sets apache notes
@@ -105,7 +105,7 @@ public class ApacheModule extends AbstractQuercusModule {
     return result;
   }
 
-  // XXX: apache_response_headers
+  // TODO: apache_response_headers
 
   /**
    * Stub for resetting the output timeout.
@@ -115,9 +115,9 @@ public class ApacheModule extends AbstractQuercusModule {
     return false;
   }
 
-  // XXX: apache_setenv
-  // XXX: ascii2ebcdic
-  // XXX: ebcdic2ascii
+  // TODO: apache_setenv
+  // TODO: ascii2ebcdic
+  // TODO: ebcdic2ascii
 
   /**
    * Returns all the request headers
@@ -136,7 +136,7 @@ public class ApacheModule extends AbstractQuercusModule {
       HttpServletRequest req = env.getRequest();
       HttpServletResponse res = env.getResponse();
 
-      // XXX: need to put the output, so the included stream gets the
+      // TODO: need to put the output, so the included stream gets the
       // buffer, too
       env.getOut().flushBuffer();
 

@@ -67,7 +67,7 @@ public class ClassStaticStatement
   public Value execute(Env env)
   {
     try {
-      // XXX: this isn't reliable, needs to be Quercus-based
+      // TODO: this isn't reliable, needs to be Quercus-based
       if (_staticName == null)
         _staticName = env.createStaticName();
 

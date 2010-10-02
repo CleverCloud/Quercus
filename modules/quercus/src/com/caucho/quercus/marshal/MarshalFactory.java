@@ -87,7 +87,7 @@ public class MarshalFactory {
     marshal = _marshalMap.get(argType);
     
     // optimized cases, new types should be added to JavaMarshal
-    // XXX: put the static classes in _marshalMap
+    // TODO: put the static classes in _marshalMap
 
     if (marshal != null) {
       

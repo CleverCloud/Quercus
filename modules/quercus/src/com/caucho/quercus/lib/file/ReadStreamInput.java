@@ -229,7 +229,7 @@ public class ReadStreamInput extends InputStream implements BinaryInput {
       return true;
     else {
       try {
-        // XXX: not quite right for sockets
+        // TODO: not quite right for sockets
         return  _is.available() <= 0;
       } catch (IOException e) {
         log.log(Level.FINE, e.toString(), e);

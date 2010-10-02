@@ -91,7 +91,7 @@ public class JavaArrayClassDef extends JavaClassDef {
     
     ArrayValueImpl arrayValueImpl = new ArrayValueImpl();
 
-    // XXX: needs to go into constructor
+    // TODO: needs to go into constructor
     Class componentClass = getType().getComponentType();
 
     MarshalFactory factory = getModuleContext().getMarshalFactory();

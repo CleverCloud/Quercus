@@ -122,7 +122,7 @@ public class PDFImage extends PDFObject {
       _is.writeToStream(ws);
       ws.close();
 
-      // XXX: issues with _jpegHead vs ts.openReadAndSaveBuffer()
+      // TODO: issues with _jpegHead vs ts.openReadAndSaveBuffer()
       _jpegHead = ts.getHead();
       _is.close();
 

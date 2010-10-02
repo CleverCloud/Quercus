@@ -331,7 +331,7 @@ public class SessionArrayValue extends ArrayValueWrapper
    */
   public void removeEvent()
   {
-    // XXX: logic doesn't make sense
+    // TODO: logic doesn't make sense
     
     /*
     boolean isValid = _isValid;

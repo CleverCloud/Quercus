@@ -495,7 +495,7 @@ public class OracleModule extends AbstractQuercusModule {
 
       CallableStatement callableStmt = (CallableStatement) pstmt;
 
-      // XXX: We could use ParameterMetaData.getParameterMode
+      // TODO: We could use ParameterMetaData.getParameterMode
       // to figure out which parameters are IN and/or OUT and
       // then setObject and/or registerOutParameter according
       // to the parameter mode. However, getParameterMode()
@@ -565,7 +565,7 @@ public class OracleModule extends AbstractQuercusModule {
         {
           // Assume the most common scenario: IN parameter mode.
 
-          // XXX: Check the spec. if there is a case where the
+          // TODO: Check the spec. if there is a case where the
           // variable would not be initialized yet
           // stmt.putByNameVariable(placeholderName, variable);
           Object object = variable.toJavaObject();
@@ -1371,7 +1371,7 @@ public class OracleModule extends AbstractQuercusModule {
         typeName = schema + "." + tdo;
       }
 
-      // XXX: Is this case ever possible?
+      // TODO: Is this case ever possible?
       // StructDescriptor structDesc
       //   = StructDescriptor.createDescriptor(typeName, jdbcConn);
 
@@ -1538,7 +1538,7 @@ public class OracleModule extends AbstractQuercusModule {
                                           String query)
   {
     try {
-      // XXX: Rework this.
+      // TODO: Rework this.
       // Enclose the query with "begin ...; end;" so any regular statement
       // or stored procedure call can be executed with a CallableStatement.
       query = query.trim();
@@ -1595,7 +1595,7 @@ public class OracleModule extends AbstractQuercusModule {
   {
     try {
 
-      // XXX: When is oldPassword used?
+      // TODO: When is oldPassword used?
 
       if (conn == null)
         return false;

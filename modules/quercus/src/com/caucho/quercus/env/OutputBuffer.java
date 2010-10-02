@@ -180,7 +180,7 @@ public class OutputBuffer {
    */
   public boolean getEraseFlag()
   {
-    // XXX: Why would anyone need this?  If the erase flag is false,
+    // TODO: Why would anyone need this?  If the erase flag is false,
     // that supposedly means that the buffer will not be destroyed 
     // until the script finishes, but you can't access the buffer 
     // after it has been popped anyway, so who cares if you delete 

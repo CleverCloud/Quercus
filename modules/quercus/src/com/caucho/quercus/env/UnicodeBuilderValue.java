@@ -684,7 +684,7 @@ public class UnicodeBuilderValue
       BinaryBuilderValue result = new BinaryBuilderValue();
       BinaryBuilderStream stream = new BinaryBuilderStream(result);
 
-      // XXX: can use EncodingWriter directly(?)
+      // TODO: can use EncodingWriter directly(?)
       WriteStream out = new WriteStream(stream);
       out.setEncoding(charset);
 

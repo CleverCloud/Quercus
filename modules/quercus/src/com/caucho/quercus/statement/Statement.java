@@ -188,7 +188,7 @@ abstract public class Statement {
         rootCause = quercusEx;
       }
       catch (IllegalStateException ex) {
-        // XXX: guard against reported bug that could not be reproduced
+        // TODO: guard against reported bug that could not be reproduced
         log.log(Level.FINE, ex.toString(), ex);
       }
     }

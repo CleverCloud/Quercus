@@ -253,7 +253,7 @@ public class QuercusProgram {
 
     String msg = e.toString();
 
-    // XXX: temp for memory issues
+    // TODO: temp for memory issues
     if (msg != null && msg.length() > 4096) {
       msg = msg.substring(0, 4096);
     }

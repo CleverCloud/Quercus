@@ -191,7 +191,7 @@ public class Post
       String attr = (String) ms.getAttribute("content-disposition");
 
       if (attr == null || ! attr.startsWith("form-data")) {
-        // XXX: is this an error?
+        // TODO: is this an error?
         continue;
       }
 

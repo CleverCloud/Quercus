@@ -432,7 +432,7 @@ public class ErrorModule extends AbstractQuercusModule {
     public Value error(Env env, String msg)
     throws Exception
     {
-    // XXX: valiate
+    // TODO: valiate
     env.error(msg);
 
     return NullValue.NULL;

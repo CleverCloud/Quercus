@@ -352,7 +352,7 @@ public class DOMDocument
     }
   }
 
-  // XXX: also can be called statically, returns a DOMDocument in that case
+  // TODO: also can be called statically, returns a DOMDocument in that case
   public boolean load(Env env, Path path, @Optional Value options)
     throws IOException
   {
@@ -387,7 +387,7 @@ public class DOMDocument
   /**
    * @param source A string containing the HTML
    */
-  // XXX: also can be called statically, returns a DOMDocument in that case
+  // TODO: also can be called statically, returns a DOMDocument in that case
   public boolean loadHTML(Env env, String source)
   {
     ReadStream is = StringStream.open(source);
@@ -421,7 +421,7 @@ public class DOMDocument
     return true;
   }
 
-  // XXX: also can be called statically, returns a DOMDocument in that case
+  // TODO: also can be called statically, returns a DOMDocument in that case
   public boolean loadHTMLFile(Env env, Path path)
   {
     ReadStream is = null;
@@ -456,7 +456,7 @@ public class DOMDocument
     return true;
   }
 
-  // XXX: also can be called statically, returns a DOMDocument in that case
+  // TODO: also can be called statically, returns a DOMDocument in that case
   public boolean loadXML(Env env, StringValue source, @Optional Value options)
   {
     if (options != null)

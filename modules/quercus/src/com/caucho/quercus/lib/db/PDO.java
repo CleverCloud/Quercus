@@ -162,7 +162,7 @@ public class PDO implements EnvCleanup {
     _password = password;
     _error = new PDOError(_env);
 
-    // XXX: following would be better as annotation on destroy() method
+    // TODO: following would be better as annotation on destroy() method
     _env.addCleanup(this);
 
     try {
@@ -384,7 +384,7 @@ public class PDO implements EnvCleanup {
 
       default:
         _error.unsupportedAttribute(attribute);
-        // XXX: check what php does
+        // TODO: check what php does
         return BooleanValue.FALSE;
 
     }
@@ -444,7 +444,7 @@ public class PDO implements EnvCleanup {
     throw new UnimplementedException();
   }
 
-  // XXX: might be int return
+  // TODO: might be int return
   private String getServerVersion()
   {
     throw new UnimplementedException();
@@ -654,7 +654,7 @@ public class PDO implements EnvCleanup {
 
     if (isInit) {
       switch (attribute) {
-        // XXX: there may be more of these
+        // TODO: there may be more of these
         case ATTR_TIMEOUT:
           return setTimeout(value.toInt());
 
@@ -663,7 +663,7 @@ public class PDO implements EnvCleanup {
       }
     }
 
-    // XXX: check what PHP does
+    // TODO: check what PHP does
     _error.unsupportedAttribute(attribute);
     return false;
   }
@@ -807,7 +807,7 @@ public class PDO implements EnvCleanup {
   {
     HashMap<String,String> attr = parseAttr(dsn, dsn.indexOf(':'));
 
-    // XXX: more robust to get attribute values as is done in getPgsqlDataSource
+    // TODO: more robust to get attribute values as is done in getPgsqlDataSource
 
     String host = attr.get("host");
     String portStr = attr.get("port");
@@ -849,7 +849,7 @@ public class PDO implements EnvCleanup {
 
     String driver = Mysqli.DRIVER;
     
-    // XXX: mysql options?
+    // TODO: mysql options?
     String url = Mysqli.getUrl(host, port, dbname, ENCODING,
                                false, false, false);
     

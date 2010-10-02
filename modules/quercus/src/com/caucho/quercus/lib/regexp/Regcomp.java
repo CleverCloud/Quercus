@@ -348,7 +348,7 @@ class Regcomp {
 
             return concat(tail, parseRec(pattern, next));
 
-          // XXX: once-only subpatterns (mostly an optimization feature)
+          // TODO: once-only subpatterns (mostly an optimization feature)
           case '>':
             pattern.read();
             return parseGroup(pattern, tail, 0, _flags);

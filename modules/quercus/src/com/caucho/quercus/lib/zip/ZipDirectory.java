@@ -126,7 +126,7 @@ public class ZipDirectory
     int extraLength = _tmpBuf[28] & 0xff;
     extraLength |= (_tmpBuf[29] & 0xff) << 8;
 
-    // XXX: correct char encoding?
+    // TODO: correct char encoding?
     String name;
     if (filenameLength <= _tmpBuf.length) {
       sublen = _in.read(_tmpBuf, 0, filenameLength);

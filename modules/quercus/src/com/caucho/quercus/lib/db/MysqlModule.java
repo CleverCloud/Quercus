@@ -199,7 +199,7 @@ public class MysqlModule extends AbstractQuercusModule {
 
     Statement stmt = null;
 
-    // XXX: move implementation
+    // TODO: move implementation
     try {
       try {
         Connection sqlConn = conn.validateConnection().getConnection(env);
@@ -527,7 +527,7 @@ public class MysqlModule extends AbstractQuercusModule {
           columnMd = tableMd.getColumn(columnName);
       }
 
-      // XXX: maxlen note from PHP comments:
+      // TODO: maxlen note from PHP comments:
       // the length of the longest value for that field in the returned dataset,
       // NOT the maximum length of data that column is designed to hold.
 
@@ -560,7 +560,7 @@ public class MysqlModule extends AbstractQuercusModule {
       else if (columnMd != null) {
         zerofill = columnMd.isZeroFill() ? 1 : 0;
         primaryKey = columnMd.isPrimaryKey() ? 1 : 0;
-        // XXX: not sure what multipleKey is supposed to be
+        // TODO: not sure what multipleKey is supposed to be
         // multipleKey = columnMd.isIndex() && !columnMd.isPrimaryKey() ? 1 : 0;
         uniqueKey = columnMd.isUnique() ? 1 : 0;
       }

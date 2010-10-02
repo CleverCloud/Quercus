@@ -64,7 +64,7 @@ abstract public class AbstractVarExpr extends Expr {
    */
   public void assign(QuercusParser parser)
   {
-    // XXX: used by list, e.g. quercus/03l8.  need further tests
+    // TODO: used by list, e.g. quercus/03l8.  need further tests
   }
 
   /**

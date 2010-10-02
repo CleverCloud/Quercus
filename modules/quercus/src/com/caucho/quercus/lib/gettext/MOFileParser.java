@@ -127,7 +127,7 @@ class MOFileParser extends GettextParser
 
     // Read in offsets of the original strings
     for (int i = 0; i < _numberOfStrings; i++) {
-      // XXX: length of original strings not needed?
+      // TODO: length of original strings not needed?
       readInt();
 
       originalOffsets[i] = readInt();

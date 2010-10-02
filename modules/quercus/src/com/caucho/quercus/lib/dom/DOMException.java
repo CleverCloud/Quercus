@@ -43,5 +43,5 @@ public class DOMException
     _delegate = delegate;
   }
 
-  // XXX:
+  // TODO:
 }

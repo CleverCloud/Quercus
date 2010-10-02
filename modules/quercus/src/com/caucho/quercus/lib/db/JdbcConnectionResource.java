@@ -417,7 +417,7 @@ public abstract class JdbcConnectionResource
   protected Connection getJavaConnection()
     throws SQLException
   {
-    // XXX: jdbc for jdk 1.6 updates
+    // TODO: jdbc for jdk 1.6 updates
     return _env.getQuercus().getConnection(_conn.getConnection());
   }
 
@@ -485,7 +485,7 @@ public abstract class JdbcConnectionResource
     
       TableKey key = new TableKey(getURL(), catalog, schema, table);
 
-      // XXX: needs invalidation on DROP or ALTER
+      // TODO: needs invalidation on DROP or ALTER
       JdbcTableMetaData tableMd = _tableMetadataMap.get(key);
     
       if (tableMd != null && tableMd.isValid(env))
@@ -631,7 +631,7 @@ public abstract class JdbcConnectionResource
       // statement reuse does not gain performance significantly (< 1%)
       // php/142v
       if (true || stmt == null) {
-        // XXX: test for performance
+        // TODO: test for performance
         
         boolean isSeekable = isSeekable();
         if (isSeekable)
@@ -651,7 +651,7 @@ public abstract class JdbcConnectionResource
         _rs = createResult(_env, stmt, rs);
         _affectedRows = 0;
 
-        // XXX: if these are needed, get them lazily for performance
+        // TODO: if these are needed, get them lazily for performance
         // _warnings = stmt.getWarnings();
       } else {
         // Statement.execute(String) returns false when SQL statement does
@@ -672,7 +672,7 @@ public abstract class JdbcConnectionResource
         if (_rs != null)
           _rs.setAffectedRows(_affectedRows);
 
-        // XXX: if these are needed, get them lazily for performance
+        // TODO: if these are needed, get them lazily for performance
         // _warnings = stmt.getWarnings();
 
         // for php/430a

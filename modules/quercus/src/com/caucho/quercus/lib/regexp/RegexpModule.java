@@ -244,7 +244,7 @@ public class RegexpModule
     try {
       return createRegexp(regexpValue);
     } catch (Exception e) {
-      // XXX: should create special error regexp.
+      // TODO: should create special error regexp.
       log.log(Level.WARNING, e.toString(), e);
 
       return null;
@@ -736,7 +736,7 @@ public class RegexpModule
 
       Value patternName = regexpState.getGroupName(j);
 
-      // XXX: named subpatterns causing conflicts with array indexes?
+      // TODO: named subpatterns causing conflicts with array indexes?
       if (patternName != null)
         matches.put(patternName, values);
 
@@ -2147,7 +2147,7 @@ public class RegexpModule
         }
         else if (i + 1 < len && regexp.charAt(i + 1) == '['
           && ! (i + 2 < len && regexp.charAt(i + 2) == ':')) {
-          // XXX: check regexp grammar
+          // TODO: check regexp grammar
           // php/151n
           sb = sb.appendByte('[');
           sb = sb.appendByte('\\');

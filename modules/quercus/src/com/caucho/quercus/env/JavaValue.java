@@ -169,7 +169,7 @@ public class JavaValue extends ObjectValue
     Set<? extends Map.Entry<Value,Value>> entrySet = entrySet();
 
     if (entrySet == null) {
-      out.print("resource(" + toString(env) + ")"); // XXX:
+      out.print("resource(" + toString(env) + ")"); // TODO:
       return;
     }
 
@@ -202,7 +202,7 @@ public class JavaValue extends ObjectValue
 
     try {
       if (! _classDef.varDumpImpl(env, this, _object, out, depth, valueSet))
-        out.print("resource(" + toString(env) + ")"); // XXX:
+        out.print("resource(" + toString(env) + ")"); // TODO:
     }
     finally {
       env.setThis(oldThis);

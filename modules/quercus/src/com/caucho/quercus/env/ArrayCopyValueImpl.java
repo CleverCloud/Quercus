@@ -110,7 +110,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl
   @Override
   public Value getArg(Value index, boolean isTop)
   {
-    // XXX:
+    // TODO:
     return super.getArg(index, isTop);
   }
 

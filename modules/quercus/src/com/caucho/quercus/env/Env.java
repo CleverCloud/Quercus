@@ -184,7 +184,7 @@ public class Env {
     private int _includePathIniCount;
     private ArrayList<String> _includePathList;
     private HashMap<Path, ArrayList<Path>> _includePathMap;
-    // XXX: may require a LinkedHashMap for ordering?
+    // TODO: may require a LinkedHashMap for ordering?
     private HashMap<Path, QuercusPage> _includeMap = new HashMap<Path, QuercusPage>();
     private Value _this = NullThisValue.NULL;
     private final boolean _isUnicodeSemantics;
@@ -283,7 +283,7 @@ public class Env {
 
 	_page = page;
 
-	// XXX: grab initial from page
+	// TODO: grab initial from page
 	// _defState = new DefinitionState(quercus);
 
 	AbstractFunction[] defFuns = getDefaultFunctionMap();
@@ -940,7 +940,7 @@ public class Env {
 	    String userName, String password,
 	    boolean isReuse)
 	    throws Exception {
-	// XXX: connections might not be reusable (see gallery2), because
+	// TODO: connections might not be reusable (see gallery2), because
 	// of case with two reuses and one closes because of CREATE or
 	// catalog
 	isReuse = false;
@@ -1716,7 +1716,7 @@ public class Env {
     public Value getGlobalValue(StringValue name) {
 	EnvVar var = getGlobalEnvVar(name);
 
-	// XXX: don't allocate?
+	// TODO: don't allocate?
 
 	return var.get();
 
@@ -1762,7 +1762,7 @@ public class Env {
     public Var getRef(StringValue name) {
 	EnvVar envVar = getEnvVar(name);
 
-	// XXX: can return null?
+	// TODO: can return null?
 
 	return envVar.getVar();
 
@@ -1806,7 +1806,7 @@ public class Env {
     public Var getGlobalRef(StringValue name) {
 	EnvVar envVar = getGlobalEnvVar(name);
 
-	// XXX: not create?
+	// TODO: not create?
 
 	return envVar.getVar();
     }
@@ -2631,7 +2631,7 @@ public class Env {
     }
 
     public void setValue(String name, Value value) {
-	// XXX: update to Quercus
+	// TODO: update to Quercus
 	setValue(createString(name), value);
     }
 
@@ -3455,7 +3455,7 @@ public class Env {
 
 	int id = _quercus.getFunctionId(name);
 
-	// XXX: anonymous/generated functions(?), e.g. like foo2431
+	// TODO: anonymous/generated functions(?), e.g. like foo2431
 
 	if (_fun.length <= id) {
 	    AbstractFunction[] funMap = new AbstractFunction[id + 256];
@@ -3495,7 +3495,7 @@ public class Env {
      */
     public Value addFunctionFromPage(String name, String lowerName,
 	    AbstractFunction fun) {
-	// XXX: skip the old function check since the include for compiled
+	// TODO: skip the old function check since the include for compiled
 	// pages is already verified.  Might have a switch here?
     /*
 	AbstractFunction oldFun = _lowerFunMap.get(lowerName);
@@ -4036,7 +4036,7 @@ public class Env {
 	_includeMap = new HashMap<Path, QuercusPage>(includeMap);
 
 	// php/404l
-	// XXX: import and namespaces
+	// TODO: import and namespaces
 
 	ImportMap importMap = saveState.getImportMap();
 
@@ -4410,12 +4410,12 @@ public class Env {
 	    return (Value) obj;
 	}
 
-	// XXX: why is this logic here?  The def should be correct on the call
+	// TODO: why is this logic here?  The def should be correct on the call
 	// logic is for JavaMarshal, where can avoid the lookup call
 	if (def.getType() != obj.getClass()) {
 	    // php/0ceg
 
-	    // XXX: what if types are incompatible, does it matter?
+	    // TODO: what if types are incompatible, does it matter?
 	    // if it doesn't matter, simplify this to one if with no else
 	    def = getJavaClassDefinition(obj.getClass());
 	}
@@ -4700,7 +4700,7 @@ public class Env {
 	ClassDef staticClass = _quercus.getClassDef(id);
 
 	if (staticClass != null) {
-	    return createQuercusClass(id, staticClass, null); // XXX: cache
+	    return createQuercusClass(id, staticClass, null); // TODO: cache
 	} else {
 	    return null;
 	}
@@ -5144,7 +5144,7 @@ public class Env {
 	    return isUrl(((JarPath) path).getContainer());
 	}
 
-	// XXX: too restrictive for filters
+	// TODO: too restrictive for filters
 	return !"php".equals(scheme)
 		|| "php://input".equals(path.toString())
 		|| path.toString().startsWith("php://filter");
@@ -6205,7 +6205,7 @@ public class Env {
 	    return null;
 	} else if (path instanceof NullPath) {
 	    // for QuercusScriptEngine.eval() where only a Reader is passed in
-	    // XXX: not too pretty
+	    // TODO: not too pretty
 	    return null;
 	}
 
@@ -6285,7 +6285,7 @@ public class Env {
      * Returns the current function.
      */
     public String getFunctionLocation() {
-	// XXX: need to work with compiled code, too
+	// TODO: need to work with compiled code, too
 	Expr call = peekCall(0);
 
 	if (call != null) {
@@ -6358,7 +6358,7 @@ public class Env {
      */
     public static Var setEnvRef(Var oldVar, Value value) {
 	// 3ab7
-	// XXX: need better test case, since that one isn't allowed by php
+	// TODO: need better test case, since that one isn't allowed by php
 
 	if (value instanceof Var) {
 	    return (Var) value;
@@ -6536,12 +6536,12 @@ public class Env {
 	_shutdownList.add(new Shutdown(callback, args));
     }
 
-    // XXX: hack until can clean up
+    // TODO: hack until can clean up
     public void setGzStream(Object obj) {
 	_gzStream = obj;
     }
 
-    // XXX: hack until can clean up
+    // TODO: hack until can clean up
     public Object getGzStream() {
 	return _gzStream;
     }

@@ -246,7 +246,7 @@ public class MailModule extends AbstractQuercusModule {
       if (addrStr.length() > 0) {
         int openBracket = addrStr.indexOf('<');
         
-        // XXX: javamail may be too strict, so we quote spaces in brackets
+        // TODO: javamail may be too strict, so we quote spaces in brackets
         if (openBracket >= 0 && ! addrStr.contains("\"")) {
           int closeBracket = addrStr.indexOf('>', openBracket + 1);
         

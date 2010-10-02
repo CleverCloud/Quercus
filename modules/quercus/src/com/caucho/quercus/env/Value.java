@@ -497,7 +497,7 @@ abstract public class Value implements java.io.Serializable
     if (lVal instanceof ObjectValue) return 1;
     if (rVal instanceof ObjectValue) return -1;
 
-    // XXX: proper default case?
+    // TODO: proper default case?
     throw new RuntimeException(
       "values are incomparable: " + lVal + " <=> " + rVal);
   }

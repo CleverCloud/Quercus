@@ -100,7 +100,7 @@ public class SimpleXMLModule
   
   public SimpleXMLElement simplexml_import_dom(Env env)
   {
-    // XXX: DOMNode needs to be able to export partial documents
+    // TODO: DOMNode needs to be able to export partial documents
     throw new UnimplementedException("simplexml_import_dom");
   }
 }

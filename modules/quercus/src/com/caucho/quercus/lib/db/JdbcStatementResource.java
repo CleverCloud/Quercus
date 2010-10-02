@@ -256,7 +256,7 @@ public class JdbcStatementResource {
           case 'd':
             _stmt.setDouble(i + 1, _params[i].toDouble());
             break;
-            // XXX: blob needs to be redone
+            // TODO: blob needs to be redone
             // Currently treated as a string
           case 'b':
             _stmt.setString(i + 1, _params[i].toString());

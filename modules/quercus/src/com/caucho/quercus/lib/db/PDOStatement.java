@@ -190,7 +190,7 @@ public class PDOStatement
         name = new StringBuilder();
         continue;
       }
-      // XXX: check what characters are allowed
+      // TODO: check what characters are allowed
       else if (name != null
           && (ch == -1 || !Character.isJavaIdentifierPart(ch))) {
         if (_parameterNameMap == null)
@@ -437,7 +437,7 @@ public class PDOStatement
    */
   public boolean execute(@Optional @ReadOnly Value inputParameters)
   {
-    // XXX: s/b to do this with ArrayValue arg, but cannot differentiate between
+    // TODO: s/b to do this with ArrayValue arg, but cannot differentiate between
     // no args and bad arg that isn't an ArrayValue
     ArrayValue parameters;
 
@@ -691,7 +691,7 @@ public class PDOStatement
 
     if (_fetchModeArgs.length == 2) {
       if (_fetchModeArgs[1].isArray()) {
-        // XXX: inefiicient, but args[1].getValueArray(_env)
+        // TODO: inefiicient, but args[1].getValueArray(_env)
         // doesn't handle references
         ArrayValue argsArray = (ArrayValue) _fetchModeArgs[1];
 
@@ -857,7 +857,7 @@ public class PDOStatement
 
   private Value fetchLazy()
   {
-    // XXX: need to check why lazy is no different than object
+    // TODO: need to check why lazy is no different than object
     return fetchObject(null, NULL_VALUES);
   }
 
@@ -1039,7 +1039,7 @@ public class PDOStatement
     if (jdbcType == -1)
       jdbcType = getResultSetMetaData().getColumnType(column);
 
-    // XXX: needs tests
+    // TODO: needs tests
 
     switch (jdbcType) {
       case Types.NULL:
@@ -1069,7 +1069,7 @@ public class PDOStatement
           return (new DoubleValue(value)).toStringValue();
       }
 
-      // XXX: lob
+      // TODO: lob
 
       default:
       {

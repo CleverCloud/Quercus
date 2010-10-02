@@ -382,7 +382,7 @@ public class Mysqli extends JdbcConnectionResource {
       return false;
     }
 
-    // XXX: Docs for mysqli_change_user indicate that
+    // TODO: Docs for mysqli_change_user indicate that
     // if new user authorization fails,
     // then the existing user perms are retained.
 

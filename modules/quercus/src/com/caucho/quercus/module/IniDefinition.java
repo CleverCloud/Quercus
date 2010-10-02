@@ -406,14 +406,14 @@ public class IniDefinition {
       Env env = Env.getInstance();
       
       // php/1a17
-      // XXX: Env may not be around yet, so need another way to notify user
+      // TODO: Env may not be around yet, so need another way to notify user
       //      of unsupported options
       if (env == null)
         return;
 
       // php/1a0u
       // don't send a warning if it's being turned off (for Drupal)
-      // XXX: send notice instead?
+      // TODO: send notice instead?
       if (toBooleanValue(value).equals(toBooleanValue(getDefault())))
         return;
 //      Env.getInstance()

@@ -82,7 +82,7 @@ public class FileValue extends StreamResource {
 
       if (ch == '\n')
         return sb;
-      // XXX: issues with mac
+      // TODO: issues with mac
     }
 
     if (sb.length() > 0)

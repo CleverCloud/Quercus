@@ -334,7 +334,7 @@ public class VariableModule extends AbstractQuercusModule {
     return v.isArray();
   }
 
-  // XXX: is_binary
+  // TODO: is_binary
 
   /**
    * Returns true for a boolean
@@ -350,7 +350,7 @@ public class VariableModule extends AbstractQuercusModule {
             : BooleanValue.FALSE);
   }
 
-  // XXX: is_buffer
+  // TODO: is_buffer
 
   /**
    * Returns the type string for the variable
@@ -364,7 +364,7 @@ public class VariableModule extends AbstractQuercusModule {
       return true;
     }
     
-    // XXX: this needs to be made OO through Value
+    // TODO: this needs to be made OO through Value
     
     if (v instanceof StringValue) {
       if (nameRef != null)
@@ -560,7 +560,7 @@ public class VariableModule extends AbstractQuercusModule {
     return value.isString();
   }
 
-  // XXX: is_unicode
+  // TODO: is_unicode
 
   /**
    * Returns the type string for the variable
@@ -741,7 +741,7 @@ public class VariableModule extends AbstractQuercusModule {
     return v;
   }
 
-  // XXX: unset
+  // TODO: unset
 
   /**
    * Prints a debug version of the variable
@@ -824,7 +824,7 @@ public class VariableModule extends AbstractQuercusModule {
         out.print("    [");
         out.print(entry.getKey());
         out.print("] => ");
-        debug_impl(env, entry.getValue(), depth + 1); // XXX: recursion
+        debug_impl(env, entry.getValue(), depth + 1); // TODO: recursion
       }
       printDepth(out, 2 * depth);
       out.println(")");
