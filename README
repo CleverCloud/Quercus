@@ -2,7 +2,7 @@ README
 -----------------------------------------------------
 
 1. What is Quercus ?
-2. Why a fork ?
+2. Why a development branch maintained by Clever Cloud ?
 3. Compiling
 4. Installing
 5. Report an issue
@@ -13,10 +13,10 @@ I. What is Quercus ?
 Quercus is Caucho Technology’s fast, open-source, 100% Java implementation of the PHP language.
 
 
-II. Why a fork ?
+II. Why a development branch maintained by Clever Cloud ?
 -----------------------------------------------------
-Clever Cloud has forked the Quercus project, formerly maintained by Caucho, to have a best response for issues and features requests.
-You can find the Git-port of Caucho SVN here : http://github.com/Kdecherf/resin
+Clever Cloud has copied the Quercus project, maintained and copyrighted by Caucho Technology, to have a best response for issues and features requests. Quercus is a part of Caucho's project Resin.
+You can find the Git-port of Caucho's SVN here : http://github.com/Kdecherf/resin
 
 
 III. Compiling
