@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.program;
 
 import com.caucho.quercus.Location;
@@ -43,60 +42,52 @@ import java.util.logging.Logger;
 /**
  * Declaration for an abstract function or interface.
  */
-public class MethodDeclaration extends Function
-{
-  private static final Logger log = Logger.getLogger(
-    MethodDeclaration.class.getName());
-  private static final L10N L = new L10N(MethodDeclaration.class);
+public class MethodDeclaration extends Function {
 
-  private final ClassDef _qClass;
+    private static final Logger log = Logger.getLogger(
+	    MethodDeclaration.class.getName());
+    private static final L10N L = new L10N(MethodDeclaration.class);
+    private final ClassDef _qClass;
 
-  public MethodDeclaration(ExprFactory exprFactory,
-                           Location location,
-                           ClassDef qClass,
-                           String name,
-                           FunctionInfo info,
-                           Arg []argList)
-  {
-    super(exprFactory, location,
-          name, info, argList,
-          new Statement[0]);
+    public MethodDeclaration(ExprFactory exprFactory,
+	    Location location,
+	    ClassDef qClass,
+	    String name,
+	    FunctionInfo info,
+	    Arg[] argList) {
+	super(exprFactory, location,
+		name, info, argList,
+		new Statement[0]);
 
-    _qClass = qClass;
-  }
+	_qClass = qClass;
+    }
 
-  public boolean isAbstract()
-  {
-    return true;
-  }
+    public boolean isAbstract() {
+	return true;
+    }
 
-  public boolean isObjectMethod()
-  {
-    return true;
-  }
+    public boolean isObjectMethod() {
+	return true;
+    }
 
-  /**
-   * Binds the user's arguments to the actual arguments.
-   *
-   * @param args the user's arguments
-   * @return the user arguments augmented by any defaults
-   */
-  public Expr []bindArguments(Env env, Expr fun, Expr []args)
-  {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * Binds the user's arguments to the actual arguments.
+     *
+     * @param args the user's arguments
+     * @return the user arguments augmented by any defaults
+     */
+    public Expr[] bindArguments(Env env, Expr fun, Expr[] args) {
+	throw new UnsupportedOperationException();
+    }
 
-  /**
-   * Evaluates the function.
-   */
-  public Value call(Env env, Value []args)
-  {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * Evaluates the function.
+     */
+    public Value call(Env env, Value[] args) {
+	throw new UnsupportedOperationException();
+    }
 
-  public String toString()
-  {
-    return getClass().getSimpleName() + "[" + getName() + "]";
-  }
+    public String toString() {
+	return getClass().getSimpleName() + "[" + getName() + "]";
+    }
 }
-

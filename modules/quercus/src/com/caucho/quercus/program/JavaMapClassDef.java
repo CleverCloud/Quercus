@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.program;
 
 import com.caucho.quercus.env.Env;
@@ -40,17 +39,16 @@ import java.util.Map;
  * Represents an introspected Java class.
  */
 public class JavaMapClassDef extends JavaClassDef {
-  JavaMapClassDef(ModuleContext moduleContext, String name, Class type)
-  {
-    super(moduleContext, name, type);
-  }
 
-  public Value wrap(Env env, Object obj)
-  {
-    if (!_isInit)
-      init();
-    
-    return new JavaMapAdapter((Map) obj, this);
-  }
+    JavaMapClassDef(ModuleContext moduleContext, String name, Class type) {
+	super(moduleContext, name, type);
+    }
+
+    public Value wrap(Env env, Object obj) {
+	if (!_isInit) {
+	    init();
+	}
+
+	return new JavaMapAdapter((Map) obj, this);
+    }
 }
-

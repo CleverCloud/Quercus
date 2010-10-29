@@ -26,13 +26,12 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.program;
 
 /**
  * Function and field visibility.
  */
-
 public enum Visibility {
-  PUBLIC, PROTECTED, PRIVATE
+
+    PUBLIC, PROTECTED, PRIVATE
 }

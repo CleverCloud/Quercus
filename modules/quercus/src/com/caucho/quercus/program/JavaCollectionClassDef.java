@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.program;
 
 import com.caucho.quercus.env.Env;
@@ -42,17 +41,16 @@ import java.util.List;
  * Represents an introspected Java class.
  */
 public class JavaCollectionClassDef extends JavaClassDef {
-  JavaCollectionClassDef(ModuleContext moduleContext, String name, Class type)
-  {
-    super(moduleContext, name, type);
-  }
 
-  public Value wrap(Env env, Object obj)
-  {
-    if (! _isInit)
-      init();
+    JavaCollectionClassDef(ModuleContext moduleContext, String name, Class type) {
+	super(moduleContext, name, type);
+    }
 
-    return new JavaCollectionAdapter((Collection) obj, this);
-  }
+    public Value wrap(Env env, Object obj) {
+	if (!_isInit) {
+	    init();
+	}
+
+	return new JavaCollectionAdapter((Collection) obj, this);
+    }
 }
-

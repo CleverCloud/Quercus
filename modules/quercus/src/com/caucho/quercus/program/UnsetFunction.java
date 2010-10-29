@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.program;
 
 import com.caucho.quercus.env.Env;
@@ -37,21 +36,18 @@ import com.caucho.quercus.function.AbstractFunction;
  * Represents an unset function
  */
 public class UnsetFunction extends AbstractFunction {
-  private final long _crc;
-  
-  public UnsetFunction(long crc)
-  {
-    _crc = crc;
-  }
 
-  public long getCrc()
-  {
-    return _crc;
-  }
+    private final long _crc;
 
-  public Value call(Env env, Value []args)
-  {
-    throw new UnsupportedOperationException();
-  }
+    public UnsetFunction(long crc) {
+	_crc = crc;
+    }
+
+    public long getCrc() {
+	return _crc;
+    }
+
+    public Value call(Env env, Value[] args) {
+	throw new UnsupportedOperationException();
+    }
 }
-

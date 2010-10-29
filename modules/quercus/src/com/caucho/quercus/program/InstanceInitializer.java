@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.program;
 
 import com.caucho.quercus.env.Env;
@@ -36,9 +35,9 @@ import com.caucho.quercus.env.Value;
  * Represents a Quercus class instance initializer
  */
 public interface InstanceInitializer {
-  /**
-   * Creates a new instance.
-   */
-  public void initInstance(Env env, Value value);
-}
 
+    /**
+     * Creates a new instance.
+     */
+    public void initInstance(Env env, Value value);
+}

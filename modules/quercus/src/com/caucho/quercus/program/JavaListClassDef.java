@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.program;
 
 import com.caucho.quercus.env.Env;
@@ -40,17 +39,16 @@ import java.util.List;
  * Represents an introspected Java class.
  */
 public class JavaListClassDef extends JavaClassDef {
-  JavaListClassDef(ModuleContext moduleContext, String name, Class type)
-  {
-    super(moduleContext, name, type);
-  }
 
-  public Value wrap(Env env, Object obj)
-  {
-    if (!_isInit)
-      init();
+    JavaListClassDef(ModuleContext moduleContext, String name, Class type) {
+	super(moduleContext, name, type);
+    }
 
-    return new JavaListAdapter((List)obj, this);
-  }
+    public Value wrap(Env env, Object obj) {
+	if (!_isInit) {
+	    init();
+	}
+
+	return new JavaListAdapter((List) obj, this);
+    }
 }
-

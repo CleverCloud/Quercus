@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.program;
 
 import com.caucho.quercus.QuercusContext;
@@ -62,50 +61,47 @@ import java.util.logging.Logger;
  * Represents an introspected Java class.
  */
 public class JavaArrayClassDef extends JavaClassDef {
-  public JavaArrayClassDef(ModuleContext moduleContext,
-                           String name,
-                           Class type)
-  {
-    super(moduleContext, name, type);
-  }
-  
-  public JavaArrayClassDef(ModuleContext moduleContext,
-                           String name,
-                           Class type,
-                           String extension)
-  {
-    super(moduleContext, name, type, extension);
-  }
 
-  @Override
-  public boolean isArray()
-  {
-    return true;
-  }
-
-  @Override
-  public Value wrap(Env env, Object obj)
-  {
-    if (! _isInit)
-      init();
-    
-    ArrayValueImpl arrayValueImpl = new ArrayValueImpl();
-
-    // TODO: needs to go into constructor
-    Class componentClass = getType().getComponentType();
-
-    MarshalFactory factory = getModuleContext().getMarshalFactory();
-    Marshal componentClassMarshal = factory.create(componentClass);
-
-    int length = Array.getLength(obj);
-      
-    for (int i = 0; i < length; i++) {
-      Object component = Array.get(obj, i);
-      
-      arrayValueImpl.put(componentClassMarshal.unmarshal(env, component));
+    public JavaArrayClassDef(ModuleContext moduleContext,
+	    String name,
+	    Class type) {
+	super(moduleContext, name, type);
     }
 
-    return arrayValueImpl;
-  }
-}
+    public JavaArrayClassDef(ModuleContext moduleContext,
+	    String name,
+	    Class type,
+	    String extension) {
+	super(moduleContext, name, type, extension);
+    }
 
+    @Override
+    public boolean isArray() {
+	return true;
+    }
+
+    @Override
+    public Value wrap(Env env, Object obj) {
+	if (!_isInit) {
+	    init();
+	}
+
+	ArrayValueImpl arrayValueImpl = new ArrayValueImpl();
+
+	// TODO: needs to go into constructor
+	Class componentClass = getType().getComponentType();
+
+	MarshalFactory factory = getModuleContext().getMarshalFactory();
+	Marshal componentClassMarshal = factory.create(componentClass);
+
+	int length = Array.getLength(obj);
+
+	for (int i = 0; i < length; i++) {
+	    Object component = Array.get(obj, i);
+
+	    arrayValueImpl.put(componentClassMarshal.unmarshal(env, component));
+	}
+
+	return arrayValueImpl;
+    }
+}
