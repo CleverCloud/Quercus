@@ -38,9 +38,12 @@ import com.caucho.util.CharBuffer;
 import com.caucho.util.L10N;
 import com.caucho.util.QDate;
 
+import org.joda.time.format.*;
+
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Locale;
 
 /**
  * Date functions.
@@ -907,6 +910,212 @@ public class DateModule extends AbstractQuercusModule {
 	}
 
 	return QDate.formatLocal(time, format);
+    }
+
+    /**
+     * Returns the parsed date.
+     */
+    public Value strptime(Env env,
+	    String date,
+	    String format) {
+	ArrayValueImpl array = new ArrayValueImpl();
+	DateTimeFormatterBuilder fb = new DateTimeFormatterBuilder();
+
+	int length = format.length();
+
+	for (int i = 0; i < length; i++) {
+	    char ch = format.charAt(i);
+	    if (ch != '%') {
+		fb.appendLiteral(ch);
+		continue;
+	    }
+
+	    switch (format.charAt(++i)) {
+		case 'a':
+		    fb.appendDayOfWeekShortText();
+		    break;
+
+		case 'A':
+		    fb.appendDayOfWeekText();
+		    break;
+
+		case 'h':
+		case 'b':
+		    fb.appendMonthOfYearShortText();
+		    ;
+		    break;
+
+		case 'B':
+		    fb.appendMonthOfYearText();
+		    break;
+		/*
+		// TODO: Find a solution to have Locale DateTime pattern string for dtfb
+		case 'c':
+		//fb.appendShortText(L)
+		break;
+		 */
+		case 'd':
+		    fb.appendDayOfMonth(2);
+		    break;
+		/*
+		case 'D':
+		cb.append((_month + 1) / 10);
+		cb.append((_month + 1) % 10);
+		cb.append('/');
+		cb.append((_dayOfMonth + 1) / 10);
+		cb.append((_dayOfMonth + 1) % 10);
+		cb.append('/');
+		cb.append(_year / 10 % 10);
+		cb.append(_year % 10);
+		break;
+
+		case 'e':
+		if ((_dayOfMonth + 1) / 10 == 0) {
+		cb.append(' ');
+		} else {
+		cb.append((_dayOfMonth + 1) / 10);
+		}
+		cb.append((_dayOfMonth + 1) % 10);
+		break;
+
+		// ISO year
+		 */
+		case 'H':
+		    fb.appendHourOfDay(2);
+		    break;
+		/*
+		case 'I': {
+		int hour = (int) (_timeOfDay / 3600000) % 12;
+		if (hour == 0) {
+		hour = 12;
+		}
+		cb.append(hour / 10);
+		cb.append(hour % 10);
+		break;
+		}
+
+		case 'j':
+		cb.append((_dayOfYear + 1) / 100);
+		cb.append((_dayOfYear + 1) / 10 % 10);
+		cb.append((_dayOfYear + 1) % 10);
+		break;
+		 */
+		case 'm':
+		    fb.appendMonthOfYear(2);
+		    break;
+
+		case 'M':
+		    fb.appendMinuteOfHour(2);
+		    break;
+		/*
+		case 'p': {
+		int hour = (int) (_timeOfDay / 3600000) % 24;
+		if (hour < 12) {
+		cb.append("am");
+		} else {
+		cb.append("pm");
+		}
+		break;
+		}
+		 */
+		case 'S':
+		    fb.appendSecondOfMinute(2);
+		    break;
+		/*
+		case 's':
+		cb.append((_timeOfDay / 100) % 10);
+		cb.append((_timeOfDay / 10) % 10);
+		cb.append(_timeOfDay % 10);
+		break;
+
+		case 'T': {
+		int hour = (int) (_timeOfDay / 3600000) % 24;
+		cb.append(hour / 10);
+		cb.append(hour % 10);
+		cb.append(':');
+		cb.append((_timeOfDay / 600000) % 6);
+		cb.append((_timeOfDay / 60000) % 10);
+		cb.append(':');
+		cb.append((_timeOfDay / 10000) % 6);
+		cb.append((_timeOfDay / 1000) % 10);
+		break;
+		}
+
+		case 'W':
+		int week = getWeek();
+		cb.append((week + 1) / 10);
+		cb.append((week + 1) % 10);
+		break;
+
+		case 'w':
+		cb.append(getDayOfWeek() - 1);
+		break;
+
+		case 'x':
+		cb.append(printShortLocaleDate());
+		break;
+
+		case 'X':
+		cb.append(printShortLocaleTime());
+		break;
+
+		case 'y':
+		cb.append(_year / 10 % 10);
+		cb.append(_year % 10);
+		break;
+		 */
+		case 'Y':
+		    fb.appendYear(4, 4);
+		    break;
+		/*
+		case 'Z':
+		if (_zoneName == null) {
+		cb.append("GMT");
+		} else {
+		cb.append(_zoneName);
+		}
+		break;
+
+		case 'z':
+		long offset = _zoneOffset;
+
+		if (offset < 0) {
+		cb.append("-");
+		offset = -offset;
+		} else {
+		cb.append("+");
+		}
+
+		cb.append((offset / 36000000) % 10);
+		cb.append((offset / 3600000) % 10);
+		cb.append((offset / 600000) % 6);
+		cb.append((offset / 60000) % 10);
+		break;
+		 */
+		case '%':
+		    fb.appendLiteral('%');
+		    break;
+
+		default:
+		    fb.appendLiteral(ch);
+	    }
+	}
+
+	DateTimeFormatter dtf = fb.toFormatter().withLocale(Locale.getDefault());
+
+	org.joda.time.DateTime dt = dtf.parseDateTime(date);
+
+	array.put("tm_sec", dt.getSecondOfMinute());
+	array.put("tm_min", dt.getMinuteOfHour());
+	array.put("tm_hour", dt.getHourOfDay());
+	array.put("tm_mday", dt.getDayOfMonth());
+	array.put("tm_mon", dt.getMonthOfYear() - 1);
+	array.put("tm_year", dt.getYearOfCentury() + ((dt.getCenturyOfEra() - 19) * 100)); // Years since 1900
+	array.put("tm_wday", dt.getDayOfWeek() % 7);
+	array.put("tm_yday", dt.getDayOfYear() - 1);
+	array.put("unparsed", "");
+
+	return array;
     }
 
     /**
