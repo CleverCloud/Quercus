@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.script;
 
 import com.caucho.quercus.QuercusContext;
@@ -42,184 +41,171 @@ import java.lang.reflect.*;
 /**
  * Script engine factory
  */
-public class QuercusScriptEngineFactory implements ScriptEngineFactory
-{
-  private Bindings _globalBindings = new SimpleBindings();
-  
-  /**
-   * Returns the full name of the ScriptEngine.
-   */
-  public String getEngineName()
-  {
-    return "Caucho Quercus Script Engine";
-  }
+public class QuercusScriptEngineFactory implements ScriptEngineFactory {
 
-  /**
-   * Returns the version of the ScriptEngine.
-   */
-  public String getEngineVersion()
-  {
-    try {
-      //return com.caucho.Version.VERSION;
+    private Bindings _globalBindings = new SimpleBindings();
 
-      Class cl = Class.forName("com.caucho.Version");
-      Field version = cl.getField("VERSION");
-
-      return (String) version.get(null);
-    } catch (Exception e) {
+    /**
+     * Returns the full name of the ScriptEngine.
+     */
+    public String getEngineName() {
+	return "Caucho Quercus Script Engine";
     }
 
-    return "Resin/3.1.0";
-  }
+    /**
+     * Returns the version of the ScriptEngine.
+     */
+    public String getEngineVersion() {
+	try {
+	    //return com.caucho.Version.VERSION;
 
-  /**
-   * Returns an array of filename extensions normally used by this
-   * language.
-   */
-  public List<String> getExtensions()
-  {
-    ArrayList<String> ext = new ArrayList<String>();
-    ext.add("php");
-    return ext;
-  }
+	    Class cl = Class.forName("com.caucho.Version");
+	    Field version = cl.getField("VERSION");
 
-  /**
-   * Returns the mime-types for scripts for the engine.
-   */
-  public List<String> getMimeTypes()
-  {
-    return new ArrayList<String>();
-  }
+	    return (String) version.get(null);
+	} catch (Exception e) {
+	}
 
-  /**
-   * Returns the short names for the scripts for the engine,
-   * e.g. {"javascript", "rhino"}
-   */
-  public List<String> getNames()
-  {
-    ArrayList<String> names = new ArrayList<String>();
-    names.add("quercus");
-    names.add("php");
-    return names;
-  }
-
-  /**
-   * Returns the name of the supported language.
-   */
-  public String getLanguageName()
-  {
-    return "php";
-  }
-
-  /**
-   * Returns the version of the scripting language.
-   */
-  public String getLanguageVersion()
-  {
-    return "5.3.2";
-  }
-
-  /**
-   * Returns engine-specific properties.
-   *
-   * Predefined keys include:
-   * <ul>
-   * <li>THREADING
-   * </ul>
-   */
-  public Object getParameter(String key)
-  {
-    if ("THREADING".equals(key))
-      return "THREAD-ISOLATED";
-    else if (ScriptEngine.ENGINE.equals(key))
-      return getEngineName();
-    else if (ScriptEngine.ENGINE_VERSION.equals(key))
-      return getEngineVersion();
-    else if (ScriptEngine.NAME.equals(key))
-      return getEngineName();
-    else if (ScriptEngine.LANGUAGE.equals(key))
-      return getLanguageName();
-    else if (ScriptEngine.LANGUAGE_VERSION.equals(key))
-      return getLanguageVersion();
-    else
-      return null;
-  }
-
-  /**
-   * Returns a string which could invoke a method of a Java object.
-   */
-  public String getMethodCallSyntax(String obj, String m, String []args)
-  {
-    StringBuilder sb = new StringBuilder();
-
-    sb.append("$");
-    sb.append(obj);
-    sb.append("->");
-    sb.append(m);
-    sb.append("(");
-    for (int i = 0; i < args.length; i++) {
-      if (i != 0)
-        sb.append(", ");
-
-      sb.append("$");
-      sb.append(args[i]);
+	return "Resin/3.1.0";
     }
-    sb.append(");");
-    
-    return sb.toString();
-  }
 
-  /**
-   * Returns a string which generates an output statement.
-   */
-  public String getOutputStatement(String toDisplay)
-  {
-    return "echo(\'" + toDisplay.replace("\'", "\\\'") + "\');";
-  }
-
-  /**
-   * Returns a string which generates a valid program.
-   */
-  public String getProgram(String []statements)
-  {
-    StringBuilder sb = new StringBuilder();
-
-    sb.append("<?php\n");
-
-    for (int i = 0; i < statements.length; i++) {
-      sb.append(statements[i]);
-      sb.append(";\n");
+    /**
+     * Returns an array of filename extensions normally used by this
+     * language.
+     */
+    public List<String> getExtensions() {
+	ArrayList<String> ext = new ArrayList<String>();
+	ext.add("php");
+	return ext;
     }
-    
-    sb.append("?>\n");
-    
-    return sb.toString();
-  }
-  
-  /**
-   * Returns a ScriptEngine instance.
-   */
-  public ScriptEngine getScriptEngine()
-  {
-    return new QuercusScriptEngine(this, createQuercus());
-  }
 
-  /**
-   * Creates a new Quercus, which can be overridden for security issues.
-   */
-  protected QuercusContext createQuercus()
-  {
-    QuercusContext quercus = new QuercusContext();
-    
-    quercus.init();
-    quercus.start();
-    
-    return quercus;
-  }
+    /**
+     * Returns the mime-types for scripts for the engine.
+     */
+    public List<String> getMimeTypes() {
+	return new ArrayList<String>();
+    }
 
-  public String toString()
-  {
-    return "QuercusScriptEngineFactory[]";
-  }
+    /**
+     * Returns the short names for the scripts for the engine,
+     * e.g. {"javascript", "rhino"}
+     */
+    public List<String> getNames() {
+	ArrayList<String> names = new ArrayList<String>();
+	names.add("quercus");
+	names.add("php");
+	return names;
+    }
+
+    /**
+     * Returns the name of the supported language.
+     */
+    public String getLanguageName() {
+	return "php";
+    }
+
+    /**
+     * Returns the version of the scripting language.
+     */
+    public String getLanguageVersion() {
+	return "5.3.2";
+    }
+
+    /**
+     * Returns engine-specific properties.
+     *
+     * Predefined keys include:
+     * <ul>
+     * <li>THREADING
+     * </ul>
+     */
+    public Object getParameter(String key) {
+	if ("THREADING".equals(key)) {
+	    return "THREAD-ISOLATED";
+	} else if (ScriptEngine.ENGINE.equals(key)) {
+	    return getEngineName();
+	} else if (ScriptEngine.ENGINE_VERSION.equals(key)) {
+	    return getEngineVersion();
+	} else if (ScriptEngine.NAME.equals(key)) {
+	    return getEngineName();
+	} else if (ScriptEngine.LANGUAGE.equals(key)) {
+	    return getLanguageName();
+	} else if (ScriptEngine.LANGUAGE_VERSION.equals(key)) {
+	    return getLanguageVersion();
+	} else {
+	    return null;
+	}
+    }
+
+    /**
+     * Returns a string which could invoke a method of a Java object.
+     */
+    public String getMethodCallSyntax(String obj, String m, String[] args) {
+	StringBuilder sb = new StringBuilder();
+
+	sb.append("$");
+	sb.append(obj);
+	sb.append("->");
+	sb.append(m);
+	sb.append("(");
+	for (int i = 0; i < args.length; i++) {
+	    if (i != 0) {
+		sb.append(", ");
+	    }
+
+	    sb.append("$");
+	    sb.append(args[i]);
+	}
+	sb.append(");");
+
+	return sb.toString();
+    }
+
+    /**
+     * Returns a string which generates an output statement.
+     */
+    public String getOutputStatement(String toDisplay) {
+	return "echo(\'" + toDisplay.replace("\'", "\\\'") + "\');";
+    }
+
+    /**
+     * Returns a string which generates a valid program.
+     */
+    public String getProgram(String[] statements) {
+	StringBuilder sb = new StringBuilder();
+
+	sb.append("<?php\n");
+
+	for (int i = 0; i < statements.length; i++) {
+	    sb.append(statements[i]);
+	    sb.append(";\n");
+	}
+
+	sb.append("?>\n");
+
+	return sb.toString();
+    }
+
+    /**
+     * Returns a ScriptEngine instance.
+     */
+    public ScriptEngine getScriptEngine() {
+	return new QuercusScriptEngine(this, createQuercus());
+    }
+
+    /**
+     * Creates a new Quercus, which can be overridden for security issues.
+     */
+    protected QuercusContext createQuercus() {
+	QuercusContext quercus = new QuercusContext();
+
+	quercus.init();
+	quercus.start();
+
+	return quercus;
+    }
+
+    public String toString() {
+	return "QuercusScriptEngineFactory[]";
+    }
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.script;
 
 import com.caucho.quercus.QuercusContext;
@@ -48,186 +47,175 @@ import java.io.Writer;
  * Script engine
  */
 public class QuercusScriptEngine
-  extends AbstractScriptEngine
-  implements Compilable
-{
-  private QuercusScriptEngineFactory _factory;
-  private final QuercusContext _quercus;
+	extends AbstractScriptEngine
+	implements Compilable {
 
-  QuercusScriptEngine(QuercusScriptEngineFactory factory)
-  {
-    this(factory, createQuercus());
-  }
+    private QuercusScriptEngineFactory _factory;
+    private final QuercusContext _quercus;
 
-  public QuercusScriptEngine(QuercusScriptEngineFactory factory,
-                             QuercusContext quercus)
-  {
-    _factory = factory;
-    _quercus = quercus;
-  }
-  
-  private static QuercusContext createQuercus()
-  {
-    QuercusContext quercus = new QuercusContext();
-    
-    quercus.init();
-    quercus.start();
-    
-    return quercus;
-  }
-
-  /**
-   * Returns the Quercus object.
-   * php/214h
-   */
-  public QuercusContext getQuercus()
-  {
-    return _quercus;
-  }
-
-  /**
-   * evaluates based on a reader.
-   */
-  public Object eval(Reader script, ScriptContext cxt)
-    throws ScriptException
-  {
-    Env env = null;
-
-    try {
-      ReadStream reader = ReaderStream.open(script);
-      
-      QuercusProgram program = QuercusParser.parse(_quercus, null, reader);
-
-      Writer writer = cxt.getWriter();
-      
-      WriteStream out;
-
-      if (writer != null) {
-        WriterStreamImpl s = new WriterStreamImpl();
-        s.setWriter(writer);
-        WriteStream os = new WriteStream(s);
-        
-        os.setNewlineString("\n");
-
-        try {
-          os.setEncoding("iso-8859-1");
-        } catch (Exception e) {
-        }
-
-        out = os;
-      }
-      else
-        out = new NullWriteStream();
-
-      QuercusPage page = new InterpretedPage(program);
-
-      env = new Env(_quercus, page, out, null, null);
-
-      env.setScriptContext(cxt);
-
-      // php/214c
-      env.start();
-      
-      Object result = null;
-      
-      try {
-        Value value = program.execute(env);
-        
-        if (value != null)
-          result = value.toJavaObject();
-      }
-      catch (QuercusExitException e) {
-        //php/2148
-      }
-      
-      out.flushBuffer();
-      out.free();
-
-      // flush buffer just in case
-      //
-      // jrunscript in interactive mode does not automatically flush its
-      // buffers after every input, so output to stdout will not be seen
-      // until the output buffer is full
-      //
-      // http://bugs.caucho.com/view.php?id=1914
-      writer.flush();
-      
-      return result;
-      
-      /*
-    } catch (ScriptException e) {
-      throw e;
-      */
-    } catch (RuntimeException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new ScriptException(e);
-    } catch (Throwable e) {
-      throw new RuntimeException(e);
-    } finally {
-      if (env != null)
-        env.close();
+    QuercusScriptEngine(QuercusScriptEngineFactory factory) {
+	this(factory, createQuercus());
     }
-  }
 
-  /**
-   * evaluates based on a script.
-   */
-  public Object eval(String script, ScriptContext cxt)
-    throws ScriptException
-  {
-    return eval(new StringReader(script), cxt);
-  }
-
-  /**
-   * compiles based on a reader.
-   */
-  public CompiledScript compile(Reader script)
-    throws ScriptException
-  {
-    try {
-      ReadStream reader = ReaderStream.open(script);
-      
-      QuercusProgram program = QuercusParser.parse(_quercus, null, reader);
-
-      return new QuercusCompiledScript(this, program);
-    } catch (RuntimeException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new ScriptException(e);
-    } catch (Throwable e) {
-      throw new RuntimeException(e);
+    public QuercusScriptEngine(QuercusScriptEngineFactory factory,
+	    QuercusContext quercus) {
+	_factory = factory;
+	_quercus = quercus;
     }
-  }
 
-  /**
-   * evaluates based on a script.
-   */
-  public CompiledScript compile(String script)
-    throws ScriptException
-  {
-    return compile(new StringReader(script));
-  }
+    private static QuercusContext createQuercus() {
+	QuercusContext quercus = new QuercusContext();
 
-  /**
-   * Returns the engine's factory.
-   */
-  public QuercusScriptEngineFactory getFactory()
-  {
-    return _factory;
-  }
+	quercus.init();
+	quercus.start();
 
-  /**
-   * Creates a bindings.
-   */
-  public Bindings createBindings()
-  {
-    return new SimpleBindings();
-  }
+	return quercus;
+    }
 
-  public String toString()
-  {
-    return "QuercusScriptEngine[]";
-  }
+    /**
+     * Returns the Quercus object.
+     * php/214h
+     */
+    public QuercusContext getQuercus() {
+	return _quercus;
+    }
+
+    /**
+     * evaluates based on a reader.
+     */
+    public Object eval(Reader script, ScriptContext cxt)
+	    throws ScriptException {
+	Env env = null;
+
+	try {
+	    ReadStream reader = ReaderStream.open(script);
+
+	    QuercusProgram program = QuercusParser.parse(_quercus, null, reader);
+
+	    Writer writer = cxt.getWriter();
+
+	    WriteStream out;
+
+	    if (writer != null) {
+		WriterStreamImpl s = new WriterStreamImpl();
+		s.setWriter(writer);
+		WriteStream os = new WriteStream(s);
+
+		os.setNewlineString("\n");
+
+		try {
+		    os.setEncoding("iso-8859-1");
+		} catch (Exception e) {
+		}
+
+		out = os;
+	    } else {
+		out = new NullWriteStream();
+	    }
+
+	    QuercusPage page = new InterpretedPage(program);
+
+	    env = new Env(_quercus, page, out, null, null);
+
+	    env.setScriptContext(cxt);
+
+	    // php/214c
+	    env.start();
+
+	    Object result = null;
+
+	    try {
+		Value value = program.execute(env);
+
+		if (value != null) {
+		    result = value.toJavaObject();
+		}
+	    } catch (QuercusExitException e) {
+		//php/2148
+	    }
+
+	    out.flushBuffer();
+	    out.free();
+
+	    // flush buffer just in case
+	    //
+	    // jrunscript in interactive mode does not automatically flush its
+	    // buffers after every input, so output to stdout will not be seen
+	    // until the output buffer is full
+	    //
+	    // http://bugs.caucho.com/view.php?id=1914
+	    writer.flush();
+
+	    return result;
+
+	    /*
+	    } catch (ScriptException e) {
+	    throw e;
+	     */
+	} catch (RuntimeException e) {
+	    throw e;
+	} catch (Exception e) {
+	    throw new ScriptException(e);
+	} catch (Throwable e) {
+	    throw new RuntimeException(e);
+	} finally {
+	    if (env != null) {
+		env.close();
+	    }
+	}
+    }
+
+    /**
+     * evaluates based on a script.
+     */
+    public Object eval(String script, ScriptContext cxt)
+	    throws ScriptException {
+	return eval(new StringReader(script), cxt);
+    }
+
+    /**
+     * compiles based on a reader.
+     */
+    public CompiledScript compile(Reader script)
+	    throws ScriptException {
+	try {
+	    ReadStream reader = ReaderStream.open(script);
+
+	    QuercusProgram program = QuercusParser.parse(_quercus, null, reader);
+
+	    return new QuercusCompiledScript(this, program);
+	} catch (RuntimeException e) {
+	    throw e;
+	} catch (Exception e) {
+	    throw new ScriptException(e);
+	} catch (Throwable e) {
+	    throw new RuntimeException(e);
+	}
+    }
+
+    /**
+     * evaluates based on a script.
+     */
+    public CompiledScript compile(String script)
+	    throws ScriptException {
+	return compile(new StringReader(script));
+    }
+
+    /**
+     * Returns the engine's factory.
+     */
+    public QuercusScriptEngineFactory getFactory() {
+	return _factory;
+    }
+
+    /**
+     * Creates a bindings.
+     */
+    public Bindings createBindings() {
+	return new SimpleBindings();
+    }
+
+    public String toString() {
+	return "QuercusScriptEngine[]";
+    }
 }
-
