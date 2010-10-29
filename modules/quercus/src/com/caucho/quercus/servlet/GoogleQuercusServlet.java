@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.servlet;
 
 import com.caucho.config.ConfigException;
@@ -39,40 +38,38 @@ import java.util.logging.Logger;
 /**
  * Servlet to call PHP through javax.script.
  */
-public class GoogleQuercusServlet extends QuercusServlet
-{
-  private static final L10N L = new L10N(GoogleQuercusServlet.class);
-  private static final Logger log
-    = Logger.getLogger(GoogleQuercusServlet.class.getName());
+public class GoogleQuercusServlet extends QuercusServlet {
 
-  @Override
-  protected QuercusServletImpl getQuercusServlet(boolean isResin)
-  {
-    QuercusServletImpl impl = null;
+    private static final L10N L = new L10N(GoogleQuercusServlet.class);
+    private static final Logger log = Logger.getLogger(GoogleQuercusServlet.class.getName());
 
-    try {
-      Class cl = Class.forName(
-          "com.caucho.quercus.servlet.ProGoogleQuercusServlet");
-      
-      Constructor cons = cl.getConstructor(java.io.File.class);
-      
-      impl = (QuercusServletImpl) cons.newInstance(_licenseDirectory);
-      
-      //impl = (QuercusServletImpl) cl.newInstance();
-    } catch (ConfigException e) {
-      log.log(Level.FINEST, e.toString(), e);
-      log.info(
-          "Quercus compiled mode requires valid Quercus professional licenses");
-      log.info(e.getMessage());
-      
-    } catch (Exception e) {
-      log.log(Level.FINEST, e.toString(), e);
+    @Override
+    protected QuercusServletImpl getQuercusServlet(boolean isResin) {
+	QuercusServletImpl impl = null;
+
+	try {
+	    Class cl = Class.forName(
+		    "com.caucho.quercus.servlet.ProGoogleQuercusServlet");
+
+	    Constructor cons = cl.getConstructor(java.io.File.class);
+
+	    impl = (QuercusServletImpl) cons.newInstance(_licenseDirectory);
+
+	    //impl = (QuercusServletImpl) cl.newInstance();
+	} catch (ConfigException e) {
+	    log.log(Level.FINEST, e.toString(), e);
+	    log.info(
+		    "Quercus compiled mode requires valid Quercus professional licenses");
+	    log.info(e.getMessage());
+
+	} catch (Exception e) {
+	    log.log(Level.FINEST, e.toString(), e);
+	}
+
+	if (impl == null) {
+	    impl = new GoogleQuercusServletImpl();
+	}
+
+	return impl;
     }
-
-    if (impl == null)
-      impl = new GoogleQuercusServletImpl();
-    
-    return impl;
-  }
 }
-

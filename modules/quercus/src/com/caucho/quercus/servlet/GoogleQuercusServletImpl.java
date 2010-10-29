@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.servlet;
 
 import com.caucho.quercus.*;
@@ -53,233 +52,217 @@ import java.util.logging.Logger;
 /**
  * Servlet to call PHP through javax.script.
  */
-public class GoogleQuercusServletImpl extends QuercusServletImpl
-{
-  private static final L10N L = new L10N(GoogleQuercusServletImpl.class);
-  private static final Logger log
-    = Logger.getLogger(GoogleQuercusServletImpl.class.getName());
+public class GoogleQuercusServletImpl extends QuercusServletImpl {
 
-  private ServletContext _webApp;
+    private static final L10N L = new L10N(GoogleQuercusServletImpl.class);
+    private static final Logger log = Logger.getLogger(GoogleQuercusServletImpl.class.getName());
+    private ServletContext _webApp;
 
-  /**
-   * initialize the script manager.
-   */
-  @Override
-  protected void initImpl(ServletConfig config)
-    throws ServletException
-  {
-    _webApp = config.getServletContext();
+    /**
+     * initialize the script manager.
+     */
+    @Override
+    protected void initImpl(ServletConfig config)
+	    throws ServletException {
+	_webApp = config.getServletContext();
 
-    // _quercus.setWebApp(_webApp);
-    
-    _quercus.setPwd(Vfs.lookup(_webApp.getRealPath(".")));
-  }
+	// _quercus.setWebApp(_webApp);
 
-  protected QuercusServletImpl getQuercusServlet()
-  {
-    return this;
-  }
+	_quercus.setPwd(Vfs.lookup(_webApp.getRealPath(".")));
+    }
 
-  protected WriteStream openWrite(HttpServletResponse response)
-    throws IOException
-  {
-    WriteStream ws;
+    protected QuercusServletImpl getQuercusServlet() {
+	return this;
+    }
 
-    OutputStream out = response.getOutputStream();
+    protected WriteStream openWrite(HttpServletResponse response)
+	    throws IOException {
+	WriteStream ws;
 
-    ws = Vfs.openWrite(out);
+	OutputStream out = response.getOutputStream();
 
-    return ws;
-  }
+	ws = Vfs.openWrite(out);
 
-  Path getPath(HttpServletRequest req)
-  {
-    String scriptPath = QuercusRequestAdapter.getPageServletPath(req);
-    String pathInfo = QuercusRequestAdapter.getPagePathInfo(req);
+	return ws;
+    }
 
-    Path pwd = Vfs.lookup();
+    Path getPath(HttpServletRequest req) {
+	String scriptPath = QuercusRequestAdapter.getPageServletPath(req);
+	String pathInfo = QuercusRequestAdapter.getPagePathInfo(req);
 
-    Path path = pwd.lookup(req.getRealPath(scriptPath));
+	Path pwd = Vfs.lookup();
 
-    if (path.isFile())
-      return path;
+	Path path = pwd.lookup(req.getRealPath(scriptPath));
 
-    // TODO: include
+	if (path.isFile()) {
+	    return path;
+	}
 
-    String fullPath;
-    if (pathInfo != null)
-      fullPath = scriptPath + pathInfo;
-    else
-      fullPath = scriptPath;
+	// TODO: include
 
-    return Vfs.lookup().lookup(req.getRealPath(fullPath));
-  }
-  /**
-   * Service.
-   */
-  /*
-  public void service(HttpServletRequest request,
-                      HttpServletResponse response)
+	String fullPath;
+	if (pathInfo != null) {
+	    fullPath = scriptPath + pathInfo;
+	} else {
+	    fullPath = scriptPath;
+	}
+
+	return Vfs.lookup().lookup(req.getRealPath(fullPath));
+    }
+
+    /**
+     * Service.
+     */
+    /*
+    public void service(HttpServletRequest request,
+    HttpServletResponse response)
     throws ServletException, IOException
-  {
+    {
     try {
     super.service(request, response);
     } catch (Exception e) {
-      log.log(Level.WARNING, e.toString(), e);
-      
-      OutputStream os = response.getOutputStream();
-      WriteStream out = Vfs.openWrite(os);
-      out.println(e);
-      out.close();
+    log.log(Level.WARNING, e.toString(), e);
+
+    OutputStream os = response.getOutputStream();
+    WriteStream out = Vfs.openWrite(os);
+    out.println(e);
+    out.close();
     }
-  }
-  */
-  
-  /**
-   * Service.
-   */
-  public void service(HttpServletRequest request,
-                      HttpServletResponse response)
-    throws ServletException, IOException
-  {
-    Env env = null;
-    WriteStream ws = null;
-    
-    try {
-      Path path = getPath(request);
-
-      QuercusPage page;
-
-      try {
-        page = getQuercus().parse(path);
-      }
-      catch (FileNotFoundException ex) {
-        // php/2001
-        log.log(Level.FINER, ex.toString(), ex);
-
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-
-        return;
-      }
-
-      ws = openWrite(response);
-      
-      // php/6006
-      ws.setNewlineString("\n");
-
-      QuercusContext quercus = getQuercus();
-      
-      env = quercus.createEnv(page, ws, request, response);
-      quercus.setServletContext(_servletContext);
-      
-      try {
-        env.start();
-        
-        // GoogleAppEngine SDK is missing non-essential Jetty classes
-        // (Jetty also hides server classes from webapp)
-        //env.setGlobalValue("request", env.wrapJava(request));
-        //env.setGlobalValue("response", env.wrapJava(response));
-        //env.setGlobalValue("servletContext", env.wrapJava(_servletContext));
-
-        StringValue prepend
-          = quercus.getIniValue("auto_prepend_file").toStringValue(env);
-        if (prepend.length() > 0) {
-          Path prependPath = env.lookup(prepend);
-          
-          if (prependPath == null)
-            env.error(L.l("auto_prepend_file '{0}' not found.", prepend));
-          else {
-            QuercusPage prependPage = getQuercus().parse(prependPath);
-            prependPage.executeTop(env);
-          }
-        }
-
-        env.executeTop();
-
-        StringValue append
-          = quercus.getIniValue("auto_append_file").toStringValue(env);
-        if (append.length() > 0) {
-          Path appendPath = env.lookup(append);
-          
-          if (appendPath == null)
-            env.error(L.l("auto_append_file '{0}' not found.", append));
-          else {
-            QuercusPage appendPage = getQuercus().parse(appendPath);
-            appendPage.executeTop(env);
-          }
-        }
-        //   return;
-      }
-      catch (QuercusExitException e) {
-        throw e;
-      }
-      catch (QuercusErrorException e) {
-        throw e;
-      }
-      catch (QuercusLineRuntimeException e) {
-        log.log(Level.FINE, e.toString(), e);
-
-        ws.println(e.getMessage());
-        //  return;
-      }
-      catch (QuercusValueException e) {
-        log.log(Level.FINE, e.toString(), e);
-    
-        ws.println(e.toString());
-
-        //  return;
-      }
-      catch (Throwable e) {
-        if (response.isCommitted())
-          e.printStackTrace(ws.getPrintWriter());
-
-        ws = null;
-
-        throw e;
-      }
-      finally {
-        if (env != null)
-          env.close();
-        
-        // don't want a flush for an exception
-        if (ws != null)
-          ws.close();
-      }
     }
-    catch (QuercusDieException e) {
-      // normal exit
-      log.log(Level.FINE, e.toString(), e);
-    }
-    catch (QuercusExitException e) {
-      // normal exit
-      log.log(Level.FINER, e.toString(), e);
-    }
-    catch (QuercusErrorException e) {
-      // error exit
-      log.log(Level.FINE, e.toString(), e);
-    }
-    catch (Throwable e) {
-      log.log(Level.WARNING, e.toString(), e);
-      
-      OutputStream os = response.getOutputStream();
-      WriteStream out = Vfs.openWrite(os);
-      out.println(e);
-      out.close();
-    }
-  }
+     */
+    /**
+     * Service.
+     */
+    public void service(HttpServletRequest request,
+	    HttpServletResponse response)
+	    throws ServletException, IOException {
+	Env env = null;
+	WriteStream ws = null;
 
-  /**
-   * Returns the Quercus instance.
-   */
-  @Override
-  protected QuercusContext getQuercus()
-  {
-    synchronized (this) {
-      if (_quercus == null)
-        _quercus = new GoogleQuercus();
+	try {
+	    Path path = getPath(request);
+
+	    QuercusPage page;
+
+	    try {
+		page = getQuercus().parse(path);
+	    } catch (FileNotFoundException ex) {
+		// php/2001
+		log.log(Level.FINER, ex.toString(), ex);
+
+		response.sendError(HttpServletResponse.SC_NOT_FOUND);
+
+		return;
+	    }
+
+	    ws = openWrite(response);
+
+	    // php/6006
+	    ws.setNewlineString("\n");
+
+	    QuercusContext quercus = getQuercus();
+
+	    env = quercus.createEnv(page, ws, request, response);
+	    quercus.setServletContext(_servletContext);
+
+	    try {
+		env.start();
+
+		// GoogleAppEngine SDK is missing non-essential Jetty classes
+		// (Jetty also hides server classes from webapp)
+		//env.setGlobalValue("request", env.wrapJava(request));
+		//env.setGlobalValue("response", env.wrapJava(response));
+		//env.setGlobalValue("servletContext", env.wrapJava(_servletContext));
+
+		StringValue prepend = quercus.getIniValue("auto_prepend_file").toStringValue(env);
+		if (prepend.length() > 0) {
+		    Path prependPath = env.lookup(prepend);
+
+		    if (prependPath == null) {
+			env.error(L.l("auto_prepend_file '{0}' not found.", prepend));
+		    } else {
+			QuercusPage prependPage = getQuercus().parse(prependPath);
+			prependPage.executeTop(env);
+		    }
+		}
+
+		env.executeTop();
+
+		StringValue append = quercus.getIniValue("auto_append_file").toStringValue(env);
+		if (append.length() > 0) {
+		    Path appendPath = env.lookup(append);
+
+		    if (appendPath == null) {
+			env.error(L.l("auto_append_file '{0}' not found.", append));
+		    } else {
+			QuercusPage appendPage = getQuercus().parse(appendPath);
+			appendPage.executeTop(env);
+		    }
+		}
+		//   return;
+	    } catch (QuercusExitException e) {
+		throw e;
+	    } catch (QuercusErrorException e) {
+		throw e;
+	    } catch (QuercusLineRuntimeException e) {
+		log.log(Level.FINE, e.toString(), e);
+
+		ws.println(e.getMessage());
+		//  return;
+	    } catch (QuercusValueException e) {
+		log.log(Level.FINE, e.toString(), e);
+
+		ws.println(e.toString());
+
+		//  return;
+	    } catch (Throwable e) {
+		if (response.isCommitted()) {
+		    e.printStackTrace(ws.getPrintWriter());
+		}
+
+		ws = null;
+
+		throw e;
+	    } finally {
+		if (env != null) {
+		    env.close();
+		}
+
+		// don't want a flush for an exception
+		if (ws != null) {
+		    ws.close();
+		}
+	    }
+	} catch (QuercusDieException e) {
+	    // normal exit
+	    log.log(Level.FINE, e.toString(), e);
+	} catch (QuercusExitException e) {
+	    // normal exit
+	    log.log(Level.FINER, e.toString(), e);
+	} catch (QuercusErrorException e) {
+	    // error exit
+	    log.log(Level.FINE, e.toString(), e);
+	} catch (Throwable e) {
+	    log.log(Level.WARNING, e.toString(), e);
+
+	    OutputStream os = response.getOutputStream();
+	    WriteStream out = Vfs.openWrite(os);
+	    out.println(e);
+	    out.close();
+	}
     }
 
-    return _quercus;
-  }
+    /**
+     * Returns the Quercus instance.
+     */
+    @Override
+    protected QuercusContext getQuercus() {
+	synchronized (this) {
+	    if (_quercus == null) {
+		_quercus = new GoogleQuercus();
+	    }
+	}
+
+	return _quercus;
+    }
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.servlet;
 
 import com.caucho.config.ConfigException;
@@ -38,60 +37,55 @@ import javax.annotation.PostConstruct;
  * Custom class configuration.
  */
 public class PhpClassConfig {
-  private static final L10N L = new L10N(PhpClassConfig.class);
-  
-  private Class _type;
-  private String _name;
 
-  /**
-   * Sets the class to add.
-   */
-  public void setType(Class cl)
-  {
-    _type = cl;
-  }
+    private static final L10N L = new L10N(PhpClassConfig.class);
+    private Class _type;
+    private String _name;
 
-  /**
-   * Returns the name of the type to add.
-   */
-  public Class getType()
-  {
-    return _type;
-  }
-
-  /**
-   * Sets the PHP name for the class
-   */
-  public void setName(String name)
-  {
-    _name = name;
-  }
-
-  /**
-   * Sets the PHP name for the class
-   */
-  public String getName()
-  {
-    return _name;
-  }
-
-  /**
-   * Initialize the class.
-   */
-  @PostConstruct
-  public void init()
-    throws ConfigException
-  {
-    if (_type == null)
-      throw new ConfigException(L.l("<class> requires a type."));
-
-    if (_name == null) {
-      String name = _type.getName();
-
-      int p = name.lastIndexOf('.');
-
-      _name = name.substring(p + 1);
+    /**
+     * Sets the class to add.
+     */
+    public void setType(Class cl) {
+	_type = cl;
     }
-  }
-}
 
+    /**
+     * Returns the name of the type to add.
+     */
+    public Class getType() {
+	return _type;
+    }
+
+    /**
+     * Sets the PHP name for the class
+     */
+    public void setName(String name) {
+	_name = name;
+    }
+
+    /**
+     * Sets the PHP name for the class
+     */
+    public String getName() {
+	return _name;
+    }
+
+    /**
+     * Initialize the class.
+     */
+    @PostConstruct
+    public void init()
+	    throws ConfigException {
+	if (_type == null) {
+	    throw new ConfigException(L.l("<class> requires a type."));
+	}
+
+	if (_name == null) {
+	    String name = _type.getName();
+
+	    int p = name.lastIndexOf('.');
+
+	    _name = name.substring(p + 1);
+	}
+    }
+}
