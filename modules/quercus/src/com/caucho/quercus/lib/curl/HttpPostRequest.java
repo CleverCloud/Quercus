@@ -64,9 +64,8 @@ public class HttpPostRequest
       return false;
     
     HttpConnection conn = getHttpConnection();
-    
-    conn.setRequestProperty("Content-Type",
-                            _body.getContentType());
+
+    conn.setRequestProperty("Content-Type",_body.getContentType(curl.getContentType()));
     
     conn.setRequestProperty("Content-Length",
                             String.valueOf(_body.getContentLength()));

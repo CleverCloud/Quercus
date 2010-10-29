@@ -41,6 +41,7 @@ import com.caucho.quercus.QuercusContext;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
+import com.caucho.quercus.annotation.Optional;
 import com.caucho.util.L10N;
 import com.caucho.util.RandomUtil;
 import com.caucho.vfs.Path;
@@ -109,7 +110,7 @@ public class MultipartBody extends PostBody
     return size;
   }
   
-  public String getContentType()
+  public String getContentType(@Optional String contentType)
   {
     return "multipart/form-data; boundary=\"" + _boundary + "\"";
   }

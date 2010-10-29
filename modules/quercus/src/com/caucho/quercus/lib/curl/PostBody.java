@@ -34,6 +34,7 @@ import java.io.OutputStream;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
+import com.caucho.quercus.annotation.Optional;
 
 abstract public class PostBody
 {
@@ -54,6 +55,6 @@ abstract public class PostBody
   
   abstract protected boolean init(Env env, Value body);
   abstract public long getContentLength();
-  abstract public String getContentType();
+  abstract public String getContentType(@Optional String contentType);
   abstract public void writeTo(Env env, OutputStream os) throws IOException;
 }

@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
+import com.caucho.quercus.annotation.Optional;
 
 public class UrlEncodedBody extends PostBody
 {
@@ -48,10 +49,13 @@ public class UrlEncodedBody extends PostBody
     
     return true;
   }
-  
-  public String getContentType()
+
+  public String getContentType(@Optional String contentType)
   {
-    return "application/x-www-form-urlencoded";
+      if (contentType != null)
+	  return contentType;
+      else
+	  return "application/x-www-form-urlencoded";
   }
   
   public long getContentLength()
