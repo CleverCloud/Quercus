@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -42,42 +41,41 @@ import com.caucho.quercus.expr.VarExpr;
  * Represents a static statement in a PHP program.
  */
 public class StaticStatement extends Statement {
-  protected VarExpr _var;
-  protected Expr _initValue;
-  protected StringValue _staticName;
-  
-  /**
-   * Creates the echo statement.
-   */
-  public StaticStatement(Location location, VarExpr var, Expr initValue)
-  {
-    super(location);
 
-    _var = var;
-    _initValue = initValue;
-  }
-  
-  public Value execute(Env env)
-  {
-    try {
-      if (_staticName == null)
-        _staticName = env.createStaticName();
+    protected VarExpr _var;
+    protected Expr _initValue;
+    protected StringValue _staticName;
 
-      StringValue staticName = _staticName;
-      
-      Var var = env.getStaticVar(staticName);
+    /**
+     * Creates the echo statement.
+     */
+    public StaticStatement(Location location, VarExpr var, Expr initValue) {
+	super(location);
 
-      env.setRef(_var.getName(), var);
-
-      if (! var.isset() && _initValue != null)
-        var.set(_initValue.eval(env));
-
-    }
-    catch (RuntimeException e) {
-      rethrow(e, RuntimeException.class);
+	_var = var;
+	_initValue = initValue;
     }
 
-    return null;
-  }
+    public Value execute(Env env) {
+	try {
+	    if (_staticName == null) {
+		_staticName = env.createStaticName();
+	    }
+
+	    StringValue staticName = _staticName;
+
+	    Var var = env.getStaticVar(staticName);
+
+	    env.setRef(_var.getName(), var);
+
+	    if (!var.isset() && _initValue != null) {
+		var.set(_initValue.eval(env));
+	    }
+
+	} catch (RuntimeException e) {
+	    rethrow(e, RuntimeException.class);
+	}
+
+	return null;
+    }
 }
-

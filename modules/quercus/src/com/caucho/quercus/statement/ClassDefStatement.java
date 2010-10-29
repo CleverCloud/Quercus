@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -40,28 +39,24 @@ import com.caucho.util.L10N;
  * Represents a class definition
  */
 public class ClassDefStatement extends Statement {
-  private final static L10N L = new L10N(ClassDefStatement.class);
-  
-  protected final InterpretedClassDef _cl;
 
-  public ClassDefStatement(Location location, InterpretedClassDef cl)
-  {
-    super(location);
+    private final static L10N L = new L10N(ClassDefStatement.class);
+    protected final InterpretedClassDef _cl;
 
-    _cl = cl;
-  }
+    public ClassDefStatement(Location location, InterpretedClassDef cl) {
+	super(location);
 
-  @Override
-  public Value execute(Env env)
-  {
-    env.addClass(_cl.getName(), _cl);
+	_cl = cl;
+    }
 
-    return null;
-  }
+    @Override
+    public Value execute(Env env) {
+	env.addClass(_cl.getName(), _cl);
 
-  public String toString()
-  {
-    return getClass().getSimpleName() + "[" + _cl + "]";
-  }
+	return null;
+    }
+
+    public String toString() {
+	return getClass().getSimpleName() + "[" + _cl + "]";
+    }
 }
-

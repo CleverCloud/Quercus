@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -37,19 +36,17 @@ import com.caucho.quercus.env.Value;
  * Represents a compiled PHP program.
  */
 public class NullStatement extends Statement {
-  public static final NullStatement NULL = new NullStatement();
 
-  protected NullStatement()
-  {
-    super(Location.UNKNOWN);
-  }
+    public static final NullStatement NULL = new NullStatement();
 
-  /**
-   * The null statement does nothing.
-   */
-  public Value execute(Env env)
-  {
-    return null;
-  }
+    protected NullStatement() {
+	super(Location.UNKNOWN);
+    }
+
+    /**
+     * The null statement does nothing.
+     */
+    public Value execute(Env env) {
+	return null;
+    }
 }
-

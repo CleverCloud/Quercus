@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -39,33 +38,30 @@ import com.caucho.util.L10N;
  * Represents a function definition
  */
 public class FunctionDefStatement extends Statement {
-  private final static L10N L = new L10N(FunctionDefStatement.class);
-  
-  protected Function _fun;
 
-  public FunctionDefStatement(Location location, Function fun)
-  {
-    super(location);
-    
-    _fun = fun;
-  }
-  
-  public Value execute(Env env)
-  {
-    try {
-      String name = _fun.getName();
+    private final static L10N L = new L10N(FunctionDefStatement.class);
+    protected Function _fun;
 
-      if (env.findFunction(name) == null)
-        env.addFunction(name, _fun);
-      else
-        env.error(getLocation(),
-                  L.l("function {0}() is already defined.", name));
-    }
-    catch (RuntimeException e) {
-      rethrow(e, RuntimeException.class);
+    public FunctionDefStatement(Location location, Function fun) {
+	super(location);
+
+	_fun = fun;
     }
 
-    return null;
-  }
+    public Value execute(Env env) {
+	try {
+	    String name = _fun.getName();
+
+	    if (env.findFunction(name) == null) {
+		env.addFunction(name, _fun);
+	    } else {
+		env.error(getLocation(),
+			L.l("function {0}() is already defined.", name));
+	    }
+	} catch (RuntimeException e) {
+	    rethrow(e, RuntimeException.class);
+	}
+
+	return null;
+    }
 }
-

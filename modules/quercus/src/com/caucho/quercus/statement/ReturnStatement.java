@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -39,45 +38,42 @@ import com.caucho.quercus.expr.Expr;
  * Represents a return expression statement in a PHP program.
  */
 public class ReturnStatement extends Statement {
-  protected final Expr _expr;
-  
-  /**
-   * Creates the echo statement.
-   */
-  public ReturnStatement(Expr expr)
-  {
-    _expr = expr;
-  }
-  
-  /**
-   * Creates the echo statement.
-   */
-  public ReturnStatement(Location location, Expr expr)
-  {
-    super(location);
 
-    _expr = expr;
-  }
+    protected final Expr _expr;
 
-  /**
-   * Executes the statement, returning the expression value.
-   */
-  @Override
-  public Value execute(Env env)
-  {
-    if (_expr != null)
-      return _expr.evalValue(env);
-    else
-      return NullValue.NULL;
-  }
+    /**
+     * Creates the echo statement.
+     */
+    public ReturnStatement(Expr expr) {
+	_expr = expr;
+    }
 
-  /**
-   * Returns true if control can go past the statement.
-   */
-  @Override
-  public int fallThrough()
-  {
-    return RETURN;
-  }
+    /**
+     * Creates the echo statement.
+     */
+    public ReturnStatement(Location location, Expr expr) {
+	super(location);
+
+	_expr = expr;
+    }
+
+    /**
+     * Executes the statement, returning the expression value.
+     */
+    @Override
+    public Value execute(Env env) {
+	if (_expr != null) {
+	    return _expr.evalValue(env);
+	} else {
+	    return NullValue.NULL;
+	}
+    }
+
+    /**
+     * Returns true if control can go past the statement.
+     */
+    @Override
+    public int fallThrough() {
+	return RETURN;
+    }
 }
-

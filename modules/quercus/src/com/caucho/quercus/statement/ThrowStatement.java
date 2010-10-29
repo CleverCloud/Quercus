@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -39,33 +38,31 @@ import com.caucho.quercus.expr.Expr;
  * Represents a throw expression statement in a Quercus program.
  */
 public class ThrowStatement extends Statement {
-  protected Expr _expr;
-  
-  /**
-   * Creates the echo statement.
-   */
-  public ThrowStatement(Location location, Expr expr)
-  {
-    super(location);
 
-    _expr = expr;
-  }
+    protected Expr _expr;
 
-  /**
-   * Executes the statement, returning the expression value.
-   */
-  public Value execute(Env env)
-  {
-    throw _expr.eval(env).toException(env,
-                                      getLocation().getFileName(),
-                                      getLocation().getLineNumber());
-  }
+    /**
+     * Creates the echo statement.
+     */
+    public ThrowStatement(Location location, Expr expr) {
+	super(location);
 
-  /**
-   * Returns true if control can go past the statement.
-   */
-  public int fallThrough()
-  {
-    return RETURN;
-  }
+	_expr = expr;
+    }
+
+    /**
+     * Executes the statement, returning the expression value.
+     */
+    public Value execute(Env env) {
+	throw _expr.eval(env).toException(env,
+		getLocation().getFileName(),
+		getLocation().getLineNumber());
+    }
+
+    /**
+     * Returns true if control can go past the statement.
+     */
+    public int fallThrough() {
+	return RETURN;
+    }
 }

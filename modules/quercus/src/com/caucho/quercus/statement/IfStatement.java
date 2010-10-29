@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -38,56 +37,52 @@ import com.caucho.quercus.expr.Expr;
  * Represents an if statement.
  */
 public class IfStatement extends Statement {
-  private final Expr _test;
-  private final Statement _trueBlock;
-  private final Statement _falseBlock;
 
-  public IfStatement(Location location,
-                     Expr test,
-                     Statement trueBlock,
-                     Statement falseBlock)
-  {
-    super(location);
+    private final Expr _test;
+    private final Statement _trueBlock;
+    private final Statement _falseBlock;
 
-    _test = test;
-    _trueBlock = trueBlock;
-    _falseBlock = falseBlock;
+    public IfStatement(Location location,
+	    Expr test,
+	    Statement trueBlock,
+	    Statement falseBlock) {
+	super(location);
 
-    if (_trueBlock != null)
-      _trueBlock.setParent(this);
+	_test = test;
+	_trueBlock = trueBlock;
+	_falseBlock = falseBlock;
 
-    if (_falseBlock != null)
-      _falseBlock.setParent(this);
-  }
+	if (_trueBlock != null) {
+	    _trueBlock.setParent(this);
+	}
 
-  protected Expr getTest()
-  {
-    return _test;
-  }
-
-  protected Statement getTrueBlock()
-  {
-    return _trueBlock;
-  }
-
-  protected Statement getFalseBlock()
-  {
-    return _falseBlock;
-  }
-
-  /**
-   * Executes the 'if' statement, returning any value.
-   */
-  public Value execute(Env env)
-  {
-    if (_test.evalBoolean(env)) {
-      return _trueBlock.execute(env);
+	if (_falseBlock != null) {
+	    _falseBlock.setParent(this);
+	}
     }
-    else if (_falseBlock != null) {
-      return _falseBlock.execute(env);
+
+    protected Expr getTest() {
+	return _test;
     }
-    else
-      return null;
-  }
+
+    protected Statement getTrueBlock() {
+	return _trueBlock;
+    }
+
+    protected Statement getFalseBlock() {
+	return _falseBlock;
+    }
+
+    /**
+     * Executes the 'if' statement, returning any value.
+     */
+    public Value execute(Env env) {
+	if (_test.evalBoolean(env)) {
+	    return _trueBlock.execute(env);
+	} else if (_falseBlock != null) {
+	    return _falseBlock.execute(env);
+	} else {
+	    return null;
+	}
+    }
 }
-

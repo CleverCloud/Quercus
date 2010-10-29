@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -40,36 +39,31 @@ import java.io.IOException;
  * Represents static text in a PHP program.
  */
 public class TextStatement extends Statement {
-  private String _value;
-  
-  /**
-   * Creates the text statement with its string.
-   */
-  public TextStatement(Location location, String value)
-  {
-    super(location);
 
-    _value = value;
-  }
+    private String _value;
 
-  protected String getValue()
-  {
-    return _value;
-  }
-  
-  public Value execute(Env env)
-  {
-    try {
-      env.getOut().print(_value);
-    }
-    catch (RuntimeException e) {
-      throw e;
-    }
-    catch (IOException e) {
-      throw new QuercusException(e);
+    /**
+     * Creates the text statement with its string.
+     */
+    public TextStatement(Location location, String value) {
+	super(location);
+
+	_value = value;
     }
 
-    return null;
-  }
+    protected String getValue() {
+	return _value;
+    }
+
+    public Value execute(Env env) {
+	try {
+	    env.getOut().print(_value);
+	} catch (RuntimeException e) {
+	    throw e;
+	} catch (IOException e) {
+	    throw new QuercusException(e);
+	}
+
+	return null;
+    }
 }
-

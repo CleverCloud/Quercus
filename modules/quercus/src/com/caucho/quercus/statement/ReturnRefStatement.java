@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -40,40 +39,36 @@ import com.caucho.quercus.expr.Expr;
  * Represents a return expression statement in a PHP program.
  */
 public class ReturnRefStatement extends Statement {
-  protected Expr _expr;
-  
-  /**
-   * Creates the echo statement.
-   */
-  public ReturnRefStatement(Location location, Expr expr)
-  {
-    super(location);
 
-    _expr = expr;
-  }
+    protected Expr _expr;
 
-  /**
-   * Executes the statement, returning the expression value.
-   */
-  @Override
-  public Value execute(Env env)
-  {
-    if (_expr != null) {
-      // php/0750
-      return _expr.evalVar(env);
+    /**
+     * Creates the echo statement.
+     */
+    public ReturnRefStatement(Location location, Expr expr) {
+	super(location);
+
+	_expr = expr;
     }
-    else {
-      return new Var();
-    }
-  }
 
-  /**
-   * Returns true if control can go past the statement.
-   */
-  @Override
-  public int fallThrough()
-  {
-    return RETURN;
-  }
+    /**
+     * Executes the statement, returning the expression value.
+     */
+    @Override
+    public Value execute(Env env) {
+	if (_expr != null) {
+	    // php/0750
+	    return _expr.evalVar(env);
+	} else {
+	    return new Var();
+	}
+    }
+
+    /**
+     * Returns true if control can go past the statement.
+     */
+    @Override
+    public int fallThrough() {
+	return RETURN;
+    }
 }
-

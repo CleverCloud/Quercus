@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -40,68 +39,63 @@ import com.caucho.quercus.expr.Expr;
  * Represents a do ... while statement.
  */
 public class DoStatement extends Statement {
-  protected final Expr _test;
-  protected final Statement _block;
-  protected final String _label;
 
-  public DoStatement(Location location,
-                     Expr test,
-                     Statement block,
-                     String label)
-  {
-    super(location);
+    protected final Expr _test;
+    protected final Statement _block;
+    protected final String _label;
 
-    _test = test;
-    _block = block;
-    _label = label;
-    
-    block.setParent(this);
-  }
+    public DoStatement(Location location,
+	    Expr test,
+	    Statement block,
+	    String label) {
+	super(location);
 
-  @Override
-  public boolean isLoop()
-  {
-    return true;
-  }
+	_test = test;
+	_block = block;
+	_label = label;
 
-  public Value execute(Env env)
-  {
-    try {
-      do {
-        env.checkTimeout();
-
-        Value value = _block.execute(env);
-
-        if (value == null) {
-        }
-        else if (value instanceof ContinueValue) {
-          ContinueValue conValue = (ContinueValue) value;
-          
-          int target = conValue.getTarget();
-          
-          if (target > 1) {
-            return new ContinueValue(target - 1);
-          }
-        }
-        else if (value instanceof BreakValue) {
-          BreakValue breakValue = (BreakValue) value;
-          
-          int target = breakValue.getTarget();
-          
-          if (target > 1)
-            return new BreakValue(target - 1);
-          else
-            break;
-        }
-        else
-          return value;
-      } while (_test.evalBoolean(env));
-    }
-    catch (RuntimeException e) {
-      rethrow(e, RuntimeException.class);
+	block.setParent(this);
     }
 
-    return null;
-  }
+    @Override
+    public boolean isLoop() {
+	return true;
+    }
+
+    public Value execute(Env env) {
+	try {
+	    do {
+		env.checkTimeout();
+
+		Value value = _block.execute(env);
+
+		if (value == null) {
+		} else if (value instanceof ContinueValue) {
+		    ContinueValue conValue = (ContinueValue) value;
+
+		    int target = conValue.getTarget();
+
+		    if (target > 1) {
+			return new ContinueValue(target - 1);
+		    }
+		} else if (value instanceof BreakValue) {
+		    BreakValue breakValue = (BreakValue) value;
+
+		    int target = breakValue.getTarget();
+
+		    if (target > 1) {
+			return new BreakValue(target - 1);
+		    } else {
+			break;
+		    }
+		} else {
+		    return value;
+		}
+	    } while (_test.evalBoolean(env));
+	} catch (RuntimeException e) {
+	    rethrow(e, RuntimeException.class);
+	}
+
+	return null;
+    }
 }
-

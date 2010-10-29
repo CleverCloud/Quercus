@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -42,202 +41,184 @@ import java.util.logging.Logger;
  * Represents a PHP statement
  */
 abstract public class Statement {
-  private static final Logger log = Logger.getLogger(Statement.class.getName());
 
-  public static final int FALL_THROUGH = 0;
-  public static final int BREAK_FALL_THROUGH = 0x1;
-  public static final int RETURN = 0x2;
+    private static final Logger log = Logger.getLogger(Statement.class.getName());
+    public static final int FALL_THROUGH = 0;
+    public static final int BREAK_FALL_THROUGH = 0x1;
+    public static final int RETURN = 0x2;
+    private final Location _location;
+    private Statement _parent;
+    private String _loopLabel;
 
-  private final Location _location;
-
-  private Statement _parent;
-  private String _loopLabel;
-
-  protected Statement()
-  {
-    _location = Location.UNKNOWN;
-  }
-
-  protected Statement(Location location)
-  {
-    _location = location;
-  }
-
-  public final Location getLocation()
-  {
-    return _location;
-  }
-
-  public boolean isLoop()
-  {
-    return false;
-  }
-
-  final public Statement getParent()
-  {
-    return _parent;
-  }
-
-  final public void setParent(Statement parent)
-  {
-    _parent = parent;
-  }
-
-  abstract public Value execute(Env env);
-
-  /**
-   * Returns true if the statement can fallthrough.
-   */
-  public int fallThrough()
-  {
-    return FALL_THROUGH;
-  }
-
-  final protected void rethrow(Throwable t)
-    throws Throwable
-  {
-    rethrow(t, Throwable.class);
-  }
-
-  final protected <E extends Throwable> void rethrow(Throwable t, Class<E> cl)
-    throws E
-  {
-    E typedT;
-
-    if (! cl.isAssignableFrom(t.getClass())) {
-      try {
-        typedT = cl.newInstance();
-        typedT.initCause(t);
-      }
-      catch (InstantiationException e) {
-        log.log(Level.WARNING, t.toString(), t);
-        throw new RuntimeException(e);
-      }
-      catch (IllegalAccessException e) {
-        log.log(Level.WARNING, t.toString(), t);
-        throw new RuntimeException(e);
-      }
-    }
-    else
-      typedT = (E) t;
-
-    Throwable rootCause = t;
-
-    // guard against circular cause
-    IdentityHashMap<Throwable, Boolean> causes
-      = new IdentityHashMap<Throwable, Boolean>();
-
-    causes.put(rootCause, Boolean.TRUE);
-
-    while (rootCause.getCause() != null) {
-      Throwable cause = rootCause.getCause();
-
-      if (causes.containsKey(cause))
-        break;
-
-      causes.put(cause, Boolean.TRUE);
-
-      rootCause = cause;
+    protected Statement() {
+	_location = Location.UNKNOWN;
     }
 
-    if (!(rootCause instanceof QuercusExecutionException)) {
-      String rootCauseName = rootCause.getClass().getName();
-      String rootCauseMessage = rootCause.getMessage();
-
-      StringBuilder quercusExMessage = new StringBuilder();
-
-      quercusExMessage.append(rootCauseName);
-
-      if (rootCauseMessage != null && rootCauseMessage.length() > 0) {
-        quercusExMessage.append(" ");
-        quercusExMessage.append(rootCauseMessage);
-      }
-
-      QuercusExecutionException quercusEx
-        = new QuercusExecutionException(quercusExMessage.toString());
-
-      StackTraceElement[] quercusExStackTrace = quercusEx.getStackTrace();
-      StackTraceElement[] rootCauseStackTrace = rootCause.getStackTrace();
-
-      int quercusExIndex = quercusExStackTrace.length - 1;
-      int rootCauseIndex = rootCauseStackTrace.length - 1;
-
-      while (rootCauseIndex >= 0 &&  quercusExIndex >= 0) {
-        StackTraceElement
-          rootCauseElement
-          = rootCauseStackTrace[rootCauseIndex];
-        StackTraceElement
-          quercusExElement
-          = quercusExStackTrace[quercusExIndex];
-
-        if (! quercusExElement.equals(rootCauseElement))
-          break;
-
-        rootCauseIndex--;
-        quercusExIndex--;
-      }
-
-      int len = rootCauseIndex + 1;
-
-      StackTraceElement[] trimmedElements = new StackTraceElement[len];
-      System.arraycopy(rootCauseStackTrace, 0, trimmedElements, 0, len);
-
-      quercusEx.setStackTrace(trimmedElements);
-      try {
-        rootCause.initCause(quercusEx);
-        rootCause = quercusEx;
-      }
-      catch (IllegalStateException ex) {
-        // TODO: guard against reported bug that could not be reproduced
-        log.log(Level.FINE, ex.toString(), ex);
-      }
+    protected Statement(Location location) {
+	_location = location;
     }
 
-    String className = _location.getClassName();
-    String functionName = _location.getFunctionName();
-    String fileName = _location.getFileName();
-    int lineNumber = _location.getLineNumber();
-
-    if (className == null)
-      className = "";
-
-    if (functionName == null)
-      functionName = "";
-
-    StackTraceElement[] existingElements = rootCause.getStackTrace();
-    int len = existingElements.length;
-    StackTraceElement lastElement;
-
-    if (len > 1)
-      lastElement = existingElements[len - 1];
-    else
-      lastElement = null;
-
-    // early return if function and class are same as last one
-    if (lastElement != null
-        && (functionName.equals(lastElement.getMethodName()))
-        && (className.equals(lastElement.getClassName())))
-    {
-      throw typedT;
+    public final Location getLocation() {
+	return _location;
     }
 
-    StackTraceElement[] elements = new StackTraceElement[len + 1];
+    public boolean isLoop() {
+	return false;
+    }
 
-    System.arraycopy(existingElements, 0, elements, 0, len);
+    final public Statement getParent() {
+	return _parent;
+    }
 
-    elements[len] = new StackTraceElement(className,
-                                          functionName,
-                                          fileName,
-                                          lineNumber);
+    final public void setParent(Statement parent) {
+	_parent = parent;
+    }
 
-    rootCause.setStackTrace(elements);
+    abstract public Value execute(Env env);
 
-    throw typedT;
-  }
+    /**
+     * Returns true if the statement can fallthrough.
+     */
+    public int fallThrough() {
+	return FALL_THROUGH;
+    }
 
-  public String toString()
-  {
-    return getClass().getSimpleName() + "[]";
-  }
+    final protected void rethrow(Throwable t)
+	    throws Throwable {
+	rethrow(t, Throwable.class);
+    }
+
+    final protected <E extends Throwable> void rethrow(Throwable t, Class<E> cl)
+	    throws E {
+	E typedT;
+
+	if (!cl.isAssignableFrom(t.getClass())) {
+	    try {
+		typedT = cl.newInstance();
+		typedT.initCause(t);
+	    } catch (InstantiationException e) {
+		log.log(Level.WARNING, t.toString(), t);
+		throw new RuntimeException(e);
+	    } catch (IllegalAccessException e) {
+		log.log(Level.WARNING, t.toString(), t);
+		throw new RuntimeException(e);
+	    }
+	} else {
+	    typedT = (E) t;
+	}
+
+	Throwable rootCause = t;
+
+	// guard against circular cause
+	IdentityHashMap<Throwable, Boolean> causes = new IdentityHashMap<Throwable, Boolean>();
+
+	causes.put(rootCause, Boolean.TRUE);
+
+	while (rootCause.getCause() != null) {
+	    Throwable cause = rootCause.getCause();
+
+	    if (causes.containsKey(cause)) {
+		break;
+	    }
+
+	    causes.put(cause, Boolean.TRUE);
+
+	    rootCause = cause;
+	}
+
+	if (!(rootCause instanceof QuercusExecutionException)) {
+	    String rootCauseName = rootCause.getClass().getName();
+	    String rootCauseMessage = rootCause.getMessage();
+
+	    StringBuilder quercusExMessage = new StringBuilder();
+
+	    quercusExMessage.append(rootCauseName);
+
+	    if (rootCauseMessage != null && rootCauseMessage.length() > 0) {
+		quercusExMessage.append(" ");
+		quercusExMessage.append(rootCauseMessage);
+	    }
+
+	    QuercusExecutionException quercusEx = new QuercusExecutionException(quercusExMessage.toString());
+
+	    StackTraceElement[] quercusExStackTrace = quercusEx.getStackTrace();
+	    StackTraceElement[] rootCauseStackTrace = rootCause.getStackTrace();
+
+	    int quercusExIndex = quercusExStackTrace.length - 1;
+	    int rootCauseIndex = rootCauseStackTrace.length - 1;
+
+	    while (rootCauseIndex >= 0 && quercusExIndex >= 0) {
+		StackTraceElement rootCauseElement = rootCauseStackTrace[rootCauseIndex];
+		StackTraceElement quercusExElement = quercusExStackTrace[quercusExIndex];
+
+		if (!quercusExElement.equals(rootCauseElement)) {
+		    break;
+		}
+
+		rootCauseIndex--;
+		quercusExIndex--;
+	    }
+
+	    int len = rootCauseIndex + 1;
+
+	    StackTraceElement[] trimmedElements = new StackTraceElement[len];
+	    System.arraycopy(rootCauseStackTrace, 0, trimmedElements, 0, len);
+
+	    quercusEx.setStackTrace(trimmedElements);
+	    try {
+		rootCause.initCause(quercusEx);
+		rootCause = quercusEx;
+	    } catch (IllegalStateException ex) {
+		// TODO: guard against reported bug that could not be reproduced
+		log.log(Level.FINE, ex.toString(), ex);
+	    }
+	}
+
+	String className = _location.getClassName();
+	String functionName = _location.getFunctionName();
+	String fileName = _location.getFileName();
+	int lineNumber = _location.getLineNumber();
+
+	if (className == null) {
+	    className = "";
+	}
+
+	if (functionName == null) {
+	    functionName = "";
+	}
+
+	StackTraceElement[] existingElements = rootCause.getStackTrace();
+	int len = existingElements.length;
+	StackTraceElement lastElement;
+
+	if (len > 1) {
+	    lastElement = existingElements[len - 1];
+	} else {
+	    lastElement = null;
+	}
+
+	// early return if function and class are same as last one
+	if (lastElement != null
+		&& (functionName.equals(lastElement.getMethodName()))
+		&& (className.equals(lastElement.getClassName()))) {
+	    throw typedT;
+	}
+
+	StackTraceElement[] elements = new StackTraceElement[len + 1];
+
+	System.arraycopy(existingElements, 0, elements, 0, len);
+
+	elements[len] = new StackTraceElement(className,
+		functionName,
+		fileName,
+		lineNumber);
+
+	rootCause.setStackTrace(elements);
+
+	throw typedT;
+    }
+
+    public String toString() {
+	return getClass().getSimpleName() + "[]";
+    }
 }
-

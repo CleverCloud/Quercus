@@ -26,49 +26,41 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 /**
  * A handle to a statement
  */
 public class StatementHandle {
-  public static final StatementHandle NULL
-    = new StatementHandle(NullStatement.NULL);
 
-  private final StatementHandle _parent;
-  private final StatementHandle _previous;
+    public static final StatementHandle NULL = new StatementHandle(NullStatement.NULL);
+    private final StatementHandle _parent;
+    private final StatementHandle _previous;
+    private Statement _statement;
 
-  private Statement _statement;
+    public StatementHandle(StatementHandle parent, StatementHandle previous) {
+	_parent = parent;
+	_previous = previous;
+    }
 
-  public StatementHandle(StatementHandle parent, StatementHandle previous)
-  {
-    _parent = parent;
-    _previous = previous;
-  }
+    private StatementHandle(Statement statement) {
+	_parent = null;
+	_previous = null;
 
-  private StatementHandle(Statement statement)
-  {
-    _parent = null;
-    _previous = null;
+	_statement = statement;
+    }
 
-    _statement = statement;
-  }
+    /**
+     * Sets the statement.
+     */
+    public void setStatement(Statement statement) {
+	_statement = statement;
+    }
 
-  /**
-   * Sets the statement.
-   */
-  public void setStatement(Statement statement)
-  {
-    _statement = statement;
-  }
-
-  /**
-   * Gets the statement.
-   */
-  public Statement getStatement()
-  {
-    return _statement;
-  }
+    /**
+     * Gets the statement.
+     */
+    public Statement getStatement() {
+	return _statement;
+    }
 }
-

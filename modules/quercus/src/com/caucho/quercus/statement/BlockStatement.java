@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -39,77 +38,74 @@ import java.util.ArrayList;
  * Represents sequence of statements.
  */
 public class BlockStatement extends Statement {
-  protected Statement []_statements;
 
-  public BlockStatement(Location location, Statement []statements)
-  {
-    super(location);
+    protected Statement[] _statements;
 
-    _statements = statements;
+    public BlockStatement(Location location, Statement[] statements) {
+	super(location);
 
-    for (Statement stmt : _statements)
-      stmt.setParent(this);
-  }
+	_statements = statements;
 
-  public BlockStatement(Location location, ArrayList<Statement> statementList)
-  {
-    super(location);
-
-    _statements = new Statement[statementList.size()];
-    statementList.toArray(_statements);
-
-    for (Statement stmt : _statements)
-      stmt.setParent(this);
-  }
-
-  public BlockStatement append(ArrayList<Statement> statementList)
-  {
-    Statement []statements
-      = new Statement[_statements.length + statementList.size()];
-
-    System.arraycopy(_statements, 0, statements, 0, _statements.length);
-
-    for (int i = 0; i < statementList.size(); i++)
-      statements[i + _statements.length] = statementList.get(i);
-
-    return new BlockStatement(getLocation(), statements);
-  }
-
-  public Statement []getStatements()
-  {
-    return _statements;
-  }
-
-  /**
-   * Returns true if the statement can fallthrough.
-   */
-  public int fallThrough()
-  {
-    for (int i = 0; i < getStatements().length; i++) {
-      Statement stmt = getStatements()[i];
-
-      int fallThrough = stmt.fallThrough();
-
-      if (fallThrough != FALL_THROUGH)
-        return fallThrough;
+	for (Statement stmt : _statements) {
+	    stmt.setParent(this);
+	}
     }
 
-    return FALL_THROUGH;
-  }
+    public BlockStatement(Location location, ArrayList<Statement> statementList) {
+	super(location);
 
-  public Value execute(Env env)
-  {
-    for (int i = 0; i < _statements.length; i++) {
-      Statement statement = _statements[i];
+	_statements = new Statement[statementList.size()];
+	statementList.toArray(_statements);
 
-      Value value = statement.execute(env);
-
-      if (value != null) {
-        return value;
-      }
+	for (Statement stmt : _statements) {
+	    stmt.setParent(this);
+	}
     }
 
-    return null;
-  }
+    public BlockStatement append(ArrayList<Statement> statementList) {
+	Statement[] statements = new Statement[_statements.length + statementList.size()];
+
+	System.arraycopy(_statements, 0, statements, 0, _statements.length);
+
+	for (int i = 0; i < statementList.size(); i++) {
+	    statements[i + _statements.length] = statementList.get(i);
+	}
+
+	return new BlockStatement(getLocation(), statements);
+    }
+
+    public Statement[] getStatements() {
+	return _statements;
+    }
+
+    /**
+     * Returns true if the statement can fallthrough.
+     */
+    public int fallThrough() {
+	for (int i = 0; i < getStatements().length; i++) {
+	    Statement stmt = getStatements()[i];
+
+	    int fallThrough = stmt.fallThrough();
+
+	    if (fallThrough != FALL_THROUGH) {
+		return fallThrough;
+	    }
+	}
+
+	return FALL_THROUGH;
+    }
+
+    public Value execute(Env env) {
+	for (int i = 0; i < _statements.length; i++) {
+	    Statement statement = _statements[i];
+
+	    Value value = statement.execute(env);
+
+	    if (value != null) {
+		return value;
+	    }
+	}
+
+	return null;
+    }
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import java.util.ArrayList;
@@ -41,29 +40,27 @@ import com.caucho.quercus.expr.Expr;
  * Represents a continue expression statement in a PHP program.
  */
 public class ContinueStatement extends Statement {
-  //public static final ContinueStatement CONTINUE = new ContinueStatement();
-  
-  protected final Expr _target;
-  protected final ArrayList<String> _loopLabelList;
-  
-  public ContinueStatement(Location location,
-                           Expr target,
-                           ArrayList<String> loopLabelList)
-  {
-    super(location);
-    _target = target;
-    _loopLabelList = loopLabelList;
-  }
+    //public static final ContinueStatement CONTINUE = new ContinueStatement();
 
-  /**
-   * Executes the statement, returning the expression value.
-   */
-  public Value execute(Env env)
-  {
-    if (_target == null)
-      return ContinueValue.CONTINUE;
-    else
-      return new ContinueValue(_target.eval(env).toInt());
-  }
+    protected final Expr _target;
+    protected final ArrayList<String> _loopLabelList;
+
+    public ContinueStatement(Location location,
+	    Expr target,
+	    ArrayList<String> loopLabelList) {
+	super(location);
+	_target = target;
+	_loopLabelList = loopLabelList;
+    }
+
+    /**
+     * Executes the statement, returning the expression value.
+     */
+    public Value execute(Env env) {
+	if (_target == null) {
+	    return ContinueValue.CONTINUE;
+	} else {
+	    return new ContinueValue(_target.eval(env).toInt());
+	}
+    }
 }
-

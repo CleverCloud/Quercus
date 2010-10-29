@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -38,37 +37,34 @@ import com.caucho.quercus.expr.Expr;
  * Represents an expression statement in a PHP program.
  */
 public class ExprStatement extends Statement {
-  private Expr _expr;
 
-  /**
-   * Creates the expression statement.
-   */
-  public ExprStatement(Location location, Expr expr)
-  {
-    super(location);
+    private Expr _expr;
 
-    _expr = expr;
-  }
+    /**
+     * Creates the expression statement.
+     */
+    public ExprStatement(Location location, Expr expr) {
+	super(location);
 
-  /**
-   * Returns the expression.
-   */
-  public Expr getExpr()
-  {
-    return _expr;
-  }
+	_expr = expr;
+    }
 
-  public Value execute(Env env)
-  {
-    // php/0d92
-    Location oldLocation = env.setLocation(getLocation());
+    /**
+     * Returns the expression.
+     */
+    public Expr getExpr() {
+	return _expr;
+    }
 
-    // php/1a08
-    _expr.evalTop(env);
+    public Value execute(Env env) {
+	// php/0d92
+	Location oldLocation = env.setLocation(getLocation());
 
-    env.setLocation(oldLocation);
+	// php/1a08
+	_expr.evalTop(env);
 
-    return null;
-  }
+	env.setLocation(oldLocation);
+
+	return null;
+    }
 }
-

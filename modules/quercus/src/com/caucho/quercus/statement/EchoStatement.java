@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -38,27 +37,24 @@ import com.caucho.quercus.expr.Expr;
  * Represents an echo statement in a PHP program.
  */
 public class EchoStatement extends Statement {
-  protected final Expr _expr;
 
-  private String _genId;
-  
-  /**
-   * Creates the echo statement.
-   */
-  public EchoStatement(Location location, Expr expr)
-  {
-    super(location);
+    protected final Expr _expr;
+    private String _genId;
 
-    _expr = expr;
-  }
-  
-  public Value execute(Env env)
-  {
-    Value value = _expr.eval(env);
+    /**
+     * Creates the echo statement.
+     */
+    public EchoStatement(Location location, Expr expr) {
+	super(location);
 
-    value.print(env);
+	_expr = expr;
+    }
 
-    return null;
-  }
+    public Value execute(Env env) {
+	Value value = _expr.eval(env);
+
+	value.print(env);
+
+	return null;
+    }
 }
-

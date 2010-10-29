@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -40,25 +39,23 @@ import com.caucho.quercus.expr.VarVarExpr;
  * Represents a global statement in a PHP program.
  */
 public class VarGlobalStatement extends Statement {
-  protected Expr _varExpr;
-  
-  /**
-   * Creates the echo statement.
-   */
-  public VarGlobalStatement(Location location, VarVarExpr var)
-  {
-    super(location);
-    
-    _varExpr = var.getExpr();
-  }
-  
-  public Value execute(Env env)
-  {
-    StringValue name = _varExpr.evalStringValue(env);
-    
-    env.setRef(name, env.getGlobalVar(name));
 
-    return null;
-  }
+    protected Expr _varExpr;
+
+    /**
+     * Creates the echo statement.
+     */
+    public VarGlobalStatement(Location location, VarVarExpr var) {
+	super(location);
+
+	_varExpr = var.getExpr();
+    }
+
+    public Value execute(Env env) {
+	StringValue name = _varExpr.evalStringValue(env);
+
+	env.setRef(name, env.getGlobalVar(name));
+
+	return null;
+    }
 }
-

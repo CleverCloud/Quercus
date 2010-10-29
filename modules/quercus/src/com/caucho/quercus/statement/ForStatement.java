@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
@@ -40,77 +39,74 @@ import com.caucho.quercus.expr.Expr;
  * Represents a for statement.
  */
 public class ForStatement extends Statement {
-  protected final Expr _init;
-  protected final Expr _test;
-  protected final Expr _incr;
-  protected final Statement _block;
-  protected final String _label;
 
-  public ForStatement(Location location, Expr init, Expr test, Expr incr,
-                      Statement block, String label)
-  {
-    super(location);
+    protected final Expr _init;
+    protected final Expr _test;
+    protected final Expr _incr;
+    protected final Statement _block;
+    protected final String _label;
 
-    _init = init;
-    _test = test;
-    _incr = incr;
+    public ForStatement(Location location, Expr init, Expr test, Expr incr,
+	    Statement block, String label) {
+	super(location);
 
-    _block = block;
-    _label = label;
-    
-    block.setParent(this);
-  }
+	_init = init;
+	_test = test;
+	_incr = incr;
 
-  @Override
-  public boolean isLoop()
-  {
-    return true;
-  }
+	_block = block;
+	_label = label;
 
-  public Value execute(Env env)
-  {
-    try {
-      if (_init != null)
-        _init.eval(env);
-
-      while (_test == null || _test.evalBoolean(env)) {
-        env.checkTimeout();
-
-        Value value = _block.execute(env);
-
-        if (value == null) {
-        }
-        else if (value instanceof ContinueValue) {
-          ContinueValue conValue = (ContinueValue) value;
-          
-          int target = conValue.getTarget();
-          
-          if (target > 1) {
-            return new ContinueValue(target - 1);
-          }
-        }
-        else if (value instanceof BreakValue) {
-          BreakValue breakValue = (BreakValue) value;
-          
-          int target = breakValue.getTarget();
-          
-          if (target > 1)
-            return new BreakValue(target - 1);
-          else
-            break;
-        }
-        else
-          return value;
-
-        if (_incr != null)
-          _incr.eval(env);
-      }
-    }
-    catch (RuntimeException t) {
-      rethrow(t, RuntimeException.class);
+	block.setParent(this);
     }
 
-    return null;
-  }
+    @Override
+    public boolean isLoop() {
+	return true;
+    }
+
+    public Value execute(Env env) {
+	try {
+	    if (_init != null) {
+		_init.eval(env);
+	    }
+
+	    while (_test == null || _test.evalBoolean(env)) {
+		env.checkTimeout();
+
+		Value value = _block.execute(env);
+
+		if (value == null) {
+		} else if (value instanceof ContinueValue) {
+		    ContinueValue conValue = (ContinueValue) value;
+
+		    int target = conValue.getTarget();
+
+		    if (target > 1) {
+			return new ContinueValue(target - 1);
+		    }
+		} else if (value instanceof BreakValue) {
+		    BreakValue breakValue = (BreakValue) value;
+
+		    int target = breakValue.getTarget();
+
+		    if (target > 1) {
+			return new BreakValue(target - 1);
+		    } else {
+			break;
+		    }
+		} else {
+		    return value;
+		}
+
+		if (_incr != null) {
+		    _incr.eval(env);
+		}
+	    }
+	} catch (RuntimeException t) {
+	    rethrow(t, RuntimeException.class);
+	}
+
+	return null;
+    }
 }
-
