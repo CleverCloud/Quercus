@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.parser;
 
 import com.caucho.quercus.expr.ExprFactory;
@@ -42,104 +41,94 @@ import java.util.HashMap;
  * Parse scope.
  */
 public class FunctionScope extends Scope {
-  private final static L10N L = new L10N(FunctionScope.class);
 
-  private ExprFactory _exprFactory;
+    private final static L10N L = new L10N(FunctionScope.class);
+    private ExprFactory _exprFactory;
+    private HashMap<String, Function> _functionMap = new HashMap<String, Function>();
+    private HashMap<String, InterpretedClassDef> _classMap = new HashMap<String, InterpretedClassDef>();
+    private HashMap<String, InterpretedClassDef> _conditionalClassMap;
+    private HashMap<String, Function> _conditionalFunctionMap;
 
-  private HashMap<String,Function> _functionMap
-  = new HashMap<String,Function>();
-  
-  private HashMap<String,InterpretedClassDef> _classMap
-    = new HashMap<String,InterpretedClassDef>();
-  
-  private HashMap<String,InterpretedClassDef> _conditionalClassMap;
-  
-  private HashMap<String,Function> _conditionalFunctionMap;
+    FunctionScope(ExprFactory exprFactory, Scope parent) {
+	super(parent);
 
-  FunctionScope(ExprFactory exprFactory, Scope parent)
-  {
-    super(parent);
-    
-    _exprFactory = exprFactory;
-  }
+	_exprFactory = exprFactory;
+    }
 
-  /*
-   * Returns true if scope is local to a function.
-   */
-  public boolean isFunction()
-  {
-    return true;
-  }
-  
-  /**
-   * Adds a function.
-   */
-  public void addFunction(String name,
-                          Function function,
-                          boolean isTop)
-  {
-    name = name.toLowerCase();
-    
-    if (_functionMap.get(name) == null)
-      _functionMap.put(name, function);
-    
-    //_parent.addConditionalFunction(name, function);
-    _parent.addFunction(name, function, false);
-  }
-  
-  /*
-   *  Adds a function defined in a conditional block.
-   */
-  @Override
-  protected void addConditionalFunction(String name, Function function)
-  {
-    if (_conditionalFunctionMap == null)
-      _conditionalFunctionMap = new HashMap<String,Function>(4);
+    /*
+     * Returns true if scope is local to a function.
+     */
+    public boolean isFunction() {
+	return true;
+    }
 
-    _conditionalFunctionMap.put(function.getCompilationName(), function);
-    
-    _parent.addConditionalFunction(name, function);
-  }
+    /**
+     * Adds a function.
+     */
+    public void addFunction(String name,
+	    Function function,
+	    boolean isTop) {
+	name = name.toLowerCase();
 
-  /**
-   * Adds a class
-   */
-  public InterpretedClassDef addClass(Location location,
-                                      String name,
-                                      String parentName,
-                                      ArrayList<String> ifaceList,
-                                      int index,
-                                      boolean isTop)
-  {
-    InterpretedClassDef existingClass = _classMap.get(name);
+	if (_functionMap.get(name) == null) {
+	    _functionMap.put(name, function);
+	}
 
-    String []ifaceArray = new String[ifaceList.size()];
-    ifaceList.toArray(ifaceArray);
+	//_parent.addConditionalFunction(name, function);
+	_parent.addFunction(name, function, false);
+    }
 
-    InterpretedClassDef cl
-      = _exprFactory.createClassDef(location,
-                                    name, parentName, ifaceArray,
-                                    index);
-    
-    if (existingClass == null)
-      _classMap.put(name, cl);
-      
-    _parent.addConditionalClass(cl);
+    /*
+     *  Adds a function defined in a conditional block.
+     */
+    @Override
+    protected void addConditionalFunction(String name, Function function) {
+	if (_conditionalFunctionMap == null) {
+	    _conditionalFunctionMap = new HashMap<String, Function>(4);
+	}
 
-    return cl;
-  }
-  
-  /*
-   *  Adds a conditional class.
-   */
-  protected void addConditionalClass(InterpretedClassDef def)
-  {
-    if (_conditionalClassMap == null)
-      _conditionalClassMap = new HashMap<String,InterpretedClassDef>(1);
-    
-    _conditionalClassMap.put(def.getCompilationName(), def);
-    
-    _parent.addConditionalClass(def);
-  }
+	_conditionalFunctionMap.put(function.getCompilationName(), function);
+
+	_parent.addConditionalFunction(name, function);
+    }
+
+    /**
+     * Adds a class
+     */
+    public InterpretedClassDef addClass(Location location,
+	    String name,
+	    String parentName,
+	    ArrayList<String> ifaceList,
+	    int index,
+	    boolean isTop) {
+	InterpretedClassDef existingClass = _classMap.get(name);
+
+	String[] ifaceArray = new String[ifaceList.size()];
+	ifaceList.toArray(ifaceArray);
+
+	InterpretedClassDef cl = _exprFactory.createClassDef(location,
+		name, parentName, ifaceArray,
+		index);
+
+	if (existingClass == null) {
+	    _classMap.put(name, cl);
+	}
+
+	_parent.addConditionalClass(cl);
+
+	return cl;
+    }
+
+    /*
+     *  Adds a conditional class.
+     */
+    protected void addConditionalClass(InterpretedClassDef def) {
+	if (_conditionalClassMap == null) {
+	    _conditionalClassMap = new HashMap<String, InterpretedClassDef>(1);
+	}
+
+	_conditionalClassMap.put(def.getCompilationName(), def);
+
+	_parent.addConditionalClass(def);
+    }
 }
-

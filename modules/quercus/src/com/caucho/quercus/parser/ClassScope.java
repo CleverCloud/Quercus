@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.parser;
 
 import com.caucho.quercus.env.FieldVisibility;
@@ -42,100 +41,88 @@ import java.util.ArrayList;
 /**
  * Class parse scope.
  */
-public class ClassScope extends Scope
-{
-  private final static L10N L = new L10N(ClassScope.class);
-  
-  private final InterpretedClassDef _cl;
+public class ClassScope extends Scope {
 
-  public ClassScope(InterpretedClassDef cl)
-  {
-    _cl = cl;
-  }
-  
-  /**
-   * Returns true if scope is within a class.
-   */
-  public boolean isClass()
-  {
-    return true;
-  }
-  
-  /**
-   * Returns true for an abstract scope, e.g. an abstract class or an
-   * interface.
-   */
-  public boolean isAbstract()
-  {
-    return _cl.isAbstract() || _cl.isInterface();
-  }
-  
-  /**
-   * Adds a function.
-   */
-  @Override
-  public void addFunction(String name,
-                          Function function,
-                          boolean isTop)
-  {
-    _cl.addFunction(name, function);
-  }
-  
-  /*
-   *  Adds a function defined in a conditional block.
-   */
-  @Override
-  public void addConditionalFunction(String name, Function function)
-  {
-    //addFunction(name, function);
-  }
-  
-  /**
-   * Adds a value
-   */
-  public void addVar(StringValue name,
-                     Expr value,
-                     FieldVisibility visibility,
-                     String comment)
-  {
-    _cl.addValue(name, value, visibility, comment);
-  }
-  
-  /**
-   * Adds a static value
-   */
-  public void addStaticVar(StringValue name, Expr value, String comment)
-  {
-    _cl.addStaticValue(name, value, comment);
-  }
-  
-  /**
-   * Adds a constant value
-   */
-  public void addConstant(String name, Expr value)
-  {
-    _cl.addConstant(name, value);
-  }
+    private final static L10N L = new L10N(ClassScope.class);
+    private final InterpretedClassDef _cl;
 
-  /**
-   * Adds a class
-   */
-  @Override
-  public InterpretedClassDef addClass(Location location, String name,
-                                      String parentName,
-                                      ArrayList<String> ifaceList,
-                                      int index,
-                                      boolean isTop)
-  {
-    throw new UnsupportedOperationException();
-  }
-  
-  /*
-   *  Adds a conditional class.
-   */
-  protected void addConditionalClass(InterpretedClassDef def)
-  {
-    throw new UnsupportedOperationException();
-  }
+    public ClassScope(InterpretedClassDef cl) {
+	_cl = cl;
+    }
+
+    /**
+     * Returns true if scope is within a class.
+     */
+    public boolean isClass() {
+	return true;
+    }
+
+    /**
+     * Returns true for an abstract scope, e.g. an abstract class or an
+     * interface.
+     */
+    public boolean isAbstract() {
+	return _cl.isAbstract() || _cl.isInterface();
+    }
+
+    /**
+     * Adds a function.
+     */
+    @Override
+    public void addFunction(String name,
+	    Function function,
+	    boolean isTop) {
+	_cl.addFunction(name, function);
+    }
+
+    /*
+     *  Adds a function defined in a conditional block.
+     */
+    @Override
+    public void addConditionalFunction(String name, Function function) {
+	//addFunction(name, function);
+    }
+
+    /**
+     * Adds a value
+     */
+    public void addVar(StringValue name,
+	    Expr value,
+	    FieldVisibility visibility,
+	    String comment) {
+	_cl.addValue(name, value, visibility, comment);
+    }
+
+    /**
+     * Adds a static value
+     */
+    public void addStaticVar(StringValue name, Expr value, String comment) {
+	_cl.addStaticValue(name, value, comment);
+    }
+
+    /**
+     * Adds a constant value
+     */
+    public void addConstant(String name, Expr value) {
+	_cl.addConstant(name, value);
+    }
+
+    /**
+     * Adds a class
+     */
+    @Override
+    public InterpretedClassDef addClass(Location location, String name,
+	    String parentName,
+	    ArrayList<String> ifaceList,
+	    int index,
+	    boolean isTop) {
+	throw new UnsupportedOperationException();
+    }
+
+    /*
+     *  Adds a conditional class.
+     */
+    protected void addConditionalClass(InterpretedClassDef def) {
+	throw new UnsupportedOperationException();
+    }
 }
-

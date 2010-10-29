@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.parser;
 
 import com.caucho.util.LineCompileException;
@@ -37,27 +36,23 @@ import java.io.IOException;
  * PHP parse exception
  */
 public class QuercusParseException
-  extends RuntimeException
-  implements LineCompileException {
-  public QuercusParseException()
-  {
-  }
+	extends RuntimeException
+	implements LineCompileException {
 
-  public QuercusParseException(String msg)
-  {
-    super(msg);
-  }
+    public QuercusParseException() {
+    }
 
-  public QuercusParseException(Throwable cause)
-  {
-    initCause(cause);
-  }
+    public QuercusParseException(String msg) {
+	super(msg);
+    }
 
-  public QuercusParseException(String msg, Throwable cause)
-  {
-    super(msg);
+    public QuercusParseException(Throwable cause) {
+	initCause(cause);
+    }
 
-    initCause(cause);
-  }
+    public QuercusParseException(String msg, Throwable cause) {
+	super(msg);
+
+	initCause(cause);
+    }
 }
-
