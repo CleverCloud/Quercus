@@ -1,7 +1,7 @@
 <?php
 
-class RuntimeException extends Exception
-{
+class RuntimeException extends Exception {
+
 }
 
 ?>

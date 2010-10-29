@@ -1,7 +1,7 @@
 <?php
 
-class OverflowException extends RuntimeException
-{
+class OverflowException extends RuntimeException {
+
 }
 
 ?>

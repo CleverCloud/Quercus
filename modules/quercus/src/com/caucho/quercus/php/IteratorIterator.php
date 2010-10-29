@@ -1,40 +1,35 @@
 <?php
 
 class IteratorIterator implements OuterIterator {
-  var $it;
-  
-  function __construct($it)
-  {
-    $this->it = $it;
-  }
 
-  function getInnerIterator()
-  {
-    return $this->it;
-  }
+    var $it;
 
-  function current()
-  {
-    return $this->it->current();
-  }
+    function __construct($it) {
+	$this->it = $it;
+    }
 
-  function key()
-  {
-    return $this->it->key();
-  }
+    function getInnerIterator() {
+	return $this->it;
+    }
 
-  function next()
-  {
-    $this->it->next();
-  }
+    function current() {
+	return $this->it->current();
+    }
 
-  function rewind()
-  {
-    $this->it->rewind();
-  }
+    function key() {
+	return $this->it->key();
+    }
 
-  function valid()
-  {
-    return $this->it->valid();
-  }
+    function next() {
+	$this->it->next();
+    }
+
+    function rewind() {
+	$this->it->rewind();
+    }
+
+    function valid() {
+	return $this->it->valid();
+    }
+
 }

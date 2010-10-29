@@ -1,7 +1,7 @@
 <?php
 
-class ErrorException extends Exception
-{
+class ErrorException extends Exception {
+
 }
 
 ?>

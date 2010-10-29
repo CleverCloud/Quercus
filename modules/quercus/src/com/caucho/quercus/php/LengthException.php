@@ -1,7 +1,7 @@
 <?php
 
-class LengthException extends LogicException
-{
+class LengthException extends LogicException {
+
 }
 
 ?>

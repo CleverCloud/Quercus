@@ -1,7 +1,7 @@
 <?php
 
-class UnexpectedValueException extends RuntimeException
-{
+class UnexpectedValueException extends RuntimeException {
+
 }
 
 ?>
