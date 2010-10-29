@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.resources;
 
 import com.caucho.quercus.env.Env;
@@ -39,110 +38,97 @@ import java.io.IOException;
  * Represents a PHP open stream
  */
 public class StreamResource extends ResourceValue {
-  /**
-   * Reads the next byte, returning -1 on eof.
-   */
-  public int read()
-    throws IOException
-  {
-    return -1;
-  }
-  
-  /**
-   * Reads a buffer, returning -1 on eof.
-   */
-  public int read(byte []buffer, int offset, int length)
-    throws IOException
-  {
-    return -1;
-  }
 
-  /**
-   * Reads the optional linefeed character from a \r\n
-   */
-  public boolean readOptionalLinefeed()
-    throws IOException
-  {
-    return false;
-  }
-  
-  /**
-   * Reads a line from the buffer.
-   */
-  public StringValue readLine(Env env)
-    throws IOException
-  {
-    return null;
-  }
-  
-  /**
-   * Writes to a buffer.
-   */
-  public int write(byte []buffer, int offset, int length)
-    throws IOException
-  {
-    return -1;
-  }
-  
-  /**
-   * prints
-   */
-  public void print(char ch)
-    throws IOException
-  {
-    print(String.valueOf(ch));
-  }
-  
-  /**
-   * prints
-   */
-  public void print(String s)
-    throws IOException
-  {
-  }
+    /**
+     * Reads the next byte, returning -1 on eof.
+     */
+    public int read()
+	    throws IOException {
+	return -1;
+    }
 
-  /**
-   * Returns true on the end of file.
-   */
-  public boolean isEOF()
-  {
-    return true;
-  }
+    /**
+     * Reads a buffer, returning -1 on eof.
+     */
+    public int read(byte[] buffer, int offset, int length)
+	    throws IOException {
+	return -1;
+    }
 
-  /**
-   * Flushes the output
-   */
-  public void flush()
-  {
-  }
+    /**
+     * Reads the optional linefeed character from a \r\n
+     */
+    public boolean readOptionalLinefeed()
+	    throws IOException {
+	return false;
+    }
 
-  /**
-   * Returns the current location in the file.
-   */
-  public long getPosition()
-  {
-    return 0;
-  }
+    /**
+     * Reads a line from the buffer.
+     */
+    public StringValue readLine(Env env)
+	    throws IOException {
+	return null;
+    }
 
-  /**
-   * Closes the stream.
-   */
-  public void close()
-  {
-  }
+    /**
+     * Writes to a buffer.
+     */
+    public int write(byte[] buffer, int offset, int length)
+	    throws IOException {
+	return -1;
+    }
 
-  /**
-   * Closes the stream for reading
-   */
-  public void closeRead()
-  {
-  }
+    /**
+     * prints
+     */
+    public void print(char ch)
+	    throws IOException {
+	print(String.valueOf(ch));
+    }
 
-  /**
-   * Closes the stream for writing
-   */
-  public void closeWrite()
-  {
-  }
+    /**
+     * prints
+     */
+    public void print(String s)
+	    throws IOException {
+    }
+
+    /**
+     * Returns true on the end of file.
+     */
+    public boolean isEOF() {
+	return true;
+    }
+
+    /**
+     * Flushes the output
+     */
+    public void flush() {
+    }
+
+    /**
+     * Returns the current location in the file.
+     */
+    public long getPosition() {
+	return 0;
+    }
+
+    /**
+     * Closes the stream.
+     */
+    public void close() {
+    }
+
+    /**
+     * Closes the stream for reading
+     */
+    public void closeRead() {
+    }
+
+    /**
+     * Closes the stream for writing
+     */
+    public void closeWrite() {
+    }
 }
-

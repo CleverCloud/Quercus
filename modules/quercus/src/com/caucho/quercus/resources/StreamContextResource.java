@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.resources;
 
 import com.caucho.quercus.env.*;
@@ -35,71 +34,65 @@ import com.caucho.quercus.env.*;
  * Represents a PHP stream context.
  */
 public class StreamContextResource extends ResourceValue {
-  private ArrayValue _options;
-  private ArrayValue _parameters;
-  
-  public StreamContextResource()
-  {
-    this(null);
-  }
 
-  public StreamContextResource(ArrayValue options)
-  {
-    this(options, null);
-  }
+    private ArrayValue _options;
+    private ArrayValue _parameters;
 
-  public StreamContextResource(ArrayValue options, ArrayValue parameters)
-  {
-    if (options == null)
-      options = new ArrayValueImpl();
+    public StreamContextResource() {
+	this(null);
+    }
 
-    if (parameters == null)
-      parameters = new ArrayValueImpl();
-    
-    _options = options;
-    _parameters = parameters;
-  }
+    public StreamContextResource(ArrayValue options) {
+	this(options, null);
+    }
 
-  /**
-   * Returns the options.
-   */
-  public ArrayValue getOptions()
-  {
-    return _options;
-  }
+    public StreamContextResource(ArrayValue options, ArrayValue parameters) {
+	if (options == null) {
+	    options = new ArrayValueImpl();
+	}
 
-  /**
-   * Sets the options.
-   */
-  public void setOptions(ArrayValue options)
-  {
-    _options = options;
-  }
+	if (parameters == null) {
+	    parameters = new ArrayValueImpl();
+	}
 
-  /**
-   * Sets an option
-   */
-  public void setOption(Env env, StringValue wrapper,
-                        StringValue option, Value value)
-  {
-    _options.getArray(wrapper).put(option, value);
-  }
+	_options = options;
+	_parameters = parameters;
+    }
 
-  /**
-   * Sets the parameters.
-   */
-  public void setParameters(ArrayValue parameters)
-  {
-    _parameters = parameters;
-  }
-  
-  /**
-   * Converts to a string.
-   * @param env
-   */
-  public StringValue toString(Env env)
-  {
-    return env.createString("StreamContextResource[]");
-  }
+    /**
+     * Returns the options.
+     */
+    public ArrayValue getOptions() {
+	return _options;
+    }
+
+    /**
+     * Sets the options.
+     */
+    public void setOptions(ArrayValue options) {
+	_options = options;
+    }
+
+    /**
+     * Sets an option
+     */
+    public void setOption(Env env, StringValue wrapper,
+	    StringValue option, Value value) {
+	_options.getArray(wrapper).put(option, value);
+    }
+
+    /**
+     * Sets the parameters.
+     */
+    public void setParameters(ArrayValue parameters) {
+	_parameters = parameters;
+    }
+
+    /**
+     * Converts to a string.
+     * @param env
+     */
+    public StringValue toString(Env env) {
+	return env.createString("StreamContextResource[]");
+    }
 }
-
