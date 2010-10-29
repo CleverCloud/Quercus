@@ -531,7 +531,7 @@
     </antcall>
   </target>
 
-  <target name="quercus-dev" depends="init">
+  <target name="quercus-dev" depends="init, ext">
     <antcall target="module" inheritRefs="true">
       <param name="module.name" value="quercus"/>
       <param name="module.dist" value="${lib}"/>
@@ -568,6 +568,7 @@
   <target name="ext" depends="init"> <!-- resin dep was deleted -->
     <copy todir="${install}/lib" preservelastmodified="true">
       <fileset dir="${ext}">
+	<include name="joda-time-1.6.2.jar"/>
       </fileset>
     </copy>
   </target>
