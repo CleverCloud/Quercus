@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.curl;
 
 import java.io.IOException;
@@ -37,37 +36,34 @@ import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.annotation.Optional;
 
-public class UrlEncodedBody extends PostBody
-{
-  private StringValue _body;
-  private int _length;
-  
-  protected boolean init(Env env, Value body)
-  {
-    _body = body.toStringValue(env);
-    _length = _body.length();
-    
-    return true;
-  }
+public class UrlEncodedBody extends PostBody {
 
-  public String getContentType(@Optional String contentType)
-  {
-      if (contentType != null)
-	  return contentType;
-      else
-	  return "application/x-www-form-urlencoded";
-  }
-  
-  public long getContentLength()
-  {
-    return (long) _length;
-  }
-  
-  public void writeTo(Env env, OutputStream os)
-    throws IOException
-  {
-    for (int i = 0; i < _length; i++) {
-      os.write(_body.charAt(i));
+    private StringValue _body;
+    private int _length;
+
+    protected boolean init(Env env, Value body) {
+	_body = body.toStringValue(env);
+	_length = _body.length();
+
+	return true;
     }
-  }  
+
+    public String getContentType(@Optional String contentType) {
+	if (contentType != null) {
+	    return contentType;
+	} else {
+	    return "application/x-www-form-urlencoded";
+	}
+    }
+
+    public long getContentLength() {
+	return (long) _length;
+    }
+
+    public void writeTo(Env env, OutputStream os)
+	    throws IOException {
+	for (int i = 0; i < _length; i++) {
+	    os.write(_body.charAt(i));
+	}
+    }
 }

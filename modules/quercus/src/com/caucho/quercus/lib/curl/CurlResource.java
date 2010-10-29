@@ -534,9 +534,10 @@ public class CurlResource {
      */
     public void setRequestProperty(String key, String value) {
 	_requestProperties.put(key, value);
-	
-	if (key.equals("Content-Type"))
+
+	if (key.equals("Content-Type")) {
 	    setContentType(value);
+	}
     }
 
     /**

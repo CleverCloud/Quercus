@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.curl;
 
 import java.io.IOException;
@@ -36,25 +35,29 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.annotation.Optional;
 
-abstract public class PostBody
-{
-  static PostBody create(Env env, Value body)
-  {
-    PostBody post;
-    
-    if (body.isArray())
-      post = new MultipartBody();
-    else
-      post = new UrlEncodedBody();
-    
-    if (post.init(env, body))
-      return post;
-    else
-      return null;
-  }
-  
-  abstract protected boolean init(Env env, Value body);
-  abstract public long getContentLength();
-  abstract public String getContentType(@Optional String contentType);
-  abstract public void writeTo(Env env, OutputStream os) throws IOException;
+abstract public class PostBody {
+
+    static PostBody create(Env env, Value body) {
+	PostBody post;
+
+	if (body.isArray()) {
+	    post = new MultipartBody();
+	} else {
+	    post = new UrlEncodedBody();
+	}
+
+	if (post.init(env, body)) {
+	    return post;
+	} else {
+	    return null;
+	}
+    }
+
+    abstract protected boolean init(Env env, Value body);
+
+    abstract public long getContentLength();
+
+    abstract public String getContentType(@Optional String contentType);
+
+    abstract public void writeTo(Env env, OutputStream os) throws IOException;
 }

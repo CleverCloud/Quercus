@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.curl;
 
 import java.security.Principal;
@@ -36,73 +35,70 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 
 public final class CurlHostnameVerifier
-  implements HostnameVerifier
-{
-  private boolean _isVerifySSLPeer;
-  private boolean _isVerifySSLCommonName;
-  private boolean _isVerifySSLHostname;
-  
-  private CurlHostnameVerifier(boolean verifyPeer,
-                               boolean commonName,
-                               boolean hostname)
-  {
-    _isVerifySSLPeer = verifyPeer;
-    _isVerifySSLCommonName = commonName;
-    _isVerifySSLHostname = hostname;
-  }
-  
-  public static CurlHostnameVerifier create()
-  {
-    return new CurlHostnameVerifier(true, true, true);
-  }
-  
-  public static CurlHostnameVerifier create(boolean verifyPeer,
-                                            boolean commonName,
-                                            boolean hostname)
-  {
-    return new CurlHostnameVerifier(verifyPeer, commonName, hostname);
-  }
-  
-  public boolean verify(String hostname, SSLSession session)
-  {
-    System.out.println("VERIFY: " + hostname);
-    if (_isVerifySSLPeer == false
-        && _isVerifySSLCommonName == false
-        && _isVerifySSLHostname == false) {
-      return true;
+	implements HostnameVerifier {
+
+    private boolean _isVerifySSLPeer;
+    private boolean _isVerifySSLCommonName;
+    private boolean _isVerifySSLHostname;
+
+    private CurlHostnameVerifier(boolean verifyPeer,
+	    boolean commonName,
+	    boolean hostname) {
+	_isVerifySSLPeer = verifyPeer;
+	_isVerifySSLCommonName = commonName;
+	_isVerifySSLHostname = hostname;
     }
-    
-    Principal principal = null;
-    
-    try {
-      principal = session.getPeerPrincipal();
+
+    public static CurlHostnameVerifier create() {
+	return new CurlHostnameVerifier(true, true, true);
     }
-    catch (SSLPeerUnverifiedException e) { 
-      if (_isVerifySSLPeer)
-        return false;
+
+    public static CurlHostnameVerifier create(boolean verifyPeer,
+	    boolean commonName,
+	    boolean hostname) {
+	return new CurlHostnameVerifier(verifyPeer, commonName, hostname);
     }
-      
-    if (_isVerifySSLPeer) {
-      try {
-        session.getPeerPrincipal();
-      }
-      catch (SSLPeerUnverifiedException e) {
-        //XXX: log
-        return false;
-      }
+
+    public boolean verify(String hostname, SSLSession session) {
+	System.out.println("VERIFY: " + hostname);
+	if (_isVerifySSLPeer == false
+		&& _isVerifySSLCommonName == false
+		&& _isVerifySSLHostname == false) {
+	    return true;
+	}
+
+	Principal principal = null;
+
+	try {
+	    principal = session.getPeerPrincipal();
+	} catch (SSLPeerUnverifiedException e) {
+	    if (_isVerifySSLPeer) {
+		return false;
+	    }
+	}
+
+	if (_isVerifySSLPeer) {
+	    try {
+		session.getPeerPrincipal();
+	    } catch (SSLPeerUnverifiedException e) {
+		//XXX: log
+		return false;
+	    }
+	}
+
+	if (_isVerifySSLCommonName) {
+	    if (principal == null || !principal.getName().equals(hostname)) {
+		return false;
+	    }
+	}
+
+	if (_isVerifySSLHostname) {
+	    if (session.getPeerHost() == null
+		    || !session.getPeerHost().equals(hostname)) {
+		return false;
+	    }
+	}
+
+	return true;
     }
-    
-    if (_isVerifySSLCommonName) {
-      if (principal == null || ! principal.getName().equals(hostname))
-        return false;
-    }
-    
-    if (_isVerifySSLHostname) {
-      if (session.getPeerHost() == null
-          || ! session.getPeerHost().equals(hostname))
-        return false;
-    }
-    
-    return true;
-  }
 }

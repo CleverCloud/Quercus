@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.curl;
 
 import com.caucho.quercus.QuercusModuleException;
@@ -44,70 +43,66 @@ import javax.net.ssl.SSLPeerUnverifiedException;
  * Represents a HttpURLConnection wrapper.
  */
 public class HttpsConnection
-  extends HttpConnection
-{
-  protected HttpsConnection(URL url,
-                            String username,
-                            String password)
-    throws IOException
-  {
-    super(url, username, password);
-  }
+	extends HttpConnection {
 
-  public HttpsConnection(URL url,
-                         String username,
-                         String password,
-                         URL proxyURL,
-                         String proxyUsername,
-                         String proxyPassword,
-                         String proxyType)
-    throws IOException
-  {
-    super(url, username, password,
-          proxyURL, proxyUsername, proxyPassword, proxyType);
-  }
-  
-  @Override
-  protected void init(CurlResource curl)
-    throws IOException
-  {
-    Proxy proxy = getProxy();
+    protected HttpsConnection(URL url,
+	    String username,
+	    String password)
+	    throws IOException {
+	super(url, username, password);
+    }
 
-    HttpsURLConnection conn;
+    public HttpsConnection(URL url,
+	    String username,
+	    String password,
+	    URL proxyURL,
+	    String proxyUsername,
+	    String proxyPassword,
+	    String proxyType)
+	    throws IOException {
+	super(url, username, password,
+		proxyURL, proxyUsername, proxyPassword, proxyType);
+    }
 
-    if (proxy != null)
-      conn = (HttpsURLConnection) getURL().openConnection(proxy);
-    else
-      conn = (HttpsURLConnection) getURL().openConnection();
+    @Override
+    protected void init(CurlResource curl)
+	    throws IOException {
+	Proxy proxy = getProxy();
 
-    HostnameVerifier hostnameVerifier
-      = CurlHostnameVerifier.create(curl.getIsVerifySSLPeer(),
-                                    curl.getIsVerifySSLCommonName(),
-                                    curl.getIsVerifySSLHostname());
-    
-    conn.setHostnameVerifier(hostnameVerifier);
+	HttpsURLConnection conn;
 
-    setConnection(conn);
-  }
-  
-  /**
-   * Connects to the server.
-   */
-  /*
-  @Override
-  public void connect(CurlResource curl)
+	if (proxy != null) {
+	    conn = (HttpsURLConnection) getURL().openConnection(proxy);
+	} else {
+	    conn = (HttpsURLConnection) getURL().openConnection();
+	}
+
+	HostnameVerifier hostnameVerifier = CurlHostnameVerifier.create(curl.getIsVerifySSLPeer(),
+		curl.getIsVerifySSLCommonName(),
+		curl.getIsVerifySSLHostname());
+
+	conn.setHostnameVerifier(hostnameVerifier);
+
+	setConnection(conn);
+    }
+    /**
+     * Connects to the server.
+     */
+    /*
+    @Override
+    public void connect(CurlResource curl)
     throws ConnectException, ProtocolException, SocketTimeoutException,
-            IOException
-  {
+    IOException
+    {
     try {
-      super.connect(curl);
-      
-      ((HttpsURLConnection)getConnection()).getServerCertificates();
+    super.connect(curl);
+
+    ((HttpsURLConnection)getConnection()).getServerCertificates();
     }
     catch (SSLPeerUnverifiedException e) {
-      if (curl.getIsVerifySSLPeer())
-        throw e;
+    if (curl.getIsVerifySSLPeer())
+    throw e;
     }
-  }
-  */
+    }
+     */
 }
