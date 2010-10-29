@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.page;
 
 import com.caucho.quercus.QuercusContext;
@@ -44,145 +43,124 @@ import java.util.logging.*;
 /**
  * Each "page" refers to a quercus file.
  */
-public class PageManager
-{
-  private static final Logger log
-    = Logger.getLogger(PageManager.class.getName());
+public class PageManager {
 
-  protected static final L10N L = new L10N(PageManager.class);
-  
-  private final QuercusContext _quercus;
-  
-  //private Path _pwd;
-  private boolean _isLazyCompile;
-  private boolean _isCompile;
-  private boolean _isCompileFailover = Alarm.isActive();
+    private static final Logger log = Logger.getLogger(PageManager.class.getName());
+    protected static final L10N L = new L10N(PageManager.class);
+    private final QuercusContext _quercus;
+    //private Path _pwd;
+    private boolean _isLazyCompile;
+    private boolean _isCompile;
+    private boolean _isCompileFailover = Alarm.isActive();
+    private boolean _isRequireSource = true;
+    protected LruCache<Path, QuercusProgram> _programCache = new LruCache<Path, QuercusProgram>(1024);
+    private boolean _isClosed;
 
-  private boolean _isRequireSource = true;
+    /**
+     * Constructor.
+     */
+    public PageManager(QuercusContext quercus) {
+	_quercus = quercus;
+    }
 
-  protected LruCache<Path,QuercusProgram> _programCache
-    = new LruCache<Path,QuercusProgram>(1024);
+    public QuercusContext getQuercus() {
+	return _quercus;
+    }
 
-  private boolean _isClosed;
-  
-  /**
-   * Constructor.
-   */ 
-  public PageManager(QuercusContext quercus)
-  {
-    _quercus = quercus;
-  }
+    /**
+     * Gets the owning directory.
+     */
+    public Path getPwd() {
+	return _quercus.getPwd();
+    }
 
-  public QuercusContext getQuercus()
-  {
-    return _quercus;
-  }
+    /**
+     * true if the pages should be compiled.
+     */
+    public boolean isCompile() {
+	return _isCompile;
+    }
 
-  /**
-   * Gets the owning directory.
-   */
-  public Path getPwd()
-  {
-    return _quercus.getPwd();
-  }
+    /**
+     * true if the pages should be compiled.
+     */
+    public void setCompile(boolean isCompile) {
+	_isCompile = isCompile;
+    }
 
-  /**
-   * true if the pages should be compiled.
-   */
-  public boolean isCompile()
-  {
-    return _isCompile;
-  }
+    /**
+     * true if the pages should be compiled lazily.
+     */
+    public boolean isLazyCompile() {
+	return _isLazyCompile;
+    }
 
-  /**
-   * true if the pages should be compiled.
-   */
-  public void setCompile(boolean isCompile)
-  {
-    _isCompile = isCompile;
-  }
+    /**
+     * true if the pages should be compiled.
+     */
+    public void setLazyCompile(boolean isCompile) {
+	_isLazyCompile = isCompile;
+    }
 
-  /**
-   * true if the pages should be compiled lazily.
-   */
-  public boolean isLazyCompile()
-  {
-    return _isLazyCompile;
-  }
+    /**
+     * true if interpreted pages should be used if pages fail to compile.
+     */
+    public boolean isCompileFailover() {
+	return _isCompileFailover;
+    }
 
-  /**
-   * true if the pages should be compiled.
-   */
-  public void setLazyCompile(boolean isCompile)
-  {
-    _isLazyCompile = isCompile;
-  }
-  
-  /**
-   * true if interpreted pages should be used if pages fail to compile.
-   */
-  public boolean isCompileFailover()
-  {
-    return _isCompileFailover;
-  }
-  
-  /**
-   * true if interpreted pages should be used if pages fail to compile.
-   */
-  public void setCompileFailover(boolean isCompileFailover)
-  {
-    _isCompileFailover = isCompileFailover;
-  }
-  
-  /**
-   * true if compiled pages require their source
-   */
-  public void setRequireSource(boolean isRequireSource)
-  {
-    _isRequireSource = isRequireSource;
-  }
-  
-  /**
-   * true if compiled pages require their source
-   */
-  public boolean isRequireSource()
-  {
-    return _isRequireSource;
-  }
-  
-  /**
-   * Gets the max size of the page cache.
-   */
-  public int getPageCacheSize()
-  {
-    return _programCache.getCapacity();
-  }
-  
-  /**
-   * Sets the max size of the page cache.
-   */
-  public void setPageCacheSize(int size)
-  {
-    if (size >= 0 && size != _programCache.getCapacity())
-      _programCache = new LruCache<Path,QuercusProgram>(size);
-  }
+    /**
+     * true if interpreted pages should be used if pages fail to compile.
+     */
+    public void setCompileFailover(boolean isCompileFailover) {
+	_isCompileFailover = isCompileFailover;
+    }
 
-  /**
-   * true if the manager is active.
-   */
-  public boolean isActive()
-  {
-    return ! _isClosed;
-  }
+    /**
+     * true if compiled pages require their source
+     */
+    public void setRequireSource(boolean isRequireSource) {
+	_isRequireSource = isRequireSource;
+    }
 
-  /**
-   * Returns the relative path.
-   */
-  /*
-  public String getClassName(Path path)
-  {
+    /**
+     * true if compiled pages require their source
+     */
+    public boolean isRequireSource() {
+	return _isRequireSource;
+    }
+
+    /**
+     * Gets the max size of the page cache.
+     */
+    public int getPageCacheSize() {
+	return _programCache.getCapacity();
+    }
+
+    /**
+     * Sets the max size of the page cache.
+     */
+    public void setPageCacheSize(int size) {
+	if (size >= 0 && size != _programCache.getCapacity()) {
+	    _programCache = new LruCache<Path, QuercusProgram>(size);
+	}
+    }
+
+    /**
+     * true if the manager is active.
+     */
+    public boolean isActive() {
+	return !_isClosed;
+    }
+
+    /**
+     * Returns the relative path.
+     */
+    /*
+    public String getClassName(Path path)
+    {
     if (path == null)
-      return "tmp.eval";
+    return "tmp.eval";
     
     String pathName = path.getFullPath();
     String pwdName = getPwd().getFullPath();
@@ -190,125 +168,120 @@ public class PageManager
     String relPath;
 
     if (pathName.startsWith(pwdName))
-      relPath = pathName.substring(pwdName.length());
+    relPath = pathName.substring(pwdName.length());
     else
-      relPath = pathName;
+    relPath = pathName;
 
     return "_quercus." + JavaCompiler.mangleName(relPath);
-  }
-  */
-  
-  /**
-   * Returns a parsed or compiled quercus program.
-   *
-   * @param path the source file path
-   *
-   * @return the parsed program
-   *
-   * @throws IOException
-   */
-  public QuercusPage parse(Path path)
-    throws IOException
-  {
-    return parse(path, null, -1);
-  }
-  
-  /**
-   * Returns a parsed or compiled quercus program.
-   *
-   * @param path the source file path
-   *
-   * @return the parsed program
-   *
-   * @throws IOException
-   */
-  public QuercusPage parse(Path path, String fileName, int line)
-    throws IOException
-  {
-    try {
-      QuercusProgram program;
-
-      program = _programCache.get(path);
-
-      boolean isModified = false;
-      
-      if (program != null) {
-        isModified = program.isModified();
-        
-        if (program.isCompilable()) {
-        }
-        else if (isModified)
-          program.setCompilable(true);
-        else {
-          if (log.isLoggable(Level.FINE))
-            log.fine(L.l("Quercus[{0}] loading interpreted page", path));
-          
-          return new InterpretedPage(program);
-        }
-      }
-
-      if (program == null || isModified) {
-        clearProgram(path, program);
-
-        program = preloadProgram(path, fileName);
-
-        if (program == null) {
-          if (log.isLoggable(Level.FINE))
-            log.fine(L.l("Quercus[{0}] parsing page", path));
-          
-          program = QuercusParser.parse(_quercus,
-                                        path,
-                                        _quercus.getScriptEncoding(),
-                                        fileName,
-                                        line);
-        }
-
-        _programCache.put(path, program);
-      }
-
-      if (program.getCompiledPage() != null)
-        return program.getCompiledPage();
-
-      return compilePage(program, path);
-    } catch (IOException e) {
-      throw e;
-    } catch (RuntimeException e) {
-      throw e;
-    } catch (Throwable e) {
-      throw new IOExceptionWrapper(e);
     }
-  }
+     */
+    /**
+     * Returns a parsed or compiled quercus program.
+     *
+     * @param path the source file path
+     *
+     * @return the parsed program
+     *
+     * @throws IOException
+     */
+    public QuercusPage parse(Path path)
+	    throws IOException {
+	return parse(path, null, -1);
+    }
 
-  public boolean precompileExists(Path path)
-  {
-    return false;
-  }
+    /**
+     * Returns a parsed or compiled quercus program.
+     *
+     * @param path the source file path
+     *
+     * @return the parsed program
+     *
+     * @throws IOException
+     */
+    public QuercusPage parse(Path path, String fileName, int line)
+	    throws IOException {
+	try {
+	    QuercusProgram program;
 
-  protected QuercusProgram preloadProgram(Path path, String fileName)
-  {
-    return null;
-  }
+	    program = _programCache.get(path);
 
-  protected void clearProgram(Path path, QuercusProgram program)
-  {
-    _programCache.remove(path);
+	    boolean isModified = false;
 
-    // php/0b36
-    if (program != null)
-      _quercus.clearDefinitionCache();
-  }
+	    if (program != null) {
+		isModified = program.isModified();
 
-  protected QuercusPage compilePage(QuercusProgram program, Path path)
-  {
-    if (log.isLoggable(Level.FINE))
-      log.fine(L.l("Quercus[{0}] loading interpreted page", path));
-    
-    return new InterpretedPage(program);
-  }
+		if (program.isCompilable()) {
+		} else if (isModified) {
+		    program.setCompilable(true);
+		} else {
+		    if (log.isLoggable(Level.FINE)) {
+			log.fine(L.l("Quercus[{0}] loading interpreted page", path));
+		    }
 
-  public void close()
-  {
-    _isClosed = true;
-  }
+		    return new InterpretedPage(program);
+		}
+	    }
+
+	    if (program == null || isModified) {
+		clearProgram(path, program);
+
+		program = preloadProgram(path, fileName);
+
+		if (program == null) {
+		    if (log.isLoggable(Level.FINE)) {
+			log.fine(L.l("Quercus[{0}] parsing page", path));
+		    }
+
+		    program = QuercusParser.parse(_quercus,
+			    path,
+			    _quercus.getScriptEncoding(),
+			    fileName,
+			    line);
+		}
+
+		_programCache.put(path, program);
+	    }
+
+	    if (program.getCompiledPage() != null) {
+		return program.getCompiledPage();
+	    }
+
+	    return compilePage(program, path);
+	} catch (IOException e) {
+	    throw e;
+	} catch (RuntimeException e) {
+	    throw e;
+	} catch (Throwable e) {
+	    throw new IOExceptionWrapper(e);
+	}
+    }
+
+    public boolean precompileExists(Path path) {
+	return false;
+    }
+
+    protected QuercusProgram preloadProgram(Path path, String fileName) {
+	return null;
+    }
+
+    protected void clearProgram(Path path, QuercusProgram program) {
+	_programCache.remove(path);
+
+	// php/0b36
+	if (program != null) {
+	    _quercus.clearDefinitionCache();
+	}
+    }
+
+    protected QuercusPage compilePage(QuercusProgram program, Path path) {
+	if (log.isLoggable(Level.FINE)) {
+	    log.fine(L.l("Quercus[{0}] loading interpreted page", path));
+	}
+
+	return new InterpretedPage(program);
+    }
+
+    public void close() {
+	_isClosed = true;
+    }
 }
-
