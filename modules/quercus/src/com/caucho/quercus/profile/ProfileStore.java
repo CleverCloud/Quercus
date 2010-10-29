@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.profile;
 
 import java.util.ArrayList;
@@ -35,54 +34,49 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Stores the most recent profiles
  */
-public class ProfileStore
-{
-  private static final AtomicLong _idSequence = new AtomicLong();
-  
-  private static final ArrayList<ProfileReport> _reportList
-    = new ArrayList<ProfileReport>();
+public class ProfileStore {
 
-  public static long generateId()
-  {
-    return _idSequence.incrementAndGet();
-  }
+    private static final AtomicLong _idSequence = new AtomicLong();
+    private static final ArrayList<ProfileReport> _reportList = new ArrayList<ProfileReport>();
 
-  /**
-   * Adds a new report
-   */
-  public static void addReport(ProfileReport report)
-  {
-    synchronized (_reportList) {
-      _reportList.add(0, report);
-
-      while (_reportList.size() > 32)
-        _reportList.remove(_reportList.size() - 1);
-    }
-  }
-
-  /**
-   * Returns the current reports
-   */
-  public static ArrayList<ProfileReport> getReports()
-  {
-    synchronized (_reportList) {
-      return new ArrayList<ProfileReport>(_reportList);
-    }
-  }
-
-  /**
-   * Returns the report with the given index
-   */
-  public static ProfileReport findReport(long index)
-  {
-    synchronized (_reportList) {
-      for (ProfileReport report : _reportList) {
-        if (index == report.getId())
-          return report;
-      }
+    public static long generateId() {
+	return _idSequence.incrementAndGet();
     }
 
-    return null;
-  }
+    /**
+     * Adds a new report
+     */
+    public static void addReport(ProfileReport report) {
+	synchronized (_reportList) {
+	    _reportList.add(0, report);
+
+	    while (_reportList.size() > 32) {
+		_reportList.remove(_reportList.size() - 1);
+	    }
+	}
+    }
+
+    /**
+     * Returns the current reports
+     */
+    public static ArrayList<ProfileReport> getReports() {
+	synchronized (_reportList) {
+	    return new ArrayList<ProfileReport>(_reportList);
+	}
+    }
+
+    /**
+     * Returns the report with the given index
+     */
+    public static ProfileReport findReport(long index) {
+	synchronized (_reportList) {
+	    for (ProfileReport report : _reportList) {
+		if (index == report.getId()) {
+		    return report;
+		}
+	    }
+	}
+
+	return null;
+    }
 }
-
