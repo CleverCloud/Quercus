@@ -26,16 +26,14 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.reflection;
 
 import com.caucho.quercus.module.AbstractQuercusModule;
 
 public class ReflectionModule
-  extends AbstractQuercusModule
-{
-  public String []getLoadedExtensions()
-  {
-    return new String[] { "Reflection" };
-  }
+	extends AbstractQuercusModule {
+
+    public String[] getLoadedExtensions() {
+	return new String[]{"Reflection"};
+    }
 }

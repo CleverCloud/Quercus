@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.reflection;
 
 import com.caucho.quercus.env.Env;
@@ -34,40 +33,35 @@ import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.QuercusLanguageException;
 import com.caucho.quercus.env.Value;
 
-public class ReflectionException extends QuercusLanguageException
-{
-  private String _message;
-  
-  public ReflectionException()
-  {
-    super(NullValue.NULL);
-  }
+public class ReflectionException extends QuercusLanguageException {
 
-  public ReflectionException(String msg)
-  {
-    super(NullValue.NULL);
-    
-    _message = msg;
-  }
-  
-  public String getMessage()
-  {
-    return _message;
-  }
+    private String _message;
 
-  public String getMessage(Env env)
-  {
-    return getMessage();
-  }
-  
-  /**
-   * Converts the exception to a Value.
-   */
-  @Override
-  public Value toValue(Env env)
-  {
-    Value e = env.createException("ReflectionException", _message);
-    
-    return e;
-  }
+    public ReflectionException() {
+	super(NullValue.NULL);
+    }
+
+    public ReflectionException(String msg) {
+	super(NullValue.NULL);
+
+	_message = msg;
+    }
+
+    public String getMessage() {
+	return _message;
+    }
+
+    public String getMessage(Env env) {
+	return getMessage();
+    }
+
+    /**
+     * Converts the exception to a Value.
+     */
+    @Override
+    public Value toValue(Env env) {
+	Value e = env.createException("ReflectionException", _message);
+
+	return e;
+    }
 }

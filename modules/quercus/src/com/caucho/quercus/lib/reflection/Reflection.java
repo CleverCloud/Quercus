@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.reflection;
 
 import com.caucho.quercus.annotation.ClassImplementation;
@@ -37,21 +36,18 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 
 @ClassImplementation
-public class Reflection
-{
-  public static Value export(Env env,
-                             Reflector r,
-                             @Optional boolean isReturn)
-  {
-    return null;
-  }
-  
-  public static ArrayValue getModifierNames(int modifierValue)
-  {
-    ArrayValue array = new ArrayValueImpl();
-    
-    
-    return array;
-  }
-                            
+public class Reflection {
+
+    public static Value export(Env env,
+	    Reflector r,
+	    @Optional boolean isReturn) {
+	return null;
+    }
+
+    public static ArrayValue getModifierNames(int modifierValue) {
+	ArrayValue array = new ArrayValueImpl();
+
+
+	return array;
+    }
 }
