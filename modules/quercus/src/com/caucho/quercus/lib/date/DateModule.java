@@ -969,7 +969,15 @@ public class DateModule extends AbstractQuercusModule {
 		    fb.appendLiteral('/');
 		    fb.appendYear(2, 2);
 		    break;
-		    
+
+		case 'F':
+		    fb.appendYear(4, 4);
+		    fb.appendLiteral('-');
+		    fb.appendMonthOfYear(2);
+		    fb.appendLiteral('-');
+		    fb.appendDayOfMonth(2);
+		    break;
+
 		case 'H':
 		    fb.appendHourOfDay(2);
 		    break;
@@ -1010,6 +1018,17 @@ public class DateModule extends AbstractQuercusModule {
 	DateTimeFormatter dtf = fb.toFormatter().withLocale(Locale.getDefault());
 
 	org.joda.time.DateTime dt = dtf.parseDateTime(date);
+
+	// If Century = 0, we consider that date has been parsed with %y, %D or eq.
+	// According to manual strptime(3), Century = 19 if Year > 69, 20 for other
+	if (dt.getCenturyOfEra() == 0) {
+	    if (dt.getYear() > 68) {
+		dt = dt.withCenturyOfEra(19);
+	    } else {
+		dt = dt.withCenturyOfEra(20);
+	    }
+	}
+
 
 	array.put("tm_sec", dt.getSecondOfMinute());
 	array.put("tm_min", dt.getMinuteOfHour());
