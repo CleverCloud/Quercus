@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.mail;
 
 import com.caucho.quercus.annotation.Optional;
@@ -55,347 +54,352 @@ import java.util.logging.Logger;
  * PHP functions implemented from the mail module
  */
 public class MailModule extends AbstractQuercusModule {
-  private static final Logger log =
-    Logger.getLogger(MailModule.class.getName());
 
-  private static final L10N L = new L10N(MailModule.class);
+    private static final Logger log =
+	    Logger.getLogger(MailModule.class.getName());
+    private static final L10N L = new L10N(MailModule.class);
 
-  /**
-   * Send mail using JavaMail.
-   */
-  public static boolean mail(Env env,
-                             String to,
-                             String subject,
-                             StringValue message,
-                             @Optional String additionalHeaders,
-                             @Optional String additionalParameters)
-  {
-    Transport smtp = null;
+    /**
+     * Send mail using JavaMail.
+     */
+    public static boolean mail(Env env,
+	    String to,
+	    String subject,
+	    StringValue message,
+	    @Optional String additionalHeaders,
+	    @Optional String additionalParameters) {
+	Transport smtp = null;
 
-    try {
-      HashMap<String,String> headers = splitHeaders(additionalHeaders);
+	try {
+	    HashMap<String, String> headers = splitHeaders(additionalHeaders);
 
-      if (to == null || to.equals(""))
-        to = headers.get("to");
-      
-      Properties props = new Properties();
-      
-      StringValue host = env.getIni("SMTP");
-      if (host != null && ! host.toString().equals(""))
-        props.put("mail.smtp.host", host.toString());
-      else if (System.getProperty("mail.smtp.host") != null)
-        props.put("mail.smtp.host", System.getProperty("mail.smtp.host"));
-      
-      StringValue port = env.getIni("smtp_port");
-      if (port != null && ! port.toString().equals(""))
-        props.put("mail.smtp.port", port.toString());
-      else if (System.getProperty("mail.smtp.port") != null)
-        props.put("mail.smtp.port", System.getProperty("mail.smtp.port"));
+	    if (to == null || to.equals("")) {
+		to = headers.get("to");
+	    }
 
-      if (System.getProperty("mail.smtp.class") != null)
-        props.put("mail.smtp.class", System.getProperty("mail.smtp.class"));
+	    Properties props = new Properties();
 
-      StringValue user = null;
+	    StringValue host = env.getIni("SMTP");
+	    if (host != null && !host.toString().equals("")) {
+		props.put("mail.smtp.host", host.toString());
+	    } else if (System.getProperty("mail.smtp.host") != null) {
+		props.put("mail.smtp.host", System.getProperty("mail.smtp.host"));
+	    }
 
-      if (headers.get("from") != null)
-        user = env.createString(headers.get("from"));
+	    StringValue port = env.getIni("smtp_port");
+	    if (port != null && !port.toString().equals("")) {
+		props.put("mail.smtp.port", port.toString());
+	    } else if (System.getProperty("mail.smtp.port") != null) {
+		props.put("mail.smtp.port", System.getProperty("mail.smtp.port"));
+	    }
 
-      if (user == null)
-        user = env.getIni("sendmail_from");
-      
-      if (user != null && ! user.toString().equals("")) {
-        String userString = user.toString();
+	    if (System.getProperty("mail.smtp.class") != null) {
+		props.put("mail.smtp.class", System.getProperty("mail.smtp.class"));
+	    }
 
-        props.put("mail.from", userString);
-      }
-      else if (System.getProperty("mail.from") != null)
-        props.put("mail.from", System.getProperty("mail.from"));
-      else {
-        try {
-          InetAddress addr = InetAddress.getLocalHost();
-          
-          String email = (System.getProperty("user.name")
-                         + "@" + addr.getHostName());
-          
-          
-          int index = email.indexOf('@');
-          
-          // for certain windows smtp servers
-          if (email.indexOf('.', index) < 0)
-            email += ".com";
+	    StringValue user = null;
 
-          props.put("mail.from", email);
-        } catch (Exception e) {
-          log.log(Level.FINER, e.toString(), e);
-        }
-      }
+	    if (headers.get("from") != null) {
+		user = env.createString(headers.get("from"));
+	    }
 
-      String username = env.getIniString("smtp_username");
-      String password = env.getIniString("smtp_password");
+	    if (user == null) {
+		user = env.getIni("sendmail_from");
+	    }
 
-      if (password != null && ! "".equals(password))
-        props.put("mail.smtp.auth", "true");
+	    if (user != null && !user.toString().equals("")) {
+		String userString = user.toString();
 
-      Session mailSession = Session.getInstance(props, null);
-      smtp = mailSession.getTransport("smtp");
+		props.put("mail.from", userString);
+	    } else if (System.getProperty("mail.from") != null) {
+		props.put("mail.from", System.getProperty("mail.from"));
+	    } else {
+		try {
+		    InetAddress addr = InetAddress.getLocalHost();
 
-      QuercusMimeMessage msg = new QuercusMimeMessage(mailSession);
-      
-      if (subject == null)
-        subject = "";
-      
-      msg.setSubject(subject);
-      msg.setContent(message.toString(), "text/plain");
+		    String email = (System.getProperty("user.name")
+			    + "@" + addr.getHostName());
 
-      ArrayList<Address> addrList = new ArrayList<Address>();
-      
-      if (to != null && to.length() > 0)
-        addRecipients(msg, Message.RecipientType.TO, to, addrList);
 
-      if (headers != null)
-        addHeaders(msg, headers, addrList);
+		    int index = email.indexOf('@');
 
-      Address []from = msg.getFrom();
-      if (from == null || from.length == 0) {
-        log.fine(L.l(
-          "mail 'From' not set, setting to Java System property 'user.name'"));
-        msg.setFrom();
-      }
+		    // for certain windows smtp servers
+		    if (email.indexOf('.', index) < 0) {
+			email += ".com";
+		    }
 
-      msg.saveChanges();
+		    props.put("mail.from", email);
+		} catch (Exception e) {
+		    log.log(Level.FINER, e.toString(), e);
+		}
+	    }
 
-      from = msg.getFrom();
-      log.fine(L.l("sending mail, From: {0}, To: {1}", from[0], to));
+	    String username = env.getIniString("smtp_username");
+	    String password = env.getIniString("smtp_password");
 
-      if (password != null && ! "".equals(password))
-        smtp.connect(username, password);
-      else
-        smtp.connect();
+	    if (password != null && !"".equals(password)) {
+		props.put("mail.smtp.auth", "true");
+	    }
 
-      Address[] addr;
-      
-      addr = new Address[addrList.size()];
-      addrList.toArray(addr);
-      
-      smtp.sendMessage(msg, addr);
+	    Session mailSession = Session.getInstance(props, null);
+	    smtp = mailSession.getTransport("smtp");
 
-      log.fine("quercus-mail: sent mail to " + to);
+	    QuercusMimeMessage msg = new QuercusMimeMessage(mailSession);
 
-      return true;
-    } catch (RuntimeException e) {
-      log.log(Level.FINER, e.toString(), e);
+	    if (subject == null) {
+		subject = "";
+	    }
 
-      throw e;
-    } catch (AuthenticationFailedException e) {
-      log.warning(L.l(
-        "Quercus[] mail could not send mail to '{0}' "
-        + "because authentication failed\n{1}",
-        to,
-        e.getMessage()));
+	    msg.setSubject(subject);
+	    msg.setContent(message.toString(), "text/plain");
 
-      log.log(Level.FINE, e.toString(), e);
+	    ArrayList<Address> addrList = new ArrayList<Address>();
 
-      env.warning(e.toString());
+	    if (to != null && to.length() > 0) {
+		addRecipients(msg, Message.RecipientType.TO, to, addrList);
+	    }
 
-      return false;
-    } catch (MessagingException e) {
-      Throwable cause = e;
+	    if (headers != null) {
+		addHeaders(msg, headers, addrList);
+	    }
 
-      log.warning(L.l("Quercus[] mail could not send mail to '{0}'\n{1}",
-                      to,
-                      cause.getMessage()));
+	    Address[] from = msg.getFrom();
+	    if (from == null || from.length == 0) {
+		log.fine(L.l(
+			"mail 'From' not set, setting to Java System property 'user.name'"));
+		msg.setFrom();
+	    }
 
-      log.log(Level.FINE, cause.toString(), cause);
-      
-      env.warning(cause.getMessage());
+	    msg.saveChanges();
 
-      return false;
-    } catch (Exception e) {
-      Throwable cause = e;
-      
-      log.warning(L.l("Quercus[] mail could not send mail to '{0}'\n{1}",
-                  to,
-                  cause.getMessage()));
+	    from = msg.getFrom();
+	    log.fine(L.l("sending mail, From: {0}, To: {1}", from[0], to));
 
-      log.log(Level.FINE, cause.toString(), cause);
+	    if (password != null && !"".equals(password)) {
+		smtp.connect(username, password);
+	    } else {
+		smtp.connect();
+	    }
 
-      env.warning(cause.toString());
+	    Address[] addr;
 
-      return false;
-    } finally {
-      try {
-        if (smtp != null)
-          smtp.close();
-      } catch (Exception e) {
-        log.log(Level.FINER, e.toString(), e);
-      }
-    }
-  }
+	    addr = new Address[addrList.size()];
+	    addrList.toArray(addr);
 
-  private static void addRecipients(QuercusMimeMessage msg,
-                                    Message.RecipientType type,
-                                    String to,
-                                    ArrayList<Address> addrList)
-    throws MessagingException
-  {
-    String []split = to.split(",");
+	    smtp.sendMessage(msg, addr);
 
-    for (int i = 0; i < split.length; i++) {
-      String addrStr = split[i];
-      
-      if (addrStr.length() > 0) {
-        int openBracket = addrStr.indexOf('<');
-        
-        // TODO: javamail may be too strict, so we quote spaces in brackets
-        if (openBracket >= 0 && ! addrStr.contains("\"")) {
-          int closeBracket = addrStr.indexOf('>', openBracket + 1);
-        
-          if (closeBracket > openBracket) {
-            int space = addrStr.indexOf(' ', openBracket + 1);
-            
-            if (openBracket < space && space < closeBracket) {
-              StringBuilder sb = new StringBuilder();
-              
-              sb.append(addrStr, 0, openBracket + 1);
-              sb.append("\"");
-              sb.append(addrStr, openBracket + 1, closeBracket);
-              sb.append("\"");
-              sb.append(addrStr, closeBracket, addrStr.length());
-              
-              addrStr = sb.toString();
-            }
-          }
-        }
-        
-        Address addr = new InternetAddress(addrStr);
+	    log.fine("quercus-mail: sent mail to " + to);
 
-        addrList.add(addr);
-        msg.addRecipient(type, addr);
-      }
-    }
-  }
+	    return true;
+	} catch (RuntimeException e) {
+	    log.log(Level.FINER, e.toString(), e);
 
-  private static void addHeaders(QuercusMimeMessage msg,
-                                 HashMap<String,String> headerMap,
-                                 ArrayList<Address> addrList)
-    throws MessagingException
-  {
-    for (Map.Entry<String,String> entry : headerMap.entrySet()) {
-      String name = entry.getKey();
-      String value = entry.getValue();
+	    throw e;
+	} catch (AuthenticationFailedException e) {
+	    log.warning(L.l(
+		    "Quercus[] mail could not send mail to '{0}' "
+		    + "because authentication failed\n{1}",
+		    to,
+		    e.getMessage()));
 
-      if ("".equals(value)) {
-      }
-      else if (name.equalsIgnoreCase("From")) {
-        msg.setFrom(new InternetAddress(value));
-      }
-      else if (name.equalsIgnoreCase("To")) {
-        addRecipients(msg, Message.RecipientType.TO, value, addrList);
-      }
-      else if (name.equalsIgnoreCase("Bcc")) {
-        addRecipients(msg, Message.RecipientType.BCC, value, addrList);
-      }
-      else if (name.equalsIgnoreCase("Cc")) {
-        addRecipients(msg, Message.RecipientType.CC, value, addrList);
-      }
-      else if (name.equalsIgnoreCase("Message-ID")) {
-        msg.setMessageID(value);
-      }
-      else
-        msg.addHeader(name, value);
-    }
-  }
+	    log.log(Level.FINE, e.toString(), e);
 
-  private static HashMap<String,String> splitHeaders(String headers)
-  {
-    HashMap<String,String> headerMap = new HashMap<String,String>();
+	    env.warning(e.toString());
 
-    if (headers == null)
-      return headerMap;
-    
-    int i = 0;
-    int len = headers.length();
+	    return false;
+	} catch (MessagingException e) {
+	    Throwable cause = e;
 
-    CharBuffer buffer = new CharBuffer();
+	    log.warning(L.l("Quercus[] mail could not send mail to '{0}'\n{1}",
+		    to,
+		    cause.getMessage()));
 
-    while (i < len) {
-      char ch;
+	    log.log(Level.FINE, cause.toString(), cause);
 
-      for (;
-           i < len && Character.isWhitespace(headers.charAt(i));
-           i++) {
-      }
+	    env.warning(cause.getMessage());
 
-      if (len <= i)
-        return headerMap;
+	    return false;
+	} catch (Exception e) {
+	    Throwable cause = e;
 
-      buffer.clear();
+	    log.warning(L.l("Quercus[] mail could not send mail to '{0}'\n{1}",
+		    to,
+		    cause.getMessage()));
 
-      for (;
-           i < len && (! Character.isWhitespace(ch = headers.charAt(i))
-                       && ch != ':');
-           i++) {
-        buffer.append((char) ch);
-      }
+	    log.log(Level.FINE, cause.toString(), cause);
 
-      for (;
-           i < len && ((ch = headers.charAt(i)) == ' '
-                       || ch == '\t'
-                       || ch == '\f'
-                       || ch == ':');
-           i++) {
-      }
+	    env.warning(cause.toString());
 
-      String name = buffer.toString();
-      buffer.clear();
-
-      for (;
-           i < len
-           && ((ch = headers.charAt(i)) != '\r' && ch != '\n');
-           i++) {
-        buffer.append((char) ch);
-      }
-
-      //
-      // check for multi-line values
-      //
-
-      for (;
-           i < len 
-           && ((ch = headers.charAt(i)) == '\r' || ch == '\n');
-           i++) {
-        buffer.append((char) ch);
-      }
-
-      while (i < len 
-             && ((ch = headers.charAt(i)) == '\t' || ch == ' ')) {
-        for (;
-             i < len
-             && ((ch = headers.charAt(i)) != '\r' && ch != '\n');
-             i++) {
-          buffer.append((char) ch);
-        }
-
-        for (;
-             i < len 
-             && ((ch = headers.charAt(i)) == '\r' || ch == '\n');
-             i++) {
-          buffer.append((char) ch);
-        }
-      }
-
-      while (buffer.length() > 0
-             && ((ch = buffer.getLastChar()) == '\r' || ch == '\n')) {
-        buffer.deleteCharAt(buffer.length() - 1);
-      }
-
-      String value = buffer.toString();
-
-      if (! "".equals(value))
-        headerMap.put(name, value);
+	    return false;
+	} finally {
+	    try {
+		if (smtp != null) {
+		    smtp.close();
+		}
+	    } catch (Exception e) {
+		log.log(Level.FINER, e.toString(), e);
+	    }
+	}
     }
 
-    return headerMap;
-  }
+    private static void addRecipients(QuercusMimeMessage msg,
+	    Message.RecipientType type,
+	    String to,
+	    ArrayList<Address> addrList)
+	    throws MessagingException {
+	String[] split = to.split(",");
+
+	for (int i = 0; i < split.length; i++) {
+	    String addrStr = split[i];
+
+	    if (addrStr.length() > 0) {
+		int openBracket = addrStr.indexOf('<');
+
+		// TODO: javamail may be too strict, so we quote spaces in brackets
+		if (openBracket >= 0 && !addrStr.contains("\"")) {
+		    int closeBracket = addrStr.indexOf('>', openBracket + 1);
+
+		    if (closeBracket > openBracket) {
+			int space = addrStr.indexOf(' ', openBracket + 1);
+
+			if (openBracket < space && space < closeBracket) {
+			    StringBuilder sb = new StringBuilder();
+
+			    sb.append(addrStr, 0, openBracket + 1);
+			    sb.append("\"");
+			    sb.append(addrStr, openBracket + 1, closeBracket);
+			    sb.append("\"");
+			    sb.append(addrStr, closeBracket, addrStr.length());
+
+			    addrStr = sb.toString();
+			}
+		    }
+		}
+
+		Address addr = new InternetAddress(addrStr);
+
+		addrList.add(addr);
+		msg.addRecipient(type, addr);
+	    }
+	}
+    }
+
+    private static void addHeaders(QuercusMimeMessage msg,
+	    HashMap<String, String> headerMap,
+	    ArrayList<Address> addrList)
+	    throws MessagingException {
+	for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+	    String name = entry.getKey();
+	    String value = entry.getValue();
+
+	    if ("".equals(value)) {
+	    } else if (name.equalsIgnoreCase("From")) {
+		msg.setFrom(new InternetAddress(value));
+	    } else if (name.equalsIgnoreCase("To")) {
+		addRecipients(msg, Message.RecipientType.TO, value, addrList);
+	    } else if (name.equalsIgnoreCase("Bcc")) {
+		addRecipients(msg, Message.RecipientType.BCC, value, addrList);
+	    } else if (name.equalsIgnoreCase("Cc")) {
+		addRecipients(msg, Message.RecipientType.CC, value, addrList);
+	    } else if (name.equalsIgnoreCase("Message-ID")) {
+		msg.setMessageID(value);
+	    } else {
+		msg.addHeader(name, value);
+	    }
+	}
+    }
+
+    private static HashMap<String, String> splitHeaders(String headers) {
+	HashMap<String, String> headerMap = new HashMap<String, String>();
+
+	if (headers == null) {
+	    return headerMap;
+	}
+
+	int i = 0;
+	int len = headers.length();
+
+	CharBuffer buffer = new CharBuffer();
+
+	while (i < len) {
+	    char ch;
+
+	    for (;
+		    i < len && Character.isWhitespace(headers.charAt(i));
+		    i++) {
+	    }
+
+	    if (len <= i) {
+		return headerMap;
+	    }
+
+	    buffer.clear();
+
+	    for (;
+		    i < len && (!Character.isWhitespace(ch = headers.charAt(i))
+		    && ch != ':');
+		    i++) {
+		buffer.append((char) ch);
+	    }
+
+	    for (;
+		    i < len && ((ch = headers.charAt(i)) == ' '
+		    || ch == '\t'
+		    || ch == '\f'
+		    || ch == ':');
+		    i++) {
+	    }
+
+	    String name = buffer.toString();
+	    buffer.clear();
+
+	    for (;
+		    i < len
+		    && ((ch = headers.charAt(i)) != '\r' && ch != '\n');
+		    i++) {
+		buffer.append((char) ch);
+	    }
+
+	    //
+	    // check for multi-line values
+	    //
+
+	    for (;
+		    i < len
+		    && ((ch = headers.charAt(i)) == '\r' || ch == '\n');
+		    i++) {
+		buffer.append((char) ch);
+	    }
+
+	    while (i < len
+		    && ((ch = headers.charAt(i)) == '\t' || ch == ' ')) {
+		for (;
+			i < len
+			&& ((ch = headers.charAt(i)) != '\r' && ch != '\n');
+			i++) {
+		    buffer.append((char) ch);
+		}
+
+		for (;
+			i < len
+			&& ((ch = headers.charAt(i)) == '\r' || ch == '\n');
+			i++) {
+		    buffer.append((char) ch);
+		}
+	    }
+
+	    while (buffer.length() > 0
+		    && ((ch = buffer.getLastChar()) == '\r' || ch == '\n')) {
+		buffer.deleteCharAt(buffer.length() - 1);
+	    }
+
+	    String value = buffer.toString();
+
+	    if (!"".equals(value)) {
+		headerMap.put(name, value);
+	    }
+	}
+
+	return headerMap;
+    }
 }
-

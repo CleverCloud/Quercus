@@ -26,7 +26,6 @@
  *
  * @author Emil Ong
  */
-
 package com.caucho.quercus.lib.mail;
 
 import java.util.logging.Logger;
@@ -41,41 +40,37 @@ import com.caucho.util.L10N;
  * Extended MimeMessage that allows overriding Message-ID header
  */
 public class QuercusMimeMessage extends MimeMessage {
-  private static final Logger log =
-    Logger.getLogger(QuercusMimeMessage.class.getName());
 
-  private static final L10N L = new L10N(QuercusMimeMessage.class);
+    private static final Logger log =
+	    Logger.getLogger(QuercusMimeMessage.class.getName());
+    private static final L10N L = new L10N(QuercusMimeMessage.class);
+    private String _messageId;
 
-  private String _messageId;
+    public QuercusMimeMessage(Session session) {
+	super(session);
+    }
 
-  public QuercusMimeMessage(Session session)
-  {
-    super(session);
-  }
+    public void setMessageID(String messageId) {
+	_messageId = messageId;
+    }
 
-  public void setMessageID(String messageId)
-  {
-    _messageId = messageId;
-  }
+    @Override
+    public String getMessageID()
+	    throws MessagingException {
+	if (_messageId == null) {
+	    return super.getMessageID();
+	}
 
-  @Override
-  public String getMessageID()
-    throws MessagingException
-  {
-    if (_messageId == null)
-      return super.getMessageID();
+	return _messageId;
+    }
 
-    return _messageId;
-  }
+    @Override
+    protected void updateHeaders()
+	    throws MessagingException {
+	super.updateHeaders();
 
-  @Override
-  protected void updateHeaders()
-    throws MessagingException
-  {
-    super.updateHeaders();
-
-    if (_messageId != null)
-      setHeader("Message-ID", _messageId);
-  }
-  
+	if (_messageId != null) {
+	    setHeader("Message-ID", _messageId);
+	}
+    }
 }
