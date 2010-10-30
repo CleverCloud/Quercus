@@ -26,19 +26,16 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.gettext.expr;
 
-public class NExpr implements Expr
-{
-  public static final Expr N_EXPR = new NExpr();
+public class NExpr implements Expr {
 
-  private NExpr()
-  {
-  }
+    public static final Expr N_EXPR = new NExpr();
 
-  public int eval(int n)
-  {
-    return n;
-  }
+    private NExpr() {
+    }
+
+    public int eval(int n) {
+	return n;
+    }
 }

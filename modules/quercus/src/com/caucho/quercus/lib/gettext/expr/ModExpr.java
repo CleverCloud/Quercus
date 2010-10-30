@@ -26,18 +26,15 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.gettext.expr;
 
-public class ModExpr extends BinaryExpr
-{
-  public ModExpr(Expr _left, Expr _right)
-  {
-    super(_left, _right);
-  }
+public class ModExpr extends BinaryExpr {
 
-  public int eval(int n)
-  {
-    return _left.eval(n) % _right.eval(n);
-  }
+    public ModExpr(Expr _left, Expr _right) {
+	super(_left, _right);
+    }
+
+    public int eval(int n) {
+	return _left.eval(n) % _right.eval(n);
+    }
 }

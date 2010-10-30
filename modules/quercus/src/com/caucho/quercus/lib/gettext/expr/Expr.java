@@ -26,10 +26,9 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.gettext.expr;
 
-public interface Expr
-{
-  public int eval(int n);
+public interface Expr {
+
+    public int eval(int n);
 }

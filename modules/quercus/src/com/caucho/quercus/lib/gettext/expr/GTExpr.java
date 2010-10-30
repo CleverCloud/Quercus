@@ -26,21 +26,19 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.gettext.expr;
 
-public class GTExpr extends BinaryExpr
-{
-  public GTExpr(Expr _left, Expr _right)
-  {
-    super(_left, _right);
-  }
+public class GTExpr extends BinaryExpr {
 
-  public int eval(int n)
-  {
-    if (_left.eval(n) > _right.eval(n))
-      return 1;
-    else
-      return 0;
-  }
+    public GTExpr(Expr _left, Expr _right) {
+	super(_left, _right);
+    }
+
+    public int eval(int n) {
+	if (_left.eval(n) > _right.eval(n)) {
+	    return 1;
+	} else {
+	    return 0;
+	}
+    }
 }

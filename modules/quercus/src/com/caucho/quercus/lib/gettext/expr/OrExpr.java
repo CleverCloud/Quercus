@@ -26,21 +26,19 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.gettext.expr;
 
-public class OrExpr extends BinaryExpr
-{
-  public OrExpr(Expr _left, Expr _right)
-  {
-    super(_left, _right);
-  }
+public class OrExpr extends BinaryExpr {
 
-  public int eval(int n)
-  {
-    if (_left.eval(n) != 0 || _right.eval(n) != 0)
-      return 1;
-    else
-      return 0;
-  }
+    public OrExpr(Expr _left, Expr _right) {
+	super(_left, _right);
+    }
+
+    public int eval(int n) {
+	if (_left.eval(n) != 0 || _right.eval(n) != 0) {
+	    return 1;
+	} else {
+	    return 0;
+	}
+    }
 }
