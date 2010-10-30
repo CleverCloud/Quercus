@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.gettext;
 
 import com.caucho.quercus.env.Env;
@@ -37,32 +36,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class GettextDomainMap
-{
-  private String _current = "messages";
-  
-  private HashMap<String, GettextDomain> _domains
-    = new HashMap<String, GettextDomain>();
-  
-  public GettextDomain getCurrent(Env env)
-  {
-    return getDomain(env, _current);
-  }
-  
-  public void setCurrent(String current)
-  {
-    _current = current;
-  }
-  
-  public GettextDomain getDomain(Env env, String name)
-  {
-    GettextDomain domain = _domains.get(name);
-    
-    if (domain == null) {
-      domain = new GettextDomain(env, name);
-      _domains.put(name, domain);
+public class GettextDomainMap {
+
+    private String _current = "messages";
+    private HashMap<String, GettextDomain> _domains = new HashMap<String, GettextDomain>();
+
+    public GettextDomain getCurrent(Env env) {
+	return getDomain(env, _current);
     }
-    
-    return domain;
-  }
+
+    public void setCurrent(String current) {
+	_current = current;
+    }
+
+    public GettextDomain getDomain(Env env, String name) {
+	GettextDomain domain = _domains.get(name);
+
+	if (domain == null) {
+	    domain = new GettextDomain(env, name);
+	    _domains.put(name, domain);
+	}
+
+	return domain;
+    }
 }
