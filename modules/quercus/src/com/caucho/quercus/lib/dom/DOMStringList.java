@@ -26,29 +26,24 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 public class DOMStringList
-  extends DOMWrapper<org.w3c.dom.DOMStringList>
-{
-  DOMStringList(DOMImplementation impl, org.w3c.dom.DOMStringList delegate)
-  {
-    super(impl, delegate);
-  }
+	extends DOMWrapper<org.w3c.dom.DOMStringList> {
 
-  public boolean contains(String str)
-  {
-    return _delegate.contains(str);
-  }
+    DOMStringList(DOMImplementation impl, org.w3c.dom.DOMStringList delegate) {
+	super(impl, delegate);
+    }
 
-  public int getLength()
-  {
-    return _delegate.getLength();
-  }
+    public boolean contains(String str) {
+	return _delegate.contains(str);
+    }
 
-  public String item(int index)
-  {
-    return _delegate.item(index);
-  }
+    public int getLength() {
+	return _delegate.getLength();
+    }
+
+    public String item(int index) {
+	return _delegate.item(index);
+    }
 }

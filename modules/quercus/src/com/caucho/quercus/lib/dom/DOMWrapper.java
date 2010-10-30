@@ -26,39 +26,33 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import com.caucho.quercus.env.Env;
 
 public class DOMWrapper<T> {
-  private final DOMImplementation _impl;
-  final T _delegate;
 
-  protected static DOMImplementation getImpl(Env env)
-  {
-    return DOMImplementation.get(env);
-  }
+    private final DOMImplementation _impl;
+    final T _delegate;
 
-  public DOMWrapper(DOMImplementation impl, T delegate)
-  {
-    _impl = impl;
-    _delegate = delegate;
-  }
+    protected static DOMImplementation getImpl(Env env) {
+	return DOMImplementation.get(env);
+    }
 
-  protected DOMImplementation getImpl()
-  {
-    return _impl;
-  }
+    public DOMWrapper(DOMImplementation impl, T delegate) {
+	_impl = impl;
+	_delegate = delegate;
+    }
 
-  protected <T> T wrap(Object obj)
-  {
-    return (T) _impl.getWrapper(obj);
-  }
+    protected DOMImplementation getImpl() {
+	return _impl;
+    }
 
-  protected DOMException wrap(org.w3c.dom.DOMException ex)
-  {
-    return (DOMException) _impl.getWrapper(ex);
-  }
+    protected <T> T wrap(Object obj) {
+	return (T) _impl.getWrapper(obj);
+    }
 
+    protected DOMException wrap(org.w3c.dom.DOMException ex) {
+	return (DOMException) _impl.getWrapper(ex);
+    }
 }

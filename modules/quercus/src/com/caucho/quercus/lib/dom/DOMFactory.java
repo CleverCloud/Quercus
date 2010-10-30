@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import org.w3c.dom.*;
@@ -36,35 +35,36 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public interface DOMFactory {
-  Attr createAttr(String name);
 
-  Comment createComment();
+    Attr createAttr(String name);
 
-  Document createDocument();
+    Comment createComment();
 
-  Document createDocument(DocumentType docType);
+    Document createDocument();
 
-  DocumentType createDocumentType(String qualifiedName);
+    Document createDocument(DocumentType docType);
 
-  DocumentType createDocumentType(String qualifiedName,
-                                  String publicId,
-                                  String systemId);
+    DocumentType createDocumentType(String qualifiedName);
 
-  Element createElement(String name);
+    DocumentType createDocumentType(String qualifiedName,
+	    String publicId,
+	    String systemId);
 
-  Element createElement(String name, String namespace);
+    Element createElement(String name);
 
-  EntityReference createEntityReference(String name);
+    Element createElement(String name, String namespace);
 
-  ProcessingInstruction createProcessingInstruction(String name);
+    EntityReference createEntityReference(String name);
 
-  Text createText();
+    ProcessingInstruction createProcessingInstruction(String name);
 
-  org.w3c.dom.DOMImplementation getImplementation();
+    Text createText();
 
-  void parseXMLDocument(Document document, InputStream is, String path)
-    throws IOException, SAXException;
+    org.w3c.dom.DOMImplementation getImplementation();
 
-  void parseHTMLDocument(Document document, InputStream is, String path)
-    throws IOException, SAXException;
+    void parseXMLDocument(Document document, InputStream is, String path)
+	    throws IOException, SAXException;
+
+    void parseHTMLDocument(Document document, InputStream is, String path)
+	    throws IOException, SAXException;
 }

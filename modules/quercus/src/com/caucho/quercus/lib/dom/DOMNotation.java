@@ -26,18 +26,15 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import org.w3c.dom.Notation;
 
 public class DOMNotation
-  extends DOMNode<Notation>
-{
-  DOMNotation(DOMImplementation impl, Notation delegate)
-  {
-    super(impl, delegate);
-  }
-  
-  // no methods
+	extends DOMNode<Notation> {
+
+    DOMNotation(DOMImplementation impl, Notation delegate) {
+	super(impl, delegate);
+    }
+    // no methods
 }

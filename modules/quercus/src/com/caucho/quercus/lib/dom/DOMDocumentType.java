@@ -26,46 +26,38 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import org.w3c.dom.DocumentType;
 
 public class DOMDocumentType
-  extends DOMNode<DocumentType>
-{
-  DOMDocumentType(DOMImplementation impl, DocumentType delegate)
-  {
-    super(impl, delegate);
-  }
+	extends DOMNode<DocumentType> {
 
-  public DOMNamedNodeMap getEntities()
-  {
-    return wrap(_delegate.getEntities());
-  }
+    DOMDocumentType(DOMImplementation impl, DocumentType delegate) {
+	super(impl, delegate);
+    }
 
-  public String getInternalSubset()
-  {
-    return _delegate.getInternalSubset();
-  }
+    public DOMNamedNodeMap getEntities() {
+	return wrap(_delegate.getEntities());
+    }
 
-  public String getName()
-  {
-    return _delegate.getName();
-  }
+    public String getInternalSubset() {
+	return _delegate.getInternalSubset();
+    }
 
-  public DOMNamedNodeMap getNotations()
-  {
-    return wrap(_delegate.getNotations());
-  }
+    public String getName() {
+	return _delegate.getName();
+    }
 
-  public String getPublicId()
-  {
-    return _delegate.getPublicId();
-  }
+    public DOMNamedNodeMap getNotations() {
+	return wrap(_delegate.getNotations());
+    }
 
-  public String getSystemId()
-  {
-    return _delegate.getSystemId();
-  }
+    public String getPublicId() {
+	return _delegate.getPublicId();
+    }
+
+    public String getSystemId() {
+	return _delegate.getSystemId();
+    }
 }

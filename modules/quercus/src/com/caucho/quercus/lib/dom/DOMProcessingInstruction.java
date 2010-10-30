@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import com.caucho.quercus.annotation.Optional;
@@ -35,44 +34,38 @@ import com.caucho.quercus.env.Env;
 import org.w3c.dom.ProcessingInstruction;
 
 public class DOMProcessingInstruction
-  extends DOMNode<ProcessingInstruction>
-{
-  public static DOMProcessingInstruction __construct(
-      Env env, String name, @Optional String data)
-  {
-    DOMProcessingInstruction pi = getImpl(env)
-        .createProcessingInstruction(name);
+	extends DOMNode<ProcessingInstruction> {
 
-    if (data != null && data.length() > 0)
-      pi.setData(data);
+    public static DOMProcessingInstruction __construct(
+	    Env env, String name, @Optional String data) {
+	DOMProcessingInstruction pi = getImpl(env).createProcessingInstruction(name);
 
-    return pi;
-  }
+	if (data != null && data.length() > 0) {
+	    pi.setData(data);
+	}
 
-  DOMProcessingInstruction(
-      DOMImplementation impl, ProcessingInstruction delegate)
-  {
-    super(impl, delegate);
-  }
-
-  public String getData()
-  {
-    return _delegate.getData();
-  }
-
-  public String getTarget()
-  {
-    return _delegate.getTarget();
-  }
-
-  public void setData(String data)
-    throws DOMException
-  {
-    try {
-    _delegate.setData(data);
+	return pi;
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
+
+    DOMProcessingInstruction(
+	    DOMImplementation impl, ProcessingInstruction delegate) {
+	super(impl, delegate);
     }
-  }
+
+    public String getData() {
+	return _delegate.getData();
+    }
+
+    public String getTarget() {
+	return _delegate.getTarget();
+    }
+
+    public void setData(String data)
+	    throws DOMException {
+	try {
+	    _delegate.setData(data);
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
 }

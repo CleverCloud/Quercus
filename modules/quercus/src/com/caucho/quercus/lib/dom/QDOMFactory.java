@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import com.caucho.xml.*;
@@ -38,81 +37,67 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class QDOMFactory
-  implements DOMFactory
-{
-  public Attr createAttr(String name)
-  {
-    return new QAttr(name);
-  }
+	implements DOMFactory {
 
-  public Comment createComment()
-  {
-    return new QComment();
-  }
+    public Attr createAttr(String name) {
+	return new QAttr(name);
+    }
 
-  public Document createDocument()
-  {
-    return new QDocument();
-  }
+    public Comment createComment() {
+	return new QComment();
+    }
 
-  public Document createDocument(DocumentType docType)
-  {
-    return new QDocument(docType);
-  }
+    public Document createDocument() {
+	return new QDocument();
+    }
 
-  public DocumentType createDocumentType(String qualifiedName)
-  {
-    return new QDocumentType(qualifiedName);
-  }
+    public Document createDocument(DocumentType docType) {
+	return new QDocument(docType);
+    }
 
-  public DocumentType createDocumentType(String qualifiedName,
-                                         String publicId,
-                                         String systemId)
-  {
-    return new QDocumentType(qualifiedName, publicId, systemId);
-  }
+    public DocumentType createDocumentType(String qualifiedName) {
+	return new QDocumentType(qualifiedName);
+    }
 
-  public Element createElement(String name)
-  {
-    return new QElement(name);
-  }
+    public DocumentType createDocumentType(String qualifiedName,
+	    String publicId,
+	    String systemId) {
+	return new QDocumentType(qualifiedName, publicId, systemId);
+    }
 
-  public Element createElement(String name, String namespace)
-  {
-    return new QElement(name, namespace);
-  }
+    public Element createElement(String name) {
+	return new QElement(name);
+    }
 
-  public EntityReference createEntityReference(String name)
-  {
-    return new QEntityReference(name);
-  }
+    public Element createElement(String name, String namespace) {
+	return new QElement(name, namespace);
+    }
 
-  public ProcessingInstruction createProcessingInstruction(String name)
-  {
-    return new QProcessingInstruction(name);
-  }
+    public EntityReference createEntityReference(String name) {
+	return new QEntityReference(name);
+    }
 
-  public Text createText()
-  {
-    return new QText();
-  }
+    public ProcessingInstruction createProcessingInstruction(String name) {
+	return new QProcessingInstruction(name);
+    }
 
-  public org.w3c.dom.DOMImplementation getImplementation()
-  {
-    return new QDOMImplementation();
-  }
+    public Text createText() {
+	return new QText();
+    }
 
-  public void parseXMLDocument(Document document, InputStream is, String path)
-    throws IOException, SAXException
-  {
-    Xml xml = new Xml();
-    xml.parseDocument((QDocument) document, is, path);
-  }
+    public org.w3c.dom.DOMImplementation getImplementation() {
+	return new QDOMImplementation();
+    }
 
-  public void parseHTMLDocument(Document document, InputStream is, String path)
-    throws IOException, SAXException
-  {
-    Html html = new Html();
-    html.parseDocument((QDocument) document, is, path);
-  }
+    public void parseXMLDocument(Document document, InputStream is, String path)
+	    throws IOException, SAXException {
+	Xml xml = new Xml();
+	xml.parseDocument((QDocument) document, is, path);
+    }
+
+    public void parseHTMLDocument(Document document, InputStream is, String path)
+	    throws IOException, SAXException {
+	Html html = new Html();
+	html.parseDocument((QDocument) document, is, path);
+    }
 }

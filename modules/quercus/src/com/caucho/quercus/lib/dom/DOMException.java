@@ -26,22 +26,19 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 public class DOMException
-  extends org.w3c.dom.DOMException
-{
-  private DOMImplementation _impl;
-  private org.w3c.dom.DOMException _delegate;
+	extends org.w3c.dom.DOMException {
 
-  public DOMException(DOMImplementation impl, org.w3c.dom.DOMException delegate)
-  {
-    super(delegate.code, delegate.getMessage());
+    private DOMImplementation _impl;
+    private org.w3c.dom.DOMException _delegate;
 
-    _impl = impl;
-    _delegate = delegate;
-  }
+    public DOMException(DOMImplementation impl, org.w3c.dom.DOMException delegate) {
+	super(delegate.code, delegate.getMessage());
 
-  // TODO:
+	_impl = impl;
+	_delegate = delegate;
+    }
+    // TODO:
 }

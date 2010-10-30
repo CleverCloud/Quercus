@@ -26,18 +26,15 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import org.w3c.dom.DocumentFragment;
 
 public class DOMDocumentFragment
-  extends DOMNode<DocumentFragment>
-{
-  DOMDocumentFragment(DOMImplementation impl, DocumentFragment delegate)
-  {
-    super(impl, delegate);
-  }
+	extends DOMNode<DocumentFragment> {
 
-  // no methods
+    DOMDocumentFragment(DOMImplementation impl, DocumentFragment delegate) {
+	super(impl, delegate);
+    }
+    // no methods
 }

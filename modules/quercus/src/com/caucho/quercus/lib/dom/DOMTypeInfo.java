@@ -26,35 +26,29 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import org.w3c.dom.TypeInfo;
 
 public class DOMTypeInfo
-  extends DOMWrapper<TypeInfo>
-{
+	extends DOMWrapper<TypeInfo> {
 
-  DOMTypeInfo(DOMImplementation impl, TypeInfo delegate)
-  {
-    super(impl, delegate);
-  }
+    DOMTypeInfo(DOMImplementation impl, TypeInfo delegate) {
+	super(impl, delegate);
+    }
 
-  public String getTypeName()
-  {
-    return _delegate.getTypeName();
-  }
+    public String getTypeName() {
+	return _delegate.getTypeName();
+    }
 
-  public String getTypeNamespace()
-  {
-    return _delegate.getTypeNamespace();
-  }
+    public String getTypeNamespace() {
+	return _delegate.getTypeNamespace();
+    }
 
-  public boolean isDerivedFrom(String typeNamespaceArg,
-                               String typeNameArg,
-                               int derivationMethod)
-  {
-    return _delegate.isDerivedFrom(
-        typeNamespaceArg, typeNameArg, derivationMethod);
-  }
+    public boolean isDerivedFrom(String typeNamespaceArg,
+	    String typeNameArg,
+	    int derivationMethod) {
+	return _delegate.isDerivedFrom(
+		typeNamespaceArg, typeNameArg, derivationMethod);
+    }
 }

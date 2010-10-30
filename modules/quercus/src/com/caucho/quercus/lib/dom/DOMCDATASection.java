@@ -26,53 +26,44 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import org.w3c.dom.CDATASection;
 
 public class DOMCDATASection
-  extends DOMCharacterData<CDATASection>
-{
-  DOMCDATASection(DOMImplementation impl, CDATASection delegate)
-  {
-    super(impl, delegate);
-  }
+	extends DOMCharacterData<CDATASection> {
 
-  public String getWholeText()
-  {
-    return _delegate.getWholeText();
-  }
-
-  public boolean isElementContentWhitespace()
-  {
-    return _delegate.isElementContentWhitespace();
-  }
-
-  public boolean isWhitespaceInElementContent()
-  {
-    return _delegate.isElementContentWhitespace();
-  }
-
-  public DOMText replaceWholeText(String content)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.replaceWholeText(content));
+    DOMCDATASection(DOMImplementation impl, CDATASection delegate) {
+	super(impl, delegate);
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public DOMText splitText(int offset)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.splitText(offset));
+    public String getWholeText() {
+	return _delegate.getWholeText();
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
+
+    public boolean isElementContentWhitespace() {
+	return _delegate.isElementContentWhitespace();
     }
-  }
+
+    public boolean isWhitespaceInElementContent() {
+	return _delegate.isElementContentWhitespace();
+    }
+
+    public DOMText replaceWholeText(String content)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.replaceWholeText(content));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
+
+    public DOMText splitText(int offset)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.splitText(offset));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
 }

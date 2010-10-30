@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import com.caucho.quercus.annotation.Optional;
@@ -35,57 +34,49 @@ import com.caucho.quercus.env.Env;
 import org.w3c.dom.Text;
 
 public class DOMText
-  extends DOMCharacterData<Text>
-{
-  public static DOMText __construct(Env env, @Optional String value)
-  {
-    DOMText text = getImpl(env).createText();
+	extends DOMCharacterData<Text> {
 
-    if (value != null && value.length() > 0)
-      text.setNodeValue(value);
+    public static DOMText __construct(Env env, @Optional String value) {
+	DOMText text = getImpl(env).createText();
 
-    return text;
-  }
+	if (value != null && value.length() > 0) {
+	    text.setNodeValue(value);
+	}
 
-  DOMText(DOMImplementation impl, Text delegate)
-  {
-    super(impl, delegate);
-  }
-
-  public String getWholeText()
-  {
-    return _delegate.getWholeText();
-  }
-
-  public boolean isElementContentWhitespace()
-  {
-    return _delegate.isElementContentWhitespace();
-  }
-
-  public boolean isWhitespaceInElementContent()
-  {
-    return _delegate.isElementContentWhitespace();
-  }
-
-  public DOMText replaceWholeText(String content)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.replaceWholeText(content));
+	return text;
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public DOMText splitText(int offset)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.splitText(offset));
+    DOMText(DOMImplementation impl, Text delegate) {
+	super(impl, delegate);
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
+
+    public String getWholeText() {
+	return _delegate.getWholeText();
     }
-  }
+
+    public boolean isElementContentWhitespace() {
+	return _delegate.isElementContentWhitespace();
+    }
+
+    public boolean isWhitespaceInElementContent() {
+	return _delegate.isElementContentWhitespace();
+    }
+
+    public DOMText replaceWholeText(String content)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.replaceWholeText(content));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
+
+    public DOMText splitText(int offset)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.splitText(offset));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
 }

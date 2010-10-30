@@ -26,273 +26,222 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import org.w3c.dom.Node;
 
 public class DOMNode<T extends Node>
-  extends DOMWrapper<T>
-{
-  protected DOMNode(DOMImplementation impl, T delegate)
-  {
-    super(impl, delegate);
-  }
+	extends DOMWrapper<T> {
 
-  Node getDelegate()
-  {
-    return _delegate;
-  }
-
-  public DOMNode appendChild(DOMNode newChild)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.appendChild(newChild.getDelegate()));
+    protected DOMNode(DOMImplementation impl, T delegate) {
+	super(impl, delegate);
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
+
+    Node getDelegate() {
+	return _delegate;
     }
-  }
 
-  public DOMNode cloneNode(boolean deep)
-  {
-    return wrap(_delegate.cloneNode(deep));
-  }
-
-  public short compareDocumentPosition(DOMNode other)
-    throws DOMException
-  {
-    try {
-      return _delegate.compareDocumentPosition(other.getDelegate());
+    public DOMNode appendChild(DOMNode newChild)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.appendChild(newChild.getDelegate()));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
+
+    public DOMNode cloneNode(boolean deep) {
+	return wrap(_delegate.cloneNode(deep));
     }
-  }
 
-  public DOMNamedNodeMap getAttributes()
-  {
-    return wrap(_delegate.getAttributes());
-  }
-
-  public String getBaseURI()
-  {
-    return _delegate.getBaseURI();
-  }
-
-  public DOMNodeList getChildNodes()
-  {
-    return wrap(_delegate.getChildNodes());
-  }
-
-  public Object getFeature(String feature, String version)
-  {
-    return _delegate.getFeature(feature, version);
-  }
-
-  public DOMNode getFirstChild()
-  {
-    return wrap(_delegate.getFirstChild());
-  }
-
-  public DOMNode getLastChild()
-  {
-    return wrap(_delegate.getLastChild());
-  }
-
-  public String getLocalName()
-  {
-    return _delegate.getLocalName();
-  }
-
-  public String getNamespaceURI()
-  {
-    return _delegate.getNamespaceURI();
-  }
-
-  public DOMNode getNextSibling()
-  {
-    return wrap(_delegate.getNextSibling());
-  }
-
-  public String getNodeName()
-  {
-    return _delegate.getNodeName();
-  }
-
-  public short getNodeType()
-  {
-    return _delegate.getNodeType();
-  }
-
-  public String getNodeValue()
-    throws DOMException
-  {
-    try {
-      return _delegate.getNodeValue();
+    public short compareDocumentPosition(DOMNode other)
+	    throws DOMException {
+	try {
+	    return _delegate.compareDocumentPosition(other.getDelegate());
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
+
+    public DOMNamedNodeMap getAttributes() {
+	return wrap(_delegate.getAttributes());
     }
-  }
 
-  public DOMDocument getOwnerDocument()
-  {
-    return wrap(_delegate.getOwnerDocument());
-  }
-
-  public DOMNode getParentNode()
-  {
-    return wrap(_delegate.getParentNode());
-  }
-
-  public String getPrefix()
-  {
-    return _delegate.getPrefix();
-  }
-
-  public DOMNode getPreviousSibling()
-  {
-    return  wrap(_delegate.getPreviousSibling());
-  }
-
-  public String getTextContent()
-    throws DOMException
-  {
-    try {
-      return _delegate.getTextContent();
+    public String getBaseURI() {
+	return _delegate.getBaseURI();
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
+
+    public DOMNodeList getChildNodes() {
+	return wrap(_delegate.getChildNodes());
     }
-  }
 
-  public Object getUserData(String key)
-  {
-    return _delegate.getUserData(key);
-  }
-
-  public boolean hasAttributes()
-  {
-    return _delegate.hasAttributes();
-  }
-
-  public boolean hasChildNodes()
-  {
-    return _delegate.hasChildNodes();
-  }
-
-  public DOMNode insertBefore(DOMNode newChild, DOMNode refChild)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.insertBefore(
-          newChild.getDelegate(), refChild.getDelegate()));
+    public Object getFeature(String feature, String version) {
+	return _delegate.getFeature(feature, version);
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
+
+    public DOMNode getFirstChild() {
+	return wrap(_delegate.getFirstChild());
     }
-  }
 
-  public boolean isDefaultNamespace(String namespaceURI)
-  {
-    return _delegate.isDefaultNamespace(namespaceURI);
-  }
-
-  public boolean isEqualNode(DOMNode arg)
-  {
-    return _delegate.isEqualNode(arg.getDelegate());
-  }
-
-  public boolean isSameNode(DOMNode other)
-  {
-    return _delegate.isSameNode(other.getDelegate());
-  }
-
-  public boolean isSupported(String feature, String version)
-  {
-    return _delegate.isSupported(feature, version);
-  }
-
-  public String lookupNamespaceURI(String prefix)
-  {
-    return _delegate.lookupNamespaceURI(prefix);
-  }
-
-  public String lookupPrefix(String namespaceURI)
-  {
-    return _delegate.lookupPrefix(namespaceURI);
-  }
-
-  public void normalize()
-  {
-    _delegate.normalize();
-  }
-
-  public DOMNode removeChild(DOMNode oldChild)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.removeChild(oldChild.getDelegate()));
+    public DOMNode getLastChild() {
+	return wrap(_delegate.getLastChild());
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public DOMNode replaceChild(DOMNode newChild, DOMNode oldChild)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.replaceChild(
-          newChild.getDelegate(), oldChild.getDelegate()));
+    public String getLocalName() {
+	return _delegate.getLocalName();
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public void setNodeValue(String nodeValue)
-    throws DOMException
-  {
-    try {
-      _delegate.setNodeValue(nodeValue);
+    public String getNamespaceURI() {
+	return _delegate.getNamespaceURI();
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public void setPrefix(String prefix)
-    throws DOMException
-  {
-    try {
-      _delegate.setPrefix(prefix);
+    public DOMNode getNextSibling() {
+	return wrap(_delegate.getNextSibling());
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public void setTextContent(String textContent)
-    throws DOMException
-  {
-    try {
-      _delegate.setTextContent(textContent);
+    public String getNodeName() {
+	return _delegate.getNodeName();
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
+
+    public short getNodeType() {
+	return _delegate.getNodeType();
     }
-  }
 
-  public Object setUserData(String key, Object data)
-  {
-    return _delegate.setUserData(key, data, null);
-  }
+    public String getNodeValue()
+	    throws DOMException {
+	try {
+	    return _delegate.getNodeValue();
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
 
-  public String toString()
-  {
-    return getClass().getSimpleName();
-  }
+    public DOMDocument getOwnerDocument() {
+	return wrap(_delegate.getOwnerDocument());
+    }
+
+    public DOMNode getParentNode() {
+	return wrap(_delegate.getParentNode());
+    }
+
+    public String getPrefix() {
+	return _delegate.getPrefix();
+    }
+
+    public DOMNode getPreviousSibling() {
+	return wrap(_delegate.getPreviousSibling());
+    }
+
+    public String getTextContent()
+	    throws DOMException {
+	try {
+	    return _delegate.getTextContent();
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
+
+    public Object getUserData(String key) {
+	return _delegate.getUserData(key);
+    }
+
+    public boolean hasAttributes() {
+	return _delegate.hasAttributes();
+    }
+
+    public boolean hasChildNodes() {
+	return _delegate.hasChildNodes();
+    }
+
+    public DOMNode insertBefore(DOMNode newChild, DOMNode refChild)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.insertBefore(
+		    newChild.getDelegate(), refChild.getDelegate()));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
+
+    public boolean isDefaultNamespace(String namespaceURI) {
+	return _delegate.isDefaultNamespace(namespaceURI);
+    }
+
+    public boolean isEqualNode(DOMNode arg) {
+	return _delegate.isEqualNode(arg.getDelegate());
+    }
+
+    public boolean isSameNode(DOMNode other) {
+	return _delegate.isSameNode(other.getDelegate());
+    }
+
+    public boolean isSupported(String feature, String version) {
+	return _delegate.isSupported(feature, version);
+    }
+
+    public String lookupNamespaceURI(String prefix) {
+	return _delegate.lookupNamespaceURI(prefix);
+    }
+
+    public String lookupPrefix(String namespaceURI) {
+	return _delegate.lookupPrefix(namespaceURI);
+    }
+
+    public void normalize() {
+	_delegate.normalize();
+    }
+
+    public DOMNode removeChild(DOMNode oldChild)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.removeChild(oldChild.getDelegate()));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
+
+    public DOMNode replaceChild(DOMNode newChild, DOMNode oldChild)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.replaceChild(
+		    newChild.getDelegate(), oldChild.getDelegate()));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
+
+    public void setNodeValue(String nodeValue)
+	    throws DOMException {
+	try {
+	    _delegate.setNodeValue(nodeValue);
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
+
+    public void setPrefix(String prefix)
+	    throws DOMException {
+	try {
+	    _delegate.setPrefix(prefix);
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
+
+    public void setTextContent(String textContent)
+	    throws DOMException {
+	try {
+	    _delegate.setTextContent(textContent);
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
+
+    public Object setUserData(String key, Object data) {
+	return _delegate.setUserData(key, data, null);
+    }
+
+    public String toString() {
+	return getClass().getSimpleName();
+    }
 }

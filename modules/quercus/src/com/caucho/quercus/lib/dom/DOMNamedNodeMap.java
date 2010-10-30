@@ -26,86 +26,71 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import org.w3c.dom.NamedNodeMap;
 
 public class DOMNamedNodeMap
-  extends DOMWrapper<NamedNodeMap>
-{
-  DOMNamedNodeMap(DOMImplementation impl, NamedNodeMap delegate)
-  {
-    super(impl, delegate);
-  }
+	extends DOMWrapper<NamedNodeMap> {
 
-  public int getLength()
-  {
-    return _delegate.getLength();
-  }
+    DOMNamedNodeMap(DOMImplementation impl, NamedNodeMap delegate) {
+	super(impl, delegate);
+    }
 
-  public DOMNode getNamedItem(String name)
-  {
-    return wrap(_delegate.getNamedItem(name));
-  }
+    public int getLength() {
+	return _delegate.getLength();
+    }
 
-  public DOMNode getNamedItemNS(String namespaceURI, String localName)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.getNamedItemNS(namespaceURI, localName));
+    public DOMNode getNamedItem(String name) {
+	return wrap(_delegate.getNamedItem(name));
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public DOMNode item(int index)
-  {
-    return wrap(_delegate.item(index));
-  }
+    public DOMNode getNamedItemNS(String namespaceURI, String localName)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.getNamedItemNS(namespaceURI, localName));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
 
-  public DOMNode removeNamedItem(String name)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.removeNamedItem(name));
+    public DOMNode item(int index) {
+	return wrap(_delegate.item(index));
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public DOMNode removeNamedItemNS(String namespaceURI, String localName)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.removeNamedItemNS(namespaceURI, localName));
+    public DOMNode removeNamedItem(String name)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.removeNamedItem(name));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public DOMNode setNamedItem(DOMNode arg)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.setNamedItem(arg.getDelegate()));
+    public DOMNode removeNamedItemNS(String namespaceURI, String localName)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.removeNamedItemNS(namespaceURI, localName));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public DOMNode setNamedItemNS(DOMNode arg)
-    throws DOMException
-  {
-    try {
-      return wrap(_delegate.setNamedItemNS(arg.getDelegate()));
+    public DOMNode setNamedItem(DOMNode arg)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.setNamedItem(arg.getDelegate()));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
+
+    public DOMNode setNamedItemNS(DOMNode arg)
+	    throws DOMException {
+	try {
+	    return wrap(_delegate.setNamedItemNS(arg.getDelegate()));
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
     }
-  }
 }

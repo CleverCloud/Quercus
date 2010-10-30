@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import com.caucho.quercus.annotation.Optional;
@@ -35,23 +34,20 @@ import com.caucho.quercus.env.Env;
 import org.w3c.dom.Comment;
 
 public class DOMComment
-  extends DOMCharacterData<Comment>
-{
-  public static DOMComment __construct(Env env, @Optional String value)
-  {
-    DOMComment comment = getImpl(env).createComment();
+	extends DOMCharacterData<Comment> {
 
-    if (value != null && value.length() > 0)
-      comment.setNodeValue(value);
+    public static DOMComment __construct(Env env, @Optional String value) {
+	DOMComment comment = getImpl(env).createComment();
 
-    return comment;
-  }
+	if (value != null && value.length() > 0) {
+	    comment.setNodeValue(value);
+	}
 
-  DOMComment(DOMImplementation impl, Comment delegate)
-  {
-    super(impl, delegate);
-  }
+	return comment;
+    }
 
-
-  // no methods
+    DOMComment(DOMImplementation impl, Comment delegate) {
+	super(impl, delegate);
+    }
+    // no methods
 }

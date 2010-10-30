@@ -26,93 +26,77 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import org.w3c.dom.CharacterData;
 
 public class DOMCharacterData<T extends CharacterData>
-  extends DOMNode<T>
-{
-  protected DOMCharacterData(DOMImplementation impl, T delegate)
-  {
-    super(impl, delegate);
-  }
+	extends DOMNode<T> {
 
-  public void appendData(String arg)
-    throws DOMException
-  {
-    _delegate.appendData(arg);
-  }
+    protected DOMCharacterData(DOMImplementation impl, T delegate) {
+	super(impl, delegate);
+    }
 
-  public void deleteData(int offset, int count)
-    throws DOMException
-  {
-    try {
-      _delegate.deleteData(offset, count);
+    public void appendData(String arg)
+	    throws DOMException {
+	_delegate.appendData(arg);
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public String getData()
-    throws DOMException
-  {
-    try {
-      return _delegate.getData();
+    public void deleteData(int offset, int count)
+	    throws DOMException {
+	try {
+	    _delegate.deleteData(offset, count);
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public int getLength()
-  {
-    return _delegate.getLength();
-  }
+    public String getData()
+	    throws DOMException {
+	try {
+	    return _delegate.getData();
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
+    }
 
-  public void insertData(int offset, String arg)
-    throws DOMException
-  {
-    try {
-      _delegate.insertData(offset, arg);
+    public int getLength() {
+	return _delegate.getLength();
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public void replaceData(int offset, int count, String arg)
-    throws DOMException
-  {
-    try {
-      _delegate.replaceData(offset, count, arg);
+    public void insertData(int offset, String arg)
+	    throws DOMException {
+	try {
+	    _delegate.insertData(offset, arg);
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public void setData(String data)
-    throws DOMException
-  {
-    try {
-      _delegate.setData(data);
+    public void replaceData(int offset, int count, String arg)
+	    throws DOMException {
+	try {
+	    _delegate.replaceData(offset, count, arg);
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
-    }
-  }
 
-  public String substringData(int offset, int count)
-    throws DOMException
-  {
-    try {
-      return _delegate.substringData(offset, count);
+    public void setData(String data)
+	    throws DOMException {
+	try {
+	    _delegate.setData(data);
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
     }
-    catch (org.w3c.dom.DOMException ex) {
-      throw wrap(ex);
+
+    public String substringData(int offset, int count)
+	    throws DOMException {
+	try {
+	    return _delegate.substringData(offset, count);
+	} catch (org.w3c.dom.DOMException ex) {
+	    throw wrap(ex);
+	}
     }
-  }
 }

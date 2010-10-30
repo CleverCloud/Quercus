@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import org.w3c.dom.NodeList;
@@ -35,30 +34,27 @@ import com.caucho.quercus.annotation.Delegates;
 
 @Delegates(DOMNodeListDelegate.class)
 public class DOMNodeList
-  extends DOMWrapper<NodeList>
-{
-  DOMNodeList(DOMImplementation impl, NodeList nodeList)
-  {
-    super(impl, nodeList);
-  }
+	extends DOMWrapper<NodeList> {
 
-  public DOMNode item(int index)
-  {
-    // php/1zl0
+    DOMNodeList(DOMImplementation impl, NodeList nodeList) {
+	super(impl, nodeList);
+    }
 
-    if (index < 0)
-      return null;
+    public DOMNode item(int index) {
+	// php/1zl0
 
-    return wrap(_delegate.item(index));
-  }
+	if (index < 0) {
+	    return null;
+	}
 
-  public int getLength()
-  {
-    return _delegate.getLength();
-  }
+	return wrap(_delegate.item(index));
+    }
 
-  public String toString()
-  {
-    return getClass().getSimpleName();
-  }
+    public int getLength() {
+	return _delegate.getLength();
+    }
+
+    public String toString() {
+	return getClass().getSimpleName();
+    }
 }

@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.dom;
 
 import com.caucho.quercus.env.Env;
@@ -34,17 +33,14 @@ import com.caucho.quercus.env.Env;
 import org.w3c.dom.EntityReference;
 
 public class DOMEntityReference
-  extends DOMNode<EntityReference>
-{
-  public static DOMEntityReference __construct(Env env, String name)
-  {
-    return getImpl(env).createEntityReference(name);
-  }
+	extends DOMNode<EntityReference> {
 
-  DOMEntityReference(DOMImplementation impl, EntityReference delegate)
-  {
-    super(impl, delegate);
-  }
+    public static DOMEntityReference __construct(Env env, String name) {
+	return getImpl(env).createEntityReference(name);
+    }
 
-  // no methods
+    DOMEntityReference(DOMImplementation impl, EntityReference delegate) {
+	super(impl, delegate);
+    }
+    // no methods
 }
