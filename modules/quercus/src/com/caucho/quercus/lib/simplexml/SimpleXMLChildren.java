@@ -26,7 +26,6 @@
  *
  * @author Charles Reich
  */
-
 package com.caucho.quercus.lib.simplexml;
 
 import com.caucho.quercus.annotation.Name;
@@ -65,49 +64,47 @@ import java.util.logging.*;
  * SimpleXMLElement object oriented API facade.
  * Also acts as the DOM document.
  */
-public class SimpleXMLChildren extends SimpleXMLElement
-{
-  protected SimpleXMLChildren(Env env, QuercusClass cls,
-                              SimpleXMLElement parent, String name)
-  {
-    super(env, cls, parent, name);
-  }
-  
-  /**
-   * Implementation for getting the indices of this class.
-   * i.e. <code>$a->foo[0]</code>
-   */
-  @Override
-  public Value __get(Env env, Value indexV)
-  {
-    if (indexV.isString()) {
-      String name = indexV.toString();
-      
-      return wrapJava(env, _cls, getAttribute(name));
-    }
-    else if (indexV.isLongConvertible()) {
-      int i = indexV.toInt();
+public class SimpleXMLChildren extends SimpleXMLElement {
 
-      if (_children != null && i < _children.size())
-        return wrapJava(env, _cls, _children.get(i));
-      else
-        return NullValue.NULL;
+    protected SimpleXMLChildren(Env env, QuercusClass cls,
+	    SimpleXMLElement parent, String name) {
+	super(env, cls, parent, name);
     }
-    else
-      return NullValue.NULL;
-  }
-  
-  /**
-   * Converts node tree to a valid xml string.
-   * 
-   * @return xml string
-   */
-  @ReturnNullAsFalse
-  public StringValue asXML(Env env)
-  {
-    if (_children != null)
-      return _children.get(0).toXML(env);
-    else
-      return null;
-  }
+
+    /**
+     * Implementation for getting the indices of this class.
+     * i.e. <code>$a->foo[0]</code>
+     */
+    @Override
+    public Value __get(Env env, Value indexV) {
+	if (indexV.isString()) {
+	    String name = indexV.toString();
+
+	    return wrapJava(env, _cls, getAttribute(name));
+	} else if (indexV.isLongConvertible()) {
+	    int i = indexV.toInt();
+
+	    if (_children != null && i < _children.size()) {
+		return wrapJava(env, _cls, _children.get(i));
+	    } else {
+		return NullValue.NULL;
+	    }
+	} else {
+	    return NullValue.NULL;
+	}
+    }
+
+    /**
+     * Converts node tree to a valid xml string.
+     *
+     * @return xml string
+     */
+    @ReturnNullAsFalse
+    public StringValue asXML(Env env) {
+	if (_children != null) {
+	    return _children.get(0).toXML(env);
+	} else {
+	    return null;
+	}
+    }
 }

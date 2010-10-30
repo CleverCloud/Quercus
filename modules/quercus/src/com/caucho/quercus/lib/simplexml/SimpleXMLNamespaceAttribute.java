@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.simplexml;
 
 import com.caucho.quercus.env.*;
@@ -35,29 +34,26 @@ import com.caucho.quercus.env.*;
  * SimpleXMLElement object oriented API facade.
  * Also acts as the DOM document.
  */
-public class SimpleXMLNamespaceAttribute extends SimpleXMLAttribute
-{
-  protected SimpleXMLNamespaceAttribute(Env env,
-                                        QuercusClass cls,
-                                        SimpleXMLElement parent,
-                                        String name)
-  {
-    super(env, cls, parent, name);
-  }
-  
-  protected SimpleXMLNamespaceAttribute(Env env,
-                                        QuercusClass cls,
-                                        SimpleXMLElement parent,
-                                        String name,
-                                        String namespace,
-                                        StringValue text)
-  {
-    super(env, cls, parent, name, namespace, text);
-  }
+public class SimpleXMLNamespaceAttribute extends SimpleXMLAttribute {
 
-  @Override
-  protected boolean isNamespaceAttribute()
-  {
-    return true;
-  }
+    protected SimpleXMLNamespaceAttribute(Env env,
+	    QuercusClass cls,
+	    SimpleXMLElement parent,
+	    String name) {
+	super(env, cls, parent, name);
+    }
+
+    protected SimpleXMLNamespaceAttribute(Env env,
+	    QuercusClass cls,
+	    SimpleXMLElement parent,
+	    String name,
+	    String namespace,
+	    StringValue text) {
+	super(env, cls, parent, name, namespace, text);
+    }
+
+    @Override
+    protected boolean isNamespaceAttribute() {
+	return true;
+    }
 }

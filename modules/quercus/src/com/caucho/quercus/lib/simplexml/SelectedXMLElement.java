@@ -26,7 +26,6 @@
  *
  * @author Charles Reich
  */
-
 package com.caucho.quercus.lib.simplexml;
 
 import com.caucho.quercus.annotation.Name;
@@ -65,68 +64,67 @@ import java.util.logging.*;
  * SimpleXMLElement object oriented API facade.
  * Also acts as the DOM document.
  */
-public class SelectedXMLElement extends SimpleXMLElement
-{
-  private SimpleXMLElement _owner;
-  
-  protected SelectedXMLElement(Env env, QuercusClass cls,
-                                           SimpleXMLElement owner)
-  {
-    super(env, cls, owner._parent, owner._name);
-    
-    _owner = owner;
-    //_parent = owner._parent;
-    //_name = owner._name;
+public class SelectedXMLElement extends SimpleXMLElement {
 
-    _text = owner._text;
-    _children = owner._children;
-    _attributes = owner._attributes;
-  }
+    private SimpleXMLElement _owner;
 
-  @Override
-  protected SimpleXMLElement getOwner()
-  {
-    return _owner;
-  }
-  
-  public String toString()
-  {
-    if (_text != null)
-      return _text.toString();
-    else
-      return "";
-  }
-  
-  /**
-   * Required for 'foreach'. When only values are specified in
-   * the loop <code>foreach($a as $b)</code>, this method
-   * should return an iterator that contains Java objects
-   * that will be wrapped in a Value.
-   *
-   * When a 'foreach' loop with name/value pairs
-   * i.e. <code>foreach($a as $b=>$c)</code>
-   * invokes this method, it expects an iterator that
-   * contains objects that implement Map.Entry.
-   */
-  public Iterator iterator()
-  {
-    // php/1x05
+    protected SelectedXMLElement(Env env, QuercusClass cls,
+	    SimpleXMLElement owner) {
+	super(env, cls, owner._parent, owner._name);
 
-    ArrayList<SimpleXMLElement> children = _parent._children;
+	_owner = owner;
+	//_parent = owner._parent;
+	//_name = owner._name;
 
-    if (children == null)
-      return null;
-    
-    ArrayList<SimpleXMLElement> values = new ArrayList<SimpleXMLElement>();
-
-    int size = children.size();
-    for (int i = 0; i < size; i++) {
-      SimpleXMLElement elt = children.get(i);
-
-      if (getName().equals(elt.getName()))
-        values.add(elt);
+	_text = owner._text;
+	_children = owner._children;
+	_attributes = owner._attributes;
     }
 
-    return values.iterator();
-  }
+    @Override
+    protected SimpleXMLElement getOwner() {
+	return _owner;
+    }
+
+    public String toString() {
+	if (_text != null) {
+	    return _text.toString();
+	} else {
+	    return "";
+	}
+    }
+
+    /**
+     * Required for 'foreach'. When only values are specified in
+     * the loop <code>foreach($a as $b)</code>, this method
+     * should return an iterator that contains Java objects
+     * that will be wrapped in a Value.
+     *
+     * When a 'foreach' loop with name/value pairs
+     * i.e. <code>foreach($a as $b=>$c)</code>
+     * invokes this method, it expects an iterator that
+     * contains objects that implement Map.Entry.
+     */
+    public Iterator iterator() {
+	// php/1x05
+
+	ArrayList<SimpleXMLElement> children = _parent._children;
+
+	if (children == null) {
+	    return null;
+	}
+
+	ArrayList<SimpleXMLElement> values = new ArrayList<SimpleXMLElement>();
+
+	int size = children.size();
+	for (int i = 0; i < size; i++) {
+	    SimpleXMLElement elt = children.get(i);
+
+	    if (getName().equals(elt.getName())) {
+		values.add(elt);
+	    }
+	}
+
+	return values.iterator();
+    }
 }

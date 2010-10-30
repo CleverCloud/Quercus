@@ -25,7 +25,6 @@
  *
  * @author Charles Reich
  */
-
 package com.caucho.quercus.lib.simplexml;
 
 import com.caucho.quercus.UnimplementedException;
@@ -50,57 +49,55 @@ import java.util.logging.Logger;
  * PHP SimpleXML
  */
 public class SimpleXMLModule
-  extends AbstractQuercusModule
-{
-  private static final Logger log
-    = Logger.getLogger(SimpleXMLModule.class.getName());
-  private static final L10N L = new L10N(SimpleXMLModule.class);
+	extends AbstractQuercusModule {
 
-  public String []getLoadedExtensions()
-  {
-    return new String[] { "SimpleXML" };
-  }
+    private static final Logger log = Logger.getLogger(SimpleXMLModule.class.getName());
+    private static final L10N L = new L10N(SimpleXMLModule.class);
 
-  public Value simplexml_load_string(Env env,
-                                     Value data,
-                                     @Optional String className,
-                                     @Optional int options,
-                                     @Optional Value namespaceV,
-                                     @Optional boolean isPrefix)
-  {
-    if (data.isNull() || data == BooleanValue.FALSE)
-      return BooleanValue.FALSE;
-    
-    if (className == null || className.length() == 0)
-      className = "SimpleXMLElement";
-    
-    QuercusClass cls = env.getClass(className);
+    public String[] getLoadedExtensions() {
+	return new String[]{"SimpleXML"};
+    }
 
-    return SimpleXMLElement.create(env, cls,
-                                   data, options, false,
-                                   namespaceV, isPrefix);
-  }
+    public Value simplexml_load_string(Env env,
+	    Value data,
+	    @Optional String className,
+	    @Optional int options,
+	    @Optional Value namespaceV,
+	    @Optional boolean isPrefix) {
+	if (data.isNull() || data == BooleanValue.FALSE) {
+	    return BooleanValue.FALSE;
+	}
 
-  public Value simplexml_load_file(Env env,
-                                   @NotNull StringValue file,
-                                   @Optional String className,
-                                   @Optional int options,
-                                   @Optional Value namespaceV,
-                                   @Optional boolean isPrefix)
-  {
-    if (className == null || className.length() == 0)
-      className = "SimpleXMLElement";
+	if (className == null || className.length() == 0) {
+	    className = "SimpleXMLElement";
+	}
 
-    QuercusClass cls = env.getClass(className);
+	QuercusClass cls = env.getClass(className);
 
-    return SimpleXMLElement.create(env, cls,
-                                   file, options, true,
-                                   namespaceV, isPrefix);
-  }
-  
-  public SimpleXMLElement simplexml_import_dom(Env env)
-  {
-    // TODO: DOMNode needs to be able to export partial documents
-    throw new UnimplementedException("simplexml_import_dom");
-  }
+	return SimpleXMLElement.create(env, cls,
+		data, options, false,
+		namespaceV, isPrefix);
+    }
+
+    public Value simplexml_load_file(Env env,
+	    @NotNull StringValue file,
+	    @Optional String className,
+	    @Optional int options,
+	    @Optional Value namespaceV,
+	    @Optional boolean isPrefix) {
+	if (className == null || className.length() == 0) {
+	    className = "SimpleXMLElement";
+	}
+
+	QuercusClass cls = env.getClass(className);
+
+	return SimpleXMLElement.create(env, cls,
+		file, options, true,
+		namespaceV, isPrefix);
+    }
+
+    public SimpleXMLElement simplexml_import_dom(Env env) {
+	// TODO: DOMNode needs to be able to export partial documents
+	throw new UnimplementedException("simplexml_import_dom");
+    }
 }
