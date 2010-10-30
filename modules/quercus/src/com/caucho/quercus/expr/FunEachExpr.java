@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -43,54 +42,49 @@ import java.io.IOException;
  * Represents a PHP each expression.
  */
 public class FunEachExpr extends AbstractUnaryExpr {
-  private final L10N L = new L10N(FunEachExpr.class);
-  
-  private boolean _isVar;
-  
-  public FunEachExpr(Location location, Expr expr)
-    throws IOException
-  {
-    super(location, expr);
-    
-    _isVar = expr.isVar();
-  }
 
-  public FunEachExpr(Expr expr)
-  {
-    super(expr);
-    
-    _isVar = expr.isVar();
-  }
+    private final L10N L = new L10N(FunEachExpr.class);
+    private boolean _isVar;
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    if (! _isVar) {
-      env.error(L.l("each() argument must be a variable at '{0}'", getExpr()));
-      
-      return NullValue.NULL;
+    public FunEachExpr(Location location, Expr expr)
+	    throws IOException {
+	super(location, expr);
+
+	_isVar = expr.isVar();
     }
-    
-    Value var = getExpr().evalRef(env);
-    Value value = var.toValue();
 
-    if (value instanceof ArrayValue) {
-      ArrayValue array = (ArrayValue) value;
+    public FunEachExpr(Expr expr) {
+	super(expr);
 
-      return array.each();
+	_isVar = expr.isVar();
     }
-    else {
-      env.warning(L.l("each() argument must be an array at '{0}'",
-                      value.getClass().getSimpleName()));
-    
-      return BooleanValue.FALSE;
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	if (!_isVar) {
+	    env.error(L.l("each() argument must be a variable at '{0}'", getExpr()));
+
+	    return NullValue.NULL;
+	}
+
+	Value var = getExpr().evalRef(env);
+	Value value = var.toValue();
+
+	if (value instanceof ArrayValue) {
+	    ArrayValue array = (ArrayValue) value;
+
+	    return array.each();
+	} else {
+	    env.warning(L.l("each() argument must be an array at '{0}'",
+		    value.getClass().getSimpleName()));
+
+	    return BooleanValue.FALSE;
+	}
     }
-  }
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -40,45 +39,40 @@ import java.io.IOException;
  * Represents the die expression
  */
 public class DieExpr extends Expr {
-  protected Expr _value;
 
-  public DieExpr(Location location, Expr value)
-  {
-    super(location);
-    _value = value;
-  }
+    protected Expr _value;
 
-  public DieExpr(Location location)
-  {
-    super(location);
-    _value = null;
-  }
-
-  public DieExpr(Expr value)
-  {
-    _value = value;
-  }
-
-  public DieExpr()
-  {
-    _value = null;
-  }
-
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    if (_value != null) {
-      String msg = _value.evalString(env);
-          return env.die(msg);
+    public DieExpr(Location location, Expr value) {
+	super(location);
+	_value = value;
     }
-    else
-      return env.die();
-  }
-}
 
+    public DieExpr(Location location) {
+	super(location);
+	_value = null;
+    }
+
+    public DieExpr(Expr value) {
+	_value = value;
+    }
+
+    public DieExpr() {
+	_value = null;
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	if (_value != null) {
+	    String msg = _value.evalString(env);
+	    return env.die(msg);
+	} else {
+	    return env.die();
+	}
+    }
+}

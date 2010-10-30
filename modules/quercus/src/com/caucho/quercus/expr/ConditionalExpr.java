@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,78 +36,75 @@ import com.caucho.quercus.env.Value;
  * Represents a conditional expression.
  */
 public class ConditionalExpr extends Expr {
-  protected final Expr _test;
-  protected final Expr _trueExpr;
-  protected final Expr _falseExpr;
 
-  public ConditionalExpr(Location location,
-                         Expr test,
-                         Expr trueExpr,
-                         Expr falseExpr)
-  {
-    super(location);
-    _test = test;
+    protected final Expr _test;
+    protected final Expr _trueExpr;
+    protected final Expr _falseExpr;
 
-    _trueExpr = trueExpr;
-    _falseExpr = falseExpr;
-  }
+    public ConditionalExpr(Location location,
+	    Expr test,
+	    Expr trueExpr,
+	    Expr falseExpr) {
+	super(location);
+	_test = test;
 
-  public ConditionalExpr(Expr test, Expr trueExpr, Expr falseExpr)
-  {
-    _test = test;
+	_trueExpr = trueExpr;
+	_falseExpr = falseExpr;
+    }
 
-    _trueExpr = trueExpr;
-    _falseExpr = falseExpr;
-  }
+    public ConditionalExpr(Expr test, Expr trueExpr, Expr falseExpr) {
+	_test = test;
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    if (_test.evalBoolean(env))
-      return _trueExpr.eval(env);
-    else
-      return _falseExpr.eval(env);
-  }
+	_trueExpr = trueExpr;
+	_falseExpr = falseExpr;
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public boolean evalBoolean(Env env)
-  {
-    if (_test.evalBoolean(env))
-      return _trueExpr.evalBoolean(env);
-    else
-      return _falseExpr.evalBoolean(env);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	if (_test.evalBoolean(env)) {
+	    return _trueExpr.eval(env);
+	} else {
+	    return _falseExpr.eval(env);
+	}
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value evalCopy(Env env)
-  {
-    if (_test.evalBoolean(env))
-      return _trueExpr.evalCopy(env);
-    else
-      return _falseExpr.evalCopy(env);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public boolean evalBoolean(Env env) {
+	if (_test.evalBoolean(env)) {
+	    return _trueExpr.evalBoolean(env);
+	} else {
+	    return _falseExpr.evalBoolean(env);
+	}
+    }
 
-  public String toString()
-  {
-    return "(" + _test + " ? " + _trueExpr + " : " + _falseExpr + ")";
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value evalCopy(Env env) {
+	if (_test.evalBoolean(env)) {
+	    return _trueExpr.evalCopy(env);
+	} else {
+	    return _falseExpr.evalCopy(env);
+	}
+    }
+
+    public String toString() {
+	return "(" + _test + " ? " + _trueExpr + " : " + _falseExpr + ")";
+    }
 }
-

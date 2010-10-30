@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -40,117 +39,107 @@ import java.io.IOException;
  * Represents a PHP error suppression
  */
 public class UnarySuppressErrorExpr extends AbstractUnaryExpr {
-  public UnarySuppressErrorExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
 
-  public UnarySuppressErrorExpr(Expr expr)
-  {
-    super(expr);
-  }
-
-  /**
-   * Creates the assignment.
-   */
-  public Expr createAssign(QuercusParser parser, Expr value)
-    throws IOException
-  {
-    // php/03j2
-
-    return new UnarySuppressErrorExpr(parser.getLocation(),
-                                 getExpr().createAssign(parser, value));
-  }
-
-  /**
-   * Creates the assignment.
-   */
-  public Expr createAssignRef(QuercusParser parser,
-                              Expr value
-  )
-    throws IOException
-  {
-    // php/03j2
-
-    return new UnarySuppressErrorExpr(parser.getLocation(),
-                                 getExpr().createAssignRef(parser, value));
-  }
-
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    int oldErrorMask = env.setErrorMask(0);
-
-    try {
-      return _expr.eval(env);
-    } finally {
-      env.setErrorMask(oldErrorMask);
+    public UnarySuppressErrorExpr(Location location, Expr expr) {
+	super(location, expr);
     }
-  }
 
-  /**
-   * Evaluates the expression as a boolean.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public boolean evalBoolean(Env env)
-  {
-    int oldErrorMask = env.setErrorMask(0);
-
-    try {
-      return _expr.evalBoolean(env);
-    } finally {
-      env.setErrorMask(oldErrorMask);
+    public UnarySuppressErrorExpr(Expr expr) {
+	super(expr);
     }
-  }
 
-  /**
-   * Evaluates the expression as a string.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public String evalString(Env env)
-  {
-    int oldErrorMask = env.setErrorMask(0);
+    /**
+     * Creates the assignment.
+     */
+    public Expr createAssign(QuercusParser parser, Expr value)
+	    throws IOException {
+	// php/03j2
 
-    try {
-      return _expr.evalString(env);
-    } finally {
-      env.setErrorMask(oldErrorMask);
+	return new UnarySuppressErrorExpr(parser.getLocation(),
+		getExpr().createAssign(parser, value));
     }
-  }
 
-  /**
-   * Evaluates the expression, copying the results as necessary
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value evalCopy(Env env)
-  {
-    int oldErrorMask = env.setErrorMask(0);
+    /**
+     * Creates the assignment.
+     */
+    public Expr createAssignRef(QuercusParser parser,
+	    Expr value)
+	    throws IOException {
+	// php/03j2
 
-    try {
-      return _expr.evalCopy(env);
-    } finally {
-      env.setErrorMask(oldErrorMask);
+	return new UnarySuppressErrorExpr(parser.getLocation(),
+		getExpr().createAssignRef(parser, value));
     }
-  }
 
-  public String toString()
-  {
-    return "@" + _expr;
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	int oldErrorMask = env.setErrorMask(0);
+
+	try {
+	    return _expr.eval(env);
+	} finally {
+	    env.setErrorMask(oldErrorMask);
+	}
+    }
+
+    /**
+     * Evaluates the expression as a boolean.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public boolean evalBoolean(Env env) {
+	int oldErrorMask = env.setErrorMask(0);
+
+	try {
+	    return _expr.evalBoolean(env);
+	} finally {
+	    env.setErrorMask(oldErrorMask);
+	}
+    }
+
+    /**
+     * Evaluates the expression as a string.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public String evalString(Env env) {
+	int oldErrorMask = env.setErrorMask(0);
+
+	try {
+	    return _expr.evalString(env);
+	} finally {
+	    env.setErrorMask(oldErrorMask);
+	}
+    }
+
+    /**
+     * Evaluates the expression, copying the results as necessary
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value evalCopy(Env env) {
+	int oldErrorMask = env.setErrorMask(0);
+
+	try {
+	    return _expr.evalCopy(env);
+	} finally {
+	    env.setErrorMask(oldErrorMask);
+	}
+    }
+
+    public String toString() {
+	return "@" + _expr;
+    }
 }
-

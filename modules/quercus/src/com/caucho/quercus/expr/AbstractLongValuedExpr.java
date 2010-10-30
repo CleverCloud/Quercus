@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,58 +37,53 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP expression.
  */
 abstract public class AbstractLongValuedExpr extends Expr {
-  public AbstractLongValuedExpr(Location location)
-  {
-    super(location);
-  }
 
-  public AbstractLongValuedExpr()
-  {
-  }
+    public AbstractLongValuedExpr(Location location) {
+	super(location);
+    }
 
-  /**
-   * Evaluates the expression as a value.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return LongValue.create(evalLong(env));
-  }
+    public AbstractLongValuedExpr() {
+    }
 
-  /**
-   * Evaluates the expression as a boolean.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public boolean evalBoolean(Env env)
-  {
-    return evalLong(env) != 0;
-  }
+    /**
+     * Evaluates the expression as a value.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return LongValue.create(evalLong(env));
+    }
 
-  /**
-   * Evaluates the expression as double
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public double evalDouble(Env env)
-  {
-    return evalLong(env);
-  }
+    /**
+     * Evaluates the expression as a boolean.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public boolean evalBoolean(Env env) {
+	return evalLong(env) != 0;
+    }
 
-  /**
-   * Evaluates the expression as a long.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  abstract public long evalLong(Env env);
+    /**
+     * Evaluates the expression as double
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public double evalDouble(Env env) {
+	return evalLong(env);
+    }
+
+    /**
+     * Evaluates the expression as a long.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    abstract public long evalLong(Env env);
 }
-

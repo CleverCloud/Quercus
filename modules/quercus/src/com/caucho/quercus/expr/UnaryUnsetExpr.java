@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,36 +37,32 @@ import com.caucho.quercus.env.Value;
  * Represents unsetting a PHP variable
  */
 public class UnaryUnsetExpr extends Expr {
-  private final AbstractVarExpr _var;
 
-  public UnaryUnsetExpr(Location location, AbstractVarExpr var)
-  {
-    super(location);
-    _var = var;
-  }
+    private final AbstractVarExpr _var;
 
-  public UnaryUnsetExpr(AbstractVarExpr var)
-  {
-    _var = var;
-  }
+    public UnaryUnsetExpr(Location location, AbstractVarExpr var) {
+	super(location);
+	_var = var;
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    _var.evalUnset(env);
+    public UnaryUnsetExpr(AbstractVarExpr var) {
+	_var = var;
+    }
 
-    return NullValue.NULL;
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	_var.evalUnset(env);
 
-  public String toString()
-  {
-    return "unset(" + _var + ")";
-  }
+	return NullValue.NULL;
+    }
+
+    public String toString() {
+	return "unset(" + _var + ")";
+    }
 }
-

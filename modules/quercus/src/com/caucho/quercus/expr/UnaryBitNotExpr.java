@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,41 +37,36 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP bitwise not expression.
  */
 public class UnaryBitNotExpr extends AbstractUnaryExpr {
-  public UnaryBitNotExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
 
-  public UnaryBitNotExpr(Expr expr)
-  {
-    super(expr);
-  }
+    public UnaryBitNotExpr(Location location, Expr expr) {
+	super(location, expr);
+    }
 
-  /**
-   * Returns true for a long.
-   */
-  public boolean isLong()
-  {
-    return true;
-  }
+    public UnaryBitNotExpr(Expr expr) {
+	super(expr);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    long lValue = _expr.evalLong(env);
+    /**
+     * Returns true for a long.
+     */
+    public boolean isLong() {
+	return true;
+    }
 
-    return LongValue.create(~ lValue);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	long lValue = _expr.evalLong(env);
 
-  public String toString()
-  {
-    return "(~ " + _expr + ")";
-  }
+	return LongValue.create(~lValue);
+    }
+
+    public String toString() {
+	return "(~ " + _expr + ")";
+    }
 }
-

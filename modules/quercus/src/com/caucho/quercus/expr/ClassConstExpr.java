@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import java.io.IOException;
@@ -43,65 +42,58 @@ import com.caucho.util.L10N;
  * Represents a PHP parent::FOO constant call expression.
  */
 public class ClassConstExpr extends Expr {
-  private static final L10N L = new L10N(ClassMethodExpr.class);
 
-  protected final String _className;
-  protected final String _name;
+    private static final L10N L = new L10N(ClassMethodExpr.class);
+    protected final String _className;
+    protected final String _name;
 
-  public ClassConstExpr(Location location, String className, String name)
-  {
-    super(location);
-    
-    _className = className.intern();
-    _name = name.intern();
-  }
+    public ClassConstExpr(Location location, String className, String name) {
+	super(location);
 
-  public ClassConstExpr(String className, String name)
-  {
-    _className = className.intern();
-    _name = name.intern();
-  }
-  
-  //
-  // function call creation
-  //
+	_className = className.intern();
+	_name = name.intern();
+    }
 
-  /**
-   * Creates a function call expression
-   */
-  @Override
-  public Expr createCall(QuercusParser parser,
-                         Location location,
-                         ArrayList<Expr> args)
-    throws IOException
-  {
-    /*
-    if (_className.equals(_name))
-      return factory.createClassConstructor(location, _className, _name, args);
-    else
-      return factory.createClassMethodCall(location, _className, _name, args);
-      */
-    ExprFactory factory = parser.getExprFactory();
-    
-    return factory.createClassMethodCall(location, _className, _name, args);
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value eval(Env env)
-  {
-    return env.getClass(_className).getConstant(env, _name);
-  }
-  
-  public String toString()
-  {
-    return _className + "::" + _name;
-  }
+    public ClassConstExpr(String className, String name) {
+	_className = className.intern();
+	_name = name.intern();
+    }
+
+    //
+    // function call creation
+    //
+    /**
+     * Creates a function call expression
+     */
+    @Override
+    public Expr createCall(QuercusParser parser,
+	    Location location,
+	    ArrayList<Expr> args)
+	    throws IOException {
+	/*
+	if (_className.equals(_name))
+	return factory.createClassConstructor(location, _className, _name, args);
+	else
+	return factory.createClassMethodCall(location, _className, _name, args);
+	 */
+	ExprFactory factory = parser.getExprFactory();
+
+	return factory.createClassMethodCall(location, _className, _name, args);
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value eval(Env env) {
+	return env.getClass(_className).getConstant(env, _name);
+    }
+
+    public String toString() {
+	return _className + "::" + _name;
+    }
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,39 +37,34 @@ import com.caucho.quercus.env.BooleanValue;
  * Represents a PHP isset call
  */
 public class FunIssetExpr extends AbstractUnaryExpr {
-  public FunIssetExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
 
-  public FunIssetExpr(Expr expr)
-  {
-    super(expr);
-  }
+    public FunIssetExpr(Location location, Expr expr) {
+	super(location, expr);
+    }
 
-  /**
-   * Return true as a boolean.
-   */
-  public boolean isBoolean()
-  {
-    return true;
-  }
+    public FunIssetExpr(Expr expr) {
+	super(expr);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return _expr.evalIsset(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
-  }
+    /**
+     * Return true as a boolean.
+     */
+    public boolean isBoolean() {
+	return true;
+    }
 
-  public String toString()
-  {
-    return "isset(" + _expr + ")";
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return _expr.evalIsset(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
+    }
+
+    public String toString() {
+	return "isset(" + _expr + ")";
+    }
 }
-

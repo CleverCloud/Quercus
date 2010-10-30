@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,54 +37,49 @@ import com.caucho.quercus.env.Value;
  * Represents a logical or expression.
  */
 public class BinaryOrExpr extends AbstractBinaryExpr {
-  public BinaryOrExpr(Location location, Expr left, Expr right)
-  {
-    super(location, left, right);
-  }
 
-  public BinaryOrExpr(Expr left, Expr right)
-  {
-    super(left, right);
-  }
+    public BinaryOrExpr(Location location, Expr left, Expr right) {
+	super(location, left, right);
+    }
 
-  /**
-   * Returns true for a boolean.
-   */
-  public boolean isBoolean()
-  {
-    return true;
-  }
+    public BinaryOrExpr(Expr left, Expr right) {
+	super(left, right);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    if (_left.evalBoolean(env) || _right.evalBoolean(env))
-      return BooleanValue.TRUE;
-    else
-      return BooleanValue.FALSE;
-  }
+    /**
+     * Returns true for a boolean.
+     */
+    public boolean isBoolean() {
+	return true;
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public boolean evalBoolean(Env env)
-  {
-    return _left.evalBoolean(env) || _right.evalBoolean(env);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	if (_left.evalBoolean(env) || _right.evalBoolean(env)) {
+	    return BooleanValue.TRUE;
+	} else {
+	    return BooleanValue.FALSE;
+	}
+    }
 
-  public String toString()
-  {
-    return "(" + _left + " || " + _right + ")";
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public boolean evalBoolean(Env env) {
+	return _left.evalBoolean(env) || _right.evalBoolean(env);
+    }
+
+    public String toString() {
+	return "(" + _left + " || " + _right + ")";
+    }
 }
-

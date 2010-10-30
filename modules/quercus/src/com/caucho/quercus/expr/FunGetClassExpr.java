@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.env.Env;
@@ -38,36 +37,32 @@ import com.caucho.util.L10N;
  * Represents returns the current class.
  */
 public class FunGetClassExpr extends Expr {
-  private String _className;
 
-  public FunGetClassExpr(QuercusParser parser)
-  {
-    super(parser.getLocation());
-    
-    _className = parser.getClassName();
-  }
-  
-  protected String getClassName()
-  {
-    return _className;
-  }
+    private String _className;
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value eval(Env env)
-  {
-    return env.createString(_className);
-  }
+    public FunGetClassExpr(QuercusParser parser) {
+	super(parser.getLocation());
 
-  public String toString()
-  {
-    return "get_class()";
-  }
+	_className = parser.getClassName();
+    }
+
+    protected String getClassName() {
+	return _className;
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value eval(Env env) {
+	return env.createString(_className);
+    }
+
+    public String toString() {
+	return "get_class()";
+    }
 }
-

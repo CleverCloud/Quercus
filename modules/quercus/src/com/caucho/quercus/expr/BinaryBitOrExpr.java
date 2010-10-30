@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,42 +37,37 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP bitwise or expression.
  */
 public class BinaryBitOrExpr extends AbstractBinaryExpr {
-  public BinaryBitOrExpr(Location location, Expr left, Expr right)
-  {
-    super(location, left, right);
-  }
 
-  public BinaryBitOrExpr(Expr left, Expr right)
-  {
-    super(left, right);
-  }
+    public BinaryBitOrExpr(Location location, Expr left, Expr right) {
+	super(location, left, right);
+    }
 
-  /**
-   * Returns true for a long.
-   */
-  public boolean isLong()
-  {
-    return true;
-  }
+    public BinaryBitOrExpr(Expr left, Expr right) {
+	super(left, right);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    Value lValue = _left.eval(env);
-    Value rValue = _right.eval(env);
+    /**
+     * Returns true for a long.
+     */
+    public boolean isLong() {
+	return true;
+    }
 
-    return lValue.bitOr(rValue);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	Value lValue = _left.eval(env);
+	Value rValue = _right.eval(env);
 
-  public String toString()
-  {
-    return "(" + _left + " | " + _right + ")";
-  }
+	return lValue.bitOr(rValue);
+    }
+
+    public String toString() {
+	return "(" + _left + " | " + _right + ")";
+    }
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -41,98 +40,92 @@ import java.util.ArrayList;
  * Represents the array function
  */
 public class FunArrayExpr extends Expr {
-  protected final Expr []_keys;
-  protected final Expr []_values;
 
-  public FunArrayExpr(Location location,
-                      ArrayList<Expr> keyList,
-                      ArrayList<Expr> valueList)
-  {
-    super(location);
+    protected final Expr[] _keys;
+    protected final Expr[] _values;
 
-    _keys = new Expr[keyList.size()];
-    keyList.toArray(_keys);
+    public FunArrayExpr(Location location,
+	    ArrayList<Expr> keyList,
+	    ArrayList<Expr> valueList) {
+	super(location);
 
-    _values = new Expr[valueList.size()];
-    valueList.toArray(_values);
-  }
+	_keys = new Expr[keyList.size()];
+	keyList.toArray(_keys);
 
-  public FunArrayExpr(Location location, Expr []keys, Expr []values)
-  {
-    super(location);
-    _keys = keys;
-    _values = values;
-  }
-
-  public FunArrayExpr(ArrayList<Expr> keyList, ArrayList<Expr> valueList)
-  {
-    this(Location.UNKNOWN, keyList, valueList);
-  }
-
-  public FunArrayExpr(Expr []keys, Expr []values)
-  {
-    this(Location.UNKNOWN, keys, values);
-  }
-
-  /**
-   * Returns true if the expression evaluates to an array.
-   */
-  public boolean isArray()
-  {
-    return true;
-  }
-
-  /**
-   * Returns true for a constant array.
-   */
-  public boolean isConstant()
-  {
-    for (int i = 0; i < _keys.length; i++) {
-      if (_keys[i] != null && ! _keys[i].isConstant())
-        return false;
+	_values = new Expr[valueList.size()];
+	valueList.toArray(_values);
     }
 
-    for (int i = 0; i < _values.length; i++) {
-      if (_values[i] != null && ! _values[i].isConstant())
-        return false;
+    public FunArrayExpr(Location location, Expr[] keys, Expr[] values) {
+	super(location);
+	_keys = keys;
+	_values = values;
     }
 
-    return true;
-  }
-
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    ArrayValue array = new ArrayValueImpl();
-
-    for (int i = 0; i < _values.length; i++) {
-      Expr keyExpr = _keys[i];
-
-      Value value = _values[i].evalArg(env, true);
-      // php/0471
-      value = value.toRefValue();
-
-      if (keyExpr != null) {
-        Value key = keyExpr.evalArg(env, true).toLocalValue();
-
-        array.put(key, value);
-      }
-      else
-        array.put(value);
+    public FunArrayExpr(ArrayList<Expr> keyList, ArrayList<Expr> valueList) {
+	this(Location.UNKNOWN, keyList, valueList);
     }
 
-    return array;
-  }
+    public FunArrayExpr(Expr[] keys, Expr[] values) {
+	this(Location.UNKNOWN, keys, values);
+    }
 
-  public String toString()
-  {
-    return "array()";
-  }
+    /**
+     * Returns true if the expression evaluates to an array.
+     */
+    public boolean isArray() {
+	return true;
+    }
+
+    /**
+     * Returns true for a constant array.
+     */
+    public boolean isConstant() {
+	for (int i = 0; i < _keys.length; i++) {
+	    if (_keys[i] != null && !_keys[i].isConstant()) {
+		return false;
+	    }
+	}
+
+	for (int i = 0; i < _values.length; i++) {
+	    if (_values[i] != null && !_values[i].isConstant()) {
+		return false;
+	    }
+	}
+
+	return true;
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	ArrayValue array = new ArrayValueImpl();
+
+	for (int i = 0; i < _values.length; i++) {
+	    Expr keyExpr = _keys[i];
+
+	    Value value = _values[i].evalArg(env, true);
+	    // php/0471
+	    value = value.toRefValue();
+
+	    if (keyExpr != null) {
+		Value key = keyExpr.evalArg(env, true).toLocalValue();
+
+		array.put(key, value);
+	    } else {
+		array.put(value);
+	    }
+	}
+
+	return array;
+    }
+
+    public String toString() {
+	return "array()";
+    }
 }
-

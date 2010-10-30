@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,55 +37,47 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP null expression.
  */
 public class LiteralNullExpr extends Expr {
-  public static final LiteralNullExpr NULL
-    = new LiteralNullExpr(Location.UNKNOWN);
 
-  private LiteralNullExpr(Location location)
-  {
-    super(location);
-  }
-  
-  protected LiteralNullExpr()
-  {
-  }
+    public static final LiteralNullExpr NULL = new LiteralNullExpr(Location.UNKNOWN);
 
-  /**
-   * Evaluates the expression as a constant.
-   *
-   * @return the expression value.
-   */
-  public Value evalConstant()
-  {
-    return NullValue.NULL;
-  }
+    private LiteralNullExpr(Location location) {
+	super(location);
+    }
 
-  /**
-   * Returns true for a literal expression.
-   */
-  public boolean isLiteral()
-  {
-    return true;
-  }
+    protected LiteralNullExpr() {
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return NullValue.create();
-  }
+    /**
+     * Evaluates the expression as a constant.
+     *
+     * @return the expression value.
+     */
+    public Value evalConstant() {
+	return NullValue.NULL;
+    }
 
-  //
-  // Java code generation
-  //
+    /**
+     * Returns true for a literal expression.
+     */
+    public boolean isLiteral() {
+	return true;
+    }
 
-  public String toString()
-  {
-    return "null";
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return NullValue.create();
+    }
+
+    //
+    // Java code generation
+    //
+    public String toString() {
+	return "null";
+    }
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,23 +37,20 @@ import java.util.ArrayList;
  * Represents a PHP method call expression from $this.
  */
 public class ThisMethodVarExpr extends ObjectMethodVarExpr {
-  private static final L10N L = new L10N(ThisMethodVarExpr.class);
 
-  public ThisMethodVarExpr(Location location, 
-                        ThisExpr qThis,
-                        Expr methodName, 
-                        ArrayList<Expr> args)
-  {
-    super(location, qThis, methodName, args);
-  }
+    private static final L10N L = new L10N(ThisMethodVarExpr.class);
 
-  //
-  // java code generation
-  //
+    public ThisMethodVarExpr(Location location,
+	    ThisExpr qThis,
+	    Expr methodName,
+	    ArrayList<Expr> args) {
+	super(location, qThis, methodName, args);
+    }
 
-  public String toString()
-  {
-    return "$this->" + _name + "()";
-  }
+    //
+    // java code generation
+    //
+    public String toString() {
+	return "$this->" + _name + "()";
+    }
 }
-

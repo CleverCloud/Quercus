@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,33 +37,29 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP default expression.
  */
 public class ParamDefaultExpr extends Expr {
-  public static final ParamDefaultExpr DEFAULT = new ParamDefaultExpr();
 
-  public ParamDefaultExpr(Location location)
-  {
-    super(location);
-  }
+    public static final ParamDefaultExpr DEFAULT = new ParamDefaultExpr();
 
-  public ParamDefaultExpr()
-  {
-    super();
-  }
+    public ParamDefaultExpr(Location location) {
+	super(location);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return DefaultValue.DEFAULT;
-  }
+    public ParamDefaultExpr() {
+	super();
+    }
 
-  public String toString()
-  {
-    return "default";
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return DefaultValue.DEFAULT;
+    }
+
+    public String toString() {
+	return "default";
+    }
 }
-

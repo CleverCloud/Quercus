@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,31 +36,27 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP clone
  */
 public class FunCloneExpr extends AbstractUnaryExpr {
-  public FunCloneExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
-  
-  public FunCloneExpr(Expr expr)
-  {
-    super(expr);
-  }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return _expr.eval(env).clone(env);
-  }
+    public FunCloneExpr(Location location, Expr expr) {
+	super(location, expr);
+    }
 
-  public String toString()
-  {
-    return "clone " + _expr.toString();
-  }
+    public FunCloneExpr(Expr expr) {
+	super(expr);
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return _expr.eval(env).clone(env);
+    }
+
+    public String toString() {
+	return "clone " + _expr.toString();
+    }
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,88 +36,81 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP assignment expression.
  */
 public class BinaryAssignRefExpr extends Expr {
-  protected final AbstractVarExpr _var;
-  protected final Expr _value;
 
-  public BinaryAssignRefExpr(Location location, AbstractVarExpr var, Expr value)
-  {
-    super(location);
-    _var = var;
-    _value = value;
-  }
+    protected final AbstractVarExpr _var;
+    protected final Expr _value;
 
-  public BinaryAssignRefExpr(AbstractVarExpr var, Expr value)
-  {
-    _var = var;
-    _value = value;
-  }
+    public BinaryAssignRefExpr(Location location, AbstractVarExpr var, Expr value) {
+	super(location);
+	_var = var;
+	_value = value;
+    }
 
-  /**
-   * Returns true if a static false value.
-   */
-  @Override
-  public boolean isAssign()
-  {
-    return true;
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value eval(Env env)
-  {
-    // value can be a Value or Var
-    Value value = _value.evalRef(env);
-    
-    _var.evalAssignRef(env, value);
+    public BinaryAssignRefExpr(AbstractVarExpr var, Expr value) {
+	_var = var;
+	_value = value;
+    }
 
-    return value.toValue();
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalCopy(Env env)
-  {
-    // value can be a Value or Var
-    Value value = _value.evalRef(env);
-    
-    _var.evalAssignRef(env, value);
+    /**
+     * Returns true if a static false value.
+     */
+    @Override
+    public boolean isAssign() {
+	return true;
+    }
 
-    return value.toValue().copy();
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalRef(Env env)
-  {
-    // value can be a Value or Var
-    Value value = _value.evalRef(env);
-    
-    _var.evalAssignRef(env, value);
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value eval(Env env) {
+	// value can be a Value or Var
+	Value value = _value.evalRef(env);
 
-    return value;
-  }
+	_var.evalAssignRef(env, value);
 
-  public String toString()
-  {
-    return "(" + _var + " =& " + _value + ")";
-  }
+	return value.toValue();
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalCopy(Env env) {
+	// value can be a Value or Var
+	Value value = _value.evalRef(env);
+
+	_var.evalAssignRef(env, value);
+
+	return value.toValue().copy();
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalRef(Env env) {
+	// value can be a Value or Var
+	Value value = _value.evalRef(env);
+
+	_var.evalAssignRef(env, value);
+
+	return value;
+    }
+
+    public String toString() {
+	return "(" + _var + " =& " + _value + ")";
+    }
 }
-

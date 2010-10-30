@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,57 +36,51 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP right shift expression.
  */
 public class BinaryRightShiftExpr extends AbstractBinaryExpr {
-  public BinaryRightShiftExpr(Location location, Expr left, Expr right)
-  {
-    super(location, left, right);
-  }
 
-  public BinaryRightShiftExpr(Expr left, Expr right)
-  {
-    super(left, right);
-  }
+    public BinaryRightShiftExpr(Location location, Expr left, Expr right) {
+	super(location, left, right);
+    }
 
-  /**
-   * Returns true for a long expression.
-   */
-  public boolean isLong()
-  {
-    return true;
-  }
+    public BinaryRightShiftExpr(Expr left, Expr right) {
+	super(left, right);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    Value lValue = _left.eval(env);
-    Value rValue = _right.eval(env);
+    /**
+     * Returns true for a long expression.
+     */
+    public boolean isLong() {
+	return true;
+    }
 
-    return lValue.rshift(rValue);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	Value lValue = _left.eval(env);
+	Value rValue = _right.eval(env);
 
-  /**
-   * Evaluates the expression as a long.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public long evalLong(Env env)
-  {
-    Value lValue = _left.eval(env);
-    Value rValue = _right.eval(env);
+	return lValue.rshift(rValue);
+    }
 
-    return lValue.toLong() >> rValue.toLong();
-  }
+    /**
+     * Evaluates the expression as a long.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public long evalLong(Env env) {
+	Value lValue = _left.eval(env);
+	Value rValue = _right.eval(env);
 
-  public String toString()
-  {
-    return "(" + _left + " >> " + _right + ")";
-  }
+	return lValue.toLong() >> rValue.toLong();
+    }
+
+    public String toString() {
+	return "(" + _left + " >> " + _right + ")";
+    }
 }
-

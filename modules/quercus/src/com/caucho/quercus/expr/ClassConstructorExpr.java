@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -45,75 +44,71 @@ import java.util.ArrayList;
  * Represents a PHP A::A consturctor call
  */
 public class ClassConstructorExpr extends Expr {
-  private static final L10N L = new L10N(ClassConstructorExpr.class);
 
-  protected final String _className;
-  protected final StringValue _name;
-  protected final Expr []_args;
+    private static final L10N L = new L10N(ClassConstructorExpr.class);
+    protected final String _className;
+    protected final StringValue _name;
+    protected final Expr[] _args;
 
-  public ClassConstructorExpr(Location location, 
-                              String className,
-                              String name,
-                              ArrayList<Expr> args)
-  {
-    super(location);
+    public ClassConstructorExpr(Location location,
+	    String className,
+	    String name,
+	    ArrayList<Expr> args) {
+	super(location);
 
-    _className = className.intern();
-    
-    _name = MethodIntern.intern(name);
+	_className = className.intern();
 
-    _args = new Expr[args.size()];
-    args.toArray(_args);
-  }
+	_name = MethodIntern.intern(name);
 
-  public ClassConstructorExpr(Location location, 
-                              String className,
-                              String name,
-                              Expr []args)
-  {
-    super(location);
-
-    _className = className.intern();
-    
-    _name = MethodIntern.intern(name);
-
-    _args = args;
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    QuercusClass cl = env.findClass(_className);
-
-    if (cl == null)
-      throw env.createErrorException(L.l("{0} is an unknown class",
-                                         _className));
-
-    AbstractFunction fun = cl.getFunction(_name);
-    
-    Value []values = evalArgs(env, _args);
-
-    Value qThis = env.getThis();
-    env.pushCall(this, qThis, values);
-
-    try {
-      env.checkTimeout();
-
-      return cl.callMethod(env, qThis, _name, _name.hashCode(), values);
-    } finally {
-      env.popCall();
+	_args = new Expr[args.size()];
+	args.toArray(_args);
     }
-  }
-  
-  public String toString()
-  {
-    return _className + "::" + _name + "()";
-  }
-}
 
+    public ClassConstructorExpr(Location location,
+	    String className,
+	    String name,
+	    Expr[] args) {
+	super(location);
+
+	_className = className.intern();
+
+	_name = MethodIntern.intern(name);
+
+	_args = args;
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	QuercusClass cl = env.findClass(_className);
+
+	if (cl == null) {
+	    throw env.createErrorException(L.l("{0} is an unknown class",
+		    _className));
+	}
+
+	AbstractFunction fun = cl.getFunction(_name);
+
+	Value[] values = evalArgs(env, _args);
+
+	Value qThis = env.getThis();
+	env.pushCall(this, qThis, values);
+
+	try {
+	    env.checkTimeout();
+
+	    return cl.callMethod(env, qThis, _name, _name.hashCode(), values);
+	} finally {
+	    env.popCall();
+	}
+    }
+
+    public String toString() {
+	return _className + "::" + _name + "()";
+    }
+}

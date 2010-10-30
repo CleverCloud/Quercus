@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,34 +37,30 @@ import com.caucho.quercus.env.Value;
  * For portability of compiled code.
  */
 public class ConstFileExpr extends Expr {
-  protected final String _fileName;
 
-  public ConstFileExpr(Location location, String fileName)
-  {
-    super(location);
-    _fileName = fileName;
-  }
+    protected final String _fileName;
 
-  public ConstFileExpr(String fileName)
-  {
-    this(Location.UNKNOWN, fileName);
-  }
+    public ConstFileExpr(Location location, String fileName) {
+	super(location);
+	_fileName = fileName;
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return env.createString(_fileName);
-  }
+    public ConstFileExpr(String fileName) {
+	this(Location.UNKNOWN, fileName);
+    }
 
-  public String toString()
-  {
-    return _fileName;
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return env.createString(_fileName);
+    }
+
+    public String toString() {
+	return _fileName;
+    }
 }
-

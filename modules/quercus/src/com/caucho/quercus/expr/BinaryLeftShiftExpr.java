@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,42 +36,37 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP left shift expression.
  */
 public class BinaryLeftShiftExpr extends AbstractBinaryExpr {
-  public BinaryLeftShiftExpr(Location location, Expr left, Expr right)
-  {
-    super(location, left, right);
-  }
 
-  public BinaryLeftShiftExpr(Expr left, Expr right)
-  {
-    super(left, right);
-  }
+    public BinaryLeftShiftExpr(Location location, Expr left, Expr right) {
+	super(location, left, right);
+    }
 
-  /**
-   * Returns true for a long.
-   */
-  public boolean isLong()
-  {
-    return true;
-  }
+    public BinaryLeftShiftExpr(Expr left, Expr right) {
+	super(left, right);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    Value lValue = _left.eval(env);
-    Value rValue = _right.eval(env);
+    /**
+     * Returns true for a long.
+     */
+    public boolean isLong() {
+	return true;
+    }
 
-    return lValue.lshift(rValue);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	Value lValue = _left.eval(env);
+	Value rValue = _right.eval(env);
 
-  public String toString()
-  {
-    return "(" + _left + " << " + _right + ")";
-  }
+	return lValue.lshift(rValue);
+    }
+
+    public String toString() {
+	return "(" + _left + " << " + _right + ")";
+    }
 }
-

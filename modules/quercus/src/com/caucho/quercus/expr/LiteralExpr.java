@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -39,104 +38,95 @@ import com.caucho.quercus.env.Value;
  * Represents a literal expression.
  */
 public class LiteralExpr extends Expr {
-  private final Value _value;
 
-  public LiteralExpr(Value value)
-  {
-    _value = value;
-  }
+    private final Value _value;
 
-  protected Value getValue()
-  {
-    return _value;
-  }
+    public LiteralExpr(Value value) {
+	_value = value;
+    }
 
-  /**
-   * Returns true for a literal expression.
-   */
-  @Override
-  public boolean isLiteral()
-  {
-    return true;
-  }
+    protected Value getValue() {
+	return _value;
+    }
 
-  /**
-   * Returns true if a static true value.
-   */
-  @Override
-  public boolean isTrue()
-  {
-    if (_value == BooleanValue.TRUE)
-      return true;
-    else if (_value instanceof LongValue)
-      return _value.toLong() != 0;
-    else
-      return false;
-  }
+    /**
+     * Returns true for a literal expression.
+     */
+    @Override
+    public boolean isLiteral() {
+	return true;
+    }
 
-  /**
-   * Returns true if a static true value.
-   */
-  @Override
-  public boolean isFalse()
-  {
-    if (_value == BooleanValue.FALSE)
-      return true;
-    else if (_value instanceof LongValue)
-      return _value.toLong() == 0;
-    else
-      return false;
-  }
+    /**
+     * Returns true if a static true value.
+     */
+    @Override
+    public boolean isTrue() {
+	if (_value == BooleanValue.TRUE) {
+	    return true;
+	} else if (_value instanceof LongValue) {
+	    return _value.toLong() != 0;
+	} else {
+	    return false;
+	}
+    }
 
-  /**
-   * Returns true for a long value.
-   */
-  public boolean isLong()
-  {
-    return _value.isLongConvertible();
-  }
+    /**
+     * Returns true if a static true value.
+     */
+    @Override
+    public boolean isFalse() {
+	if (_value == BooleanValue.FALSE) {
+	    return true;
+	} else if (_value instanceof LongValue) {
+	    return _value.toLong() == 0;
+	} else {
+	    return false;
+	}
+    }
 
-  /**
-   * Returns true for a double value.
-   */
-  public boolean isDouble()
-  {
-    return _value.isDoubleConvertible();
-  }
+    /**
+     * Returns true for a long value.
+     */
+    public boolean isLong() {
+	return _value.isLongConvertible();
+    }
 
-  /*
-   *
-   */
-  public boolean isBoolean()
-  {
-    return _value.isBoolean();
-  }
+    /**
+     * Returns true for a double value.
+     */
+    public boolean isDouble() {
+	return _value.isDoubleConvertible();
+    }
 
-  /**
-   * Evaluates the expression as a constant.
-   *
-   * @return the expression value.
-   */
-  public Value evalConstant()
-  {
-    return _value;
-  }
+    /*
+     *
+     */
+    public boolean isBoolean() {
+	return _value.isBoolean();
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return _value;
-  }
+    /**
+     * Evaluates the expression as a constant.
+     *
+     * @return the expression value.
+     */
+    public Value evalConstant() {
+	return _value;
+    }
 
-  public String toString()
-  {
-    return _value.toString();
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return _value;
+    }
+
+    public String toString() {
+	return _value.toString();
+    }
 }
-

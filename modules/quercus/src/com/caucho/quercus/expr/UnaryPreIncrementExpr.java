@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,59 +36,53 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP pre increment expression.
  */
 public class UnaryPreIncrementExpr extends AbstractUnaryExpr {
-  protected final int _incr;
 
-  public UnaryPreIncrementExpr(Location location, Expr expr, int incr)
-  {
-    // super(expr.createRef());
-    super(location, expr);
+    protected final int _incr;
 
-    _incr = incr;
-  }
+    public UnaryPreIncrementExpr(Location location, Expr expr, int incr) {
+	// super(expr.createRef());
+	super(location, expr);
 
-  public UnaryPreIncrementExpr(Expr expr, int incr)
-  {
-    // super(expr.createRef());
-    super(expr);
+	_incr = incr;
+    }
 
-    _incr = incr;
-  }
+    public UnaryPreIncrementExpr(Expr expr, int incr) {
+	// super(expr.createRef());
+	super(expr);
 
-  public Value eval(Env env)
-  {
-    return _expr.evalPreIncrement(env, _incr);
-  }
+	_incr = incr;
+    }
 
-  /**
-   * Return true for a double value
-   */
-  public boolean isDouble()
-  {
-    return _expr.isDouble();
-  }
+    public Value eval(Env env) {
+	return _expr.evalPreIncrement(env, _incr);
+    }
 
-  /**
-   * Return true for a long value
-   */
-  public boolean isLong()
-  {
-    return _expr.isLong();
-  }
+    /**
+     * Return true for a double value
+     */
+    public boolean isDouble() {
+	return _expr.isDouble();
+    }
 
-  /**
-   * Return true for a number
-   */
-  public boolean isNumber()
-  {
-    return true;
-  }
+    /**
+     * Return true for a long value
+     */
+    public boolean isLong() {
+	return _expr.isLong();
+    }
 
-  public String toString()
-  {
-    if (_incr > 0)
-      return "++" + _expr;
-    else
-      return "--" + _expr;
-  }
+    /**
+     * Return true for a number
+     */
+    public boolean isNumber() {
+	return true;
+    }
+
+    public String toString() {
+	if (_incr > 0) {
+	    return "++" + _expr;
+	} else {
+	    return "--" + _expr;
+	}
+    }
 }
-

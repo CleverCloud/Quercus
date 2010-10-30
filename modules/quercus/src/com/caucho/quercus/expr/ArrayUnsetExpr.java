@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,40 +36,36 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP array unset expression.
  */
 public class ArrayUnsetExpr extends Expr {
-  protected final Expr _expr;
-  protected final Expr _index;
 
-  public ArrayUnsetExpr(Location location, Expr expr, Expr index)
-  {
-    super(location);
-    _expr = expr;
-    _index = index;
-  }
+    protected final Expr _expr;
+    protected final Expr _index;
 
-  public ArrayUnsetExpr(Expr expr, Expr index)
-  {
-    _expr = expr;
-    _index = index;
-  }
+    public ArrayUnsetExpr(Location location, Expr expr, Expr index) {
+	super(location);
+	_expr = expr;
+	_index = index;
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    Value array = _expr.eval(env);
-    Value index = _index.eval(env);
+    public ArrayUnsetExpr(Expr expr, Expr index) {
+	_expr = expr;
+	_index = index;
+    }
 
-    return array.remove(index);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	Value array = _expr.eval(env);
+	Value index = _index.eval(env);
 
-  public String toString()
-  {
-    return "unset(" + _expr + "[" + _index + "])";
-  }
+	return array.remove(index);
+    }
+
+    public String toString() {
+	return "unset(" + _expr + "[" + _index + "])";
+    }
 }
-

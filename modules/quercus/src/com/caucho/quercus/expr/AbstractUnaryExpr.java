@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -35,25 +34,22 @@ import com.caucho.quercus.Location;
  * Represents a PHP boolean negation
  */
 abstract public class AbstractUnaryExpr extends Expr {
-  protected final Expr _expr;
 
-  protected AbstractUnaryExpr(Location location, Expr expr)
-  {
-    super(location);
-    _expr = expr;
-  }
+    protected final Expr _expr;
 
-  protected AbstractUnaryExpr(Expr expr)
-  {
-    _expr = expr;
-  }
+    protected AbstractUnaryExpr(Location location, Expr expr) {
+	super(location);
+	_expr = expr;
+    }
 
-  /**
-   * Returns the child expression.
-   */
-  public final Expr getExpr()
-  {
-    return _expr;
-  }
+    protected AbstractUnaryExpr(Expr expr) {
+	_expr = expr;
+    }
+
+    /**
+     * Returns the child expression.
+     */
+    public final Expr getExpr() {
+	return _expr;
+    }
 }
-

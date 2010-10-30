@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -41,90 +40,82 @@ import com.caucho.quercus.parser.QuercusParser;
  * Represents a PHP reference argument.
  */
 public class UnaryRefExpr extends AbstractUnaryExpr {
-  public UnaryRefExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
 
-  public UnaryRefExpr(Expr expr)
-  {
-    super(expr);
-  }
+    public UnaryRefExpr(Location location, Expr expr) {
+	super(location, expr);
+    }
 
-  /**
-   * Returns true for a reference.
-   */
-  public boolean isRef()
-  {
-    return true;
-  }
-  
-  /**
-   * Creates an assignment using this value as the right hand side.
-   */
-  @Override
-  public Expr createAssignFrom(QuercusParser parser,
-                               AbstractVarExpr leftHandSide)
-  {
-    ExprFactory factory = parser.getExprFactory();
-    
-    return factory.createAssignRef(leftHandSide, _expr);
-  }
+    public UnaryRefExpr(Expr expr) {
+	super(expr);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    // quercus/0d28
-    Value value = getExpr().evalVar(env);
-    
-    return value.toRef();
-  }
+    /**
+     * Returns true for a reference.
+     */
+    public boolean isRef() {
+	return true;
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalArg(Env env, boolean isTop)
-  {
-    Value value = getExpr().evalVar(env);
-    
-    return value.toArgRef();
-  }
+    /**
+     * Creates an assignment using this value as the right hand side.
+     */
+    @Override
+    public Expr createAssignFrom(QuercusParser parser,
+	    AbstractVarExpr leftHandSide) {
+	ExprFactory factory = parser.getExprFactory();
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Var evalVar(Env env)
-  {
-    Var value = getExpr().evalVar(env);
+	return factory.createAssignRef(leftHandSide, _expr);
+    }
 
-    // php/112d
-    return value;
-    /*
-    if (value instanceof Var)
-      return new RefVar((Var) value);
-    else
-      return value;
-    */
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	// quercus/0d28
+	Value value = getExpr().evalVar(env);
 
-  public String toString()
-  {
-    return _expr.toString();
-  }
+	return value.toRef();
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalArg(Env env, boolean isTop) {
+	Value value = getExpr().evalVar(env);
+
+	return value.toArgRef();
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Var evalVar(Env env) {
+	Var value = getExpr().evalVar(env);
+
+	// php/112d
+	return value;
+	/*
+	if (value instanceof Var)
+	return new RefVar((Var) value);
+	else
+	return value;
+	 */
+    }
+
+    public String toString() {
+	return _expr.toString();
+    }
 }
-

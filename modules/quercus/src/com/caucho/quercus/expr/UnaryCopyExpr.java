@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,44 +36,39 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP variable assignment
  */
 public class UnaryCopyExpr extends AbstractUnaryExpr {
-  public UnaryCopyExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
 
-  public UnaryCopyExpr(Expr expr)
-  {
-    super(expr);
-  }
+    public UnaryCopyExpr(Location location, Expr expr) {
+	super(location, expr);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return _expr.eval(env).copy();
-  }
+    public UnaryCopyExpr(Expr expr) {
+	super(expr);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalArg(Env env, boolean isTop)
-  {
-    return eval(env);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return _expr.eval(env).copy();
+    }
 
-  public String toString()
-  {
-    return _expr.toString();
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalArg(Env env, boolean isTop) {
+	return eval(env);
+    }
+
+    public String toString() {
+	return _expr.toString();
+    }
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,31 +36,27 @@ import com.caucho.quercus.env.Value;
  * A "- $a" unary minus.
  */
 public class UnaryMinusExpr extends AbstractUnaryExpr {
-  public UnaryMinusExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
 
-  public UnaryMinusExpr(Expr expr)
-  {
-    super(expr);
-  }
+    public UnaryMinusExpr(Location location, Expr expr) {
+	super(location, expr);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return _expr.eval(env).neg();
-  }
+    public UnaryMinusExpr(Expr expr) {
+	super(expr);
+    }
 
-  public String toString()
-  {
-    return "-" + _expr;
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return _expr.eval(env).neg();
+    }
+
+    public String toString() {
+	return "-" + _expr;
+    }
 }
-

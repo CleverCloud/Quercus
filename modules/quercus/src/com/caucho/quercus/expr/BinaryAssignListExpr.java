@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.env.Env;
@@ -36,42 +35,39 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP list assignment expression.
  */
 public class BinaryAssignListExpr extends Expr {
-  protected final ListHeadExpr _listHead;
-  protected final Expr _value;
 
-  protected BinaryAssignListExpr(ListHeadExpr head, Expr value)
-  {
-    _listHead = head;
+    protected final ListHeadExpr _listHead;
+    protected final Expr _value;
 
-    _value = value;
-  }
+    protected BinaryAssignListExpr(ListHeadExpr head, Expr value) {
+	_listHead = head;
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    Value value = _value.eval(env);
+	_value = value;
+    }
 
-    _listHead.evalAssignValue(env, value);
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	Value value = _value.eval(env);
 
-    return value;
-  }
+	_listHead.evalAssignValue(env, value);
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value evalCopy(Env env)
-  {
-    return eval(env).copy();
-  }
+	return value;
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value evalCopy(Env env) {
+	return eval(env).copy();
+    }
 }
-

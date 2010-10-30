@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,31 +37,27 @@ import com.caucho.quercus.env.Value;
  * Converts to a long
  */
 public class ToLongExpr extends AbstractUnaryExpr {
-  public ToLongExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
 
-  public ToLongExpr(Expr expr)
-  {
-    super(expr);
-  }
+    public ToLongExpr(Location location, Expr expr) {
+	super(location, expr);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return LongValue.create(_expr.evalLong(env));
-  }
+    public ToLongExpr(Expr expr) {
+	super(expr);
+    }
 
-  public String toString()
-  {
-    return "((long) " + _expr + ")";
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return LongValue.create(_expr.evalLong(env));
+    }
+
+    public String toString() {
+	return "((long) " + _expr + ")";
+    }
 }
-

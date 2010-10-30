@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,31 +37,27 @@ import com.caucho.quercus.env.Value;
  * Converts to a boolean
  */
 public class ToBooleanExpr extends AbstractUnaryExpr {
-  public ToBooleanExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
 
-  public ToBooleanExpr(Expr expr)
-  {
-    super(expr);
-  }
+    public ToBooleanExpr(Location location, Expr expr) {
+	super(location, expr);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return _expr.evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
-  }
+    public ToBooleanExpr(Expr expr) {
+	super(expr);
+    }
 
-  public String toString()
-  {
-    return "((boolean) " + _expr + ")";
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return _expr.evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
+    }
+
+    public String toString() {
+	return "((boolean) " + _expr + ")";
+    }
 }
-

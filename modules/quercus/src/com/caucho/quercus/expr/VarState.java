@@ -26,16 +26,16 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 /**
  * Represents the state of a PHP variable.
  */
 public enum VarState {
-  INIT,
-  UNKNOWN,
-  VALID,
-  UNSET,
-  UNDEFINED
+
+    INIT,
+    UNKNOWN,
+    VALID,
+    UNSET,
+    UNDEFINED
 }

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import java.io.IOException;
@@ -47,118 +46,109 @@ import com.caucho.util.L10N;
  * Represents a PHP static field reference.
  */
 public class ClassVirtualFieldExpr extends AbstractVarExpr {
-  private static final L10N L = new L10N(ClassVirtualFieldExpr.class);
 
-  protected final StringValue _varName;
+    private static final L10N L = new L10N(ClassVirtualFieldExpr.class);
+    protected final StringValue _varName;
 
-  public ClassVirtualFieldExpr(String varName)
-  {
-    _varName = MethodIntern.intern(varName);
-  }
-  
-  //
-  // function call creation
-  //
+    public ClassVirtualFieldExpr(String varName) {
+	_varName = MethodIntern.intern(varName);
+    }
 
-  /**
-   * Creates a function call expression
-   */
-  @Override
-  public Expr createCall(QuercusParser parser,
-                         Location location,
-                         ArrayList<Expr> args)
-    throws IOException
-  {
-    ExprFactory factory = parser.getExprFactory();
-    
-    Expr var = parser.createVar(_varName.toString());
-    
-    return factory.createClassVirtualMethodCall(location, var, args);
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value eval(Env env)
-  {
-    Value qThis = env.getThis();
-    QuercusClass qClass = qThis != null ? qThis.getQuercusClass() : null;
-    
-    if (qClass == null) {
-      env.error(L.l("No calling class found for '{0}'", this));
-      
-      return NullValue.NULL;
+    //
+    // function call creation
+    //
+    /**
+     * Creates a function call expression
+     */
+    @Override
+    public Expr createCall(QuercusParser parser,
+	    Location location,
+	    ArrayList<Expr> args)
+	    throws IOException {
+	ExprFactory factory = parser.getExprFactory();
+
+	Expr var = parser.createVar(_varName.toString());
+
+	return factory.createClassVirtualMethodCall(location, var, args);
     }
-    
-    return qClass.getStaticFieldValue(env, _varName);
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Var evalVar(Env env)
-  {
-    Value qThis = env.getThis();
-    QuercusClass qClass = qThis != null ? qThis.getQuercusClass() : null;
-    
-    if (qClass == null) {
-      env.error(L.l("No calling class found for '{0}'", this));
-      
-      return NullValue.NULL.toVar();
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value eval(Env env) {
+	Value qThis = env.getThis();
+	QuercusClass qClass = qThis != null ? qThis.getQuercusClass() : null;
+
+	if (qClass == null) {
+	    env.error(L.l("No calling class found for '{0}'", this));
+
+	    return NullValue.NULL;
+	}
+
+	return qClass.getStaticFieldValue(env, _varName);
     }
-    
-    return qClass.getStaticFieldVar(env, _varName);
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalAssignRef(Env env, Value value)
-  {
-    Value qThis = env.getThis();
-    QuercusClass qClass = qThis != null ? qThis.getQuercusClass() : null;
-    
-    if (qClass == null) {
-      env.error(L.l("No calling class found for '{0}'", this));
-      
-      return NullValue.NULL.toVar();
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Var evalVar(Env env) {
+	Value qThis = env.getThis();
+	QuercusClass qClass = qThis != null ? qThis.getQuercusClass() : null;
+
+	if (qClass == null) {
+	    env.error(L.l("No calling class found for '{0}'", this));
+
+	    return NullValue.NULL.toVar();
+	}
+
+	return qClass.getStaticFieldVar(env, _varName);
     }
-    
-    return qClass.setStaticFieldRef(env, _varName, value);
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public void evalUnset(Env env)
-  {
-    env.error(getLocation(),
-              L.l("{0}::${1}: Cannot unset static variables.",
-                      env.getCallingClass().getName(), _varName));
-  }
-  
-  public String toString()
-  {
-    return "static::$" + _varName;
-  }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalAssignRef(Env env, Value value) {
+	Value qThis = env.getThis();
+	QuercusClass qClass = qThis != null ? qThis.getQuercusClass() : null;
+
+	if (qClass == null) {
+	    env.error(L.l("No calling class found for '{0}'", this));
+
+	    return NullValue.NULL.toVar();
+	}
+
+	return qClass.setStaticFieldRef(env, _varName, value);
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public void evalUnset(Env env) {
+	env.error(getLocation(),
+		L.l("{0}::${1}: Cannot unset static variables.",
+		env.getCallingClass().getName(), _varName));
+    }
+
+    public String toString() {
+	return "static::$" + _varName;
+    }
 }
-

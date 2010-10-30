@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,43 +37,37 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP boolean negation
  */
 public class UnaryNotExpr extends AbstractUnaryExpr {
-  public UnaryNotExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
 
-  public UnaryNotExpr(Expr expr)
-  {
-    super(expr);
-  }
+    public UnaryNotExpr(Location location, Expr expr) {
+	super(location, expr);
+    }
 
-  /**
-   * Return true as a boolean.
-   */
-  public boolean isBoolean()
-  {
-    return true;
-  }
+    public UnaryNotExpr(Expr expr) {
+	super(expr);
+    }
 
-  /**
-   * Evaluates the equality as a boolean.
-   */
-  public Value eval(Env env)
-  {
-    return _expr.evalBoolean(env) ? BooleanValue.FALSE : BooleanValue.TRUE;
-  }
+    /**
+     * Return true as a boolean.
+     */
+    public boolean isBoolean() {
+	return true;
+    }
 
-  /**
-   * Evaluates the equality as a boolean.
-   */
-  public boolean evalBoolean(Env env)
-  {
-    return ! _expr.evalBoolean(env);
-  }
+    /**
+     * Evaluates the equality as a boolean.
+     */
+    public Value eval(Env env) {
+	return _expr.evalBoolean(env) ? BooleanValue.FALSE : BooleanValue.TRUE;
+    }
 
-  public String toString()
-  {
-    return "! " + _expr;
-  }
+    /**
+     * Evaluates the equality as a boolean.
+     */
+    public boolean evalBoolean(Env env) {
+	return !_expr.evalBoolean(env);
+    }
+
+    public String toString() {
+	return "! " + _expr;
+    }
 }
-

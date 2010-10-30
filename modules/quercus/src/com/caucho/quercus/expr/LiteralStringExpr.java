@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -41,117 +40,102 @@ import com.caucho.quercus.parser.QuercusParser;
  * Represents a PHP string literal expression.
  */
 public class LiteralStringExpr extends Expr {
-  protected final StringValue _value;
 
-  public LiteralStringExpr(Location location, String value)
-  {
-    super(location);
-    
-    _value = new ConstStringValue(value);
-  }
+    protected final StringValue _value;
 
-  public LiteralStringExpr(Location location, StringValue value)
-  {
-    super(location);
-    
-    _value = value;
-  }
+    public LiteralStringExpr(Location location, String value) {
+	super(location);
 
-  public LiteralStringExpr(String value)
-  {
-    this(Location.UNKNOWN, value);
-  }
-
-  public LiteralStringExpr(StringValue value)
-  {
-    this(Location.UNKNOWN, value);
-  }
-
-  /**
-   * Returns true for a literal expression.
-   */
-  public boolean isLiteral()
-  {
-    return true;
-  }
-  
-  /**
-   * Returns true if the expression evaluates to a string.
-   */
-  public boolean isString()
-  {
-    return true;
-  }
-  
-  //
-  // expression creation
-  //
-  
-  /**
-   * Creates a class field $class::foo
-   */
-  public Expr createClassConst(QuercusParser parser, String name)
-  {
-    ExprFactory factory = parser.getExprFactory();
-    
-    String className = _value.toString();
-    
-    if ("self".equals(className)) {
-      className = parser.getSelfClassName();
-      
-      return factory.createClassConst(className, name);
+	_value = new ConstStringValue(value);
     }
-    else if ("parent".equals(className)) {
-      className = parser.getParentClassName();
-      
-      return factory.createClassConst(className, name);
+
+    public LiteralStringExpr(Location location, StringValue value) {
+	super(location);
+
+	_value = value;
     }
-    else if ("static".equals(className)) {
-      return factory.createClassVirtualConst(name);
+
+    public LiteralStringExpr(String value) {
+	this(Location.UNKNOWN, value);
     }
-    else {
-      return factory.createClassConst(className, name);
+
+    public LiteralStringExpr(StringValue value) {
+	this(Location.UNKNOWN, value);
     }
-  }
 
-  /**
-   * Evaluates the expression as a constant.
-   *
-   * @return the expression value.
-   */
-  public Value evalConstant()
-  {
-    return _value;
-  }
+    /**
+     * Returns true for a literal expression.
+     */
+    public boolean isLiteral() {
+	return true;
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return _value;
-  }
+    /**
+     * Returns true if the expression evaluates to a string.
+     */
+    public boolean isString() {
+	return true;
+    }
 
-  /**
-   * Evaluates the expression as a string value.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public StringValue evalStringValue(Env env)
-  {
-    return _value;
-  }
+    //
+    // expression creation
+    //
+    /**
+     * Creates a class field $class::foo
+     */
+    public Expr createClassConst(QuercusParser parser, String name) {
+	ExprFactory factory = parser.getExprFactory();
 
-  public String toString()
-  {
-    return "\"" + _value + "\"";
-  }
+	String className = _value.toString();
+
+	if ("self".equals(className)) {
+	    className = parser.getSelfClassName();
+
+	    return factory.createClassConst(className, name);
+	} else if ("parent".equals(className)) {
+	    className = parser.getParentClassName();
+
+	    return factory.createClassConst(className, name);
+	} else if ("static".equals(className)) {
+	    return factory.createClassVirtualConst(name);
+	} else {
+	    return factory.createClassConst(className, name);
+	}
+    }
+
+    /**
+     * Evaluates the expression as a constant.
+     *
+     * @return the expression value.
+     */
+    public Value evalConstant() {
+	return _value;
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return _value;
+    }
+
+    /**
+     * Evaluates the expression as a string value.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public StringValue evalStringValue(Env env) {
+	return _value;
+    }
+
+    public String toString() {
+	return "\"" + _value + "\"";
+    }
 }
-

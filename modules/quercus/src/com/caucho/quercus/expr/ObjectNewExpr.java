@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -42,67 +41,61 @@ import java.util.ArrayList;
  * Represents a PHP function expression of the form "new ClassName()".
  */
 public class ObjectNewExpr extends Expr {
-  private static final L10N L = new L10N(ObjectNewExpr.class);
-  protected final String _name;
-  protected final Expr []_args;
 
-  public ObjectNewExpr(Location location, String name, ArrayList<Expr> args)
-  {
-    super(location);
-    _name = name.intern();
+    private static final L10N L = new L10N(ObjectNewExpr.class);
+    protected final String _name;
+    protected final Expr[] _args;
 
-    _args = new Expr[args.size()];
-    args.toArray(_args);
-  }
+    public ObjectNewExpr(Location location, String name, ArrayList<Expr> args) {
+	super(location);
+	_name = name.intern();
 
-  public ObjectNewExpr(Location location, String name, Expr []args)
-  {
-    super(location);
-    _name = name.intern();
-    _args = args;
-  }
-
-  public ObjectNewExpr(String name, ArrayList<Expr> args)
-  {
-    this(Location.UNKNOWN, name, args);
-  }
-
-  public ObjectNewExpr(String name, Expr []args)
-  {
-    this(Location.UNKNOWN, name, args);
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    Value []args = new Value[_args.length];
-
-    for (int i = 0; i < args.length; i++) {
-      args[i] = _args[i].evalArg(env, true);
+	_args = new Expr[args.size()];
+	args.toArray(_args);
     }
-    
-    env.pushCall(this, NullValue.NULL, args);
-    
-    try {
-      QuercusClass cl = env.findAbstractClass(_name);
 
-      env.checkTimeout();
-
-      return cl.callNew(env, args);
-    } finally {
-      env.popCall();
+    public ObjectNewExpr(Location location, String name, Expr[] args) {
+	super(location);
+	_name = name.intern();
+	_args = args;
     }
-  }
-  
-  public String toString()
-  {
-    return _name + "()";
-  }
+
+    public ObjectNewExpr(String name, ArrayList<Expr> args) {
+	this(Location.UNKNOWN, name, args);
+    }
+
+    public ObjectNewExpr(String name, Expr[] args) {
+	this(Location.UNKNOWN, name, args);
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	Value[] args = new Value[_args.length];
+
+	for (int i = 0; i < args.length; i++) {
+	    args[i] = _args[i].evalArg(env, true);
+	}
+
+	env.pushCall(this, NullValue.NULL, args);
+
+	try {
+	    QuercusClass cl = env.findAbstractClass(_name);
+
+	    env.checkTimeout();
+
+	    return cl.callNew(env, args);
+	} finally {
+	    env.popCall();
+	}
+    }
+
+    public String toString() {
+	return _name + "()";
+    }
 }
-

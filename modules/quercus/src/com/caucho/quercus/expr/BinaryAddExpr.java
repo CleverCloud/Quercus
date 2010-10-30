@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,51 +36,44 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP add expression.
  */
 public class BinaryAddExpr extends AbstractBinaryExpr {
-  protected BinaryAddExpr(Location location, Expr left, Expr right)
-  {
-    super(location, left, right);
-  }
 
-  protected BinaryAddExpr(Expr left, Expr right)
-  {
-    super(left, right);
-  }
+    protected BinaryAddExpr(Location location, Expr left, Expr right) {
+	super(location, left, right);
+    }
 
-  public Value eval(Env env)
-  {
-    Value lValue = _left.eval(env);
-    Value rValue = _right.eval(env);
+    protected BinaryAddExpr(Expr left, Expr right) {
+	super(left, right);
+    }
 
-    return lValue.add(rValue);
-  }
+    public Value eval(Env env) {
+	Value lValue = _left.eval(env);
+	Value rValue = _right.eval(env);
 
-  /**
-   * Return true for a double value
-   */
-  public boolean isDouble()
-  {
-    return _left.isDouble() || _right.isDouble();
-  }
+	return lValue.add(rValue);
+    }
 
-  /**
-   * Return true for a long value
-   */
-  public boolean isLong()
-  {
-    return _left.isLong() && _right.isLong();
-  }
+    /**
+     * Return true for a double value
+     */
+    public boolean isDouble() {
+	return _left.isDouble() || _right.isDouble();
+    }
 
-  /**
-   * Return true for a number
-   */
-  public boolean isNumber()
-  {
-    return true;
-  }
+    /**
+     * Return true for a long value
+     */
+    public boolean isLong() {
+	return _left.isLong() && _right.isLong();
+    }
 
-  public String toString()
-  {
-    return "(" + _left + " + " + _right + ")";
-  }
+    /**
+     * Return true for a number
+     */
+    public boolean isNumber() {
+	return true;
+    }
+
+    public String toString() {
+	return "(" + _left + " + " + _right + ")";
+    }
 }
-

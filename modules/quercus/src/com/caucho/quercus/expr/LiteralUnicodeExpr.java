@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -39,64 +38,56 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP string literal expression.
  */
 public class LiteralUnicodeExpr extends Expr {
-  protected final StringValue _value;
 
-  public LiteralUnicodeExpr(Location location, String value)
-  {
-    super(location);
-    
-    _value = new UnicodeBuilderValue(value);
-  }
+    protected final StringValue _value;
 
-  public LiteralUnicodeExpr(Location location, StringValue value)
-  {
-    super(location);
-    _value = value;
-  }
+    public LiteralUnicodeExpr(Location location, String value) {
+	super(location);
 
-  public LiteralUnicodeExpr(String value)
-  {
-    this(Location.UNKNOWN, value);
-  }
+	_value = new UnicodeBuilderValue(value);
+    }
 
-  public LiteralUnicodeExpr(StringValue value)
-  {
-    this(Location.UNKNOWN, value);
-  }
+    public LiteralUnicodeExpr(Location location, StringValue value) {
+	super(location);
+	_value = value;
+    }
 
-  /**
-   * Returns true for a literal expression.
-   */
-  public boolean isLiteral()
-  {
-    return true;
-  }
+    public LiteralUnicodeExpr(String value) {
+	this(Location.UNKNOWN, value);
+    }
 
-  /**
-   * Evaluates the expression as a constant.
-   *
-   * @return the expression value.
-   */
-  public Value evalConstant()
-  {
-    return _value;
-  }
+    public LiteralUnicodeExpr(StringValue value) {
+	this(Location.UNKNOWN, value);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return _value;
-  }
+    /**
+     * Returns true for a literal expression.
+     */
+    public boolean isLiteral() {
+	return true;
+    }
 
-  public String toString()
-  {
-    return "\"" + _value + "\"";
-  }
+    /**
+     * Evaluates the expression as a constant.
+     *
+     * @return the expression value.
+     */
+    public Value evalConstant() {
+	return _value;
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return _value;
+    }
+
+    public String toString() {
+	return "\"" + _value + "\"";
+    }
 }
-

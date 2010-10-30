@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -40,195 +39,179 @@ import com.caucho.quercus.statement.Statement;
  * Represents an expression that is assignable
  */
 abstract public class AbstractVarExpr extends Expr {
-  public AbstractVarExpr(Location location)
-  {
-    super(location);
-  }
-  
-  public AbstractVarExpr()
-  {
-  }
-  
-  
-  /**
-   * Returns true if the expression is a var/left-hand-side.
-   */
-  @Override
-  public boolean isVar()
-  {
-    return true;
-  }
-  
-  /**
-   * Marks the value as assigned
-   */
-  public void assign(QuercusParser parser)
-  {
-    // TODO: used by list, e.g. quercus/03l8.  need further tests
-  }
 
-  /**
-   * Creates the assignment.
-   */
-  @Override
-  public Expr createAssign(QuercusParser parser, Expr value)
-  {
-    return value.createAssignFrom(parser, this);
-  }
+    public AbstractVarExpr(Location location) {
+	super(location);
+    }
 
-  /**
-   * Creates the assignment.
-   */
-  @Override
-  public Expr createAssignRef(QuercusParser parser,
-                              Expr value)
-  {
-    return parser.getExprFactory().createAssignRef(this, value);
-  }
+    public AbstractVarExpr() {
+    }
 
-  /**
-   * Creates the reference
-   * @param location
-   */
-  @Override
-  public Expr createRef(QuercusParser parser)
-  {
-    return parser.getExprFactory().createRef(this);
-  }
+    /**
+     * Returns true if the expression is a var/left-hand-side.
+     */
+    @Override
+    public boolean isVar() {
+	return true;
+    }
 
-  /**
-   * Creates the copy.
-   * @param location
-   */
-  @Override
-  public Expr createCopy(ExprFactory factory)
-  {
-    return factory.createCopy(this);
-  }
+    /**
+     * Marks the value as assigned
+     */
+    public void assign(QuercusParser parser) {
+	// TODO: used by list, e.g. quercus/03l8.  need further tests
+    }
 
-  /**
-   * Creates the assignment.
-   */
-  @Override
-  public Statement createUnset(ExprFactory factory, Location location)
-  {
-    return factory.createExpr(location, factory.createUnsetVar(this));
-  }
+    /**
+     * Creates the assignment.
+     */
+    @Override
+    public Expr createAssign(QuercusParser parser, Expr value) {
+	return value.createAssignFrom(parser, this);
+    }
 
-  /**
-   * Evaluates the expression, returning a Value.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  abstract public Value eval(Env env);
+    /**
+     * Creates the assignment.
+     */
+    @Override
+    public Expr createAssignRef(QuercusParser parser,
+	    Expr value) {
+	return parser.getExprFactory().createAssignRef(this, value);
+    }
 
-  /**
-   * Evaluates the expression as a reference (by RefExpr).
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  abstract public Var evalVar(Env env);
+    /**
+     * Creates the reference
+     * @param location
+     */
+    @Override
+    public Expr createRef(QuercusParser parser) {
+	return parser.getExprFactory().createRef(this);
+    }
 
-  /**
-   * Evaluates the expression as a reference when possible.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalRef(Env env)
-  {
-    return evalVar(env);
-  }
+    /**
+     * Creates the copy.
+     * @param location
+     */
+    @Override
+    public Expr createCopy(ExprFactory factory) {
+	return factory.createCopy(this);
+    }
 
-  /**
-   * Evaluates the expression as an argument.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalArg(Env env, boolean isTop)
-  {
-    return evalVar(env);
-  }
+    /**
+     * Creates the assignment.
+     */
+    @Override
+    public Statement createUnset(ExprFactory factory, Location location) {
+	return factory.createExpr(location, factory.createUnsetVar(this));
+    }
 
-  /**
-   * Evaluates the expression and copies the result for an assignment.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalCopy(Env env)
-  {
-    return eval(env).copy();
-  }
+    /**
+     * Evaluates the expression, returning a Value.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    abstract public Value eval(Env env);
 
-  /**
-   * Evaluates the expression as an array.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalArray(Env env)
-  {
-    return evalVar(env).toAutoArray();
-  }
+    /**
+     * Evaluates the expression as a reference (by RefExpr).
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    abstract public Var evalVar(Env env);
 
-  /**
-   * Evaluates the expression as an object.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalObject(Env env)
-  {
-    return evalVar(env).toObject(env);
-  }
+    /**
+     * Evaluates the expression as a reference when possible.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalRef(Env env) {
+	return evalVar(env);
+    }
 
-  /**
-   * Evaluates the expression as an argument.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  abstract public void evalUnset(Env env);
+    /**
+     * Evaluates the expression as an argument.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalArg(Env env, boolean isTop) {
+	return evalVar(env);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalAssignValue(Env env, Value value)
-  {
-    return evalAssignRef(env, value);
-  }
+    /**
+     * Evaluates the expression and copies the result for an assignment.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalCopy(Env env) {
+	return eval(env).copy();
+    }
 
-  /**
-   * Assign the variable with a new reference value.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  abstract public Value evalAssignRef(Env env, Value value);
+    /**
+     * Evaluates the expression as an array.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalArray(Env env) {
+	return evalVar(env).toAutoArray();
+    }
+
+    /**
+     * Evaluates the expression as an object.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalObject(Env env) {
+	return evalVar(env).toObject(env);
+    }
+
+    /**
+     * Evaluates the expression as an argument.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    abstract public void evalUnset(Env env);
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalAssignValue(Env env, Value value) {
+	return evalAssignRef(env, value);
+    }
+
+    /**
+     * Assign the variable with a new reference value.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    abstract public Value evalAssignRef(Env env, Value value);
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,53 +37,48 @@ import com.caucho.quercus.env.Value;
  * Represents unsetting a PHP variable
  */
 public class VarUnsetExpr extends Expr {
-  protected final AbstractVarExpr _var;
 
-  public VarUnsetExpr(Location location, AbstractVarExpr var)
-  {
-    super(location);
-    _var = var;
-  }
+    protected final AbstractVarExpr _var;
 
-  public VarUnsetExpr(AbstractVarExpr var)
-  {
-    _var = var;
-  }
+    public VarUnsetExpr(Location location, AbstractVarExpr var) {
+	super(location);
+	_var = var;
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    _var.evalUnset(env);
+    public VarUnsetExpr(AbstractVarExpr var) {
+	_var = var;
+    }
 
-    return NullValue.NULL;
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	_var.evalUnset(env);
 
-  public int hashCode()
-  {
-    return _var.hashCode();
-  }
+	return NullValue.NULL;
+    }
 
-  public boolean equals(Object o)
-  {
-    if (this == o)
-      return true;
-    else if (getClass() != o.getClass())
-      return false;
+    public int hashCode() {
+	return _var.hashCode();
+    }
 
-    VarUnsetExpr expr = (VarUnsetExpr) o;
+    public boolean equals(Object o) {
+	if (this == o) {
+	    return true;
+	} else if (getClass() != o.getClass()) {
+	    return false;
+	}
 
-    return _var == expr._var;
-  }
+	VarUnsetExpr expr = (VarUnsetExpr) o;
 
-  public String toString()
-  {
-    return "unset(" + _var + ")";
-  }
+	return _var == expr._var;
+    }
+
+    public String toString() {
+	return "unset(" + _var + ")";
+    }
 }
-

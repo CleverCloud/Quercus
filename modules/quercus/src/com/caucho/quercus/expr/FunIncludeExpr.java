@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -40,62 +39,56 @@ import com.caucho.vfs.Path;
  * Represents a PHP include statement
  */
 public class FunIncludeExpr extends AbstractUnaryExpr {
-  protected Path _dir;
-  protected boolean _isRequire;
-  
-  public FunIncludeExpr(Location location, Path sourceFile, Expr expr)
-  {
-    super(location, expr);
 
-    _dir = sourceFile.getParent();
-  }
+    protected Path _dir;
+    protected boolean _isRequire;
 
-  public FunIncludeExpr(Location location,
-                        Path sourceFile,
-                        Expr expr,
-                        boolean isRequire)
-  {
-    this(location, sourceFile, expr);
+    public FunIncludeExpr(Location location, Path sourceFile, Expr expr) {
+	super(location, expr);
 
-    _isRequire = isRequire;
-  }
-  
-  public FunIncludeExpr(Path sourceFile, Expr expr)
-  {
-    super(expr);
-
-    _dir = sourceFile.getParent();
-  }
-  
-  public FunIncludeExpr(Path sourceFile, Expr expr, boolean isRequire)
-  {
-    this(sourceFile, expr);
-
-    _isRequire = isRequire;
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    StringValue name = _expr.eval(env).toStringValue();
-      
-    env.pushCall(this, NullValue.NULL, new Value[] { name });
-    try {
-      return env.include(_dir, name, _isRequire, false);
-    } finally {
-      env.popCall();
+	_dir = sourceFile.getParent();
     }
-  }
-  
-  public String toString()
-  {
-    return _expr.toString();
-  }
-}
 
+    public FunIncludeExpr(Location location,
+	    Path sourceFile,
+	    Expr expr,
+	    boolean isRequire) {
+	this(location, sourceFile, expr);
+
+	_isRequire = isRequire;
+    }
+
+    public FunIncludeExpr(Path sourceFile, Expr expr) {
+	super(expr);
+
+	_dir = sourceFile.getParent();
+    }
+
+    public FunIncludeExpr(Path sourceFile, Expr expr, boolean isRequire) {
+	this(sourceFile, expr);
+
+	_isRequire = isRequire;
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	StringValue name = _expr.eval(env).toStringValue();
+
+	env.pushCall(this, NullValue.NULL, new Value[]{name});
+	try {
+	    return env.include(_dir, name, _isRequire, false);
+	} finally {
+	    env.popCall();
+	}
+    }
+
+    public String toString() {
+	return _expr.toString();
+    }
+}

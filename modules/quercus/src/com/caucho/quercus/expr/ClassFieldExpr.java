@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import java.io.IOException;
@@ -46,99 +45,89 @@ import com.caucho.util.L10N;
  * Represents a PHP class field reference A::$foo
  */
 public class ClassFieldExpr extends AbstractVarExpr {
-  private static final L10N L = new L10N(ClassFieldExpr.class);
 
-  protected final String _className;
-  protected final StringValue _varName;
-  
-  private final StringValue _var;
+    private static final L10N L = new L10N(ClassFieldExpr.class);
+    protected final String _className;
+    protected final StringValue _varName;
+    private final StringValue _var;
 
-  public ClassFieldExpr(String className, String varName)
-  {
-    _className = className;
-    _varName = MethodIntern.intern(varName);
-    
-    _var = new ConstStringValue(className + "::" + varName);
-  }
-  
-  //
-  // function call creation
-  //
+    public ClassFieldExpr(String className, String varName) {
+	_className = className;
+	_varName = MethodIntern.intern(varName);
 
-  /**
-   * Creates a function call expression
-   */
-  @Override
-  public Expr createCall(QuercusParser parser,
-                         Location location,
-                         ArrayList<Expr> args)
-    throws IOException
-  {
-    Expr var = parser.createVar(_varName.toString());
-    ExprFactory factory = parser.getExprFactory();
-    
-    return factory.createClassMethodCall(location, _className, var, args);
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value eval(Env env)
-  {
-    return env.getClass(_className).getStaticFieldValue(env, _varName);
-  }
-   
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Var evalVar(Env env)
-  {
-    return env.getClass(_className).getStaticFieldVar(env, _varName);
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value evalAssignRef(Env env, Value value)
-  {
-    env.getClass(_className).setStaticFieldRef(env, _varName, value);
-    
-    return value;
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public void evalUnset(Env env)
-  {
-    env.error(getLocation(),
-              L.l("{0}::${1}: Cannot unset static variables.",
-                  _className, _varName));
-  }
-  
-  public String toString()
-  {
-    return _className + "::$" + _varName;
-  }
+	_var = new ConstStringValue(className + "::" + varName);
+    }
+
+    //
+    // function call creation
+    //
+    /**
+     * Creates a function call expression
+     */
+    @Override
+    public Expr createCall(QuercusParser parser,
+	    Location location,
+	    ArrayList<Expr> args)
+	    throws IOException {
+	Expr var = parser.createVar(_varName.toString());
+	ExprFactory factory = parser.getExprFactory();
+
+	return factory.createClassMethodCall(location, _className, var, args);
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value eval(Env env) {
+	return env.getClass(_className).getStaticFieldValue(env, _varName);
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Var evalVar(Env env) {
+	return env.getClass(_className).getStaticFieldVar(env, _varName);
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value evalAssignRef(Env env, Value value) {
+	env.getClass(_className).setStaticFieldRef(env, _varName, value);
+
+	return value;
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public void evalUnset(Env env) {
+	env.error(getLocation(),
+		L.l("{0}::${1}: Cannot unset static variables.",
+		_className, _varName));
+    }
+
+    public String toString() {
+	return _className + "::$" + _varName;
+    }
 }
-

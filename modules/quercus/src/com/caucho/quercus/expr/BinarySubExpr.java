@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,33 +36,29 @@ import com.caucho.quercus.env.Value;
  * A "$b - $a" subtract expression.
  */
 public class BinarySubExpr extends AbstractBinaryExpr {
-  protected BinarySubExpr(Location location, Expr left, Expr right)
-  {
-    super(location, left, right);
-  }
 
-  protected BinarySubExpr(Expr left, Expr right)
-  {
-    super(left, right);
-  }
+    protected BinarySubExpr(Location location, Expr left, Expr right) {
+	super(location, left, right);
+    }
 
-  /**
-   * Evaluates the expression returning the expression value.
-   *
-   * @param env the quercus environment
-   * @return the resulting value
-   */
-  public Value eval(Env env)
-  {
-    Value lValue = _left.eval(env);
-    Value rValue = _right.eval(env);
+    protected BinarySubExpr(Expr left, Expr right) {
+	super(left, right);
+    }
 
-    return lValue.sub(rValue);
-  }
+    /**
+     * Evaluates the expression returning the expression value.
+     *
+     * @param env the quercus environment
+     * @return the resulting value
+     */
+    public Value eval(Env env) {
+	Value lValue = _left.eval(env);
+	Value rValue = _right.eval(env);
 
-  public String toString()
-  {
-    return "(" + _left + " + " + _right + ")";
-  }
+	return lValue.sub(rValue);
+    }
+
+    public String toString() {
+	return "(" + _left + " + " + _right + ")";
+    }
 }
-

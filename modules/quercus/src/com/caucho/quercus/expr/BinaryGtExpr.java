@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,46 +37,40 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP comparison expression.
  */
 public class BinaryGtExpr extends AbstractBinaryExpr {
-  public BinaryGtExpr(Location location, Expr left, Expr right)
-  {
-    super(location, left, right);
-  }
 
-  public BinaryGtExpr(Expr left, Expr right)
-  {
-    super(left, right);
-  }
+    public BinaryGtExpr(Location location, Expr left, Expr right) {
+	super(location, left, right);
+    }
 
-  /**
-   * Returns true for a boolean.
-   */
-  public boolean isBoolean()
-  {
-    return true;
-  }
+    public BinaryGtExpr(Expr left, Expr right) {
+	super(left, right);
+    }
 
-  /**
-   * Evaluates the equality as a boolean.
-   */
-  public Value eval(Env env)
-  {
-    return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
-  }
+    /**
+     * Returns true for a boolean.
+     */
+    public boolean isBoolean() {
+	return true;
+    }
 
-  /**
-   * Evaluates the equality as a boolean.
-   */
-  public boolean evalBoolean(Env env)
-  {
-    Value lValue = _left.eval(env);
-    Value rValue = _right.eval(env);
+    /**
+     * Evaluates the equality as a boolean.
+     */
+    public Value eval(Env env) {
+	return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
+    }
 
-    return lValue.gt(rValue);
-  }
+    /**
+     * Evaluates the equality as a boolean.
+     */
+    public boolean evalBoolean(Env env) {
+	Value lValue = _left.eval(env);
+	Value rValue = _right.eval(env);
 
-  public String toString()
-  {
-    return "(" + _left + " > " + _right + ")";
-  }
+	return lValue.gt(rValue);
+    }
+
+    public String toString() {
+	return "(" + _left + " > " + _right + ")";
+    }
 }
-

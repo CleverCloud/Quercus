@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.statement.StatementHandle;
@@ -35,44 +34,37 @@ import com.caucho.quercus.statement.StatementHandle;
  * A handle to a top expression
  */
 public class ExprHandle {
-  public static final ExprHandle NULL = new ExprHandle();
-  
-  private final StatementHandle _statement;
-  
-  private Expr _expr;
 
-  public ExprHandle(StatementHandle statement)
-  {
-    _statement = statement;
-  }
+    public static final ExprHandle NULL = new ExprHandle();
+    private final StatementHandle _statement;
+    private Expr _expr;
 
-  private ExprHandle()
-  {
-    _statement = StatementHandle.NULL;
-  }
+    public ExprHandle(StatementHandle statement) {
+	_statement = statement;
+    }
 
-  /**
-   * Sets the expression
-   */
-  public void setExpr(Expr expr)
-  {
-    _expr = expr;
-  }
+    private ExprHandle() {
+	_statement = StatementHandle.NULL;
+    }
 
-  /**
-   * Gets the expression
-   */
-  public Expr getExpr()
-  {
-    return _expr;
-  }
+    /**
+     * Sets the expression
+     */
+    public void setExpr(Expr expr) {
+	_expr = expr;
+    }
 
-  /**
-   * Returns the owning statement handle.
-   */
-  public StatementHandle getStatement()
-  {
-    return _statement;
-  }
+    /**
+     * Gets the expression
+     */
+    public Expr getExpr() {
+	return _expr;
+    }
+
+    /**
+     * Returns the owning statement handle.
+     */
+    public StatementHandle getStatement() {
+	return _statement;
+    }
 }
-

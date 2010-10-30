@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -47,108 +46,97 @@ import java.util.ArrayList;
  * Represents a PHP static method expression.
  */
 public class ClassMethodVarExpr extends AbstractMethodExpr {
-  private static final L10N L = new L10N(ClassMethodVarExpr.class);
-  
-  protected final String _className;
-  protected final Expr _nameExpr;
-  protected final Expr []_args;
 
-  protected Expr []_fullArgs;
+    private static final L10N L = new L10N(ClassMethodVarExpr.class);
+    protected final String _className;
+    protected final Expr _nameExpr;
+    protected final Expr[] _args;
+    protected Expr[] _fullArgs;
+    protected AbstractFunction _fun;
+    protected boolean _isMethod;
 
-  protected AbstractFunction _fun;
-  protected boolean _isMethod;
+    public ClassMethodVarExpr(Location location,
+	    String className,
+	    Expr nameExpr,
+	    ArrayList<Expr> args) {
+	super(location);
 
-  public ClassMethodVarExpr(Location location,
-                            String className,
-                            Expr nameExpr,
-                            ArrayList<Expr> args)
-  {
-    super(location);
-    
-    _className = className.intern();
-    
-    _nameExpr = nameExpr;
+	_className = className.intern();
 
-    _args = new Expr[args.size()];
-    args.toArray(_args);
-  }
+	_nameExpr = nameExpr;
 
-  public ClassMethodVarExpr(Location location,
-                            String className,
-                            Expr nameExpr,
-                            Expr []args)
-  {
-    super(location);
-    
-    _className = className.intern();
-    
-    _nameExpr = nameExpr;
-
-    _args = args;
-  }
-
-  public ClassMethodVarExpr(String className,
-                            Expr nameExpr,
-                            ArrayList<Expr> args)
-  {
-    this(Location.UNKNOWN, className, nameExpr, args);
-  }
-
-  public ClassMethodVarExpr(String className, Expr nameExpr, Expr []args)
-  {
-    this(Location.UNKNOWN, className, nameExpr, args);
-  }
-
-  /**
-   * Returns the reference of the value.
-   * @param location
-   */
-  @Override
-  public Expr createRef(QuercusParser parser)
-  {
-    return parser.getFactory().createRef(this);
-  }
-
-  /**
-   * Returns the copy of the value.
-   * @param location
-   */
-  @Override
-  public Expr createCopy(ExprFactory factory)
-  {
-    return factory.createCopy(this);
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  @Override
-  public Value eval(Env env)
-  {
-    QuercusClass cl = env.findClass(_className);
-
-    if (cl == null) {
-      env.error(getLocation(), L.l("no matching class {0}", _className));
+	_args = new Expr[args.size()];
+	args.toArray(_args);
     }
 
-    // qa/0954 - static calls pass the current $this
-    Value qThis = env.getThis();
-    
-    StringValue methodName = _nameExpr.evalStringValue(env);
-    
-    Value []args = evalArgs(env, _args);
-    int hash = methodName.hashCodeCaseInsensitive();
+    public ClassMethodVarExpr(Location location,
+	    String className,
+	    Expr nameExpr,
+	    Expr[] args) {
+	super(location);
 
-    return cl.callMethod(env, qThis, methodName, hash, args);
-  }
-  
-  public String toString()
-  {
-    return _nameExpr + "()";
-  }
+	_className = className.intern();
+
+	_nameExpr = nameExpr;
+
+	_args = args;
+    }
+
+    public ClassMethodVarExpr(String className,
+	    Expr nameExpr,
+	    ArrayList<Expr> args) {
+	this(Location.UNKNOWN, className, nameExpr, args);
+    }
+
+    public ClassMethodVarExpr(String className, Expr nameExpr, Expr[] args) {
+	this(Location.UNKNOWN, className, nameExpr, args);
+    }
+
+    /**
+     * Returns the reference of the value.
+     * @param location
+     */
+    @Override
+    public Expr createRef(QuercusParser parser) {
+	return parser.getFactory().createRef(this);
+    }
+
+    /**
+     * Returns the copy of the value.
+     * @param location
+     */
+    @Override
+    public Expr createCopy(ExprFactory factory) {
+	return factory.createCopy(this);
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    @Override
+    public Value eval(Env env) {
+	QuercusClass cl = env.findClass(_className);
+
+	if (cl == null) {
+	    env.error(getLocation(), L.l("no matching class {0}", _className));
+	}
+
+	// qa/0954 - static calls pass the current $this
+	Value qThis = env.getThis();
+
+	StringValue methodName = _nameExpr.evalStringValue(env);
+
+	Value[] args = evalArgs(env, _args);
+	int hash = methodName.hashCodeCaseInsensitive();
+
+	return cl.callMethod(env, qThis, methodName, hash, args);
+    }
+
+    public String toString() {
+	return _nameExpr + "()";
+    }
 }
-

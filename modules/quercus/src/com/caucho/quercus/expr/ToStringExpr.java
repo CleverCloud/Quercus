@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -39,39 +38,35 @@ import com.caucho.quercus.env.Value;
  * Converts to an string
  */
 public class ToStringExpr extends AbstractUnaryExpr {
-  public ToStringExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
 
-  public ToStringExpr(Expr expr)
-  {
-    super(expr);
-  }
+    public ToStringExpr(Location location, Expr expr) {
+	super(location, expr);
+    }
 
-  public static Expr create(Expr expr)
-  {
-    if (expr.isString())
-      return expr;
-    else
-      return new ToStringExpr(expr);
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return _expr.eval(env).toString(env);
-  }
+    public ToStringExpr(Expr expr) {
+	super(expr);
+    }
 
-  public String toString()
-  {
-    return "((string) " + _expr + ")";
-  }
+    public static Expr create(Expr expr) {
+	if (expr.isString()) {
+	    return expr;
+	} else {
+	    return new ToStringExpr(expr);
+	}
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return _expr.eval(env).toString(env);
+    }
+
+    public String toString() {
+	return "((string) " + _expr + ")";
+    }
 }
-

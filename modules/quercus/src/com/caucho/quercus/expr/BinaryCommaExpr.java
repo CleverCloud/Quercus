@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,47 +36,42 @@ import com.caucho.quercus.env.Value;
  * A "($foo, $bar)" comma expression (evaluates all and returns first).
  */
 public class BinaryCommaExpr extends AbstractBinaryExpr {
-  public BinaryCommaExpr(Location location, Expr left, Expr right)
-  {
-    super(location, left, right);
-  }
 
-  public BinaryCommaExpr(Expr left, Expr right)
-  {
-    super(left, right);
-  }
+    public BinaryCommaExpr(Location location, Expr left, Expr right) {
+	super(location, left, right);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    _left.eval(env);
+    public BinaryCommaExpr(Expr left, Expr right) {
+	super(left, right);
+    }
 
-    return _right.eval(env);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	_left.eval(env);
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public boolean evalBoolean(Env env)
-  {
-    _left.eval(env);
+	return _right.eval(env);
+    }
 
-    return _right.evalBoolean(env);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public boolean evalBoolean(Env env) {
+	_left.eval(env);
 
-  public String toString()
-  {
-    return "(" + _left + ", " + _right + ")";
-  }
+	return _right.evalBoolean(env);
+    }
+
+    public String toString() {
+	return "(" + _left + ", " + _right + ")";
+    }
 }
-

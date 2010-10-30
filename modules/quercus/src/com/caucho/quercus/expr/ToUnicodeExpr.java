@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -36,36 +35,33 @@ import com.caucho.quercus.env.*;
  * Converts to an string
  */
 public class ToUnicodeExpr extends ToStringExpr {
-  public ToUnicodeExpr(Location location, Expr expr)
-  {
-    super(location, expr);
-  }
 
-  public ToUnicodeExpr(Expr expr)
-  {
-    super(expr);
-  }
+    public ToUnicodeExpr(Location location, Expr expr) {
+	super(location, expr);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    Value value = _expr.eval(env).toValue();
+    public ToUnicodeExpr(Expr expr) {
+	super(expr);
+    }
 
-    if (value.isUnicode())
-      return value;
-    else
-      return value.toString(env).toUnicode(env);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	Value value = _expr.eval(env).toValue();
 
-  public String toString()
-  {
-    return "((unicode) " + _expr + ")";
-  }
+	if (value.isUnicode()) {
+	    return value;
+	} else {
+	    return value.toString(env).toUnicode(env);
+	}
+    }
+
+    public String toString() {
+	return "((unicode) " + _expr + ")";
+    }
 }
-

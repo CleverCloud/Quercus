@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -44,108 +43,95 @@ import java.util.ArrayList;
  * A "$foo(...)" function call.
  */
 public class CallVarExpr extends Expr {
-  private static final L10N L = new L10N(CallExpr.class);
-  
-  protected final Expr _name;
-  protected final Expr []_args;
 
-  public CallVarExpr(Location location, Expr name, ArrayList<Expr> args)
-  {
-    super(location);
-    _name = name;
+    private static final L10N L = new L10N(CallExpr.class);
+    protected final Expr _name;
+    protected final Expr[] _args;
 
-    _args = new Expr[args.size()];
-    args.toArray(_args);
-  }
+    public CallVarExpr(Location location, Expr name, ArrayList<Expr> args) {
+	super(location);
+	_name = name;
 
-  public CallVarExpr(Location location, Expr name, Expr []args)
-  {
-    super(location);
-    _name = name;
-
-    _args = args;
-  }
-
-  public CallVarExpr(Expr name, ArrayList<Expr> args)
-  {
-    this(Location.UNKNOWN, name, args);
-  }
-
-  public CallVarExpr(Expr name, Expr []args)
-  {
-    this(Location.UNKNOWN, name, args);
-  }
-
-  /**
-   * Returns the reference of the value.
-   * @param location
-   */
-  public Expr createRef(QuercusParser parser)
-  {
-    return parser.getFactory().createRef(this);
-  }
-
-  /**
-   * Returns the copy of the value.
-   * @param location
-   */
-  public Expr createCopy(ExprFactory factory)
-  {
-    return this;
-  }
-  
-  @Override
-  public Value eval(Env env)
-  {
-    return evalImpl(env, false, false);
-  }
-  
-  
-  @Override
-  public Value evalRef(Env env)
-  {
-    return evalImpl(env, true, false);
-  }
-  
-  
-  @Override
-  public Value evalCopy(Env env)
-  {
-    return evalImpl(env, false, true);
-  }
-  
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value evalImpl(Env env, boolean isRef, boolean isCopy)
-  {
-    Value value = _name.eval(env);
-    
-    Value []args = evalArgs(env, _args);
-
-    env.pushCall(this, NullValue.NULL, null);
-
-    try {
-      env.checkTimeout();
-      
-      if (isRef)
-        return value.callRef(env, args);
-      else if (isCopy)
-        return value.call(env, args).copyReturn();
-      else
-        return value.call(env, args).toValue();
-    } finally {
-      env.popCall();
+	_args = new Expr[args.size()];
+	args.toArray(_args);
     }
-  }
-  
-  public String toString()
-  {
-    return _name + "()";
-  }
-}
 
+    public CallVarExpr(Location location, Expr name, Expr[] args) {
+	super(location);
+	_name = name;
+
+	_args = args;
+    }
+
+    public CallVarExpr(Expr name, ArrayList<Expr> args) {
+	this(Location.UNKNOWN, name, args);
+    }
+
+    public CallVarExpr(Expr name, Expr[] args) {
+	this(Location.UNKNOWN, name, args);
+    }
+
+    /**
+     * Returns the reference of the value.
+     * @param location
+     */
+    public Expr createRef(QuercusParser parser) {
+	return parser.getFactory().createRef(this);
+    }
+
+    /**
+     * Returns the copy of the value.
+     * @param location
+     */
+    public Expr createCopy(ExprFactory factory) {
+	return this;
+    }
+
+    @Override
+    public Value eval(Env env) {
+	return evalImpl(env, false, false);
+    }
+
+    @Override
+    public Value evalRef(Env env) {
+	return evalImpl(env, true, false);
+    }
+
+    @Override
+    public Value evalCopy(Env env) {
+	return evalImpl(env, false, true);
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value evalImpl(Env env, boolean isRef, boolean isCopy) {
+	Value value = _name.eval(env);
+
+	Value[] args = evalArgs(env, _args);
+
+	env.pushCall(this, NullValue.NULL, null);
+
+	try {
+	    env.checkTimeout();
+
+	    if (isRef) {
+		return value.callRef(env, args);
+	    } else if (isCopy) {
+		return value.call(env, args).copyReturn();
+	    } else {
+		return value.call(env, args).toValue();
+	    }
+	} finally {
+	    env.popCall();
+	}
+    }
+
+    public String toString() {
+	return _name + "()";
+    }
+}

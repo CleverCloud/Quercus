@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import java.io.IOException;
@@ -43,52 +42,46 @@ import com.caucho.util.L10N;
  * Represents a PHP parent::FOO constant call expression.
  */
 public class ClassVarConstExpr extends Expr {
-  private static final L10N L = new L10N(ClassVarConstExpr.class);
 
-  protected final Expr _className;
-  protected final String _name;
+    private static final L10N L = new L10N(ClassVarConstExpr.class);
+    protected final Expr _className;
+    protected final String _name;
 
-  public ClassVarConstExpr(Expr className, String name)
-  {
-    _className = className;
-    _name = name.intern();
-  }
-  
-  //
-  // function call creation
-  //
+    public ClassVarConstExpr(Expr className, String name) {
+	_className = className;
+	_name = name.intern();
+    }
 
-  /**
-   * Creates a function call expression
-   */
-  @Override
-  public Expr createCall(QuercusParser parser,
-                         Location location,
-                         ArrayList<Expr> args)
-    throws IOException
-  {
-    ExprFactory factory = parser.getExprFactory();
-    
-    return factory.createClassMethodCall(location, _className, _name, args);
-  }
+    //
+    // function call creation
+    //
+    /**
+     * Creates a function call expression
+     */
+    @Override
+    public Expr createCall(QuercusParser parser,
+	    Location location,
+	    ArrayList<Expr> args)
+	    throws IOException {
+	ExprFactory factory = parser.getExprFactory();
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    String className = _className.evalString(env);
+	return factory.createClassMethodCall(location, _className, _name, args);
+    }
 
-    return env.getClass(className).getConstant(env, _name);
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	String className = _className.evalString(env);
 
-  public String toString()
-  {
-    return _className + "::" + _name;
-  }
+	return env.getClass(className).getConstant(env, _name);
+    }
+
+    public String toString() {
+	return _className + "::" + _name;
+    }
 }
-

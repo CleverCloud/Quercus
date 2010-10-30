@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -37,42 +36,40 @@ import com.caucho.quercus.env.Value;
 /**
  * Represents a PHP import statement
  */
-public class ImportExpr extends Expr
-{
-  protected final String _name;
-  protected final boolean _isWildcard;
-  
-  public ImportExpr(Location location, String name, boolean isWildcard)
-  {
-    super(location);
+public class ImportExpr extends Expr {
 
-    _name = name;
-    _isWildcard = isWildcard;
-  }
+    protected final String _name;
+    protected final boolean _isWildcard;
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    if (_isWildcard)
-      env.addWildcardImport(_name);
-    else
-      env.putQualifiedImport(_name);
+    public ImportExpr(Location location, String name, boolean isWildcard) {
+	super(location);
 
-    return NullValue.NULL;
-  }
-  
-  public String toString()
-  {
-    if (_isWildcard)
-      return "import " + _name + ".*;";
-    else
-      return "import " + _name + ";";
-  }
+	_name = name;
+	_isWildcard = isWildcard;
+    }
+
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	if (_isWildcard) {
+	    env.addWildcardImport(_name);
+	} else {
+	    env.putQualifiedImport(_name);
+	}
+
+	return NullValue.NULL;
+    }
+
+    public String toString() {
+	if (_isWildcard) {
+	    return "import " + _name + ".*;";
+	} else {
+	    return "import " + _name + ";";
+	}
+    }
 }
-

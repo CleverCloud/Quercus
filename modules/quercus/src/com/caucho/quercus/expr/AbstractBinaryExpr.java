@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -35,36 +34,32 @@ import com.caucho.quercus.Location;
  * Common analysis for a PHP binary expression.
  */
 abstract public class AbstractBinaryExpr extends Expr {
-  protected final Expr _left;
-  protected final Expr _right;
 
-  protected AbstractBinaryExpr(Location location, Expr left, Expr right)
-  {
-    super(location);
-    _left = left;
-    _right = right;
-  }
+    protected final Expr _left;
+    protected final Expr _right;
 
-  protected AbstractBinaryExpr(Expr left, Expr right)
-  {
-    _left = left;
-    _right = right;
-  }
+    protected AbstractBinaryExpr(Location location, Expr left, Expr right) {
+	super(location);
+	_left = left;
+	_right = right;
+    }
 
-  /**
-   * Returns the left expression.
-   */
-  public final Expr getLeft()
-  {
-    return _left;
-  }
+    protected AbstractBinaryExpr(Expr left, Expr right) {
+	_left = left;
+	_right = right;
+    }
 
-  /**
-   * Returns the right expression.
-   */
-  public final Expr getRight()
-  {
-    return _right;
-  }
+    /**
+     * Returns the left expression.
+     */
+    public final Expr getLeft() {
+	return _left;
+    }
+
+    /**
+     * Returns the right expression.
+     */
+    public final Expr getRight() {
+	return _right;
+    }
 }
-

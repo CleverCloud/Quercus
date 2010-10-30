@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,35 +37,31 @@ import com.caucho.quercus.env.Value;
  * For portability of compiled code.
  */
 public class ConstDirExpr extends Expr {
-  protected final String _dirName;
 
-  public ConstDirExpr(Location location, String dirName)
-  {
-    super(location);
+    protected final String _dirName;
 
-    _dirName = dirName;
-  }
+    public ConstDirExpr(Location location, String dirName) {
+	super(location);
 
-  public ConstDirExpr(String dirName)
-  {
-    this(Location.UNKNOWN, dirName);
-  }
+	_dirName = dirName;
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    return env.createString(_dirName);
-  }
+    public ConstDirExpr(String dirName) {
+	this(Location.UNKNOWN, dirName);
+    }
 
-  public String toString()
-  {
-    return _dirName;
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	return env.createString(_dirName);
+    }
+
+    public String toString() {
+	return _dirName;
+    }
 }
-

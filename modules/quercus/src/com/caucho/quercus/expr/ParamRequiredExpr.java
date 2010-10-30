@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -38,36 +37,31 @@ import com.caucho.quercus.env.Value;
  * Represents a PHP required expression.
  */
 public class ParamRequiredExpr extends Expr {
-  public static final ParamRequiredExpr REQUIRED
-    = new ParamRequiredExpr(Location.UNKNOWN);
 
-  protected ParamRequiredExpr(Location location)
-  {
-    super(location);
-  }
+    public static final ParamRequiredExpr REQUIRED = new ParamRequiredExpr(Location.UNKNOWN);
 
-  protected ParamRequiredExpr()
-  {
-    super();
-  }
+    protected ParamRequiredExpr(Location location) {
+	super(location);
+    }
 
-  /**
-   * Evaluates the expression.
-   *
-   * @param env the calling environment.
-   *
-   * @return the expression value.
-   */
-  public Value eval(Env env)
-  {
-    env.warning("required argument missing");
+    protected ParamRequiredExpr() {
+	super();
+    }
 
-    return NullValue.NULL;
-  }
+    /**
+     * Evaluates the expression.
+     *
+     * @param env the calling environment.
+     *
+     * @return the expression value.
+     */
+    public Value eval(Env env) {
+	env.warning("required argument missing");
 
-  public String toString()
-  {
-    return "required";
-  }
+	return NullValue.NULL;
+    }
+
+    public String toString() {
+	return "required";
+    }
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
@@ -35,27 +34,23 @@ import com.caucho.quercus.Location;
  * Represents a temp PHP variable expression.
  */
 public class VarTempExpr extends VarExpr {
-  public VarTempExpr(Location location, VarInfo var)
-  {
-    super(location, var);
-  }
 
-  public VarTempExpr(VarInfo var)
-  {
-    super(var);
-  }
+    public VarTempExpr(Location location, VarInfo var) {
+	super(location, var);
+    }
 
-  /**
-   * Returns the java variable name.
-   */
-  public String getJavaVar()
-  {
-    return getName().toString();
-  }
+    public VarTempExpr(VarInfo var) {
+	super(var);
+    }
 
-  public String toString()
-  {
-    return "$quercus_" + getName();
-  }
+    /**
+     * Returns the java variable name.
+     */
+    public String getJavaVar() {
+	return getName().toString();
+    }
+
+    public String toString() {
+	return "$quercus_" + getName();
+    }
 }
-
