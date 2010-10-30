@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.i18n;
 
 import java.nio.ByteBuffer;
@@ -39,71 +38,62 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.util.L10N;
 
-abstract public class Encoder
-{
-  protected static final int ERROR_CHARACTER = 0xFFFE;
-  
-  protected String _charset;
-  protected String _replacement;
-  protected boolean _isIgnore;
-  protected boolean _isReplaceUnicode = false;
-  
-  protected Encoder(String charset)
-  {
-    _charset = charset;
-  }
-  
-  public static Encoder create(String charset)
-  {
-    if (charset.equalsIgnoreCase("utf8")
-        || charset.equalsIgnoreCase("utf-8"))
-      return new Utf8Encoder();
-    else if (charset.equalsIgnoreCase("big5")
-             || charset.equalsIgnoreCase("big-5"))
-      return new Big5Encoder(charset);
-    else
-      return new GenericEncoder(charset);
-  }
-  
-  public boolean isUtf8()
-  {
-    return false;
-  }
-  
-  public boolean isIgnore()
-  {
-    return _isIgnore;
-  }
-  
-  public void setIgnoreErrors(boolean isIgnore)
-  {
-    _isIgnore = isIgnore;
-  }
-  
-  public void setReplacement(String replacement)
-  {
-    _replacement = replacement;
-  }
-  
-  public final void setReplaceUnicode(boolean isReplaceUnicode)
-  {
-    _isReplaceUnicode = isReplaceUnicode;
-  }
-  
-  public void reset()
-  {
-  }
-  
-  abstract public boolean isEncodable(Env env, StringValue str);
-  
-  abstract public StringValue encode(Env env, CharSequence str);
-  
-  public final StringValue encode(Env env, CharSequence str, boolean isReset)
-  {
-    if (isReset)
-      reset();
-    
-    return encode(env, str);
-  }
-  
+abstract public class Encoder {
+
+    protected static final int ERROR_CHARACTER = 0xFFFE;
+    protected String _charset;
+    protected String _replacement;
+    protected boolean _isIgnore;
+    protected boolean _isReplaceUnicode = false;
+
+    protected Encoder(String charset) {
+	_charset = charset;
+    }
+
+    public static Encoder create(String charset) {
+	if (charset.equalsIgnoreCase("utf8")
+		|| charset.equalsIgnoreCase("utf-8")) {
+	    return new Utf8Encoder();
+	} else if (charset.equalsIgnoreCase("big5")
+		|| charset.equalsIgnoreCase("big-5")) {
+	    return new Big5Encoder(charset);
+	} else {
+	    return new GenericEncoder(charset);
+	}
+    }
+
+    public boolean isUtf8() {
+	return false;
+    }
+
+    public boolean isIgnore() {
+	return _isIgnore;
+    }
+
+    public void setIgnoreErrors(boolean isIgnore) {
+	_isIgnore = isIgnore;
+    }
+
+    public void setReplacement(String replacement) {
+	_replacement = replacement;
+    }
+
+    public final void setReplaceUnicode(boolean isReplaceUnicode) {
+	_isReplaceUnicode = isReplaceUnicode;
+    }
+
+    public void reset() {
+    }
+
+    abstract public boolean isEncodable(Env env, StringValue str);
+
+    abstract public StringValue encode(Env env, CharSequence str);
+
+    public final StringValue encode(Env env, CharSequence str, boolean isReset) {
+	if (isReset) {
+	    reset();
+	}
+
+	return encode(env, str);
+    }
 }

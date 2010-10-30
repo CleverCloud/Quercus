@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.i18n;
 
 import com.caucho.quercus.QuercusModuleException;
@@ -41,182 +40,176 @@ import java.io.UnsupportedEncodingException;
 import java.util.logging.*;
 
 public class IconvUtility {
-  private static final Logger log
-    = Logger.getLogger(IconvUtility.class.getName());
 
-  public static StringValue decodeEncode(Env env,
-                                        StringValue str,
-                                        String inCharset,
-                                        String outCharset)
-    throws UnsupportedEncodingException
-  {
-    return decodeEncode(env, str, inCharset, outCharset, 0, Integer.MAX_VALUE);
-  }
+    private static final Logger log = Logger.getLogger(IconvUtility.class.getName());
 
-  public static StringValue decodeEncode(Env env,
-                                         StringValue str,
-                                         String inCharset,
-                                         String outCharset,
-                                         int offset)
-    throws UnsupportedEncodingException
-  {
-    return decodeEncode(env, str, inCharset, outCharset,
-                        offset, Integer.MAX_VALUE);
-  }
-
-  /**
-   * Decodes and encodes to specified charsets at the same time.
-   */
-  public static StringValue decodeEncode(Env env,
-                                         StringValue str,
-                                         String inCharset,
-                                         String outCharset,
-                                         int offset,
-                                         int length)
-    throws UnsupportedEncodingException
-  {
-    TempCharBuffer tb = TempCharBuffer.allocate();
-    char[] charBuf = tb.getBuffer();
-
-    try {
-      Reader in;
-
-      try {
-        in = str.toReader(inCharset);
-      } catch (IOException e) {
-        log.log(Level.WARNING, e.toString(), e);
-    
-        in = str.toReader("utf-8");
-      }
-
-      TempStream ts = new TempStream();
-      WriteStream out = new WriteStream(ts);
-
-      try {
-        out.setEncoding(outCharset);
-      } catch (IOException e) {
-        log.log(Level.WARNING, e.toString(), e);
-    
-        out.setEncoding("utf-8");
-      }
-
-      while (offset > 0) {
-        if (in.read() < 0)
-          break;
-        offset--;
-      }
-
-      int sublen;
-
-      while (length > 0
-          && (sublen = in.read(charBuf, 0, charBuf.length)) >= 0) {
-
-        sublen = Math.min(length, sublen);
-
-        out.print(charBuf, 0, sublen);
-        length -= sublen;
-      }
-
-      out.flush();
-
-      StringValue sb = env.createBinaryBuilder();
-      for (TempBuffer ptr = ts.getHead(); ptr != null; ptr = ptr.getNext()) {
-        sb.append(ptr.getBuffer(), 0, ptr.getLength());
-      }
-      
-      return sb;
-    } catch (IOException e) {
-      throw new QuercusModuleException(e);
+    public static StringValue decodeEncode(Env env,
+	    StringValue str,
+	    String inCharset,
+	    String outCharset)
+	    throws UnsupportedEncodingException {
+	return decodeEncode(env, str, inCharset, outCharset, 0, Integer.MAX_VALUE);
     }
 
-    finally {
-      TempCharBuffer.free(tb);
+    public static StringValue decodeEncode(Env env,
+	    StringValue str,
+	    String inCharset,
+	    String outCharset,
+	    int offset)
+	    throws UnsupportedEncodingException {
+	return decodeEncode(env, str, inCharset, outCharset,
+		offset, Integer.MAX_VALUE);
     }
-  }
 
-  /**
-   * Returns decoded Mime header/field.
-   */
-  public static StringValue decodeMime(Env env,
-                              CharSequence word,
-                              String charset)
-    throws UnsupportedEncodingException
-  {
-    StringValue str = env.createString(
-            MimeUtility.unfold(MimeUtility.decodeText(word.toString())));
+    /**
+     * Decodes and encodes to specified charsets at the same time.
+     */
+    public static StringValue decodeEncode(Env env,
+	    StringValue str,
+	    String inCharset,
+	    String outCharset,
+	    int offset,
+	    int length)
+	    throws UnsupportedEncodingException {
+	TempCharBuffer tb = TempCharBuffer.allocate();
+	char[] charBuf = tb.getBuffer();
 
-    return str.toBinaryValue(charset);
-  }
+	try {
+	    Reader in;
 
-  public static Value encodeMime(Env env,
-                              StringValue name,
-                              StringValue value,
-                              String inCharset,
-                              String outCharset,
-                              String scheme)
-    throws UnsupportedEncodingException
-  {
-    return encodeMime(env,
-                      name,
-                      value,
-                      inCharset,
-                      outCharset,
-                      scheme,
-                      "\r\n",
-                      76);
-  }
+	    try {
+		in = str.toReader(inCharset);
+	    } catch (IOException e) {
+		log.log(Level.WARNING, e.toString(), e);
 
-  /**
-   * Encodes a MIME header.
-   *
-   * XXX: preferences
-   *
-   * @param field_name header field name
-   * @param field_value header field value
-   * @param preferences
-   */
-  /**
-   * Returns an encoded Mime header.
-   */
-  public static StringValue encodeMime(Env env,
-                              StringValue name,
-                              StringValue value,
-                              String inCharset,
-                              String outCharset,
-                              String scheme,
-                              String lineBreakChars,
-                              int lineLength)
-    throws UnsupportedEncodingException
-  {
-    name = name.toUnicodeValue(env, inCharset);
-    value = value.toUnicodeValue(env, inCharset);
+		in = str.toReader("utf-8");
+	    }
 
-    StringValue sb = env.createUnicodeBuilder();
-    sb.append(name);
-    sb.append(':');
-    sb.append(' ');
+	    TempStream ts = new TempStream();
+	    WriteStream out = new WriteStream(ts);
 
-    String word = encodeMimeWord(
-            value.toString(), outCharset, scheme, lineBreakChars, lineLength);
+	    try {
+		out.setEncoding(outCharset);
+	    } catch (IOException e) {
+		log.log(Level.WARNING, e.toString(), e);
 
-    sb.append(MimeUtility.fold(sb.length(), word));
+		out.setEncoding("utf-8");
+	    }
 
-    return sb;
-  }
+	    while (offset > 0) {
+		if (in.read() < 0) {
+		    break;
+		}
+		offset--;
+	    }
 
-  public static String encodeMimeWord(String value,
-                              String charset,
-                              String scheme,
-                              String lineBreakChars,
-                              int lineLength)
-    throws UnsupportedEncodingException
-  {
-    if (lineLength != 76)
-      throw new UnimplementedException("Mime line length option");
+	    int sublen;
 
-    if (! lineBreakChars.equals("\r\n"))
-      throw new UnimplementedException("Mime line break option");
+	    while (length > 0
+		    && (sublen = in.read(charBuf, 0, charBuf.length)) >= 0) {
 
-    return MimeUtility.encodeWord(value, charset, scheme);
-  }
+		sublen = Math.min(length, sublen);
+
+		out.print(charBuf, 0, sublen);
+		length -= sublen;
+	    }
+
+	    out.flush();
+
+	    StringValue sb = env.createBinaryBuilder();
+	    for (TempBuffer ptr = ts.getHead(); ptr != null; ptr = ptr.getNext()) {
+		sb.append(ptr.getBuffer(), 0, ptr.getLength());
+	    }
+
+	    return sb;
+	} catch (IOException e) {
+	    throw new QuercusModuleException(e);
+	} finally {
+	    TempCharBuffer.free(tb);
+	}
+    }
+
+    /**
+     * Returns decoded Mime header/field.
+     */
+    public static StringValue decodeMime(Env env,
+	    CharSequence word,
+	    String charset)
+	    throws UnsupportedEncodingException {
+	StringValue str = env.createString(
+		MimeUtility.unfold(MimeUtility.decodeText(word.toString())));
+
+	return str.toBinaryValue(charset);
+    }
+
+    public static Value encodeMime(Env env,
+	    StringValue name,
+	    StringValue value,
+	    String inCharset,
+	    String outCharset,
+	    String scheme)
+	    throws UnsupportedEncodingException {
+	return encodeMime(env,
+		name,
+		value,
+		inCharset,
+		outCharset,
+		scheme,
+		"\r\n",
+		76);
+    }
+
+    /**
+     * Encodes a MIME header.
+     *
+     * XXX: preferences
+     *
+     * @param field_name header field name
+     * @param field_value header field value
+     * @param preferences
+     */
+    /**
+     * Returns an encoded Mime header.
+     */
+    public static StringValue encodeMime(Env env,
+	    StringValue name,
+	    StringValue value,
+	    String inCharset,
+	    String outCharset,
+	    String scheme,
+	    String lineBreakChars,
+	    int lineLength)
+	    throws UnsupportedEncodingException {
+	name = name.toUnicodeValue(env, inCharset);
+	value = value.toUnicodeValue(env, inCharset);
+
+	StringValue sb = env.createUnicodeBuilder();
+	sb.append(name);
+	sb.append(':');
+	sb.append(' ');
+
+	String word = encodeMimeWord(
+		value.toString(), outCharset, scheme, lineBreakChars, lineLength);
+
+	sb.append(MimeUtility.fold(sb.length(), word));
+
+	return sb;
+    }
+
+    public static String encodeMimeWord(String value,
+	    String charset,
+	    String scheme,
+	    String lineBreakChars,
+	    int lineLength)
+	    throws UnsupportedEncodingException {
+	if (lineLength != 76) {
+	    throw new UnimplementedException("Mime line length option");
+	}
+
+	if (!lineBreakChars.equals("\r\n")) {
+	    throw new UnimplementedException("Mime line break option");
+	}
+
+	return MimeUtility.encodeWord(value, charset, scheme);
+    }
 }

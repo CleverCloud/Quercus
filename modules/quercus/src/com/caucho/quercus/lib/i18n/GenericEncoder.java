@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.i18n;
 
 import java.io.IOException;
@@ -49,106 +48,99 @@ import com.caucho.util.L10N;
 import com.caucho.vfs.TempBuffer;
 
 public class GenericEncoder
-  extends Encoder
-{
-  private static final Logger log
-    = Logger.getLogger(GenericEncoder.class.getName());
+	extends Encoder {
 
-  private static final L10N L = new L10N(GenericEncoder.class);
-  
-  private Charset _charset;
-  protected CharsetEncoder _encoder;
-  
-  public GenericEncoder(String charsetName)
-  {
-    super(charsetName);
-    
-    _charset = Charset.forName(charsetName);
-    
-    _encoder = _charset.newEncoder();
-  }
-  
-  public boolean isEncodable(Env env, StringValue str)
-  {
-    int len = str.length();
-    
-    for (int i = 0; i < len; i++) {
-      if (! _encoder.canEncode(str.charAt(i))) {
-        return false;
-      }
-    }
-    
-    return false;
-  }
-  
-  @Override
-  public StringValue encode(Env env, CharSequence str)
-  {
-    CharBuffer in = CharBuffer.wrap(str);
-    
-    TempBuffer tempBuf = TempBuffer.allocate();
-    
-    try {
-      ByteBuffer out = ByteBuffer.wrap(tempBuf.getBuffer());
-      
-      StringValue sb = env.createBinaryBuilder();
+    private static final Logger log = Logger.getLogger(GenericEncoder.class.getName());
+    private static final L10N L = new L10N(GenericEncoder.class);
+    private Charset _charset;
+    protected CharsetEncoder _encoder;
 
-      while (in.hasRemaining()) {
-        CoderResult coder = _encoder.encode(in, out, false);
+    public GenericEncoder(String charsetName) {
+	super(charsetName);
 
-        if (! fill(sb, in, out, coder))
-          return sb;
-        
-        out.clear();
-      }
-      
-      CoderResult coder = _encoder.encode(in, out, true);
-      if (! fill(sb, in, out, coder))
-        return sb;
-      
-      out.clear();
-      
-      coder = _encoder.flush(out);
-      fill(sb, in, out, coder);
-      
-      return sb;
-    } finally {
-      TempBuffer.free(tempBuf);
-    }
-  }
-  
-  protected boolean fill(StringValue sb, CharBuffer in,
-                         ByteBuffer out, CoderResult coder)
-  {
-    int len = out.position();
-    
-    if (len > 0) {
-      int offset = out.arrayOffset();
-      
-      sb.appendBytes(out.array(), offset, offset + len);
-    }
-    
-    if (coder.isMalformed() || coder.isUnmappable()) {
-      int errorIndex = in.position();
-      
-      in.position(errorIndex + 1);
-      
-      if (_isIgnore) {
-      }
-      else if (_replacement != null)
-        sb.append(_replacement);
-      else if (_isReplaceUnicode)
-        sb.append("U+" + Integer.toHexString(in.get(errorIndex)));
-      else
-        return false;
-    }
-    
-    return true;
-  }
-  
-  public void reset()
-  {
-    _encoder.reset();
-  }
+	_charset = Charset.forName(charsetName);
 
+	_encoder = _charset.newEncoder();
+    }
+
+    public boolean isEncodable(Env env, StringValue str) {
+	int len = str.length();
+
+	for (int i = 0; i < len; i++) {
+	    if (!_encoder.canEncode(str.charAt(i))) {
+		return false;
+	    }
+	}
+
+	return false;
+    }
+
+    @Override
+    public StringValue encode(Env env, CharSequence str) {
+	CharBuffer in = CharBuffer.wrap(str);
+
+	TempBuffer tempBuf = TempBuffer.allocate();
+
+	try {
+	    ByteBuffer out = ByteBuffer.wrap(tempBuf.getBuffer());
+
+	    StringValue sb = env.createBinaryBuilder();
+
+	    while (in.hasRemaining()) {
+		CoderResult coder = _encoder.encode(in, out, false);
+
+		if (!fill(sb, in, out, coder)) {
+		    return sb;
+		}
+
+		out.clear();
+	    }
+
+	    CoderResult coder = _encoder.encode(in, out, true);
+	    if (!fill(sb, in, out, coder)) {
+		return sb;
+	    }
+
+	    out.clear();
+
+	    coder = _encoder.flush(out);
+	    fill(sb, in, out, coder);
+
+	    return sb;
+	} finally {
+	    TempBuffer.free(tempBuf);
+	}
+    }
+
+    protected boolean fill(StringValue sb, CharBuffer in,
+	    ByteBuffer out, CoderResult coder) {
+	int len = out.position();
+
+	if (len > 0) {
+	    int offset = out.arrayOffset();
+
+	    sb.appendBytes(out.array(), offset, offset + len);
+	}
+
+	if (coder.isMalformed() || coder.isUnmappable()) {
+	    int errorIndex = in.position();
+
+	    in.position(errorIndex + 1);
+
+	    if (_isIgnore) {
+	    } else if (_replacement != null) {
+		sb.append(_replacement);
+	    } else if (_isReplaceUnicode) {
+		sb.append("U+" + Integer.toHexString(in.get(errorIndex)));
+	    } else {
+		return false;
+	    }
+	}
+
+	return true;
+    }
+
+    public void reset() {
+	_encoder.reset();
+    }
 }

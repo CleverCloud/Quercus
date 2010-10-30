@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.i18n;
 
 import java.nio.ByteBuffer;
@@ -39,106 +38,100 @@ import com.caucho.quercus.env.StringValue;
 import com.caucho.util.L10N;
 
 public class Big5Decoder
-  extends GenericDecoder
-{
-  private static final Logger log
-    = Logger.getLogger(Big5Decoder.class.getName());
+	extends GenericDecoder {
 
-  private static final L10N L = new L10N(Big5Decoder.class);
-  
-  public Big5Decoder(String charsetName)
-  {
-    super(charsetName);
-  }
-  
-  @Override
-  public boolean isDecodable(Env env, StringValue str)
-  {
-    if (str.isUnicode())
-      return true;
-    
-    ByteBuffer in = ByteBuffer.wrap(str.toBytes());
-    CharBuffer out = CharBuffer.allocate(512);
-    
-    while (in.hasRemaining()) {
-      CoderResult coder = _decoder.decode(in, out, false);
-      if (isMalformed(coder, in)) {
-        return false;
-      }
-      
-      out.clear();
-    }
-    
-    CoderResult coder = _decoder.decode(in, out, true);
-    if (isMalformed(coder, in)) {
-      return false;
-    }
-    
-    out.clear();
-    
-    coder = _decoder.flush(out);
-    if (isMalformed(coder, in)) {
-      return false;
-    }
-    
-    return true;
-  }
-  
-  private boolean isMalformed(CoderResult coder, ByteBuffer in)
-  {
-    if (coder.isMalformed() || coder.isUnmappable()) {
-      int errorPosition = in.position();
-      
-      if (errorPosition + 1 < in.limit()
-          && in.get(errorPosition) == '\u00a3'
-          && in.get(errorPosition + 1) == '\u00e1') {
-        return false;
-      }
-      else
-        return true;
-    }
-    else
-      return false;
-  }
-  
-  @Override
-  protected boolean fill(StringBuilder sb, ByteBuffer in,
-                         CharBuffer out, CoderResult coder)
-  {
-    int len = out.position();
-    
-    if (len > 0) {
-      int offset = out.arrayOffset();
-      sb.append(out.array(), offset, len);
-    }
-    
-    if (coder.isMalformed() || coder.isUnmappable()) {
-      int errorPosition = in.position();
+    private static final Logger log = Logger.getLogger(Big5Decoder.class.getName());
+    private static final L10N L = new L10N(Big5Decoder.class);
 
-      if (errorPosition + 1 < in.limit()
-          && (in.get(errorPosition) & 0xFF) == '\u00a3'
-          && (in.get(errorPosition + 1) & 0xFF) == '\u00e1') {
-        
-        sb.append('\u20AC');
-        in.position(errorPosition + 2);
-        
-        return true;
-      }
-      
-      _hasError = true;
-      in.position(errorPosition + 1);
-      
-      if (_isIgnoreErrors) {
-      }
-      else if (_replacement != null)
-        sb.append(_replacement);
-      else if (_isAllowMalformedOut)
-        sb.append((char) in.get(errorPosition));
-      else
-        return false;
+    public Big5Decoder(String charsetName) {
+	super(charsetName);
     }
-    
-    return true;
-  }
 
+    @Override
+    public boolean isDecodable(Env env, StringValue str) {
+	if (str.isUnicode()) {
+	    return true;
+	}
+
+	ByteBuffer in = ByteBuffer.wrap(str.toBytes());
+	CharBuffer out = CharBuffer.allocate(512);
+
+	while (in.hasRemaining()) {
+	    CoderResult coder = _decoder.decode(in, out, false);
+	    if (isMalformed(coder, in)) {
+		return false;
+	    }
+
+	    out.clear();
+	}
+
+	CoderResult coder = _decoder.decode(in, out, true);
+	if (isMalformed(coder, in)) {
+	    return false;
+	}
+
+	out.clear();
+
+	coder = _decoder.flush(out);
+	if (isMalformed(coder, in)) {
+	    return false;
+	}
+
+	return true;
+    }
+
+    private boolean isMalformed(CoderResult coder, ByteBuffer in) {
+	if (coder.isMalformed() || coder.isUnmappable()) {
+	    int errorPosition = in.position();
+
+	    if (errorPosition + 1 < in.limit()
+		    && in.get(errorPosition) == '\u00a3'
+		    && in.get(errorPosition + 1) == '\u00e1') {
+		return false;
+	    } else {
+		return true;
+	    }
+	} else {
+	    return false;
+	}
+    }
+
+    @Override
+    protected boolean fill(StringBuilder sb, ByteBuffer in,
+	    CharBuffer out, CoderResult coder) {
+	int len = out.position();
+
+	if (len > 0) {
+	    int offset = out.arrayOffset();
+	    sb.append(out.array(), offset, len);
+	}
+
+	if (coder.isMalformed() || coder.isUnmappable()) {
+	    int errorPosition = in.position();
+
+	    if (errorPosition + 1 < in.limit()
+		    && (in.get(errorPosition) & 0xFF) == '\u00a3'
+		    && (in.get(errorPosition + 1) & 0xFF) == '\u00e1') {
+
+		sb.append('\u20AC');
+		in.position(errorPosition + 2);
+
+		return true;
+	    }
+
+	    _hasError = true;
+	    in.position(errorPosition + 1);
+
+	    if (_isIgnoreErrors) {
+	    } else if (_replacement != null) {
+		sb.append(_replacement);
+	    } else if (_isAllowMalformedOut) {
+		sb.append((char) in.get(errorPosition));
+	    } else {
+		return false;
+	    }
+	}
+
+	return true;
+    }
 }
