@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -41,37 +40,33 @@ import com.caucho.quercus.expr.Expr;
  * Code for marshaling (PHP to Java) and unmarshaling (Java to PHP) arguments.
  */
 public class UnicodeEregiMarshal extends StringMarshal {
-  public static final UnicodeEregiMarshal MARSHAL = new UnicodeEregiMarshal();
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return RegexpModule.createUnicodeEregi(env, 
-                                           expr.eval(env).toStringValue());
-  }
+    public static final UnicodeEregiMarshal MARSHAL = new UnicodeEregiMarshal();
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return RegexpModule.createUnicodeEregi(env, value.toStringValue());
-  }
-
-  public Value unmarshal(Env env, Object value)
-  {
-    throw new UnsupportedOperationException(getClass().getName());
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (argValue.isString()) {
-      return Marshal.ZERO;
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return RegexpModule.createUnicodeEregi(env,
+		expr.eval(env).toStringValue());
     }
-    else
-      return Marshal.MAX;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return UnicodeEregi.class;
-  }
+
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return RegexpModule.createUnicodeEregi(env, value.toStringValue());
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	throw new UnsupportedOperationException(getClass().getName());
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (argValue.isString()) {
+	    return Marshal.ZERO;
+	} else {
+	    return Marshal.MAX;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return UnicodeEregi.class;
+    }
 }

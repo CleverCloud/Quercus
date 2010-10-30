@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import java.io.InputStream;
@@ -37,44 +36,39 @@ import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 import com.caucho.vfs.Path;
 
-public class InputStreamMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new InputStreamMarshal();
-  
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+public class InputStreamMarshal extends Marshal {
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return marshal(env, expr.eval(env), expectedClass);
-  }
+    public static final Marshal MARSHAL = new InputStreamMarshal();
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return value.toInputStream();
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    return env.wrapJava((InputStream)value);
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (argValue instanceof JavaValue
-        && InputStream.class.isAssignableFrom(
-            argValue.toJavaObject().getClass()))
-      return Marshal.ZERO;
-    else
-      return Marshal.FOUR;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return InputStream.class;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return marshal(env, expr.eval(env), expectedClass);
+    }
+
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return value.toInputStream();
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	return env.wrapJava((InputStream) value);
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (argValue instanceof JavaValue
+		&& InputStream.class.isAssignableFrom(
+		argValue.toJavaObject().getClass())) {
+	    return Marshal.ZERO;
+	} else {
+	    return Marshal.FOUR;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return InputStream.class;
+    }
 }

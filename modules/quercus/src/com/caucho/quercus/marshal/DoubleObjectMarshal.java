@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.DoubleValue;
@@ -34,53 +33,48 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class DoubleObjectMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new DoubleObjectMarshal();
+public class DoubleObjectMarshal extends Marshal {
 
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+    public static final Marshal MARSHAL = new DoubleObjectMarshal();
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return new Double(expr.evalDouble(env));
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return value.toJavaDouble();
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return new Double(expr.evalDouble(env));
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value == null)
-      return DoubleValue.ZERO;
-    else
-      return new DoubleValue(((Number) value).doubleValue());
-  }
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return value.toJavaDouble();
+    }
 
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return argValue.toDoubleMarshalCost() + 1;
+    public Value unmarshal(Env env, Object value) {
+	if (value == null) {
+	    return DoubleValue.ZERO;
+	} else {
+	    return new DoubleValue(((Number) value).doubleValue());
+	}
+    }
 
-    /*
-    if (argValue instanceof DoubleValue)
-      return COST_EQUAL;
-    else if (argValue.isLongConvertible())
-      return COST_LOSSY_NUMERIC;
-    else if (argValue.isDoubleConvertible())
-      return COST_LOSSLESS_NUMERIC;
-    else
-      return Marshal.FOUR;
-    */
-  }
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return argValue.toDoubleMarshalCost() + 1;
 
-  @Override
-  public Class getExpectedClass()
-  {
-    return Double.class;
-  }
+	/*
+	if (argValue instanceof DoubleValue)
+	return COST_EQUAL;
+	else if (argValue.isLongConvertible())
+	return COST_LOSSY_NUMERIC;
+	else if (argValue.isDoubleConvertible())
+	return COST_LOSSLESS_NUMERIC;
+	else
+	return Marshal.FOUR;
+	 */
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return Double.class;
+    }
 }

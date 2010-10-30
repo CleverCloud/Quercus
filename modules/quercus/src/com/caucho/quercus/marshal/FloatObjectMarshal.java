@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.DoubleValue;
@@ -34,54 +33,49 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class FloatObjectMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new FloatObjectMarshal();
+public class FloatObjectMarshal extends Marshal {
 
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+    public static final Marshal MARSHAL = new FloatObjectMarshal();
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return new Float((float) expr.evalDouble(env));
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  @Override
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return value.toJavaFloat();
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return new Float((float) expr.evalDouble(env));
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value == null)
-      return DoubleValue.ZERO;
-    else
-      return new DoubleValue(((Number) value).doubleValue());
-  }
+    @Override
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return value.toJavaFloat();
+    }
 
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return argValue.toFloatMarshalCost() + 3;
+    public Value unmarshal(Env env, Object value) {
+	if (value == null) {
+	    return DoubleValue.ZERO;
+	} else {
+	    return new DoubleValue(((Number) value).doubleValue());
+	}
+    }
 
-    /*
-    if (argValue instanceof DoubleValue)
-      return Marshal.ONE;
-    else if (argValue.isLongConvertible())
-      return LONG_CONVERTIBLE_FLOAT_COST;
-    else if (argValue.isDoubleConvertible())
-      return DOUBLE_CONVERTIBLE_FLOAT_COST;
-    else
-      return Marshal.FOUR;
-    */
-  }
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return argValue.toFloatMarshalCost() + 3;
 
-  @Override
-  public Class getExpectedClass()
-  {
-    return Float.class;
-  }
+	/*
+	if (argValue instanceof DoubleValue)
+	return Marshal.ONE;
+	else if (argValue.isLongConvertible())
+	return LONG_CONVERTIBLE_FLOAT_COST;
+	else if (argValue.isDoubleConvertible())
+	return DOUBLE_CONVERTIBLE_FLOAT_COST;
+	else
+	return Marshal.FOUR;
+	 */
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return Float.class;
+    }
 }

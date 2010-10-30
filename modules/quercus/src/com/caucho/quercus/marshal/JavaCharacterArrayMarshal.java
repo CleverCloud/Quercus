@@ -26,53 +26,49 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.Value;
 
-public class JavaCharacterArrayMarshal extends JavaArrayMarshal
-{
-  public static final Marshal MARSHAL
-    = new JavaCharacterArrayMarshal();
+public class JavaCharacterArrayMarshal extends JavaArrayMarshal {
 
-  @Override
-  public Value unmarshal(Env env, Object value)
-  {
-    char []buffer = (char []) value;
+    public static final Marshal MARSHAL = new JavaCharacterArrayMarshal();
 
-    if (buffer != null)
-      return env.createString(buffer, 0, buffer.length);
-    else
-      return NullValue.NULL;
-  }
+    @Override
+    public Value unmarshal(Env env, Object value) {
+	char[] buffer = (char[]) value;
 
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return argValue.toCharArrayMarshalCost();
-
-    /*
-    if (argValue.isString()) {
-      if (argValue.isUnicode())
-        return Marshal.UNICODE_CHARACTER_ARRAY_COST;
-      else if (argValue.isBinary())
-        return Marshal.BINARY_CHARACTER_ARRAY_COST;
-      else
-        return Marshal.PHP5_CHARACTER_ARRAY_COST;
+	if (buffer != null) {
+	    return env.createString(buffer, 0, buffer.length);
+	} else {
+	    return NullValue.NULL;
+	}
     }
-    else if (argValue.isArray())
-      return Marshal.TWO; // php/0cib
-    else
-      return Marshal.FOUR;
-    */
-  }
 
-  @Override
-  public Class getExpectedClass()
-  {
-    return char[].class;
-  }
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return argValue.toCharArrayMarshalCost();
+
+	/*
+	if (argValue.isString()) {
+	if (argValue.isUnicode())
+	return Marshal.UNICODE_CHARACTER_ARRAY_COST;
+	else if (argValue.isBinary())
+	return Marshal.BINARY_CHARACTER_ARRAY_COST;
+	else
+	return Marshal.PHP5_CHARACTER_ARRAY_COST;
+	}
+	else if (argValue.isArray())
+	return Marshal.TWO; // php/0cib
+	else
+	return Marshal.FOUR;
+	 */
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return char[].class;
+    }
 }

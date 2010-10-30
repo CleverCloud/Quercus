@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.DoubleValue;
@@ -34,57 +33,51 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class DoubleMarshal extends Marshal
-{
-  public static final DoubleMarshal MARSHAL = new DoubleMarshal();
+public class DoubleMarshal extends Marshal {
 
-  public boolean isDouble()
-  {
-    return true;
-  }
+    public static final DoubleMarshal MARSHAL = new DoubleMarshal();
 
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+    public boolean isDouble() {
+	return true;
+    }
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return new Double(expr.evalDouble(env));
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return new Double(value.toDouble());
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return new Double(expr.evalDouble(env));
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value == null)
-      return DoubleValue.ZERO;
-    else
-      return new DoubleValue(((Number) value).doubleValue());
-  }
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return new Double(value.toDouble());
+    }
 
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return argValue.toDoubleMarshalCost();
+    public Value unmarshal(Env env, Object value) {
+	if (value == null) {
+	    return DoubleValue.ZERO;
+	} else {
+	    return new DoubleValue(((Number) value).doubleValue());
+	}
+    }
 
-    /*
-    if (argValue instanceof DoubleValue)
-      return COST_EQUAL;
-    else if (argValue.isLongConvertible())
-      return COST_LOSSY_NUMERIC;
-    else if (argValue.isDoubleConvertible())
-      return COST_LOSSLESS_NUMERIC;
-    else
-      return Marshal.FOUR;
-    */
-  }
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return argValue.toDoubleMarshalCost();
 
-  public Class getExpectedClass()
-  {
-    return double.class;
-  }
+	/*
+	if (argValue instanceof DoubleValue)
+	return COST_EQUAL;
+	else if (argValue.isLongConvertible())
+	return COST_LOSSY_NUMERIC;
+	else if (argValue.isDoubleConvertible())
+	return COST_LOSSLESS_NUMERIC;
+	else
+	return Marshal.FOUR;
+	 */
+    }
+
+    public Class getExpectedClass() {
+	return double.class;
+    }
 }

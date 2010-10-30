@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -37,46 +36,41 @@ import com.caucho.quercus.expr.Expr;
 
 import java.util.Date;
 
-public class DateMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new DateMarshal();
-  
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+public class DateMarshal extends Marshal {
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return marshal(env, expr.eval(env), expectedClass);
-  }
+    public static final Marshal MARSHAL = new DateMarshal();
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return value.toJavaDate();
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    return env.wrapJava((Date)value);
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (argValue instanceof JavaDateValue)
-      return Marshal.ZERO;
-    else if (argValue instanceof LongValue)
-      return Marshal.THREE;
-    else if (argValue.isLongConvertible())
-      return Marshal.THREE;
-    else
-      return Marshal.FOUR;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return Date.class;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return marshal(env, expr.eval(env), expectedClass);
+    }
+
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return value.toJavaDate();
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	return env.wrapJava((Date) value);
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (argValue instanceof JavaDateValue) {
+	    return Marshal.ZERO;
+	} else if (argValue instanceof LongValue) {
+	    return Marshal.THREE;
+	} else if (argValue.isLongConvertible()) {
+	    return Marshal.THREE;
+	} else {
+	    return Marshal.FOUR;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return Date.class;
+    }
 }

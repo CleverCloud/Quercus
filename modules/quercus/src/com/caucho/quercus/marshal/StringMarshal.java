@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -38,69 +37,64 @@ import com.caucho.quercus.expr.Expr;
  * Code for marshaling (PHP to Java) and unmarshaling (Java to PHP) arguments.
  */
 public class StringMarshal extends Marshal {
-  public static final StringMarshal MARSHAL = new StringMarshal();
 
-  public boolean isString()
-  {
-    return true;
-  }
+    public static final StringMarshal MARSHAL = new StringMarshal();
 
-  public boolean isReadOnly()
-  {
-    return true;
-  }
-
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return expr.evalString(env);
-  }
-
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-
-    return value.toJavaString();
-  }
-
-  @Override
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value == null)
-      return NullValue.NULL;
-    else
-      return env.createString((String) value);
-  }
-
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return argValue.toStringMarshalCost();
-    /*
-    if (argValue.isString()) {
-      if (argValue.isUnicode())
-        return Marshal.UNICODE_STRING_COST;
-      else if (argValue.isBinary())
-        return Marshal.BINARY_STRING_COST;
-      else
-        return Marshal.PHP5_STRING_COST;
+    public boolean isString() {
+	return true;
     }
-    else if (! (argValue.isArray() || argValue.isObject()))
-      return Marshal.THREE;
-    else
-      return Marshal.FOUR;
-    */
-  }
 
-  public int getMarshalingCost(Expr expr)
-  {
-    if (expr.isString())
-      return Marshal.ZERO;
-    else
-      return Marshal.FOUR;
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  @Override
-  public Class getExpectedClass()
-  {
-    return String.class;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return expr.evalString(env);
+    }
+
+    public Object marshal(Env env, Value value, Class expectedClass) {
+
+	return value.toJavaString();
+    }
+
+    @Override
+    public Value unmarshal(Env env, Object value) {
+	if (value == null) {
+	    return NullValue.NULL;
+	} else {
+	    return env.createString((String) value);
+	}
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return argValue.toStringMarshalCost();
+	/*
+	if (argValue.isString()) {
+	if (argValue.isUnicode())
+	return Marshal.UNICODE_STRING_COST;
+	else if (argValue.isBinary())
+	return Marshal.BINARY_STRING_COST;
+	else
+	return Marshal.PHP5_STRING_COST;
+	}
+	else if (! (argValue.isArray() || argValue.isObject()))
+	return Marshal.THREE;
+	else
+	return Marshal.FOUR;
+	 */
+    }
+
+    public int getMarshalingCost(Expr expr) {
+	if (expr.isString()) {
+	    return Marshal.ZERO;
+	} else {
+	    return Marshal.FOUR;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return String.class;
+    }
 }

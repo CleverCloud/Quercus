@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.BooleanValue;
@@ -35,54 +34,50 @@ import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class BooleanObjectMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new BooleanObjectMarshal();
+public class BooleanObjectMarshal extends Marshal {
 
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+    public static final Marshal MARSHAL = new BooleanObjectMarshal();
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return expr.evalBoolean(env) ? Boolean.TRUE : Boolean.FALSE;
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  @Override
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    if (value.isNull())
-      return null;
-    else
-      return value.toBoolean() ? Boolean.TRUE : Boolean.FALSE;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return expr.evalBoolean(env) ? Boolean.TRUE : Boolean.FALSE;
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value == null)
-      return NullValue.NULL;
-    else
-      return Boolean.TRUE.equals(value)
-        ? BooleanValue.TRUE
-        : BooleanValue.FALSE;
-  }
+    @Override
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	if (value.isNull()) {
+	    return null;
+	} else {
+	    return value.toBoolean() ? Boolean.TRUE : Boolean.FALSE;
+	}
+    }
 
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return argValue.toBooleanMarshalCost() + 1;
-    /*
-    if (argValue instanceof BooleanValue)
-      return Marshal.ONE;
-    else
-      return Marshal.THREE + 1;
-    */
-  }
+    public Value unmarshal(Env env, Object value) {
+	if (value == null) {
+	    return NullValue.NULL;
+	} else {
+	    return Boolean.TRUE.equals(value)
+		    ? BooleanValue.TRUE
+		    : BooleanValue.FALSE;
+	}
+    }
 
-  @Override
-  public Class getExpectedClass()
-  {
-    return Boolean.class;
-  }
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return argValue.toBooleanMarshalCost() + 1;
+	/*
+	if (argValue instanceof BooleanValue)
+	return Marshal.ONE;
+	else
+	return Marshal.THREE + 1;
+	 */
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return Boolean.class;
+    }
 }

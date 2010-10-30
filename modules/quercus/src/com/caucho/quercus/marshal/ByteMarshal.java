@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -34,55 +33,49 @@ import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class ByteMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new ByteMarshal();
+public class ByteMarshal extends Marshal {
 
-  public boolean isLong()
-  {
-    return true;
-  }
+    public static final Marshal MARSHAL = new ByteMarshal();
 
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+    public boolean isLong() {
+	return true;
+    }
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return new Byte((byte) expr.evalLong(env));
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return new Byte((byte) value.toLong());
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return new Byte((byte) expr.evalLong(env));
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value == null)
-      return LongValue.ZERO;
-    else
-      return LongValue.create(((Number) value).longValue());
-  }
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return new Byte((byte) value.toLong());
+    }
 
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return argValue.toByteMarshalCost();
-    /*
-    if (argValue.isLongConvertible())
-      return LONG_CONVERTIBLE_BYTE_COST;
-    else if (argValue.isDoubleConvertible())
-      return DOUBLE_CONVERTIBLE_BYTE_COST;
-    else
-      return Marshal.FOUR;
-    */
-  }
+    public Value unmarshal(Env env, Object value) {
+	if (value == null) {
+	    return LongValue.ZERO;
+	} else {
+	    return LongValue.create(((Number) value).longValue());
+	}
+    }
 
-  @Override
-  public Class getExpectedClass()
-  {
-    return byte.class;
-  }
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return argValue.toByteMarshalCost();
+	/*
+	if (argValue.isLongConvertible())
+	return LONG_CONVERTIBLE_BYTE_COST;
+	else if (argValue.isDoubleConvertible())
+	return DOUBLE_CONVERTIBLE_BYTE_COST;
+	else
+	return Marshal.FOUR;
+	 */
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return byte.class;
+    }
 }

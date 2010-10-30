@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -34,54 +33,49 @@ import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class ShortMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new ShortMarshal();
-  
-  public boolean isLong()
-  {
-    return true;
-  }
+public class ShortMarshal extends Marshal {
 
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+    public static final Marshal MARSHAL = new ShortMarshal();
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return new Short((short) expr.evalLong(env));
-  }
+    public boolean isLong() {
+	return true;
+    }
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return new Short((short) value.toLong());
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value == null)
-      return LongValue.ZERO;
-    else
-      return LongValue.create(((Number) value).longValue());
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (argValue instanceof LongValue)
-      return Marshal.ONE;
-    else if (argValue.isLongConvertible())
-      return Marshal.THREE;
-    else if (argValue.isNumeric())
-      return Marshal.THREE;
-    else
-      return Marshal.FOUR;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return short.class;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return new Short((short) expr.evalLong(env));
+    }
+
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return new Short((short) value.toLong());
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	if (value == null) {
+	    return LongValue.ZERO;
+	} else {
+	    return LongValue.create(((Number) value).longValue());
+	}
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (argValue instanceof LongValue) {
+	    return Marshal.ONE;
+	} else if (argValue.isLongConvertible()) {
+	    return Marshal.THREE;
+	} else if (argValue.isNumeric()) {
+	    return Marshal.THREE;
+	} else {
+	    return Marshal.FOUR;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return short.class;
+    }
 }

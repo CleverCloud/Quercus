@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -34,54 +33,49 @@ import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class CharacterMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new CharacterMarshal();
+public class CharacterMarshal extends Marshal {
 
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+    public static final Marshal MARSHAL = new CharacterMarshal();
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return new Character(expr.evalChar(env));
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return new Character(value.toChar());
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return new Character(expr.evalChar(env));
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value == null)
-      return NullValue.NULL;
-    else
-      return env.createString(value.toString());
-  }
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return new Character(value.toChar());
+    }
 
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return argValue.toCharMarshalCost();
+    public Value unmarshal(Env env, Object value) {
+	if (value == null) {
+	    return NullValue.NULL;
+	} else {
+	    return env.createString(value.toString());
+	}
+    }
 
-    /*
-    if (argValue.isUnicode() && argValue.length() == 1)
-      return Marshal.ONE;
-    else if (argValue.isString()
-            &&  !argValue.isBinary() && argValue.length() == 1)
-      return Marshal.ONE; // php/0ch0
-    else if (argValue.isLongConvertible())
-      return Marshal.THREE;
-    else
-      return Marshal.FOUR;
-    */
-  }
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return argValue.toCharMarshalCost();
 
-  @Override
-  public Class getExpectedClass()
-  {
-    return char.class;
-  }
+	/*
+	if (argValue.isUnicode() && argValue.length() == 1)
+	return Marshal.ONE;
+	else if (argValue.isString()
+	&&  !argValue.isBinary() && argValue.length() == 1)
+	return Marshal.ONE; // php/0ch0
+	else if (argValue.isLongConvertible())
+	return Marshal.THREE;
+	else
+	return Marshal.FOUR;
+	 */
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return char.class;
+    }
 }

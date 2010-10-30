@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -40,46 +39,43 @@ import com.caucho.quercus.expr.Expr;
  * Code for marshaling (PHP to Java) and unmarshaling (Java to PHP) arguments.
  */
 public class RegexpArrayMarshal extends StringMarshal {
-  public static final RegexpMarshal MARSHAL = new RegexpMarshal();
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return RegexpModule.createRegexpArray(env, expr.eval(env));
-  }
+    public static final RegexpMarshal MARSHAL = new RegexpMarshal();
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return RegexpModule.createRegexpArray(env, value);
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return RegexpModule.createRegexpArray(env, expr.eval(env));
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    throw new UnsupportedOperationException(getClass().getName());
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (argValue.isArray())
-      return Marshal.ZERO;
-    else if (argValue.isString())
-      return Marshal.ONE;
-    else
-      return Marshal.MAX;
-  }
-  
-  @Override
-  public int getMarshalingCost(Expr expr)
-  {
-    if (expr.isArray())
-      return Marshal.ZERO;
-    else
-      return Marshal.ONE;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return Regexp[].class;
-  }
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return RegexpModule.createRegexpArray(env, value);
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	throw new UnsupportedOperationException(getClass().getName());
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (argValue.isArray()) {
+	    return Marshal.ZERO;
+	} else if (argValue.isString()) {
+	    return Marshal.ONE;
+	} else {
+	    return Marshal.MAX;
+	}
+    }
+
+    @Override
+    public int getMarshalingCost(Expr expr) {
+	if (expr.isArray()) {
+	    return Marshal.ZERO;
+	} else {
+	    return Marshal.ONE;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return Regexp[].class;
+    }
 }

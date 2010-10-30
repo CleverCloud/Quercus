@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -34,51 +33,46 @@ import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class ByteObjectMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new ByteObjectMarshal();
+public class ByteObjectMarshal extends Marshal {
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return new Byte((byte) expr.evalLong(env));
-  }
+    public static final Marshal MARSHAL = new ByteObjectMarshal();
 
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return new Byte((byte) expr.evalLong(env));
+    }
 
-  @Override
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return value.toJavaByte();
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value == null)
-      return LongValue.ZERO;
-    else
-      return LongValue.create(((Number) value).longValue());
-  }
+    @Override
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return value.toJavaByte();
+    }
 
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return argValue.toByteMarshalCost() + 1;
-    /*
-    if (argValue.isLongConvertible())
-      return LONG_CONVERTIBLE_BYTE_COST;
-    else if (argValue.isDoubleConvertible())
-      return DOUBLE_CONVERTIBLE_BYTE_COST;
-    else
-      return Marshal.FOUR;
-    */
-  }
+    public Value unmarshal(Env env, Object value) {
+	if (value == null) {
+	    return LongValue.ZERO;
+	} else {
+	    return LongValue.create(((Number) value).longValue());
+	}
+    }
 
-  @Override
-  public Class getExpectedClass()
-  {
-    return Byte.class;
-  }
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return argValue.toByteMarshalCost() + 1;
+	/*
+	if (argValue.isLongConvertible())
+	return LONG_CONVERTIBLE_BYTE_COST;
+	else if (argValue.isDoubleConvertible())
+	return DOUBLE_CONVERTIBLE_BYTE_COST;
+	else
+	return Marshal.FOUR;
+	 */
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return Byte.class;
+    }
 }

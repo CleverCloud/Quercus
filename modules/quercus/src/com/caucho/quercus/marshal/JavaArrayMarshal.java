@@ -26,81 +26,74 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class JavaArrayMarshal extends Marshal
-{
-  private Class _expectedClass;
-  
-  public JavaArrayMarshal()
-  {
-    _expectedClass = Object[].class;
-  }
-  
-  public JavaArrayMarshal(Class expectedClass)
-  {
-    _expectedClass = expectedClass;
-  }
-  
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return marshal(env, expr.eval(env), expectedClass);
-  }
+public class JavaArrayMarshal extends Marshal {
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    /*
-    if (! value.isset()) {
-      if (_isNotNull) {
-        env.warning(L.l(
-          "null is an unexpected argument, expected {0}",
-          shortName(expectedClass)));
-      }
+    private Class _expectedClass;
 
-      return null;
+    public JavaArrayMarshal() {
+	_expectedClass = Object[].class;
     }
-    */
 
-    Class<?> componentType = expectedClass.getComponentType();
-    Object array = value.valuesToArray(env, componentType);
-    /*
-    if (array == null && _isNotNull) {
-      env.warning(L.l(
-        "null is an unexpected argument, expected {0}",
-        shortName(expectedClass)));
+    public JavaArrayMarshal(Class expectedClass) {
+	_expectedClass = expectedClass;
     }
-    */
-    
-    return array;
-  }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    return env.wrapJava(value);
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (argValue.isArray()) {
-      if (Value[].class.equals(_expectedClass)
-          || Object[].class.equals(_expectedClass))
-        return Marshal.ONE;
-      else
-        return Marshal.THREE;
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return marshal(env, expr.eval(env), expectedClass);
     }
-    else
-      return Marshal.FOUR;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return _expectedClass;
-  }
+
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	/*
+	if (! value.isset()) {
+	if (_isNotNull) {
+	env.warning(L.l(
+	"null is an unexpected argument, expected {0}",
+	shortName(expectedClass)));
+	}
+
+	return null;
+	}
+	 */
+
+	Class<?> componentType = expectedClass.getComponentType();
+	Object array = value.valuesToArray(env, componentType);
+	/*
+	if (array == null && _isNotNull) {
+	env.warning(L.l(
+	"null is an unexpected argument, expected {0}",
+	shortName(expectedClass)));
+	}
+	 */
+
+	return array;
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	return env.wrapJava(value);
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (argValue.isArray()) {
+	    if (Value[].class.equals(_expectedClass)
+		    || Object[].class.equals(_expectedClass)) {
+		return Marshal.ONE;
+	    } else {
+		return Marshal.THREE;
+	    }
+	} else {
+	    return Marshal.FOUR;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return _expectedClass;
+    }
 }

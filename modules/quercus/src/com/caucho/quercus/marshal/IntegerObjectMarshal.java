@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -34,49 +33,45 @@ import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class IntegerObjectMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new IntegerObjectMarshal();
-  
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+public class IntegerObjectMarshal extends Marshal {
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return new Integer((int) expr.evalLong(env));
-  }
+    public static final Marshal MARSHAL = new IntegerObjectMarshal();
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return value.toJavaInteger();
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value == null)
-      return LongValue.ZERO;
-    else
-      return LongValue.create(((Number) value).longValue());
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (argValue instanceof LongValue)
-      return Marshal.ONE;
-    else if (argValue.isLongConvertible())
-      return LONG_CONVERTIBLE_INTEGER_OBJECT_COST;
-    else if (argValue.isDoubleConvertible())
-      return DOUBLE_CONVERTIBLE_INTEGER_OBJECT_COST;
-    else
-      return Marshal.FOUR;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return Integer.class;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return new Integer((int) expr.evalLong(env));
+    }
+
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return value.toJavaInteger();
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	if (value == null) {
+	    return LongValue.ZERO;
+	} else {
+	    return LongValue.create(((Number) value).longValue());
+	}
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (argValue instanceof LongValue) {
+	    return Marshal.ONE;
+	} else if (argValue.isLongConvertible()) {
+	    return LONG_CONVERTIBLE_INTEGER_OBJECT_COST;
+	} else if (argValue.isDoubleConvertible()) {
+	    return DOUBLE_CONVERTIBLE_INTEGER_OBJECT_COST;
+	} else {
+	    return Marshal.FOUR;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return Integer.class;
+    }
 }

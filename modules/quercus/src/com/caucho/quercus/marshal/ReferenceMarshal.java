@@ -26,53 +26,45 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class ReferenceMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new ReferenceMarshal();
-  
-  public boolean isReadOnly()
-  {
-    return false;
-  }
+public class ReferenceMarshal extends Marshal {
 
-  public boolean isReference()
-  {
-    return true;
-  }
+    public static final Marshal MARSHAL = new ReferenceMarshal();
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    // quercus/0d1k
-    return expr.evalRef(env);
-  }
+    public boolean isReadOnly() {
+	return false;
+    }
 
-  @Override
-  public Object marshal(Env env, Value value, Class argClass)
-  {
-    return value.toLocalVarDeclAsRef();
-  }
+    public boolean isReference() {
+	return true;
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    throw new UnsupportedOperationException();
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	// quercus/0d1k
+	return expr.evalRef(env);
+    }
 
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return Marshal.ZERO;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return Value.class;
-  }
+    @Override
+    public Object marshal(Env env, Value value, Class argClass) {
+	return value.toLocalVarDeclAsRef();
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return Marshal.ZERO;
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return Value.class;
+    }
 }

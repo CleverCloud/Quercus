@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -35,64 +34,58 @@ import com.caucho.quercus.env.UnicodeValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class UnicodeValueMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new UnicodeValueMarshal();
-  
-  public boolean isReadOnly()
-  {
-    return true;
-  }
-  
-  /**
-   * Return true if is a Value.
-   */
-  @Override
-  public boolean isValue()
-  {
-    return true;
-  }
+public class UnicodeValueMarshal extends Marshal {
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return expr.eval(env).toUnicodeValue(env);
-  }
+    public static final Marshal MARSHAL = new UnicodeValueMarshal();
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return value.toUnicodeValue(env);
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value instanceof UnicodeValue)
-      return (UnicodeValue) value;
-    else if (value instanceof Value)
-      return ((Value) value).toUnicodeValue(env);
-    else
-      return env.createString(String.valueOf(value));
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return argValue.toUnicodeValueMarshalCost();
+    /**
+     * Return true if is a Value.
+     */
+    @Override
+    public boolean isValue() {
+	return true;
+    }
 
-    /*
-    if (argValue.isUnicode())
-      return Marshal.ZERO;
-    else if (argValue.isString())
-      return Marshal.TWO;
-    else if (! (argValue.isArray() || argValue.isObject()))
-      return Marshal.THREE;
-    else
-      return Marshal.FOUR;
-    */
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return UnicodeValue.class;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return expr.eval(env).toUnicodeValue(env);
+    }
+
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return value.toUnicodeValue(env);
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	if (value instanceof UnicodeValue) {
+	    return (UnicodeValue) value;
+	} else if (value instanceof Value) {
+	    return ((Value) value).toUnicodeValue(env);
+	} else {
+	    return env.createString(String.valueOf(value));
+	}
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return argValue.toUnicodeValueMarshalCost();
+
+	/*
+	if (argValue.isUnicode())
+	return Marshal.ZERO;
+	else if (argValue.isString())
+	return Marshal.TWO;
+	else if (! (argValue.isArray() || argValue.isObject()))
+	return Marshal.THREE;
+	else
+	return Marshal.FOUR;
+	 */
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return UnicodeValue.class;
+    }
 }

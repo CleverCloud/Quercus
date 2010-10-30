@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -34,72 +33,61 @@ import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class ValueMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new ValueMarshal(false);
-  public static final Marshal MARSHAL_PASS_THRU = new ValueMarshal(true);
+public class ValueMarshal extends Marshal {
 
-  private boolean _isPassThru;
+    public static final Marshal MARSHAL = new ValueMarshal(false);
+    public static final Marshal MARSHAL_PASS_THRU = new ValueMarshal(true);
+    private boolean _isPassThru;
 
-  protected ValueMarshal(boolean isPassThru)
-  {
-    _isPassThru = isPassThru;
-  }
-
-  public boolean isReadOnly()
-  {
-    return false;
-  }
-
-  /**
-   * Return true if is a Value.
-   */
-  @Override
-  public boolean isValue()
-  {
-    return true;
-  }
-
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return expr.eval(env);
-  }
-
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    if (_isPassThru) {
-      // php/0433
-      return value.toLocalRef();
+    protected ValueMarshal(boolean isPassThru) {
+	_isPassThru = isPassThru;
     }
-    else {
-      // php/3c81
-      // return value.toLocalValue();
-      return value.toLocalValueReadOnly(); // non-copy
+
+    public boolean isReadOnly() {
+	return false;
     }
-  }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    return (Value) value;
-  }
+    /**
+     * Return true if is a Value.
+     */
+    @Override
+    public boolean isValue() {
+	return true;
+    }
 
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return Marshal.COST_VALUE;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return expr.eval(env);
+    }
 
-  /*
-  @Override
-  public int getMarshalingCost(Expr expr)
-  {
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	if (_isPassThru) {
+	    // php/0433
+	    return value.toLocalRef();
+	} else {
+	    // php/3c81
+	    // return value.toLocalValue();
+	    return value.toLocalValueReadOnly(); // non-copy
+	}
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	return (Value) value;
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return Marshal.COST_VALUE;
+    }
+
+    /*
+    @Override
+    public int getMarshalingCost(Expr expr)
+    {
     return Marshal.FOUR;
-  }
-  */
-
-  @Override
-  public Class getExpectedClass()
-  {
-    return Value.class;
-  }
+    }
+     */
+    @Override
+    public Class getExpectedClass() {
+	return Value.class;
+    }
 }

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Callback;
@@ -36,46 +35,41 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class CallableMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new CallableMarshal();
-  
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+public class CallableMarshal extends Marshal {
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return marshal(env, expr.eval(env), expectedClass);
-  }
+    public static final Marshal MARSHAL = new CallableMarshal();
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    Object callable = value.toCallable(env);
-    
-    return callable;
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    throw new UnsupportedOperationException();
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (argValue instanceof CallbackFunction)
-      return Marshal.ZERO;
-    else if (argValue.isString())
-      return Marshal.THREE;
-    else
-      return Marshal.FOUR;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return Callback.class;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return marshal(env, expr.eval(env), expectedClass);
+    }
+
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	Object callable = value.toCallable(env);
+
+	return callable;
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (argValue instanceof CallbackFunction) {
+	    return Marshal.ZERO;
+	} else if (argValue.isString()) {
+	    return Marshal.THREE;
+	} else {
+	    return Marshal.FOUR;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return Callback.class;
+    }
 }

@@ -26,56 +26,53 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.Value;
 
-public class JavaByteObjectArrayMarshal extends JavaArrayMarshal
-{
-  public static final Marshal MARSHAL
-    = new JavaByteObjectArrayMarshal();
+public class JavaByteObjectArrayMarshal extends JavaArrayMarshal {
 
-  @Override
-  public Value unmarshal(Env env, Object value)
-  {
-    Byte []byteValue = (Byte []) value;
+    public static final Marshal MARSHAL = new JavaByteObjectArrayMarshal();
 
-    if (byteValue == null)
-      return NullValue.NULL;
+    @Override
+    public Value unmarshal(Env env, Object value) {
+	Byte[] byteValue = (Byte[]) value;
 
-    byte []data = new byte[byteValue.length];
-    for (int i = 0; i < data.length; i++)
-      data[i] = byteValue[i];
+	if (byteValue == null) {
+	    return NullValue.NULL;
+	}
 
-    return env.createBinaryBuilder(data);
-  }
+	byte[] data = new byte[byteValue.length];
+	for (int i = 0; i < data.length; i++) {
+	    data[i] = byteValue[i];
+	}
 
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    return Marshal.COST_INCOMPATIBLE;
-    /*
-    if (argValue.isString()) {
-      if (argValue.isUnicode())
-        return Marshal.UNICODE_BYTE_OBJECT_ARRAY_COST;
-      else if (argValue.isBinary())
-        return Marshal.BINARY_BYTE_OBJECT_ARRAY_COST;
-      else
-        return Marshal.PHP5_BYTE_OBJECT_ARRAY_COST;
+	return env.createBinaryBuilder(data);
     }
-    else if (argValue.isArray())
-      return Marshal.THREE;
-    else
-      return Marshal.FOUR;
-    */
-  }
 
-  @Override
-  public Class getExpectedClass()
-  {
-    return Byte[].class;
-  }
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	return Marshal.COST_INCOMPATIBLE;
+	/*
+	if (argValue.isString()) {
+	if (argValue.isUnicode())
+	return Marshal.UNICODE_BYTE_OBJECT_ARRAY_COST;
+	else if (argValue.isBinary())
+	return Marshal.BINARY_BYTE_OBJECT_ARRAY_COST;
+	else
+	return Marshal.PHP5_BYTE_OBJECT_ARRAY_COST;
+	}
+	else if (argValue.isArray())
+	return Marshal.THREE;
+	else
+	return Marshal.FOUR;
+	 */
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return Byte[].class;
+    }
 }

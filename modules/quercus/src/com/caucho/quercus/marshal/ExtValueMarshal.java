@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -37,80 +36,74 @@ import com.caucho.quercus.expr.Expr;
 /**
  * Code for marshaling (PHP to Java) and unmarshaling (Java to PHP) arguments.
  */
-public class ExtValueMarshal extends Marshal
-{
-  private Class _expectedClass;
-  
-  public ExtValueMarshal(Class expectedClass)
-  {
-    _expectedClass = expectedClass;
-  }
-  
-  public boolean isReadOnly()
-  {
-    return false;
-  }
+public class ExtValueMarshal extends Marshal {
 
-  /**
-   * Return true if is a Value.
-   */
-  @Override
-  public boolean isValue()
-  {
-    return true;
-  }
-  
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return marshal(env, expr.eval(env), expectedClass);
-  }
+    private Class _expectedClass;
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    if (value == null || ! value.isset())
-      return null;
-
-    // TODO: need QA, added for mantis view bug page
-    value = value.toValue();
-
-    if (expectedClass.isAssignableFrom(value.getClass()))
-      return value;
-    else {
-      String className = expectedClass.getName();
-      int p = className.lastIndexOf('.');
-      className = className.substring(p + 1);
-
-      String valueClassName = value.getClass().getName();
-      p = valueClassName.lastIndexOf('.');
-      valueClassName = valueClassName.substring(p + 1);
-
-      env.warning(L.l(
-        "'{0}' of type `{1}' is an unexpected argument, expected {2}",
-        value,
-        valueClassName,
-        className));
-
-      return null;
+    public ExtValueMarshal(Class expectedClass) {
+	_expectedClass = expectedClass;
     }
-  }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    return (Value) value;
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (_expectedClass.isAssignableFrom(argValue.getClass()))
-      return Marshal.ONE;
-    else
-      return Marshal.FOUR;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return _expectedClass;
-  }
+    public boolean isReadOnly() {
+	return false;
+    }
+
+    /**
+     * Return true if is a Value.
+     */
+    @Override
+    public boolean isValue() {
+	return true;
+    }
+
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return marshal(env, expr.eval(env), expectedClass);
+    }
+
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	if (value == null || !value.isset()) {
+	    return null;
+	}
+
+	// TODO: need QA, added for mantis view bug page
+	value = value.toValue();
+
+	if (expectedClass.isAssignableFrom(value.getClass())) {
+	    return value;
+	} else {
+	    String className = expectedClass.getName();
+	    int p = className.lastIndexOf('.');
+	    className = className.substring(p + 1);
+
+	    String valueClassName = value.getClass().getName();
+	    p = valueClassName.lastIndexOf('.');
+	    valueClassName = valueClassName.substring(p + 1);
+
+	    env.warning(L.l(
+		    "'{0}' of type `{1}' is an unexpected argument, expected {2}",
+		    value,
+		    valueClassName,
+		    className));
+
+	    return null;
+	}
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	return (Value) value;
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (_expectedClass.isAssignableFrom(argValue.getClass())) {
+	    return Marshal.ONE;
+	} else {
+	    return Marshal.FOUR;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return _expectedClass;
+    }
 }

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -34,50 +33,46 @@ import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
-public class ShortObjectMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new ShortObjectMarshal();
-  
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+public class ShortObjectMarshal extends Marshal {
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return new Short((short) expr.evalLong(env));
-  }
+    public static final Marshal MARSHAL = new ShortObjectMarshal();
 
-  @Override
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return value.toJavaShort();
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    if (value == null)
-      return LongValue.ZERO;
-    else
-      return LongValue.create(((Number) value).longValue());
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (argValue instanceof LongValue)
-      return Marshal.ONE;
-    else if (argValue.isLongConvertible())
-      return Marshal.THREE;
-    else if (argValue.isNumeric())
-      return Marshal.THREE;
-    else
-      return Marshal.FOUR;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return Short.class;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return new Short((short) expr.evalLong(env));
+    }
+
+    @Override
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return value.toJavaShort();
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	if (value == null) {
+	    return LongValue.ZERO;
+	} else {
+	    return LongValue.create(((Number) value).longValue());
+	}
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (argValue instanceof LongValue) {
+	    return Marshal.ONE;
+	} else if (argValue.isLongConvertible()) {
+	    return Marshal.THREE;
+	} else if (argValue.isNumeric()) {
+	    return Marshal.THREE;
+	} else {
+	    return Marshal.FOUR;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return Short.class;
+    }
 }

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -36,52 +35,47 @@ import com.caucho.quercus.expr.Expr;
 
 import java.net.URL;
 
-public class URLMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new URLMarshal();
-  
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+public class URLMarshal extends Marshal {
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return marshal(env, expr.eval(env), expectedClass);
-  }
+    public static final Marshal MARSHAL = new URLMarshal();
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    return value.toJavaURL(env);
-  }
+    public boolean isReadOnly() {
+	return true;
+    }
 
-  public Value unmarshal(Env env, Object value)
-  {
-    return env.wrapJava((URL)value);
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (argValue instanceof JavaURLValue)
-      return Marshal.ZERO;
-    else if (argValue.isString())
-      return Marshal.THREE;
-    else
-      return Marshal.FOUR;
-  }
-  
-  public int getMarshalingCost(Expr expr)
-  {
-    if (expr.isString())
-      return Marshal.THREE;
-    else
-      return Marshal.MAX;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return URL.class;
-  }
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return marshal(env, expr.eval(env), expectedClass);
+    }
+
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	return value.toJavaURL(env);
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	return env.wrapJava((URL) value);
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (argValue instanceof JavaURLValue) {
+	    return Marshal.ZERO;
+	} else if (argValue.isString()) {
+	    return Marshal.THREE;
+	} else {
+	    return Marshal.FOUR;
+	}
+    }
+
+    public int getMarshalingCost(Expr expr) {
+	if (expr.isString()) {
+	    return Marshal.THREE;
+	} else {
+	    return Marshal.MAX;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return URL.class;
+    }
 }

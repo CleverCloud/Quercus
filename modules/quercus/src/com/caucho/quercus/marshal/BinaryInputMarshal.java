@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
@@ -38,73 +37,70 @@ import com.caucho.quercus.lib.file.ReadStreamInput;
 
 import java.io.InputStream;
 
-public class BinaryInputMarshal extends Marshal
-{
-  public static final Marshal MARSHAL = new BinaryInputMarshal();
-  
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+public class BinaryInputMarshal extends Marshal {
 
-  public Object marshal(Env env, Expr expr, Class expectedClass)
-  {
-    return marshal(env, expr.eval(env), expectedClass);
-  }
+    public static final Marshal MARSHAL = new BinaryInputMarshal();
 
-  public Object marshal(Env env, Value value, Class expectedClass)
-  {
-    if (value == null)
-      return null;
-    else if (value instanceof BinaryInput)
-      return (BinaryInput) value;
+    public boolean isReadOnly() {
+	return true;
+    }
 
-    Object javaObj = value.toJavaObject();
+    public Object marshal(Env env, Expr expr, Class expectedClass) {
+	return marshal(env, expr.eval(env), expectedClass);
+    }
 
-    if (javaObj instanceof BinaryInput)
-      return (BinaryInput) javaObj;
-    else if (javaObj instanceof InputStream)
-      return new ReadStreamInput(env, (InputStream) javaObj);
-    else
-      return new ReadStreamInput(env, value.toInputStream());
-  }
+    public Object marshal(Env env, Value value, Class expectedClass) {
+	if (value == null) {
+	    return null;
+	} else if (value instanceof BinaryInput) {
+	    return (BinaryInput) value;
+	}
 
-  public static BinaryInput marshal(Env env, Value value)
-  {
-    if (value == null)
-      return null;
-    else if (value instanceof BinaryInput)
-      return (BinaryInput) value;
+	Object javaObj = value.toJavaObject();
 
-    Object javaObj = value.toJavaObject();
+	if (javaObj instanceof BinaryInput) {
+	    return (BinaryInput) javaObj;
+	} else if (javaObj instanceof InputStream) {
+	    return new ReadStreamInput(env, (InputStream) javaObj);
+	} else {
+	    return new ReadStreamInput(env, value.toInputStream());
+	}
+    }
 
-    if (javaObj instanceof BinaryInput)
-      return (BinaryInput) javaObj;
-    else if (javaObj instanceof InputStream)
-      return new ReadStreamInput(env, (InputStream) javaObj);
-    else
-      return new ReadStreamInput(env, value.toInputStream());
-  }
+    public static BinaryInput marshal(Env env, Value value) {
+	if (value == null) {
+	    return null;
+	} else if (value instanceof BinaryInput) {
+	    return (BinaryInput) value;
+	}
 
-  public Value unmarshal(Env env, Object value)
-  {
-    return (Value) value;
-  }
-  
-  @Override
-  protected int getMarshalingCostImpl(Value argValue)
-  {
-    if (argValue instanceof JavaValue
-        && InputStream.class
-      .isAssignableFrom(argValue.toJavaObject().getClass()))
-      return Marshal.ZERO;
-    else
-      return Marshal.FOUR;
-  }
-  
-  @Override
-  public Class getExpectedClass()
-  {
-    return BinaryInput.class;
-  }
+	Object javaObj = value.toJavaObject();
+
+	if (javaObj instanceof BinaryInput) {
+	    return (BinaryInput) javaObj;
+	} else if (javaObj instanceof InputStream) {
+	    return new ReadStreamInput(env, (InputStream) javaObj);
+	} else {
+	    return new ReadStreamInput(env, value.toInputStream());
+	}
+    }
+
+    public Value unmarshal(Env env, Object value) {
+	return (Value) value;
+    }
+
+    @Override
+    protected int getMarshalingCostImpl(Value argValue) {
+	if (argValue instanceof JavaValue
+		&& InputStream.class.isAssignableFrom(argValue.toJavaObject().getClass())) {
+	    return Marshal.ZERO;
+	} else {
+	    return Marshal.FOUR;
+	}
+    }
+
+    @Override
+    public Class getExpectedClass() {
+	return BinaryInput.class;
+    }
 }
