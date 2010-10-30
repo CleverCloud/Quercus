@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.regexp;
 
 import com.caucho.util.IntArray;
@@ -34,125 +33,113 @@ import com.caucho.util.IntArray;
 /*
  * Represents the state of groups in the regexp.
  */
-class GroupState
-{
-  // number of items to store per long
-  static final int BIT_WIDTH = 32;
-  
-  // maximum number of groups
-  static final int MAX_SIZE = 99;
+class GroupState {
+    // number of items to store per long
 
-  private long []_set;
+    static final int BIT_WIDTH = 32;
+    // maximum number of groups
+    static final int MAX_SIZE = 99;
+    private long[] _set;
+    private IntArray _group;
+    private GroupState _freeList;
 
-  private IntArray _group;
-  private GroupState _freeList;
-  
-  public GroupState()
-  {
-    int arraySize = MAX_SIZE / BIT_WIDTH;
-    
-    if (MAX_SIZE % BIT_WIDTH != 0)
-      arraySize++;
-    
-    _set = new long[arraySize];
-    
-    _group = new IntArray();
-  }
-  
-  private GroupState(GroupState src)
-  {
-    _set = new long[src._set.length];
-    _group = new IntArray();
-    _group.add(src._group);
+    public GroupState() {
+	int arraySize = MAX_SIZE / BIT_WIDTH;
 
-    for (int i = 0; i < src._set.length; i++) {
-      _set[i] = src._set[i];
-    }
-  }
-  
-  public boolean isMatched(int group)
-  {
-    int i = group / BIT_WIDTH;
-    
-    if (group > MAX_SIZE)
-      throw new RuntimeException("out of range: " + group + " >= " + MAX_SIZE);
-    
-    int shift = group - i * BIT_WIDTH;
-    int bit = 1 << shift;
-    
-    return (_set[i] & bit) != 0; 
-  }
+	if (MAX_SIZE % BIT_WIDTH != 0) {
+	    arraySize++;
+	}
 
-  public void setMatched(int group)
-  {
-    int i = group / BIT_WIDTH;
-    
-    if (group > MAX_SIZE)
-      throw new RuntimeException("out of range: " + group + " >= " + MAX_SIZE);
-    
-    int shift = group - i * BIT_WIDTH;
-    int bit = 1 << shift;
-    
-    _set[i] |= bit;
-  }
-  
-  public GroupState copy()
-  {
-    GroupState state;
-    
-    if (_freeList != null) {
-      state = _freeList;
-      _freeList = _freeList._freeList;
-      state._freeList = null;
+	_set = new long[arraySize];
 
-      state._group.clear();
-      state._group.add(_group);
-
-      for (int i = 0; i < _set.length; i++) {
-        state._set[i] = _set[i];
-      }
-    }
-    else {
-      state = new GroupState(this);
+	_group = new IntArray();
     }
 
-    return state;
-  }
-  
-  public void free(GroupState state)
-  {
-    if (state != null && state != this) {
-      state._freeList = _freeList;
-      _freeList = state;
+    private GroupState(GroupState src) {
+	_set = new long[src._set.length];
+	_group = new IntArray();
+	_group.add(src._group);
+
+	for (int i = 0; i < src._set.length; i++) {
+	    _set[i] = src._set[i];
+	}
     }
-  }
-  
-  public void clear()
-  {
-    _group.clear();
-    
-    for (int i = 0; i < _set.length; i++) {
-      _set[i] = 0;
+
+    public boolean isMatched(int group) {
+	int i = group / BIT_WIDTH;
+
+	if (group > MAX_SIZE) {
+	    throw new RuntimeException("out of range: " + group + " >= " + MAX_SIZE);
+	}
+
+	int shift = group - i * BIT_WIDTH;
+	int bit = 1 << shift;
+
+	return (_set[i] & bit) != 0;
     }
-  }
-  
-  public int size()
-  {
-    return _group.size();
-  }
-  
-  public int get(int i)
-  {
-    return _group.get(i);
-  }
-  
-  public void set(int i, int val)
-  {
-    _group.set(i, val);
-  }
-  
-  public void setLength(int len)
-  {
-    _group.setLength(len);
-  }
+
+    public void setMatched(int group) {
+	int i = group / BIT_WIDTH;
+
+	if (group > MAX_SIZE) {
+	    throw new RuntimeException("out of range: " + group + " >= " + MAX_SIZE);
+	}
+
+	int shift = group - i * BIT_WIDTH;
+	int bit = 1 << shift;
+
+	_set[i] |= bit;
+    }
+
+    public GroupState copy() {
+	GroupState state;
+
+	if (_freeList != null) {
+	    state = _freeList;
+	    _freeList = _freeList._freeList;
+	    state._freeList = null;
+
+	    state._group.clear();
+	    state._group.add(_group);
+
+	    for (int i = 0; i < _set.length; i++) {
+		state._set[i] = _set[i];
+	    }
+	} else {
+	    state = new GroupState(this);
+	}
+
+	return state;
+    }
+
+    public void free(GroupState state) {
+	if (state != null && state != this) {
+	    state._freeList = _freeList;
+	    _freeList = state;
+	}
+    }
+
+    public void clear() {
+	_group.clear();
+
+	for (int i = 0; i < _set.length; i++) {
+	    _set[i] = 0;
+	}
+    }
+
+    public int size() {
+	return _group.size();
+    }
+
+    public int get(int i) {
+	return _group.get(i);
+    }
+
+    public void set(int i, int val) {
+	_group.set(i, val);
+    }
+
+    public void setLength(int len) {
+	_group.setLength(len);
+    }
 }

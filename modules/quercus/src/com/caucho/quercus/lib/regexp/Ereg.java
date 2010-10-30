@@ -26,27 +26,23 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.regexp;
 
 import com.caucho.quercus.env.StringValue;
 
-public class Ereg extends Regexp
-{
-  public Ereg(StringValue rawRegexp)
-    throws IllegalRegexpException
-  {
-    super(rawRegexp);
-  }
-  
-  @Override
-  protected void init()
-  {
-    _flags |= Regcomp.SINGLE_LINE;
-  }
-  
-  public String toString()
-  {
-    return "Ereg[" + _pattern + "]";
-  }
+public class Ereg extends Regexp {
+
+    public Ereg(StringValue rawRegexp)
+	    throws IllegalRegexpException {
+	super(rawRegexp);
+    }
+
+    @Override
+    protected void init() {
+	_flags |= Regcomp.SINGLE_LINE;
+    }
+
+    public String toString() {
+	return "Ereg[" + _pattern + "]";
+    }
 }

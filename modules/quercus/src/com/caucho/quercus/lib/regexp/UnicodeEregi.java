@@ -26,29 +26,25 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.regexp;
 
 import com.caucho.quercus.env.StringValue;
 
-public class UnicodeEregi extends UnicodeEreg
-{
-  public UnicodeEregi(StringValue rawRegexp)
-    throws IllegalRegexpException
-  {
-    super(rawRegexp);
-  }
-  
-  @Override
-  protected void init()
-  {
-    super.init();
-    
-    _flags |= Regcomp.IGNORE_CASE;
-  }
+public class UnicodeEregi extends UnicodeEreg {
 
-  public String toString()
-  {
-    return "UnicodeEregi[" + _pattern + "]";
-  }
+    public UnicodeEregi(StringValue rawRegexp)
+	    throws IllegalRegexpException {
+	super(rawRegexp);
+    }
+
+    @Override
+    protected void init() {
+	super.init();
+
+	_flags |= Regcomp.IGNORE_CASE;
+    }
+
+    public String toString() {
+	return "UnicodeEregi[" + _pattern + "]";
+    }
 }

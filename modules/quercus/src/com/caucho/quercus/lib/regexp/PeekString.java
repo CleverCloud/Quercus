@@ -26,64 +26,56 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.regexp;
 
 import com.caucho.quercus.env.StringValue;
 
 class PeekString extends PeekStream {
-  CharSequence _string;
-  int _length;
-  int _index;
 
-  PeekString(CharSequence string)
-  {
-    _string = string;
-    _length = string.length();
-    _index = 0;
-  }
+    CharSequence _string;
+    int _length;
+    int _index;
 
-  int read() 
-  { 
-    if (_index < _length)
-      return _string.charAt(_index++);
-    else
-      return -1; 
-  }
+    PeekString(CharSequence string) {
+	_string = string;
+	_length = string.length();
+	_index = 0;
+    }
 
-  int peek() 
-  {
-    if (_index < _length)
-      return _string.charAt(_index);
-    else
-      return -1; 
-  }
+    int read() {
+	if (_index < _length) {
+	    return _string.charAt(_index++);
+	} else {
+	    return -1;
+	}
+    }
 
-  void ungetc(int ch) { 
-    if (_index <= 0)
-      throw new RuntimeException();
+    int peek() {
+	if (_index < _length) {
+	    return _string.charAt(_index);
+	} else {
+	    return -1;
+	}
+    }
 
-    _index--;
-  }
+    void ungetc(int ch) {
+	if (_index <= 0) {
+	    throw new RuntimeException();
+	}
 
-  StringValue createStringBuilder()
-  {
-    return ((StringValue) _string).createStringBuilder();
-  }
+	_index--;
+    }
 
-  @Override
-  public String getPattern()
-  {
-    return "/" + _string + "/";
-  }
+    StringValue createStringBuilder() {
+	return ((StringValue) _string).createStringBuilder();
+    }
 
-  public String toString()
-  {
-    return "PeekString[" + _string + "]";
-  }
+    @Override
+    public String getPattern() {
+	return "/" + _string + "/";
+    }
+
+    public String toString() {
+	return "PeekString[" + _string + "]";
+    }
 }
-
-
-
-
-

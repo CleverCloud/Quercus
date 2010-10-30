@@ -26,27 +26,28 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.regexp;
 
 import com.caucho.quercus.env.*;
 
 class PeekStream {
-  int read() { return -1; }
 
-  int peek() { return -1; }
+    int read() {
+	return -1;
+    }
 
-  void ungetc(int ch) { }
+    int peek() {
+	return -1;
+    }
 
-  StringValue createStringBuilder() { return new StringBuilderValue(); }
+    void ungetc(int ch) {
+    }
 
-  String getPattern()
-  {
-    return toString();
-  }
+    StringValue createStringBuilder() {
+	return new StringBuilderValue();
+    }
+
+    String getPattern() {
+	return toString();
+    }
 }
-
-
-
-
-

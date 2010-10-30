@@ -26,21 +26,16 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.regexp;
 
 import java.util.*;
 
 public class IllegalRegexpException extends Exception {
-  IllegalRegexpException(String msg) {
-    super(msg);
-  }
 
-  IllegalRegexpException() {
-  }
+    IllegalRegexpException(String msg) {
+	super(msg);
+    }
+
+    IllegalRegexpException() {
+    }
 }
-
-
-
-
-
