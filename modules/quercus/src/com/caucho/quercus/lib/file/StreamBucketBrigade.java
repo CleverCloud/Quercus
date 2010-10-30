@@ -26,7 +26,6 @@
  *
  * @author Emil Ong
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.Env;
@@ -37,25 +36,21 @@ import java.util.LinkedList;
  * Bucket for stream filters.
  */
 public class StreamBucketBrigade {
-  private LinkedList<StreamBucket> _brigade = new LinkedList<StreamBucket>();
 
-  public StreamBucketBrigade(Env env)
-  {
-  }
+    private LinkedList<StreamBucket> _brigade = new LinkedList<StreamBucket>();
 
-  public void prepend(StreamBucket bucket) 
-  {
-    _brigade.addFirst(bucket);
-  }
+    public StreamBucketBrigade(Env env) {
+    }
 
-  public void append(StreamBucket bucket) 
-  {
-    _brigade.addLast(bucket);
-  }
+    public void prepend(StreamBucket bucket) {
+	_brigade.addFirst(bucket);
+    }
 
-  public StreamBucket popTop()
-  {
-    return _brigade.removeFirst();
-  }
+    public void append(StreamBucket bucket) {
+	_brigade.addLast(bucket);
+    }
+
+    public StreamBucket popTop() {
+	return _brigade.removeFirst();
+    }
 }
-

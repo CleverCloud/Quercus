@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.EnvCleanup;
@@ -38,21 +37,23 @@ import java.net.SocketAddress;
  * Represents read/write stream
  */
 public interface SocketInputOutput
-  extends BinaryInput, BinaryOutput, EnvCleanup
-{
-  public enum Domain { AF_INET, AF_INET6, AF_UNIX };
-  
-  public void init()
-    throws IOException;
+	extends BinaryInput, BinaryOutput, EnvCleanup {
 
-  public void bind(SocketAddress address)
-    throws IOException;
+    public enum Domain {
 
-  public void connect(SocketAddress address)
-    throws IOException;
+	AF_INET, AF_INET6, AF_UNIX
+    };
 
-  public void setError(int error);
+    public void init()
+	    throws IOException;
 
-  public void setTimeout(long timeout);
+    public void bind(SocketAddress address)
+	    throws IOException;
+
+    public void connect(SocketAddress address)
+	    throws IOException;
+
+    public void setError(int error);
+
+    public void setTimeout(long timeout);
 }
-

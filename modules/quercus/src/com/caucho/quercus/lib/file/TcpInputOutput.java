@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.QuercusException;
@@ -53,177 +52,162 @@ import javax.net.ssl.SSLSocketFactory;
  * Represents read/write stream
  */
 public class TcpInputOutput
-  extends BufferedBinaryInputOutput
-  implements SocketInputOutput
-{
-  private static final Logger log
-    = Logger.getLogger(TcpInputOutput.class.getName());
-  
-  private Socket _socket;
-  private Domain _domain;
-  
-  private int _errno;
+	extends BufferedBinaryInputOutput
+	implements SocketInputOutput {
 
-  public TcpInputOutput(Env env, String host, int port,
-                        boolean isSecure,
-                        Domain domain)
-    throws IOException
-  {
-    super(env);
-    env.addCleanup(this);
-    
-    if (isSecure) {
-      try {
-        _socket = createSSLSocket(host, port);
-      } catch (KeyManagementException e) {
-        throw new QuercusException(e);
-      } catch (NoSuchAlgorithmException e) {
-        throw new QuercusException(e);
-      }
-  }
-    else
-      _socket = SocketFactory.getDefault().createSocket(host, port);
-    
-    _domain = domain;
-  }
-  
-  public TcpInputOutput(Env env, Socket socket, Domain domain)
-  {
-    super(env);
-    env.addCleanup(this);
+    private static final Logger log = Logger.getLogger(TcpInputOutput.class.getName());
+    private Socket _socket;
+    private Domain _domain;
+    private int _errno;
 
-    _socket = socket;
-    _domain = domain;
-  }
-  
-  private Socket createSSLSocket(String host, int port)
-    throws IOException, NoSuchAlgorithmException, KeyManagementException
-  {
-    Socket s = new Socket(host, port);
+    public TcpInputOutput(Env env, String host, int port,
+	    boolean isSecure,
+	    Domain domain)
+	    throws IOException {
+	super(env);
+	env.addCleanup(this);
 
-    SSLContext context = SSLContext.getInstance("TLS");
+	if (isSecure) {
+	    try {
+		_socket = createSSLSocket(host, port);
+	    } catch (KeyManagementException e) {
+		throw new QuercusException(e);
+	    } catch (NoSuchAlgorithmException e) {
+		throw new QuercusException(e);
+	    }
+	} else {
+	    _socket = SocketFactory.getDefault().createSocket(host, port);
+	}
 
-    javax.net.ssl.TrustManager tm =
-      new javax.net.ssl.X509TrustManager() {
-        public java.security.cert.X509Certificate[]
-          getAcceptedIssuers() {
-          return null;
-        }
-
-        public void checkClientTrusted(
-            java.security.cert.X509Certificate[] cert, String foo) {
-        }
-
-        public void checkServerTrusted(
-            java.security.cert.X509Certificate[] cert, String foo) {
-        }
-      };
-
-
-    context.init(null, new javax.net.ssl.TrustManager[] { tm }, null);
-    SSLSocketFactory factory = context.getSocketFactory();
-
-    return factory.createSocket(s, host, port, true);
-  }
-
-  public void bind(SocketAddress address)
-    throws IOException
-  {
-    _socket.bind(address);
-  }
-
-  public void connect(SocketAddress address)
-    throws IOException
-  {
-    _socket.connect(address);
-
-    init();
-  }
-  
-  public void setError(int errno)
-  {
-    _errno = errno;
-  }
-  
-  public int getError()
-  {
-    return _errno;
-  }
-
-  public void init()
-  {
-    SocketStream sock = new SocketStream(_socket);
-    sock.setThrowReadInterrupts(true);
-
-    WriteStream os = new WriteStream(sock);
-    ReadStream is = new ReadStream(sock, os);
-
-    init(is, os);
-  }
-
-  public void setTimeout(long timeout)
-  {
-    try {
-      if (_socket != null)
-        _socket.setSoTimeout((int) timeout);
-    } catch (Exception e) {
-      log.log(Level.FINER, e.toString(), e);
+	_domain = domain;
     }
-  }
-  
-  @Override
-  public void write(int ch)
-    throws IOException
-  {
-    super.write(ch);
-    flush();
-  }
 
-  @Override
-  public void write(byte []buffer, int offset, int length)
-    throws IOException
-  {
-    super.write(buffer, offset, length);
-    flush();
-  }
+    public TcpInputOutput(Env env, Socket socket, Domain domain) {
+	super(env);
+	env.addCleanup(this);
 
-  /**
-   * Read length bytes of data from the InputStream
-   * argument and write them to this output stream.
-   */
-  @Override
-  public int write(InputStream is, int length)
-    throws IOException
-  {
-    int writeLength = super.write(is, length);
-    flush();
-    
-    return writeLength;
-  }
-  
-  /**
-   * Implements the EnvCleanup interface.
-   */
-  public void cleanup()
-  {
-    Socket s = _socket;
-    _socket = null;
-
-    try {
-      if (s != null)
-        s.close();
-    } catch (IOException e) {
-      log.log(Level.FINE, e.toString(), e);
+	_socket = socket;
+	_domain = domain;
     }
-  }
 
-  public String toString()
-  {
-    if (_socket != null)
-      return "TcpInputOutput[" + _socket.getInetAddress()
-          + "," + _socket.getPort() + "]";
-    else
-      return "TcpInputOutput[closed]";
-  }
+    private Socket createSSLSocket(String host, int port)
+	    throws IOException, NoSuchAlgorithmException, KeyManagementException {
+	Socket s = new Socket(host, port);
+
+	SSLContext context = SSLContext.getInstance("TLS");
+
+	javax.net.ssl.TrustManager tm =
+		new javax.net.ssl.X509TrustManager() {
+
+		    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+			return null;
+		    }
+
+		    public void checkClientTrusted(
+			    java.security.cert.X509Certificate[] cert, String foo) {
+		    }
+
+		    public void checkServerTrusted(
+			    java.security.cert.X509Certificate[] cert, String foo) {
+		    }
+		};
+
+
+	context.init(null, new javax.net.ssl.TrustManager[]{tm}, null);
+	SSLSocketFactory factory = context.getSocketFactory();
+
+	return factory.createSocket(s, host, port, true);
+    }
+
+    public void bind(SocketAddress address)
+	    throws IOException {
+	_socket.bind(address);
+    }
+
+    public void connect(SocketAddress address)
+	    throws IOException {
+	_socket.connect(address);
+
+	init();
+    }
+
+    public void setError(int errno) {
+	_errno = errno;
+    }
+
+    public int getError() {
+	return _errno;
+    }
+
+    public void init() {
+	SocketStream sock = new SocketStream(_socket);
+	sock.setThrowReadInterrupts(true);
+
+	WriteStream os = new WriteStream(sock);
+	ReadStream is = new ReadStream(sock, os);
+
+	init(is, os);
+    }
+
+    public void setTimeout(long timeout) {
+	try {
+	    if (_socket != null) {
+		_socket.setSoTimeout((int) timeout);
+	    }
+	} catch (Exception e) {
+	    log.log(Level.FINER, e.toString(), e);
+	}
+    }
+
+    @Override
+    public void write(int ch)
+	    throws IOException {
+	super.write(ch);
+	flush();
+    }
+
+    @Override
+    public void write(byte[] buffer, int offset, int length)
+	    throws IOException {
+	super.write(buffer, offset, length);
+	flush();
+    }
+
+    /**
+     * Read length bytes of data from the InputStream
+     * argument and write them to this output stream.
+     */
+    @Override
+    public int write(InputStream is, int length)
+	    throws IOException {
+	int writeLength = super.write(is, length);
+	flush();
+
+	return writeLength;
+    }
+
+    /**
+     * Implements the EnvCleanup interface.
+     */
+    public void cleanup() {
+	Socket s = _socket;
+	_socket = null;
+
+	try {
+	    if (s != null) {
+		s.close();
+	    }
+	} catch (IOException e) {
+	    log.log(Level.FINE, e.toString(), e);
+	}
+    }
+
+    public String toString() {
+	if (_socket != null) {
+	    return "TcpInputOutput[" + _socket.getInetAddress()
+		    + "," + _socket.getPort() + "]";
+	} else {
+	    return "TcpInputOutput[closed]";
+	}
+    }
 }
-

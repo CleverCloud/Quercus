@@ -26,7 +26,6 @@
  *
  * @author Emil Ong
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.*;
@@ -35,10 +34,9 @@ import com.caucho.quercus.env.*;
  * Bucket for stream filters.
  */
 public class StreamBucket extends Value {
-  public StreamBucket(Env env, BinaryValue data)
-  {
-    putField(env, "data", data);
-    putField(env, "datalen", LongValue.create(data.length()));
-  }
-}
 
+    public StreamBucket(Env env, BinaryValue data) {
+	putField(env, "data", data);
+	putField(env, "datalen", LongValue.create(data.length()));
+    }
+}

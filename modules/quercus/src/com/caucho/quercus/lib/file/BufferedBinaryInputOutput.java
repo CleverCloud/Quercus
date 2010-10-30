@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.QuercusModuleException;
@@ -44,183 +43,173 @@ import java.util.logging.Logger;
  * Represents a Quercus file open for reading
  */
 abstract public class BufferedBinaryInputOutput
-  extends AbstractBinaryInputOutput
-{
-  private static final Logger log
-    = Logger.getLogger(BufferedBinaryInputOutput.class.getName());
+	extends AbstractBinaryInputOutput {
 
-  private ReadStream _is;
-  private WriteStream _os;
+    private static final Logger log = Logger.getLogger(BufferedBinaryInputOutput.class.getName());
+    private ReadStream _is;
+    private WriteStream _os;
 
-  protected BufferedBinaryInputOutput(Env env)
-  {
-    super(env);
-  }
-
-  public void init(ReadStream is, WriteStream os)
-  {
-    super.init(is, os);
-    
-    _is = is;
-    _os = os;
-  }
-
-  //
-  // read methods
-  //
-
-  public void setEncoding(String encoding)
-    throws UnsupportedEncodingException
-  {
-    if (_is != null)
-      _is.setEncoding(encoding);
-  }
-
-  /**
-   * Unread the last byte.
-   */
-  public void unread()
-    throws IOException
-  {
-    if (_is != null) {
-      _is.unread();
-      _isEOF = false;
+    protected BufferedBinaryInputOutput(Env env) {
+	super(env);
     }
-  }
 
-  /**
-   * Reads a character from a file, returning -1 on EOF.
-   */
-  public int read()
-    throws IOException
-  {
-    try {
-      if (_is != null) {
-        int c = _is.read();
+    public void init(ReadStream is, WriteStream os) {
+	super.init(is, os);
 
-        if (c < 0)
-          _isEOF = true;
-
-        return c;
-      }
-      else
-        return -1;
-    } catch (IOException e) {
-      _isTimeout = true;
-      _isEOF = true;
-
-      log.log(Level.FINER, e.toString(), e);
-
-      return -1;
+	_is = is;
+	_os = os;
     }
-  }
 
-  /**
-   * Reads a buffer from a file, returning -1 on EOF.
-   */
-  public int read(char []buffer, int offset, int length)
-    throws IOException
-  {
-    try {
-      if (_is != null) {
-        int c = _is.read(buffer, offset, length);
-
-        if (c == -1)
-          _isEOF = true;
-        else
-          _isEOF = false;
-
-        return c;
-      }
-      else
-        return -1;
-    } catch (IOException e) {
-      _isTimeout = true;
-      _isEOF = true;
-
-      log.log(Level.FINER, e.toString(), e);
-
-      return -1;
+    //
+    // read methods
+    //
+    public void setEncoding(String encoding)
+	    throws UnsupportedEncodingException {
+	if (_is != null) {
+	    _is.setEncoding(encoding);
+	}
     }
-  }
 
-  public void writeToStream(OutputStream os, int length)
-    throws IOException
-  {
-    try {
-      if (_is != null) {
-        _is.writeToStream(os, length);
-      }
-    } catch (IOException e) {
-      _isTimeout = true;
-      _isEOF = true;
-
-      log.log(Level.FINER, e.toString(), e);
+    /**
+     * Unread the last byte.
+     */
+    public void unread()
+	    throws IOException {
+	if (_is != null) {
+	    _is.unread();
+	    _isEOF = false;
+	}
     }
-  }
 
-  /**
-   * Reads a line from a file, returning null on EOF.
-   */
-  public StringValue readLine(long length)
-    throws IOException
-  {
-    try {
-      StringValue line = _lineReader.readLine(_env, this, length);
+    /**
+     * Reads a character from a file, returning -1 on EOF.
+     */
+    public int read()
+	    throws IOException {
+	try {
+	    if (_is != null) {
+		int c = _is.read();
 
-      return line;
-    } catch (IOException e) {
-      _isTimeout = true;
-      _isEOF = true;
+		if (c < 0) {
+		    _isEOF = true;
+		}
 
-      log.log(Level.FINER, e.toString(), e);
+		return c;
+	    } else {
+		return -1;
+	    }
+	} catch (IOException e) {
+	    _isTimeout = true;
+	    _isEOF = true;
 
-      return _env.getEmptyString();
+	    log.log(Level.FINER, e.toString(), e);
+
+	    return -1;
+	}
     }
-  }
 
-  /**
-   * Returns the current location in the file.
-   */
-  public long getPosition()
-  {
-    if (_is != null)
-      return _is.getPosition();
-    else
-      return -1;
-  }
+    /**
+     * Reads a buffer from a file, returning -1 on EOF.
+     */
+    public int read(char[] buffer, int offset, int length)
+	    throws IOException {
+	try {
+	    if (_is != null) {
+		int c = _is.read(buffer, offset, length);
 
-  /**
-   * Sets the current location in the file.
-   */
-  public boolean setPosition(long offset)
-  {
-    if (_is == null)
-      return false;
+		if (c == -1) {
+		    _isEOF = true;
+		} else {
+		    _isEOF = false;
+		}
 
-    _isEOF = false;
+		return c;
+	    } else {
+		return -1;
+	    }
+	} catch (IOException e) {
+	    _isTimeout = true;
+	    _isEOF = true;
 
-    try {
-      return _is.setPosition(offset);
-    } catch (IOException e) {
-      throw new QuercusModuleException(e);
+	    log.log(Level.FINER, e.toString(), e);
+
+	    return -1;
+	}
     }
-  }
 
-  public Value stat()
-  {
-    return BooleanValue.FALSE;
-  }
+    public void writeToStream(OutputStream os, int length)
+	    throws IOException {
+	try {
+	    if (_is != null) {
+		_is.writeToStream(os, length);
+	    }
+	} catch (IOException e) {
+	    _isTimeout = true;
+	    _isEOF = true;
 
-  /**
-   * Converts to a string.
-   */
-  public String toString()
-  {
-    if (_is != null)
-      return "BufferedBinaryInputOutput[" + _is.getPath() + "]";
-    else
-      return "BufferedBinaryInputOutput[closed]";
-  }
+	    log.log(Level.FINER, e.toString(), e);
+	}
+    }
+
+    /**
+     * Reads a line from a file, returning null on EOF.
+     */
+    public StringValue readLine(long length)
+	    throws IOException {
+	try {
+	    StringValue line = _lineReader.readLine(_env, this, length);
+
+	    return line;
+	} catch (IOException e) {
+	    _isTimeout = true;
+	    _isEOF = true;
+
+	    log.log(Level.FINER, e.toString(), e);
+
+	    return _env.getEmptyString();
+	}
+    }
+
+    /**
+     * Returns the current location in the file.
+     */
+    public long getPosition() {
+	if (_is != null) {
+	    return _is.getPosition();
+	} else {
+	    return -1;
+	}
+    }
+
+    /**
+     * Sets the current location in the file.
+     */
+    public boolean setPosition(long offset) {
+	if (_is == null) {
+	    return false;
+	}
+
+	_isEOF = false;
+
+	try {
+	    return _is.setPosition(offset);
+	} catch (IOException e) {
+	    throw new QuercusModuleException(e);
+	}
+    }
+
+    public Value stat() {
+	return BooleanValue.FALSE;
+    }
+
+    /**
+     * Converts to a string.
+     */
+    public String toString() {
+	if (_is != null) {
+	    return "BufferedBinaryInputOutput[" + _is.getPath() + "]";
+	} else {
+	    return "BufferedBinaryInputOutput[closed]";
+	}
+    }
 }
-

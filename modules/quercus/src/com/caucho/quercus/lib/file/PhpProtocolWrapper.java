@@ -26,7 +26,6 @@
  *
  * @author Emil Ong
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.BooleanValue;
@@ -39,75 +38,68 @@ import com.caucho.util.L10N;
 import java.io.IOException;
 
 public class PhpProtocolWrapper extends ProtocolWrapper {
-  private static final L10N L = new L10N(PhpProtocolWrapper.class);
 
-  public PhpProtocolWrapper()
-  {
-  }
+    private static final L10N L = new L10N(PhpProtocolWrapper.class);
 
-  public BinaryStream fopen(Env env, StringValue pathV, StringValue mode, 
-                            LongValue options)
-  {
-    String path = pathV.toString();
-    
-    if (path.equals("php://output"))
-      return new PhpBinaryOutput(env);
-    else if (path.equals("php://input"))
-      return new PhpBinaryInput(env);
-    else if (path.equals("php://stdout"))
-      return new PhpStdout();
-    else if (path.equals("php://stderr"))
-      return new PhpStderr();
-    else if (path.equals("php://stdin"))
-      return new PhpStdin(env);
-    
-    env.warning(L.l("{0} is an unsupported or unknown path for this protocol",
-                    path));
+    public PhpProtocolWrapper() {
+    }
 
-    return null;
-  }
+    public BinaryStream fopen(Env env, StringValue pathV, StringValue mode,
+	    LongValue options) {
+	String path = pathV.toString();
 
-  public Value opendir(Env env, StringValue path, LongValue flags)
-  {
-    env.warning(L.l("opendir not supported by protocol"));
+	if (path.equals("php://output")) {
+	    return new PhpBinaryOutput(env);
+	} else if (path.equals("php://input")) {
+	    return new PhpBinaryInput(env);
+	} else if (path.equals("php://stdout")) {
+	    return new PhpStdout();
+	} else if (path.equals("php://stderr")) {
+	    return new PhpStderr();
+	} else if (path.equals("php://stdin")) {
+	    return new PhpStdin(env);
+	}
 
-    return BooleanValue.FALSE;
-  }
+	env.warning(L.l("{0} is an unsupported or unknown path for this protocol",
+		path));
 
-  public boolean unlink(Env env, StringValue path)
-  {
-    env.warning(L.l("unlink not supported by protocol"));
+	return null;
+    }
 
-    return false;
-  }
+    public Value opendir(Env env, StringValue path, LongValue flags) {
+	env.warning(L.l("opendir not supported by protocol"));
 
-  public boolean rename(Env env, StringValue path_from, StringValue path_to)
-  {
-    env.warning(L.l("rename not supported by protocol"));
+	return BooleanValue.FALSE;
+    }
 
-    return false;
-  }
+    public boolean unlink(Env env, StringValue path) {
+	env.warning(L.l("unlink not supported by protocol"));
 
-  public boolean mkdir(Env env, 
-                       StringValue path, LongValue mode, LongValue options)
-  {
-    env.warning(L.l("mkdir not supported by protocol"));
+	return false;
+    }
 
-    return false;
-  }
+    public boolean rename(Env env, StringValue path_from, StringValue path_to) {
+	env.warning(L.l("rename not supported by protocol"));
 
-  public boolean rmdir(Env env, StringValue path, LongValue options)
-  {
-    env.warning(L.l("rmdir not supported by protocol"));
+	return false;
+    }
 
-    return false;
-  }
+    public boolean mkdir(Env env,
+	    StringValue path, LongValue mode, LongValue options) {
+	env.warning(L.l("mkdir not supported by protocol"));
 
-  public Value url_stat(Env env, StringValue path, LongValue flags)
-  {
-    env.warning(L.l("stat not supported by protocol"));
+	return false;
+    }
 
-    return BooleanValue.FALSE;
-  }
+    public boolean rmdir(Env env, StringValue path, LongValue options) {
+	env.warning(L.l("rmdir not supported by protocol"));
+
+	return false;
+    }
+
+    public Value url_stat(Env env, StringValue path, LongValue flags) {
+	env.warning(L.l("stat not supported by protocol"));
+
+	return BooleanValue.FALSE;
+    }
 }
-

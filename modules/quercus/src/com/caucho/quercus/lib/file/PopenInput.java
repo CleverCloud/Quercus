@@ -26,7 +26,6 @@
  *
  * @author Emil Ong
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.Env;
@@ -41,81 +40,69 @@ import java.util.logging.Logger;
  * Represents an input stream for a popen'ed process.
  */
 public class PopenInput extends ReadStreamInput
-    implements EnvCleanup
-{
-  private static final Logger log
-    = Logger.getLogger(FileInput.class.getName());
+	implements EnvCleanup {
 
-  private Env _env;
-  private Process _process;
+    private static final Logger log = Logger.getLogger(FileInput.class.getName());
+    private Env _env;
+    private Process _process;
 
-  public PopenInput(Env env, Process process)
-    throws IOException
-  {
-    super(env);
-    
-    _env = env;
-    
-    _env.addCleanup(this);
+    public PopenInput(Env env, Process process)
+	    throws IOException {
+	super(env);
 
-    _process = process;
+	_env = env;
 
-    init(new ReadStream(new VfsStream(_process.getInputStream(), null)));
+	_env.addCleanup(this);
 
-    _process.getOutputStream().close();
-  }
+	_process = process;
 
-  /**
-   * Opens a copy.
-   */
-  public BinaryInput openCopy()
-    throws IOException
-  {
-    return new PopenInput(_env, _process);
-  }
+	init(new ReadStream(new VfsStream(_process.getInputStream(), null)));
 
-  /**
-   * Returns the number of bytes available to be read, 0 if no known.
-   */
-  public long getLength()
-  {
-    return 0;
-  }
-
-  /**
-   * Converts to a string.
-   */
-  public String toString()
-  {
-    return "PopenInput[" + _process + "]";
-  }
-
-  public int pclose() 
-  {
-    super.close();
-
-    try {
-      return _process.waitFor();
-    } catch (Exception e) {
-      return -1;
-    } finally {
-      _env.removeCleanup(this);
+	_process.getOutputStream().close();
     }
-  }
 
-  public void close()
-  {
-    pclose();
-  }
+    /**
+     * Opens a copy.
+     */
+    public BinaryInput openCopy()
+	    throws IOException {
+	return new PopenInput(_env, _process);
+    }
 
-  /**
-   * Implements the EnvCleanup interface.
-   */
+    /**
+     * Returns the number of bytes available to be read, 0 if no known.
+     */
+    public long getLength() {
+	return 0;
+    }
 
-  public void cleanup()
-  {
-    pclose();
-  }
+    /**
+     * Converts to a string.
+     */
+    public String toString() {
+	return "PopenInput[" + _process + "]";
+    }
 
+    public int pclose() {
+	super.close();
+
+	try {
+	    return _process.waitFor();
+	} catch (Exception e) {
+	    return -1;
+	} finally {
+	    _env.removeCleanup(this);
+	}
+    }
+
+    public void close() {
+	pclose();
+    }
+
+    /**
+     * Implements the EnvCleanup interface.
+     */
+    public void cleanup() {
+	pclose();
+    }
 }
-

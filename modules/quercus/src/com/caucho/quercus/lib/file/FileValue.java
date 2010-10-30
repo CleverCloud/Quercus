@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.Env;
@@ -42,89 +41,83 @@ import java.io.OutputStream;
  * Represents a Quercus open file
  */
 public class FileValue extends StreamResource {
-  private Path _path;
 
-  public FileValue(Path path)
-  {
-    _path = path;
-  }
+    private Path _path;
 
-  /**
-   * Returns the path.
-   */
-  public Path getPath()
-  {
-    return _path;
-  }
-
-  /**
-   * Reads a character from a file, returning -1 on EOF.
-   */
-  public int read()
-    throws IOException
-  {
-    return -1;
-  }
-
-  /**
-   * Reads a line from a file, returning null.
-   */
-  @Override
-  public StringValue readLine(Env env)
-    throws IOException
-  {
-    StringValue sb = env.createStringBuilder();
-
-    int ch;
-
-    while ((ch = read()) >= 0) {
-      sb.append((char) ch);
-
-      if (ch == '\n')
-        return sb;
-      // TODO: issues with mac
+    public FileValue(Path path) {
+	_path = path;
     }
 
-    if (sb.length() > 0)
-      return sb;
-    else
-      return null;
-  }
+    /**
+     * Returns the path.
+     */
+    public Path getPath() {
+	return _path;
+    }
 
-  /**
-   * Read a maximum of <i>length</i> bytes from the file and write
-   * them to the outputStream.
-   *
-   * @param os the {@link OutputStream}
-   * @param length the maximum number of bytes to read
-   */
-  public void writeToStream(OutputStream os, int length)
-    throws IOException
-  {
-  }
+    /**
+     * Reads a character from a file, returning -1 on EOF.
+     */
+    public int read()
+	    throws IOException {
+	return -1;
+    }
 
-  /**
-   * Prints a string to a file.
-   */
-  public void print(String v)
-    throws IOException
-  {
-  }
+    /**
+     * Reads a line from a file, returning null.
+     */
+    @Override
+    public StringValue readLine(Env env)
+	    throws IOException {
+	StringValue sb = env.createStringBuilder();
 
-  /**
-   * Closes the file.
-   */
-  public void close()
-  {
-  }
+	int ch;
 
-  /**
-   * Converts to a string.
-   * @param env
-   */
-  public String toString()
-  {
-    return "File[" + _path + "]";
-  }
+	while ((ch = read()) >= 0) {
+	    sb.append((char) ch);
+
+	    if (ch == '\n') {
+		return sb;
+	    }
+	    // TODO: issues with mac
+	}
+
+	if (sb.length() > 0) {
+	    return sb;
+	} else {
+	    return null;
+	}
+    }
+
+    /**
+     * Read a maximum of <i>length</i> bytes from the file and write
+     * them to the outputStream.
+     *
+     * @param os the {@link OutputStream}
+     * @param length the maximum number of bytes to read
+     */
+    public void writeToStream(OutputStream os, int length)
+	    throws IOException {
+    }
+
+    /**
+     * Prints a string to a file.
+     */
+    public void print(String v)
+	    throws IOException {
+    }
+
+    /**
+     * Closes the file.
+     */
+    public void close() {
+    }
+
+    /**
+     * Converts to a string.
+     * @param env
+     */
+    public String toString() {
+	return "File[" + _path + "]";
+    }
 }
-

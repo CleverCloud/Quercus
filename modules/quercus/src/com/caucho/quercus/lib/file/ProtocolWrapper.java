@@ -26,7 +26,6 @@
  *
  * @author Emil Ong
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.BooleanValue;
@@ -38,82 +37,79 @@ import com.caucho.quercus.env.Value;
 import com.caucho.quercus.function.AbstractFunction;
 
 public class ProtocolWrapper {
-  private QuercusClass _qClass;
 
-  protected ProtocolWrapper()
-  {
-  }
+    private QuercusClass _qClass;
 
-  public ProtocolWrapper(QuercusClass qClass)
-  {
-    _qClass = qClass;
-  }
+    protected ProtocolWrapper() {
+    }
 
-  public BinaryStream fopen(Env env, StringValue path, StringValue mode, 
-                            LongValue options)
-  {
-    return new WrappedStream(env, _qClass, path, mode, options);
-  }
+    public ProtocolWrapper(QuercusClass qClass) {
+	_qClass = qClass;
+    }
 
-  public Value opendir(Env env, StringValue path, LongValue flags)
-  {
-    WrappedDirectoryValue value = new WrappedDirectoryValue(env, _qClass);
+    public BinaryStream fopen(Env env, StringValue path, StringValue mode,
+	    LongValue options) {
+	return new WrappedStream(env, _qClass, path, mode, options);
+    }
 
-    if (! value.opendir(path, flags))
-      return BooleanValue.FALSE;
-    else
-      return value;
-  }
+    public Value opendir(Env env, StringValue path, LongValue flags) {
+	WrappedDirectoryValue value = new WrappedDirectoryValue(env, _qClass);
 
-  public boolean unlink(Env env, StringValue path)
-  {
-    AbstractFunction function = _qClass.getStaticFunction("unlink");
+	if (!value.opendir(path, flags)) {
+	    return BooleanValue.FALSE;
+	} else {
+	    return value;
+	}
+    }
 
-    if (function == null)
-      return false;
+    public boolean unlink(Env env, StringValue path) {
+	AbstractFunction function = _qClass.getStaticFunction("unlink");
 
-    return function.call(env, path).toBoolean();
-  }
+	if (function == null) {
+	    return false;
+	}
 
-  public boolean rename(Env env, StringValue path_from, StringValue path_to)
-  {
-    AbstractFunction function = _qClass.getStaticFunction("rename");
+	return function.call(env, path).toBoolean();
+    }
 
-    if (function == null)
-      return false;
+    public boolean rename(Env env, StringValue path_from, StringValue path_to) {
+	AbstractFunction function = _qClass.getStaticFunction("rename");
 
-    return function.call(env, path_from, path_to).toBoolean();
-  }
+	if (function == null) {
+	    return false;
+	}
 
-  public boolean mkdir(Env env, 
-                       StringValue path, LongValue mode, LongValue options)
-  {
-    AbstractFunction function = _qClass.getStaticFunction("mkdir");
+	return function.call(env, path_from, path_to).toBoolean();
+    }
 
-    if (function == null)
-      return false;
+    public boolean mkdir(Env env,
+	    StringValue path, LongValue mode, LongValue options) {
+	AbstractFunction function = _qClass.getStaticFunction("mkdir");
 
-    return function.call(env, path, mode, options).toBoolean();
-  }
+	if (function == null) {
+	    return false;
+	}
 
-  public boolean rmdir(Env env, StringValue path, LongValue options)
-  {
-    AbstractFunction function = _qClass.getStaticFunction("rmdir");
+	return function.call(env, path, mode, options).toBoolean();
+    }
 
-    if (function == null)
-      return false;
+    public boolean rmdir(Env env, StringValue path, LongValue options) {
+	AbstractFunction function = _qClass.getStaticFunction("rmdir");
 
-    return function.call(env, path, options).toBoolean();
-  }
+	if (function == null) {
+	    return false;
+	}
 
-  public Value url_stat(Env env, StringValue path, LongValue flags)
-  {
-    AbstractFunction function = _qClass.getStaticFunction("url_stat");
+	return function.call(env, path, options).toBoolean();
+    }
 
-    if (function == null)
-      return BooleanValue.FALSE;
+    public Value url_stat(Env env, StringValue path, LongValue flags) {
+	AbstractFunction function = _qClass.getStaticFunction("url_stat");
 
-    return function.call(env, path, flags);
-  }
+	if (function == null) {
+	    return BooleanValue.FALSE;
+	}
 
+	return function.call(env, path, flags);
+    }
 }

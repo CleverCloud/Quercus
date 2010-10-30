@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.Env;
@@ -37,79 +36,80 @@ import java.io.IOException;
 /**
  * A helper class that handles line endings when reading from a BinaryInput.
  */
-public class LineReader
-{
-  private Boolean _isMacLineEnding;
+public class LineReader {
 
-  public LineReader(Env env)
-  {
-    this(FileModule.INI_AUTO_DETECT_LINE_ENDINGS.getAsBoolean(env));
-  }
+    private Boolean _isMacLineEnding;
 
-  private LineReader(boolean isAutoDetectLineEndings)
-  {
-    if (!isAutoDetectLineEndings)
-      _isMacLineEnding = Boolean.FALSE;
-  }
-
-  /**
-   * Reads a line from the BinaryInput, returning null on EOF.
-   */
-  public StringValue readLine(Env env, BinaryInput input, long length)
-    throws IOException
-  {
-    StringValue sb = env.createBinaryBuilder();
-
-    int ch;
-
-    for (; length > 0 && (ch = input.read()) >= 0; length--) {
-      // php/161[pq] newlines
-      if (ch == '\n') {
-        sb.appendByte((byte) ch);
-
-        if (_isMacLineEnding == null)
-          _isMacLineEnding = false;
-
-        if (!_isMacLineEnding)
-          break;
-      }
-      else if (ch == '\r') {
-        sb.appendByte((byte) '\r');
-
-        int ch2 = input.read();
-
-        if (ch2 == '\n') {
-          if (_isMacLineEnding == null)
-            _isMacLineEnding = false;
-
-          if (_isMacLineEnding) {
-            input.unread();
-            break;
-          }
-          else {
-            sb.appendByte((byte) '\n');
-            break;
-          }
-        }
-        else {
-          input.unread();
-
-          if (_isMacLineEnding == null)
-            _isMacLineEnding = true;
-
-          if (_isMacLineEnding)
-            return sb;
-        }
-
-      }
-      else
-        sb.appendByte((byte) ch);
+    public LineReader(Env env) {
+	this(FileModule.INI_AUTO_DETECT_LINE_ENDINGS.getAsBoolean(env));
     }
 
-    if (sb.length() == 0)
-      return null;
-    else
-      return sb;
-    
-  }
+    private LineReader(boolean isAutoDetectLineEndings) {
+	if (!isAutoDetectLineEndings) {
+	    _isMacLineEnding = Boolean.FALSE;
+	}
+    }
+
+    /**
+     * Reads a line from the BinaryInput, returning null on EOF.
+     */
+    public StringValue readLine(Env env, BinaryInput input, long length)
+	    throws IOException {
+	StringValue sb = env.createBinaryBuilder();
+
+	int ch;
+
+	for (; length > 0 && (ch = input.read()) >= 0; length--) {
+	    // php/161[pq] newlines
+	    if (ch == '\n') {
+		sb.appendByte((byte) ch);
+
+		if (_isMacLineEnding == null) {
+		    _isMacLineEnding = false;
+		}
+
+		if (!_isMacLineEnding) {
+		    break;
+		}
+	    } else if (ch == '\r') {
+		sb.appendByte((byte) '\r');
+
+		int ch2 = input.read();
+
+		if (ch2 == '\n') {
+		    if (_isMacLineEnding == null) {
+			_isMacLineEnding = false;
+		    }
+
+		    if (_isMacLineEnding) {
+			input.unread();
+			break;
+		    } else {
+			sb.appendByte((byte) '\n');
+			break;
+		    }
+		} else {
+		    input.unread();
+
+		    if (_isMacLineEnding == null) {
+			_isMacLineEnding = true;
+		    }
+
+		    if (_isMacLineEnding) {
+			return sb;
+		    }
+		}
+
+	    } else {
+		sb.appendByte((byte) ch);
+	    }
+	}
+
+	if (sb.length() == 0) {
+	    return null;
+	} else {
+	    return sb;
+	}
+
+    }
 }

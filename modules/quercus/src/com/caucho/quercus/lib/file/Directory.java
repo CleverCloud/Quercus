@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.Env;
@@ -36,35 +35,31 @@ import com.caucho.vfs.Path;
 import java.io.IOException;
 
 public class Directory {
-  public DirectoryValue handle;
-  public String path;
 
-  protected Directory(Env env, Path path)
-    throws IOException
-  {
-    handle = new DirectoryValue(env, path);
-    env.addCleanup(handle);
+    public DirectoryValue handle;
+    public String path;
 
-    this.path = path.toString();
-  }
+    protected Directory(Env env, Path path)
+	    throws IOException {
+	handle = new DirectoryValue(env, path);
+	env.addCleanup(handle);
 
-  public Value read(Env env)
-  {
-    return handle.readdir();
-  }
+	this.path = path.toString();
+    }
 
-  public void rewind()
-  {
-    handle.rewinddir();
-  }
+    public Value read(Env env) {
+	return handle.readdir();
+    }
 
-  public void close()
-  {
-    handle.close();
-  }
+    public void rewind() {
+	handle.rewinddir();
+    }
 
-  public String toString()
-  {
-    return "Directory[]";
-  }
+    public void close() {
+	handle.close();
+    }
+
+    public String toString() {
+	return "Directory[]";
+    }
 }

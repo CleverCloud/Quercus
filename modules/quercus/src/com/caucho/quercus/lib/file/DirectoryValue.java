@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.file;
 
 import java.io.IOException;
@@ -42,75 +41,69 @@ import com.caucho.vfs.Path;
  * Represents a PHP directory listing
  */
 public class DirectoryValue extends ResourceValue {
-  private Env _env;
-  private Path _path;
-  private String []_list;
-  private int _index;
 
-  protected DirectoryValue(Env env)
-  {
-    _env = env;
-  }
+    private Env _env;
+    private Path _path;
+    private String[] _list;
+    private int _index;
 
-  public DirectoryValue(Env env, Path path)
-    throws IOException
-  {
-    _env = env;
-    _path = path;
-
-    _list = path.list();
-  }
-
-  /**
-   * Returns the next value.
-   */
-  public Value readdir()
-  {
-    if (_index < _list.length)
-      return _env.createString(_list[_index++]);
-    else
-      return BooleanValue.FALSE;
-  }
-
-  /**
-   * Rewinds the directory
-   */
-  public void rewinddir()
-  {
-    _index = 0;
-  }
-
-  /**
-   * Calls the given method.
-   */
-  @Override
-  public Value callMethod(Env env, StringValue methodName, int hash)
-  {
-    String method = methodName.toString();
-    
-    if ("read".equals(method))
-      return readdir();
-    else if ("rewind".equals(method)) {
-      rewinddir();
-
-      return BooleanValue.TRUE;
+    protected DirectoryValue(Env env) {
+	_env = env;
     }
-    else if ("close".equals(method)) {
-      close();
 
-      return BooleanValue.TRUE;
+    public DirectoryValue(Env env, Path path)
+	    throws IOException {
+	_env = env;
+	_path = path;
+
+	_list = path.list();
     }
-    else
-      return super.callMethod(env, methodName, hash);
-  }
 
-  /**
-   * Converts to a string.
-   * @param env
-   */
-  public String toString()
-  {
-    return "Directory[" + _path + "]";
-  }
+    /**
+     * Returns the next value.
+     */
+    public Value readdir() {
+	if (_index < _list.length) {
+	    return _env.createString(_list[_index++]);
+	} else {
+	    return BooleanValue.FALSE;
+	}
+    }
+
+    /**
+     * Rewinds the directory
+     */
+    public void rewinddir() {
+	_index = 0;
+    }
+
+    /**
+     * Calls the given method.
+     */
+    @Override
+    public Value callMethod(Env env, StringValue methodName, int hash) {
+	String method = methodName.toString();
+
+	if ("read".equals(method)) {
+	    return readdir();
+	} else if ("rewind".equals(method)) {
+	    rewinddir();
+
+	    return BooleanValue.TRUE;
+	} else if ("close".equals(method)) {
+	    close();
+
+	    return BooleanValue.TRUE;
+	} else {
+	    return super.callMethod(env, methodName, hash);
+	}
+    }
+
+    /**
+     * Converts to a string.
+     * @param env
+     */
+    public String toString() {
+	return "Directory[" + _path + "]";
+    }
 }
-

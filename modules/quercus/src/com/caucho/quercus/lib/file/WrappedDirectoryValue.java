@@ -26,7 +26,6 @@
  *
  * @author Emil Ong
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.*;
@@ -35,83 +34,71 @@ import com.caucho.quercus.env.*;
  * Represents a PHP directory listing
  */
 public class WrappedDirectoryValue extends DirectoryValue {
-  private static final ConstStringValue DIR_CLOSEDIR
-    = new ConstStringValue("dir_closedir");
-  private static final ConstStringValue DIR_OPENDIR
-    = new ConstStringValue("dir_opendir");
-  private static final ConstStringValue DIR_READDIR
-    = new ConstStringValue("dir_readdir");
-  private static final ConstStringValue DIR_REWINDDIR
-    = new ConstStringValue("dir_rewinddir");
-  
-  private static final UnicodeBuilderValue DIR_CLOSEDIR_U
-    = new UnicodeBuilderValue("dir_closedir");
-  private static final UnicodeBuilderValue DIR_OPENDIR_U
-    = new UnicodeBuilderValue("dir_opendir");
-  private static final UnicodeBuilderValue DIR_READDIR_U
-    = new UnicodeBuilderValue("dir_readdir");
-  private static final UnicodeBuilderValue DIR_REWINDDIR_U
-    = new UnicodeBuilderValue("dir_rewinddir");
-  
-  private Env _env;
-  private Value _wrapper;
 
-  public WrappedDirectoryValue(Env env, QuercusClass qClass)
-  {
-    super(env);
-    
-    _env = env;
-    _wrapper = qClass.callNew(_env, Value.NULL_ARGS);
-  }
+    private static final ConstStringValue DIR_CLOSEDIR = new ConstStringValue("dir_closedir");
+    private static final ConstStringValue DIR_OPENDIR = new ConstStringValue("dir_opendir");
+    private static final ConstStringValue DIR_READDIR = new ConstStringValue("dir_readdir");
+    private static final ConstStringValue DIR_REWINDDIR = new ConstStringValue("dir_rewinddir");
+    private static final UnicodeBuilderValue DIR_CLOSEDIR_U = new UnicodeBuilderValue("dir_closedir");
+    private static final UnicodeBuilderValue DIR_OPENDIR_U = new UnicodeBuilderValue("dir_opendir");
+    private static final UnicodeBuilderValue DIR_READDIR_U = new UnicodeBuilderValue("dir_readdir");
+    private static final UnicodeBuilderValue DIR_REWINDDIR_U = new UnicodeBuilderValue("dir_rewinddir");
+    private Env _env;
+    private Value _wrapper;
 
-  public boolean opendir(StringValue path, LongValue flags)
-  {
-    if (_env.isUnicodeSemantics())
-      return _wrapper.callMethod(_env, DIR_OPENDIR_U, path, flags).toBoolean();
-    else
-      return _wrapper.callMethod(_env, DIR_OPENDIR, path, flags).toBoolean();
-  }
+    public WrappedDirectoryValue(Env env, QuercusClass qClass) {
+	super(env);
 
-  /**
-   * Returns the next value.
-   */
-  public Value readdir()
-  {
-    if (_env.isUnicodeSemantics())
-      return _wrapper.callMethod(_env, DIR_READDIR_U);
-    else
-      return _wrapper.callMethod(_env, DIR_READDIR);
-  }
+	_env = env;
+	_wrapper = qClass.callNew(_env, Value.NULL_ARGS);
+    }
 
-  /**
-   * Rewinds the directory
-   */
-  public void rewinddir()
-  {
-    if (_env.isUnicodeSemantics())
-      _wrapper.callMethod(_env, DIR_REWINDDIR_U);
-    else
-      _wrapper.callMethod(_env, DIR_REWINDDIR);
-  }
+    public boolean opendir(StringValue path, LongValue flags) {
+	if (_env.isUnicodeSemantics()) {
+	    return _wrapper.callMethod(_env, DIR_OPENDIR_U, path, flags).toBoolean();
+	} else {
+	    return _wrapper.callMethod(_env, DIR_OPENDIR, path, flags).toBoolean();
+	}
+    }
 
-  /**
-   * Closes the directory
-   */
-  public void close()
-  {
-    if (_env.isUnicodeSemantics())
-      _wrapper.callMethod(_env, DIR_CLOSEDIR_U);
-    else
-      _wrapper.callMethod(_env, DIR_CLOSEDIR);
-  }
+    /**
+     * Returns the next value.
+     */
+    public Value readdir() {
+	if (_env.isUnicodeSemantics()) {
+	    return _wrapper.callMethod(_env, DIR_READDIR_U);
+	} else {
+	    return _wrapper.callMethod(_env, DIR_READDIR);
+	}
+    }
 
-  /**
-   * Converts to a string.
-   * @param env
-   */
-  public String toString()
-  {
-    return "Directory[]";
-  }
+    /**
+     * Rewinds the directory
+     */
+    public void rewinddir() {
+	if (_env.isUnicodeSemantics()) {
+	    _wrapper.callMethod(_env, DIR_REWINDDIR_U);
+	} else {
+	    _wrapper.callMethod(_env, DIR_REWINDDIR);
+	}
+    }
+
+    /**
+     * Closes the directory
+     */
+    public void close() {
+	if (_env.isUnicodeSemantics()) {
+	    _wrapper.callMethod(_env, DIR_CLOSEDIR_U);
+	} else {
+	    _wrapper.callMethod(_env, DIR_CLOSEDIR);
+	}
+    }
+
+    /**
+     * Converts to a string.
+     * @param env
+     */
+    public String toString() {
+	return "Directory[]";
+    }
 }
-

@@ -35,15 +35,13 @@ import com.caucho.vfs.VfsStream;
 /*
  * STDIN, php://stdin
  */
-public class PhpStdin extends AbstractBinaryInput
-{
-  public PhpStdin(Env env)
-  {
-    super(env, new ReadStream(new VfsStream(System.in, null)));
-  }
-  
-  public String toString()
-  {
-    return "PhpStdin[]";
-  }
+public class PhpStdin extends AbstractBinaryInput {
+
+    public PhpStdin(Env env) {
+	super(env, new ReadStream(new VfsStream(System.in, null)));
+    }
+
+    public String toString() {
+	return "PhpStdin[]";
+    }
 }

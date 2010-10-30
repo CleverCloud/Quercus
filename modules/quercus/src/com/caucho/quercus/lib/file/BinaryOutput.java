@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.file;
 
 import java.io.IOException;
@@ -37,51 +36,49 @@ import java.io.OutputStream;
  * Represents a Quercus output stream
  */
 public interface BinaryOutput extends BinaryStream {
-  /**
-   * Returns an OutputStream.
-   */
-  public OutputStream getOutputStream();
-  
-  /**
-   * Writes a buffer.
-   */
-  public void write(byte []buffer, int offset, int length)
-    throws IOException;
 
-  /**
-   * Writes a buffer.
-   */
-  public int write(InputStream is, int length)
-    throws IOException;
-  
-  /**
-   * prints a unicode character
-   */
-  public void print(char ch)
-    throws IOException;
-  
-  /**
-   * prints
-   */
-  public void print(String s)
-    throws IOException;
+    /**
+     * Returns an OutputStream.
+     */
+    public OutputStream getOutputStream();
 
-  /**
-   * Flushes the output
-   */
-  public void flush()
-    throws IOException;
+    /**
+     * Writes a buffer.
+     */
+    public void write(byte[] buffer, int offset, int length)
+	    throws IOException;
 
-  /**
-   * Closes the stream for writing
-   */
-  public void closeWrite();
+    /**
+     * Writes a buffer.
+     */
+    public int write(InputStream is, int length)
+	    throws IOException;
 
-  /**
-   * Closes the stream.
-   */
-  public void close();
+    /**
+     * prints a unicode character
+     */
+    public void print(char ch)
+	    throws IOException;
 
+    /**
+     * prints
+     */
+    public void print(String s)
+	    throws IOException;
 
+    /**
+     * Flushes the output
+     */
+    public void flush()
+	    throws IOException;
+
+    /**
+     * Closes the stream for writing
+     */
+    public void closeWrite();
+
+    /**
+     * Closes the stream.
+     */
+    public void close();
 }
-

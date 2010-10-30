@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.file;
 
 import java.io.IOException;
@@ -42,150 +41,133 @@ import com.caucho.vfs.TempBuffer;
  * Represents a Quercus file open for reading
  */
 public class WriteStreamOutput extends OutputStream implements BinaryOutput {
-  private static final Logger log
-    = Logger.getLogger(WriteStreamOutput.class.getName());
 
-  private OutputStream _os;
+    private static final Logger log = Logger.getLogger(WriteStreamOutput.class.getName());
+    private OutputStream _os;
 
-  public WriteStreamOutput(OutputStream os)
-  {
-    _os = os;
-  }
-
-  /**
-   * Returns the input stream.
-   */
-  public OutputStream getOutputStream()
-  {
-    return _os;
-  }
-
-  public void close()
-  {
-    OutputStream os = _os;
-    _os = null;
-
-    if (os != null) {
-      try {
-        os.close();
-      } catch (Exception e) {
-        log.log(Level.FINE, e.toString(), e);
-      }
+    public WriteStreamOutput(OutputStream os) {
+	_os = os;
     }
-  }
 
-  public Object toJavaObject()
-  {
-    return this;
-  }
-
-  public String getResourceType()
-  {
-    return "stream";
-  }
-
-  @Override
-  public void write(int ch) throws IOException
-  {
-    _os.write(ch);
-  }
-
-  @Override
-  public void write(byte []buffer, int offset, int length) throws IOException
-  {
-    _os.write(buffer, offset, length);
-  }
-
-  @Override
-  public void closeWrite()
-  {
-    close();
-  }
-
-  @Override
-  public void print(char ch) throws IOException
-  {
-    _os.write(ch);
-  }
-
-  /* (non-Javadoc)
-   * @see com.caucho.quercus.lib.file.BinaryOutput#print(java.lang.String)
-   */
-  @Override
-  public void print(String s) throws IOException
-  {
-    int len = s.length();
-    
-    for (int i = 0; i < len; i++)
-      _os.write(s.charAt(i));
-  }
-
-  @Override
-  public int write(InputStream is, int length) throws IOException
-  {
-    TempBuffer tempBuffer = TempBuffer.allocate();
-    byte []buffer = tempBuffer.getBuffer();
-    
-    int writeLength = length;
-    
-    while (length > 0) {
-      int sublen = buffer.length;
-      
-      if (length < sublen)
-        sublen = length;
-      
-      sublen = is.read(buffer, 0, sublen);
-      
-      if (sublen <= 0)
-        break;
-      
-      _os.write(buffer, 0, sublen);
-      
-      length -= sublen;
+    /**
+     * Returns the input stream.
+     */
+    public OutputStream getOutputStream() {
+	return _os;
     }
-    
-    TempBuffer.free(tempBuffer);
-    
-    return writeLength;
-  }
 
-  @Override
-  public long getPosition()
-  {
-    return 0;
-  }
+    public void close() {
+	OutputStream os = _os;
+	_os = null;
 
-  @Override
-  public boolean isEOF()
-  {
-    return false;
-  }
+	if (os != null) {
+	    try {
+		os.close();
+	    } catch (Exception e) {
+		log.log(Level.FINE, e.toString(), e);
+	    }
+	}
+    }
 
-  @Override
-  public long seek(long offset, int whence)
-  {
-    return 0;
-  }
+    public Object toJavaObject() {
+	return this;
+    }
 
-  @Override
-  public boolean setPosition(long offset)
-  {
-    return false;
-  }
+    public String getResourceType() {
+	return "stream";
+    }
 
-  @Override
-  public Value stat()
-  {
-    return null;
-  }
-  
+    @Override
+    public void write(int ch) throws IOException {
+	_os.write(ch);
+    }
 
-  /**
-   * Converts to a string.
-   */
-  public String toString()
-  {
-    return "WriteStreamOutput[" + _os + "]";
-  }
+    @Override
+    public void write(byte[] buffer, int offset, int length) throws IOException {
+	_os.write(buffer, offset, length);
+    }
+
+    @Override
+    public void closeWrite() {
+	close();
+    }
+
+    @Override
+    public void print(char ch) throws IOException {
+	_os.write(ch);
+    }
+
+    /* (non-Javadoc)
+     * @see com.caucho.quercus.lib.file.BinaryOutput#print(java.lang.String)
+     */
+    @Override
+    public void print(String s) throws IOException {
+	int len = s.length();
+
+	for (int i = 0; i < len; i++) {
+	    _os.write(s.charAt(i));
+	}
+    }
+
+    @Override
+    public int write(InputStream is, int length) throws IOException {
+	TempBuffer tempBuffer = TempBuffer.allocate();
+	byte[] buffer = tempBuffer.getBuffer();
+
+	int writeLength = length;
+
+	while (length > 0) {
+	    int sublen = buffer.length;
+
+	    if (length < sublen) {
+		sublen = length;
+	    }
+
+	    sublen = is.read(buffer, 0, sublen);
+
+	    if (sublen <= 0) {
+		break;
+	    }
+
+	    _os.write(buffer, 0, sublen);
+
+	    length -= sublen;
+	}
+
+	TempBuffer.free(tempBuffer);
+
+	return writeLength;
+    }
+
+    @Override
+    public long getPosition() {
+	return 0;
+    }
+
+    @Override
+    public boolean isEOF() {
+	return false;
+    }
+
+    @Override
+    public long seek(long offset, int whence) {
+	return 0;
+    }
+
+    @Override
+    public boolean setPosition(long offset) {
+	return false;
+    }
+
+    @Override
+    public Value stat() {
+	return null;
+    }
+
+    /**
+     * Converts to a string.
+     */
+    public String toString() {
+	return "WriteStreamOutput[" + _os + "]";
+    }
 }
-

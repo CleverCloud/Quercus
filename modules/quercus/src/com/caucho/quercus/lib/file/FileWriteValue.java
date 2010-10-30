@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.file;
 
 import com.caucho.vfs.Path;
@@ -40,103 +39,97 @@ import java.util.logging.Logger;
  * Represents a PHP open file
  */
 public class FileWriteValue extends FileValue {
-  private static final Logger log
-    = Logger.getLogger(FileReadValue.class.getName());
 
-  private WriteStream _os;
-  private long _offset;
+    private static final Logger log = Logger.getLogger(FileReadValue.class.getName());
+    private WriteStream _os;
+    private long _offset;
 
-  public FileWriteValue(Path path)
-    throws IOException
-  {
-    super(path);
+    public FileWriteValue(Path path)
+	    throws IOException {
+	super(path);
 
-    _os = path.openWrite();
-  }
-
-  public FileWriteValue(Path path, boolean isAppend)
-    throws IOException
-  {
-    super(path);
-
-    if (isAppend)
-      _os = path.openAppend();
-    else
-      _os = path.openWrite();
-  }
-
-  /**
-   * Prints a string to a file.
-   */
-  public void print(char v)
-    throws IOException
-  {
-    if (_os != null)
-      _os.print(v);
-  }
-
-  /**
-   * Prints a string to a file.
-   */
-  public void print(String v)
-    throws IOException
-  {
-    if (_os != null)
-      _os.print(v);
-  }
-
-  /**
-   * Writes a buffer to a file.
-   */
-  public int write(byte []buffer, int offset, int length)
-    throws IOException
-  {
-    if (_os != null) {
-      _os.write(buffer, offset, length);
-
-      return length;
+	_os = path.openWrite();
     }
 
-    return 0;
-  }
+    public FileWriteValue(Path path, boolean isAppend)
+	    throws IOException {
+	super(path);
 
-  /**
-   * Flushes the output.
-   */
-  public void flush()
-  {
-    try {
-      if (_os != null)
-        _os.flush();
-    } catch (IOException e) {
-      log.log(Level.FINE, e.toString(), e);
+	if (isAppend) {
+	    _os = path.openAppend();
+	} else {
+	    _os = path.openWrite();
+	}
     }
-  }
 
-
-  /**
-   * Closes the file.
-   */
-  public void close()
-  {
-    try {
-      WriteStream os = _os;
-      _os = null;
-
-      if (os != null)
-        os.close();
-    } catch (IOException e) {
-      log.log(Level.FINE, e.toString(), e);
+    /**
+     * Prints a string to a file.
+     */
+    public void print(char v)
+	    throws IOException {
+	if (_os != null) {
+	    _os.print(v);
+	}
     }
-  }
 
-  /**
-   * Converts to a string.
-   * @param env
-   */
-  public String toString()
-  {
-    return "File[" + getPath() + "]";
-  }
+    /**
+     * Prints a string to a file.
+     */
+    public void print(String v)
+	    throws IOException {
+	if (_os != null) {
+	    _os.print(v);
+	}
+    }
+
+    /**
+     * Writes a buffer to a file.
+     */
+    public int write(byte[] buffer, int offset, int length)
+	    throws IOException {
+	if (_os != null) {
+	    _os.write(buffer, offset, length);
+
+	    return length;
+	}
+
+	return 0;
+    }
+
+    /**
+     * Flushes the output.
+     */
+    public void flush() {
+	try {
+	    if (_os != null) {
+		_os.flush();
+	    }
+	} catch (IOException e) {
+	    log.log(Level.FINE, e.toString(), e);
+	}
+    }
+
+    /**
+     * Closes the file.
+     */
+    public void close() {
+	try {
+	    WriteStream os = _os;
+	    _os = null;
+
+	    if (os != null) {
+		os.close();
+	    }
+	} catch (IOException e) {
+	    log.log(Level.FINE, e.toString(), e);
+	}
+    }
+
+    /**
+     * Converts to a string.
+     * @param env
+     */
+    public String toString() {
+	return "File[" + getPath() + "]";
+    }
 }
-
