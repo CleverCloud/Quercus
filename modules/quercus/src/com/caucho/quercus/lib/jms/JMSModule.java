@@ -26,7 +26,6 @@
  *
  * @author Emil Ong
  */
-
 package com.caucho.quercus.lib.jms;
 
 import com.caucho.quercus.QuercusModuleException;
@@ -48,75 +47,70 @@ import java.util.logging.Logger;
  * JMS functions
  */
 @ClassImplementation
-public class JMSModule extends AbstractQuercusModule
-{
-  private static final Logger log
-    = Logger.getLogger(JMSModule.class.getName());
+public class JMSModule extends AbstractQuercusModule {
 
-  private static final L10N L = new L10N(JMSModule.class);
+    private static final Logger log = Logger.getLogger(JMSModule.class.getName());
+    private static final L10N L = new L10N(JMSModule.class);
+    private static final IniDefinitions _iniDefinitions = new IniDefinitions();
 
-  private static final IniDefinitions _iniDefinitions = new IniDefinitions();
-
-  /**
-   * Returns the default php.ini values.
-   */
-  public IniDefinitions getIniDefinitions()
-  {
-    return _iniDefinitions;
-  }
-
-  static JMSQueue message_get_queue(Env env, String queueName,
-                                    ConnectionFactory connectionFactory)
-  {
-    if (connectionFactory == null)
-      connectionFactory = getConnectionFactory(env);
-
-    if (connectionFactory == null) {
-      env.warning(L.l("No connection factory"));
-      return null;
+    /**
+     * Returns the default php.ini values.
+     */
+    public IniDefinitions getIniDefinitions() {
+	return _iniDefinitions;
     }
 
-    try {
-      Destination queue = null;
+    static JMSQueue message_get_queue(Env env, String queueName,
+	    ConnectionFactory connectionFactory) {
+	if (connectionFactory == null) {
+	    connectionFactory = getConnectionFactory(env);
+	}
 
-      if (queueName != null && ! queueName.equals(""))
-        queue = (Destination) new InitialContext().lookup(
-            "java:comp/env/" + queueName);
-      
-      return new JMSQueue(connectionFactory, queue);
-    } catch (Exception e) {
-      env.warning(e);
+	if (connectionFactory == null) {
+	    env.warning(L.l("No connection factory"));
+	    return null;
+	}
 
-      return null;
+	try {
+	    Destination queue = null;
+
+	    if (queueName != null && !queueName.equals("")) {
+		queue = (Destination) new InitialContext().lookup(
+			"java:comp/env/" + queueName);
+	    }
+
+	    return new JMSQueue(connectionFactory, queue);
+	} catch (Exception e) {
+	    env.warning(e);
+
+	    return null;
+	}
     }
-  }
 
-  private static ConnectionFactory getConnectionFactory(Env env)
-  {
-    StringValue factoryName = env.getIni("jms.connection_factory");
+    private static ConnectionFactory getConnectionFactory(Env env) {
+	StringValue factoryName = env.getIni("jms.connection_factory");
 
-    if (factoryName == null)
-      log.fine("jms.connection_factory not set");
+	if (factoryName == null) {
+	    log.fine("jms.connection_factory not set");
+	}
 
-    try {
-      Context context = (Context) new InitialContext().lookup("java:comp/env");
+	try {
+	    Context context = (Context) new InitialContext().lookup("java:comp/env");
 
-      ConnectionFactory connectionFactory = 
-        (ConnectionFactory) context.lookup(factoryName.toString());
+	    ConnectionFactory connectionFactory =
+		    (ConnectionFactory) context.lookup(factoryName.toString());
 
-      if (connectionFactory == null)
-        log.warning("Couldn't find factory " + factoryName.toString());
+	    if (connectionFactory == null) {
+		log.warning("Couldn't find factory " + factoryName.toString());
+	    }
 
-      return connectionFactory;
-    } catch (RuntimeException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new QuercusModuleException(e);
+	    return connectionFactory;
+	} catch (RuntimeException e) {
+	    throw e;
+	} catch (Exception e) {
+	    throw new QuercusModuleException(e);
+	}
     }
-  }
-
-  static final IniDefinition INI_JMS_CONNECTION_FACTORY
-    = _iniDefinitions.add(
-      "jms.connection_factory",  "jms/ConnectionFactory", PHP_INI_SYSTEM);
+    static final IniDefinition INI_JMS_CONNECTION_FACTORY = _iniDefinitions.add(
+	    "jms.connection_factory", "jms/ConnectionFactory", PHP_INI_SYSTEM);
 }
-
