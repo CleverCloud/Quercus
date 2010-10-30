@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib;
 
 import com.caucho.quercus.QuercusContext;
@@ -48,156 +47,148 @@ import java.util.logging.Logger;
  * PHP function routines.
  */
 public class FunctionModule extends AbstractQuercusModule {
-  private static final L10N L = new L10N(FunctionModule.class);
 
-  private static final Logger log
-    = Logger.getLogger(FunctionModule.class.getName());
-  
-  /**
-   * Calls a user function
-   */
-  public static Value call_user_func(Env env,
-                                     Callable function,
-                                     Value []args)
-  {
-    return function.call(env, args).copyReturn();
-  }
+    private static final L10N L = new L10N(FunctionModule.class);
+    private static final Logger log = Logger.getLogger(FunctionModule.class.getName());
 
-  /**
-   * Calls a user function
-   */
-  public static Value call_user_func_array(Env env,
-                                           Callable function,
-                                           Value arg)
-  {
-    if (function == null) {
-      env.warning(
-          "call_user_func_array: first argument is not a valid function");
-      return NullValue.NULL;
+    /**
+     * Calls a user function
+     */
+    public static Value call_user_func(Env env,
+	    Callable function,
+	    Value[] args) {
+	return function.call(env, args).copyReturn();
     }
 
-    ArrayValue argArray;
+    /**
+     * Calls a user function
+     */
+    public static Value call_user_func_array(Env env,
+	    Callable function,
+	    Value arg) {
+	if (function == null) {
+	    env.warning(
+		    "call_user_func_array: first argument is not a valid function");
+	    return NullValue.NULL;
+	}
 
-    if (arg.isArray())
-      argArray = (ArrayValue) arg.toArray();
-    else
-      argArray = new ArrayValueImpl().append(arg);
+	ArrayValue argArray;
 
-    Value []args;
+	if (arg.isArray()) {
+	    argArray = (ArrayValue) arg.toArray();
+	} else {
+	    argArray = new ArrayValueImpl().append(arg);
+	}
 
-    if (argArray != null) {
-      args = new Value[argArray.getSize()];
+	Value[] args;
 
-      int i = 0;
-      
-      for (Map.Entry<Value,Value> entry : argArray.entrySet()) {
-        ArrayValue.Entry arrayEntry = (ArrayValue.Entry) entry;
-        
-        args[i++] = arrayEntry.getRawValue();
-      }
-    }
-    else
-      args = new Value[0];
+	if (argArray != null) {
+	    args = new Value[argArray.getSize()];
 
-    return function.call(env, args).copyReturn();
-  }
+	    int i = 0;
 
-  /**
-   * Creates an anonymous function
-   */
-  public static Value create_function(Env env,
-                                      String args,
-                                      String code)
-  {
-    try {
-      AbstractFunction fun = env.createAnonymousFunction(args, code);
-      
-      return new CallbackFunction(fun, fun.getName());
-    } catch (IOException e) {
-      env.warning(e.getMessage());
+	    for (Map.Entry<Value, Value> entry : argArray.entrySet()) {
+		ArrayValue.Entry arrayEntry = (ArrayValue.Entry) entry;
 
-      return BooleanValue.FALSE;
-    }
-  }
+		args[i++] = arrayEntry.getRawValue();
+	    }
+	} else {
+	    args = new Value[0];
+	}
 
-  /**
-   * Returns the nth function argument.
-   */
-  @VariableArguments
-  public static Value func_get_arg(Env env, int index)
-  {
-    Value []args = env.getFunctionArgs();
-
-    if (0 <= index && index < args.length)
-      return args[index];
-    else {
-      // TODO: warning
-      return NullValue.NULL;
-    }
-  }
-
-  /**
-   * Returns the function arguments as an array.
-   */
-  @VariableArguments
-  public static Value func_get_args(Env env)
-  {
-    Value []args = env.getFunctionArgs();
-
-    ArrayValue result = new ArrayValueImpl();
-    if (args != null) {
-      for (int i = 0; i < args.length; i++)
-        result.put(args[i]);
+	return function.call(env, args).copyReturn();
     }
 
-    return result;
-  }
+    /**
+     * Creates an anonymous function
+     */
+    public static Value create_function(Env env,
+	    String args,
+	    String code) {
+	try {
+	    AbstractFunction fun = env.createAnonymousFunction(args, code);
 
-  /**
-   * Returns the number of arguments to the function.
-   */
-  @VariableArguments
-  public static Value func_num_args(Env env)
-  {
-    Value []args = env.getFunctionArgs();
+	    return new CallbackFunction(fun, fun.getName());
+	} catch (IOException e) {
+	    env.warning(e.getMessage());
 
-    if (args != null && args.length > 0)
-      return LongValue.create(args.length);
-    else
-      return LongValue.ZERO;
-  }
+	    return BooleanValue.FALSE;
+	}
+    }
 
-  /**
-   * Returns true if the function exists.
-   *
-   * @param env the PHP environment
-   * @param name the function name
-   */
-  public static boolean function_exists(Env env, String name)
-  {
-    return name != null && env.findFunction(name) != null;
-  }
+    /**
+     * Returns the nth function argument.
+     */
+    @VariableArguments
+    public static Value func_get_arg(Env env, int index) {
+	Value[] args = env.getFunctionArgs();
 
-  /**
-   * Returns an array of the defined functions
-   */
-  public static Value get_defined_functions(Env env)
-  {
-    return env.getDefinedFunctions();
-  }
+	if (0 <= index && index < args.length) {
+	    return args[index];
+	} else {
+	    // TODO: warning
+	    return NullValue.NULL;
+	}
+    }
 
-  /**
-   * Registers a shutdown function.
-   */
-  public static Value register_shutdown_function(Env env,
-                                                 Callable fun,
-                                                 Value []args)
-  {
-    env.addShutdown(fun, args);
+    /**
+     * Returns the function arguments as an array.
+     */
+    @VariableArguments
+    public static Value func_get_args(Env env) {
+	Value[] args = env.getFunctionArgs();
 
-    return NullValue.NULL;
-  }
+	ArrayValue result = new ArrayValueImpl();
+	if (args != null) {
+	    for (int i = 0; i < args.length; i++) {
+		result.put(args[i]);
+	    }
+	}
 
-  // TODO: register_tick_function
-  // TODO: unregister_tick_function
+	return result;
+    }
+
+    /**
+     * Returns the number of arguments to the function.
+     */
+    @VariableArguments
+    public static Value func_num_args(Env env) {
+	Value[] args = env.getFunctionArgs();
+
+	if (args != null && args.length > 0) {
+	    return LongValue.create(args.length);
+	} else {
+	    return LongValue.ZERO;
+	}
+    }
+
+    /**
+     * Returns true if the function exists.
+     *
+     * @param env the PHP environment
+     * @param name the function name
+     */
+    public static boolean function_exists(Env env, String name) {
+	return name != null && env.findFunction(name) != null;
+    }
+
+    /**
+     * Returns an array of the defined functions
+     */
+    public static Value get_defined_functions(Env env) {
+	return env.getDefinedFunctions();
+    }
+
+    /**
+     * Registers a shutdown function.
+     */
+    public static Value register_shutdown_function(Env env,
+	    Callable fun,
+	    Value[] args) {
+	env.addShutdown(fun, args);
+
+	return NullValue.NULL;
+    }
+    // TODO: register_tick_function
+    // TODO: unregister_tick_function
 }

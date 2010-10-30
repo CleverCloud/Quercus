@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib;
 
 import com.caucho.quercus.QuercusModuleException;
@@ -47,106 +46,99 @@ import java.util.logging.Logger;
  * PHP apache routines.
  */
 public class ApacheModule extends AbstractQuercusModule {
-  private static final L10N L = new L10N(ApacheModule.class);
 
-  private static final Logger log =
-    Logger.getLogger(ApacheModule.class.getName());
+    private static final L10N L = new L10N(ApacheModule.class);
+    private static final Logger log =
+	    Logger.getLogger(ApacheModule.class.getName());
 
-  /**
-   * Stub for insisting the apache process should terminate.
-   */
-  public boolean apache_child_terminate()
-  {
-    return false;
-  }
-
-  // TODO: apache_get_modules
-  // TODO: apache_get_version
-  // TODO: apache_getenv
-  // TODO: apache_lookup_uri
-
-  /**
-   * Gets and sets apache notes
-   */
-  public String apache_note(Env env,
-                            String name,
-                            @Optional Value value)
-  {
-    HttpServletRequest req = env.getRequest();
-
-    Object oldValue = req.getAttribute(name);
-
-    if (value.isset())
-      req.setAttribute(name, value.toString());
-
-    if (oldValue != null)
-      return oldValue.toString();
-    else
-      return null;
-  }
-
-  /**
-   * Returns all the request headers
-   */
-  public Value apache_request_headers(Env env)
-  {
-    HttpServletRequest req = env.getRequest();
-
-    ArrayValue result = new ArrayValueImpl();
-
-    Enumeration e = req.getHeaderNames();
-
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
-
-      result.put(env.createString(key), env.createString(req.getHeader(key)));
+    /**
+     * Stub for insisting the apache process should terminate.
+     */
+    public boolean apache_child_terminate() {
+	return false;
     }
 
-    return result;
-  }
+    // TODO: apache_get_modules
+    // TODO: apache_get_version
+    // TODO: apache_getenv
+    // TODO: apache_lookup_uri
+    /**
+     * Gets and sets apache notes
+     */
+    public String apache_note(Env env,
+	    String name,
+	    @Optional Value value) {
+	HttpServletRequest req = env.getRequest();
 
-  // TODO: apache_response_headers
+	Object oldValue = req.getAttribute(name);
 
-  /**
-   * Stub for resetting the output timeout.
-   */
-  public boolean apache_reset_timeout()
-  {
-    return false;
-  }
+	if (value.isset()) {
+	    req.setAttribute(name, value.toString());
+	}
 
-  // TODO: apache_setenv
-  // TODO: ascii2ebcdic
-  // TODO: ebcdic2ascii
-
-  /**
-   * Returns all the request headers
-   */
-  public Value getallheaders(Env env)
-  {
-    return apache_request_headers(env);
-  }
-
-  /**
-   * Include request.
-   */
-  public boolean virtual(Env env, String url)
-  {
-    try {
-      HttpServletRequest req = env.getRequest();
-      HttpServletResponse res = env.getResponse();
-
-      // TODO: need to put the output, so the included stream gets the
-      // buffer, too
-      env.getOut().flushBuffer();
-
-      req.getRequestDispatcher(url).include(req, res);
-
-      return true;
-    } catch (RuntimeException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new QuercusModuleException(e);
+	if (oldValue != null) {
+	    return oldValue.toString();
+	} else {
+	    return null;
+	}
     }
-  }
+
+    /**
+     * Returns all the request headers
+     */
+    public Value apache_request_headers(Env env) {
+	HttpServletRequest req = env.getRequest();
+
+	ArrayValue result = new ArrayValueImpl();
+
+	Enumeration e = req.getHeaderNames();
+
+	while (e.hasMoreElements()) {
+	    String key = (String) e.nextElement();
+
+	    result.put(env.createString(key), env.createString(req.getHeader(key)));
+	}
+
+	return result;
+    }
+
+    // TODO: apache_response_headers
+    /**
+     * Stub for resetting the output timeout.
+     */
+    public boolean apache_reset_timeout() {
+	return false;
+    }
+
+    // TODO: apache_setenv
+    // TODO: ascii2ebcdic
+    // TODO: ebcdic2ascii
+    /**
+     * Returns all the request headers
+     */
+    public Value getallheaders(Env env) {
+	return apache_request_headers(env);
+    }
+
+    /**
+     * Include request.
+     */
+    public boolean virtual(Env env, String url) {
+	try {
+	    HttpServletRequest req = env.getRequest();
+	    HttpServletResponse res = env.getResponse();
+
+	    // TODO: need to put the output, so the included stream gets the
+	    // buffer, too
+	    env.getOut().flushBuffer();
+
+	    req.getRequestDispatcher(url).include(req, res);
+
+	    return true;
+	} catch (RuntimeException e) {
+	    throw e;
+	} catch (Exception e) {
+	    throw new QuercusModuleException(e);
+	}
+    }
 }

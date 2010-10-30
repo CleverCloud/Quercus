@@ -26,7 +26,6 @@
  *
  * @author Charles Reich
  */
-
 package com.caucho.quercus.lib;
 
 import com.caucho.quercus.env.Env;
@@ -39,14 +38,14 @@ import com.caucho.util.L10N;
  * Java object facade.
  */
 public class Java {
-  private static final L10N L = new L10N(Java.class);
-  
-  /**
-   * Create a new Java API object.
-   */
-  public static Object __construct(Env env,
-                                   String className, Value []args)
-  {
-    return JavaModule.java(env, className, args);
-  }
+
+    private static final L10N L = new L10N(Java.class);
+
+    /**
+     * Create a new Java API object.
+     */
+    public static Object __construct(Env env,
+	    String className, Value[] args) {
+	return JavaModule.java(env, className, args);
+    }
 }
