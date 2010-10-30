@@ -948,58 +948,40 @@ public class DateModule extends AbstractQuercusModule {
 		case 'B':
 		    fb.appendMonthOfYearText();
 		    break;
-		/*
+
 		// TODO: Find a solution to have Locale DateTime pattern string for dtfb
-		case 'c':
-		//fb.appendShortText(L)
-		break;
-		 */
+		/*case 'c':
+		fb.appendShortText(L)
+		break;*/
+
+		case 'C':
+		    fb.appendCenturyOfEra(2, 2);
+		    break;
+
 		case 'd':
 		    fb.appendDayOfMonth(2);
 		    break;
-		/*
+
 		case 'D':
-		cb.append((_month + 1) / 10);
-		cb.append((_month + 1) % 10);
-		cb.append('/');
-		cb.append((_dayOfMonth + 1) / 10);
-		cb.append((_dayOfMonth + 1) % 10);
-		cb.append('/');
-		cb.append(_year / 10 % 10);
-		cb.append(_year % 10);
-		break;
-
-		case 'e':
-		if ((_dayOfMonth + 1) / 10 == 0) {
-		cb.append(' ');
-		} else {
-		cb.append((_dayOfMonth + 1) / 10);
-		}
-		cb.append((_dayOfMonth + 1) % 10);
-		break;
-
-		// ISO year
-		 */
+		    fb.appendMonthOfYear(2);
+		    fb.appendLiteral('/');
+		    fb.appendDayOfMonth(2);
+		    fb.appendLiteral('/');
+		    fb.appendYear(2, 2);
+		    break;
+		    
 		case 'H':
 		    fb.appendHourOfDay(2);
 		    break;
-		/*
-		case 'I': {
-		int hour = (int) (_timeOfDay / 3600000) % 12;
-		if (hour == 0) {
-		hour = 12;
-		}
-		cb.append(hour / 10);
-		cb.append(hour % 10);
-		break;
-		}
+
+		case 'I':
+		    fb.appendHourOfHalfday(2);
+		    break;
 
 		case 'j':
-		cb.append((_dayOfYear + 1) / 100);
-		cb.append((_dayOfYear + 1) / 10 % 10);
-		cb.append((_dayOfYear + 1) % 10);
-		break;
-		 */
+		    fb.appendDayOfYear(3);
+		    break;
+
 		case 'm':
 		    fb.appendMonthOfYear(2);
 		    break;
@@ -1007,91 +989,15 @@ public class DateModule extends AbstractQuercusModule {
 		case 'M':
 		    fb.appendMinuteOfHour(2);
 		    break;
-		/*
-		case 'p': {
-		int hour = (int) (_timeOfDay / 3600000) % 24;
-		if (hour < 12) {
-		cb.append("am");
-		} else {
-		cb.append("pm");
-		}
-		break;
-		}
-		 */
+
 		case 'S':
 		    fb.appendSecondOfMinute(2);
 		    break;
-		/*
-		case 's':
-		cb.append((_timeOfDay / 100) % 10);
-		cb.append((_timeOfDay / 10) % 10);
-		cb.append(_timeOfDay % 10);
-		break;
 
-		case 'T': {
-		int hour = (int) (_timeOfDay / 3600000) % 24;
-		cb.append(hour / 10);
-		cb.append(hour % 10);
-		cb.append(':');
-		cb.append((_timeOfDay / 600000) % 6);
-		cb.append((_timeOfDay / 60000) % 10);
-		cb.append(':');
-		cb.append((_timeOfDay / 10000) % 6);
-		cb.append((_timeOfDay / 1000) % 10);
-		break;
-		}
-
-		case 'W':
-		int week = getWeek();
-		cb.append((week + 1) / 10);
-		cb.append((week + 1) % 10);
-		break;
-
-		case 'w':
-		cb.append(getDayOfWeek() - 1);
-		break;
-
-		case 'x':
-		cb.append(printShortLocaleDate());
-		break;
-
-		case 'X':
-		cb.append(printShortLocaleTime());
-		break;
-
-		case 'y':
-		cb.append(_year / 10 % 10);
-		cb.append(_year % 10);
-		break;
-		 */
 		case 'Y':
 		    fb.appendYear(4, 4);
 		    break;
-		/*
-		case 'Z':
-		if (_zoneName == null) {
-		cb.append("GMT");
-		} else {
-		cb.append(_zoneName);
-		}
-		break;
 
-		case 'z':
-		long offset = _zoneOffset;
-
-		if (offset < 0) {
-		cb.append("-");
-		offset = -offset;
-		} else {
-		cb.append("+");
-		}
-
-		cb.append((offset / 36000000) % 10);
-		cb.append((offset / 3600000) % 10);
-		cb.append((offset / 600000) % 6);
-		cb.append((offset / 60000) % 10);
-		break;
-		 */
 		case '%':
 		    fb.appendLiteral('%');
 		    break;
