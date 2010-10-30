@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.annotation;
 
 import java.lang.annotation.ElementType;
@@ -40,11 +39,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UsesSymbolTable {
-  /**
-   * Replace is true if the symbol table can override existing Var, not
-   * just set their values.
-   *
-   * XXX: the default may change to false for 3.2.1
-   */
-  public boolean replace() default true;
+
+    /**
+     * Replace is true if the symbol table can override existing Var, not
+     * just set their values.
+     *
+     * XXX: the default may change to false for 3.2.1
+     */
+    public boolean replace() default true;
 }

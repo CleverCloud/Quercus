@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.annotation;
 
 import java.lang.annotation.ElementType;
@@ -40,6 +39,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Optional {
-  public static final String NOT_SET = "caucho-not-set";
-  public String value() default NOT_SET;
+
+    public static final String NOT_SET = "caucho-not-set";
+
+    public String value() default NOT_SET;
 }

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.annotation;
 
 import java.lang.annotation.ElementType;
@@ -43,9 +42,11 @@ import java.lang.annotation.Target;
  * Most of the methods will have a @This annotation on the first argument
  * to handle the Quercus object.
  */
-@Target({ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ClassImplementation {
-  public String parent() default "";
-  public String iface() default "";
+
+    public String parent() default "";
+
+    public String iface() default "";
 }

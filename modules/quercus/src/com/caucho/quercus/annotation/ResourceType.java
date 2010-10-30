@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.annotation;
 
 import java.lang.annotation.ElementType;
@@ -40,5 +39,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ResourceType {
-  public String value() default "Unknown";
+
+    public String value() default "Unknown";
 }

@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.annotation;
 
 import java.lang.annotation.ElementType;
@@ -42,8 +41,9 @@ import java.lang.annotation.Target;
  * @see com.caucho.quercus.env.PrintDelegate
  * @see com.caucho.quercus.env.FieldDelegate
  */
-@Target({ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Delegates {
-  public Class<?>[] value();
+
+    public Class<?>[] value();
 }

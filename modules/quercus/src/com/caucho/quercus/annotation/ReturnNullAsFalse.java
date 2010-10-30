@@ -25,8 +25,6 @@
  *
  * @author Sam
  */
-
-
 package com.caucho.quercus.annotation;
 
 import java.lang.annotation.ElementType;

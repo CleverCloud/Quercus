@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.annotation;
 
 import java.lang.annotation.Retention;

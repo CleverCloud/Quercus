@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.annotation;
 
 import java.lang.annotation.ElementType;
@@ -37,12 +36,14 @@ import java.lang.annotation.Target;
 /**
  * Expected type for a function argument.
  */
-@Target({ ElementType.PARAMETER })
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Expect {
-  public enum Type {
-    STRING, NUMERIC, BOOLEAN
-  }
 
-  Type type();
+    public enum Type {
+
+	STRING, NUMERIC, BOOLEAN
+    }
+
+    Type type();
 }
