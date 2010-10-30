@@ -26,7 +26,6 @@
  *
  * @author Emil Ong
  */
-
 package com.caucho.quercus.module;
 
 import com.caucho.quercus.env.Env;
@@ -36,5 +35,6 @@ import com.caucho.quercus.env.Env;
  * script is executed.
  */
 public interface ModuleStartupListener extends QuercusModule {
-  public void startup(Env env);
+
+    public void startup(Env env);
 }

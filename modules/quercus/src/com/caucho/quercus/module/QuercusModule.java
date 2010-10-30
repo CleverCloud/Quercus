@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.module;
 
 import com.caucho.quercus.env.Value;
@@ -38,16 +37,16 @@ import java.util.Map;
  * Represents a quercus module.
  */
 public interface QuercusModule {
-  public Map<StringValue,Value> getConstMap();
 
-  /**
-   * Returns the extensions implemented by the module.
-   */
-  public String []getLoadedExtensions();
+    public Map<StringValue, Value> getConstMap();
 
-  /**
-   * Returns the quercus.init default values.
-   */
-  public IniDefinitions getIniDefinitions();
+    /**
+     * Returns the extensions implemented by the module.
+     */
+    public String[] getLoadedExtensions();
+
+    /**
+     * Returns the quercus.init default values.
+     */
+    public IniDefinitions getIniDefinitions();
 }
-
