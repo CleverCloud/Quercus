@@ -998,8 +998,16 @@ public class DateModule extends AbstractQuercusModule {
 		    fb.appendMinuteOfHour(2);
 		    break;
 
+		case 'n':
+		    fb.appendLiteral("\n");
+		    break;
+
 		case 'S':
 		    fb.appendSecondOfMinute(2);
+		    break;
+
+		case 't':
+		    fb.appendLiteral("\t");
 		    break;
 
 		case 'Y':
