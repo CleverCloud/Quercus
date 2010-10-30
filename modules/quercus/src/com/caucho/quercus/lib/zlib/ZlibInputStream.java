@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.zlib;
 
 import com.caucho.quercus.QuercusModuleException;
@@ -42,73 +41,67 @@ import java.io.IOException;
  *
  * 
  */
-public class ZlibInputStream extends ReadStreamInput
-{
-  private Env _env;
-  
-  private BinaryInput _in;
-  private GZInputStream _gzIn;
-  
-  public ZlibInputStream(Env env, BinaryInput in) throws IOException
-  {
-    super(env);
+public class ZlibInputStream extends ReadStreamInput {
 
-    _env = env;
-    
-    init(in);
-  }
+    private Env _env;
+    private BinaryInput _in;
+    private GZInputStream _gzIn;
 
-  protected void init(BinaryInput in)
-    throws IOException
-  {
-    _in = in;
+    public ZlibInputStream(Env env, BinaryInput in) throws IOException {
+	super(env);
 
-    _gzIn = new GZInputStream(in.getInputStream());
-    ReadStream rs = new ReadStream(new VfsStream(_gzIn, null));
+	_env = env;
 
-    init(rs);
-  }
-
-  /**
-   * Opens a new copy.
-   */
-  public BinaryInput openCopy()
-    throws IOException
-  {
-    return new ZlibInputStream(_env, _in.openCopy());
-  }
-
-  /**
-   * Sets the position.
-   */
-  public boolean setPosition(long offset)
-  {
-    try {
-      BinaryInput newIn = _in.openCopy();
-      
-      /*
-      _gzIn.close();
-      getInputStream().close();
-      
-      _in.close();
-      _in = null;
-      _gzIn = null;
-      */
-      
-      close();
-      _in.close();
-      
-      init(newIn);
-
-      return skip(offset) == offset;
-
-    } catch (IOException e) {
-      throw new QuercusModuleException(e);
+	init(in);
     }
-  }
 
-  public String toString()
-  {
-    return "ZlibInputStream[]";
-  }
+    protected void init(BinaryInput in)
+	    throws IOException {
+	_in = in;
+
+	_gzIn = new GZInputStream(in.getInputStream());
+	ReadStream rs = new ReadStream(new VfsStream(_gzIn, null));
+
+	init(rs);
+    }
+
+    /**
+     * Opens a new copy.
+     */
+    public BinaryInput openCopy()
+	    throws IOException {
+	return new ZlibInputStream(_env, _in.openCopy());
+    }
+
+    /**
+     * Sets the position.
+     */
+    public boolean setPosition(long offset) {
+	try {
+	    BinaryInput newIn = _in.openCopy();
+
+	    /*
+	    _gzIn.close();
+	    getInputStream().close();
+
+	    _in.close();
+	    _in = null;
+	    _gzIn = null;
+	     */
+
+	    close();
+	    _in.close();
+
+	    init(newIn);
+
+	    return skip(offset) == offset;
+
+	} catch (IOException e) {
+	    throw new QuercusModuleException(e);
+	}
+    }
+
+    public String toString() {
+	return "ZlibInputStream[]";
+    }
 }

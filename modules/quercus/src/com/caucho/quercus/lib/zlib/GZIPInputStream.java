@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.zlib;
 
 import java.io.IOException;
@@ -36,26 +35,22 @@ import java.io.InputStream;
  *
  *
  */
-public class GZIPInputStream extends java.util.zip.GZIPInputStream
-{
-  public GZIPInputStream(InputStream in) throws IOException
-  {
-    super(in);
-  }
-  public GZIPInputStream(InputStream in, int size) throws IOException
-  {
-    super(in, size);
-  }
+public class GZIPInputStream extends java.util.zip.GZIPInputStream {
 
-  /**
-   * Tells whether the compressed gzip data has been exhausted.
-   *
-   * @return true if no more compressed data to read, false otherwise
-   */
-  public boolean isEOS()
-  {
-    return this.eos;
-  }
+    public GZIPInputStream(InputStream in) throws IOException {
+	super(in);
+    }
 
+    public GZIPInputStream(InputStream in, int size) throws IOException {
+	super(in, size);
+    }
 
+    /**
+     * Tells whether the compressed gzip data has been exhausted.
+     *
+     * @return true if no more compressed data to read, false otherwise
+     */
+    public boolean isEOS() {
+	return this.eos;
+    }
 }
