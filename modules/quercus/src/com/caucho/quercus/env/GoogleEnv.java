@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.*;
@@ -88,44 +87,42 @@ import java.util.logging.Logger;
  * Represents the Quercus environment.
  */
 public class GoogleEnv extends Env {
-  private int _timeoutCount;
-  
-  public GoogleEnv(QuercusContext quercus,
-                   QuercusPage page,
-                   WriteStream out,
-                   HttpServletRequest request,
-                   HttpServletResponse response)
-  {
-    super(quercus, page, out, request, response);
-  }
 
-  public GoogleEnv(QuercusContext quercus)
-  {
-    super(quercus);
-  }
+    private int _timeoutCount;
 
-  /**
-   * Checks for the program timeout.
-   */
-  @Override
-  public void checkTimeout()
-  {
-    // since GoogleAppEngine doesn't allow Threads, the normal Alarm
-    // optimization doesn't work.  Instead use a timeout count to limit
-    // the calls
-    if (_timeoutCount-- > 0)
-      return;
+    public GoogleEnv(QuercusContext quercus,
+	    QuercusPage page,
+	    WriteStream out,
+	    HttpServletRequest request,
+	    HttpServletResponse response) {
+	super(quercus, page, out, request, response);
+    }
 
-    _timeoutCount = 8192;
+    public GoogleEnv(QuercusContext quercus) {
+	super(quercus);
+    }
 
-    super.checkTimeout();
-  }
+    /**
+     * Checks for the program timeout.
+     */
+    @Override
+    public void checkTimeout() {
+	// since GoogleAppEngine doesn't allow Threads, the normal Alarm
+	// optimization doesn't work.  Instead use a timeout count to limit
+	// the calls
+	if (_timeoutCount-- > 0) {
+	    return;
+	}
 
-  @Override
-  public void resetTimeout()
-  {
-    super.resetTimeout();
+	_timeoutCount = 8192;
 
-    _timeoutCount = 8192;
-  }
+	super.checkTimeout();
+    }
+
+    @Override
+    public void resetTimeout() {
+	super.resetTimeout();
+
+	_timeoutCount = 8192;
+    }
 }

@@ -29,38 +29,34 @@
 package com.caucho.quercus.env;
 
 public class UnsetBinaryValue
-  extends BinaryBuilderValue
-{
-  public static final UnsetBinaryValue UNSET = new UnsetBinaryValue();
-  
-  private UnsetBinaryValue()
-  {
-    super("");
-  }
-  
-  /**
-   * Returns true if string is not empty.
-   */
-  @Override
-  public boolean isset()
-  {
-    return false;
-  }
-  
-  /**
-   * Returns the length of the string.
-   */
-  public int length()
-  {
-    return -1;
-  }
-  
-  /**
-   * Returns the character at an index
-   */
-  @Override
-  public Value charValueAt(long index)
-  {
-    return this;
-  }
+	extends BinaryBuilderValue {
+
+    public static final UnsetBinaryValue UNSET = new UnsetBinaryValue();
+
+    private UnsetBinaryValue() {
+	super("");
+    }
+
+    /**
+     * Returns true if string is not empty.
+     */
+    @Override
+    public boolean isset() {
+	return false;
+    }
+
+    /**
+     * Returns the length of the string.
+     */
+    public int length() {
+	return -1;
+    }
+
+    /**
+     * Returns the character at an index
+     */
+    @Override
+    public Value charValueAt(long index) {
+	return this;
+    }
 }

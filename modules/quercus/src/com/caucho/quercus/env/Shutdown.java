@@ -26,28 +26,25 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 /**
  * Represents a PHP shutdown function.
  */
 public class Shutdown {
-  private final Callable _callback;
-  private final Value []_args;
 
-  public Shutdown(Callable callback, Value []args)
-  {
-    _callback = callback;
-    _args = args;
-  }
-  
-  /**
-   * Evaluate the shutdown function
-   */
-  public void call(Env env)
-  {
-    _callback.call(env, _args);
-  }
+    private final Callable _callback;
+    private final Value[] _args;
+
+    public Shutdown(Callable callback, Value[] args) {
+	_callback = callback;
+	_args = args;
+    }
+
+    /**
+     * Evaluate the shutdown function
+     */
+    public void call(Env env) {
+	_callback.call(env, _args);
+    }
 }
-

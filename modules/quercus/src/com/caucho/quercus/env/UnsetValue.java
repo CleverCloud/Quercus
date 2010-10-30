@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import java.io.Serializable;
@@ -35,22 +34,17 @@ import java.io.Serializable;
  * Represents a PHP null value.
  */
 public class UnsetValue extends NullValue
-  implements Serializable
-{
-  public static final UnsetValue UNSET = new UnsetValue();
+	implements Serializable {
 
-  private UnsetValue()
-  {
-  }
+    public static final UnsetValue UNSET = new UnsetValue();
 
-  //
-  // Java Serialization
-  //
-  
-  private Object readResolve()
-  {
-    return UNSET;
-  }
+    private UnsetValue() {
+    }
 
+    //
+    // Java Serialization
+    //
+    private Object readResolve() {
+	return UNSET;
+    }
 }
-

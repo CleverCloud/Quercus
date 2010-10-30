@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.QuercusException;
@@ -42,104 +41,99 @@ import java.lang.reflect.Modifier;
  * Represents a function created from a java method.
  */
 public class JavaMethod extends JavaInvoker {
-  private static final L10N L = new L10N(JavaMethod.class);
 
-  private final Method _method;
+    private static final L10N L = new L10N(JavaMethod.class);
+    private final Method _method;
 
-  /**
-   * Creates a function from an introspected java method.
-   *
-   * @param method the introspected method.
-   */
-  public JavaMethod(ModuleContext moduleContext, Method method)
-  {
-    super(moduleContext,
-          getName(method),
-          method.getParameterTypes(),
-          method.getParameterAnnotations(),
-          method.getAnnotations(),
-          method.getReturnType());
-    
-    _method = method;
-    _isStatic = Modifier.isStatic(method.getModifiers());
-    
-    // php/069a
-    // Java 6 fixes the need to do this for methods of inner classes
-    _method.setAccessible(true);
-  }
+    /**
+     * Creates a function from an introspected java method.
+     *
+     * @param method the introspected method.
+     */
+    public JavaMethod(ModuleContext moduleContext, Method method) {
+	super(moduleContext,
+		getName(method),
+		method.getParameterTypes(),
+		method.getParameterAnnotations(),
+		method.getAnnotations(),
+		method.getReturnType());
 
-  private static String getName(Method method)
-  {
-    String name;
+	_method = method;
+	_isStatic = Modifier.isStatic(method.getModifiers());
 
-    Name nameAnn = method.getAnnotation(Name.class);
-
-    if (nameAnn != null)
-      name = nameAnn.value();
-    else
-      name = method.getName();
-
-    return name;
-  }
-  
-  @Override
-  public String getDeclaringClassName()
-  {
-    return _method.getDeclaringClass().getSimpleName();
-  }
-
-  /**
-   * Returns the function's method.
-   *
-   * @return the reflection method.
-   */
-  public Method getMethod()
-  {
-    return _method;
-  }
-
-  @Override
-  public Class []getJavaParameterTypes()
-  {
-    return _method.getParameterTypes();
-  }
-
-  @Override
-  public Class getJavaDeclaringClass()
-  {
-    return _method.getDeclaringClass();
-  }
-
-  @Override
-  public Object invoke(Object obj, Object []args)
-  {
-    try {
-      return _method.invoke(obj, args);
-    } catch (InvocationTargetException e) {
-      Throwable e1 = e.getCause();
-      
-      // php/0g0h
-      if (e1 instanceof QuercusException)
-        throw (QuercusException) e1;
-
-      if (e1 instanceof QuercusException)
-        throw (QuercusException) e1;
-      
-      String methodName = (_method.getDeclaringClass().getName() + "."
-                           + _method.getName());
-
-      throw new QuercusException(methodName + ": " + e1.getMessage(), e1);
-    } catch (Exception e) {
-      String methodName = (_method.getDeclaringClass().getName() + "."
-                           + _method.getName());
-      
-      throw new QuercusException(methodName + ": " + e.getMessage(), e);
+	// php/069a
+	// Java 6 fixes the need to do this for methods of inner classes
+	_method.setAccessible(true);
     }
-  }
 
-  @Override
-  public String toString()
-  {
-    return "JavaMethod[" + _method + "]";
-  }
+    private static String getName(Method method) {
+	String name;
+
+	Name nameAnn = method.getAnnotation(Name.class);
+
+	if (nameAnn != null) {
+	    name = nameAnn.value();
+	} else {
+	    name = method.getName();
+	}
+
+	return name;
+    }
+
+    @Override
+    public String getDeclaringClassName() {
+	return _method.getDeclaringClass().getSimpleName();
+    }
+
+    /**
+     * Returns the function's method.
+     *
+     * @return the reflection method.
+     */
+    public Method getMethod() {
+	return _method;
+    }
+
+    @Override
+    public Class[] getJavaParameterTypes() {
+	return _method.getParameterTypes();
+    }
+
+    @Override
+    public Class getJavaDeclaringClass() {
+	return _method.getDeclaringClass();
+    }
+
+    @Override
+    public Object invoke(Object obj, Object[] args) {
+	try {
+	    return _method.invoke(obj, args);
+	} catch (InvocationTargetException e) {
+	    Throwable e1 = e.getCause();
+
+	    // php/0g0h
+	    if (e1 instanceof QuercusException) {
+		throw (QuercusException) e1;
+	    }
+
+	    if (e1 instanceof QuercusException) {
+		throw (QuercusException) e1;
+	    }
+
+	    String methodName = (_method.getDeclaringClass().getName() + "."
+		    + _method.getName());
+
+	    throw new QuercusException(methodName + ": " + e1.getMessage(), e1);
+	} catch (Exception e) {
+	    String methodName = (_method.getDeclaringClass().getName() + "."
+		    + _method.getName());
+
+	    throw new QuercusException(methodName + ": " + e.getMessage(), e);
+	}
+    }
+
+    @Override
+    public String toString() {
+	return "JavaMethod[" + _method + "]";
+    }
 }

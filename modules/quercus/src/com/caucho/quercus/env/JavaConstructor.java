@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.QuercusException;
@@ -40,83 +39,79 @@ import java.lang.reflect.*;
  * Represents the introspected static function information.
  */
 public class JavaConstructor extends JavaInvoker {
-  private static final L10N L = new L10N(JavaConstructor.class);
-  
-  private final Constructor _constructor;
-  private final int _argLength;
 
-  /**
-   * Creates the statically introspected function.
-   *
-   * @param method the introspected method.
-   */
-  public JavaConstructor(ModuleContext moduleContext,
-                         Constructor cons)
-  {    
-    super(moduleContext,
-          getName(cons),
-          cons.getParameterTypes(),
-          cons.getParameterAnnotations(),
-          cons.getAnnotations(),
-          cons.getDeclaringClass());
+    private static final L10N L = new L10N(JavaConstructor.class);
+    private final Constructor _constructor;
+    private final int _argLength;
 
-    _constructor = cons;
-    _argLength = cons.getParameterTypes().length;
-  }
-  
-  @Override
-  public String getDeclaringClassName()
-  {
-    return getName();
-  }
+    /**
+     * Creates the statically introspected function.
+     *
+     * @param method the introspected method.
+     */
+    public JavaConstructor(ModuleContext moduleContext,
+	    Constructor cons) {
+	super(moduleContext,
+		getName(cons),
+		cons.getParameterTypes(),
+		cons.getParameterAnnotations(),
+		cons.getAnnotations(),
+		cons.getDeclaringClass());
 
-  private static String getName(Constructor<?> cons)
-  {
-    String name;
-
-    Name nameAnn = (Name) cons.getAnnotation(Name.class);
-
-    if (nameAnn != null)
-      name = nameAnn.value();
-    else {
-      Class<?> cl = cons.getDeclaringClass();
-      Name clNameAnn =  (Name) cl.getAnnotation(Name.class);
-
-      if (clNameAnn != null)
-        name = nameAnn.value();
-      else
-        name = cl.getSimpleName();
+	_constructor = cons;
+	_argLength = cons.getParameterTypes().length;
     }
 
-    return name;
-  }
-  
-  @Override
-  public boolean isConstructor()
-  {
-    return true;
-  }
-
-  public int getArgumentLength()
-  {
-    return _argLength;
-  }
-
-  public Object invoke(Object obj, Object []args)
-  {
-    try {
-      obj = _constructor.newInstance(args);
-      
-      return obj;
-    } catch (RuntimeException e) {
-      throw e;
-    } catch (InvocationTargetException e) {
-      if (e.getCause() instanceof RuntimeException)
-        throw (RuntimeException) e.getCause();
-      else
-        throw new QuercusException(e.getCause());
-    } catch (Exception e) {
-      throw new QuercusException(e);
+    @Override
+    public String getDeclaringClassName() {
+	return getName();
     }
-  }
+
+    private static String getName(Constructor<?> cons) {
+	String name;
+
+	Name nameAnn = (Name) cons.getAnnotation(Name.class);
+
+	if (nameAnn != null) {
+	    name = nameAnn.value();
+	} else {
+	    Class<?> cl = cons.getDeclaringClass();
+	    Name clNameAnn = (Name) cl.getAnnotation(Name.class);
+
+	    if (clNameAnn != null) {
+		name = nameAnn.value();
+	    } else {
+		name = cl.getSimpleName();
+	    }
+	}
+
+	return name;
+    }
+
+    @Override
+    public boolean isConstructor() {
+	return true;
+    }
+
+    public int getArgumentLength() {
+	return _argLength;
+    }
+
+    public Object invoke(Object obj, Object[] args) {
+	try {
+	    obj = _constructor.newInstance(args);
+
+	    return obj;
+	} catch (RuntimeException e) {
+	    throw e;
+	} catch (InvocationTargetException e) {
+	    if (e.getCause() instanceof RuntimeException) {
+		throw (RuntimeException) e.getCause();
+	    } else {
+		throw new QuercusException(e.getCause());
+	    }
+	} catch (Exception e) {
+	    throw new QuercusException(e);
+	}
+    }
 }

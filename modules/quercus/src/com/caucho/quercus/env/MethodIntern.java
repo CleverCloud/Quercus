@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,24 +33,23 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Case-insensitive method mapping
  */
-public final class MethodIntern
-{
-  private static final ConcurrentHashMap<String,StringValue> _internMap
-    = new ConcurrentHashMap<String,StringValue>();
+public final class MethodIntern {
 
-  public static StringValue intern(String name)
-  {
-    StringValue internName = _internMap.get(name);
+    private static final ConcurrentHashMap<String, StringValue> _internMap = new ConcurrentHashMap<String, StringValue>();
 
-    if (internName == null) {
-      StringValue string = new CompiledConstStringValue(name);
+    public static StringValue intern(String name) {
+	StringValue internName = _internMap.get(name);
 
-      internName = _internMap.putIfAbsent(name, string);
+	if (internName == null) {
+	    StringValue string = new CompiledConstStringValue(name);
 
-      if (internName == null)
-        internName = string;
+	    internName = _internMap.putIfAbsent(name, string);
+
+	    if (internName == null) {
+		internName = string;
+	    }
+	}
+
+	return internName;
     }
-
-    return internName;
-  }
 }

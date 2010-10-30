@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.env.Env;
@@ -38,47 +37,41 @@ import java.io.Serializable;
  * Represents a Quercus java value representing a PHP resource value.
  */
 public class JavaResourceValue extends JavaValue
-  implements Serializable
-{
-  public JavaResourceValue(Env env, Object object, JavaClassDef def)
-  {
-    super(env, object, def);
-  }
-  
-  /**
-   * Returns true for an object.
-   */
-  @Override
-  public boolean isObject()
-  {
-    return false;
-  }
-  
-  /*
-   * Returns true for a resource.
-   */
-  @Override
-  public boolean isResource()
-  {
-    return true;
-  }
+	implements Serializable {
 
-  /**
-   * Returns the type.
-   */
-  @Override
-  public String getType()
-  {
-    return "resource";
-  }
-  
-  /*
-   * Returns the resource type.
-   */
-  @Override
-  public String getResourceType()
-  {
-    return getJavaClassDef().getResourceType();
-  }
+    public JavaResourceValue(Env env, Object object, JavaClassDef def) {
+	super(env, object, def);
+    }
+
+    /**
+     * Returns true for an object.
+     */
+    @Override
+    public boolean isObject() {
+	return false;
+    }
+
+    /*
+     * Returns true for a resource.
+     */
+    @Override
+    public boolean isResource() {
+	return true;
+    }
+
+    /**
+     * Returns the type.
+     */
+    @Override
+    public String getType() {
+	return "resource";
+    }
+
+    /*
+     * Returns the resource type.
+     */
+    @Override
+    public String getResourceType() {
+	return getJavaClassDef().getResourceType();
+    }
 }
-

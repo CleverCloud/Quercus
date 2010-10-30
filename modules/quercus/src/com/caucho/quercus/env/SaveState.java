@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.function.AbstractFunction;
@@ -45,191 +44,175 @@ import java.util.Map;
  * Represents a saved copy of the Quercus environment.
  */
 public class SaveState {
-  private AbstractFunction []_fun;
 
-  private ClassDef []_classDef;
-  private QuercusClass []_qClass;
+    private AbstractFunction[] _fun;
+    private ClassDef[] _classDef;
+    private QuercusClass[] _qClass;
+    private Value[] _const;
+    private IntMap _staticNameMap = new IntMap();
+    private Value[] _staticValues;
+    private IntMap _globalNameMap = new IntMap();
+    private Value[] _globalValues;
+    private Map<Path, QuercusPage> _includeMap;
+    private ImportMap _importMap;
 
-  private Value []_const;
-  
-  private IntMap _staticNameMap = new IntMap();
-  private Value []_staticValues;
+    /**
+     * Creates a new save state.
+     */
+    SaveState(Env env,
+	    AbstractFunction[] fun,
+	    ClassDef[] classDef,
+	    QuercusClass[] qClass,
+	    Value[] constants,
+	    Map<StringValue, Var> staticMap,
+	    Map<StringValue, EnvVar> globalMap,
+	    HashMap<Path, QuercusPage> includeMap,
+	    ImportMap importMap) {
+	_fun = new AbstractFunction[fun.length];
+	System.arraycopy(fun, 0, _fun, 0, fun.length);
 
-  private IntMap _globalNameMap = new IntMap();
-  private Value []_globalValues;
-  
-  private Map<Path,QuercusPage> _includeMap;
-  private ImportMap _importMap;
+	_classDef = new ClassDef[classDef.length];
+	System.arraycopy(classDef, 0, _classDef, 0, classDef.length);
 
-  /**
-   * Creates a new save state.
-   */
-  SaveState(Env env,
-            AbstractFunction []fun,
-            ClassDef []classDef,
-            QuercusClass []qClass,
-            Value []constants,
-            Map<StringValue,Var> staticMap,
-            Map<StringValue,EnvVar> globalMap,
-            HashMap<Path,QuercusPage> includeMap,
-            ImportMap importMap)
-  {
-    _fun = new AbstractFunction[fun.length];
-    System.arraycopy(fun, 0, _fun, 0, fun.length);
-    
-    _classDef = new ClassDef[classDef.length];
-    System.arraycopy(classDef, 0, _classDef, 0, classDef.length);
-    
-    _qClass = new QuercusClass[qClass.length];
-    System.arraycopy(qClass, 0, _qClass, 0, qClass.length);
-    
-    _const = new Value[constants.length];
-    System.arraycopy(constants, 0, _const, 0, constants.length);
-    
-    saveStatics(env, staticMap);
-    saveGlobals(env, globalMap);
-    
-    _includeMap = new HashMap<Path,QuercusPage>(includeMap);
-    
-    if (importMap != null)
-      _importMap = importMap.copy();
-  }
+	_qClass = new QuercusClass[qClass.length];
+	System.arraycopy(qClass, 0, _qClass, 0, qClass.length);
 
-  /**
-   * Returns the function list
-   */
-  public AbstractFunction []getFunctionList()
-  {
-    return _fun;
-  }
+	_const = new Value[constants.length];
+	System.arraycopy(constants, 0, _const, 0, constants.length);
 
-  /**
-   * Returns the class def
-   */
-  public ClassDef []getClassDefList()
-  {
-    return _classDef;
-  }
+	saveStatics(env, staticMap);
+	saveGlobals(env, globalMap);
 
-  /**
-   * Returns the quercus class
-   */
-  public QuercusClass []getQuercusClassList()
-  {
-    return _qClass;
-  }
+	_includeMap = new HashMap<Path, QuercusPage>(includeMap);
 
-  /**
-   * Returns the constant list
-   */
-  public Value []getConstantList()
-  {
-    return _const;
-  }
-  
-  /**
-   * Returns the global name map
-   */
-  public IntMap getStaticNameMap()
-  {
-    return _staticNameMap;
-  }
-  
-  /**
-   * Returns the constant list
-   */
-  public Value []getStaticList()
-  {
-    return _staticValues;
-  }
-
-  /**
-   * Returns the global name map
-   */
-  public IntMap getGlobalNameMap()
-  {
-    return _globalNameMap;
-  }
-
-  /**
-   * Returns the global values
-   */
-  public Value []getGlobalList()
-  {
-    return _globalValues;
-  }
-  
-  /**
-   * Returns the list of included pages.
-   */
-  public Map<Path,QuercusPage> getIncludeMap()
-  {
-    return _includeMap;
-  }
-  
-  /**
-   * Returns the import statements.
-   */
-  public ImportMap getImportMap()
-  {
-    return _importMap;
-  }
-  
-  public boolean isModified()
-  {
-    return false;
-  }
-  
-  private void saveStatics(Env env, Map<StringValue,Var> staticMap)
-  {
-    _staticValues = new Value[staticMap.size()];
-
-    for (Map.Entry<StringValue,Var> entry : staticMap.entrySet()) {
-      int id = addStaticName(entry.getKey());
-
-      _staticValues[id] = entry.getValue().toValue().copy(env);
+	if (importMap != null) {
+	    _importMap = importMap.copy();
+	}
     }
-  }
 
-  private void saveGlobals(Env env, Map<StringValue,EnvVar> globalMap)
-  {
-    _globalValues = new Value[globalMap.size()];
-
-    for (Map.Entry<StringValue,EnvVar> entry : globalMap.entrySet()) {
-      if (env.isSpecialVar(entry.getKey()))
-        continue;
-
-      EnvVar envVar = entry.getValue();
-
-      int id = addGlobalName(entry.getKey());
-
-      _globalValues[id] = envVar.get().copy(env);
+    /**
+     * Returns the function list
+     */
+    public AbstractFunction[] getFunctionList() {
+	return _fun;
     }
-  }
-  
-  private int addStaticName(StringValue name)
-  {
-    int id = _staticNameMap.get(name);
 
-    if (id >= 0)
-      return id;
+    /**
+     * Returns the class def
+     */
+    public ClassDef[] getClassDefList() {
+	return _classDef;
+    }
 
-    id = _staticNameMap.size();
-    _staticNameMap.put(name, id);
+    /**
+     * Returns the quercus class
+     */
+    public QuercusClass[] getQuercusClassList() {
+	return _qClass;
+    }
 
-    return id;
-  }
+    /**
+     * Returns the constant list
+     */
+    public Value[] getConstantList() {
+	return _const;
+    }
 
-  private int addGlobalName(StringValue name)
-  {
-    int id = _globalNameMap.get(name);
+    /**
+     * Returns the global name map
+     */
+    public IntMap getStaticNameMap() {
+	return _staticNameMap;
+    }
 
-    if (id >= 0)
-      return id;
+    /**
+     * Returns the constant list
+     */
+    public Value[] getStaticList() {
+	return _staticValues;
+    }
 
-    id = _globalNameMap.size();
-    _globalNameMap.put(name, id);
+    /**
+     * Returns the global name map
+     */
+    public IntMap getGlobalNameMap() {
+	return _globalNameMap;
+    }
 
-    return id;
-  }
+    /**
+     * Returns the global values
+     */
+    public Value[] getGlobalList() {
+	return _globalValues;
+    }
+
+    /**
+     * Returns the list of included pages.
+     */
+    public Map<Path, QuercusPage> getIncludeMap() {
+	return _includeMap;
+    }
+
+    /**
+     * Returns the import statements.
+     */
+    public ImportMap getImportMap() {
+	return _importMap;
+    }
+
+    public boolean isModified() {
+	return false;
+    }
+
+    private void saveStatics(Env env, Map<StringValue, Var> staticMap) {
+	_staticValues = new Value[staticMap.size()];
+
+	for (Map.Entry<StringValue, Var> entry : staticMap.entrySet()) {
+	    int id = addStaticName(entry.getKey());
+
+	    _staticValues[id] = entry.getValue().toValue().copy(env);
+	}
+    }
+
+    private void saveGlobals(Env env, Map<StringValue, EnvVar> globalMap) {
+	_globalValues = new Value[globalMap.size()];
+
+	for (Map.Entry<StringValue, EnvVar> entry : globalMap.entrySet()) {
+	    if (env.isSpecialVar(entry.getKey())) {
+		continue;
+	    }
+
+	    EnvVar envVar = entry.getValue();
+
+	    int id = addGlobalName(entry.getKey());
+
+	    _globalValues[id] = envVar.get().copy(env);
+	}
+    }
+
+    private int addStaticName(StringValue name) {
+	int id = _staticNameMap.get(name);
+
+	if (id >= 0) {
+	    return id;
+	}
+
+	id = _staticNameMap.size();
+	_staticNameMap.put(name, id);
+
+	return id;
+    }
+
+    private int addGlobalName(StringValue name) {
+	int id = _globalNameMap.get(name);
+
+	if (id >= 0) {
+	    return id;
+	}
+
+	id = _globalNameMap.size();
+	_globalNameMap.put(name, id);
+
+	return id;
+    }
 }

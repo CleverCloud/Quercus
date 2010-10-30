@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.Location;
@@ -36,62 +35,57 @@ import com.caucho.quercus.lib.VariableModule;
 /**
  * Parent of PHP exceptions
  */
-public class QuercusLanguageException extends QuercusException
-{
-  private static final StringValue FILE = new ConstStringValue("file");
-  private static final StringValue LINE = new ConstStringValue("line");
-  private static final StringValue MESSAGE
-    = new ConstStringValue("message");
-  
-  private Value _value;
-  
-  public QuercusLanguageException(Value value)
-  {
-    super(value.toString());
+public class QuercusLanguageException extends QuercusException {
 
-    _value = value;
-  }
+    private static final StringValue FILE = new ConstStringValue("file");
+    private static final StringValue LINE = new ConstStringValue("line");
+    private static final StringValue MESSAGE = new ConstStringValue("message");
+    private Value _value;
 
-  /**
-   * Returns the value.
-   */
-  public Value getValue()
-  {
-    return _value;
-  }
-  
-  /**
-   * Converts the exception to a Value.
-   */
-  public Value toValue(Env env)
-  {
-    return _value;
-  }
-  
-  /*
-   * Returns the PHP exception message.  If null, returns the empty string.
-   */
-  public String getMessage(Env env)
-  {
-    Value field = _value.getField(env, MESSAGE);
-    
-    if (field != null)
-      return field.toString();
-    else
-      return "";
-  }
-  
-  /**
-   * Returns the location of this PHP exception.
-   */
-  public Location getLocation(Env env)
-  {
-    Value file = _value.getField(env, FILE);
-    Value line = _value.getField(env, LINE);
-    
-    if (file.isNull() || line.isNull())
-      return Location.UNKNOWN;
-    else
-      return new Location(file.toString(), line.toInt(), null, null);
-  }
+    public QuercusLanguageException(Value value) {
+	super(value.toString());
+
+	_value = value;
+    }
+
+    /**
+     * Returns the value.
+     */
+    public Value getValue() {
+	return _value;
+    }
+
+    /**
+     * Converts the exception to a Value.
+     */
+    public Value toValue(Env env) {
+	return _value;
+    }
+
+    /*
+     * Returns the PHP exception message.  If null, returns the empty string.
+     */
+    public String getMessage(Env env) {
+	Value field = _value.getField(env, MESSAGE);
+
+	if (field != null) {
+	    return field.toString();
+	} else {
+	    return "";
+	}
+    }
+
+    /**
+     * Returns the location of this PHP exception.
+     */
+    public Location getLocation(Env env) {
+	Value file = _value.getField(env, FILE);
+	Value line = _value.getField(env, LINE);
+
+	if (file.isNull() || line.isNull()) {
+	    return Location.UNKNOWN;
+	} else {
+	    return new Location(file.toString(), line.toInt(), null, null);
+	}
+    }
 }

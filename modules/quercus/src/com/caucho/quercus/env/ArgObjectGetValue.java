@@ -26,63 +26,57 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 /**
  * Represents an object-get argument which might be a call to a reference.
  */
 public class ArgObjectGetValue extends Value {
-  private final Env _env;
-  private final Value _obj;
-  private final Value _index;
 
-  public ArgObjectGetValue(Env env, Value obj, Value index)
-  {
-    _env = env;
-    _obj = obj;
-    _index = index;
-  }
+    private final Env _env;
+    private final Value _obj;
+    private final Value _index;
 
-  /**
-   * Returns the value for a get arg.
-   */
-  @Override
-  public Value getArg(Value index, boolean isTop)
-  {
-    // quercus/3d2u
-    return new ArgObjectGetValue(_env, this, index);
-  }
+    public ArgObjectGetValue(Env env, Value obj, Value index) {
+	_env = env;
+	_obj = obj;
+	_index = index;
+    }
 
-  /**
-   * Converts to a ref var.
-   */
-  @Override
-  public Var toLocalVarDeclAsRef()
-  {
-    // quercus/3d2t
-    return _obj.getVar(_index).toLocalVarDeclAsRef();
-  }
+    /**
+     * Returns the value for a get arg.
+     */
+    @Override
+    public Value getArg(Value index, boolean isTop) {
+	// quercus/3d2u
+	return new ArgObjectGetValue(_env, this, index);
+    }
 
-  /**
-   * Converts to a var.
-   */
-  /*
-  public Var toVar()
-  {
+    /**
+     * Converts to a ref var.
+     */
+    @Override
+    public Var toLocalVarDeclAsRef() {
+	// quercus/3d2t
+	return _obj.getVar(_index).toLocalVarDeclAsRef();
+    }
+    /**
+     * Converts to a var.
+     */
+    /*
+    public Var toVar()
+    {
     // quercus/3d52
     return _obj.get(_index).toVar();
-  }
-  */
-
-  /**
-   * Returns the value, converting to an object if necessary.
-   */
-  /*
-  public Value getObject(Env env, Value index)
-  {
+    }
+     */
+    /**
+     * Returns the value, converting to an object if necessary.
+     */
+    /*
+    public Value getObject(Env env, Value index)
+    {
     return _obj.getObject(_env, _index).getObject(env, index);
-  }
-  */
+    }
+     */
 }
-

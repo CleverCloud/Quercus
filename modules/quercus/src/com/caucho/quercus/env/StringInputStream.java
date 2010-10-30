@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import java.io.InputStream;
@@ -35,45 +34,44 @@ import java.io.InputStream;
  * Represents an ISO-8859-1 input stream.
  */
 public class StringInputStream extends InputStream {
-  private final String _string;
-  private final int _length;
 
-  private int _index;
+    private final String _string;
+    private final int _length;
+    private int _index;
 
-  public StringInputStream(String s)
-  {
-    _string = s;
-    _length = s.length();
-  }
-
-  public int read()
-  {
-    if (_index < _length)
-      return _string.charAt(_index++);
-    else
-      return -1;
-  }
-
-  public int read(byte []buffer, int offset, int length)
-  {
-    int sublen = _length - _index;
-
-    if (sublen == 0)
-      return -1;
-    
-    if (length < sublen)
-      sublen = length;
-
-    String s = _string;
-    int index = _index;
-
-    for (int i = 0; i < sublen; i++) {
-      buffer[offset + i] = (byte) s.charAt(index + i);
+    public StringInputStream(String s) {
+	_string = s;
+	_length = s.length();
     }
 
-    _index = index + sublen;
+    public int read() {
+	if (_index < _length) {
+	    return _string.charAt(_index++);
+	} else {
+	    return -1;
+	}
+    }
 
-    return sublen;
-  }
+    public int read(byte[] buffer, int offset, int length) {
+	int sublen = _length - _index;
+
+	if (sublen == 0) {
+	    return -1;
+	}
+
+	if (length < sublen) {
+	    sublen = length;
+	}
+
+	String s = _string;
+	int index = _index;
+
+	for (int i = 0; i < sublen; i++) {
+	    buffer[offset + i] = (byte) s.charAt(index + i);
+	}
+
+	_index = index + sublen;
+
+	return sublen;
+    }
 }
-

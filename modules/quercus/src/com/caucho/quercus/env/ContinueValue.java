@@ -26,74 +26,63 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 /**
  * Represents a PHP continue value.
  */
 public class ContinueValue extends Value {
-  public static final ContinueValue CONTINUE = new ContinueValue();
 
-  private int _target;
-  
-  private ContinueValue()
-  {
-  }
-  
-  public ContinueValue(Value target)
-  {
-    _target = target.toInt();
-  }
-  
-  public ContinueValue(int target)
-  {
-    _target = target;
-  }
-  
-  public int getTarget()
-  {
-    return _target;
-  }
+    public static final ContinueValue CONTINUE = new ContinueValue();
+    private int _target;
 
-  /**
-   * Converts to a boolean.
-   */
-  public boolean toBoolean()
-  {
-    return false;
-  }
+    private ContinueValue() {
+    }
 
-  /**
-   * Converts to a long.
-   */
-  public long toLong()
-  {
-    return 0;
-  }
+    public ContinueValue(Value target) {
+	_target = target.toInt();
+    }
 
-  /**
-   * Converts to a double.
-   */
-  public double toDouble()
-  {
-    return 0;
-  }
+    public ContinueValue(int target) {
+	_target = target;
+    }
 
-  /**
-   * Converts to an object.
-   */
-  public Object toObject()
-  {
-    return "";
-  }
+    public int getTarget() {
+	return _target;
+    }
 
-  /**
-   * Prints the value.
-   * @param env
-   */
-  public void print(Env env)
-  {
-  }
+    /**
+     * Converts to a boolean.
+     */
+    public boolean toBoolean() {
+	return false;
+    }
+
+    /**
+     * Converts to a long.
+     */
+    public long toLong() {
+	return 0;
+    }
+
+    /**
+     * Converts to a double.
+     */
+    public double toDouble() {
+	return 0;
+    }
+
+    /**
+     * Converts to an object.
+     */
+    public Object toObject() {
+	return "";
+    }
+
+    /**
+     * Prints the value.
+     * @param env
+     */
+    public void print(Env env) {
+    }
 }
-

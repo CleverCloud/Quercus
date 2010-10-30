@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.program.JavaClassDef;
@@ -40,120 +39,112 @@ import java.util.IdentityHashMap;
  * Represents a PHP object which extends a Java value.
  */
 public class ObjectExtJavaValue extends ObjectExtValue
-  implements Serializable
-{
-  private Object _object;
-  private final JavaClassDef _javaClassDef;
-  
-  public ObjectExtJavaValue(QuercusClass cl, Object object,
-                            JavaClassDef javaClassDef)
-  {
-    super(cl);
+	implements Serializable {
 
-    _object = object;
-    _javaClassDef = javaClassDef;
-  }
-  
-  public ObjectExtJavaValue(QuercusClass cl,
-                            JavaClassDef javaClassDef)
-  {
-    super(cl);
+    private Object _object;
+    private final JavaClassDef _javaClassDef;
 
-    _javaClassDef = javaClassDef;
-  }
-  
-  //
-  // field
-  //
+    public ObjectExtJavaValue(QuercusClass cl, Object object,
+	    JavaClassDef javaClassDef) {
+	super(cl);
 
-  /**
-   * Returns fields not explicitly specified by this value.
-   */
-  @Override
-  protected Value getFieldExt(Env env, StringValue name)
-  {
-    if (_object == null) {
-      _object = createJavaObject(env);
+	_object = object;
+	_javaClassDef = javaClassDef;
     }
-    
-    Value value = _javaClassDef.getField(env, this, name);
 
-    if (value != null)
-      return value;
-    else
-      return super.getFieldExt(env, name);
-  }
+    public ObjectExtJavaValue(QuercusClass cl,
+	    JavaClassDef javaClassDef) {
+	super(cl);
 
-  /**
-   * Sets fields not specified by the value.
-   */
-  protected Value putFieldExt(Env env, StringValue name, Value value)
-  {
-    if (_object == null) {
-      createJavaObject(env);
+	_javaClassDef = javaClassDef;
     }
-    
-    return _javaClassDef.putField(env, this, name, value);
-  }
 
-  /**
-   * Returns the java object.
-   */
-  @Override
-  public Object toJavaObject()
-  {
-    if (_object == null) {
-      _object = createJavaObject(Env.getInstance());
-    }
-    
-    return _object;
-  }
-  
-  /**
-   * Binds a Java object to this object.
-   */
-  @Override
-  public void setJavaObject(Value value)
-  {
-    if (_object == null)
-      _object = value.toJavaObject();
-  }
-  
-  /**
-   * Creats a backing Java object for this php object.
-   */
-  private Object createJavaObject(Env env)
-  {
-    Value javaWrapper = _javaClassDef.callNew(env, Value.NULL_ARGS);
-    return javaWrapper.toJavaObject();
-  }
-  
-  public void varDumpImpl(Env env,
-                          WriteStream out,
-                          int depth,
-                          IdentityHashMap<Value, String> valueSet)
-    throws IOException
-  {
-    if (_object == null) {
-      _object = createJavaObject(Env.getInstance());
-    }
-    
-    if (! _javaClassDef.varDumpImpl(env, this, _object, out, depth, valueSet))
-      super.varDumpImpl(env, out, depth, valueSet);
-  }
+    //
+    // field
+    //
+    /**
+     * Returns fields not explicitly specified by this value.
+     */
+    @Override
+    protected Value getFieldExt(Env env, StringValue name) {
+	if (_object == null) {
+	    _object = createJavaObject(env);
+	}
 
-  @Override
-  protected void printRImpl(Env env,
-                            WriteStream out,
-                            int depth,
-                            IdentityHashMap<Value, String> valueSet)
-    throws IOException
-  {
-    if (_object == null) {
-      _object = createJavaObject(Env.getInstance());
+	Value value = _javaClassDef.getField(env, this, name);
+
+	if (value != null) {
+	    return value;
+	} else {
+	    return super.getFieldExt(env, name);
+	}
     }
-    
-    _javaClassDef.printRImpl(env, _object, out, depth, valueSet);
-  }
+
+    /**
+     * Sets fields not specified by the value.
+     */
+    protected Value putFieldExt(Env env, StringValue name, Value value) {
+	if (_object == null) {
+	    createJavaObject(env);
+	}
+
+	return _javaClassDef.putField(env, this, name, value);
+    }
+
+    /**
+     * Returns the java object.
+     */
+    @Override
+    public Object toJavaObject() {
+	if (_object == null) {
+	    _object = createJavaObject(Env.getInstance());
+	}
+
+	return _object;
+    }
+
+    /**
+     * Binds a Java object to this object.
+     */
+    @Override
+    public void setJavaObject(Value value) {
+	if (_object == null) {
+	    _object = value.toJavaObject();
+	}
+    }
+
+    /**
+     * Creats a backing Java object for this php object.
+     */
+    private Object createJavaObject(Env env) {
+	Value javaWrapper = _javaClassDef.callNew(env, Value.NULL_ARGS);
+	return javaWrapper.toJavaObject();
+    }
+
+    public void varDumpImpl(Env env,
+	    WriteStream out,
+	    int depth,
+	    IdentityHashMap<Value, String> valueSet)
+	    throws IOException {
+	if (_object == null) {
+	    _object = createJavaObject(Env.getInstance());
+	}
+
+	if (!_javaClassDef.varDumpImpl(env, this, _object, out, depth, valueSet)) {
+	    super.varDumpImpl(env, out, depth, valueSet);
+	}
+    }
+
+    @Override
+    protected void printRImpl(Env env,
+	    WriteStream out,
+	    int depth,
+	    IdentityHashMap<Value, String> valueSet)
+	    throws IOException {
+	if (_object == null) {
+	    _object = createJavaObject(Env.getInstance());
+	}
+
+	_javaClassDef.printRImpl(env, _object, out, depth, valueSet);
+    }
 }
-

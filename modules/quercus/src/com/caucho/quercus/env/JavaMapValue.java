@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.program.JavaClassDef;
@@ -38,28 +37,23 @@ import java.util.logging.Logger;
  * Represents a Quercus java value.
  */
 public class JavaMapValue extends JavaValue {
-  private static final Logger log
-    = Logger.getLogger(JavaMapValue.class.getName());
-  
-  private final Map _map;
 
-  public JavaMapValue(Env env, Map map, JavaClassDef def)
-  {
-    super(env, map, def);
+    private static final Logger log = Logger.getLogger(JavaMapValue.class.getName());
+    private final Map _map;
 
-    _map = map;
-  }
-  
-  @Override
-  public Value get(Value name)
-  {
-    return _env.wrapJava(_map.get(name.toJavaObject()));
-  }
+    public JavaMapValue(Env env, Map map, JavaClassDef def) {
+	super(env, map, def);
 
-  @Override
-  public Value put(Value index, Value value)
-  {
-    return _env.wrapJava(_map.put(index.toJavaObject(), value.toJavaObject()));
-  }
+	_map = map;
+    }
+
+    @Override
+    public Value get(Value name) {
+	return _env.wrapJava(_map.get(name.toJavaObject()));
+    }
+
+    @Override
+    public Value put(Value index, Value value) {
+	return _env.wrapJava(_map.put(index.toJavaObject(), value.toJavaObject()));
+    }
 }
-

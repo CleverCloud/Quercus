@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.QuercusModuleException;
@@ -34,43 +33,38 @@ import com.caucho.quercus.QuercusModuleException;
 /**
  * Represents a PHP variable value.
  */
-public class SessionVar extends Var
-{
-  /**
-   * Sets the value.
-   */
-  public Value set(Value value)
-  {
-    if (value instanceof SessionArrayValue) {
-      super.set(value);
-      
-      return value;
+public class SessionVar extends Var {
+
+    /**
+     * Sets the value.
+     */
+    public Value set(Value value) {
+	if (value instanceof SessionArrayValue) {
+	    super.set(value);
+
+	    return value;
+	} else if (value instanceof ArrayValue) {
+	    ArrayValue arrayValue = (ArrayValue) value;
+	    ArrayValue sessionValue = (ArrayValue) toValue();
+
+	    sessionValue.clear();
+
+	    sessionValue.putAll(arrayValue);
+
+	    return value;
+	} else if (!value.isset()) {
+	    super.set(value);
+
+	    return value;
+	} else {
+	    throw new QuercusModuleException(L.l("Can't set this variable"));
+	}
     }
-    else if (value instanceof ArrayValue) {
-      ArrayValue arrayValue = (ArrayValue) value;
-      ArrayValue sessionValue = (ArrayValue) toValue();
 
-      sessionValue.clear();
-
-      sessionValue.putAll(arrayValue);
-
-      return value;
+    /**
+     * Sets the value.
+     */
+    protected Value setRaw(Value value) {
+	throw new QuercusModuleException(L.l("Can't set this variable"));
     }
-    else if (! value.isset()) {
-      super.set(value);
-      
-      return value;
-    }
-    else
-      throw new QuercusModuleException(L.l("Can't set this variable"));
-  }
-
-  /**
-   * Sets the value.
-   */
-  protected Value setRaw(Value value)
-  {
-    throw new QuercusModuleException(L.l("Can't set this variable"));
-  }
 }
-

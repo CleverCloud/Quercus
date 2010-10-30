@@ -26,47 +26,45 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 /**
  * Encapsulates an environment entry for a variable.  The EnvVar is a
  * container for Vars.
  */
-abstract public class EnvVar
-{
-  /**
-   * Returns the current value.
-   */
-  abstract public Value get();
+abstract public class EnvVar {
 
-  /**
-   * Sets the current value.
-   */
-  abstract public Value set(Value value);
+    /**
+     * Returns the current value.
+     */
+    abstract public Value get();
 
-  /**
-   * Returns the current Var.
-   */
-  abstract public Var getVar();
+    /**
+     * Sets the current value.
+     */
+    abstract public Value set(Value value);
 
-  /**
-   * Sets the var.
-   */
-  abstract public Var setVar(Var var);
+    /**
+     * Returns the current Var.
+     */
+    abstract public Var getVar();
 
-  /**
-   * Sets the value as a reference. If the value is a Var, it replaces
-   * the current Var, otherwise it sets the value. 
-   */
-  public Var setRef(Value value)
-  {
-    if (value.isVar())
-      setVar((Var) value);
-    else
-      set(value);
-    
-    return getVar();
-  }
+    /**
+     * Sets the var.
+     */
+    abstract public Var setVar(Var var);
+
+    /**
+     * Sets the value as a reference. If the value is a Var, it replaces
+     * the current Var, otherwise it sets the value.
+     */
+    public Var setRef(Value value) {
+	if (value.isVar()) {
+	    setVar((Var) value);
+	} else {
+	    set(value);
+	}
+
+	return getVar();
+    }
 }
-

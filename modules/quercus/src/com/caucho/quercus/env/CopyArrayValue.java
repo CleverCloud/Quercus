@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import java.util.IdentityHashMap;
@@ -39,357 +38,335 @@ import com.caucho.quercus.Location;
  * Represents a PHP array value.
  */
 public class CopyArrayValue extends ArrayValue {
-  private static final Logger log
-    = Logger.getLogger(CopyArrayValue.class.getName());
 
-  private final ConstArrayValue _constArray;
-  private ArrayValue _copyArray;
+    private static final Logger log = Logger.getLogger(CopyArrayValue.class.getName());
+    private final ConstArrayValue _constArray;
+    private ArrayValue _copyArray;
 
-  public CopyArrayValue(ConstArrayValue constArray)
-  {
-    _constArray = constArray;
-  }
+    public CopyArrayValue(ConstArrayValue constArray) {
+	_constArray = constArray;
+    }
 
-  /**
-   * Converts to a boolean.
-   */
-  public boolean toBoolean()
-  {
-    if (_copyArray != null)
-      return _copyArray.toBoolean();
-    else
-      return _constArray.toBoolean();
-  }
-  
-  /**
-   * Copy for assignment.
-   */
-  public Value copy()
-  {
-    if (_copyArray != null)
-      return _copyArray.copy();
-    else
-      return _constArray.copy();
-  }
-  
-  /**
-   * Copy for serialization
-   */
-  public Value copy(Env env, IdentityHashMap<Value,Value> map)
-  {
-    if (_copyArray != null)
-      return _copyArray.copy(env, map);
-    else
-      return _constArray.copy(env, map);
-  }
-  
-  /**
-   * Copy for saving a function arguments.
-   */
-  public Value copySaveFunArg()
-  {
-    if (_copyArray != null)
-      return _copyArray.copySaveFunArg();
-    else
-      return _constArray.copySaveFunArg();
-  }
+    /**
+     * Converts to a boolean.
+     */
+    public boolean toBoolean() {
+	if (_copyArray != null) {
+	    return _copyArray.toBoolean();
+	} else {
+	    return _constArray.toBoolean();
+	}
+    }
 
-  /**
-   * Returns the size.
-   */
-  public int getSize()
-  {
-    if (_copyArray != null)
-      return _copyArray.getSize();
-    else
-      return _constArray.getSize();
-  }
+    /**
+     * Copy for assignment.
+     */
+    public Value copy() {
+	if (_copyArray != null) {
+	    return _copyArray.copy();
+	} else {
+	    return _constArray.copy();
+	}
+    }
 
-  /**
-   * Clears the array
-   */
-  public void clear()
-  {
-    getCopyArray().clear();
-  }
-  
-  /**
-   * Adds a new value.
-   */
-  @Override
-  public Value put(Value key, Value value)
-  {
-    return getCopyArray().put(key, value);
-  }
+    /**
+     * Copy for serialization
+     */
+    public Value copy(Env env, IdentityHashMap<Value, Value> map) {
+	if (_copyArray != null) {
+	    return _copyArray.copy(env, map);
+	} else {
+	    return _constArray.copy(env, map);
+	}
+    }
 
-  /**
-   * Add
-   */
-  public Value put(Value value)
-  {
-    return getCopyArray().put(value);
-  }
+    /**
+     * Copy for saving a function arguments.
+     */
+    public Value copySaveFunArg() {
+	if (_copyArray != null) {
+	    return _copyArray.copySaveFunArg();
+	} else {
+	    return _constArray.copySaveFunArg();
+	}
+    }
 
-  /**
-   * Add
-   */
-  public ArrayValue unshift(Value value)
-  {
-    return getCopyArray().unshift(value);
-  }
+    /**
+     * Returns the size.
+     */
+    public int getSize() {
+	if (_copyArray != null) {
+	    return _copyArray.getSize();
+	} else {
+	    return _constArray.getSize();
+	}
+    }
 
-  /**
-   * Splices.
-   */
-  public ArrayValue splice(int start, int end, ArrayValue replace)
-  {
-    return getCopyArray().splice(start, end, replace);
-  }
-  
-  /**
-   * Slices.
-   */
-  public ArrayValue slice(Env env, int start, int end, boolean isPreserveKeys)
-  {
-    return getCopyArray().slice(env, start, end, isPreserveKeys);
-  }
+    /**
+     * Clears the array
+     */
+    public void clear() {
+	getCopyArray().clear();
+    }
 
-  /**
-   * Returns the value as an array.
-   */
-  public Value getArray(Value fieldName)
-  {
-    return getCopyArray().getArray(fieldName);
-  }
+    /**
+     * Adds a new value.
+     */
+    @Override
+    public Value put(Value key, Value value) {
+	return getCopyArray().put(key, value);
+    }
 
-  /**
-   * Returns the value as an argument which may be a reference.
-   */
-  @Override
-  public Value getArg(Value index, boolean isTop)
-  {
-    return getCopyArray().getArg(index, isTop);
-  }
-  
-  /**
-   * Convert to an argument value.
-   */
-  @Override
-  public Value toLocalValue()
-  {
-    return getCopyArray().toLocalValue();
-  }
+    /**
+     * Add
+     */
+    public Value put(Value value) {
+	return getCopyArray().put(value);
+    }
 
-  /**
-   * Returns the field value, creating an object if it's unset.
-   */
-  @Override
-  public Value getObject(Env env, Value fieldName)
-  {
-    return getCopyArray().getObject(env, fieldName);
-  }
+    /**
+     * Add
+     */
+    public ArrayValue unshift(Value value) {
+	return getCopyArray().unshift(value);
+    }
 
-  /**
-   * Sets the array ref.
-   */
-  public Var putVar()
-  {
-    return getCopyArray().putVar();
-  }
+    /**
+     * Splices.
+     */
+    public ArrayValue splice(int start, int end, ArrayValue replace) {
+	return getCopyArray().splice(start, end, replace);
+    }
 
-  /**
-   * Add
-   */
-  public ArrayValue append(Value key, Value value)
-  {
-    return getCopyArray().append(key, value);
-  }
+    /**
+     * Slices.
+     */
+    public ArrayValue slice(Env env, int start, int end, boolean isPreserveKeys) {
+	return getCopyArray().slice(env, start, end, isPreserveKeys);
+    }
 
-  /**
-   * Add
-   */
-  public ArrayValue append(Value value)
-  {
-    return getCopyArray().append(value);
-  }
+    /**
+     * Returns the value as an array.
+     */
+    public Value getArray(Value fieldName) {
+	return getCopyArray().getArray(fieldName);
+    }
 
-  /**
-   * Gets a new value.
-   */
-  public Value get(Value key)
-  {
-    if (_copyArray != null)
-      return _copyArray.get(key);
-    else
-      return _constArray.get(key);
-  }
+    /**
+     * Returns the value as an argument which may be a reference.
+     */
+    @Override
+    public Value getArg(Value index, boolean isTop) {
+	return getCopyArray().getArg(index, isTop);
+    }
 
-  /**
-   * Returns the corresponding key if this array contains the given value
-   *
-   * @param value to search for in the array
-   *
-   * @return the key if it is found in the array, NULL otherwise
-   */
-  public Value contains(Value value)
-  {
-    if (_copyArray != null)
-      return _copyArray.contains(value);
-    else
-      return _constArray.contains(value);
-  }
+    /**
+     * Convert to an argument value.
+     */
+    @Override
+    public Value toLocalValue() {
+	return getCopyArray().toLocalValue();
+    }
 
-  /**
-   * Returns the corresponding key if this array contains the given value
-   *
-   * @param value to search for in the array
-   *
-   * @return the key if it is found in the array, NULL otherwise
-   */
-  public Value containsStrict(Value value)
-  {
-    if (_copyArray != null)
-      return _copyArray.containsStrict(value);
-    else
-      return _constArray.containsStrict(value);
-  }
+    /**
+     * Returns the field value, creating an object if it's unset.
+     */
+    @Override
+    public Value getObject(Env env, Value fieldName) {
+	return getCopyArray().getObject(env, fieldName);
+    }
 
-  /**
-   * Returns the corresponding value if this array contains the given key
-   *
-   * @param key to search for in the array
-   *
-   * @return the value if it is found in the array, NULL otherwise
-   */
-  public Value containsKey(Value key)
-  {
-    if (_copyArray != null)
-      return _copyArray.containsKey(key);
-    else
-      return _constArray.containsKey(key);
-  }
+    /**
+     * Sets the array ref.
+     */
+    public Var putVar() {
+	return getCopyArray().putVar();
+    }
 
-  /**
-   * Removes a value.
-   */
-  public Value remove(Value key)
-  {
-    return getCopyArray().remove(key);
-  }
+    /**
+     * Add
+     */
+    public ArrayValue append(Value key, Value value) {
+	return getCopyArray().append(key, value);
+    }
 
-  /**
-   * Returns the array ref.
-   */
-  public Var getVar(Value index)
-  {
-    return getCopyArray().getVar(index);
-  }
+    /**
+     * Add
+     */
+    public ArrayValue append(Value value) {
+	return getCopyArray().append(value);
+    }
 
-  /**
-   * Pops the top value.
-   */
-  @Override
-  public Value pop(Env env)
-  {
-    return getCopyArray().pop(env);
-  }
+    /**
+     * Gets a new value.
+     */
+    public Value get(Value key) {
+	if (_copyArray != null) {
+	    return _copyArray.get(key);
+	} else {
+	    return _constArray.get(key);
+	}
+    }
 
-  /**
-   * Pops the top value.
-   */
-  public Value createTailKey()
-  {
-    return getCopyArray().createTailKey();
-  }
+    /**
+     * Returns the corresponding key if this array contains the given value
+     *
+     * @param value to search for in the array
+     *
+     * @return the key if it is found in the array, NULL otherwise
+     */
+    public Value contains(Value value) {
+	if (_copyArray != null) {
+	    return _copyArray.contains(value);
+	} else {
+	    return _constArray.contains(value);
+	}
+    }
 
-  /**
-   * Shuffles the array
-   */
-  public Value shuffle()
-  {
-    return getCopyArray().shuffle();
-  }
+    /**
+     * Returns the corresponding key if this array contains the given value
+     *
+     * @param value to search for in the array
+     *
+     * @return the key if it is found in the array, NULL otherwise
+     */
+    public Value containsStrict(Value value) {
+	if (_copyArray != null) {
+	    return _copyArray.containsStrict(value);
+	} else {
+	    return _constArray.containsStrict(value);
+	}
+    }
 
-  public Entry getHead()
-  {
-    if (_copyArray != null)
-      return _copyArray.getHead();
-    else
-      return _constArray.getHead();
-  }
+    /**
+     * Returns the corresponding value if this array contains the given key
+     *
+     * @param key to search for in the array
+     *
+     * @return the value if it is found in the array, NULL otherwise
+     */
+    public Value containsKey(Value key) {
+	if (_copyArray != null) {
+	    return _copyArray.containsKey(key);
+	} else {
+	    return _constArray.containsKey(key);
+	}
+    }
 
-  protected Entry getTail()
-  {
-    if (_copyArray != null)
-      return _copyArray.getTail();
-    else
-      return _constArray.getTail();
-  }
+    /**
+     * Removes a value.
+     */
+    public Value remove(Value key) {
+	return getCopyArray().remove(key);
+    }
 
-  private ArrayValue getCopyArray()
-  {
-    if (_copyArray == null)
-      _copyArray = new ArrayValueImpl(_constArray);
+    /**
+     * Returns the array ref.
+     */
+    public Var getVar(Value index) {
+	return getCopyArray().getVar(index);
+    }
 
-    return _copyArray;
-  }
-  
-  @Override
-  public int cmp(Value rValue)
-  {
-    if (_copyArray != null)
-      return _copyArray.cmp(rValue);
-    else
-      return _constArray.cmp(rValue);
-  }
-  
-  @Override
-  public boolean eq(Value rValue)
-  {
-    if (_copyArray != null)
-      return _copyArray.eq(rValue);
-    else
-      return _constArray.eq(rValue);
-  }
-  
-  @Override
-  public boolean eql(Value rValue)
-  {
-    if (_copyArray != null)
-      return _copyArray.eql(rValue);
-    else
-      return _constArray.eql(rValue);
-  }
+    /**
+     * Pops the top value.
+     */
+    @Override
+    public Value pop(Env env) {
+	return getCopyArray().pop(env);
+    }
 
-  @Override
-  public int hashCode()
-  {
-    if (_copyArray != null)
-      return _copyArray.hashCode();
-    else
-      return _constArray.hashCode();
-  }
-  
-  @Override
-  public Value toValue()
-  {
-    /*
-    if (_copyArray != null)
-      return _copyArray;
-    else
-      return _constArray;
-    */
-    
-    return this;
-  }
-  
-  @Override
-  public boolean equals(Object o)
-  {
-    if (_copyArray != null)
-      return _copyArray.equals(o);
-    else
-      return _constArray.equals(o);
-  }
+    /**
+     * Pops the top value.
+     */
+    public Value createTailKey() {
+	return getCopyArray().createTailKey();
+    }
+
+    /**
+     * Shuffles the array
+     */
+    public Value shuffle() {
+	return getCopyArray().shuffle();
+    }
+
+    public Entry getHead() {
+	if (_copyArray != null) {
+	    return _copyArray.getHead();
+	} else {
+	    return _constArray.getHead();
+	}
+    }
+
+    protected Entry getTail() {
+	if (_copyArray != null) {
+	    return _copyArray.getTail();
+	} else {
+	    return _constArray.getTail();
+	}
+    }
+
+    private ArrayValue getCopyArray() {
+	if (_copyArray == null) {
+	    _copyArray = new ArrayValueImpl(_constArray);
+	}
+
+	return _copyArray;
+    }
+
+    @Override
+    public int cmp(Value rValue) {
+	if (_copyArray != null) {
+	    return _copyArray.cmp(rValue);
+	} else {
+	    return _constArray.cmp(rValue);
+	}
+    }
+
+    @Override
+    public boolean eq(Value rValue) {
+	if (_copyArray != null) {
+	    return _copyArray.eq(rValue);
+	} else {
+	    return _constArray.eq(rValue);
+	}
+    }
+
+    @Override
+    public boolean eql(Value rValue) {
+	if (_copyArray != null) {
+	    return _copyArray.eql(rValue);
+	} else {
+	    return _constArray.eql(rValue);
+	}
+    }
+
+    @Override
+    public int hashCode() {
+	if (_copyArray != null) {
+	    return _copyArray.hashCode();
+	} else {
+	    return _constArray.hashCode();
+	}
+    }
+
+    @Override
+    public Value toValue() {
+	/*
+	if (_copyArray != null)
+	return _copyArray;
+	else
+	return _constArray;
+	 */
+
+	return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+	if (_copyArray != null) {
+	    return _copyArray.equals(o);
+	} else {
+	    return _constArray.equals(o);
+	}
+    }
 }
-

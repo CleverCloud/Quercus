@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.QuercusException;
@@ -44,633 +43,586 @@ import java.util.logging.Logger;
  * Represents a Quercus java value.
  */
 public class JavaValue extends ObjectValue
-  implements Serializable
-{
-  private static final Logger log
-    = Logger.getLogger(JavaValue.class.getName());
+	implements Serializable {
 
-  private JavaClassDef _classDef;
-  protected Env _env;
+    private static final Logger log = Logger.getLogger(JavaValue.class.getName());
+    private JavaClassDef _classDef;
+    protected Env _env;
+    private Object _object;
 
-  private Object _object;
+    public JavaValue(Env env, Object object, JavaClassDef def) {
+	super();
 
-  public JavaValue(Env env, Object object, JavaClassDef def)
-  {
-    super();
+	setQuercusClass(env.createJavaQuercusClass(def));
 
-    setQuercusClass(env.createJavaQuercusClass(def));
-
-    _classDef = def;
-    _object = object;
-  }
-
-  public JavaValue(Object object, JavaClassDef def, QuercusClass qClass)
-  {
-    super();
-
-    setQuercusClass(qClass);
-
-    _classDef = def;
-    _object = object;
-  }
-
-  /*
-   * Returns the underlying Java class definition.
-   */
-  protected JavaClassDef getJavaClassDef()
-  {
-    return _classDef;
-  }
-
-  @Override
-  public String getClassName()
-  {
-    return _classDef.getName();
-  }
-
-  /**
-   * Converts to a double.
-   */
-  public long toLong()
-  {
-    return StringValue.parseLong(toString(Env.getInstance()));
-  }
-
-  /**
-   * Converts to a double.
-   */
-  public double toDouble()
-  {
-    return toDouble(toString(Env.getInstance()).toString());
-  }
-
-  /**
-   * Converts to a double.
-   */
-  public static double toDouble(String s)
-  {
-    int len = s.length();
-    int i = 0;
-    int ch = 0;
-
-    if (i < len && ((ch = s.charAt(i)) == '+' || ch == '-')) {
-      i++;
+	_classDef = def;
+	_object = object;
     }
 
-    for (; i < len && '0' <= (ch = s.charAt(i)) && ch <= '9'; i++) {
+    public JavaValue(Object object, JavaClassDef def, QuercusClass qClass) {
+	super();
+
+	setQuercusClass(qClass);
+
+	_classDef = def;
+	_object = object;
     }
 
-    if (ch == '.') {
-      for (i++; i < len && '0' <= (ch = s.charAt(i)) && ch <= '9'; i++) {
-      }
+    /*
+     * Returns the underlying Java class definition.
+     */
+    protected JavaClassDef getJavaClassDef() {
+	return _classDef;
     }
 
-    if (ch == 'e' || ch == 'E') {
-      int e = i++;
-
-      if (i < len && (ch = s.charAt(i)) == '+' || ch == '-') {
-        i++;
-      }
-
-      for (; i < len && '0' <= (ch = s.charAt(i)) && ch <= '9'; i++) {
-      }
-
-      if (i == e + 1)
-        i = e;
+    @Override
+    public String getClassName() {
+	return _classDef.getName();
     }
 
-    if (i != len)
-      return 1;
-    else
-      return Double.parseDouble(s);
-  }
-
-  @Override
-  public StringValue toString(Env env)
-  {
-    StringValue value = _classDef.toString(env, this);
-
-    if (value == null)
-      value = env.createString(toString());
-
-    return value;
-  }
-
-  @Override
-  protected void printRImpl(Env env,
-                            WriteStream out,
-                            int depth,
-                            IdentityHashMap<Value, String> valueSet)
-    throws IOException
-  {
-    if (_classDef.printRImpl(env, _object, out, depth, valueSet))
-      return;
-
-    Set<? extends Map.Entry<Value,Value>> entrySet = entrySet();
-
-    if (entrySet == null) {
-      out.print("resource(" + toString(env) + ")"); // TODO:
-      return;
+    /**
+     * Converts to a double.
+     */
+    public long toLong() {
+	return StringValue.parseLong(toString(Env.getInstance()));
     }
 
-    out.print(_classDef.getSimpleName());
-    out.println(" Object");
-    printRDepth(out, depth);
-    out.print("(");
-
-    for (Map.Entry<Value,Value> entry : entrySet) {
-      out.println();
-      printRDepth(out, depth);
-      out.print("    [" + entry.getKey() + "] => ");
-
-      entry.getValue().printRImpl(env, out, depth + 1, valueSet);
+    /**
+     * Converts to a double.
+     */
+    public double toDouble() {
+	return toDouble(toString(Env.getInstance()).toString());
     }
 
-    out.println();
-    printRDepth(out, depth);
-    out.println(")");
-  }
+    /**
+     * Converts to a double.
+     */
+    public static double toDouble(String s) {
+	int len = s.length();
+	int i = 0;
+	int ch = 0;
 
-  @Override
-  protected void varDumpImpl(Env env,
-                            WriteStream out,
-                            int depth,
-                            IdentityHashMap<Value, String> valueSet)
-    throws IOException
-  {
-    Value oldThis = env.setThis(this);
+	if (i < len && ((ch = s.charAt(i)) == '+' || ch == '-')) {
+	    i++;
+	}
 
-    try {
-      if (! _classDef.varDumpImpl(env, this, _object, out, depth, valueSet))
-        out.print("resource(" + toString(env) + ")"); // TODO:
+	for (; i < len && '0' <= (ch = s.charAt(i)) && ch <= '9'; i++) {
+	}
+
+	if (ch == '.') {
+	    for (i++; i < len && '0' <= (ch = s.charAt(i)) && ch <= '9'; i++) {
+	    }
+	}
+
+	if (ch == 'e' || ch == 'E') {
+	    int e = i++;
+
+	    if (i < len && (ch = s.charAt(i)) == '+' || ch == '-') {
+		i++;
+	    }
+
+	    for (; i < len && '0' <= (ch = s.charAt(i)) && ch <= '9'; i++) {
+	    }
+
+	    if (i == e + 1) {
+		i = e;
+	    }
+	}
+
+	if (i != len) {
+	    return 1;
+	} else {
+	    return Double.parseDouble(s);
+	}
     }
-    finally {
-      env.setThis(oldThis);
+
+    @Override
+    public StringValue toString(Env env) {
+	StringValue value = _classDef.toString(env, this);
+
+	if (value == null) {
+	    value = env.createString(toString());
+	}
+
+	return value;
     }
-  }
 
-  //
-  // field routines
-  //
+    @Override
+    protected void printRImpl(Env env,
+	    WriteStream out,
+	    int depth,
+	    IdentityHashMap<Value, String> valueSet)
+	    throws IOException {
+	if (_classDef.printRImpl(env, _object, out, depth, valueSet)) {
+	    return;
+	}
 
-  /**
-   * Returns the field value.
-   */
-  @Override
-  public Value getField(Env env, StringValue name)
-  {
-    Value value = _classDef.getField(env, this, name);
+	Set<? extends Map.Entry<Value, Value>> entrySet = entrySet();
 
-    if (value != null)
-      return value;
-    else
-      return UnsetValue.NULL;
-  }
+	if (entrySet == null) {
+	    out.print("resource(" + toString(env) + ")"); // TODO:
+	    return;
+	}
 
-  /**
-   * Sets the field value.
-   */
-  @Override
-  public Value putField(Env env, StringValue name, Value value)
-  {
-    Value oldValue = _classDef.putField(env, this, name, value);
+	out.print(_classDef.getSimpleName());
+	out.println(" Object");
+	printRDepth(out, depth);
+	out.print("(");
 
-    if (oldValue != null)
-      return oldValue;
-    else
-      return NullValue.NULL;
-  }
+	for (Map.Entry<Value, Value> entry : entrySet) {
+	    out.println();
+	    printRDepth(out, depth);
+	    out.print("    [" + entry.getKey() + "] => ");
 
-  public Set<? extends Map.Entry<Value, Value>> entrySet()
-  {
-    return _classDef.entrySet(_object);
-  }
+	    entry.getValue().printRImpl(env, out, depth + 1, valueSet);
+	}
 
-  /**
-   * Converts to a key.
-   */
-  @Override
-  public Value toKey()
-  {
-    return new LongValue(System.identityHashCode(this));
-  }
+	out.println();
+	printRDepth(out, depth);
+	out.println(")");
+    }
 
-  @Override
-  public int cmpObject(ObjectValue rValue)
-  {
-    // php/172z
+    @Override
+    protected void varDumpImpl(Env env,
+	    WriteStream out,
+	    int depth,
+	    IdentityHashMap<Value, String> valueSet)
+	    throws IOException {
+	Value oldThis = env.setThis(this);
 
-    if (rValue == this)
-      return 0;
+	try {
+	    if (!_classDef.varDumpImpl(env, this, _object, out, depth, valueSet)) {
+		out.print("resource(" + toString(env) + ")"); // TODO:
+	    }
+	} finally {
+	    env.setThis(oldThis);
+	}
+    }
 
-    if (!(rValue instanceof JavaValue))
-      return -1;
+    //
+    // field routines
+    //
+    /**
+     * Returns the field value.
+     */
+    @Override
+    public Value getField(Env env, StringValue name) {
+	Value value = _classDef.getField(env, this, name);
 
-    Object rObject = rValue.toJavaObject();
+	if (value != null) {
+	    return value;
+	} else {
+	    return UnsetValue.NULL;
+	}
+    }
 
-    return _classDef.cmpObject(_object,
-                               rObject,
-                               ((JavaValue) rValue)._classDef);
-  }
+    /**
+     * Sets the field value.
+     */
+    @Override
+    public Value putField(Env env, StringValue name, Value value) {
+	Value oldValue = _classDef.putField(env, this, name, value);
 
-  /**
-   * Returns true for an object.
-   */
-  @Override
-  public boolean isObject()
-  {
-    return true;
-  }
+	if (oldValue != null) {
+	    return oldValue;
+	} else {
+	    return NullValue.NULL;
+	}
+    }
 
-  /*
-   * Returns true for a resource.
-   */
-  @Override
-  public boolean isResource()
-  {
-    return false;
-  }
+    public Set<? extends Map.Entry<Value, Value>> entrySet() {
+	return _classDef.entrySet(_object);
+    }
 
-  /**
-   * Returns the type.
-   */
-  @Override
-  public String getType()
-  {
-    return "object";
-  }
+    /**
+     * Converts to a key.
+     */
+    @Override
+    public Value toKey() {
+	return new LongValue(System.identityHashCode(this));
+    }
 
-  /**
-   * Returns the method.
-   */
-  /*
-  @Override
-  public AbstractFunction findFunction(String methodName)
-  {
+    @Override
+    public int cmpObject(ObjectValue rValue) {
+	// php/172z
+
+	if (rValue == this) {
+	    return 0;
+	}
+
+	if (!(rValue instanceof JavaValue)) {
+	    return -1;
+	}
+
+	Object rObject = rValue.toJavaObject();
+
+	return _classDef.cmpObject(_object,
+		rObject,
+		((JavaValue) rValue)._classDef);
+    }
+
+    /**
+     * Returns true for an object.
+     */
+    @Override
+    public boolean isObject() {
+	return true;
+    }
+
+    /*
+     * Returns true for a resource.
+     */
+    @Override
+    public boolean isResource() {
+	return false;
+    }
+
+    /**
+     * Returns the type.
+     */
+    @Override
+    public String getType() {
+	return "object";
+    }
+
+    /**
+     * Returns the method.
+     */
+    /*
+    @Override
+    public AbstractFunction findFunction(String methodName)
+    {
     return _classDef.findFunction(methodName);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethod(Env env,
-                          StringValue methodName, int hash,
-                          Value []args)
-  {
-    return _classDef.callMethod(env, this, methodName, hash, args);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethod(Env env, StringValue methodName, int hash)
-  {
-    return _classDef.callMethod(env, this, methodName, hash);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethod(Env env, StringValue methodName, int hash,
-                          Value a1)
-  {
-    return _classDef.callMethod(env, this, methodName, hash, a1);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethod(Env env, StringValue methodName, int hash,
-                          Value a1, Value a2)
-  {
-    return _classDef.callMethod(env, this, methodName, hash, a1, a2);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethod(Env env, StringValue methodName, int hash,
-                          Value a1, Value a2, Value a3)
-  {
-    return _classDef.callMethod(env, this, methodName, hash, a1, a2, a3);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethod(Env env, StringValue methodName, int hash,
-                          Value a1, Value a2, Value a3, Value a4)
-  {
-    return _classDef.callMethod(env, this, methodName, hash,
-                                a1, a2, a3, a4);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethod(Env env, StringValue methodName, int hash,
-                          Value a1, Value a2, Value a3, Value a4, Value a5)
-  {
-    return _classDef.callMethod(env, this, methodName, hash,
-                                a1, a2, a3, a4, a5);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethodRef(Env env, StringValue methodName, int hash,
-                             Value []args)
-  {
-    return _classDef.callMethod(env, this, methodName, hash, args);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethodRef(Env env, StringValue methodName, int hash)
-  {
-    Value value = _classDef.callMethod(env, this, methodName, hash);
-
-    return value;
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethodRef(Env env, StringValue methodName, int hash,
-                             Value a1)
-  {
-    return _classDef.callMethod(env, this, methodName, hash, a1);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethodRef(Env env, StringValue methodName, int hash,
-                             Value a1, Value a2)
-  {
-    return _classDef.callMethod(env, this, methodName, hash, a1, a2);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethodRef(Env env, StringValue methodName, int hash,
-                             Value a1, Value a2, Value a3)
-  {
-    return _classDef.callMethod(env, this, methodName, hash, a1, a2, a3);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethodRef(Env env, StringValue methodName, int hash,
-                             Value a1, Value a2, Value a3, Value a4)
-  {
-    return _classDef.callMethod(env, this, methodName, hash,
-                                a1, a2, a3, a4);
-  }
-
-  /**
-   * Evaluates a method.
-   */
-  @Override
-  public Value callMethodRef(Env env, StringValue methodName, int hash,
-                             Value a1, Value a2, Value a3, Value a4, Value a5)
-  {
-    return _classDef.callMethod(env, this, methodName, hash,
-                                a1, a2, a3, a4, a5);
-  }
-
-  /**
-   * Serializes the value.
-   */
-  @Override
-  public void serialize(Env env, StringBuilder sb, SerializeMap map)
-  {
-    String name = _classDef.getSimpleName();
-
-    Set<? extends Map.Entry<Value,Value>> entrySet = entrySet();
-
-    if (entrySet != null) {
-      sb.append("O:");
-      sb.append(name.length());
-      sb.append(":\"");
-      sb.append(name);
-      sb.append("\":");
-      sb.append(entrySet.size());
-      sb.append(":{");
-
-      for (Map.Entry<Value,Value> entry : entrySet) {
-        entry.getKey().serialize(env, sb);
-        entry.getValue().serialize(env, sb, map);
-      }
-
-      sb.append("}");
     }
-    else {
-      // php/121f
-      sb.append("i:0;");
-    }
-  }
-
-  /**
-   * Encodes the value in JSON.
-   */
-  public void jsonEncode(Env env, StringValue sb)
-  {
-    if (_classDef.jsonEncode(env, _object, sb))
-      return;
-    else
-      super.jsonEncode(env, sb);
-  }
-
-  /**
-   * Converts to a string.
-   */
-  public String toString()
-  {
-    //return toString(Env.getInstance()).toString();
-
-    return String.valueOf(_object);
-  }
-
-
-  /**
-   * Converts to an object.
-   */
-  @Override
-  public Object toJavaObject()
-  {
-    return _object;
-  }
-
-  /**
-   * Converts to a java object.
-   */
-  @Override
-  public final Object toJavaObject(Env env, Class type)
-  {
-    final Object object = _object;
-    final Class objectClass = _object.getClass();
-
-    if (type == objectClass || type.isAssignableFrom(objectClass)) {
-      return object;
-    } else {
-      env.warning(L.l("Can't assign {0} to {1}",
-                      objectClass.getName(), type.getName()));
-
-      return null;
-    }
-  }
-
-  /**
-   * Converts to a java object.
-   */
-  @Override
-  public Object toJavaObjectNotNull(Env env, Class type)
-  {
-    Class objClass = _object.getClass();
-
-    if (objClass == type || type.isAssignableFrom(objClass)) {
-      return _object;
-    } else {
-      env.warning(L.l("Can't assign {0} to {1}",
-                      objClass.getName(), type.getName()));
-
-      return null;
-    }
-  }
-
-  /**
-   * Converts to a java object.
-   */
-  @Override
-  public Map toJavaMap(Env env, Class type)
-  {
-    if (type.isAssignableFrom(_object.getClass())) {
-      return (Map) _object;
-    } else {
-      env.warning(L.l("Can't assign {0} to {1}",
-                      _object.getClass().getName(), type.getName()));
-
-      return null;
-    }
-  }
-
-  /**
-   * Converts to an object.
-   */
-  @Override
-  public InputStream toInputStream()
-  {
-    if (_object instanceof InputStream)
-      return (InputStream) _object;
-    else if (_object instanceof File) {
-      try {
-        InputStream is = new FileInputStream((File) _object);
-
-        Env.getCurrent().addCleanup(new EnvCloseable(is));
-
-        return is;
-      } catch (IOException e) {
-        throw new QuercusException(e);
-      }
-    }
-    else
-      return super.toInputStream();
-  }
-
-  private static void printRDepth(WriteStream out, int depth)
-    throws IOException
-  {
-    for (int i = 0; i < 8 * depth; i++)
-      out.print(' ');
-  }
-
-  //
-  // Java Serialization
-  //
-
-  private void writeObject(ObjectOutputStream out)
-    throws IOException
-  {
-    out.writeObject(_classDef.getType().getCanonicalName());
-
-    out.writeObject(_object);
-  }
-
-  private void readObject(ObjectInputStream in)
-    throws ClassNotFoundException, IOException
-  {
-    _env = Env.getInstance();
-
-    _classDef = _env.getJavaClassDefinition((String) in.readObject());
-
-    int id = _env.getQuercus().getClassId(_classDef.getName());
-
-    setQuercusClass(_env.createQuercusClass(id, _classDef, null));
-
-    _object = in.readObject();
-  }
-
-  private static class EntryItem implements Map.Entry<Value,Value> {
-    private Value _key;
-    private Value _value;
-    private boolean _isArray;
-
-    EntryItem(Value key, Value value)
-    {
-      _key = key;
-      _value = value;
+     */
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethod(Env env,
+	    StringValue methodName, int hash,
+	    Value[] args) {
+	return _classDef.callMethod(env, this, methodName, hash, args);
     }
 
-    public Value getKey()
-    {
-      return _key;
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethod(Env env, StringValue methodName, int hash) {
+	return _classDef.callMethod(env, this, methodName, hash);
     }
 
-    public Value getValue()
-    {
-      return _value;
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethod(Env env, StringValue methodName, int hash,
+	    Value a1) {
+	return _classDef.callMethod(env, this, methodName, hash, a1);
     }
 
-    public Value setValue(Value value)
-    {
-      return _value;
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethod(Env env, StringValue methodName, int hash,
+	    Value a1, Value a2) {
+	return _classDef.callMethod(env, this, methodName, hash, a1, a2);
     }
 
-    void addValue(Value value)
-    {
-      ArrayValue array = null;
-
-      if (! _isArray) {
-        _isArray = true;
-        Value oldValue = _value;
-        _value = new ArrayValueImpl();
-        array = (ArrayValue) _value;
-        array.append(oldValue);
-      }
-      else {
-        array = (ArrayValue) _value;
-      }
-
-      array.append(value);
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethod(Env env, StringValue methodName, int hash,
+	    Value a1, Value a2, Value a3) {
+	return _classDef.callMethod(env, this, methodName, hash, a1, a2, a3);
     }
-  }
+
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethod(Env env, StringValue methodName, int hash,
+	    Value a1, Value a2, Value a3, Value a4) {
+	return _classDef.callMethod(env, this, methodName, hash,
+		a1, a2, a3, a4);
+    }
+
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethod(Env env, StringValue methodName, int hash,
+	    Value a1, Value a2, Value a3, Value a4, Value a5) {
+	return _classDef.callMethod(env, this, methodName, hash,
+		a1, a2, a3, a4, a5);
+    }
+
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethodRef(Env env, StringValue methodName, int hash,
+	    Value[] args) {
+	return _classDef.callMethod(env, this, methodName, hash, args);
+    }
+
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethodRef(Env env, StringValue methodName, int hash) {
+	Value value = _classDef.callMethod(env, this, methodName, hash);
+
+	return value;
+    }
+
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethodRef(Env env, StringValue methodName, int hash,
+	    Value a1) {
+	return _classDef.callMethod(env, this, methodName, hash, a1);
+    }
+
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethodRef(Env env, StringValue methodName, int hash,
+	    Value a1, Value a2) {
+	return _classDef.callMethod(env, this, methodName, hash, a1, a2);
+    }
+
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethodRef(Env env, StringValue methodName, int hash,
+	    Value a1, Value a2, Value a3) {
+	return _classDef.callMethod(env, this, methodName, hash, a1, a2, a3);
+    }
+
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethodRef(Env env, StringValue methodName, int hash,
+	    Value a1, Value a2, Value a3, Value a4) {
+	return _classDef.callMethod(env, this, methodName, hash,
+		a1, a2, a3, a4);
+    }
+
+    /**
+     * Evaluates a method.
+     */
+    @Override
+    public Value callMethodRef(Env env, StringValue methodName, int hash,
+	    Value a1, Value a2, Value a3, Value a4, Value a5) {
+	return _classDef.callMethod(env, this, methodName, hash,
+		a1, a2, a3, a4, a5);
+    }
+
+    /**
+     * Serializes the value.
+     */
+    @Override
+    public void serialize(Env env, StringBuilder sb, SerializeMap map) {
+	String name = _classDef.getSimpleName();
+
+	Set<? extends Map.Entry<Value, Value>> entrySet = entrySet();
+
+	if (entrySet != null) {
+	    sb.append("O:");
+	    sb.append(name.length());
+	    sb.append(":\"");
+	    sb.append(name);
+	    sb.append("\":");
+	    sb.append(entrySet.size());
+	    sb.append(":{");
+
+	    for (Map.Entry<Value, Value> entry : entrySet) {
+		entry.getKey().serialize(env, sb);
+		entry.getValue().serialize(env, sb, map);
+	    }
+
+	    sb.append("}");
+	} else {
+	    // php/121f
+	    sb.append("i:0;");
+	}
+    }
+
+    /**
+     * Encodes the value in JSON.
+     */
+    public void jsonEncode(Env env, StringValue sb) {
+	if (_classDef.jsonEncode(env, _object, sb)) {
+	    return;
+	} else {
+	    super.jsonEncode(env, sb);
+	}
+    }
+
+    /**
+     * Converts to a string.
+     */
+    public String toString() {
+	//return toString(Env.getInstance()).toString();
+
+	return String.valueOf(_object);
+    }
+
+    /**
+     * Converts to an object.
+     */
+    @Override
+    public Object toJavaObject() {
+	return _object;
+    }
+
+    /**
+     * Converts to a java object.
+     */
+    @Override
+    public final Object toJavaObject(Env env, Class type) {
+	final Object object = _object;
+	final Class objectClass = _object.getClass();
+
+	if (type == objectClass || type.isAssignableFrom(objectClass)) {
+	    return object;
+	} else {
+	    env.warning(L.l("Can't assign {0} to {1}",
+		    objectClass.getName(), type.getName()));
+
+	    return null;
+	}
+    }
+
+    /**
+     * Converts to a java object.
+     */
+    @Override
+    public Object toJavaObjectNotNull(Env env, Class type) {
+	Class objClass = _object.getClass();
+
+	if (objClass == type || type.isAssignableFrom(objClass)) {
+	    return _object;
+	} else {
+	    env.warning(L.l("Can't assign {0} to {1}",
+		    objClass.getName(), type.getName()));
+
+	    return null;
+	}
+    }
+
+    /**
+     * Converts to a java object.
+     */
+    @Override
+    public Map toJavaMap(Env env, Class type) {
+	if (type.isAssignableFrom(_object.getClass())) {
+	    return (Map) _object;
+	} else {
+	    env.warning(L.l("Can't assign {0} to {1}",
+		    _object.getClass().getName(), type.getName()));
+
+	    return null;
+	}
+    }
+
+    /**
+     * Converts to an object.
+     */
+    @Override
+    public InputStream toInputStream() {
+	if (_object instanceof InputStream) {
+	    return (InputStream) _object;
+	} else if (_object instanceof File) {
+	    try {
+		InputStream is = new FileInputStream((File) _object);
+
+		Env.getCurrent().addCleanup(new EnvCloseable(is));
+
+		return is;
+	    } catch (IOException e) {
+		throw new QuercusException(e);
+	    }
+	} else {
+	    return super.toInputStream();
+	}
+    }
+
+    private static void printRDepth(WriteStream out, int depth)
+	    throws IOException {
+	for (int i = 0; i < 8 * depth; i++) {
+	    out.print(' ');
+	}
+    }
+
+    //
+    // Java Serialization
+    //
+    private void writeObject(ObjectOutputStream out)
+	    throws IOException {
+	out.writeObject(_classDef.getType().getCanonicalName());
+
+	out.writeObject(_object);
+    }
+
+    private void readObject(ObjectInputStream in)
+	    throws ClassNotFoundException, IOException {
+	_env = Env.getInstance();
+
+	_classDef = _env.getJavaClassDefinition((String) in.readObject());
+
+	int id = _env.getQuercus().getClassId(_classDef.getName());
+
+	setQuercusClass(_env.createQuercusClass(id, _classDef, null));
+
+	_object = in.readObject();
+    }
+
+    private static class EntryItem implements Map.Entry<Value, Value> {
+
+	private Value _key;
+	private Value _value;
+	private boolean _isArray;
+
+	EntryItem(Value key, Value value) {
+	    _key = key;
+	    _value = value;
+	}
+
+	public Value getKey() {
+	    return _key;
+	}
+
+	public Value getValue() {
+	    return _value;
+	}
+
+	public Value setValue(Value value) {
+	    return _value;
+	}
+
+	void addValue(Value value) {
+	    ArrayValue array = null;
+
+	    if (!_isArray) {
+		_isArray = true;
+		Value oldValue = _value;
+		_value = new ArrayValueImpl();
+		array = (ArrayValue) _value;
+		array.append(oldValue);
+	    } else {
+		array = (ArrayValue) _value;
+	    }
+
+	    array.append(value);
+	}
+    }
 }
-

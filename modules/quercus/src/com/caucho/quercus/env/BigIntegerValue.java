@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.program.JavaClassDef;
@@ -39,74 +38,64 @@ import java.util.logging.Logger;
  * Represents a Quercus java BigInteger value.
  */
 public class BigIntegerValue extends JavaValue {
-  private static final Logger log
-    = Logger.getLogger(JavaURLValue.class.getName());
 
-  private final BigInteger _val;
+    private static final Logger log = Logger.getLogger(JavaURLValue.class.getName());
+    private final BigInteger _val;
 
-  public BigIntegerValue(Env env, BigInteger val, JavaClassDef def)
-  {
-    super(env, val, def);
-    _val = val;
-  }
-  
-  /**
-   * Converts to a long.
-   */
-  @Override
-  public long toLong()
-  {
-    return _val.longValue();
-  }
-  
-  /**
-   * Converts to a double.
-   */
-  @Override
-  public double toDouble()
-  {
-    return _val.doubleValue();
-  }
-  
-  /**
-   * Converts to a Java BigDecimal.
-   */
-  @Override
-  public BigDecimal toBigDecimal()
-  {
-    return new BigDecimal(toString());
-  }
-  
-  /**
-   * Converts to a Java BigDecimal.
-   */
-  @Override
-  public BigInteger toBigInteger()
-  {
-    return _val;
-  }
-  
-  /**
-   * Returns true for a double-value.
-   */
-  @Override
-  public boolean isDoubleConvertible()
-  {
-    return true;
-  }
+    public BigIntegerValue(Env env, BigInteger val, JavaClassDef def) {
+	super(env, val, def);
+	_val = val;
+    }
 
-  /**
-   * Returns true for a long-value.
-   */
-  @Override
-  public boolean isLongConvertible()
-  {
-    return true;
-  }
-  
-  public String toString()
-  {
-    return "BigInteger[" + _val.toString() + "]";
-  }
+    /**
+     * Converts to a long.
+     */
+    @Override
+    public long toLong() {
+	return _val.longValue();
+    }
+
+    /**
+     * Converts to a double.
+     */
+    @Override
+    public double toDouble() {
+	return _val.doubleValue();
+    }
+
+    /**
+     * Converts to a Java BigDecimal.
+     */
+    @Override
+    public BigDecimal toBigDecimal() {
+	return new BigDecimal(toString());
+    }
+
+    /**
+     * Converts to a Java BigDecimal.
+     */
+    @Override
+    public BigInteger toBigInteger() {
+	return _val;
+    }
+
+    /**
+     * Returns true for a double-value.
+     */
+    @Override
+    public boolean isDoubleConvertible() {
+	return true;
+    }
+
+    /**
+     * Returns true for a long-value.
+     */
+    @Override
+    public boolean isLongConvertible() {
+	return true;
+    }
+
+    public String toString() {
+	return "BigInteger[" + _val.toString() + "]";
+    }
 }
-

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.Location;
@@ -50,9 +49,9 @@ import java.util.TreeSet;
 /**
  * Represents a PHP field visibility
  */
-public enum FieldVisibility
-{
-  PUBLIC,
-  PRIVATE,
-  PROTECTED
-}    
+public enum FieldVisibility {
+
+    PUBLIC,
+    PRIVATE,
+    PROTECTED
+}

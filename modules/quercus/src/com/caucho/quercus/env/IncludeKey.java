@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 /**
@@ -34,4 +33,3 @@ package com.caucho.quercus.env;
  */
 class IncludeKey {
 }
-

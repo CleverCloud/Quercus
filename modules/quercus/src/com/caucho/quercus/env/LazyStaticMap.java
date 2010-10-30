@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.util.IntMap;
@@ -36,65 +35,59 @@ import java.util.*;
 /**
  * Represents the Quercus static environment.
  */
-public class LazyStaticMap extends AbstractMap<StringValue,Var> {
-  private final IntMap _intMap;
-  private final Value []_values;
-  
-  private HashMap<StringValue,Var> _extMap = new HashMap<StringValue,Var>();
+public class LazyStaticMap extends AbstractMap<StringValue, Var> {
 
-  public LazyStaticMap(IntMap intMap, Value []values)
-  {
-    _intMap = intMap;
-    _values = values;
-  }
+    private final IntMap _intMap;
+    private final Value[] _values;
+    private HashMap<StringValue, Var> _extMap = new HashMap<StringValue, Var>();
 
-  /**
-   * Returns the matching value, or null.
-   */
-  public Var get(Object key)
-  {
-    return (Var) get((StringValue) key);
-  }
-
-  /**
-   * Returns the matching value, or null.
-   */
-  public Var get(StringValue key)
-  {
-    Var var = _extMap.get(key);
-
-    if (var == null) {
-      int id = _intMap.get(key);
-
-      if (id >= 0 && _values[id] != null) {
-        var = new Var();
-        // var.setGlobal();
-
-        _extMap.put(key, var);
-      
-        Env env = Env.getCurrent();
-
-        Value value = _values[id].copy(env);
-
-        var.set(value);
-      }
+    public LazyStaticMap(IntMap intMap, Value[] values) {
+	_intMap = intMap;
+	_values = values;
     }
-    
-    return var;
-  }
 
-  /**
-   * Returns the matching value, or null.
-   */
-  @Override
-  public Var put(StringValue key, Var newVar)
-  {
-    return _extMap.put(key, newVar);
-  }
+    /**
+     * Returns the matching value, or null.
+     */
+    public Var get(Object key) {
+	return (Var) get((StringValue) key);
+    }
 
-  public Set<Map.Entry<StringValue,Var>> entrySet()
-  {
-    return _extMap.entrySet();
-  }
+    /**
+     * Returns the matching value, or null.
+     */
+    public Var get(StringValue key) {
+	Var var = _extMap.get(key);
+
+	if (var == null) {
+	    int id = _intMap.get(key);
+
+	    if (id >= 0 && _values[id] != null) {
+		var = new Var();
+		// var.setGlobal();
+
+		_extMap.put(key, var);
+
+		Env env = Env.getCurrent();
+
+		Value value = _values[id].copy(env);
+
+		var.set(value);
+	    }
+	}
+
+	return var;
+    }
+
+    /**
+     * Returns the matching value, or null.
+     */
+    @Override
+    public Var put(StringValue key, Var newVar) {
+	return _extMap.put(key, newVar);
+    }
+
+    public Set<Map.Entry<StringValue, Var>> entrySet() {
+	return _extMap.entrySet();
+    }
 }
-

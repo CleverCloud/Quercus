@@ -26,20 +26,17 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.env;
 
-public class UnexpectedValue extends NullValue
-{
-  private final Value _value;
-  
-  public UnexpectedValue(Value value)  
-  {
-    _value = value;
-  }
-  
-  public String getType()
-  {
-    return _value.getType();
-  }
+public class UnexpectedValue extends NullValue {
+
+    private final Value _value;
+
+    public UnexpectedValue(Value value) {
+	_value = value;
+    }
+
+    public String getType() {
+	return _value.getType();
+    }
 }

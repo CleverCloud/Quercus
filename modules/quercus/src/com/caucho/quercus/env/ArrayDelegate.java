@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.env;
 
 import java.util.Map;
@@ -36,28 +35,29 @@ import java.util.Iterator;
  * A delegate that performs Array operations for Quercus objects.
  */
 public interface ArrayDelegate {
-  /**
-   * Returns the value for the specified key.
-   */
-  public Value get(ObjectValue qThis, Value key);
 
-  /**
-   * Sets the value for the spoecified key.
-   */
-  public Value put(ObjectValue qThis, Value key, Value value);
+    /**
+     * Returns the value for the specified key.
+     */
+    public Value get(ObjectValue qThis, Value key);
 
-  /**
-   * Appends a value.
-   */
-  public Value put(ObjectValue qThis, Value value);
+    /**
+     * Sets the value for the spoecified key.
+     */
+    public Value put(ObjectValue qThis, Value key, Value value);
 
-  /**
-   * Returns true if the value is set
-   */
-  public boolean isset(ObjectValue qThis, Value key);
+    /**
+     * Appends a value.
+     */
+    public Value put(ObjectValue qThis, Value value);
 
-  /**
-   * Removes the value at the speified key.
-   */
-  public Value unset(ObjectValue qThis, Value key);
+    /**
+     * Returns true if the value is set
+     */
+    public boolean isset(ObjectValue qThis, Value key);
+
+    /**
+     * Removes the value at the speified key.
+     */
+    public Value unset(ObjectValue qThis, Value key);
 }

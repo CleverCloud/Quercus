@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import java.io.Serializable;
@@ -39,21 +38,17 @@ import com.caucho.quercus.program.ClassDef;
  * Represents a PHP null value, used for 
  */
 public class NullThisValue extends NullValue
-  implements Serializable
-{
-  public static final NullThisValue NULL = new NullThisValue();
+	implements Serializable {
 
-  private NullThisValue()
-  {
-  }
-  
-  //
-  // Java Serialization
-  //
-  
-  private Object readResolve()
-  {
-    return NULL;
-  }
+    public static final NullThisValue NULL = new NullThisValue();
+
+    private NullThisValue() {
+    }
+
+    //
+    // Java Serialization
+    //
+    private Object readResolve() {
+	return NULL;
+    }
 }
-

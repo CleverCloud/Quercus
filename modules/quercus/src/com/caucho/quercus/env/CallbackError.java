@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.function.AbstractFunction;
@@ -40,36 +39,31 @@ import java.util.IdentityHashMap;
  * Represents a call to an object's method
  */
 public class CallbackError extends Callback {
-  private static final L10N L = new L10N(CallbackError.class);
 
-  private final String _errorString;
+    private static final L10N L = new L10N(CallbackError.class);
+    private final String _errorString;
 
-  public CallbackError(String errorString)
-  {
-    _errorString = errorString;
-  }
+    public CallbackError(String errorString) {
+	_errorString = errorString;
+    }
 
-  @Override
-  public Value call(Env env, Value []args)
-  {
-    return NullValue.NULL;
-  }
+    @Override
+    public Value call(Env env, Value[] args) {
+	return NullValue.NULL;
+    }
 
-  @Override
-  public boolean isValid(Env env)
-  {
-    return false;
-  }
-  
-  @Override
-  public boolean isInternal(Env env)
-  {
-    return false;
-  }
-  
-  @Override
-  public String getCallbackName()
-  {
-    return _errorString;
-  }
+    @Override
+    public boolean isValid(Env env) {
+	return false;
+    }
+
+    @Override
+    public boolean isInternal(Env env) {
+	return false;
+    }
+
+    @Override
+    public String getCallbackName() {
+	return _errorString;
+    }
 }

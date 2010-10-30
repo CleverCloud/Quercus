@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.QuercusException;
@@ -35,22 +34,19 @@ import com.caucho.quercus.QuercusException;
  * Parent of PHP exceptions
  */
 public class QuercusValueException extends QuercusException {
-  public QuercusValueException()
-  {
-  }
 
-  public QuercusValueException(String msg)
-  {
-    super(msg);
-  }
+    public QuercusValueException() {
+    }
 
-  public QuercusValueException(Throwable cause)
-  {
-    super(cause);
-  }
+    public QuercusValueException(String msg) {
+	super(msg);
+    }
 
-  public QuercusValueException(String msg, Throwable cause)
-  {
-    super(msg, cause);
-  }
+    public QuercusValueException(Throwable cause) {
+	super(cause);
+    }
+
+    public QuercusValueException(String msg, Throwable cause) {
+	super(msg, cause);
+    }
 }

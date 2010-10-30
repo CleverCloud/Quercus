@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import java.lang.ref.*;
@@ -35,73 +34,71 @@ import com.caucho.util.*;
 /**
  * Cache entry root
  */
-public class UnserializeCacheEntry
-{
-  private FreeList<SoftReference<CopyRoot>> _freeList;
-  private SoftReference<Value> _valueRef;
+public class UnserializeCacheEntry {
 
-  public UnserializeCacheEntry(Value value)
-  {
-    _valueRef = new SoftReference<Value>(value);
-  }
+    private FreeList<SoftReference<CopyRoot>> _freeList;
+    private SoftReference<Value> _valueRef;
 
-  public UnserializeCacheEntry(Env env, Value value)
-  {
-    CopyRoot root = new CopyRoot(this);
-
-    value = value.copyTree(env, root);
-    
-    _valueRef = new SoftReference<Value>(value);
-  }
-
-  public Value getValue(Env env)
-  {
-    SoftReference<CopyRoot> copyRef = null;
-
-    if (_freeList != null)
-      copyRef = _freeList.allocate();
-
-    if (copyRef != null) {
-      CopyRoot copy = copyRef.get();
-
-      if (copy != null) {
-        copy.allocate(env);
-
-        return copy.getRoot();
-      }
+    public UnserializeCacheEntry(Value value) {
+	_valueRef = new SoftReference<Value>(value);
     }
 
-    Value value = null;
+    public UnserializeCacheEntry(Env env, Value value) {
+	CopyRoot root = new CopyRoot(this);
 
-    if (_valueRef != null)
-      value = _valueRef.get();
+	value = value.copyTree(env, root);
 
-    if (value != null) {
-      CopyRoot root = new CopyRoot(this);
-
-      root.allocate(env);
-      
-      Value copy = value.copyTree(env, root);
-
-      root.setRoot(copy);
-
-      return copy;
+	_valueRef = new SoftReference<Value>(value);
     }
-    else
-      return null;
-  }
 
-  public void clear()
-  {
-    _valueRef = null;
-    _freeList = null;
-  }
+    public Value getValue(Env env) {
+	SoftReference<CopyRoot> copyRef = null;
 
-  void free(CopyRoot root)
-  {
-    if (_freeList == null)
-      _freeList = new FreeList<SoftReference<CopyRoot>>(2);
-    
-    _freeList.free(new SoftReference<CopyRoot>(root));
-  }
+	if (_freeList != null) {
+	    copyRef = _freeList.allocate();
+	}
+
+	if (copyRef != null) {
+	    CopyRoot copy = copyRef.get();
+
+	    if (copy != null) {
+		copy.allocate(env);
+
+		return copy.getRoot();
+	    }
+	}
+
+	Value value = null;
+
+	if (_valueRef != null) {
+	    value = _valueRef.get();
+	}
+
+	if (value != null) {
+	    CopyRoot root = new CopyRoot(this);
+
+	    root.allocate(env);
+
+	    Value copy = value.copyTree(env, root);
+
+	    root.setRoot(copy);
+
+	    return copy;
+	} else {
+	    return null;
+	}
+    }
+
+    public void clear() {
+	_valueRef = null;
+	_freeList = null;
+    }
+
+    void free(CopyRoot root) {
+	if (_freeList == null) {
+	    _freeList = new FreeList<SoftReference<CopyRoot>>(2);
+	}
+
+	_freeList.free(new SoftReference<CopyRoot>(root));
+    }
 }

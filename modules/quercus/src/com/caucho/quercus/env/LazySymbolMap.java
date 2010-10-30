@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.java.LineMap;
@@ -47,67 +46,60 @@ import java.util.logging.Logger;
 /**
  * Represents the Quercus environment.
  */
-public class LazySymbolMap extends AbstractMap<StringValue,EnvVar> {
-  private final IntMap _intMap;
-  private final Value []_values;
+public class LazySymbolMap extends AbstractMap<StringValue, EnvVar> {
 
-  private HashMap<StringValue, EnvVar> _extMap
-    = new HashMap<StringValue, EnvVar>();
+    private final IntMap _intMap;
+    private final Value[] _values;
+    private HashMap<StringValue, EnvVar> _extMap = new HashMap<StringValue, EnvVar>();
 
-  public LazySymbolMap(IntMap intMap, Value []values)
-  {
-    _intMap = intMap;
-    _values = values;
-  }
-
-  /**
-   * Returns the matching value, or null.
-   */
-  public EnvVar get(Object key)
-  {
-    return (EnvVar) get((StringValue) key);
-  }
-
-  /**
-   * Returns the matching value, or null.
-   */
-  public EnvVar get(StringValue key)
-  {
-    EnvVar envVar = _extMap.get(key);
-
-    if (envVar == null) {
-      int id = _intMap.get(key);
-
-      if (id >= 0 && _values[id] != null) {
-        Var var = new Var();
-        // var.setGlobal();
-        
-        envVar = new EnvVarImpl(var);
-        _extMap.put(key, envVar);
-          
-        Env env = Env.getCurrent();
-        
-        Value value = _values[id].copy(env);
-
-        envVar.set(value);
-      }
+    public LazySymbolMap(IntMap intMap, Value[] values) {
+	_intMap = intMap;
+	_values = values;
     }
-    
-    return envVar;
-  }
 
-  /**
-   * Returns the matching value, or null.
-   */
-  @Override
-  public EnvVar put(StringValue key, EnvVar newVar)
-  {
-    return _extMap.put(key, newVar);
-  }
+    /**
+     * Returns the matching value, or null.
+     */
+    public EnvVar get(Object key) {
+	return (EnvVar) get((StringValue) key);
+    }
 
-  public Set<Map.Entry<StringValue,EnvVar>> entrySet()
-  {
-    return _extMap.entrySet();
-  }
+    /**
+     * Returns the matching value, or null.
+     */
+    public EnvVar get(StringValue key) {
+	EnvVar envVar = _extMap.get(key);
+
+	if (envVar == null) {
+	    int id = _intMap.get(key);
+
+	    if (id >= 0 && _values[id] != null) {
+		Var var = new Var();
+		// var.setGlobal();
+
+		envVar = new EnvVarImpl(var);
+		_extMap.put(key, envVar);
+
+		Env env = Env.getCurrent();
+
+		Value value = _values[id].copy(env);
+
+		envVar.set(value);
+	    }
+	}
+
+	return envVar;
+    }
+
+    /**
+     * Returns the matching value, or null.
+     */
+    @Override
+    public EnvVar put(StringValue key, EnvVar newVar) {
+	return _extMap.put(key, newVar);
+    }
+
+    public Set<Map.Entry<StringValue, EnvVar>> entrySet() {
+	return _extMap.entrySet();
+    }
 }
-

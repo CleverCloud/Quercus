@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.marshal.Marshal;
@@ -40,82 +39,73 @@ import java.util.IdentityHashMap;
  * Represents a PHP long value.
  */
 @SuppressWarnings("serial")
-public class LongCacheValue extends LongValue
-{
-  private transient LongValue _prev;
-  private transient final LongValue _next;
-  
-  public LongCacheValue(long value, LongValue next)
-  {
-    super(value);
-    
-    _next = next;
-  }
-  
-  void setPrev(LongValue prev)
-  {
-    _prev = prev;
-  }
+public class LongCacheValue extends LongValue {
 
-  /**
-   * Returns the next integer
-   */
-  @Override
-  public Value addOne()
-  {
-    return _next;
-  }
+    private transient LongValue _prev;
+    private transient final LongValue _next;
 
-  /**
-   * Returns the previous integer
-   */
-  @Override
-  public Value subOne()
-  {
-    return _prev;
-  }
+    public LongCacheValue(long value, LongValue next) {
+	super(value);
 
-  /**
-   * Pre-increment the following value.
-   */
-  @Override
-  public Value preincr()
-  {
-    return _next;
-  }
+	_next = next;
+    }
 
-  /**
-   * Pre-increment the following value.
-   */
-  @Override
-  public Value predecr()
-  {
-    return _prev;
-  }
+    void setPrev(LongValue prev) {
+	_prev = prev;
+    }
 
-  /**
-   * Post-increment the following value.
-   */
-  @Override
-  public Value postincr()
-  {
-    return _next;
-  }
+    /**
+     * Returns the next integer
+     */
+    @Override
+    public Value addOne() {
+	return _next;
+    }
 
-  /**
-   * Post-decrement the following value.
-   */
-  @Override
-  public Value postdecr()
-  {
-    return _prev;
-  }
+    /**
+     * Returns the previous integer
+     */
+    @Override
+    public Value subOne() {
+	return _prev;
+    }
 
-  /**
-   * serialization override
-   */
-  private Object writeReplace()
-  {
-    return new LongValue(toLong());
-  }
+    /**
+     * Pre-increment the following value.
+     */
+    @Override
+    public Value preincr() {
+	return _next;
+    }
+
+    /**
+     * Pre-increment the following value.
+     */
+    @Override
+    public Value predecr() {
+	return _prev;
+    }
+
+    /**
+     * Post-increment the following value.
+     */
+    @Override
+    public Value postincr() {
+	return _next;
+    }
+
+    /**
+     * Post-decrement the following value.
+     */
+    @Override
+    public Value postdecr() {
+	return _prev;
+    }
+
+    /**
+     * serialization override
+     */
+    private Object writeReplace() {
+	return new LongValue(toLong());
+    }
 }

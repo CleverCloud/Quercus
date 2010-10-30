@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.expr.Expr;
@@ -45,477 +44,454 @@ import java.util.Set;
  * Represents a compiled object value.
  */
 public class CompiledObjectValue extends ObjectValue
-  implements Serializable
-{
-  private static final StringValue TO_STRING
-    = new UnicodeValueImpl("__toString");
-  private static final Value []NULL_FIELDS = new Value[0];
+	implements Serializable {
 
-  public Value []_fields;
+    private static final StringValue TO_STRING = new UnicodeValueImpl("__toString");
+    private static final Value[] NULL_FIELDS = new Value[0];
+    public Value[] _fields;
+    private ObjectExtValue _object;
 
-  private ObjectExtValue _object;
+    public CompiledObjectValue(QuercusClass cl) {
+	super(cl);
 
-  public CompiledObjectValue(QuercusClass cl)
-  {
-    super(cl);
-
-    int size = cl.getFieldSize();
-    if (size != 0)
-      _fields = new Value[cl.getFieldSize()];
-    else
-      _fields = NULL_FIELDS;
-  }
-
-  /**
-   * Returns the number of entries.
-   */
-  @Override
-  public int getSize()
-  {
-    int size = 0;
-
-    for (int i = 0; i < _fields.length; i++) {
-      if (_fields[i] != UnsetValue.UNSET)
-        size++;
+	int size = cl.getFieldSize();
+	if (size != 0) {
+	    _fields = new Value[cl.getFieldSize()];
+	} else {
+	    _fields = NULL_FIELDS;
+	}
     }
 
-    if (_object != null)
-      size += _object.getSize();
+    /**
+     * Returns the number of entries.
+     */
+    @Override
+    public int getSize() {
+	int size = 0;
 
-    return size;
-  }
+	for (int i = 0; i < _fields.length; i++) {
+	    if (_fields[i] != UnsetValue.UNSET) {
+		size++;
+	    }
+	}
 
-  /**
-   * Gets a new value.
-   */
-  @Override
-  public Value getField(Env env, StringValue key)
-  {
-    if (_fields.length > 0) {
-      int index = _quercusClass.findFieldIndex(key);
+	if (_object != null) {
+	    size += _object.getSize();
+	}
 
-      if (index >= 0)
-        return _fields[index].toValue();
-    }
-    
-    if (_object != null) {
-      return _object.getField(env, key);
-    }
-    else
-      return UnsetValue.UNSET;
-  }
-
-  /**
-   * Returns the array ref.
-   */
-  @Override
-  public Var getFieldVar(Env env, StringValue key)
-  {
-    if (_fields.length > 0) {
-      int index = _quercusClass.findFieldIndex(key);
-
-      if (index >= 0) {
-        Var var = _fields[index].toLocalVarDeclAsRef();
-
-        _fields[index] = var;
-
-        return var;
-      }
+	return size;
     }
 
-    if (_object == null)
-      _object = new ObjectExtValue(_quercusClass);
-    
-    return _object.getFieldVar(env, key);
-  }
+    /**
+     * Gets a new value.
+     */
+    @Override
+    public Value getField(Env env, StringValue key) {
+	if (_fields.length > 0) {
+	    int index = _quercusClass.findFieldIndex(key);
 
-  /**
-   * Returns the value as an argument which may be a reference.
-   */
-  @Override
-  public Value getFieldArg(Env env, StringValue key, boolean isTop)
-  {
-    if (_fields.length > 0) {
-      int index = _quercusClass.findFieldIndex(key);
+	    if (index >= 0) {
+		return _fields[index].toValue();
+	    }
+	}
 
-      if (index >= 0) {
-        Var var = _fields[index].toLocalVarDeclAsRef();
-
-        _fields[index] = var;
-
-        return var;
-      }
+	if (_object != null) {
+	    return _object.getField(env, key);
+	} else {
+	    return UnsetValue.UNSET;
+	}
     }
 
-    if (_object == null)
-      _object = new ObjectExtValue(_quercusClass);
-    
-    return _object.getFieldArg(env, key, isTop);
-  }
+    /**
+     * Returns the array ref.
+     */
+    @Override
+    public Var getFieldVar(Env env, StringValue key) {
+	if (_fields.length > 0) {
+	    int index = _quercusClass.findFieldIndex(key);
 
-  /**
-   * Returns the value as an argument which may be a reference.
-   */
-  @Override
-  public Value getFieldArgRef(Env env, StringValue key)
-  {
-    if (_fields.length > 0) {
-      int index = _quercusClass.findFieldIndex(key);
+	    if (index >= 0) {
+		Var var = _fields[index].toLocalVarDeclAsRef();
 
-      if (index >= 0) {
-        Var var = _fields[index].toLocalVarDeclAsRef();
+		_fields[index] = var;
 
-        _fields[index] = var;
+		return var;
+	    }
+	}
 
-        return var;
-      }
+	if (_object == null) {
+	    _object = new ObjectExtValue(_quercusClass);
+	}
+
+	return _object.getFieldVar(env, key);
     }
 
-    if (_object == null)
-      _object = new ObjectExtValue(_quercusClass);
-    
-    return _object.getFieldArgRef(env, key);
-  }
+    /**
+     * Returns the value as an argument which may be a reference.
+     */
+    @Override
+    public Value getFieldArg(Env env, StringValue key, boolean isTop) {
+	if (_fields.length > 0) {
+	    int index = _quercusClass.findFieldIndex(key);
 
-  /**
-   * Returns field as an array.
-   */
-  @Override
-  public Value getFieldArray(Env env, StringValue key)
-  {
-    if (_fields.length > 0) {
-      int index = _quercusClass.findFieldIndex(key);
+	    if (index >= 0) {
+		Var var = _fields[index].toLocalVarDeclAsRef();
 
-      if (index >= 0) {
-        _fields[index] = _fields[index].toAutoArray();
+		_fields[index] = var;
 
-        return _fields[index];
-      }
+		return var;
+	    }
+	}
+
+	if (_object == null) {
+	    _object = new ObjectExtValue(_quercusClass);
+	}
+
+	return _object.getFieldArg(env, key, isTop);
     }
 
-    if (_object == null)
-      _object = new ObjectExtValue(_quercusClass);
-    
-    return _object.getFieldArray(env, key);
-  }
+    /**
+     * Returns the value as an argument which may be a reference.
+     */
+    @Override
+    public Value getFieldArgRef(Env env, StringValue key) {
+	if (_fields.length > 0) {
+	    int index = _quercusClass.findFieldIndex(key);
 
-  /**
-   * Returns field as an object.
-   */
-  @Override
-  public Value getFieldObject(Env env, StringValue key)
-  {
-    if (_fields.length > 0) {
-      int index = _quercusClass.findFieldIndex(key);
+	    if (index >= 0) {
+		Var var = _fields[index].toLocalVarDeclAsRef();
 
-      if (index >= 0) {
-        _fields[index] = _fields[index].toAutoObject(env);
+		_fields[index] = var;
 
-        return _fields[index];
-      }
+		return var;
+	    }
+	}
+
+	if (_object == null) {
+	    _object = new ObjectExtValue(_quercusClass);
+	}
+
+	return _object.getFieldArgRef(env, key);
     }
 
-    if (_object == null)
-      _object = new ObjectExtValue(_quercusClass);
-    
-    return _object.getFieldObject(env, key);
-  }
+    /**
+     * Returns field as an array.
+     */
+    @Override
+    public Value getFieldArray(Env env, StringValue key) {
+	if (_fields.length > 0) {
+	    int index = _quercusClass.findFieldIndex(key);
 
-  /**
-   * Adds a new value.
-   */
-  @Override
-  public Value putField(Env env, StringValue key, Value value)
-  {
-    if (_fields.length > 0) {
-      int index = _quercusClass.findFieldIndex(key);
+	    if (index >= 0) {
+		_fields[index] = _fields[index].toAutoArray();
 
-      if (index >= 0) {
-        _fields[index] = _fields[index].set(value);
+		return _fields[index];
+	    }
+	}
 
-        return value;
-      }
+	if (_object == null) {
+	    _object = new ObjectExtValue(_quercusClass);
+	}
+
+	return _object.getFieldArray(env, key);
     }
-    
-    if (_object == null)
-      _object = new ObjectExtValue(_quercusClass);
 
-    return _object.putField(env, key, value);
-  }
+    /**
+     * Returns field as an object.
+     */
+    @Override
+    public Value getFieldObject(Env env, StringValue key) {
+	if (_fields.length > 0) {
+	    int index = _quercusClass.findFieldIndex(key);
 
-  /**
-   * Removes a value.
-   */
-  @Override
-  public void unsetField(StringValue key)
-  {
-    if (_fields.length > 0) {
-      int index = _quercusClass.findFieldIndex(key);
+	    if (index >= 0) {
+		_fields[index] = _fields[index].toAutoObject(env);
 
-      if (index >= 0) {
-        _fields[index] = UnsetValue.UNSET;
+		return _fields[index];
+	    }
+	}
 
-        return;
-      }
+	if (_object == null) {
+	    _object = new ObjectExtValue(_quercusClass);
+	}
+
+	return _object.getFieldObject(env, key);
     }
-    
-    if (_object != null)
-      _object.unsetField(key);
-  }
 
-  /**
-   * Finds the method name.
-   */
-  @Override
-  public AbstractFunction findFunction(String methodName)
-  {
-    return _quercusClass.findFunction(methodName);
-  }
+    /**
+     * Adds a new value.
+     */
+    @Override
+    public Value putField(Env env, StringValue key, Value value) {
+	if (_fields.length > 0) {
+	    int index = _quercusClass.findFieldIndex(key);
 
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethod(Env env, String methodName, Value []args)
-  {
+	    if (index >= 0) {
+		_fields[index] = _fields[index].set(value);
+
+		return value;
+	    }
+	}
+
+	if (_object == null) {
+	    _object = new ObjectExtValue(_quercusClass);
+	}
+
+	return _object.putField(env, key, value);
+    }
+
+    /**
+     * Removes a value.
+     */
+    @Override
+    public void unsetField(StringValue key) {
+	if (_fields.length > 0) {
+	    int index = _quercusClass.findFieldIndex(key);
+
+	    if (index >= 0) {
+		_fields[index] = UnsetValue.UNSET;
+
+		return;
+	    }
+	}
+
+	if (_object != null) {
+	    _object.unsetField(key);
+	}
+    }
+
+    /**
+     * Finds the method name.
+     */
+    @Override
+    public AbstractFunction findFunction(String methodName) {
+	return _quercusClass.findFunction(methodName);
+    }
+
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethod(Env env, String methodName, Value []args)
+    {
     AbstractFunction fun = _quercusClass.findFunction(methodName);
 
     if (fun != null)
-      return fun.callMethod(env, this, args);
+    return fun.callMethod(env, this, args);
     else
-      return env.error(L.l("Call to undefined method {0}::{1}()",
-                           _quercusClass.getName(), methodName));
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethod(Env env, String methodName)
-  {
+    return env.error(L.l("Call to undefined method {0}::{1}()",
+    _quercusClass.getName(), methodName));
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethod(Env env, String methodName)
+    {
     return _quercusClass.getFunction(methodName).callMethod(env, this);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethod(Env env, String methodName, Value a0)
-  {
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethod(Env env, String methodName, Value a0)
+    {
     return _quercusClass.getFunction(methodName).callMethod(env, this, a0);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethod(Env env, String methodName,
-                          Value a0, Value a1)
-  {
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethod(Env env, String methodName,
+    Value a0, Value a1)
+    {
     return _quercusClass.getFunction(methodName).callMethod(env, this, a0, a1);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethod(Env env, String methodName,
-                          Value a0, Value a1, Value a2)
-  {
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethod(Env env, String methodName,
+    Value a0, Value a1, Value a2)
+    {
     return _quercusClass.getFunction(methodName).callMethod(env, this,
-                                                            a0, a1, a2);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethod(Env env, String methodName,
-                          Value a0, Value a1, Value a2, Value a3)
-  {
+    a0, a1, a2);
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethod(Env env, String methodName,
+    Value a0, Value a1, Value a2, Value a3)
+    {
     return _quercusClass.getFunction(methodName).callMethod(env, this,
-                                                            a0, a1, a2, a3);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethod(Env env, String methodName,
-                          Value a0, Value a1, Value a2, Value a3, Value a4)
-  {
+    a0, a1, a2, a3);
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethod(Env env, String methodName,
+    Value a0, Value a1, Value a2, Value a3, Value a4)
+    {
     return _quercusClass.getFunction(methodName).callMethod(env, this,
-                                                            a0, a1, a2, a3, a4);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethodRef(Env env, String methodName, Expr []args)
-  {
+    a0, a1, a2, a3, a4);
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethodRef(Env env, String methodName, Expr []args)
+    {
     return _quercusClass.getFunction(methodName).callMethodRef(env, this, args);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethodRef(Env env, String methodName, Value []args)
-  {
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethodRef(Env env, String methodName, Value []args)
+    {
     return _quercusClass.getFunction(methodName).callMethodRef(env, this, args);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethodRef(Env env, String methodName)
-  {
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethodRef(Env env, String methodName)
+    {
     return _quercusClass.getFunction(methodName).callMethodRef(env, this);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethodRef(Env env, String methodName, Value a0)
-  {
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethodRef(Env env, String methodName, Value a0)
+    {
     return _quercusClass.getFunction(methodName).callMethodRef(env, this, a0);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethodRef(Env env, String methodName,
-                             Value a0, Value a1)
-  {
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethodRef(Env env, String methodName,
+    Value a0, Value a1)
+    {
     return _quercusClass.getFunction(methodName).callMethodRef(
-      env, this, a0, a1);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethodRef(Env env, String methodName,
-                             Value a0, Value a1, Value a2)
-  {
+    env, this, a0, a1);
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethodRef(Env env, String methodName,
+    Value a0, Value a1, Value a2)
+    {
     return _quercusClass.getFunction(methodName).callMethodRef(env, this,
-                                                     a0, a1, a2);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethodRef(Env env, String methodName,
-                             Value a0, Value a1, Value a2, Value a3)
-  {
+    a0, a1, a2);
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethodRef(Env env, String methodName,
+    Value a0, Value a1, Value a2, Value a3)
+    {
     return _quercusClass.getFunction(methodName).callMethodRef(env, this,
-                                                     a0, a1, a2, a3);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  public Value callMethodRef(Env env, String methodName,
-                             Value a0, Value a1, Value a2, Value a3, Value a4)
-  {
+    a0, a1, a2, a3);
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    public Value callMethodRef(Env env, String methodName,
+    Value a0, Value a1, Value a2, Value a3, Value a4)
+    {
     return _quercusClass.getFunction(methodName).callMethodRef(env, this,
-                                                     a0, a1, a2, a3, a4);
-  }
-  */
-
-  /**
-   * Evaluates a method.
-   */
-  /*
-  @Override
-  public Value callClassMethod(Env env, AbstractFunction fun, Value []args)
-  {
+    a0, a1, a2, a3, a4);
+    }
+     */
+    /**
+     * Evaluates a method.
+     */
+    /*
+    @Override
+    public Value callClassMethod(Env env, AbstractFunction fun, Value []args)
+    {
     Value oldThis = env.getThis();
 
     try {
-      env.setThis(this);
+    env.setThis(this);
 
-      return fun.call(env, args);
+    return fun.call(env, args);
     } finally {
-      env.setThis(oldThis);
+    env.setThis(oldThis);
     }
-  }
-  */
+    }
+     */
+    /**
+     * Returns the value for the variable, creating an object if the var
+     * is unset.
+     */
+    @Override
+    public Value getObject(Env env) {
+	return this;
+    }
 
-  /**
-   * Returns the value for the variable, creating an object if the var
-   * is unset.
-   */
-  @Override
-  public Value getObject(Env env)
-  {
-    return this;
-  }
+    /**
+     * Copy for assignment.
+     */
+    @Override
+    public Value copy() {
+	return this;
+    }
 
-  /**
-   * Copy for assignment.
-   */
-  @Override
-  public Value copy()
-  {
-    return this;
-  }
+    /**
+     * Copy for serialization
+     */
+    @Override
+    public Value copy(Env env, IdentityHashMap<Value, Value> map) {
+	Value oldValue = map.get(this);
 
-  /**
-   * Copy for serialization
-   */
-  @Override
-  public Value copy(Env env, IdentityHashMap<Value,Value> map)
-  {
-    Value oldValue = map.get(this);
+	if (oldValue != null) {
+	    return oldValue;
+	}
 
-    if (oldValue != null)
-      return oldValue;
+	// TODO:
+	// return new ObjectExtValue(env, map, _cl, getArray());
 
-    // TODO:
-    // return new ObjectExtValue(env, map, _cl, getArray());
+	return this;
+    }
 
-    return this;
-  }
+    /**
+     * Clone the object
+     */
+    @Override
+    public Value clone(Env env) {
+	throw new UnsupportedOperationException();
+    }
 
-  /**
-   * Clone the object
-   */
-  @Override
-  public Value clone(Env env)
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  // TODO: need to check the other copy, e.g. for sessions
-
-  /**
-   * Serializes the value.
-   */
-  /*
-  @Override
-  public void serialize(Env env, StringBuilder sb, SerializeMap map)
-  {
+    // TODO: need to check the other copy, e.g. for sessions
+    /**
+     * Serializes the value.
+     */
+    /*
+    @Override
+    public void serialize(Env env, StringBuilder sb, SerializeMap map)
+    {
     sb.append("O:");
     sb.append(_quercusClass.getName().length());
     sb.append(":\"");
@@ -527,161 +503,147 @@ public class CompiledObjectValue extends ObjectValue
     HashMap<StringValue,ClassField> names = _quercusClass.getClassFields();
     
     if (names != null) {
-      int index = 0;
+    int index = 0;
 
-      for (int i = 0; i < names.size(); i++) {
-        StringValue key = names.get(i);
+    for (int i = 0; i < names.size(); i++) {
+    StringValue key = names.get(i);
 
-        if (_fields[i] == UnsetValue.UNSET)
-          continue;
+    if (_fields[i] == UnsetValue.UNSET)
+    continue;
 
-        sb.append("s:");
-        sb.append(key.length());
-        sb.append(":\"");
-        sb.append(key);
-        sb.append("\";");
+    sb.append("s:");
+    sb.append(key.length());
+    sb.append(":\"");
+    sb.append(key);
+    sb.append("\";");
 
-        _fields[i].serialize(env, sb, map);
-      }
+    _fields[i].serialize(env, sb, map);
+    }
     }
 
     if (_object != null) {
-      for (Map.Entry<Value,Value> mapEntry : _object.sortedEntrySet()) {
-        ObjectExtValue.Entry entry = (ObjectExtValue.Entry) mapEntry;
+    for (Map.Entry<Value,Value> mapEntry : _object.sortedEntrySet()) {
+    ObjectExtValue.Entry entry = (ObjectExtValue.Entry) mapEntry;
 
-        StringValue key = entry.getKey().toStringValue();
+    StringValue key = entry.getKey().toStringValue();
 
-        sb.append("s:");
-        sb.append(key.length());
-        sb.append(":\"");
-        sb.append(key);
-        sb.append("\";");
+    sb.append("s:");
+    sb.append(key.length());
+    sb.append(":\"");
+    sb.append(key);
+    sb.append("\";");
 
-        entry.getValue().serialize(env, sb, map);
-      }
+    entry.getValue().serialize(env, sb, map);
+    }
     }
 
     sb.append("}");
-  }
-  */
-
-  /**
-   * Converts to a string.
-   * @param env
-   */
-  /*
-  @Override
-  public StringValue toString(Env env)
-  {
+    }
+     */
+    /**
+     * Converts to a string.
+     * @param env
+     */
+    /*
+    @Override
+    public StringValue toString(Env env)
+    {
     AbstractFunction fun = _quercusClass.findFunction("__toString");
 
     if (fun != null)
-      return fun.callMethod(env, this, new Expr[0]).toString(env);
+    return fun.callMethod(env, this, new Expr[0]).toString(env);
     else
-      return env
-      .createUnicodeBuilder().append(_quercusClass.getName()).append("[]");
-  }
-  */
-
-  /**
-   * Converts to a string.
-   * @param env
-   */
-  @Override
-  public void print(Env env)
-  {
-    env.print(toString(env));
-  }
-
-  /**
-   * Converts to an array.
-   */
-  @Override
-  public Value toArray()
-  {
-    ArrayValue array = new ArrayValueImpl();
-
-    for (Map.Entry<Value,Value> entry : entrySet()) {
-      array.put(entry.getKey().toStringValue(), entry.getValue());
+    return env
+    .createUnicodeBuilder().append(_quercusClass.getName()).append("[]");
+    }
+     */
+    /**
+     * Converts to a string.
+     * @param env
+     */
+    @Override
+    public void print(Env env) {
+	env.print(toString(env));
     }
 
-    return array;
-  }
+    /**
+     * Converts to an array.
+     */
+    @Override
+    public Value toArray() {
+	ArrayValue array = new ArrayValueImpl();
 
-  /**
-   * Converts to an object.
-   */
-  @Override
-  public Value toObject(Env env)
-  {
-    return this;
-  }
+	for (Map.Entry<Value, Value> entry : entrySet()) {
+	    array.put(entry.getKey().toStringValue(), entry.getValue());
+	}
 
-  /**
-   * Converts to an object.
-   */
-  @Override
-  public Object toJavaObject()
-  {
-    return this;
-  }
-
-  @Override
-  public Set<? extends Map.Entry<Value,Value>> entrySet()
-  {
-    throw new UnsupportedOperationException();
-    // return new EntrySet();
-  }
-
-  /**
-   * Returns a Set of entries, sorted by key.
-   */
-  public Set<? extends Map.Entry<Value,Value>> sortedEntrySet()
-  {
-    throw new UnsupportedOperationException();
-    //return new TreeSet<Map.Entry<String, Value>>(entrySet());
-  }
-
-  @Override
-  public String toString()
-  {
-    return "CompiledObjectValue@" + System.identityHashCode(this)
-           + "[" + _quercusClass.getName() + "]";
-  }
-
-  //
-  // Java Serialization
-  //
-
-  private void writeObject(ObjectOutputStream out)
-    throws IOException
-  { 
-    out.writeObject(_fields);
-    out.writeObject(_object);
-    out.writeObject(_quercusClass.getName());
-  }
-  
-  private void readObject(ObjectInputStream in)
-    throws ClassNotFoundException, IOException
-  { 
-    _fields = (Value []) in.readObject();
-    _object = (ObjectExtValue) in.readObject();
-    
-    Env env = Env.getInstance();
-    String name = (String) in.readObject();
-
-    QuercusClass cl = env.findClass(name);
-
-    if (cl != null) {
-      setQuercusClass(cl);
+	return array;
     }
-    else {
-      cl = env.getQuercus().getStdClass();
-      
-      setQuercusClass(cl);
-      
-      setIncompleteObjectName(name);
+
+    /**
+     * Converts to an object.
+     */
+    @Override
+    public Value toObject(Env env) {
+	return this;
     }
-  }
+
+    /**
+     * Converts to an object.
+     */
+    @Override
+    public Object toJavaObject() {
+	return this;
+    }
+
+    @Override
+    public Set<? extends Map.Entry<Value, Value>> entrySet() {
+	throw new UnsupportedOperationException();
+	// return new EntrySet();
+    }
+
+    /**
+     * Returns a Set of entries, sorted by key.
+     */
+    public Set<? extends Map.Entry<Value, Value>> sortedEntrySet() {
+	throw new UnsupportedOperationException();
+	//return new TreeSet<Map.Entry<String, Value>>(entrySet());
+    }
+
+    @Override
+    public String toString() {
+	return "CompiledObjectValue@" + System.identityHashCode(this)
+		+ "[" + _quercusClass.getName() + "]";
+    }
+
+    //
+    // Java Serialization
+    //
+    private void writeObject(ObjectOutputStream out)
+	    throws IOException {
+	out.writeObject(_fields);
+	out.writeObject(_object);
+	out.writeObject(_quercusClass.getName());
+    }
+
+    private void readObject(ObjectInputStream in)
+	    throws ClassNotFoundException, IOException {
+	_fields = (Value[]) in.readObject();
+	_object = (ObjectExtValue) in.readObject();
+
+	Env env = Env.getInstance();
+	String name = (String) in.readObject();
+
+	QuercusClass cl = env.findClass(name);
+
+	if (cl != null) {
+	    setQuercusClass(cl);
+	} else {
+	    cl = env.getQuercus().getStdClass();
+
+	    setQuercusClass(cl);
+
+	    setIncompleteObjectName(name);
+	}
+    }
 }
-

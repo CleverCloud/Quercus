@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.vfs.Path;
@@ -37,37 +36,36 @@ import java.net.URL;
  * Internal call to autoload an internally defined PHP, e.g. for the SPL
  * library.
  */
-public class InternalAutoloadCallback
-{
-  private final String _prefix;
+public class InternalAutoloadCallback {
 
-  public InternalAutoloadCallback(String prefix)
-  {
-    if (! prefix.endsWith("/"))
-      prefix = prefix + "/";
+    private final String _prefix;
 
-    _prefix = prefix;
-  }
+    public InternalAutoloadCallback(String prefix) {
+	if (!prefix.endsWith("/")) {
+	    prefix = prefix + "/";
+	}
 
-  /**
-   * Evaluates the callback with 1 arguments.
-   *
-   * @param env the calling environment
-   */
-  public QuercusClass loadClass(Env env, String name)
-  {
-    ClassLoader loader = Thread.currentThread().getContextClassLoader();
+	_prefix = prefix;
+    }
 
-    URL url = loader.getResource(_prefix + name + ".php");
+    /**
+     * Evaluates the callback with 1 arguments.
+     *
+     * @param env the calling environment
+     */
+    public QuercusClass loadClass(Env env, String name) {
+	ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-    if (url == null)
-      return null;
+	URL url = loader.getResource(_prefix + name + ".php");
 
-    Path path = env.getPwd().lookup(url.toString());
+	if (url == null) {
+	    return null;
+	}
 
-    env.executePage(path);
-    
-    return env.findClass(name, false, false);
-  }
+	Path path = env.getPwd().lookup(url.toString());
+
+	env.executePage(path);
+
+	return env.findClass(name, false, false);
+    }
 }
-

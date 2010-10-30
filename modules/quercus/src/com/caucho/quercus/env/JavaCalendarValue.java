@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.program.JavaClassDef;
@@ -38,37 +37,32 @@ import java.util.logging.Logger;
  * Represents a Quercus java Calendar value.
  */
 public class JavaCalendarValue extends JavaValue {
-  private static final Logger log
-    = Logger.getLogger(JavaCalendarValue.class.getName());
-  
-  private final Calendar _calendar;
-  
-  public JavaCalendarValue(Env env, Calendar calendar, JavaClassDef def)
-  {
-    super(env, calendar, def);
-    _calendar = calendar;
-  }
 
-  /**
-   * Converts to a long.
-   */
-  @Override
-  public long toLong()
-  {
-    return _calendar.getTimeInMillis();
-  }
-  
-  /**
-   * Converts to a Java Calendar.
-   */
-  @Override
-  public Calendar toJavaCalendar()
-  {
-    return _calendar;
-  }
-  
-  public String toString()
-  {
-    return _calendar.getTime().toString();
-  }
+    private static final Logger log = Logger.getLogger(JavaCalendarValue.class.getName());
+    private final Calendar _calendar;
+
+    public JavaCalendarValue(Env env, Calendar calendar, JavaClassDef def) {
+	super(env, calendar, def);
+	_calendar = calendar;
+    }
+
+    /**
+     * Converts to a long.
+     */
+    @Override
+    public long toLong() {
+	return _calendar.getTimeInMillis();
+    }
+
+    /**
+     * Converts to a Java Calendar.
+     */
+    @Override
+    public Calendar toJavaCalendar() {
+	return _calendar;
+    }
+
+    public String toString() {
+	return _calendar.getTime().toString();
+    }
 }

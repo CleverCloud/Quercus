@@ -26,57 +26,51 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 /**
  * Encapsulates an environment entry for a variable.  The EnvVar is a
  * container for Vars.
  */
-public final class EnvVarImpl extends EnvVar
-{
-  private Var _var;
+public final class EnvVarImpl extends EnvVar {
 
-  public EnvVarImpl(Var var)
-  {
-    if (var == null)
-      throw new NullPointerException();
-    
-    _var = var;
-  }
-  
-  /**
-   * Returns the current value.
-   */
-  public Value get()
-  {
-    return _var.toValue();
-  }
+    private Var _var;
 
-  /**
-   * Sets the current value.
-   */
-  public Value set(Value value)
-  {
-    return _var.set(value);
-  }
+    public EnvVarImpl(Var var) {
+	if (var == null) {
+	    throw new NullPointerException();
+	}
 
-  /**
-   * Returns the current Var.
-   */
-  public Var getVar()
-  {
-    return _var;
-  }
+	_var = var;
+    }
 
-  /**
-   * Sets the var.
-   */
-  public Var setVar(Var var)
-  {
-    _var = var;
+    /**
+     * Returns the current value.
+     */
+    public Value get() {
+	return _var.toValue();
+    }
 
-    return var;
-  }
+    /**
+     * Sets the current value.
+     */
+    public Value set(Value value) {
+	return _var.set(value);
+    }
+
+    /**
+     * Returns the current Var.
+     */
+    public Var getVar() {
+	return _var;
+    }
+
+    /**
+     * Sets the var.
+     */
+    public Var setVar(Var var) {
+	_var = var;
+
+	return var;
+    }
 }
-

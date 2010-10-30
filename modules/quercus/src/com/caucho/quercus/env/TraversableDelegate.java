@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.env;
 
 import java.util.Map;
@@ -36,19 +35,19 @@ import java.util.Iterator;
  * A delegate that performs Iterator operations for Quercus objects.
  */
 public interface TraversableDelegate {
-  /**
-   * Returns an iterator over the object's &lt;key,value> entries. 
-   */
-  public Iterator<Map.Entry<Value, Value>>
-    getIterator(Env env, ObjectValue qThis);
-  
-  /**
-   * Returns an iterator over the object's keys
-   */
-  public Iterator<Value> getKeyIterator(Env env, ObjectValue qThis);
 
-  /**
-   * Returns an iterator over the object's values.
-   */
-  public Iterator<Value> getValueIterator(Env env, ObjectValue qThis);
+    /**
+     * Returns an iterator over the object's &lt;key,value> entries.
+     */
+    public Iterator<Map.Entry<Value, Value>> getIterator(Env env, ObjectValue qThis);
+
+    /**
+     * Returns an iterator over the object's keys
+     */
+    public Iterator<Value> getKeyIterator(Env env, ObjectValue qThis);
+
+    /**
+     * Returns an iterator over the object's values.
+     */
+    public Iterator<Value> getValueIterator(Env env, ObjectValue qThis);
 }

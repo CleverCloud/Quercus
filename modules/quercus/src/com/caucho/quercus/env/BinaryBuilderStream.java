@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.vfs.*;
@@ -37,39 +36,35 @@ import java.util.Iterator;
 /**
  * Stream for appending to binary builder.
  */
-public class BinaryBuilderStream extends StreamImpl
-{
-  private StringValue _out;
+public class BinaryBuilderStream extends StreamImpl {
 
-  public BinaryBuilderStream(StringValue out)
-  {
-    _out = out;
-  }
+    private StringValue _out;
 
-  public StringValue getString()
-  {
-    return _out;
-  }
-  
-  /**
-   * Returns true if this is a writable stream.
-   */
-  public boolean canWrite()
-  {
-    return true;
-  }
+    public BinaryBuilderStream(StringValue out) {
+	_out = out;
+    }
 
-  /**
-   * Writes a buffer to the underlying stream.
-   *
-   * @param buffer the byte array to write.
-   * @param offset the offset into the byte array.
-   * @param length the number of bytes to write.
-   * @param isEnd true when the write is flushing a close.
-   */
-  public void write(byte []buffer, int offset, int length, boolean isEnd)
-    throws IOException
-  {
-    _out.append(buffer, offset, length);
-  }
+    public StringValue getString() {
+	return _out;
+    }
+
+    /**
+     * Returns true if this is a writable stream.
+     */
+    public boolean canWrite() {
+	return true;
+    }
+
+    /**
+     * Writes a buffer to the underlying stream.
+     *
+     * @param buffer the byte array to write.
+     * @param offset the offset into the byte array.
+     * @param length the number of bytes to write.
+     * @param isEnd true when the write is flushing a close.
+     */
+    public void write(byte[] buffer, int offset, int length, boolean isEnd)
+	    throws IOException {
+	_out.append(buffer, offset, length);
+    }
 }

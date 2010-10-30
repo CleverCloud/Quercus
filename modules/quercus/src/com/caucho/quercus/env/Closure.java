@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.program.Arg;
@@ -36,97 +35,85 @@ import com.caucho.quercus.program.Function;
  * Represents a call to a function.
  */
 public class Closure extends Callback {
-  private static final Value []NULL_ARGS = new Value[0];
-  
-  private static final StringValue INVOKE = MethodIntern.intern("__invoke");
-  
-  private Function _fun;
-  private Value []_args;
 
-  public Closure(Env env, Function fun)
-  {
-    _fun = fun;
-    
-    Arg []args = fun.getClosureUseArgs();
-    if (args != null && args.length > 0) {
-      _args = new Value[args.length];
-      
-      for (int i = 0; i < args.length; i++) {
-        Arg arg = args[i];
-        
-        if (arg.isReference())
-          _args[i] = env.getRef(arg.getName());
-        else
-          _args[i] = env.getValue(arg.getName());
-      }
+    private static final Value[] NULL_ARGS = new Value[0];
+    private static final StringValue INVOKE = MethodIntern.intern("__invoke");
+    private Function _fun;
+    private Value[] _args;
+
+    public Closure(Env env, Function fun) {
+	_fun = fun;
+
+	Arg[] args = fun.getClosureUseArgs();
+	if (args != null && args.length > 0) {
+	    _args = new Value[args.length];
+
+	    for (int i = 0; i < args.length; i++) {
+		Arg arg = args[i];
+
+		if (arg.isReference()) {
+		    _args[i] = env.getRef(arg.getName());
+		} else {
+		    _args[i] = env.getValue(arg.getName());
+		}
+	    }
+	}
     }
-  }
-  
-  public boolean isCallable(Env env, boolean isSyntax)
-  {
-    return true;
-  }
-  
-  @Override
-  public Callable toCallable(Env env)
-  {
-    return this;
-  }
-  
-  @Override
-  public boolean isObject()
-  {
-    return true;    
-  }
-  
-  @Override
-  public String getType()
-  {
-    return "object";
-  }
-  
-  @Override
-  public Value call(Env env, Value []args)
-  {
-    return _fun.callImpl(env, args, false, _fun.getClosureUseArgs(), _args);
-  }
 
-  @Override
-  public String getCallbackName()
-  {
-    return _fun.getName();
-  }
+    public boolean isCallable(Env env, boolean isSyntax) {
+	return true;
+    }
 
-  @Override
-  public boolean isInternal(Env env)
-  {
-    return false;
-  }
+    @Override
+    public Callable toCallable(Env env) {
+	return this;
+    }
 
-  @Override
-  public boolean isValid(Env env)
-  {
-    return true;
-  }
-  
-  //
-  // special methods
-  //
-  
-  @Override
-  public Value callMethod(Env env, 
-                          StringValue methodName, int hash, 
-                          Value []args)
-  {
-    if (methodName == INVOKE || INVOKE.equals(methodName))
-      return call(env, args);
-    else
-      return super.callMethod(env, methodName, hash, args);
-  }
+    @Override
+    public boolean isObject() {
+	return true;
+    }
 
-  public String toString()
-  {
-    return "Closure[" + _fun.getName() + "]";
-  }
+    @Override
+    public String getType() {
+	return "object";
+    }
+
+    @Override
+    public Value call(Env env, Value[] args) {
+	return _fun.callImpl(env, args, false, _fun.getClosureUseArgs(), _args);
+    }
+
+    @Override
+    public String getCallbackName() {
+	return _fun.getName();
+    }
+
+    @Override
+    public boolean isInternal(Env env) {
+	return false;
+    }
+
+    @Override
+    public boolean isValid(Env env) {
+	return true;
+    }
+
+    //
+    // special methods
+    //
+    @Override
+    public Value callMethod(Env env,
+	    StringValue methodName, int hash,
+	    Value[] args) {
+	if (methodName == INVOKE || INVOKE.equals(methodName)) {
+	    return call(env, args);
+	} else {
+	    return super.callMethod(env, methodName, hash, args);
+	}
+    }
+
+    public String toString() {
+	return "Closure[" + _fun.getName() + "]";
+    }
 }
-

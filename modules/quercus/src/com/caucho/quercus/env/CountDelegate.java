@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.env;
 
 import java.util.Map;
@@ -36,8 +35,9 @@ import java.util.Iterator;
  * A delegate that performs the count operations for Quercus objects.
  */
 public interface CountDelegate {
-  /**
-   * Returns the object's count
-   */
-  public int count(ObjectValue qThis);
+
+    /**
+     * Returns the object's count
+     */
+    public int count(ObjectValue qThis);
 }

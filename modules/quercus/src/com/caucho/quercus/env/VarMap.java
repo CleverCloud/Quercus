@@ -26,26 +26,25 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 /**
  * Represents a PHP variable map
  */
-public interface VarMap<K,V> {
-  /**
-   * Sets the value
-   */
-  public void put(K key, V value);
+public interface VarMap<K, V> {
 
-  /**
-   * Gets a value.
-   */
-  public V get(K key);
+    /**
+     * Sets the value
+     */
+    public void put(K key, V value);
 
-  /**
-   * Remove a value.
-   */
-  public V remove(K key);
+    /**
+     * Gets a value.
+     */
+    public V get(K key);
+
+    /**
+     * Remove a value.
+     */
+    public V remove(K key);
 }
-

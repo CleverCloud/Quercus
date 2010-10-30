@@ -26,34 +26,29 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.env;
 
 import java.util.Locale;
 
-public class QuercusLocale
-{
-  private final Locale _locale;
-  private final String _charset;
+public class QuercusLocale {
 
-  public QuercusLocale(Locale locale, String charset)
-  {
-    _locale = locale;
-    _charset = charset;
-  }
+    private final Locale _locale;
+    private final String _charset;
 
-  public Locale getLocale()
-  {
-    return _locale;
-  }
-  
-  public String getCharset()
-  {
-    return _charset;
-  }
-  
-  public String toString()
-  {
-    return _locale.toString();
-  }
+    public QuercusLocale(Locale locale, String charset) {
+	_locale = locale;
+	_charset = charset;
+    }
+
+    public Locale getLocale() {
+	return _locale;
+    }
+
+    public String getCharset() {
+	return _charset;
+    }
+
+    public String toString() {
+	return _locale.toString();
+    }
 }

@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.QuercusRuntimeException;
@@ -42,374 +41,331 @@ import java.util.logging.*;
  * Represents a marshalled Map argument.
  */
 public class JavaMapAdapter
-  extends JavaAdapter
-{
-  private static final Logger log
-    = Logger.getLogger(JavaMapAdapter.class.getName());
-  
-  private Map<Object,Object> _map;
-  
-  private long _nextAvailableIndex;
+	extends JavaAdapter {
 
-  public JavaMapAdapter(Env env, Map map)
-  {
-    this(map, env.getJavaClassDefinition(map.getClass()));
-  }
-  
-  public JavaMapAdapter(Map map, JavaClassDef def)
-  {
-    super(map, def);
-    
-    _map = map;
-    
-    updateNextAvailableIndex();
-  }
+    private static final Logger log = Logger.getLogger(JavaMapAdapter.class.getName());
+    private Map<Object, Object> _map;
+    private long _nextAvailableIndex;
 
-  /**
-   * Clears the array
-   */
-  @Override
-  public void clear()
-  {
-    _map.clear();
-    
-    _nextAvailableIndex = 0;
-  }
-
-  public int size()
-  {
-    return _map.size();
-  }
-
-  /**
-   * Converts to a java object.
-   */
-  @Override
-  public Object toJavaObject(Env env, Class type)
-  {
-    if (type.isAssignableFrom(_map.getClass())) {
-      return _map;
-    }
-    else {
-      env.warning(L.l("Can't assign {0} to {1}",
-              _map.getClass().getName(), type.getName()));
-    
-      return null;
-    }
-  }
-
-  /**
-   * Copy for assignment.
-   */
-  @Override
-  public Value copy()
-  {
-    try {
-      return new JavaMapAdapter(_map, getClassDef());
-    }
-    catch (Exception e) {
-      throw new QuercusRuntimeException(e);
-    }
-  }
-
-  /**
-   * Copy for serialization
-   */
-  @Override
-  public Value copy(Env env, IdentityHashMap<Value,Value> map)
-  {
-    return new JavaMapAdapter(_map, getClassDef());
-  }
-  
-  /**
-   * Returns the size.
-   */
-  @Override
-  public int getSize()
-  {
-    return size();
-  }
-
-  /**
-   * Gets a new value.
-   */
-  @Override
-  public Value get(Value key)
-  {
-    Object obj = _map.get(key.toJavaObject());
-    
-    if (obj != null)
-      return wrapJava(_map.get(key.toJavaObject()));
-    else
-      return UnsetValue.UNSET;
-  }
-  
-  /**
-   * Removes a value.
-   */
-  @Override
-  public Value remove(Value key)
-  {
-    updateNextAvailableIndex();
-
-    if (key.isLongConvertible() || key instanceof BooleanValue) {
-    //if (key instanceof LongValue) {
-      long pos = key.toLong();
-      
-      Object value = _map.remove(Long.valueOf(pos));
-      
-      if (value != null) {
-        if (pos + 1 == _nextAvailableIndex)
-          updateNextAvailableIndex();
-        
-        return wrapJava(value);
-      }
-    }
-    else {
-      Object value = _map.remove(key.toJavaObject());
-      
-      if (value != null)
-        return wrapJava(value);
-    }
-    
-    return UnsetValue.UNSET;
-  }
-  
-  /**
-   * Creatse a tail index.
-   */
-  @Override
-  public Value createTailKey()
-  {
-    updateNextAvailableIndex();
-    return LongValue.create(_nextAvailableIndex);
-  }
-  
-  /**
-   * Adds a new value.
-   */
-  @Override
-  public Value putImpl(Value key, Value value)
-  {
-    Object keyObject;
-    
-    if (key.isLongConvertible() || key instanceof BooleanValue) {
-      keyObject = Long.valueOf(key.toLong());
-    }
-    else {
-      keyObject = key.toJavaObject();
+    public JavaMapAdapter(Env env, Map map) {
+	this(map, env.getJavaClassDefinition(map.getClass()));
     }
 
-    Value val = wrapJava(_map.put(keyObject, value.toJavaObject()));
+    public JavaMapAdapter(Map map, JavaClassDef def) {
+	super(map, def);
 
-    updateNextAvailableIndex(keyObject);
-    
-    return val;
-  }
+	_map = map;
 
-  /**
-   * Returns the corresponding valeu if this array contains the given key
-   *
-   * @param key  the key to search for in the array
-   *
-   * @return the value if it is found in the array, NULL otherwise
-   */
-  public Value containsKey(Value key)
-  {
-    return BooleanValue.create(_map.containsKey(key.toJavaObject()));
-  }
-  
-  @Override
-  public Iterator<Value> getKeyIterator(Env env)
-  {
-    return new KeyIterator();
-  }
-
-  @Override
-  public Iterator<Value> getValueIterator(Env env)
-  {
-    return new ValueIterator();
-  }
-  
-  @Override
-  public Iterator<Map.Entry<Value, Value>> getIterator(Env env)
-  {
-    return new MapIterator();
-  }
-
-  /**
-   * Returns a set of all the of the entries.
-   */
-  @Override
-  public Set<Map.Entry<Value,Value>> entrySet()
-  {
-    return new MapSet();
-  }
-  
-  /**
-   * Returns a collection of the values.
-   */
-  @Override
-  public Set<Map.Entry<Object, Object>> objectEntrySet()
-  {
-    return _map.entrySet();
-  }
-
-  /**
-   * Returns a collection of the values.
-   */
-  @Override
-  public Collection<Value> values()
-  {
-    return new ValueCollection();
-  }
-
-  /**
-   * Updates _nextAvailableIndex on a remove of the highest value
-   */
-  private void updateNextAvailableIndex()
-  {
-    _nextAvailableIndex = 0;
-
-    for (Object key : _map.keySet()) {
-      updateNextAvailableIndex(key);
+	updateNextAvailableIndex();
     }
-  }
-  
-  /**
-   * Updates _nextAvailableIndex.
-   */
-  private void updateNextAvailableIndex(Object objectKey)
-  { 
-    if (objectKey instanceof Long) {
-      long key = ((Long)objectKey).longValue();
-    
-      if (_nextAvailableIndex <= key)
-        _nextAvailableIndex = key + 1;
-    }
-  }
 
-  public class MapSet
-    extends AbstractSet<Map.Entry<Value,Value>>
-  {
-    MapSet()
-    {
+    /**
+     * Clears the array
+     */
+    @Override
+    public void clear() {
+	_map.clear();
+
+	_nextAvailableIndex = 0;
+    }
+
+    public int size() {
+	return _map.size();
+    }
+
+    /**
+     * Converts to a java object.
+     */
+    @Override
+    public Object toJavaObject(Env env, Class type) {
+	if (type.isAssignableFrom(_map.getClass())) {
+	    return _map;
+	} else {
+	    env.warning(L.l("Can't assign {0} to {1}",
+		    _map.getClass().getName(), type.getName()));
+
+	    return null;
+	}
+    }
+
+    /**
+     * Copy for assignment.
+     */
+    @Override
+    public Value copy() {
+	try {
+	    return new JavaMapAdapter(_map, getClassDef());
+	} catch (Exception e) {
+	    throw new QuercusRuntimeException(e);
+	}
+    }
+
+    /**
+     * Copy for serialization
+     */
+    @Override
+    public Value copy(Env env, IdentityHashMap<Value, Value> map) {
+	return new JavaMapAdapter(_map, getClassDef());
+    }
+
+    /**
+     * Returns the size.
+     */
+    @Override
+    public int getSize() {
+	return size();
+    }
+
+    /**
+     * Gets a new value.
+     */
+    @Override
+    public Value get(Value key) {
+	Object obj = _map.get(key.toJavaObject());
+
+	if (obj != null) {
+	    return wrapJava(_map.get(key.toJavaObject()));
+	} else {
+	    return UnsetValue.UNSET;
+	}
+    }
+
+    /**
+     * Removes a value.
+     */
+    @Override
+    public Value remove(Value key) {
+	updateNextAvailableIndex();
+
+	if (key.isLongConvertible() || key instanceof BooleanValue) {
+	    //if (key instanceof LongValue) {
+	    long pos = key.toLong();
+
+	    Object value = _map.remove(Long.valueOf(pos));
+
+	    if (value != null) {
+		if (pos + 1 == _nextAvailableIndex) {
+		    updateNextAvailableIndex();
+		}
+
+		return wrapJava(value);
+	    }
+	} else {
+	    Object value = _map.remove(key.toJavaObject());
+
+	    if (value != null) {
+		return wrapJava(value);
+	    }
+	}
+
+	return UnsetValue.UNSET;
+    }
+
+    /**
+     * Creatse a tail index.
+     */
+    @Override
+    public Value createTailKey() {
+	updateNextAvailableIndex();
+	return LongValue.create(_nextAvailableIndex);
+    }
+
+    /**
+     * Adds a new value.
+     */
+    @Override
+    public Value putImpl(Value key, Value value) {
+	Object keyObject;
+
+	if (key.isLongConvertible() || key instanceof BooleanValue) {
+	    keyObject = Long.valueOf(key.toLong());
+	} else {
+	    keyObject = key.toJavaObject();
+	}
+
+	Value val = wrapJava(_map.put(keyObject, value.toJavaObject()));
+
+	updateNextAvailableIndex(keyObject);
+
+	return val;
+    }
+
+    /**
+     * Returns the corresponding valeu if this array contains the given key
+     *
+     * @param key  the key to search for in the array
+     *
+     * @return the value if it is found in the array, NULL otherwise
+     */
+    public Value containsKey(Value key) {
+	return BooleanValue.create(_map.containsKey(key.toJavaObject()));
     }
 
     @Override
-    public int size()
-    {
-      return getSize();
+    public Iterator<Value> getKeyIterator(Env env) {
+	return new KeyIterator();
     }
 
     @Override
-    public Iterator<Map.Entry<Value,Value>> iterator()
-    {
-      return new MapIterator();
-    }
-  }
-
-  public class MapIterator
-    implements Iterator<Map.Entry<Value,Value>>
-  {
-    private Iterator<Map.Entry<Object,Object>> _iterator;
-
-    public MapIterator()
-    {
-      _iterator = _map.entrySet().iterator();
-    }
-
-    public boolean hasNext()
-    {
-      return _iterator.hasNext();
-    }
-
-    public Map.Entry<Value,Value> next()
-    {
-      Map.Entry entry = _iterator.next();
-      
-      Value key = wrapJava(entry.getKey());
-      Value value = wrapJava(entry.getValue());
-
-      return new ArrayValue.Entry(key, value);
-    }
-
-    public void remove()
-    {
-      throw new UnsupportedOperationException();
-    }
-  }
-
-  public class ValueCollection
-    extends AbstractCollection<Value>
-  {
-    ValueCollection()
-    {
+    public Iterator<Value> getValueIterator(Env env) {
+	return new ValueIterator();
     }
 
     @Override
-    public int size()
-    {
-      return getSize();
+    public Iterator<Map.Entry<Value, Value>> getIterator(Env env) {
+	return new MapIterator();
     }
 
+    /**
+     * Returns a set of all the of the entries.
+     */
     @Override
-    public Iterator<Value> iterator()
-    {
-      return new ValueIterator();
-    }
-  }
-
-  public class ValueIterator
-    implements Iterator<Value>
-  {
-    private Iterator _iterator;
-
-    public ValueIterator()
-    {
-      _iterator = _map.values().iterator();
+    public Set<Map.Entry<Value, Value>> entrySet() {
+	return new MapSet();
     }
 
-    public boolean hasNext()
-    {
-      return _iterator.hasNext();
+    /**
+     * Returns a collection of the values.
+     */
+    @Override
+    public Set<Map.Entry<Object, Object>> objectEntrySet() {
+	return _map.entrySet();
     }
 
-    public Value next()
-    {
-      return wrapJava(_iterator.next());
+    /**
+     * Returns a collection of the values.
+     */
+    @Override
+    public Collection<Value> values() {
+	return new ValueCollection();
     }
 
-    public void remove()
-    {
-      throw new UnsupportedOperationException();
-    }
-  }
-  
-  public class KeyIterator
-    implements Iterator<Value>
-  {
-    private Iterator _iterator;
+    /**
+     * Updates _nextAvailableIndex on a remove of the highest value
+     */
+    private void updateNextAvailableIndex() {
+	_nextAvailableIndex = 0;
 
-    public KeyIterator()
-    {
-      _iterator = _map.keySet().iterator();
+	for (Object key : _map.keySet()) {
+	    updateNextAvailableIndex(key);
+	}
     }
 
-    public boolean hasNext()
-    {
-      return _iterator.hasNext();
+    /**
+     * Updates _nextAvailableIndex.
+     */
+    private void updateNextAvailableIndex(Object objectKey) {
+	if (objectKey instanceof Long) {
+	    long key = ((Long) objectKey).longValue();
+
+	    if (_nextAvailableIndex <= key) {
+		_nextAvailableIndex = key + 1;
+	    }
+	}
     }
 
-    public Value next()
-    {
-      return wrapJava(_iterator.next());
+    public class MapSet
+	    extends AbstractSet<Map.Entry<Value, Value>> {
+
+	MapSet() {
+	}
+
+	@Override
+	public int size() {
+	    return getSize();
+	}
+
+	@Override
+	public Iterator<Map.Entry<Value, Value>> iterator() {
+	    return new MapIterator();
+	}
     }
 
-    public void remove()
-    {
-      throw new UnsupportedOperationException();
-    }
-  }
+    public class MapIterator
+	    implements Iterator<Map.Entry<Value, Value>> {
 
+	private Iterator<Map.Entry<Object, Object>> _iterator;
+
+	public MapIterator() {
+	    _iterator = _map.entrySet().iterator();
+	}
+
+	public boolean hasNext() {
+	    return _iterator.hasNext();
+	}
+
+	public Map.Entry<Value, Value> next() {
+	    Map.Entry entry = _iterator.next();
+
+	    Value key = wrapJava(entry.getKey());
+	    Value value = wrapJava(entry.getValue());
+
+	    return new ArrayValue.Entry(key, value);
+	}
+
+	public void remove() {
+	    throw new UnsupportedOperationException();
+	}
+    }
+
+    public class ValueCollection
+	    extends AbstractCollection<Value> {
+
+	ValueCollection() {
+	}
+
+	@Override
+	public int size() {
+	    return getSize();
+	}
+
+	@Override
+	public Iterator<Value> iterator() {
+	    return new ValueIterator();
+	}
+    }
+
+    public class ValueIterator
+	    implements Iterator<Value> {
+
+	private Iterator _iterator;
+
+	public ValueIterator() {
+	    _iterator = _map.values().iterator();
+	}
+
+	public boolean hasNext() {
+	    return _iterator.hasNext();
+	}
+
+	public Value next() {
+	    return wrapJava(_iterator.next());
+	}
+
+	public void remove() {
+	    throw new UnsupportedOperationException();
+	}
+    }
+
+    public class KeyIterator
+	    implements Iterator<Value> {
+
+	private Iterator _iterator;
+
+	public KeyIterator() {
+	    _iterator = _map.keySet().iterator();
+	}
+
+	public boolean hasNext() {
+	    return _iterator.hasNext();
+	}
+
+	public Value next() {
+	    return wrapJava(_iterator.next());
+	}
+
+	public void remove() {
+	    throw new UnsupportedOperationException();
+	}
+    }
 }

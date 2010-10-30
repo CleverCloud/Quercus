@@ -26,22 +26,19 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 /**
  * Represents a unicode string value.
  */
 public class UnicodeValueImpl
-  extends UnicodeBuilderValue
-{
-  protected static final int IS_STRING = 0;
-  protected static final int IS_LONG = 1;
-  protected static final int IS_DOUBLE = 2;
+	extends UnicodeBuilderValue {
 
-  public UnicodeValueImpl(String value)
-  {
-    super(value);
-  }
+    protected static final int IS_STRING = 0;
+    protected static final int IS_LONG = 1;
+    protected static final int IS_DOUBLE = 2;
+
+    public UnicodeValueImpl(String value) {
+	super(value);
+    }
 }
-

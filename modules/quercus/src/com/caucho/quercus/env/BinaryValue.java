@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.marshal.Marshal;
@@ -34,22 +33,19 @@ import com.caucho.quercus.marshal.Marshal;
 /**
  * Represents an 8-bit binary php-6 value.
  */
-abstract public class BinaryValue extends StringValue
-{
-  /*
-  @Override
-  public boolean isBinary()
-  {
+abstract public class BinaryValue extends StringValue {
+    /*
+    @Override
+    public boolean isBinary()
+    {
     return true;
-  }
-  */
+    }
+     */
 
-  /**
-   * Cost to convert to a binary value
-   */
-  public int toBinaryValueMarshalCost()
-  {
-    return Marshal.COST_IDENTICAL + 1;
-  }
+    /**
+     * Cost to convert to a binary value
+     */
+    public int toBinaryValueMarshalCost() {
+	return Marshal.COST_IDENTICAL + 1;
+    }
 }
-

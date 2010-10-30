@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.function.AbstractFunction;
@@ -35,172 +34,155 @@ import com.caucho.quercus.function.AbstractFunction;
  * Represents a call to a function.
  */
 public class CallbackFunction extends Callback {
-  // public static final CallbackFunction INVALID_CALLBACK
-  // = new CallbackFunction(null, "Invalid Callback");
+    // public static final CallbackFunction INVALID_CALLBACK
+    // = new CallbackFunction(null, "Invalid Callback");
 
-  private String _funName;
+    private String _funName;
+    private AbstractFunction _fun;
 
-  private AbstractFunction _fun;
+    // private boolean _isInvalid = false;
+    public CallbackFunction(Env env, String funName) {
+	_funName = funName;
+    }
 
- // private boolean _isInvalid = false;
+    public CallbackFunction(AbstractFunction fun) {
+	_fun = fun;
+    }
 
-  public CallbackFunction(Env env, String funName)
-  {
-    _funName = funName;
-  }
+    public CallbackFunction(AbstractFunction fun, String funName) {
+	_fun = fun;
+	_funName = funName;
+    }
 
-  public CallbackFunction(AbstractFunction fun)
-  {
-    _fun = fun;
-  }
+    /**
+     * Allow subclasses to set the abstract function directly.
+     */
+    protected void setFunction(AbstractFunction fun) {
+	_fun = fun;
+    }
 
-  public CallbackFunction(AbstractFunction fun, String funName)
-  {
-    _fun = fun;
-    _funName = funName;
-  }
+    @Override
+    public boolean isValid(Env env) {
+	if (_fun != null) {
+	    return true;
+	}
 
-  /**
-   * Allow subclasses to set the abstract function directly.
-   */
-  protected void setFunction(AbstractFunction fun)
-  {
-    _fun = fun;
-  }
-  
-  @Override
-  public boolean isValid(Env env)
-  {
-    if (_fun != null)
-      return true;
+	return env.findFunction(_funName) != null;
 
-    return env.findFunction(_funName) != null;
+	//return _isInvalid;
+    }
 
-    //return _isInvalid;
-  }
-  
-  /**
-   * Serializes the value.
-   */
-  public void serialize(Env env, StringBuilder sb)
-  {
-    String name;
-    
-    if (_fun != null)
-      name = _fun.getName();
-    else
-      name = _funName;
-    
-    sb.append("S:");
-    sb.append(name.length());
-    sb.append(":\"");
-    sb.append(name);
-    sb.append("\";");
-  }
+    /**
+     * Serializes the value.
+     */
+    public void serialize(Env env, StringBuilder sb) {
+	String name;
 
-  /**
-   * Evaluates the callback with no arguments.
-   *
-   * @param env the calling environment
-   */
-  @Override
-  public Value call(Env env)
-  {
-    return getFunction(env).call(env);
-  }
+	if (_fun != null) {
+	    name = _fun.getName();
+	} else {
+	    name = _funName;
+	}
 
-  /**
-   * Evaluates the callback with 1 argument.
-   *
-   * @param env the calling environment
-   */
-  @Override
-  public Value call(Env env, Value a1)
-  {
-    return getFunction(env).call(env, a1);
-  }
+	sb.append("S:");
+	sb.append(name.length());
+	sb.append(":\"");
+	sb.append(name);
+	sb.append("\";");
+    }
 
-  /**
-   * Evaluates the callback with 2 arguments.
-   *
-   * @param env the calling environment
-   */
-  @Override
-  public Value call(Env env, Value a1, Value a2)
-  {
-    return getFunction(env).call(env, a1, a2);
-  }
+    /**
+     * Evaluates the callback with no arguments.
+     *
+     * @param env the calling environment
+     */
+    @Override
+    public Value call(Env env) {
+	return getFunction(env).call(env);
+    }
 
-  /**
-   * Evaluates the callback with 3 arguments.
-   *
-   * @param env the calling environment
-   */
-  @Override
-  public Value call(Env env, Value a1, Value a2, Value a3)
-  {
-    return getFunction(env).call(env, a1, a2, a3);
-  }
+    /**
+     * Evaluates the callback with 1 argument.
+     *
+     * @param env the calling environment
+     */
+    @Override
+    public Value call(Env env, Value a1) {
+	return getFunction(env).call(env, a1);
+    }
 
-  /**
-   * Evaluates the callback with 3 arguments.
-   *
-   * @param env the calling environment
-   */
-  @Override
-  public Value call(Env env, Value a1, Value a2, Value a3,
-                    Value a4)
-  {
-    return getFunction(env).call(env, a1, a2, a3, a4);
-  }
+    /**
+     * Evaluates the callback with 2 arguments.
+     *
+     * @param env the calling environment
+     */
+    @Override
+    public Value call(Env env, Value a1, Value a2) {
+	return getFunction(env).call(env, a1, a2);
+    }
 
-  /**
-   * Evaluates the callback with 3 arguments.
-   *
-   * @param env the calling environment
-   */
-  @Override
-  public Value call(Env env, Value a1, Value a2, Value a3,
-                    Value a4, Value a5)
-  {
-    return getFunction(env).call(env, a1, a2, a3, a4, a5);
-  }
+    /**
+     * Evaluates the callback with 3 arguments.
+     *
+     * @param env the calling environment
+     */
+    @Override
+    public Value call(Env env, Value a1, Value a2, Value a3) {
+	return getFunction(env).call(env, a1, a2, a3);
+    }
 
-  @Override
-  public Value call(Env env, Value []args)
-  {
-    return getFunction(env).call(env, args);
-  }
+    /**
+     * Evaluates the callback with 3 arguments.
+     *
+     * @param env the calling environment
+     */
+    @Override
+    public Value call(Env env, Value a1, Value a2, Value a3,
+	    Value a4) {
+	return getFunction(env).call(env, a1, a2, a3, a4);
+    }
 
-  public String getCallbackName()
-  {
-    return _funName;
-  }
+    /**
+     * Evaluates the callback with 3 arguments.
+     *
+     * @param env the calling environment
+     */
+    @Override
+    public Value call(Env env, Value a1, Value a2, Value a3,
+	    Value a4, Value a5) {
+	return getFunction(env).call(env, a1, a2, a3, a4, a5);
+    }
 
-  public AbstractFunction getFunction(Env env)
-  {
-    if (_fun == null)
-      _fun = env.getFunction(_funName);
+    @Override
+    public Value call(Env env, Value[] args) {
+	return getFunction(env).call(env, args);
+    }
 
-    return _fun;
-  }
+    public String getCallbackName() {
+	return _funName;
+    }
 
-  @Override
-  public boolean isInternal(Env env)
-  {
-    return getFunction(env) instanceof JavaInvoker;
-  }
-  
-  /**
-   * Exports the value.
-   */
-  public void varExport(StringBuilder sb)
-  {
-    sb.append("'' . \"\\0\" . '" + _funName.substring(1) + "'");
-  }
+    public AbstractFunction getFunction(Env env) {
+	if (_fun == null) {
+	    _fun = env.getFunction(_funName);
+	}
 
-  public String toString()
-  {
-    return getClass().getName() + '[' + _funName + ']';
-  }
+	return _fun;
+    }
+
+    @Override
+    public boolean isInternal(Env env) {
+	return getFunction(env) instanceof JavaInvoker;
+    }
+
+    /**
+     * Exports the value.
+     */
+    public void varExport(StringBuilder sb) {
+	sb.append("'' . \"\\0\" . '" + _funName.substring(1) + "'");
+    }
+
+    public String toString() {
+	return getClass().getName() + '[' + _funName + ']';
+    }
 }

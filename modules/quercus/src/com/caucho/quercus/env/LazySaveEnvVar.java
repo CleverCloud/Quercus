@@ -26,70 +26,62 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 /**
  * Encapsulates an environment entry for a variable.  The EnvVar is a
  * container for Vars.
  */
-public class LazySaveEnvVar extends EnvVar
-{
-  private int _id;
-  private Value _value;
+public class LazySaveEnvVar extends EnvVar {
 
-  public LazySaveEnvVar(int id, Value value)
-  {
-    _id = id;
-    _value = value;
-  }
-  
-  /**
-   * Returns the current value.
-   */
-  public Value get()
-  {
-    return getEnvVar().get();
-  }
+    private int _id;
+    private Value _value;
 
-  /**
-   * Sets the current value.
-   */
-  public Value set(Value value)
-  {
-    return getEnvVar().set(value);
-  }
-
-  /**
-   * Returns the current Var.
-   */
-  public Var getVar()
-  {
-    return getEnvVar().getVar();
-  }
-
-  /**
-   * Sets the var.
-   */
-  public Var setVar(Var var)
-  {
-    return getEnvVar().setVar(var);
-  }
-
-  private EnvVar getEnvVar()
-  {
-    Env env = Env.getCurrent();
-    EnvVar []globals = env.getGlobalList();
-
-    if (globals[_id] == this) {
-      EnvVar var = new EnvVarImpl(new Var());
-
-      var.set(_value.copy(env));
-
-      globals[_id] = var;
+    public LazySaveEnvVar(int id, Value value) {
+	_id = id;
+	_value = value;
     }
 
-    return globals[_id];
-  }
-}
+    /**
+     * Returns the current value.
+     */
+    public Value get() {
+	return getEnvVar().get();
+    }
 
+    /**
+     * Sets the current value.
+     */
+    public Value set(Value value) {
+	return getEnvVar().set(value);
+    }
+
+    /**
+     * Returns the current Var.
+     */
+    public Var getVar() {
+	return getEnvVar().getVar();
+    }
+
+    /**
+     * Sets the var.
+     */
+    public Var setVar(Var var) {
+	return getEnvVar().setVar(var);
+    }
+
+    private EnvVar getEnvVar() {
+	Env env = Env.getCurrent();
+	EnvVar[] globals = env.getGlobalList();
+
+	if (globals[_id] == this) {
+	    EnvVar var = new EnvVarImpl(new Var());
+
+	    var.set(_value.copy(env));
+
+	    globals[_id] = var;
+	}
+
+	return globals[_id];
+    }
+}

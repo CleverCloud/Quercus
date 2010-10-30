@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.program.JavaClassDef;
@@ -38,34 +37,29 @@ import java.util.logging.Logger;
  * Represents a Quercus java Date value.
  */
 public class JavaDateValue extends JavaValue {
-  private static final Logger log
-    = Logger.getLogger(JavaDateValue.class.getName());
-  
-  private final Date _date;
-  
-  public JavaDateValue(Env env, Date date, JavaClassDef def)
-  {
-    super(env, date, def);
-    _date = date;
-  }
 
-  /**
-   * Converts to a long.
-   */
-  @Override
-  public long toLong()
-  {
-    // return seconds per PHP convention
-    return _date.getTime() / 1000;
-  }
-  
-  /**
-   * Converts to a Java Date.
-   */
-  @Override
-  public Date toJavaDate()
-  {
-    return _date;
-  }
+    private static final Logger log = Logger.getLogger(JavaDateValue.class.getName());
+    private final Date _date;
 
+    public JavaDateValue(Env env, Date date, JavaClassDef def) {
+	super(env, date, def);
+	_date = date;
+    }
+
+    /**
+     * Converts to a long.
+     */
+    @Override
+    public long toLong() {
+	// return seconds per PHP convention
+	return _date.getTime() / 1000;
+    }
+
+    /**
+     * Converts to a Java Date.
+     */
+    @Override
+    public Date toJavaDate() {
+	return _date;
+    }
 }
