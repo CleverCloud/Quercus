@@ -26,30 +26,25 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus;
 
 /**
  * Exception thrown by die() or exit()
  */
 public class QuercusExitException extends QuercusRuntimeException {
-  public QuercusExitException()
-  {
-  }
 
-  public QuercusExitException(String msg)
-  {
-    super(msg);
-  }
+    public QuercusExitException() {
+    }
 
-  public QuercusExitException(Throwable cause)
-  {
-    super(cause);
-  }
+    public QuercusExitException(String msg) {
+	super(msg);
+    }
 
-  public QuercusExitException(String msg, Throwable cause)
-  {
-    super(msg, cause);
-  }
+    public QuercusExitException(Throwable cause) {
+	super(cause);
+    }
+
+    public QuercusExitException(String msg, Throwable cause) {
+	super(msg, cause);
+    }
 }
-

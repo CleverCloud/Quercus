@@ -25,19 +25,15 @@
  *
  * @author Sam
  */
-
-
 package com.caucho.quercus;
 
 public class QuercusExecutionException
-  extends Exception
-{
-  public QuercusExecutionException()
-  {
-  }
+	extends Exception {
 
-  public QuercusExecutionException(String message)
-  {
-    super(message);
-  }
+    public QuercusExecutionException() {
+    }
+
+    public QuercusExecutionException(String message) {
+	super(message);
+    }
 }

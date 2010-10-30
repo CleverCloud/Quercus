@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus;
 
 import java.io.IOException;
@@ -39,11 +38,10 @@ import com.caucho.vfs.StdoutStream;
 import com.caucho.vfs.StringPath;
 import com.caucho.vfs.WriteStream;
 
-public class CliQuercus extends Quercus
-{
-  public static void main(String []args)
-    throws IOException
-  {
-    Quercus.main(args);
-  }
+public class CliQuercus extends Quercus {
+
+    public static void main(String[] args)
+	    throws IOException {
+	Quercus.main(args);
+    }
 }

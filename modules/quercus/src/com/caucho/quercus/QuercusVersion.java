@@ -26,18 +26,15 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus;
 
-public class QuercusVersion
-{ 
-  public static String getVersionNumber()
-  {
-    return "4.0.11c-dev";
-  }
+public class QuercusVersion {
 
-  public static String getVersionDate()
-  {
-    return "20100918";
-  }
+    public static String getVersionNumber() {
+	return "4.0.11c-dev";
+    }
+
+    public static String getVersionDate() {
+	return "20100918";
+    }
 }

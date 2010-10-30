@@ -26,30 +26,25 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus;
 
 /**
  * Parent of PHP runtime exceptions
  */
 public class QuercusRuntimeException extends QuercusException {
-  public QuercusRuntimeException()
-  {
-  }
 
-  public QuercusRuntimeException(String msg)
-  {
-    super(msg);
-  }
+    public QuercusRuntimeException() {
+    }
 
-  public QuercusRuntimeException(Throwable cause)
-  {
-    super(cause);
-  }
+    public QuercusRuntimeException(String msg) {
+	super(msg);
+    }
 
-  public QuercusRuntimeException(String msg, Throwable cause)
-  {
-    super(msg, cause);
-  }
+    public QuercusRuntimeException(Throwable cause) {
+	super(cause);
+    }
+
+    public QuercusRuntimeException(String msg, Throwable cause) {
+	super(msg, cause);
+    }
 }
-

@@ -26,30 +26,25 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus;
 
 /**
  * Exception thrown by Env.error().
  */
 public class QuercusErrorException extends QuercusRuntimeException {
-  public QuercusErrorException()
-  {
-  }
 
-  public QuercusErrorException(String msg)
-  {
-    super(msg);
-  }
+    public QuercusErrorException() {
+    }
 
-  public QuercusErrorException(Throwable cause)
-  {
-    super(cause);
-  }
+    public QuercusErrorException(String msg) {
+	super(msg);
+    }
 
-  public QuercusErrorException(String msg, Throwable cause)
-  {
-    super(msg, cause);
-  }
+    public QuercusErrorException(Throwable cause) {
+	super(cause);
+    }
+
+    public QuercusErrorException(String msg, Throwable cause) {
+	super(msg, cause);
+    }
 }
-

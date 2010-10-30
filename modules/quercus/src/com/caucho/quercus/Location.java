@@ -25,76 +25,67 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus;
 
 /**
  * Records the source file location of a statement or expression.
  */
 public class Location {
-  public static final Location UNKNOWN = new Location();
 
-  private final String _fileName;
-  private final int _lineNumber;
-  private final String _className;
-  private final String _functionName;
+    public static final Location UNKNOWN = new Location();
+    private final String _fileName;
+    private final int _lineNumber;
+    private final String _className;
+    private final String _functionName;
 
-  public Location(String fileName, int lineNumber, String className,
-                  String functionName)
-  {
-    _fileName = fileName;
-    _lineNumber = lineNumber;
-    _className = className;
-    _functionName = functionName;
-  }
+    public Location(String fileName, int lineNumber, String className,
+	    String functionName) {
+	_fileName = fileName;
+	_lineNumber = lineNumber;
+	_className = className;
+	_functionName = functionName;
+    }
 
-  private Location()
-  {
-    _fileName = null;
-    _lineNumber = 0;
-    _className = null;
-    _functionName = null;
-  }
+    private Location() {
+	_fileName = null;
+	_lineNumber = 0;
+	_className = null;
+	_functionName = null;
+    }
 
-  public String getFileName()
-  {
-    return _fileName;
-  }
+    public String getFileName() {
+	return _fileName;
+    }
 
-  public int getLineNumber()
-  {
-    return _lineNumber;
-  }
+    public int getLineNumber() {
+	return _lineNumber;
+    }
 
-  public String getClassName()
-  {
-    return _className;
-  }
+    public String getClassName() {
+	return _className;
+    }
 
-  public String getFunctionName()
-  {
-    return _functionName;
-  }
+    public String getFunctionName() {
+	return _functionName;
+    }
 
-  /**
-   * Returns a prefix of the form "filename:linenumber: ", or the empty string
-   * if the filename is not known.
-   */
-  public String getMessagePrefix()
-  {
-    if (_fileName == null)
-      return "";
-    else
-      return _fileName + ":" + _lineNumber + ": ";
-  }
+    /**
+     * Returns a prefix of the form "filename:linenumber: ", or the empty string
+     * if the filename is not known.
+     */
+    public String getMessagePrefix() {
+	if (_fileName == null) {
+	    return "";
+	} else {
+	    return _fileName + ":" + _lineNumber + ": ";
+	}
+    }
 
-  public boolean isUnknown()
-  {
-    return _fileName == null || _lineNumber <= 0; 
-  }
+    public boolean isUnknown() {
+	return _fileName == null || _lineNumber <= 0;
+    }
 
-  public String toString()
-  {
-    return "Location[" + _fileName + ":" + _lineNumber + "]";
-  }
+    public String toString() {
+	return "Location[" + _fileName + ":" + _lineNumber + "]";
+    }
 }

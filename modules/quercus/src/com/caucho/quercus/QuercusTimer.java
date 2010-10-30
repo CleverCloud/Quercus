@@ -26,123 +26,111 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus;
 
 import java.util.concurrent.locks.LockSupport;
 import java.util.logging.Logger;
 
-public class QuercusTimer
-{
-  private static final Logger log
-    = Logger.getLogger(QuercusTimer.class.getName());
+public class QuercusTimer {
 
-  private TimerThread _timerThread;
-  
-  private volatile long _currentTime;
-  private volatile boolean _isCurrentTimeUsed;
-  private volatile boolean _isSlowTime;
-  
-  private volatile boolean _isRunnable = true;
-  
-  public QuercusTimer()
-  {
-    _currentTime = System.currentTimeMillis();
+    private static final Logger log = Logger.getLogger(QuercusTimer.class.getName());
+    private TimerThread _timerThread;
+    private volatile long _currentTime;
+    private volatile boolean _isCurrentTimeUsed;
+    private volatile boolean _isSlowTime;
+    private volatile boolean _isRunnable = true;
 
-    TimerThread timerThread = null;
+    public QuercusTimer() {
+	_currentTime = System.currentTimeMillis();
 
-    try {
-      timerThread = new TimerThread();
-      timerThread.start();
-    } catch (Throwable e) {
-      // should display for security manager issues
+	TimerThread timerThread = null;
+
+	try {
+	    timerThread = new TimerThread();
+	    timerThread.start();
+	} catch (Throwable e) {
+	    // should display for security manager issues
+	}
+
+	_timerThread = timerThread;
     }
 
-    _timerThread = timerThread;
-  }
-  
-  /**
-   * Returns the approximate current time in milliseconds.
-   * Convenient for minimizing system calls.
-   */
-  public long getCurrentTime()
-  {
-    // test avoids extra writes on multicore machines
-    if (! _isCurrentTimeUsed) {
-      if (_timerThread == null)
-        return System.currentTimeMillis();
-      
-      if (_isSlowTime) {
-        return System.currentTimeMillis();
-      }
-      else {
-        _isCurrentTimeUsed = true;
-      }
+    /**
+     * Returns the approximate current time in milliseconds.
+     * Convenient for minimizing system calls.
+     */
+    public long getCurrentTime() {
+	// test avoids extra writes on multicore machines
+	if (!_isCurrentTimeUsed) {
+	    if (_timerThread == null) {
+		return System.currentTimeMillis();
+	    }
+
+	    if (_isSlowTime) {
+		return System.currentTimeMillis();
+	    } else {
+		_isCurrentTimeUsed = true;
+	    }
+	}
+
+	return _currentTime;
     }
 
-    return _currentTime;
-  }
-  
-  /**
-   * Returns the exact current time in milliseconds.
-   */
-  public long getExactTime()
-  {
-    return System.currentTimeMillis();
-  }
-  
-  /**
-   * Returns the exact current time in nanoseconds.
-   */
-  public long getExactTimeNanoseconds()
-  {
-    return System.nanoTime();
-  }
-  
-  public void shutdown()
-  {
-    _isRunnable = false;
-  }
-  
-  class TimerThread extends Thread {
-    TimerThread()
-    {
-      super("quercus-timer");
-
-      setDaemon(true);
-      setPriority(Thread.MAX_PRIORITY);
+    /**
+     * Returns the exact current time in milliseconds.
+     */
+    public long getExactTime() {
+	return System.currentTimeMillis();
     }
 
-    public void run()
-    {
-      int idleCount = 0;
-
-      while (_isRunnable) {
-        try {
-          long now = System.currentTimeMillis();
-            
-          _currentTime = now;
-            
-          boolean isCurrentTimeUsed = _isCurrentTimeUsed;
-          _isCurrentTimeUsed = false;
-          
-          if (isCurrentTimeUsed) {
-            _isSlowTime = false;
-          }
-          else {
-            idleCount++;
-
-            if (idleCount == 10) {
-              _isSlowTime = true;
-            }
-          }
-
-          long sleepTime = _isSlowTime ? 1000L : 5L;
-              
-          LockSupport.parkNanos(sleepTime * 1000000L);
-        } catch (Throwable e) {
-        }
-      }
+    /**
+     * Returns the exact current time in nanoseconds.
+     */
+    public long getExactTimeNanoseconds() {
+	return System.nanoTime();
     }
-  }
+
+    public void shutdown() {
+	_isRunnable = false;
+    }
+
+    class TimerThread extends Thread {
+
+	TimerThread() {
+	    super("quercus-timer");
+
+	    setDaemon(true);
+	    setPriority(Thread.MAX_PRIORITY);
+	}
+
+	public void run() {
+	    int idleCount = 0;
+
+	    while (_isRunnable) {
+		try {
+		    long now = System.currentTimeMillis();
+
+		    _currentTime = now;
+
+		    boolean isCurrentTimeUsed = _isCurrentTimeUsed;
+		    _isCurrentTimeUsed = false;
+
+		    if (isCurrentTimeUsed) {
+			_isSlowTime = false;
+		    } else {
+			idleCount++;
+
+			if (idleCount == 10) {
+			    _isSlowTime = true;
+			}
+		    }
+
+		    long sleepTime = _isSlowTime ? 1000L : 5L;
+
+		    LockSupport.parkNanos(sleepTime * 1000000L);
+		} catch (Throwable e) {
+		}
+	    }
+	}
+    }
 }

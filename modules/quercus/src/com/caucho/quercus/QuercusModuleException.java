@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus;
 
 import java.lang.reflect.*;
@@ -35,32 +34,29 @@ import java.lang.reflect.*;
  * Java exception caught and rethrown by modules.
  */
 public class QuercusModuleException extends QuercusException {
-  public QuercusModuleException()
-  {
-  }
 
-  public QuercusModuleException(String msg)
-  {
-    super(msg);
-  }
+    public QuercusModuleException() {
+    }
 
-  public QuercusModuleException(Throwable cause)
-  {
-    super(cause);
-  }
+    public QuercusModuleException(String msg) {
+	super(msg);
+    }
 
-  public QuercusModuleException(String msg, Throwable cause)
-  {
-    super(msg, cause);
-  }
+    public QuercusModuleException(Throwable cause) {
+	super(cause);
+    }
 
-  public static RuntimeException create(Throwable e)
-  {
-    if (e instanceof RuntimeException)
-      return (RuntimeException) e;
-    else if (e instanceof InvocationTargetException && e.getCause() != null)
-      return new QuercusModuleException(e.getCause());
-    else
-      return new QuercusModuleException(e);
-  }
+    public QuercusModuleException(String msg, Throwable cause) {
+	super(msg, cause);
+    }
+
+    public static RuntimeException create(Throwable e) {
+	if (e instanceof RuntimeException) {
+	    return (RuntimeException) e;
+	} else if (e instanceof InvocationTargetException && e.getCause() != null) {
+	    return new QuercusModuleException(e.getCause());
+	} else {
+	    return new QuercusModuleException(e);
+	}
+    }
 }
