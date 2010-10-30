@@ -26,14 +26,13 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.spl;
 
 import com.caucho.quercus.env.Value;
 
-public interface Serializable
-{
-  public Value serialize();
-  
-  public Value unserialize(Value serialized);
+public interface Serializable {
+
+    public Value serialize();
+
+    public Value unserialize(Value serialized);
 }

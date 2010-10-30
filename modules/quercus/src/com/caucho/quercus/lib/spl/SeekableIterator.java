@@ -26,16 +26,15 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.spl;
 
 import com.caucho.quercus.env.Env;
 
 public interface SeekableIterator
-  extends Iterator
-{
-  /**
-   * Seeks to the given offset.
-   */
-  public void seek(Env env, int index);
+	extends Iterator {
+
+    /**
+     * Seeks to the given offset.
+     */
+    public void seek(Env env, int index);
 }

@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.spl;
 
 import com.caucho.quercus.env.CountDelegate;
@@ -42,17 +41,15 @@ import com.caucho.quercus.env.StringValue;
  * method on target objects that implement
  * the {@link com.caucho.quercus.lib.spl.Countable} interface.
  */
-public class CountableDelegate implements CountDelegate
-{
-  private static final StringValue COUNT_METHOD
-    = new ConstStringValue("count");
-  
-  public int count(ObjectValue qThis)
-  {
-    Env env = Env.getInstance();
-    
-    Value count = qThis.callMethod(env, COUNT_METHOD);
+public class CountableDelegate implements CountDelegate {
 
-    return count.toInt();
-  }
+    private static final StringValue COUNT_METHOD = new ConstStringValue("count");
+
+    public int count(ObjectValue qThis) {
+	Env env = Env.getInstance();
+
+	Value count = qThis.callMethod(env, COUNT_METHOD);
+
+	return count.toInt();
+    }
 }

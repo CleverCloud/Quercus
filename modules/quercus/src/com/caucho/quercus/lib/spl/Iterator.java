@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.spl;
 
 import com.caucho.quercus.env.Env;
@@ -35,30 +34,30 @@ import com.caucho.quercus.annotation.Delegates;
 
 @Delegates(IteratorDelegate.class)
 public interface Iterator
-  extends Traversable
-{
-  /**
-   * Returns the current value.
-   */
-  public Value current(Env env);
+	extends Traversable {
 
-  /**
-   * Returns the current key.
-   */
-  public Value key(Env env);
+    /**
+     * Returns the current value.
+     */
+    public Value current(Env env);
 
-  /**
-   * Advances to the next row.
-   */
-  public void next(Env env);
+    /**
+     * Returns the current key.
+     */
+    public Value key(Env env);
 
-  /**
-   * Rewinds the iterator so it is at the first row.
-   */
-  public void rewind();
+    /**
+     * Advances to the next row.
+     */
+    public void next(Env env);
 
-  /**
-   * Returns true if the iterator currently points to a valid row.
-   */
-  public boolean valid();
+    /**
+     * Rewinds the iterator so it is at the first row.
+     */
+    public void rewind();
+
+    /**
+     * Returns true if the iterator currently points to a valid row.
+     */
+    public boolean valid();
 }

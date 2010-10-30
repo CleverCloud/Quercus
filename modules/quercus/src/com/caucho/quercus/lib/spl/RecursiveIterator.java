@@ -26,12 +26,12 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.spl;
 
 public interface RecursiveIterator
-  extends Iterator
-{
-  public boolean hasChildren();
-  public RecursiveIterator getChildren();
+	extends Iterator {
+
+    public boolean hasChildren();
+
+    public RecursiveIterator getChildren();
 }

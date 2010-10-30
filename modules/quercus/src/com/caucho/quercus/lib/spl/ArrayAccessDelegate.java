@@ -26,7 +26,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.spl;
 
 import com.caucho.quercus.env.*;
@@ -36,49 +35,40 @@ import com.caucho.quercus.env.*;
  * target objects that implement
  * the {@link com.caucho.quercus.lib.spl.ArrayAccess} interface.
  */
-public class ArrayAccessDelegate implements ArrayDelegate
-{
-  private static final StringValue OFFSET_GET
-    = new ConstStringValue("offsetGet");
-  private static final StringValue OFFSET_SET
-    = new ConstStringValue("offsetSet");
-  private static final StringValue OFFSET_UNSET
-    = new ConstStringValue("offsetUnset");
-  private static final StringValue OFFSET_EXISTS
-    = new ConstStringValue("offsetExists");
-  
-  public Value get(ObjectValue qThis, Value index)
-  {
-    Env env = Env.getInstance();
-    
-    return qThis.callMethod(env, OFFSET_GET, index);
-  }
+public class ArrayAccessDelegate implements ArrayDelegate {
 
-  public Value put(ObjectValue qThis, Value index, Value value)
-  {
-    Env env = Env.getInstance();
+    private static final StringValue OFFSET_GET = new ConstStringValue("offsetGet");
+    private static final StringValue OFFSET_SET = new ConstStringValue("offsetSet");
+    private static final StringValue OFFSET_UNSET = new ConstStringValue("offsetUnset");
+    private static final StringValue OFFSET_EXISTS = new ConstStringValue("offsetExists");
 
-    return qThis.callMethod(env, OFFSET_SET, index, value);
-  }
+    public Value get(ObjectValue qThis, Value index) {
+	Env env = Env.getInstance();
 
-  public Value put(ObjectValue qThis, Value index)
-  {
-    Env env = Env.getInstance();
-    
-    return qThis.callMethod(env, OFFSET_SET, UnsetValue.UNSET, index);
-  }
+	return qThis.callMethod(env, OFFSET_GET, index);
+    }
 
-  public boolean isset(ObjectValue qThis, Value index)
-  {
-    Env env = Env.getInstance();
-    
-    return qThis.callMethod(env, OFFSET_EXISTS, index).toBoolean();
-  }
+    public Value put(ObjectValue qThis, Value index, Value value) {
+	Env env = Env.getInstance();
 
-  public Value unset(ObjectValue qThis, Value index)
-  {
-    Env env = Env.getInstance();
-    
-    return qThis.callMethod(env, OFFSET_UNSET, index);
-  }
+	return qThis.callMethod(env, OFFSET_SET, index, value);
+    }
+
+    public Value put(ObjectValue qThis, Value index) {
+	Env env = Env.getInstance();
+
+	return qThis.callMethod(env, OFFSET_SET, UnsetValue.UNSET, index);
+    }
+
+    public boolean isset(ObjectValue qThis, Value index) {
+	Env env = Env.getInstance();
+
+	return qThis.callMethod(env, OFFSET_EXISTS, index).toBoolean();
+    }
+
+    public Value unset(ObjectValue qThis, Value index) {
+	Env env = Env.getInstance();
+
+	return qThis.callMethod(env, OFFSET_UNSET, index);
+    }
 }
