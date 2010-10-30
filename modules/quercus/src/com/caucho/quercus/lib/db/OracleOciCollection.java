@@ -26,7 +26,6 @@
  *
  * @author Rodrigo Westrupp
  */
-
 package com.caucho.quercus.lib.db;
 
 import com.caucho.quercus.annotation.ReturnNullAsFalse;
@@ -44,270 +43,251 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * Quercus Oracle OCI-Collection object oriented API.
  */
 public class OracleOciCollection {
-  private static final Logger log = Logger.getLogger(
-      OracleOciCollection.class.getName());
-  private static final L10N L = new L10N(OracleOciCollection.class);
 
-  // The Oracle array descriptor
-  private Object _arrayDescriptor;
+    private static final Logger log = Logger.getLogger(
+	    OracleOciCollection.class.getName());
+    private static final L10N L = new L10N(OracleOciCollection.class);
+    // The Oracle array descriptor
+    private Object _arrayDescriptor;
+    // The Oracle collection
+    private Array _collection;
+    // The cached Java collection
+    private ArrayList _javaCollection;
+    // The Oracle JDBC connection
+    private Connection _jdbcConn;
+    // Cache class oracle.sql.ARRAY
+    private static Class classOracleARRAY;
 
-  // The Oracle collection
-  private Array _collection;
-
-  // The cached Java collection
-  private ArrayList _javaCollection;
-
-  // The Oracle JDBC connection
-  private Connection _jdbcConn;
-
-  // Cache class oracle.sql.ARRAY
-  private static Class classOracleARRAY;
-
-  static {
-    try {
-      classOracleARRAY = Class.forName("oracle.sql.ARRAY");
-    } catch (Exception e) {
-      L.l("Unable to load ARRAY class oracle.sql.ARRAY.");
+    static {
+	try {
+	    classOracleARRAY = Class.forName("oracle.sql.ARRAY");
+	} catch (Exception e) {
+	    L.l("Unable to load ARRAY class oracle.sql.ARRAY.");
+	}
     }
-  }
 
-  /**
-   * Constructor for OracleOciCollection
-   */
-  OracleOciCollection(Connection jdbcConn,
-                      Object arrayDescriptor)
-  {
-    _jdbcConn = jdbcConn;
+    /**
+     * Constructor for OracleOciCollection
+     */
+    OracleOciCollection(Connection jdbcConn,
+	    Object arrayDescriptor) {
+	_jdbcConn = jdbcConn;
 
-    _arrayDescriptor = arrayDescriptor;
+	_arrayDescriptor = arrayDescriptor;
 
-    _collection = null;
+	_collection = null;
 
-    _javaCollection = new ArrayList();
-  }
-
-  /**
-   * Appends element to the collection
-   *
-   * @param value can be a string or a number
-   */
-  public boolean append(Env env,
-                        Value value)
-  {
-    try {
-
-      _javaCollection.add(value.toJavaObject());
-
-      return true;
-
-    } catch (Exception ex) {
-      log.log(Level.FINE, ex.toString(), ex);
-      return false;
+	_javaCollection = new ArrayList();
     }
-  }
 
-  /**
-   * Assigns a value to the collection from another existing collection
-   */
-  public boolean assign(Env env,
-                        OracleOciCollection fromCollection)
-  {
-    try {
+    /**
+     * Appends element to the collection
+     *
+     * @param value can be a string or a number
+     */
+    public boolean append(Env env,
+	    Value value) {
+	try {
 
-      _javaCollection.addAll(fromCollection.getJavaCollection());
+	    _javaCollection.add(value.toJavaObject());
 
-      return true;
+	    return true;
 
-    } catch (Exception ex) {
-      log.log(Level.FINE, ex.toString(), ex);
-      return false;
+	} catch (Exception ex) {
+	    log.log(Level.FINE, ex.toString(), ex);
+	    return false;
+	}
     }
-  }
 
-  /**
-   * Assigns a value to the element of the collection
-   *
-   * @param index 1-based index
-   * @param value can be a string or a number
-   */
-  public boolean assignElem(Env env,
-                            int index,
-                            Value value)
-  {
-    try {
+    /**
+     * Assigns a value to the collection from another existing collection
+     */
+    public boolean assign(Env env,
+	    OracleOciCollection fromCollection) {
+	try {
 
-      if ((index < 1) || (index > _javaCollection.size())) {
-        return false;
-      }
+	    _javaCollection.addAll(fromCollection.getJavaCollection());
 
-      _javaCollection.set(index - 1, value.toJavaObject());
+	    return true;
 
-      return true;
-
-    } catch (Exception ex) {
-      log.log(Level.FINE, ex.toString(), ex);
-      return false;
+	} catch (Exception ex) {
+	    log.log(Level.FINE, ex.toString(), ex);
+	    return false;
+	}
     }
-  }
 
-  /**
-   * Frees the resources associated with the collection object
-   */
-  public boolean free(Env env)
-  {
-    try {
+    /**
+     * Assigns a value to the element of the collection
+     *
+     * @param index 1-based index
+     * @param value can be a string or a number
+     */
+    public boolean assignElem(Env env,
+	    int index,
+	    Value value) {
+	try {
 
-      _collection = null;
+	    if ((index < 1) || (index > _javaCollection.size())) {
+		return false;
+	    }
 
-      _javaCollection = null;
+	    _javaCollection.set(index - 1, value.toJavaObject());
 
-      return true;
+	    return true;
 
-    } catch (Exception ex) {
-      log.log(Level.FINE, ex.toString(), ex);
-      return false;
+	} catch (Exception ex) {
+	    log.log(Level.FINE, ex.toString(), ex);
+	    return false;
+	}
     }
-  }
 
-  /**
-   * Returns the underlying Oracle collection
-   */
-  protected Array getCollection()
-  {
-    try {
+    /**
+     * Frees the resources associated with the collection object
+     */
+    public boolean free(Env env) {
+	try {
 
-      // oracle.sql.ARRAY array = new oracle.sql.ARRAY(
-      // arrayDesc, jdbcConn, arrayValues);
+	    _collection = null;
 
-      Class clArrayDescriptor = Class.forName("oracle.sql.ArrayDescriptor");
+	    _javaCollection = null;
 
-      Constructor constructor = classOracleARRAY.getDeclaredConstructor(
-          new Class[]
-        {clArrayDescriptor, Connection.class, Object.class});
+	    return true;
 
-      Object []elements = _javaCollection.toArray();
-
-      _collection = (Array) constructor.newInstance(new Object[]
-        {_arrayDescriptor, _jdbcConn, elements});
-
-      if (_collection != null) {
-        // Optimization
-        Method setAutoBuffering
-          = classOracleARRAY.getDeclaredMethod("setAutoBuffering",
-                                               new Class[] {Boolean.TYPE});
-        setAutoBuffering.invoke(_collection, new Object[] {true});
-      }
-
-      return _collection;
-
-    } catch (Exception ex) {
-      log.log(Level.FINE, ex.toString(), ex);
-      return null;
+	} catch (Exception ex) {
+	    log.log(Level.FINE, ex.toString(), ex);
+	    return false;
+	}
     }
-  }
 
-  /**
-   * Returns value of the element by index (1-based)
-   */
-  public Value getElem(Env env,
-                       int index)
-  {
-    try {
+    /**
+     * Returns the underlying Oracle collection
+     */
+    protected Array getCollection() {
+	try {
 
-      if ((index < 1) || (index > _javaCollection.size())) {
-        return BooleanValue.FALSE;
-      }
+	    // oracle.sql.ARRAY array = new oracle.sql.ARRAY(
+	    // arrayDesc, jdbcConn, arrayValues);
 
-      return env.wrapJava(_javaCollection.get(index - 1));
+	    Class clArrayDescriptor = Class.forName("oracle.sql.ArrayDescriptor");
 
-    } catch (Exception ex) {
-      log.log(Level.FINE, ex.toString(), ex);
-      return BooleanValue.FALSE;
+	    Constructor constructor = classOracleARRAY.getDeclaredConstructor(
+		    new Class[]{clArrayDescriptor, Connection.class, Object.class});
+
+	    Object[] elements = _javaCollection.toArray();
+
+	    _collection = (Array) constructor.newInstance(new Object[]{_arrayDescriptor, _jdbcConn, elements});
+
+	    if (_collection != null) {
+		// Optimization
+		Method setAutoBuffering = classOracleARRAY.getDeclaredMethod("setAutoBuffering",
+			new Class[]{Boolean.TYPE});
+		setAutoBuffering.invoke(_collection, new Object[]{true});
+	    }
+
+	    return _collection;
+
+	} catch (Exception ex) {
+	    log.log(Level.FINE, ex.toString(), ex);
+	    return null;
+	}
     }
-  }
 
-  /**
-   * Returns the underlying Java collection
-   */
-  protected ArrayList getJavaCollection()
-  {
-    return _javaCollection;
-  }
+    /**
+     * Returns value of the element by index (1-based)
+     */
+    public Value getElem(Env env,
+	    int index) {
+	try {
 
-  /**
-   * Returns the maximum number of elements in the collection
-   * If the returned value is 0, then the number of elements
-   * is not limited. Returns FALSE in case of error.
-   */
-  @ReturnNullAsFalse
-  public LongValue max(Env env)
-  {
-    try {
+	    if ((index < 1) || (index > _javaCollection.size())) {
+		return BooleanValue.FALSE;
+	    }
 
-      return LongValue.create(0);
+	    return env.wrapJava(_javaCollection.get(index - 1));
 
-    } catch (Exception ex) {
-      log.log(Level.FINE, ex.toString(), ex);
-      return null;
+	} catch (Exception ex) {
+	    log.log(Level.FINE, ex.toString(), ex);
+	    return BooleanValue.FALSE;
+	}
     }
-  }
 
-  /**
-   * Returns size of the collection
-   */
-  @ReturnNullAsFalse
-  public LongValue size(Env env)
-  {
-    try {
-
-      return LongValue.create(_javaCollection.size());
-
-    } catch (Exception ex) {
-      log.log(Level.FINE, ex.toString(), ex);
-      return null;
+    /**
+     * Returns the underlying Java collection
+     */
+    protected ArrayList getJavaCollection() {
+	return _javaCollection;
     }
-  }
 
-  /**
-   * Trims num elements from the end of the collection
-   */
-  public boolean trim(Env env,
-                      int num)
-  {
-    try {
+    /**
+     * Returns the maximum number of elements in the collection
+     * If the returned value is 0, then the number of elements
+     * is not limited. Returns FALSE in case of error.
+     */
+    @ReturnNullAsFalse
+    public LongValue max(Env env) {
+	try {
 
-      if (num < 0) {
-        return false;
-      }
+	    return LongValue.create(0);
 
-      if (num == 0) {
-        return true;
-      }
-
-      int length = _javaCollection.size();
-
-      if (num > length) {
-        num = length;
-      }
-
-      int i = length - num;
-
-      _javaCollection.subList(i, length).clear();
-
-      return true;
-
-    } catch (Exception ex) {
-      log.log(Level.FINE, ex.toString(), ex);
-      return false;
+	} catch (Exception ex) {
+	    log.log(Level.FINE, ex.toString(), ex);
+	    return null;
+	}
     }
-  }
 
-  public String toString() {
-    return "OracleOciCollection()";
-  }
+    /**
+     * Returns size of the collection
+     */
+    @ReturnNullAsFalse
+    public LongValue size(Env env) {
+	try {
+
+	    return LongValue.create(_javaCollection.size());
+
+	} catch (Exception ex) {
+	    log.log(Level.FINE, ex.toString(), ex);
+	    return null;
+	}
+    }
+
+    /**
+     * Trims num elements from the end of the collection
+     */
+    public boolean trim(Env env,
+	    int num) {
+	try {
+
+	    if (num < 0) {
+		return false;
+	    }
+
+	    if (num == 0) {
+		return true;
+	    }
+
+	    int length = _javaCollection.size();
+
+	    if (num > length) {
+		num = length;
+	    }
+
+	    int i = length - num;
+
+	    _javaCollection.subList(i, length).clear();
+
+	    return true;
+
+	} catch (Exception ex) {
+	    log.log(Level.FINE, ex.toString(), ex);
+	    return false;
+	}
+    }
+
+    public String toString() {
+	return "OracleOciCollection()";
+    }
 }

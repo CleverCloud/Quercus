@@ -26,7 +26,6 @@
  *
  * @author Rodrigo Westrupp
  */
-
 package com.caucho.quercus.lib.db;
 
 import com.caucho.quercus.annotation.Optional;
@@ -48,121 +47,117 @@ import java.util.logging.Logger;
  * oracle connection class (oracle has NO object oriented API)
  */
 public class Oracle extends JdbcConnectionResource {
-  private static final Logger log = Logger.getLogger(Oracle.class.getName());
-  private static final L10N L = new L10N(Oracle.class);
 
-  public Oracle(Env env,
-                @Optional("localhost") String host,
-                @Optional String user,
-                @Optional String password,
-                @Optional String db,
-                @Optional("1521") int port,
-                @Optional String driver,
-                @Optional String url)
-  {
-    super(env);
+    private static final Logger log = Logger.getLogger(Oracle.class.getName());
+    private static final L10N L = new L10N(Oracle.class);
 
-    connectInternal(env, host, user, password, db, port, "", 0,
-                    driver, url, false);
-  }
+    public Oracle(Env env,
+	    @Optional("localhost") String host,
+	    @Optional String user,
+	    @Optional String password,
+	    @Optional String db,
+	    @Optional("1521") int port,
+	    @Optional String driver,
+	    @Optional String url) {
+	super(env);
 
-  /**
-   * Connects to the underlying database.
-   */
-  @Override
+	connectInternal(env, host, user, password, db, port, "", 0,
+		driver, url, false);
+    }
+
+    /**
+     * Connects to the underlying database.
+     */
+    @Override
     protected ConnectionEntry connectImpl(Env env,
-                                          String host,
-                                          String userName,
-                                          String password,
-                                          String dbname,
-                                          int port,
-                                          String socket,
-                                          int flags,
-                                          String driver,
-                                          String url,
-                                          boolean isNewLink)
-  {
-    if (isConnected()) {
-      env.warning(L.l("Connection is already opened to '{0}'", this));
-      return null;
+	    String host,
+	    String userName,
+	    String password,
+	    String dbname,
+	    int port,
+	    String socket,
+	    int flags,
+	    String driver,
+	    String url,
+	    boolean isNewLink) {
+	if (isConnected()) {
+	    env.warning(L.l("Connection is already opened to '{0}'", this));
+	    return null;
+	}
+
+	try {
+
+	    if (host == null || host.equals("")) {
+		host = "localhost";
+	    }
+
+	    if (driver == null || driver.equals("")) {
+		driver = "oracle.jdbc.OracleDriver";
+	    }
+
+	    if (url == null || url.equals("")) {
+		if (dbname.indexOf("//") == 0) {
+		    // db is the url itself: "//db_host[:port]/database_name"
+		    url = "jdbc:oracle:thin:@" + dbname.substring(2);
+		    url = url.replace('/', ':');
+		} else {
+		    url = "jdbc:oracle:thin:@" + host + ":" + port + ":" + dbname;
+		}
+	    }
+
+	    ConnectionEntry jConn;
+
+	    jConn = env.getConnection(driver, url, userName, password, !isNewLink);
+
+	    return jConn;
+
+	} catch (SQLException e) {
+	    env.warning(
+		    "A link to the server could not be established. " + e.toString());
+	    env.setSpecialValue(
+		    "oracle.connectErrno", LongValue.create(e.getErrorCode()));
+	    env.setSpecialValue(
+		    "oracle.connectError", env.createString(e.getMessage()));
+
+	    log.log(Level.FINE, e.toString(), e);
+
+	    return null;
+	} catch (Exception e) {
+	    env.warning(
+		    "A link to the server could not be established. " + e.toString());
+	    env.setSpecialValue(
+		    "oracle.connectError", env.createString(e.getMessage()));
+
+	    log.log(Level.FINE, e.toString(), e);
+	    return null;
+	}
     }
 
-    try {
+    /**
+     * returns a prepared statement
+     */
+    public OracleStatement prepare(Env env, StringValue query) {
+	OracleStatement stmt = new OracleStatement((Oracle) validateConnection());
 
-      if (host == null || host.equals("")) {
-        host = "localhost";
-      }
+	stmt.prepare(env, query);
 
-      if (driver == null || driver.equals("")) {
-        driver = "oracle.jdbc.OracleDriver";
-      }
-
-      if (url == null || url.equals("")) {
-        if (dbname.indexOf("//") == 0) {
-          // db is the url itself: "//db_host[:port]/database_name"
-          url = "jdbc:oracle:thin:@" + dbname.substring(2);
-          url = url.replace('/', ':');
-        } else {
-          url = "jdbc:oracle:thin:@" + host + ":" + port + ":" + dbname;
-        }
-      }
-
-      ConnectionEntry jConn;
-      
-      jConn = env.getConnection(driver, url, userName, password, ! isNewLink);
-      
-      return jConn;
-
-    } catch (SQLException e) {
-      env.warning(
-          "A link to the server could not be established. " + e.toString());
-      env.setSpecialValue(
-          "oracle.connectErrno", LongValue.create(e.getErrorCode()));
-      env.setSpecialValue(
-          "oracle.connectError", env.createString(e.getMessage()));
-
-      log.log(Level.FINE, e.toString(), e);
-
-      return null;
-    } catch (Exception e) {
-      env.warning(
-          "A link to the server could not be established. " + e.toString());
-      env.setSpecialValue(
-          "oracle.connectError", env.createString(e.getMessage()));
-
-      log.log(Level.FINE, e.toString(), e);
-      return null;
+	return stmt;
     }
-  }
 
-  /**
-   * returns a prepared statement
-   */
-  public OracleStatement prepare(Env env, StringValue query)
-  {
-    OracleStatement stmt = new OracleStatement((Oracle) validateConnection());
+    /**
+     * Creates a database-specific result.
+     */
+    protected JdbcResultResource createResult(Env env,
+	    Statement stmt,
+	    ResultSet rs) {
+	return new OracleResult(env, stmt, rs, this);
+    }
 
-    stmt.prepare(env, query);
-
-    return stmt;
-  }
-
-  /**
-   * Creates a database-specific result.
-   */
-  protected JdbcResultResource createResult(Env env,
-                                            Statement stmt,
-                                            ResultSet rs)
-  {
-    return new OracleResult(env, stmt, rs, this);
-  }
-
-
-  public String toString()
-  {
-    if (isConnected())
-      return "Oracle[" + getHost() + "]";
-    else
-      return "Oracle[]";
-  }
+    public String toString() {
+	if (isConnected()) {
+	    return "Oracle[" + getHost() + "]";
+	} else {
+	    return "Oracle[]";
+	}
+    }
 }

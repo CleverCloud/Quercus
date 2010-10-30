@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.db;
 
 import com.caucho.util.*;
@@ -45,9 +44,10 @@ import javax.sql.*;
  * Extra ResultSet metadata for a Quercus Mysql connection.
  */
 public interface QuercusResultSet extends ResultSet {
-  public int getStringLength(int column)
-    throws SQLException;
 
-  public void getString(int column, byte []buffer, int offset)
-    throws SQLException;
+    public int getStringLength(int column)
+	    throws SQLException;
+
+    public void getString(int column, byte[] buffer, int offset)
+	    throws SQLException;
 }

@@ -25,7 +25,6 @@
  *
  * @author Sam
  */
-
 package com.caucho.quercus.lib.db;
 
 import com.caucho.quercus.env.NullValue;
@@ -35,52 +34,44 @@ import com.caucho.quercus.env.Value;
 import com.caucho.quercus.Location;
 
 public class PDOException
-  extends QuercusLanguageException
-{
-  private final String _code;
-  private final String _message;
+	extends QuercusLanguageException {
 
-  private Location _location;
+    private final String _code;
+    private final String _message;
+    private Location _location;
 
-  public PDOException(String code, String message)
-  {
-    super(NullValue.NULL);
+    public PDOException(String code, String message) {
+	super(NullValue.NULL);
 
-    _code = code;
-    _message = "SQLSTATE[" + code + "]: " + message;
+	_code = code;
+	_message = "SQLSTATE[" + code + "]: " + message;
 
-    _location = Env.getInstance().getLocation();
-  }
+	_location = Env.getInstance().getLocation();
+    }
 
-  public String getCode()
-  {
-    return _code;
-  }
+    public String getCode() {
+	return _code;
+    }
 
+    public Location getLocation(Env env) {
+	return _location;
+    }
 
-  public Location getLocation(Env env)
-  {
-    return _location;
-  }
+    public String getMessage() {
+	return _message;
+    }
 
-  public String getMessage()
-  {
-    return _message;
-  }
+    public String getMessage(Env env) {
+	return getMessage();
+    }
 
-  public String getMessage(Env env)
-  {
-    return getMessage();
-  }
-  
-  /**
-   * Converts the exception to a Value.
-   */
-  @Override
-  public Value toValue(Env env)
-  {
-    Value e = env.createException("PDOException", _message);
-    
-    return e;
-  }
+    /**
+     * Converts the exception to a Value.
+     */
+    @Override
+    public Value toValue(Env env) {
+	Value e = env.createException("PDOException", _message);
+
+	return e;
+    }
 }

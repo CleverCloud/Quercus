@@ -26,7 +26,6 @@
  *
  * @author Rodrigo Westrupp
  */
-
 package com.caucho.quercus.lib.db;
 
 import com.caucho.util.L10N;
@@ -38,40 +37,37 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
-
 /**
  * oracle result set class (postgres has NO object oriented API)
  */
 public class OracleResult extends JdbcResultResource {
-  private static final Logger log
-    = Logger.getLogger(OracleResult.class.getName());
-  private static final L10N L = new L10N(OracleResult.class);
 
-  /**
-   * Constructor for OracleResult
-   *
-   * @param stmt the corresponding statement
-   * @param rs the corresponding result set
-   * @param conn the corresponding connection
-   */
-  public OracleResult(Env env,
-                      Statement stmt,
-                      ResultSet rs,
-                      Oracle conn)
-  {
-    super(env, stmt, rs, conn);
-  }
+    private static final Logger log = Logger.getLogger(OracleResult.class.getName());
+    private static final L10N L = new L10N(OracleResult.class);
 
-  /**
-   * Constructor for OracleResult
-   *
-   * @param metaData the corresponding result set meta data
-   * @param conn the corresponding connection
-   */
-  public OracleResult(Env env,
-                      ResultSetMetaData metaData,
-                      Oracle conn)
-  {
-    super(env, metaData, conn);
-  }
+    /**
+     * Constructor for OracleResult
+     *
+     * @param stmt the corresponding statement
+     * @param rs the corresponding result set
+     * @param conn the corresponding connection
+     */
+    public OracleResult(Env env,
+	    Statement stmt,
+	    ResultSet rs,
+	    Oracle conn) {
+	super(env, stmt, rs, conn);
+    }
+
+    /**
+     * Constructor for OracleResult
+     *
+     * @param metaData the corresponding result set meta data
+     * @param conn the corresponding connection
+     */
+    public OracleResult(Env env,
+	    ResultSetMetaData metaData,
+	    Oracle conn) {
+	super(env, metaData, conn);
+    }
 }

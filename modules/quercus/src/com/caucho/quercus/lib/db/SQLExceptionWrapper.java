@@ -26,7 +26,6 @@
  *
  * @author Scott Ferguson
  */
-
 package com.caucho.quercus.lib.db;
 
 import java.sql.*;
@@ -35,16 +34,15 @@ import java.sql.*;
  * SQLException wrapper
  */
 public class SQLExceptionWrapper extends SQLException {
-  private Throwable _cause;
 
-  public SQLExceptionWrapper(Throwable cause)
-  {
-    _cause = cause;
-  }
+    private Throwable _cause;
 
-  @Override
-  public Throwable getCause()
-  {
-    return _cause;
-  }
+    public SQLExceptionWrapper(Throwable cause) {
+	_cause = cause;
+    }
+
+    @Override
+    public Throwable getCause() {
+	return _cause;
+    }
 }
