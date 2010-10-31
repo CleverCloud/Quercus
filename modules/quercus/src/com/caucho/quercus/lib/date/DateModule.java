@@ -1041,8 +1041,7 @@ public class DateModule extends AbstractQuercusModule {
 
 	org.joda.time.DateTime dt = dtf.parseDateTime(date);
 
-	// If Century = 0, we consider that date has been parsed with %y, %D or eq.
-	// According to manual strptime(3), Century = 19 if Year > 69, 20 for other
+	// According to manual strptime(3)
 	if (dt.getCenturyOfEra() == 0) {
 	    if (dt.getYear() > 68) {
 		dt = dt.withCenturyOfEra(19);
