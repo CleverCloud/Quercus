@@ -1002,6 +1002,21 @@ public class DateModule extends AbstractQuercusModule {
 		    fb.appendLiteral("\n");
 		    break;
 
+		case 'p':
+		case 'P':
+		    fb.appendHalfdayOfDayText();
+		    break;
+
+		case 'r':
+		    fb.appendHourOfHalfday(2);
+		    fb.appendLiteral(':');
+		    fb.appendMinuteOfHour(2);
+		    fb.appendLiteral(':');
+		    fb.appendSecondOfMinute(2);
+		    fb.appendLiteral(' ');
+		    fb.appendHalfdayOfDayText();
+		    break;
+
 		case 'R':
 		    fb.appendHourOfDay(2);
 		    fb.appendLiteral(':');
@@ -1022,6 +1037,10 @@ public class DateModule extends AbstractQuercusModule {
 		    fb.appendMinuteOfHour(2);
 		    fb.appendLiteral(':');
 		    fb.appendSecondOfMinute(2);
+		    break;
+
+		case 'y':
+		    fb.appendYear(2, 2);
 		    break;
 
 		case 'Y':
