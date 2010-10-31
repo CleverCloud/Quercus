@@ -1066,7 +1066,19 @@ public class DateModule extends AbstractQuercusModule {
 
 	DateTimeFormatter dtf = fb.toFormatter().withLocale(Locale.getDefault()).withOffsetParsed();
 
-	org.joda.time.DateTime dt = dtf.parseDateTime(date);
+	org.joda.time.DateTime dt = new org.joda.time.DateTime();
+
+	String unparsed = "";
+
+	try {
+	    dt = dtf.parseDateTime(date);
+	} catch (IllegalArgumentException e) {
+	    String delims = "[\"]+";
+
+	    String[] splits = e.getMessage().split(delims);
+
+	    unparsed = unparsed.concat(splits[3]);
+	}
 
 	// According to manual strptime(3)
 	if (dt.getCenturyOfEra() == 0) {
@@ -1077,7 +1089,6 @@ public class DateModule extends AbstractQuercusModule {
 	    }
 	}
 
-
 	array.put("tm_sec", dt.getSecondOfMinute());
 	array.put("tm_min", dt.getMinuteOfHour());
 	array.put("tm_hour", dt.getHourOfDay());
@@ -1086,7 +1097,7 @@ public class DateModule extends AbstractQuercusModule {
 	array.put("tm_year", dt.getYearOfCentury() + ((dt.getCenturyOfEra() - 19) * 100)); // Years since 1900
 	array.put("tm_wday", dt.getDayOfWeek() % 7);
 	array.put("tm_yday", dt.getDayOfYear() - 1);
-	array.put("unparsed", "");
+	array.put("unparsed", unparsed);
 
 	return array;
     }
