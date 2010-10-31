@@ -1047,6 +1047,14 @@ public class DateModule extends AbstractQuercusModule {
 		    fb.appendYear(4, 4);
 		    break;
 
+		case 'z':
+		    fb.appendTimeZoneOffset(null, true, 2, 2);
+		    break;
+
+		case 'Z':
+		    fb.appendTimeZoneName();
+		    break;
+
 		case '%':
 		    fb.appendLiteral('%');
 		    break;
@@ -1056,7 +1064,7 @@ public class DateModule extends AbstractQuercusModule {
 	    }
 	}
 
-	DateTimeFormatter dtf = fb.toFormatter().withLocale(Locale.getDefault());
+	DateTimeFormatter dtf = fb.toFormatter().withLocale(Locale.getDefault()).withOffsetParsed();
 
 	org.joda.time.DateTime dt = dtf.parseDateTime(date);
 
