@@ -33,10 +33,10 @@ import com.caucho.quercus.env.*;
 import com.caucho.quercus.module.AbstractQuercusModule;
 import com.caucho.quercus.program.JavaClassDef;
 import com.caucho.util.L10N;
-import com.caucho.util.RandomUtil;
 
 import java.util.Iterator;
 import java.math.BigInteger;
+import java.util.Random;
 
 /**
  * PHP math routines.
@@ -44,6 +44,7 @@ import java.math.BigInteger;
 public class MathModule extends AbstractQuercusModule {
 
     private static final L10N L = new L10N(MathModule.class);
+    private static final Random rnd = new Random();
     public static final double M_PI = Math.PI;
     public static final double M_E = Math.E;
     public static final long RAND_MAX = Integer.MAX_VALUE;
@@ -534,7 +535,7 @@ public class MathModule extends AbstractQuercusModule {
 	    return min;
 	}
 
-	long value = RandomUtil.getRandomLong();
+	long value = rnd.nextLong();
 	if (value < 0) {
 	    value = -value;
 	}
@@ -547,7 +548,7 @@ public class MathModule extends AbstractQuercusModule {
     }
 
     public static double lcg_value() {
-	return RandomUtil.nextDouble();
+	return rnd.nextDouble();
     }
 
     /**
