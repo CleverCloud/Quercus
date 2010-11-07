@@ -59,7 +59,9 @@ public class OptionsModule extends AbstractQuercusModule {
 
     private static final L10N L = new L10N(OptionsModule.class);
     private static final Logger log = Logger.getLogger(OptionsModule.class.getName());
-    private static final String[] phpVersionArray = (new QuercusContext()).getPhpVersion().split("\\.");
+    private static final String phpVersion = (new QuercusContext()).getPhpVersion();
+    private static final String[] phpVersionEArray = phpVersion.split("-");
+    private static final String[] phpVersionArray = phpVersionEArray[0].split("\\.");
     // php/1a0q (phpMyAdmin)
     public static final String PHP_OS = System.getProperty("os.name").toUpperCase();
     // PHP reserved constant PHP_EOL (since PHP 5.0.2)
@@ -72,6 +74,7 @@ public class OptionsModule extends AbstractQuercusModule {
     public static final int PHP_MAJOR_VERSION = Integer.parseInt(phpVersionArray[0]);
     public static final int PHP_MINOR_VERSION = Integer.parseInt(phpVersionArray[1]);
     public static final int PHP_RELEASE_VERSION = Integer.parseInt(phpVersionArray[2]);
+    public static final String PHP_EXTRA_VERSION = "-"+phpVersionEArray[1];
     public static final int ASSERT_ACTIVE = 1;
     public static final int ASSERT_CALLBACK = 2;
     public static final int ASSERT_BAIL = 3;

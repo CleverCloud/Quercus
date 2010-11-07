@@ -46,6 +46,7 @@ import com.caucho.quercus.page.PageManager;
 import com.caucho.quercus.page.QuercusPage;
 import com.caucho.quercus.parser.QuercusParser;
 import com.caucho.quercus.program.*;
+import com.caucho.quercus.QuercusVersion;
 import com.caucho.util.*;
 import com.caucho.vfs.*;
 
@@ -118,7 +119,7 @@ public class QuercusContext {
     //  = new LruCache<String, SessionArrayValue>(4096);
     private ConcurrentHashMap<String, Object> _specialMap = new ConcurrentHashMap<String, Object>();
     private String _scriptEncoding;
-    private String _phpVersion = "5.3.2";
+    private String _phpVersion = "5.3.2-quercus"+QuercusVersion.getVersionNumber();
     private String _mySqlVersion;
     private StringValue _phpVersionValue;
     private boolean _isStrict;
