@@ -41,7 +41,6 @@ com.caucho.quercus.lib.dom.DOMImplementation provides dom
 com.caucho.quercus.lib.dom.DOMProcessingInstruction provides dom
 com.caucho.quercus.lib.dom.DOMText provides dom
 com.caucho.quercus.lib.dom.DOMXPath provides dom
-com.caucho.quercus.lib.pdf.PDF
 com.caucho.quercus.lib.resin.MBeanServer
 com.caucho.quercus.lib.xml.XmlReader
 com.caucho.quercus.lib.xml.XMLWriter
