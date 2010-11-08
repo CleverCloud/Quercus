@@ -504,7 +504,6 @@ public class OptionsModule extends AbstractQuercusModule {
      * Returns system information
      */
     public static String php_uname(@Optional("'a'") String mode) {
-	// TODO: stubbed
 
 	if (mode == null || mode.equals("")) {
 	    mode = "a";
@@ -526,13 +525,13 @@ public class OptionsModule extends AbstractQuercusModule {
 		}
 
 	    case 'r':
-		return "2.4.0";
+		return System.getProperty("os.version");
 
 	    case 'v':
-		return "Version 2.6.24";
+		return "unknown";
 
 	    case 'm':
-		return "i686";
+		return System.getProperty("os.arch");
 
 	    case 'a':
 	    default:
