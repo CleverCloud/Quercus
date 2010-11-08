@@ -75,6 +75,7 @@ public class OptionsModule extends AbstractQuercusModule {
     public static final int PHP_MINOR_VERSION = Integer.parseInt(phpVersionArray[1]);
     public static final int PHP_RELEASE_VERSION = Integer.parseInt(phpVersionArray[2]);
     public static final String PHP_EXTRA_VERSION = "-"+phpVersionEArray[1];
+    public static final int PHP_VERSION_ID = PHP_MAJOR_VERSION * 10000 + PHP_MINOR_VERSION * 100 + PHP_RELEASE_VERSION;
     public static final int ASSERT_ACTIVE = 1;
     public static final int ASSERT_CALLBACK = 2;
     public static final int ASSERT_BAIL = 3;
@@ -96,6 +97,10 @@ public class OptionsModule extends AbstractQuercusModule {
     public static final int INFO_VARIABLES = 32;
     public static final int INFO_LICENSE = 64;
     public static final int INFO_ALL = -1;
+    public static final int INI_USER = 0x1;
+    public static final int INI_PERDIR = 0x2;
+    public static final int INI_SYSTEM = 0x4;
+    public static final int INI_ALL = 0x7;
     private static final IniDefinitions _iniDefinitions = new IniDefinitions();
 
     /**
