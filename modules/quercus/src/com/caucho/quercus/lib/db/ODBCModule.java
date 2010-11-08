@@ -42,6 +42,10 @@ public class ODBCModule extends AbstractQuercusModule {
 
     private static final Logger log = Log.open(ODBCModule.class);
     private static final L10N L = new L10N(ODBCModule.class);
+    public static final String ODBC_TYPE = "jdbcODBC";
+    public static final int ODBC_BINMODE_PASSTHRU = 0x0;
+    public static final int ODBC_BINMODE_RETURN = 0x1;
+    public static final int ODBC_BINMODE_CONVERT = 0x2;
 
     public ODBCModule() {
     }
