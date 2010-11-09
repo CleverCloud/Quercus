@@ -69,6 +69,7 @@ public class OptionsModule extends AbstractQuercusModule {
     public static final int PHP_INT_MAX = Integer.MAX_VALUE;
     // PHP int size is in byte representation
     public static final int PHP_INT_SIZE = Integer.SIZE / 8;
+    public static final int PHP_DEBUG = 0;
     public static final String CURRENCY_SYMBOL = (Currency.getInstance(Locale.getDefault())).getSymbol();
     public static final String INT_CURR_SYMBOL = (Currency.getInstance(Locale.getDefault())).toString();
     public static final int PHP_MAJOR_VERSION = Integer.parseInt(phpVersionArray[0]);
