@@ -464,30 +464,20 @@ public class HtmlModule extends AbstractQuercusModule {
      * Replaces newlines with HTML breaks.
      *
      * @param env the calling environment
+     * @param string string to convert
+     * @param is_xhtml indicates if function returns <br /> (XHTML style, default) or <br>
      */
-    public static Value nl2br(Env env, StringValue string) {
-	int strLen = string.length();
+    public static Value nl2br(Env env, StringValue string, @Optional("true") boolean is_xhtml) {
 
-	StringValue sb = string.createStringBuilder(strLen * 5 / 4);
+	String br = "<br />";
 
-	for (int i = 0; i < strLen; i++) {
-	    char ch = string.charAt(i);
+	if (!is_xhtml)
+	    br = "<br>";
+	    
+	String str = string.toString().replaceAll("(\\r?\\n)", br+"$1");
 
-	    if (ch == '\n') {
-		sb.append("<br />\n");
-	    } else if (ch == '\r') {
-		if (i + 1 < strLen && string.charAt(i + 1) == '\n') {
-		    sb.append("<br />\r\n");
-		    i++;
-		} else {
-		    sb.append("<br />\r");
-		}
-	    } else {
-		sb.append(ch);
-	    }
-	}
+	return StringValue.create(str);
 
-	return sb;
     }
 
     private static void entity(ArrayValue array, StringValue[] map,

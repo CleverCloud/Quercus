@@ -1342,7 +1342,6 @@ public class StringModule extends AbstractQuercusModule {
 	return result;
     }
 
-    // TODO: nl2br
     /**
      * Returns a formatted number.
      *
