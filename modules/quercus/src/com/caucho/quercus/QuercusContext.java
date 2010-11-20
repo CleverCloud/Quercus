@@ -121,6 +121,7 @@ public class QuercusContext {
     private String _scriptEncoding;
     private String _phpVersion = "5.3.2-quercus"+QuercusVersion.getVersionNumber();
     private String _mySqlVersion;
+    private String _jdbcEncoding = "ISO8859_1";
     private StringValue _phpVersionValue;
     private boolean _isStrict;
     private boolean _isLooseParse;
@@ -392,6 +393,20 @@ public class QuercusContext {
      */
     public void setScriptEncoding(String encoding) {
 	_scriptEncoding = encoding;
+    }
+
+    /**
+     * Returns the current JDBC encoding
+     */
+    public String getJdbcEncoding() {
+	return _jdbcEncoding;
+    }
+
+    /**
+     * Sets the JDBC encoding
+     */
+    public void setJdbcEncoding(String encoding) {
+	_jdbcEncoding = encoding;
     }
 
     /*

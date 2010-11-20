@@ -80,6 +80,8 @@ public class QuercusServlet
     private String _mysqlVersion;
     private String _phpVersion;
     protected File _licenseDirectory;
+    private String _jdbcEncoding;
+    private String _unicode = "false";
     private ArrayList<QuercusModule> _moduleList = new ArrayList<QuercusModule>();
     private ArrayList<PhpClassConfig> _classList = new ArrayList<PhpClassConfig>();
     private ArrayList<PhpClassConfig> _classImplList = new ArrayList<PhpClassConfig>();
@@ -337,7 +339,11 @@ public class QuercusServlet
 	    }
 	}
 
-	return false;
+	if (_unicode.equals("true")) {
+	    return true;
+	} else {
+	    return false;
+	}
     }
 
     /**
@@ -375,6 +381,17 @@ public class QuercusServlet
      */
     public void setPhpVersion(String version) {
 	_phpVersion = version;
+    }
+
+    /**
+     * Sets JDBC encoding
+     */
+    public void setJdbcEncoding(String encoding) {
+	_jdbcEncoding = encoding;
+    }
+
+    public void setUnicode(String unicode) {
+	_unicode = unicode;
     }
 
     /**
@@ -445,6 +462,10 @@ public class QuercusServlet
 	    setPhpVersion(paramValue);
 	} else if ("script-encoding".equals(paramName)) {
 	    setScriptEncoding(paramValue);
+	} else if ("jdbc-encoding".equals(paramName)) {
+	    setJdbcEncoding(paramValue);
+	} else if ("unicode".equals(paramName)) {
+	    setUnicode(paramValue);
 	} else if ("strict".equals(paramName)) {
 	    setStrict("true".equals(paramValue));
 	} else if ("loose-parse".equals(paramName)) {
@@ -507,6 +528,10 @@ public class QuercusServlet
 
 	if (_phpVersion != null) {
 	    quercus.setPhpVersion(_phpVersion);
+	}
+
+	if (_jdbcEncoding != null) {
+	    quercus.setJdbcEncoding(_jdbcEncoding);
 	}
 
 	for (QuercusModule module : _moduleList) {
