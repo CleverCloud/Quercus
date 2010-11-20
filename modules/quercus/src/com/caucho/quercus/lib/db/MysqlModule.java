@@ -1224,7 +1224,20 @@ public class MysqlModule extends AbstractQuercusModule {
     }
 
     //@todo mysql_list_processes()
-    //@todo mysql_set_charset()
+    /**
+     *
+     */
+    public static boolean mysql_set_charset(Env env,
+	    String charset,
+	    @Optional Mysqli conn) {
+
+	if (conn == null) {
+	    conn = (Mysqli) env.getSpecialValue("caucho.mysql");
+	}
+
+	return conn.set_charset(env, charset);
+    }
+
     private static Mysqli getConnection(Env env) {
 	return getConnection(env, "");
     }

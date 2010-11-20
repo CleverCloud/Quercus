@@ -211,8 +211,13 @@ public class Mysqli extends JdbcConnectionResource {
 	    if (!(conn instanceof QuercusConnection)) {
 		Statement stmt = conn.createStatement();
 
-		// php/1465
-		stmt.executeUpdate("SET NAMES 'latin1'");
+		String encname = null;
+		if (ENCODING == "ISO8859_1") {
+		    encname = "latin1";
+		} else {
+		    encname = ENCODING;
+		}
+		stmt.executeUpdate("SET NAMES '" + encname + "'");
 		stmt.close();
 	    }
 
@@ -284,10 +289,16 @@ public class Mysqli extends JdbcConnectionResource {
 	// to Strings
 	// php/140b
 	if (encoding != null) {
+
 	    char sep = urlBuilder.indexOf("?") < 0 ? '?' : '&';
 	    urlBuilder.append(sep);
 	    urlBuilder.append("characterEncoding=");
 	    urlBuilder.append(encoding);
+
+	    // Sets useUnicode to true if using utf8
+	    if (encoding.equals("utf8")) {
+		urlBuilder.append("&useUnicode=true");
+	    }
 	}
 
 	/*
@@ -946,9 +957,31 @@ public class Mysqli extends JdbcConnectionResource {
 
     /**
      * Sets the character set
+     * XXX: Stubbed, only latin1 and utf8 are supported
      */
-    public boolean set_charset(String charset) {
-	return false;
+    public boolean set_charset(Env env, String charset) {
+
+	if (charset.equals("latin1")) {
+	    charset = "ISO8859_1";
+	}
+
+	ENCODING = charset;
+
+	String catalog = getCatalog().toString();
+
+	// Prevents multiple connections
+	close(env);
+
+	// Recreates connection
+	boolean retr = connectInternal(env, getHost(), getUserName(), getPassword(),
+		catalog, getPort(), _socket,
+		0, null, null, true);
+
+	if (catalog != null && retr) {
+	    select_db(catalog);
+	}
+
+	return retr;
     }
 
     /**

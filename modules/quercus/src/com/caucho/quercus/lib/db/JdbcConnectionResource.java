@@ -75,11 +75,12 @@ public abstract class JdbcConnectionResource
     private boolean _isCatalogOptimEnabled = false;
     private boolean _isUsed;
     protected SqlParseToken _sqlParseToken = new SqlParseToken();
-    // php/144b, php/1464, php/1465
-    protected static final String ENCODING = "ISO8859_1";
+    protected static String ENCODING;
 
     public JdbcConnectionResource(Env env) {
 	_env = env;
+
+	ENCODING = env.getQuercus().getJdbcEncoding();
 
 	env.addCleanup(this);
     }
@@ -312,12 +313,13 @@ public abstract class JdbcConnectionResource
 
     /**
      * Returns the client encoding.
-     *
-     * XXX: stubbed out. has to be revised once we
-     * figure out what to do with character encoding
      */
     public String getCharacterSetName() {
-	return "latin1";
+	String enc = ENCODING;
+	if (enc.equals("ISO8859_1"))
+	    enc = "latin1";
+
+	return enc;
     }
 
     /**

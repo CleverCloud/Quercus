@@ -715,13 +715,14 @@ public class MysqliModule extends AbstractQuercusModule {
     /**
      * Sets the character set for a conneciton.
      */
-    public static boolean mysqli_set_charset(@NotNull Mysqli mysqli,
+    public static boolean mysqli_set_charset(Env env,
+	    @NotNull Mysqli mysqli,
 	    String charset) {
 	if (mysqli == null) {
 	    return false;
 	}
 
-	return mysqli.set_charset(charset);
+	return mysqli.set_charset(env,charset);
     }
 
     /**
