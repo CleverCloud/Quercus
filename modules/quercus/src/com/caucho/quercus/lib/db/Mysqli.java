@@ -212,7 +212,7 @@ public class Mysqli extends JdbcConnectionResource {
 		Statement stmt = conn.createStatement();
 
 		String encname = null;
-		if (ENCODING == "ISO8859_1") {
+		if (ENCODING.equals("ISO8859_1")) {
 		    encname = "latin1";
 		} else {
 		    encname = ENCODING;

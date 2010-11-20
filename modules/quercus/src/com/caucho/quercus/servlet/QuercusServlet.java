@@ -81,7 +81,7 @@ public class QuercusServlet
     private String _phpVersion;
     protected File _licenseDirectory;
     private String _jdbcEncoding;
-    private String _unicode = "false";
+    private boolean _unicode = false;
     private ArrayList<QuercusModule> _moduleList = new ArrayList<QuercusModule>();
     private ArrayList<PhpClassConfig> _classList = new ArrayList<PhpClassConfig>();
     private ArrayList<PhpClassConfig> _classImplList = new ArrayList<PhpClassConfig>();
@@ -339,11 +339,7 @@ public class QuercusServlet
 	    }
 	}
 
-	if (_unicode.equals("true")) {
-	    return true;
-	} else {
-	    return false;
-	}
+	return _unicode;
     }
 
     /**
@@ -391,7 +387,7 @@ public class QuercusServlet
     }
 
     public void setUnicode(String unicode) {
-	_unicode = unicode;
+	_unicode = Boolean.parseBoolean(unicode);
     }
 
     /**

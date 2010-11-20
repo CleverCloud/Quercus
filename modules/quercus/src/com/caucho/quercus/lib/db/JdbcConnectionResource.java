@@ -315,11 +315,10 @@ public abstract class JdbcConnectionResource
      * Returns the client encoding.
      */
     public String getCharacterSetName() {
-	String enc = ENCODING;
-	if (enc.equals("ISO8859_1"))
-	    enc = "latin1";
+	if (ENCODING.equals("ISO8859_1"))
+	    return "latin1";
 
-	return enc;
+	return ENCODING;
     }
 
     /**
