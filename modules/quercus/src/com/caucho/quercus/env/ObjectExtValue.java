@@ -555,7 +555,7 @@ public class ObjectExtValue extends ObjectValue
     @Override
     public void unsetField(StringValue name) {
 	Value returnValue = _quercusClass.unsetField(Env.getCurrent(), this, name);
-	if (returnValue == UnsetValue.UNSET) {
+	if (returnValue == UnsetValue.UNSET || returnValue == NullValue.NULL) {
 	    // __unset didn't work, lets look in the class itself
 	    int hash = (name.hashCode() & 0x7fffffff) % _prime;
 
@@ -1359,9 +1359,8 @@ public class ObjectExtValue extends ObjectValue
 	    for (Entry entry = _entries[hash]; entry != null; entry = entry._next) {
 		StringValue entryKey = entry._key;
 
-		if (name == entryKey || name.equals(entryKey)) {
+		if ((name == entryKey || name.equals(entryKey)) && entry._value != NullValue.NULL) {
 		    // php/09ks vs php/091m
-		    // returnValue = entry._value.toValue();
 		    return true;
 		}
 	    }

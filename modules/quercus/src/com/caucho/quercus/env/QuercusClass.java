@@ -1038,7 +1038,22 @@ public class QuercusClass extends NullValue {
 		env.popFieldGet(Env.OVERLOADING_TYPES.ISSET);
 	    }
 	} else {
-	    return issetField(name) ? BooleanValue.TRUE : BooleanValue.FALSE;
+	    return UnsetValue.UNSET;
+	}
+    }
+
+    @Override
+    public boolean issetField(StringValue name) {
+	if (_fieldMap.containsKey(name)) {
+	    return true;
+	}
+	return false;
+    }
+
+    @Override
+    public void unsetField(StringValue name) {
+	if (_fieldMap.containsKey(name)) {
+	    _fieldMap.remove(name);
 	}
     }
 
