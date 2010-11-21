@@ -430,14 +430,12 @@ public class ObjectExtValue extends ObjectValue
 
 		if (fieldSet != null) {
 		    _isFieldInit = true;
-		    Value retVal = fieldSet.callMethod(env,
-			    _quercusClass,
-			    this,
-			    name,
-			    value);
+		    Value retVal = _quercusClass.setField(env, this, name, value);
 		    _isFieldInit = false;
 
-		    return retVal;
+		    if (retVal != UnsetValue.UNSET) {
+			return retVal;
+		    }
 		}
 	    }
 
@@ -629,18 +627,25 @@ public class ObjectExtValue extends ObjectValue
 
 	    if (name == entryKey || name.equals(entryKey)) {
 
-		/*
 		if (entry._visibility == FieldVisibility.PRIVATE) {
-		QuercusClass cls = env.getCallingClass();
+		    QuercusClass cls = env.getCallingClass();
 
-		// TODO: this really only checks access from outside of class scope
-		// php/091m
-		if (cls != _quercusClass) {
-		env.error(L.l("Can't access private field '{0}::${1}'",
-		_quercusClass.getName(), name));
+		    // TODO: this really only checks access from outside of class scope
+		    // php/091m
+		    if (cls != _quercusClass) {
+			env.notice(L.l("Can't access private field '{0}::${1}'",
+				_quercusClass.getName(), name));
+			return null;
+		    }
+		} else if (entry._visibility == FieldVisibility.PROTECTED) {
+		    QuercusClass cls = env.getCallingClass();
+
+		    if (cls == null || (cls != _quercusClass && !cls.isA(_quercusClass.getName()))) {
+			env.notice(L.l("Can't access protected field '{0}::${1}'",
+				_quercusClass.getName(), name));
+			return null;
+		    }
 		}
-		}
-		 */
 
 		return entry;
 	    }

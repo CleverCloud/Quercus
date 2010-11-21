@@ -1004,10 +1004,14 @@ public class QuercusClass extends NullValue {
     //
     /**
      * Implements the __get method call.
+     * __get() is utilized for reading data from inaccessible properties.
      */
     public Value getField(Env env, Value qThis, StringValue name) {
 	// php/09km, php/09kn
 	// push/pop to prevent infinite recursion
+	if (issetField(name) && _fieldMap.get(name).isPublic()) {
+	    return this.get(name); // TODO: move to ObjectExtValue if possible
+	}
 
 	if (_fieldGet != null) {
 	    if (!env.pushFieldGet(Env.OVERLOADING_TYPES.FIELDGET, qThis.getClassName(), name)) {
@@ -1024,9 +1028,16 @@ public class QuercusClass extends NullValue {
 	}
     }
 
+    /**
+     * Implements the __isset method call.
+     * __isset() is triggered by calling isset() or empty()  on inaccessible properties.
+     */
     public Value issetField(Env env, Value qThis, StringValue name) {
-	// basically a copy of the __get code with slightly different semantics
+	if (issetField(name) && _fieldMap.get(name).isPublic()) {
+	    return BooleanValue.TRUE;    // TODO: move to ObjectExtValue if possible
+	}
 
+	// basically a copy of the __get code with slightly different semantics
 	if (_isset != null) {
 	    if (!env.pushFieldGet(Env.OVERLOADING_TYPES.ISSET, qThis.getClassName(), name)) {
 		return UnsetValue.UNSET;
@@ -1057,9 +1068,18 @@ public class QuercusClass extends NullValue {
 	}
     }
 
+    /**
+     * implements the __unset method call
+     *  __unset() is invoked when unset() is used on inaccessible properties.
+     */
     public Value unsetField(Env env, Value qThis, StringValue name) {
-	// basically a copy of the __get code with slightly different semantics
+	if (issetField(name) && _fieldMap.get(name).isPublic()) {
+	    // TODO: move to ObjectExtValue if possible
+	    unsetField(name);
+	    return NullValue.NULL;
+	}
 
+	// basically a copy of the __get code with slightly different semantics
 	if (_unset != null) {
 	    if (!env.pushFieldGet(Env.OVERLOADING_TYPES.UNSET, qThis.getClassName(), name)) {
 		return UnsetValue.UNSET;
