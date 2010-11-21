@@ -230,6 +230,11 @@ public class ObjectExtValue extends ObjectValue
      * Returns fields not explicitly specified by this value.
      */
     protected Value getFieldExt(Env env, StringValue name) {
+	Entry e = this.getEntry(env, name);
+	if (e != null && e._value != NullValue.NULL && e._value != UnsetValue.UNSET) {
+	    return e._value;
+	}
+
 	return _quercusClass.getField(env, this, name);
     }
 
