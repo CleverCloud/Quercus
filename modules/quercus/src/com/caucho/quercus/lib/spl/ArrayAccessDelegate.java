@@ -63,7 +63,12 @@ public class ArrayAccessDelegate implements ArrayDelegate {
     public boolean isset(ObjectValue qThis, Value index) {
 	Env env = Env.getInstance();
 
-	return qThis.callMethod(env, OFFSET_EXISTS, index).toBoolean();
+	Value returnValue = qThis.getQuercusClass().issetField(env, qThis, index.toString(env));
+	if (returnValue == UnsetValue.UNSET) {
+	    return qThis.callMethod(env, OFFSET_EXISTS, index).toBoolean();
+	} else {
+	    return returnValue.toBoolean();
+	}
     }
 
     public Value unset(ObjectValue qThis, Value index) {

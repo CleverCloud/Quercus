@@ -1366,6 +1366,16 @@ public class ObjectExtValue extends ObjectValue
 	    }
 	}
 
+	if (this.isA("arrayaccess")) {
+	    // TODO: This should probably be in ArrayAccessDelegate
+	    Env _env = Env.getCurrent();
+	    Value v = this.getObject(_env).getArray().get(name);
+	    if (v != null && v != NullValue.NULL && v != UnsetValue.UNSET) {
+		return true;
+	    }
+	    return false;
+	}
+
 	return returnValue.toBoolean();
 
     }
