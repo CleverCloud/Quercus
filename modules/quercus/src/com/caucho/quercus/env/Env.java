@@ -3162,7 +3162,13 @@ public class Env {
 	int id;
 
 	if (isCaseInsensitive) {
-	    id = _quercus.addLowerConstantId(new ConstStringValue(name));
+	    StringValue newname = null;
+	    if (isUnicodeSemantics()) {
+		newname = new UnicodeBuilderValue(name);
+	    } else {
+		newname = new ConstStringValue(name);
+	    }
+	    id = _quercus.addLowerConstantId(newname);
 	} else {
 	    id = _quercus.getConstantId(name);
 	}
