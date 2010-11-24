@@ -45,6 +45,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,6 +54,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -133,6 +136,15 @@ public class PDO implements EnvCleanup {
     private boolean _inTransaction;
     private static String ENCODING = "ISO8859_1";
 
+    private static Properties driverList = new Properties();
+    
+    static 
+    {
+    	InputStream is = PDO.class.getResourceAsStream("pdo.properties");
+    	driverList.load(is);
+    	is.close();
+    }
+    
     public PDO(Env env,
 	    String dsn,
 	    @Optional("null") String user,
@@ -741,6 +753,10 @@ public class PDO implements EnvCleanup {
 	    return getPgsqlDataSource(env, dsn);
 	} else if (dsn.startsWith("java")) {
 	    return getJndiDataSource(env, dsn);
+	} else if (dsn.startsWith("jdbc:")) {
+	    return getJdbcDataSource(env, dsn);
+	} else if (dsn.indexOf(":jdbc:")>0) {
+	    return getJdbcDataSource(env, dsn);
 	} else if (dsn.startsWith("resin:")) {
 	    return getResinDataSource(env, dsn);
 	} else {
@@ -749,6 +765,29 @@ public class PDO implements EnvCleanup {
 
 	    return null;
 	}
+    }
+
+    /**
+     * Opens a jdbc connection based on the dsn.
+     * you can also use "driver-class:jdbc-url"
+     */
+    private DataSource getJdbcDataSource(Env env, String dsn)
+    throws Exception 
+    {
+    	if (dsn.indexOf(":jdbc:")>0)
+    	{
+        	return env.getDataSource(dsn.substring(0,dsn.indexOf(":jdbc:")), dsn.substring(dsn.indexOf(":jdbc:")+1));
+    	}
+    	
+    	int t_start = dsn.indexOf(':')+1;
+    	int t_end = dsn.indexOf(':', t_start);
+    	String tag = dsn.substring(t_start, t_end);
+    	
+    	if(driverList.containsKey(tag))
+    	{
+        	return env.getDataSource(driverList.getProperty(tag), dsn);
+    	}
+    	return env.getDataSource(null, dsn);
     }
 
     /**
