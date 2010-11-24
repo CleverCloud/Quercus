@@ -127,7 +127,7 @@ public class QuercusContext {
     private boolean _isLooseParse;
     private boolean _isRequireSource;
     private boolean _isConnectionPool = true;
-    private Boolean _isUnicodeSemantics;
+    private static Boolean _isUnicodeSemantics;
     private DataSource _database;
     private ConcurrentHashMap<String, DataSource> _databaseMap = new ConcurrentHashMap<String, DataSource>();
     protected ConcurrentHashMap<Env, Env> _activeEnvSet = new ConcurrentHashMap<Env, Env>();
@@ -337,6 +337,10 @@ public class QuercusContext {
 	    _isUnicodeSemantics = Boolean.valueOf(getIniBoolean("unicode.semantics"));
 	}
 
+	return _isUnicodeSemantics.booleanValue();
+    }
+
+    public static boolean isUnicode() {
 	return _isUnicodeSemantics.booleanValue();
     }
 
