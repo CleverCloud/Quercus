@@ -28,6 +28,7 @@
  */
 package com.caucho.quercus.env;
 
+import com.caucho.quercus.QuercusContext;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -41,7 +42,12 @@ public final class MethodIntern {
 	StringValue internName = _internMap.get(name);
 
 	if (internName == null) {
-	    StringValue string = new CompiledConstStringValue(name);
+	    StringValue string = null;
+	    if (QuercusContext.isUnicode()) {
+		string = new CompiledConstUnicodeStringValue(name);
+	    } else {
+		string = new CompiledConstStringValue(name);
+	    }
 
 	    internName = _internMap.putIfAbsent(name, string);
 

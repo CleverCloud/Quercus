@@ -28,6 +28,7 @@
  */
 package com.caucho.quercus.env;
 
+import com.caucho.quercus.QuercusContext;
 import com.caucho.quercus.QuercusException;
 import com.caucho.quercus.QuercusRuntimeException;
 import com.caucho.quercus.expr.ClassConstExpr;
@@ -128,7 +129,11 @@ public class QuercusClass extends NullValue {
 	    AbstractFunction cons = cls.getConstructor();
 
 	    if (cons != null) {
-		addMethod(new StringBuilderValue(cls.getName()), cons);
+		if (QuercusContext.isUnicode()) {
+		    addMethod(new UnicodeBuilderValue(cls.getName()), cons);
+		} else {
+		    addMethod(new StringBuilderValue(cls.getName()), cons);
+		}
 	    }
 	}
 
@@ -187,8 +192,14 @@ public class QuercusClass extends NullValue {
 	// php/093n
 	if (_constructor != null
 		&& !_constructor.getName().equals("__construct")) {
-	    addMethodIfNotExist(new StringBuilderValue("__construct"), _constructor);
-	    addMethodIfNotExist(new StringBuilderValue(_className), _constructor);
+	    if (QuercusContext.isUnicode()) {
+		addMethodIfNotExist(new UnicodeBuilderValue("__construct"), _constructor);
+		addMethodIfNotExist(new UnicodeBuilderValue(_className), _constructor);
+	    } else {
+
+		addMethodIfNotExist(new StringBuilderValue("__construct"), _constructor);
+		addMethodIfNotExist(new StringBuilderValue(_className), _constructor);
+	    }
 	}
 
 	if (_destructor == null && parent != null) {
@@ -564,7 +575,11 @@ public class QuercusClass extends NullValue {
      * Adds a method.
      */
     public void addMethod(String name, AbstractFunction fun) {
-	addMethod(new StringBuilderValue(name), fun);
+	if (QuercusContext.isUnicode()) {
+	    addMethod(new UnicodeBuilderValue(name), fun);
+	} else {
+	    addMethod(new StringBuilderValue(name), fun);
+	}
     }
 
     /**
@@ -619,8 +634,13 @@ public class QuercusClass extends NullValue {
 	}
 
 	fieldList.add(new StaticField(name, value));
-	_staticFieldNameMap.put(new ConstStringValue(name),
-		new ConstStringValue(className + "::" + name));
+	if (QuercusContext.isUnicode()) {
+	    _staticFieldNameMap.put(new UnicodeBuilderValue(name),
+		    new UnicodeBuilderValue(className + "::" + name));
+	} else {
+	    _staticFieldNameMap.put(new StringBuilderValue(name),
+		    new StringBuilderValue(className + "::" + name));
+	}
     }
 
     /**
@@ -1050,7 +1070,11 @@ public class QuercusClass extends NullValue {
      */
     @Override
     public final AbstractFunction findFunction(String methodName) {
-	return _methodMap.getRaw(new StringBuilderValue(methodName));
+	if (QuercusContext.isUnicode()) {
+	    return _methodMap.getRaw(new UnicodeBuilderValue(methodName));
+	} else {
+	    return _methodMap.getRaw(new StringBuilderValue(methodName));
+	}
     }
 
     /**
