@@ -341,8 +341,10 @@ public class Env {
 	_internalAutoload = new InternalAutoloadCallback("com/caucho/quercus/php/");
 
 	// Define the constant string PHP_VERSION
-
 	addConstant("PHP_VERSION", OptionsModule.phpversion(this, null), true);
+
+	// Define the constant string PHP_SAPI
+	addConstant("PHP_SAPI", new ConstStringValue(OptionsModule.php_sapi_name(this)), true);
 
 	// STDIN, STDOUT, STDERR
 	// php://stdin, php://stdout, php://stderr
