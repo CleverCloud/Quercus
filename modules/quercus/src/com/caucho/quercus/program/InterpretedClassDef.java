@@ -59,6 +59,8 @@ public class InterpretedClassDef extends ClassDef
     protected AbstractFunction _destructor;
     protected AbstractFunction _getField;
     protected AbstractFunction _setField;
+    protected AbstractFunction _isset;
+    protected AbstractFunction _unset;
     protected AbstractFunction _call;
     protected AbstractFunction _invoke;
     protected AbstractFunction _toString;
@@ -191,6 +193,14 @@ public class InterpretedClassDef extends ClassDef
 	    cl.setToString(_toString);
 	}
 
+	if (_isset != null) {
+	    cl.setIsset(_isset);
+	}
+
+	if (_unset != null) {
+	    cl.setUnset(_unset);
+	}
+
 	cl.addInitializer(this);
 
 	for (Map.Entry<String, AbstractFunction> entry : _functionMap.entrySet()) {
@@ -248,6 +258,10 @@ public class InterpretedClassDef extends ClassDef
 	    _invoke = fun;
 	} else if (name.equals("__toString")) {
 	    _toString = fun;
+	} else if (name.equals("__isset")) {
+	    _isset = fun;
+	} else if (name.equals("__unset")) {
+	    _unset = fun;
 	} else if (name.equalsIgnoreCase(getName()) && _constructor == null) {
 	    _constructor = fun;
 	}

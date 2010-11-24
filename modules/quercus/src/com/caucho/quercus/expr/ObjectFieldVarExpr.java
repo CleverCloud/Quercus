@@ -193,4 +193,10 @@ public class ObjectFieldVarExpr extends AbstractVarExpr {
     public String toString() {
 	return _objExpr + "->{" + _nameExpr + "}";
     }
+
+    @Override
+    public boolean evalIsset(Env env) {
+	Value object = _objExpr.eval(env);
+	return object.issetField(_nameExpr.evalStringValue(env));
+    }
 }

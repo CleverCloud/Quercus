@@ -73,6 +73,8 @@ public class QuercusClass extends NullValue {
     private AbstractFunction _call;
     private AbstractFunction _invoke;
     private AbstractFunction _toString;
+    private AbstractFunction _isset;
+    private AbstractFunction _unset;
     private ArrayDelegate _arrayDelegate;
     private TraversableDelegate _traversableDelegate;
     private CountDelegate _countDelegate;
@@ -1002,20 +1004,31 @@ public class QuercusClass extends NullValue {
     //
     /**
      * Implements the __get method call.
+     * __get() is utilized for reading data from inaccessible properties.
      */
     public Value getField(Env env, Value qThis, StringValue name) {
 	// php/09km, php/09kn
 	// push/pop to prevent infinite recursion
+	if (issetField(name) && _fieldMap.get(name).isPublic()) {
+	    Value v_current = this.get(name); // TODO: move to ObjectExtValue if possible
+
+	    if (v_current != NullValue.NULL && v_current != UnsetValue.UNSET) {
+		return v_current;
+	    }
+	    if (_fieldGet == null) {
+		return ((ClassField) _fieldMap.get(name)).getInitValue().eval(env);
+	    }
+	}
 
 	if (_fieldGet != null) {
-	    if (!env.pushFieldGet(qThis.getClassName(), name)) {
+	    if (!env.pushFieldGet(Env.OVERLOADING_TYPES.FIELDGET, qThis.getClassName(), name)) {
 		return UnsetValue.UNSET;
 	    }
 
 	    try {
 		return _fieldGet.callMethod(env, this, qThis, name);
 	    } finally {
-		env.popFieldGet();
+		env.popFieldGet(Env.OVERLOADING_TYPES.FIELDGET);
 	    }
 	} else {
 	    return UnsetValue.UNSET;
@@ -1023,12 +1036,90 @@ public class QuercusClass extends NullValue {
     }
 
     /**
+     * Implements the __isset method call.
+     * __isset() is triggered by calling isset() or empty()  on inaccessible properties.
+     */
+    public Value issetField(Env env, Value qThis, StringValue name) {
+	if (issetField(name) && _fieldMap.get(name).isPublic()) {
+	    return BooleanValue.TRUE;    // TODO: move to ObjectExtValue if possible
+	}
+
+	// basically a copy of the __get code with slightly different semantics
+	if (_isset != null) {
+	    if (!env.pushFieldGet(Env.OVERLOADING_TYPES.ISSET, qThis.getClassName(), name)) {
+		return UnsetValue.UNSET;
+	    }
+
+	    try {
+		return _isset.callMethod(env, this, qThis, name);
+	    } finally {
+		env.popFieldGet(Env.OVERLOADING_TYPES.ISSET);
+	    }
+	} else {
+	    return UnsetValue.UNSET;
+	}
+    }
+
+    @Override
+    public boolean issetField(StringValue name) {
+	if (_fieldMap.containsKey(name)) {
+	    return true;
+	}
+	return false;
+    }
+
+    @Override
+    public void unsetField(StringValue name) {
+	if (_fieldMap.containsKey(name)) {
+	    _fieldMap.remove(name);
+	}
+    }
+
+    /**
+     * implements the __unset method call
+     *  __unset() is invoked when unset() is used on inaccessible properties.
+     */
+    public Value unsetField(Env env, Value qThis, StringValue name) {
+	if (issetField(name) && _fieldMap.get(name).isPublic()) {
+	    // TODO: move to ObjectExtValue if possible
+	    unsetField(name);
+	    return NullValue.NULL;
+	}
+
+	// basically a copy of the __get code with slightly different semantics
+	if (_unset != null) {
+	    if (!env.pushFieldGet(Env.OVERLOADING_TYPES.UNSET, qThis.getClassName(), name)) {
+		return UnsetValue.UNSET;
+	    }
+
+	    try {
+		return _unset.callMethod(env, this, qThis, name);
+	    } finally {
+		env.popFieldGet(Env.OVERLOADING_TYPES.UNSET);
+	    }
+	} else {
+	    unsetField(name);
+	}
+
+	return NullValue.NULL;
+    }
+
+    /**
      * Implements the __set method call.
      */
-    public void setField(Env env, Value qThis, StringValue name, Value value) {
+    public Value setField(Env env, Value qThis, StringValue name, Value value) {
 	if (_fieldSet != null) {
-	    _fieldSet.callMethod(env, this, qThis, name, value);
+	    if (!env.pushFieldGet(Env.OVERLOADING_TYPES.FIELDSET, qThis.getClassName(), name)) {
+		return UnsetValue.UNSET;
+	    }
+
+	    try {
+		return _fieldSet.callMethod(env, this, qThis, name, value);
+	    } finally {
+		env.popFieldGet(Env.OVERLOADING_TYPES.FIELDSET);
+	    }
 	}
+	return UnsetValue.UNSET;
     }
 
     /**
@@ -1705,5 +1796,21 @@ public class QuercusClass extends NullValue {
 	String getName() {
 	    return _name;
 	}
+    }
+
+    public void setIsset(AbstractFunction isset) {
+	_isset = isset;
+    }
+
+    public void setUnset(AbstractFunction unset) {
+	_unset = unset;
+    }
+
+    public AbstractFunction getIsset() {
+	return _isset;
+    }
+
+    public AbstractFunction getUnset() {
+	return _unset;
     }
 }

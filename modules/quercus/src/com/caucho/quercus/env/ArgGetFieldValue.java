@@ -144,7 +144,13 @@ public class ArgGetFieldValue extends ArgValue {
 	return _obj.getFieldObject(_env, _name).getFieldVar(_env, name);
     }
 
+    @Override
     public StringValue toStringValue() {
 	return toValue().toStringValue();
+    }
+
+    @Override
+    public String toJavaString() {
+	return toValue().toJavaString();
     }
 }

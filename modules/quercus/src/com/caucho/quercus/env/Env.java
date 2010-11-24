@@ -62,18 +62,9 @@ import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.IdentityHashMap;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -207,6 +198,14 @@ public class Env {
     private QuercusClass _callingClass;
     private Value[] _functionArgs;
     private LinkedList<FieldGetEntry> _fieldGetList = new LinkedList<FieldGetEntry>();
+    private LinkedList<FieldGetEntry> _fieldSetList = new LinkedList<FieldGetEntry>();
+    private LinkedList<FieldGetEntry> _issetList = new LinkedList<FieldGetEntry>();
+    private LinkedList<FieldGetEntry> _unsetList = new LinkedList<FieldGetEntry>();
+
+    public enum OVERLOADING_TYPES {
+
+	INVALID_FIRST, FIELDGET, FIELDSET, ISSET, UNSET, INVALID_LAST
+    };
     private Path _selfPath;
     private Path _selfDirectory;
     private Path _pwd;
@@ -2841,20 +2840,61 @@ public class Env {
      * Returns true if <code>name</code> doesn't already exist on the
      * field __get() stack.
      */
-    public boolean pushFieldGet(String className, StringValue fieldName) {
+    public boolean pushFieldGet(Env.OVERLOADING_TYPES type, String className, StringValue fieldName) {
 	FieldGetEntry entry = new FieldGetEntry(className, fieldName);
 
-	if (_fieldGetList.contains(entry)) {
+	LinkedList<FieldGetEntry> list = null;
+	switch (type) {
+	    case FIELDGET:
+		list = _fieldGetList;
+		break;
+	    case FIELDSET:
+		list = _fieldSetList;
+		break;
+	    case ISSET:
+		list = _issetList;
+		break;
+	    case UNSET:
+		list = _unsetList;
+		break;
+	    case INVALID_FIRST:
+	    case INVALID_LAST:
+		// defensive programming according to &quot;Code Complete 2nd Edition, MS Press&quot;
+		throw new IllegalStateException("IllegalState: pushFieldGet with FIRST/LAST Element");
+	}
+
+	if (list == null) {
+	    return false;
+	}
+
+	if (list.contains(entry)) {
 	    return false;
 	} else {
-	    _fieldGetList.push(entry);
+	    list.push(entry);
 
 	    return true;
 	}
     }
 
-    public void popFieldGet() {
-	_fieldGetList.pop();
+    public void popFieldGet(Env.OVERLOADING_TYPES type) {
+	switch (type) {
+	    case FIELDGET:
+		_fieldGetList.pop();
+		break;
+	    case FIELDSET:
+		_fieldSetList.pop();
+		break;
+	    case ISSET:
+		_issetList.pop();
+		break;
+	    case UNSET:
+		_unsetList.pop();
+		break;
+	    case INVALID_FIRST:
+	    case INVALID_LAST:
+		// defensive programming according to &quot;Code Complete 2nd Edition, MS Press&quot;
+		throw new IllegalStateException("IllegalState: popFieldGet with FIRST/LAST Element");
+	}
     }
 
     /*

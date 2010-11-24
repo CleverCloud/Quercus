@@ -127,11 +127,27 @@ public class ReadStreamInput extends InputStream implements BinaryInput {
      */
     public int read(byte[] buffer, int offset, int length)
 	    throws IOException {
-	if (_is != null) {
-	    return _is.read(buffer, offset, length);
-	} else {
+	ReadStream is = _is;
+
+	if (is == null) {
 	    return -1;
 	}
+
+	int readLength = 0;
+
+	do {
+	    int sublen = is.read(buffer, offset, length);
+
+	    if (sublen < 0) {
+		return readLength > 0 ? readLength : sublen;
+	    }
+
+	    readLength += sublen;
+	    length -= sublen;
+	    offset += sublen;
+	} while (length > 0 && is.getAvailable() > 0);
+
+	return readLength;
     }
 
     /**

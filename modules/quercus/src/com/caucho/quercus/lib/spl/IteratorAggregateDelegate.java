@@ -42,7 +42,7 @@ import java.util.Map;
 
 /**
  * A delegate that intercepts requests for iterator's and delegates
- * them to the iteerator returned by {@link IteratorAggregate@getIterator()}
+ * them to the iterator returned by {@link IteratorAggregate@getIterator()}
  */
 public class IteratorAggregateDelegate
 	implements TraversableDelegate {
@@ -77,7 +77,11 @@ public class IteratorAggregateDelegate
 	Value target = getTarget(env, qThis);
 
 	if (target instanceof ObjectValue) {
-	    return _iteratorDelegate.getValueIterator(env, (ObjectValue) target);
+	    if (target.isA("iteratoraggregate")) {
+		return target.getValueIterator(env);
+	    } else {
+		return _iteratorDelegate.getValueIterator(env, (ObjectValue) target);
+	    }
 	} else {
 	    throw new QuercusException(L.l("'{0}' is not a valid Traversable",
 		    qThis));
