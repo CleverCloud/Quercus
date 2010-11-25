@@ -314,6 +314,25 @@ public class ApcModule extends AbstractQuercusModule {
 	return BooleanValue.TRUE;
     }
 
+    /**
+     * Returns a value, no overwrite if key already exists
+     */
+    public Value apc_add(Env env, String key, Value value, @Optional("0") int ttl) {
+	if (_cache == null) {
+	    long size = env.getIniLong("apc.user_entries_hint");
+
+	    if (size <= 0) {
+		size = _defaultSize;
+	    }
+
+	    _cache = new LruCache<String, Entry>((int) size);
+	}
+	Entry newObj = new Entry(env, value, ttl);
+	Entry rtnObj = _cache.putIfNew(key, newObj);
+
+	return BooleanValue.create(newObj.equals(rtnObj));
+    }
+
     static class Entry extends UnserializeCacheEntry {
 
 	private long _createTime;
