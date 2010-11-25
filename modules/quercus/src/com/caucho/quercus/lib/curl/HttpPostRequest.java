@@ -26,7 +26,6 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.curl;
 
 import com.caucho.quercus.env.Env;
@@ -39,108 +38,104 @@ import java.net.ProtocolException;
  * Represents a POST Http request.
  */
 public class HttpPostRequest
-  extends HttpRequest
-{
-  private PostBody _body;
-  
-  public HttpPostRequest(CurlResource curlResource)
-  {
-    super(curlResource);
-  }
+	extends HttpRequest {
 
-  /**
-   * Initializes the connection.
-   */
-  protected boolean init(Env env)
-    throws ProtocolException
-  {
-    if (! super.init(env))
-      return false;
-    
-    CurlResource curl = getCurlResource();
-    _body = PostBody.create(env, curl.getPostBody());
-    
-    if (_body == null)
-      return false;
-    
-    HttpConnection conn = getHttpConnection();
-    
-    conn.setRequestProperty("Content-Type",
-                            _body.getContentType());
-    
-    conn.setRequestProperty("Content-Length",
-                            String.valueOf(_body.getContentLength()));
-    
-    conn.setDoOutput(true);
-    
-    return true;
-  }
+    private PostBody _body;
 
-  /**
-   * Transfer data to the server.
-   */
-  protected void transfer(Env env)
-    throws IOException
-  {
-    super.transfer(env);
+    public HttpPostRequest(CurlResource curlResource) {
+	super(curlResource);
+    }
 
-    HttpConnection conn = getHttpConnection();
-    OutputStream out = conn.getOutputStream();
-    
-    //out = new TestOutputStream(out);
-    
-    _body.writeTo(env, out);
-  }
-  
-  /*
-  static class TestOutputStream extends OutputStream
-  {
+    /**
+     * Initializes the connection.
+     */
+    protected boolean init(Env env)
+	    throws ProtocolException {
+	if (!super.init(env)) {
+	    return false;
+	}
+
+	CurlResource curl = getCurlResource();
+	_body = PostBody.create(env, curl.getPostBody());
+
+	if (_body == null) {
+	    return false;
+	}
+
+	HttpConnection conn = getHttpConnection();
+
+	conn.setRequestProperty("Content-Type", _body.getContentType(curl.getContentType()));
+
+	conn.setRequestProperty("Content-Length",
+		String.valueOf(_body.getContentLength()));
+
+	conn.setDoOutput(true);
+
+	return true;
+    }
+
+    /**
+     * Transfer data to the server.
+     */
+    protected void transfer(Env env)
+	    throws IOException {
+	super.transfer(env);
+
+	HttpConnection conn = getHttpConnection();
+	OutputStream out = conn.getOutputStream();
+
+	//out = new TestOutputStream(out);
+
+	_body.writeTo(env, out);
+    }
+    /*
+    static class TestOutputStream extends OutputStream
+    {
     OutputStream _out;
     FileOutputStream _ps;
     
     TestOutputStream(OutputStream out)
-      throws IOException
+    throws IOException
     {
-      _out = out;
-      
-      _ps = new FileOutputStream("c:/out.txt");
+    _out = out;
+
+    _ps = new FileOutputStream("c:/out.txt");
     }
     
     public void close()
-      throws IOException
+    throws IOException
     {
-      _out.close();
-      _ps.close();
+    _out.close();
+    _ps.close();
     }
     
     public void flush()
-      throws IOException
+    throws IOException
     {
-      _out.flush();
-      _ps.close();
+    _out.flush();
+    _ps.close();
     }
     
     public void write(int b)
-      throws IOException
+    throws IOException
     {
-      _out.write(b);
-      _ps.write(b);
+    _out.write(b);
+    _ps.write(b);
     }
     
     public void write(byte b[])
-      throws IOException
+    throws IOException
     {
-      _out.write(b);
-      _ps.write(b);
+    _out.write(b);
+    _ps.write(b);
     }
     
     public void write(byte b[], int offset, int len)
-      throws IOException
+    throws IOException
     {
-      _out.write(b, offset, len);
-      _ps.write(b, offset, len);
+    _out.write(b, offset, len);
+    _ps.write(b, offset, len);
     } 
-  }
-  */
-  
+    }
+     */
 }

@@ -26,17 +26,15 @@
  *
  * @author Nam Nguyen
  */
-
 package com.caucho.quercus.lib.curl;
 
 /**
  * Represents a GET Http request.
  */
 public class HttpGetRequest
-  extends HttpRequest
-{
-  public HttpGetRequest(CurlResource curlResource)
-  {
-    super(curlResource);
-  }
+	extends HttpRequest {
+
+    public HttpGetRequest(CurlResource curlResource) {
+	super(curlResource);
+    }
 }
