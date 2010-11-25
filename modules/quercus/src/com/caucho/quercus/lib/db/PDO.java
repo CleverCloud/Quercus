@@ -896,6 +896,7 @@ public class PDO implements EnvCleanup {
 	url.append(host);
 
 	if (port != null) {
+	    url.append(':');
 	    url.append(port);
 	}
 
