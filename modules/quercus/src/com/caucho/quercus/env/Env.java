@@ -346,6 +346,12 @@ public class Env {
 	// Define the constant string PHP_SAPI
 	addConstant("PHP_SAPI", new ConstStringValue(OptionsModule.php_sapi_name(this)), true);
 
+	addConstant("PEAR_EXTENSION_DIR", new ConstStringValue(getPwd()+"WEB-INF/lib/"), true);
+	addConstant("PHP_EXTENSION_DIR", new ConstStringValue(getPwd()+"WEB-INF/lib/"), true);
+	addConstant("PHP_LIBDIR", new ConstStringValue(getPwd()+"WEB-INF/lib/"), true);
+	addConstant("PHP_CONFIG_FILE_PATH", new ConstStringValue(getPwd()+"WEB-INF/"), true);
+	addConstant("PHP_CONFIG_FILE_SCAN_DIR", new ConstStringValue(getPwd()+"WEB-INF/"), true);
+
 	// STDIN, STDOUT, STDERR
 	// php://stdin, php://stdout, php://stderr
 	if (response == null) {
