@@ -78,6 +78,8 @@ public class OptionsModule extends AbstractQuercusModule {
     public static final String PHP_EXTRA_VERSION = "-"+phpVersionEArray[1];
     public static final int PHP_VERSION_ID = PHP_MAJOR_VERSION * 10000 + PHP_MINOR_VERSION * 100 + PHP_RELEASE_VERSION;
     public static final int PHP_ZTS = 0;
+    public static final String PHP_BINDIR = "/usr/bin";
+    public static final String PHP_SHLIB_SUFFIX = "jar";
     public static final int ASSERT_ACTIVE = 1;
     public static final int ASSERT_CALLBACK = 2;
     public static final int ASSERT_BAIL = 3;
