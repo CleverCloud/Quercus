@@ -346,11 +346,11 @@ public class Env {
 	// Define the constant string PHP_SAPI
 	addConstant("PHP_SAPI", new ConstStringValue(OptionsModule.php_sapi_name(this)), true);
 
-	addConstant("PEAR_EXTENSION_DIR", new ConstStringValue(getPwd()+"WEB-INF/lib/"), true);
-	addConstant("PHP_EXTENSION_DIR", new ConstStringValue(getPwd()+"WEB-INF/lib/"), true);
-	addConstant("PHP_LIBDIR", new ConstStringValue(getPwd()+"WEB-INF/lib/"), true);
-	addConstant("PHP_CONFIG_FILE_PATH", new ConstStringValue(getPwd()+"WEB-INF/"), true);
-	addConstant("PHP_CONFIG_FILE_SCAN_DIR", new ConstStringValue(getPwd()+"WEB-INF/"), true);
+	addConstant("PEAR_EXTENSION_DIR", new ConstStringValue(getPwd() + "WEB-INF/lib/"), true);
+	addConstant("PHP_EXTENSION_DIR", new ConstStringValue(getPwd() + "WEB-INF/lib/"), true);
+	addConstant("PHP_LIBDIR", new ConstStringValue(getPwd() + "WEB-INF/lib/"), true);
+	addConstant("PHP_CONFIG_FILE_PATH", new ConstStringValue(getPwd() + "WEB-INF/"), true);
+	addConstant("PHP_CONFIG_FILE_SCAN_DIR", new ConstStringValue(getPwd() + "WEB-INF/"), true);
 
 	// STDIN, STDOUT, STDERR
 	// php://stdin, php://stdout, php://stderr
@@ -3701,10 +3701,17 @@ public class Env {
 	String type = e.getValue().getClassName();
 	String message = e.getMessage(this);
 
-	error(location,
-		L.l("Uncaught exception of type '{0}' with message '{1}'",
-		type,
-		message));
+	if (message.equals("")) {
+	    error(location,
+		    L.l(
+		    "Uncaught exception of type '{0}'",
+		    type));
+	} else {
+	    error(location,
+		    L.l("Uncaught exception of type '{0}' with message '{1}'",
+		    type,
+		    message));
+	}
     }
 
     /**
