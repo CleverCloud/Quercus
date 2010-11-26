@@ -4445,11 +4445,17 @@ public class QuercusParser {
 	    throws IOException {
 	ch = ignoreWhiteSpace(ch);
 
+	long pos = _is.getPosition();
+
 	if (ch == '/') {
 	    if ((ch = read()) == '*') {
 		ch = ignoreMultiLineComment(ch);
 	    } else if (ch == '/') {
 		ch = ignoreSingleLineComment(ch);
+	    } else {
+		// Restore previous character if not comment
+		_is.setPosition(pos);
+		ch = '/';
 	    }
 	}
 
@@ -4460,13 +4466,22 @@ public class QuercusParser {
 	    _sb.append((char) ch);
 
 	    for (ch = read(); ch >= 0; ch = read()) {
+		pos = _is.getPosition();
 		if (ch == '/') {
 		    if ((ch = read()) == '*') {
 			ch = ignoreMultiLineComment(ch);
+			continue;
 		    } else if (ch == '/') {
 			ch = ignoreSingleLineComment(ch);
+			continue;
 		    }
-		} else if (isNamespaceIdentifierPart(ch)) {
+
+		    // Restore previous character if not comment
+		    _is.setPosition(pos);
+		    ch = '/';
+		}
+
+		if (isNamespaceIdentifierPart(ch)) {
 		    _sb.append((char) ch);
 		} else {
 		    break;
