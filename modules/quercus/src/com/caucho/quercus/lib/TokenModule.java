@@ -200,6 +200,12 @@ public class TokenModule extends AbstractQuercusModule {
 	return highlight_string(env, v, isReturn);
     }
 
+    public static Value show_source(Env env,
+	    StringValue filename,
+	    @Optional boolean isReturn) {
+	return highlight_file(env, filename, isReturn);
+    }
+
     public static Value highlight_string(Env env,
 	    StringValue s,
 	    @Optional boolean isReturn) {
