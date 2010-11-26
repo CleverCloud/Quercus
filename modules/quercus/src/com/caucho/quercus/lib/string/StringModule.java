@@ -105,6 +105,59 @@ public class StringModule extends AbstractQuercusModule {
     public static final int STR_PAD_RIGHT = 0;
     public static final int STR_PAD_BOTH = 2;
     public static final int YESEXPR = 10 << 15;
+    public static final int RADIXCHAR = 0x10000;
+    public static final int DECIMAL_POINT = RADIXCHAR; // Returns same value as RADIXCHAR
+    public static final int THOUSEP = 0x10001;
+    public static final int THOUSANDS_SEP = THOUSEP; // Returns same value as THOUSEP
+    public static final int ABDAY_1 = 0x20000;
+    public static final int ABDAY_2 = 0x20001;
+    public static final int ABDAY_3 = 0x20002;
+    public static final int ABDAY_4 = 0x20003;
+    public static final int ABDAY_5 = 0x20004;
+    public static final int ABDAY_6 = 0x20005;
+    public static final int ABDAY_7 = 0x20006;
+    public static final int DAY_1 = 0x20007;
+    public static final int DAY_2 = 0x20008;
+    public static final int DAY_3 = 0x20009;
+    public static final int DAY_4 = 0x2000a;
+    public static final int DAY_5 = 0x2000b;
+    public static final int DAY_6 = 0x2000c;
+    public static final int DAY_7 = 0x2000d;
+    public static final int ABMON_1 = 0x2000e;
+    public static final int ABMON_2 = 0x2000f;
+    public static final int ABMON_3 = 0x20010;
+    public static final int ABMON_4 = 0x20011;
+    public static final int ABMON_5 = 0x20012;
+    public static final int ABMON_6 = 0x20013;
+    public static final int ABMON_7 = 0x20014;
+    public static final int ABMON_8 = 0x20015;
+    public static final int ABMON_9 = 0x20016;
+    public static final int ABMON_10 = 0x20017;
+    public static final int ABMON_11 = 0x20018;
+    public static final int ABMON_12 = 0x20019;
+    public static final int MON_1 = 0x2001a;
+    public static final int MON_2 = 0x2001b;
+    public static final int MON_3 = 0x2001c;
+    public static final int MON_4 = 0x2001d;
+    public static final int MON_5 = 0x2001e;
+    public static final int MON_6 = 0x2001f;
+    public static final int MON_7 = 0x20020;
+    public static final int MON_8 = 0x20021;
+    public static final int MON_9 = 0x20022;
+    public static final int MON_10 = 0x20023;
+    public static final int MON_11 = 0x20024;
+    public static final int MON_12 = 0x20025;
+    public static final int AM_STR = 0x20026;
+    public static final int PM_STR = 0x20027;
+    public static final int D_T_FMT = 0x20028;
+    public static final int D_FMT = 0x20029;
+    public static final int T_FMT = 0x2002a;
+    public static final int T_FMT_AMPM = 0x2002b;
+    public static final int ERA = 0x2002c;
+    public static final int ERA_D_FMT = 0x2002e;
+    public static final int ERA_D_T_FMT = 0x20030;
+    public static final int ERA_T_FMT = 0x20031;
+    public static final int CRNCYSTR = 0x4000f;
     private static final DecimalFormatSymbols DEFAULT_DECIMAL_FORMAT_SYMBOLS;
     private static final BigInteger BIG_TEN = new BigInteger("10");
     private static final BigInteger BIG_2_64 = BigInteger.ONE.shiftLeft(64);
@@ -1323,6 +1376,9 @@ public class StringModule extends AbstractQuercusModule {
 	return NumberFormat.getCurrencyInstance(locale).format(value);
     }
 
+    /**
+     * TODO: finish implementation of nl_langinfo
+     */
     public static String nl_langinfo(Env env, int item) {
 	QuercusLocale money = env.getLocaleInfo().getMonetary();
 
