@@ -629,7 +629,6 @@
       <packageset dir="${modules}/resin/src"/>
       <!--
       <packageset dir="${modules}/script/src"/>
-      <packageset dir="${modules}/unix/src"/>
       -->
       <packageset dir="${modules}/kernel/src"/>
       <packageset dir="${modules}/webbeans/src"/>
@@ -1024,7 +1023,6 @@
     <delete dir="${lib}"/>
     <delete dir="${maven.lib}"/>
     <delete dir="${clientlib}"/>
-    <delete dir="${install}/unix"/>
 
     <delete dir="${install}/logs"/>
     <delete dir="${install}/bin"/>

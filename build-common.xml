@@ -1073,7 +1073,6 @@
     <delete dir="${lib}"/>
     <delete dir="${maven.lib}"/>
     <delete dir="${clientlib}"/>
-    <delete dir="${install}/unix"/>
 
     <delete dir="${install}/log"/>
     <delete dir="${install}/bin"/>
