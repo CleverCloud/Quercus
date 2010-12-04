@@ -1,9 +1,6 @@
 /lib/
 classes/
 dist/
-modules/kernel/src/com/caucho/Version.java
-modules/resin/src/manifest
+/modules/kernel/src/com/caucho/Version.java
+/modules/resin/src/manifest
 /nbproject/
-/extras/qits/WEB-INF/lib/*
-/extras/qits/WEB-INF/sun-web.xml
-!/extras/qits/WEB-INF/lib/.gitignore
