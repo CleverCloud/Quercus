@@ -5,7 +5,21 @@ com.caucho.quercus.lib.db.OracleOciCollection
 com.caucho.quercus.lib.db.OracleOciLob
 com.caucho.quercus.lib.db.PDO provides PDO
 com.caucho.quercus.lib.db.PDOException provides PDO
-com.caucho.quercus.lib.ExceptionClass as Exception
+com.caucho.quercus.lib.exception.ExceptionClass as Exception
+com.caucho.quercus.lib.exception.LogicException as LogicException
+com.caucho.quercus.lib.exception.BadFunctionCallException as BadFunctionCallException
+com.caucho.quercus.lib.exception.BadMethodCallException as BadMethodCallException
+com.caucho.quercus.lib.exception.DomainException as DomainException
+com.caucho.quercus.lib.exception.ErrorException as ErrorException
+com.caucho.quercus.lib.exception.InvalidArgumentException as InvalidArgumentException
+com.caucho.quercus.lib.exception.LengthException as LengthException
+com.caucho.quercus.lib.exception.OutOfBoundsException as OutOfBoundsException
+com.caucho.quercus.lib.exception.OutOfRangeException as OutOfRangeException
+com.caucho.quercus.lib.exception.OverflowException as OverflowException
+com.caucho.quercus.lib.exception.RangeException as RangeException
+com.caucho.quercus.lib.exception.RuntimeException as RuntimeException
+com.caucho.quercus.lib.exception.UnderflowException as UnderflowException
+com.caucho.quercus.lib.exception.UnexpectedValueException as UnexectedValueException
 com.caucho.quercus.lib.Java
 com.caucho.quercus.lib.jms.JMSQueue
 com.caucho.quercus.lib.Memcache provides memcache
