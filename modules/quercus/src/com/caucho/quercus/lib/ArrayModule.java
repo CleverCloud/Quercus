@@ -45,10 +45,12 @@ import com.caucho.util.L10N;
 import com.caucho.util.RandomUtil;
 
 import java.text.Collator;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -2776,6 +2778,22 @@ public class ArrayModule
 		array.put(key, value.toValue().copy());
 	    }
 	}
+    }
+
+    public static Value array_replace(Env env, ArrayValue array, Value[] replaces) {
+	ArrayValue result = new ArrayValueImpl();
+
+	result = array;
+
+	for (int i = 0; i < replaces.length; i++) {
+	    Entry<Value, Value>[] values = replaces[i].toArrayValue(env).toEntryArray();
+
+	    for (int j = 0; j < values.length; j++) {
+		result.append(values[j].getKey(), values[j].getValue());
+	    }
+	}
+
+	return result;
     }
 
     // TODO: Performance Test asort
