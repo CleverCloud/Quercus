@@ -38,9 +38,12 @@ import com.caucho.util.CharBuffer;
 import com.caucho.util.L10N;
 import com.caucho.util.QDate;
 
+import org.joda.time.format.*;
+
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Locale;
 
 /**
  * Date functions.
@@ -907,6 +910,210 @@ public class DateModule extends AbstractQuercusModule {
 	}
 
 	return QDate.formatLocal(time, format);
+    }
+
+    /**
+     * Returns the parsed date.
+     */
+    public Value strptime(Env env,
+	    String date,
+	    String format) {
+	ArrayValueImpl array = new ArrayValueImpl();
+	DateTimeFormatterBuilder fb = new DateTimeFormatterBuilder();
+
+	int length = format.length();
+
+	for (int i = 0; i < length; i++) {
+	    char ch = format.charAt(i);
+	    if (ch != '%') {
+		fb.appendLiteral(ch);
+		continue;
+	    }
+
+	    switch (format.charAt(++i)) {
+		case 'a':
+		    fb.appendDayOfWeekShortText();
+		    break;
+
+		case 'A':
+		    fb.appendDayOfWeekText();
+		    break;
+
+		case 'h':
+		case 'b':
+		    fb.appendMonthOfYearShortText();
+		    ;
+		    break;
+
+		case 'B':
+		    fb.appendMonthOfYearText();
+		    break;
+
+		// TODO: case 'c'
+
+		case 'C':
+		    fb.appendCenturyOfEra(2, 2);
+		    break;
+
+		case 'd':
+		    fb.appendDayOfMonth(2);
+		    break;
+
+		case 'D':
+		    fb.appendMonthOfYear(2);
+		    fb.appendLiteral('/');
+		    fb.appendDayOfMonth(2);
+		    fb.appendLiteral('/');
+		    fb.appendYear(2, 2);
+		    break;
+
+		// TODO: case 'e'
+
+		case 'F':
+		    fb.appendYear(4, 4);
+		    fb.appendLiteral('-');
+		    fb.appendMonthOfYear(2);
+		    fb.appendLiteral('-');
+		    fb.appendDayOfMonth(2);
+		    break;
+
+		// TODO: case 'g'
+		// TODO: case 'G'
+
+		case 'H':
+		    fb.appendHourOfDay(2);
+		    break;
+
+		case 'I':
+		    fb.appendHourOfHalfday(2);
+		    break;
+
+		case 'j':
+		    fb.appendDayOfYear(3);
+		    break;
+
+		// TODO: case 'l'
+
+		case 'm':
+		    fb.appendMonthOfYear(2);
+		    break;
+
+		case 'M':
+		    fb.appendMinuteOfHour(2);
+		    break;
+
+		case 'n':
+		    fb.appendLiteral("\n");
+		    break;
+
+		case 'p':
+		case 'P':
+		    fb.appendHalfdayOfDayText();
+		    break;
+
+		case 'r':
+		    fb.appendHourOfHalfday(2);
+		    fb.appendLiteral(':');
+		    fb.appendMinuteOfHour(2);
+		    fb.appendLiteral(':');
+		    fb.appendSecondOfMinute(2);
+		    fb.appendLiteral(' ');
+		    fb.appendHalfdayOfDayText();
+		    break;
+
+		case 'R':
+		    fb.appendHourOfDay(2);
+		    fb.appendLiteral(':');
+		    fb.appendMinuteOfHour(2);
+		    break;
+
+		// TODO: case 's'
+
+		case 'S':
+		    fb.appendSecondOfMinute(2);
+		    break;
+
+		case 't':
+		    fb.appendLiteral("\t");
+		    break;
+
+		case 'T':
+		    fb.appendHourOfDay(2);
+		    fb.appendLiteral(':');
+		    fb.appendMinuteOfHour(2);
+		    fb.appendLiteral(':');
+		    fb.appendSecondOfMinute(2);
+		    break;
+
+		// TODO: case 'u'
+		// TODO: case 'U'
+		// TODO: case 'V'
+		// TODO: case 'w'
+		// TODO: case 'W'
+		// TODO: case 'x'
+		// TODO: case 'X'
+
+		case 'y':
+		    fb.appendYear(2, 2);
+		    break;
+
+		case 'Y':
+		    fb.appendYear(4, 4);
+		    break;
+
+		case 'z':
+		    fb.appendTimeZoneOffset(null, true, 2, 2);
+		    break;
+
+		case 'Z':
+		    fb.appendTimeZoneName();
+		    break;
+
+		case '%':
+		    fb.appendLiteral('%');
+		    break;
+
+		default:
+		    fb.appendLiteral(ch);
+	    }
+	}
+
+	DateTimeFormatter dtf = fb.toFormatter().withLocale(Locale.getDefault()).withOffsetParsed();
+
+	org.joda.time.DateTime dt = new org.joda.time.DateTime();
+
+	String unparsed = "";
+
+	try {
+	    dt = dtf.parseDateTime(date);
+	} catch (IllegalArgumentException e) {
+	    String delims = "[\"]+";
+
+	    String[] splits = e.getMessage().split(delims);
+
+	    unparsed = unparsed.concat(splits[3]);
+	}
+
+	// According to manual strptime(3)
+	if (dt.getCenturyOfEra() == 0) {
+	    if (dt.getYear() > 68) {
+		dt = dt.withCenturyOfEra(19);
+	    } else {
+		dt = dt.withCenturyOfEra(20);
+	    }
+	}
+
+	array.put("tm_sec", dt.getSecondOfMinute());
+	array.put("tm_min", dt.getMinuteOfHour());
+	array.put("tm_hour", dt.getHourOfDay());
+	array.put("tm_mday", dt.getDayOfMonth());
+	array.put("tm_mon", dt.getMonthOfYear() - 1);
+	array.put("tm_year", dt.getYearOfCentury() + ((dt.getCenturyOfEra() - 19) * 100)); // Years since 1900
+	array.put("tm_wday", dt.getDayOfWeek() % 7);
+	array.put("tm_yday", dt.getDayOfYear() - 1);
+	array.put("unparsed", unparsed);
+
+	return array;
     }
 
     /**
