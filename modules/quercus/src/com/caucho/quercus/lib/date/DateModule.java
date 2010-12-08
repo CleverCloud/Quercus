@@ -949,10 +949,7 @@ public class DateModule extends AbstractQuercusModule {
 		    fb.appendMonthOfYearText();
 		    break;
 
-		// TODO: Find a solution to have Locale DateTime pattern string for dtfb
-		/*case 'c':
-		fb.appendShortText(L)
-		break;*/
+		// TODO: case 'c'
 
 		case 'C':
 		    fb.appendCenturyOfEra(2, 2);
@@ -970,6 +967,8 @@ public class DateModule extends AbstractQuercusModule {
 		    fb.appendYear(2, 2);
 		    break;
 
+		// TODO: case 'e'
+
 		case 'F':
 		    fb.appendYear(4, 4);
 		    fb.appendLiteral('-');
@@ -977,6 +976,9 @@ public class DateModule extends AbstractQuercusModule {
 		    fb.appendLiteral('-');
 		    fb.appendDayOfMonth(2);
 		    break;
+
+		// TODO: case 'g'
+		// TODO: case 'G'
 
 		case 'H':
 		    fb.appendHourOfDay(2);
@@ -989,6 +991,8 @@ public class DateModule extends AbstractQuercusModule {
 		case 'j':
 		    fb.appendDayOfYear(3);
 		    break;
+
+		// TODO: case 'l'
 
 		case 'm':
 		    fb.appendMonthOfYear(2);
@@ -1023,6 +1027,8 @@ public class DateModule extends AbstractQuercusModule {
 		    fb.appendMinuteOfHour(2);
 		    break;
 
+		// TODO: case 's'
+
 		case 'S':
 		    fb.appendSecondOfMinute(2);
 		    break;
@@ -1038,6 +1044,14 @@ public class DateModule extends AbstractQuercusModule {
 		    fb.appendLiteral(':');
 		    fb.appendSecondOfMinute(2);
 		    break;
+
+		// TODO: case 'u'
+		// TODO: case 'U'
+		// TODO: case 'V'
+		// TODO: case 'w'
+		// TODO: case 'W'
+		// TODO: case 'x'
+		// TODO: case 'X'
 
 		case 'y':
 		    fb.appendYear(2, 2);
