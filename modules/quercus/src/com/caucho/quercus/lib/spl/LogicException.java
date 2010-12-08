@@ -26,10 +26,11 @@
  *
  * @author Kevin Decherf
  */
-package com.caucho.quercus.lib.exception;
+package com.caucho.quercus.lib.spl;
 
 import com.caucho.quercus.annotation.ClassImplementation;
+import com.caucho.quercus.lib.exception.ExceptionClass;
 
 @ClassImplementation
-public class BadMethodCallException extends BadFunctionCallException {
+public class LogicException extends ExceptionClass {
 }

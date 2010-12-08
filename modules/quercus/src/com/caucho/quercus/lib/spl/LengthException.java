@@ -26,11 +26,11 @@
  *
  * @author Kevin Decherf
  */
-package com.caucho.quercus.lib.exception;
+package com.caucho.quercus.lib.spl;
 
 import com.caucho.quercus.annotation.ClassImplementation;
 
 @ClassImplementation
-public class DomainException extends LogicException {
+public class LengthException extends LogicException {
 
 }
