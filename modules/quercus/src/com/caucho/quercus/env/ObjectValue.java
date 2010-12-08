@@ -293,7 +293,7 @@ abstract public class ObjectValue extends Value {
 	if (delegate != null) {
 	    return delegate.getIterator(env, this);
 	} else {
-	    return super.getIterator(env);
+	    return getBaseIterator(env);
 	}
     }
 

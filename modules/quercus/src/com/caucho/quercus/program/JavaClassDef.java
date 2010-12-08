@@ -1080,6 +1080,12 @@ public class JavaClassDef extends ClassDef {
 		    }
 
 		    _funArrayDelegate.setArrayPut(new JavaMethod(moduleContext, method));
+		} else if ("__count".equals(methodName)) {
+		    FunctionCountDelegate delegate = new FunctionCountDelegate();
+
+		    delegate.setCount(new JavaMethod(moduleContext, method));
+
+		    _countDelegate = delegate;
 		} else if ("__getField".equals(methodName)) {
 		    __fieldGet = new JavaMethod(moduleContext, method);
 		} else if ("__setField".equals(methodName)) {

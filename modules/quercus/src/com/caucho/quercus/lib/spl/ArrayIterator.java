@@ -175,8 +175,10 @@ public class ArrayIterator
 	}
     }
 
+    @Override
     public void rewind() {
-	_iterator = _value.getIterator(_env);
+	// php/4as8
+	_iterator = _value.getBaseIterator(_env);
 
 	if (_iterator.hasNext()) {
 	    _current = _iterator.next();
@@ -214,6 +216,7 @@ public class ArrayIterator
 	}
     }
 
+    @Override
     public boolean valid() {
 	if (_iterator == null) {
 	    rewind();
