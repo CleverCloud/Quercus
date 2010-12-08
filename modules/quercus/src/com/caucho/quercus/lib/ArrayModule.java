@@ -28,13 +28,31 @@
  */
 package com.caucho.quercus.lib;
 
+import java.text.Collator;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.caucho.quercus.QuercusModuleException;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.annotation.ReadOnly;
 import com.caucho.quercus.annotation.Reference;
 import com.caucho.quercus.annotation.UsesSymbolTable;
-import com.caucho.quercus.annotation.NotNull;
-import com.caucho.quercus.env.*;
+import com.caucho.quercus.env.ArrayValue;
+import com.caucho.quercus.env.ArrayValueImpl;
+import com.caucho.quercus.env.BooleanValue;
+import com.caucho.quercus.env.Callable;
+import com.caucho.quercus.env.DoubleValue;
+import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.LongValue;
+import com.caucho.quercus.env.NullValue;
+import com.caucho.quercus.env.NumberValue;
+import com.caucho.quercus.env.StringValue;
+import com.caucho.quercus.env.Value;
+import com.caucho.quercus.env.Var;
 import com.caucho.quercus.env.ArrayValue.AbstractGet;
 import com.caucho.quercus.env.ArrayValue.GetKey;
 import com.caucho.quercus.env.ArrayValue.KeyComparator;
@@ -43,16 +61,6 @@ import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.quercus.module.AbstractQuercusModule;
 import com.caucho.util.L10N;
 import com.caucho.util.RandomUtil;
-
-import java.text.Collator;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * PHP array routines.
@@ -111,8 +119,7 @@ public class ArrayModule
     /**
      * Changes the key case
      */
-    public static Value array_change_key_case(
-	    Env env,
+    public static Value array_change_key_case(Env env,
 	    ArrayValue array,
 	    @Optional("CASE_LOWER") int toCase) {
 	if (array == null) {
@@ -248,183 +255,304 @@ public class ArrayModule
     }
 
     /**
-     * Pops off the top element
-     */
-    public static Value array_pop(Env env, @Reference Value array) {
-	return array.pop(env);
-    }
-
-    /**
-     * Returns the size of the array.
-     */
-    public static long count(Env env,
-	    @ReadOnly Value value,
-	    @Optional int countMethod) {
-	boolean isRecursive = countMethod == COUNT_RECURSIVE;
-
-	if (!isRecursive) {
-	    return value.getCount(env);
-	} else {
-	    return value.getCountRecursive(env);
-	}
-    }
-
-    /**
-     * Returns the current value of the array.
-     */
-    public static Value current(@ReadOnly Value value) {
-	return value.current();
-    }
-
-    /**
-     * Returns the current key of the array.
-     */
-    public static Value key(@ReadOnly Value value) {
-	return value.key();
-    }
-
-    /**
-     * Returns the current value of the array.
-     */
-    public static Value pos(@ReadOnly Value value) {
-	return current(value);
-    }
-
-    /**
-     * Returns the next value of the array.
-     */
-    public static Value next(@Reference Value value) {
-	return value.next();
-    }
-
-    /**
-     * Returns the next value of the array.
-     */
-    public static Value each(Env env, @Reference Value value) {
-	if (value instanceof Var) {
-	    value = value.toValue();
-
-	    if (value.isArray()) {
-		return value.toArrayValue(env).each();
-	    } else {
-		env.warning(L.l("each() requires argument to be an array"));
-
-		return NullValue.NULL;
-	    }
-	} else {
-	    return env.error(L.l("each() argument must be a variable"));
-	}
-    }
-
-    /**
-     * Returns the previous value of the array.
-     */
-    public static Value prev(@Reference Value array) {
-	return array.prev();
-    }
-
-    /**
-     * Resets the pointer
-     */
-    public static Value reset(@Reference Value array) {
-	return array.reset();
-    }
-
-    /**
-     * Returns the current value of the array.
-     */
-    public static Value shuffle(Env env, @Reference Value array) {
-	return array.shuffle();
-    }
-
-    /**
-     * Resets the pointer to the end
-     */
-    public static Value end(@Reference Value value) {
-	return value.end();
-    }
-
-    /**
-     * Checks if the key is in the given array
+     * Returns an array with everything that is in array and not in the other
+     * arrays, keys also used
      *
-     * @param key a key to check for in the array
-     * @param searchArray the array to search for the key in
-     * @return true if the key is in the array, and false otherwise
+     * @param array the primary array
+     * @param arrays the vector of arrays to check the primary array's values
+     * against
+     * @return an array with all of the values that are in the primary array but
+     *         not in the other arrays
      */
-    public static boolean array_key_exists(Env env,
-	    @ReadOnly Value key,
-	    @ReadOnly Value searchArray) {
-
-
-	if (!searchArray.isset() || !key.isset()) {
-	    return false;
-	}
-
-	if (!(searchArray.isArray() || searchArray.isObject())) {
-	    env.warning(
-		    L.l("'" + searchArray.toString()
-		    + "' is an unexpected argument, expected "
-		    + "ArrayValue or ObjectValue"));
-	    return false;
-	}
-
-	if (!(key.isString() || key.isLongConvertible())) {
-	    env.warning(
-		    L.l(
-		    "The first argument (a '{0}') should be "
-		    + "either a string or an integer",
-		    key.getType()));
-	    return false;
-	}
-
-	return searchArray.keyExists(key);
-    }
-
-    /**
-     * Undocumented alias for {@link #array_key_exists}.
-     */
-    public static boolean key_exists(Env env,
-	    @ReadOnly Value key,
-	    @ReadOnly Value searchArray) {
-	return array_key_exists(env, key, searchArray);
-    }
-
-    /**
-     * Returns an array of the keys in the given array
-     *
-     * @param array the array to obtain the keys for
-     * @param searchValue the corresponding value of the returned key array
-     * @return an array containing the keys
-     */
-    public static Value array_keys(Env env,
-	    @ReadOnly ArrayValue array,
-	    @Optional @ReadOnly Value searchValue,
-	    @Optional boolean isStrict) {
+    public static Value array_diff_assoc(Env env,
+	    ArrayValue array,
+	    Value[] arrays) {
 	if (array == null) {
 	    return NullValue.NULL;
 	}
 
-	if (searchValue.isDefault()) {
-	    return array.getKeys();
+	if (arrays.length < 1) {
+	    env.warning("Wrong parameter count for array_diff()");
+
+	    return NullValue.NULL;
 	}
 
-	ArrayValue newArray = new ArrayValueImpl(array.getSize());
+	ArrayValue diffArray = new ArrayValueImpl();
 
-	int i = 0;
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    boolean valueFound = false;
 
-	Iterator<Map.Entry<Value, Value>> iter = array.getIterator(env);
-
-	while (iter.hasNext()) {
-	    Map.Entry<Value, Value> entry = iter.next();
-	    Value entryKey = entry.getKey();
 	    Value entryValue = entry.getValue();
 
-	    if (entryValue.eq(searchValue)) {
-		newArray.append(LongValue.create(i++), entryKey);
+	    Value entryKey = entry.getKey();
+
+	    for (int k = 0; k < arrays.length && !valueFound; k++) {
+		if (!(arrays[k] instanceof ArrayValue)) {
+		    env.warning("Argument #" + (k + 2) + " is not an array");
+
+		    return NullValue.NULL;
+		}
+
+		valueFound =
+			((ArrayValue) arrays[k]).contains(entryValue).eq(entryKey);
+	    }
+
+	    if (!valueFound) {
+		diffArray.put(entryKey, entryValue);
 	    }
 	}
 
-	return newArray;
+	return diffArray;
+    }
+
+    /**
+     * Returns an array with everything that is in array and not in the other
+     * arrays, keys used for comparison
+     *
+     * @param array the primary array
+     * @param arrays the vector of arrays to check the primary array's values
+     * against
+     * @return an array with all of the values that are in the primary array but
+     *         not in the other arrays
+     */
+    public static Value array_diff_key(Env env,
+	    ArrayValue array,
+	    Value[] arrays) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	if (arrays.length < 1) {
+	    env.warning("Wrong parameter count for array_diff()");
+
+	    return NullValue.NULL;
+	}
+
+	ArrayValue diffArray = new ArrayValueImpl();
+
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    boolean keyFound = false;
+
+	    Value entryKey = entry.getKey();
+
+	    for (int k = 0; k < arrays.length && !keyFound; k++) {
+		if (!(arrays[k] instanceof ArrayValue)) {
+		    env.warning("Argument #" + (k + 2) + " is not an array");
+
+		    return NullValue.NULL;
+		}
+
+		keyFound = ((ArrayValue) arrays[k]).containsKey(entryKey) != null;
+	    }
+
+	    if (!keyFound) {
+		diffArray.put(entryKey, entry.getValue());
+	    }
+	}
+
+	return diffArray;
+    }
+
+    /**
+     * Returns an array with everything that is in array and not in the other
+     * arrays, keys used for comparison aswell
+     *
+     * @param array the primary array
+     * @param arrays the vector of arrays to check the primary array's values
+     * against.  The last element is the callback function.
+     * @return an array with all of the values that are in the primary array but
+     *         not in the other arrays
+     */
+    public static Value array_diff_uassoc(Env env,
+	    ArrayValue array,
+	    Value[] arrays) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	if (arrays.length < 2) {
+	    env.warning("Wrong parameter count for array_diff()");
+
+	    return NullValue.NULL;
+	}
+
+	AbstractFunction func =
+		env.findFunction(arrays[arrays.length - 1].toString().intern());
+
+	if (func == null) {
+	    env.warning("Invalid comparison function");
+
+	    return NullValue.NULL;
+	}
+
+	ArrayValue diffArray = new ArrayValueImpl();
+
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    boolean ValueFound = false;
+
+	    Value entryValue = entry.getValue();
+
+	    Value entryKey = entry.getKey();
+
+	    for (int k = 0; k < arrays.length - 1 && !ValueFound; k++) {
+		if (!(arrays[k] instanceof ArrayValue)) {
+		    env.warning("Argument #" + (k + 2) + " is not an array");
+
+		    return NullValue.NULL;
+		}
+
+		Value searchKey = ((ArrayValue) arrays[k]).contains(entryValue);
+
+		if (!searchKey.isNull()) {
+		    ValueFound = ((int) func.call(env, searchKey, entryKey).toLong())
+			    == 0;
+		}
+	    }
+
+	    if (!ValueFound) {
+		diffArray.put(entryKey, entryValue);
+	    }
+	}
+
+	return diffArray;
+    }
+
+    /**
+     * Returns an array with everything that is in array and not in the other
+     * arrays, keys used for comparison only
+     *
+     * @param array the primary array
+     * @param arrays the vector of arrays to check the primary array's values
+     * against.  The last element is the callback function.
+     * @return an array with all of the values that are in the primary array but
+     *         not in the other arrays
+     */
+    public static Value array_diff_ukey(Env env,
+	    ArrayValue array,
+	    Value[] arrays) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	if (arrays.length < 2) {
+	    env.warning("Wrong parameter count for array_diff()");
+
+	    return NullValue.NULL;
+	}
+
+	AbstractFunction func =
+		env.findFunction(arrays[arrays.length - 1].toString().intern());
+
+	if (func == null) {
+	    env.warning("Invalid comparison function");
+
+	    return NullValue.NULL;
+	}
+
+	ArrayValue diffArray = new ArrayValueImpl();
+
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    boolean keyFound = false;
+
+	    Value entryKey = entry.getKey();
+
+	    for (int k = 0; k < arrays.length - 1 && !keyFound; k++) {
+		if (!(arrays[k] instanceof ArrayValue)) {
+		    env.warning("Argument #" + (k + 2) + " is not an array");
+
+		    return NullValue.NULL;
+		}
+
+		Iterator<Value> keyItr = ((ArrayValue) arrays[k]).keySet().iterator();
+
+		keyFound = false;
+
+		while (keyItr.hasNext() && !keyFound) {
+		    Value currentKey = keyItr.next();
+
+		    keyFound = ((int) func.call(env, entryKey, currentKey).toLong()) == 0;
+		}
+	    }
+
+	    if (!keyFound) {
+		diffArray.put(entryKey, entry.getValue());
+	    }
+	}
+
+	return diffArray;
+    }
+
+    /**
+     * Returns an array with everything that is in array and not in the other
+     * arrays using a passed callback function for comparing
+     *
+     * @param array the primary array
+     * @param arrays the vector of arrays to check the primary array's values
+     * against
+     * @return an array with all of the values that are in the primary array but
+     *         not in the other arrays
+     */
+    public static Value array_diff(Env env, ArrayValue array, Value[] arrays) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	if (arrays.length < 1) {
+	    env.warning("Wrong parameter count for array_diff()");
+
+	    return NullValue.NULL;
+	}
+
+	ArrayValue diffArray = new ArrayValueImpl();
+
+	boolean valueFound;
+
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    valueFound = false;
+
+	    Value entryValue = entry.getValue();
+
+	    for (int k = 0; k < arrays.length && !valueFound; k++) {
+		if (!(arrays[k] instanceof ArrayValue)) {
+		    env.warning("Argument #" + (k + 2) + " is not an array");
+
+		    return NullValue.NULL;
+		}
+
+		valueFound =
+			!((ArrayValue) arrays[k]).contains(entryValue).isNull();
+	    }
+
+	    if (!valueFound) {
+		diffArray.put(entry.getKey(), entryValue);
+	    }
+	}
+
+	return diffArray;
+    }
+
+    /*
+     * Returns an array whose keys are the values of the keyArray passed in,
+     * and whose values are all the value passed in.
+     *
+     * @param keyArray whose values are used to populate the keys of the new
+     * array
+     * @param value used as the value of the keys
+     *
+     * @return newly filled array
+     */
+    public static ArrayValue array_fill_keys(Env env,
+	    ArrayValue keyArray,
+	    Value value) {
+	ArrayValue array = new ArrayValueImpl();
+
+	Iterator<Value> iter = keyArray.getValueIterator(env);
+
+	while (iter.hasNext()) {
+	    array.put(iter.next(), value.copy());
+	}
+
+	return array;
     }
 
     /**
@@ -451,95 +579,6 @@ public class ArrayModule
 	}
 
 	return array;
-    }
-
-    /**
-     * Returns an array with the given array's keys as values and its values as
-     * keys.  If the given array has matching values, the latest value will be
-     * transfered and the others will be lost.
-     *
-     * @param array the array to flip
-     * @return an array with it's keys and values swapped
-     */
-    public static Value array_flip(Env env,
-	    ArrayValue array) {
-	if (array == null) {
-	    return BooleanValue.FALSE;
-	}
-
-	ArrayValue newArray = new ArrayValueImpl();
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    Value entryValue = entry.getValue();
-
-	    if (entryValue.isLongConvertible()
-		    || entryValue instanceof StringValue) {
-		newArray.put(entryValue, entry.getKey());
-	    } else {
-		env.warning(L.l("Can only flip string and integer values at '{0}'",
-			entryValue));
-	    }
-	}
-
-	return newArray;
-    }
-
-    /**
-     * Returns an array with either the front/end padded with the pad value.  If
-     * the pad size is positive, the padding is performed on the end.  If
-     * negative, then the array is padded on the front.  The pad size is the new
-     * array size.  If this size is not greater than the current array size, then
-     * the original input array is returned.
-     *
-     * @param input the array to pad
-     * @param padSize the amount to pad the array by
-     * @param padValue determines front/back padding and the value to place in the
-     * padded space
-     * @return a padded array
-     */
-    public static Value array_pad(Env env,
-	    ArrayValue input,
-	    long padSize,
-	    Value padValue) {
-	if (input == null) {
-	    return NullValue.NULL;
-	}
-
-	long inputSize = input.getSize();
-
-	long size = Math.abs(padSize);
-
-	if (input.getSize() >= size) {
-	    return input;
-	}
-
-	if (size - inputSize > 1048576) {
-	    env.warning("You may only pad up to 1048576 elements at a time");
-
-	    return BooleanValue.FALSE;
-	}
-
-	ArrayValue paddedArray = new ArrayValueImpl();
-
-	boolean padFront = padSize < 0;
-
-	Iterator<Value> keyIterator = input.keySet().iterator();
-
-	for (long ctr = 0; ctr < size; ctr++) {
-	    Value newValue;
-
-	    if (padFront && ctr < size - inputSize) {
-		newValue = padValue;
-	    } else if ((!padFront) && ctr >= inputSize) {
-		newValue = padValue;
-	    } else {
-		newValue = input.get(keyIterator.next());
-	    }
-
-	    paddedArray.put(LongValue.create(ctr), newValue);
-	}
-
-	return paddedArray;
     }
 
     /**
@@ -603,6 +642,745 @@ public class ArrayModule
 	}
 
 	return filteredArray;
+    }
+
+    /**
+     * Returns an array with the given array's keys as values and its values as
+     * keys.  If the given array has matching values, the latest value will be
+     * transfered and the others will be lost.
+     *
+     * @param array the array to flip
+     * @return an array with it's keys and values swapped
+     */
+    public static Value array_flip(Env env,
+	    ArrayValue array) {
+	if (array == null) {
+	    return BooleanValue.FALSE;
+	}
+
+	ArrayValue newArray = new ArrayValueImpl();
+
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    Value entryValue = entry.getValue();
+
+	    if (entryValue.isLongConvertible()
+		    || entryValue instanceof StringValue) {
+		newArray.put(entryValue, entry.getKey());
+	    } else {
+		env.warning(L.l("Can only flip string and integer values at '{0}'",
+			entryValue));
+	    }
+	}
+
+	return newArray;
+    }
+
+    /**
+     * Returns an array with everything that is in array and also in the other
+     * arrays, keys are also used in the comparison
+     *
+     * @param array the primary array
+     * @param arrays the vector of arrays to check the primary array's values
+     * against.  The last element is the callback function.
+     * @return an array with all of the values that are in the primary array and
+     *         in the other arrays
+     */
+    public static Value array_intersect_assoc(Env env,
+	    ArrayValue array,
+	    Value[] arrays) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	if (arrays.length < 1) {
+	    env.warning("Wrong parameter count for array_diff()");
+
+	    return NullValue.NULL;
+	}
+
+	ArrayValue interArray = new ArrayValueImpl();
+
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    boolean valueFound = false;
+
+	    Value entryKey = entry.getKey();
+
+	    Value entryValue = entry.getValue();
+
+	    for (int k = 0; k < arrays.length; k++) {
+		if (!(arrays[k] instanceof ArrayValue)) {
+		    env.warning("Argument #" + (k + 2) + " is not an array");
+
+		    return NullValue.NULL;
+		}
+
+		if (k > 0 && !valueFound) {
+		    break;
+		}
+
+		Value searchValue = ((ArrayValue) arrays[k]).containsKey(entryKey);
+
+		if (searchValue != null) {
+		    valueFound = searchValue.eq(entryValue);
+		} else {
+		    valueFound = false;
+		}
+	    }
+
+	    if (valueFound) {
+		interArray.put(entryKey, entryValue);
+	    }
+	}
+
+	return interArray;
+    }
+
+    /**
+     * Returns an array with everything that is in array and also in the other
+     * arrays, keys are only used in the comparison
+     *
+     * @param array the primary array
+     * @param arrays the vector of arrays to check the primary array's values
+     * against.  The last element is the callback function.
+     * @return an array with all of the values that are in the primary array and
+     *         in the other arrays
+     */
+    public static Value array_intersect_key(Env env,
+	    ArrayValue array,
+	    Value[] arrays) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	if (arrays.length < 1) {
+	    env.warning("Wrong parameter count for array_diff()");
+
+	    return NullValue.NULL;
+	}
+
+	ArrayValue interArray = new ArrayValueImpl();
+
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    boolean keyFound = false;
+
+	    Value entryKey = entry.getKey();
+
+	    for (int k = 0; k < arrays.length; k++) {
+		if (!(arrays[k] instanceof ArrayValue)) {
+		    env.warning("Argument #" + (k + 2) + " is not an array");
+
+		    return NullValue.NULL;
+		}
+
+		if (k > 0 && !keyFound) {
+		    break;
+		}
+
+		keyFound = ((ArrayValue) arrays[k]).containsKey(entryKey) != null;
+	    }
+
+	    if (keyFound) {
+		interArray.put(entryKey, entry.getValue());
+	    }
+	}
+
+	return interArray;
+    }
+
+    /**
+     * Returns an array with everything that is in array and also in the other
+     * arrays, keys are also used in the comparison.  Uses a callback function for
+     * evalutation the keys.
+     *
+     * @param array the primary array
+     * @param arrays the vector of arrays to check the primary array's values
+     * against.  The last element is the callback function.
+     * @return an array with all of the values that are in the primary array and
+     *         in the other arrays
+     */
+    public static Value array_intersect_uassoc(Env env,
+	    ArrayValue array,
+	    Value[] arrays) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	if (arrays.length < 2) {
+	    env.warning("Wrong parameter count for array_diff()");
+
+	    return NullValue.NULL;
+	}
+
+	AbstractFunction func =
+		env.findFunction(arrays[arrays.length - 1].toString().intern());
+
+	if (func == null) {
+	    env.warning("Invalid comparison function");
+
+	    return NullValue.NULL;
+	}
+
+	ArrayValue interArray = new ArrayValueImpl();
+
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    boolean valueFound = false;
+
+	    Value entryKey = entry.getKey();
+
+	    Value entryValue = entry.getValue();
+
+	    for (int k = 0; k < arrays.length - 1; k++) {
+		if (!(arrays[k] instanceof ArrayValue)) {
+		    env.warning("Argument #" + (k + 2) + " is not an array");
+
+		    return NullValue.NULL;
+		}
+
+		if (k > 0 && !valueFound) {
+		    break;
+		}
+
+		Value searchValue = ((ArrayValue) arrays[k]).containsKey(entryKey);
+
+		if (searchValue != null) {
+		    valueFound = func.call(env, searchValue, entryValue).toLong() == 0;
+		} else {
+		    valueFound = false;
+		}
+	    }
+
+	    if (valueFound) {
+		interArray.put(entryKey, entryValue);
+	    }
+	}
+
+	return interArray;
+    }
+
+    /**
+     * Returns an array with everything that is in array and also in the other
+     * arrays, keys are only used in the comparison.  Uses a callback function for
+     * evalutation the keys.
+     *
+     * @param array the primary array
+     * @param arrays the vector of arrays to check the primary array's values
+     * against.  The last element is the callback function.
+     * @return an array with all of the values that are in the primary array and
+     *         in the other arrays
+     */
+    public static Value array_intersect_ukey(Env env,
+	    ArrayValue array,
+	    Value[] arrays) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	if (arrays.length < 2) {
+	    env.warning("Wrong parameter count for array_diff()");
+
+	    return NullValue.NULL;
+	}
+
+	AbstractFunction func =
+		env.findFunction(arrays[arrays.length - 1].toString().intern());
+
+	if (func == null) {
+	    env.warning("Invalid comparison function");
+
+	    return NullValue.NULL;
+	}
+
+	ArrayValue interArray = new ArrayValueImpl();
+
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    boolean keyFound = false;
+
+	    Value entryKey = entry.getKey();
+
+	    for (int k = 0; k < arrays.length - 1; k++) {
+		if (!(arrays[k] instanceof ArrayValue)) {
+		    env.warning("Argument #" + (k + 2) + " is not an array");
+
+		    return NullValue.NULL;
+		}
+
+		if (k > 0 && !keyFound) {
+		    break;
+		}
+
+		Iterator<Value> keyItr = ((ArrayValue) arrays[k]).keySet().iterator();
+
+		keyFound = false;
+
+		while (keyItr.hasNext() && !keyFound) {
+		    Value currentKey = keyItr.next();
+
+		    keyFound = ((int) func.call(env, entryKey, currentKey).toLong()) == 0;
+		}
+
+	    }
+
+	    if (keyFound) {
+		interArray.put(entryKey, entry.getValue());
+	    }
+	}
+
+	return interArray;
+    }
+
+    /**
+     * Returns an array with everything that is in array and also in the other
+     * arrays
+     *
+     * @param array the primary array
+     * @param arrays the vector of arrays to check the primary array's values
+     * against.  The last element is the callback function.
+     * @return an array with all of the values that are in the primary array and
+     *         in the other arrays
+     */
+    public static Value array_intersect(Env env,
+	    ArrayValue array,
+	    Value[] arrays) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	if (arrays.length < 1) {
+	    env.warning("Wrong parameter count for array_diff()");
+
+	    return NullValue.NULL;
+	}
+
+	ArrayValue interArray = new ArrayValueImpl();
+
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    boolean valueFound = false;
+
+	    Value entryValue = entry.getValue();
+
+	    for (int k = 0; k < arrays.length; k++) {
+		if (!(arrays[k] instanceof ArrayValue)) {
+		    env.warning("Argument #" + (k + 2) + " is not an array");
+
+		    return NullValue.NULL;
+		}
+
+		if (k > 0 && !valueFound) {
+		    break;
+		}
+
+		valueFound =
+			!((ArrayValue) arrays[k]).contains(entryValue).isNull();
+	    }
+
+	    if (valueFound) {
+		interArray.put(entry.getKey(), entryValue);
+	    }
+	}
+
+	return interArray;
+    }
+
+    /**
+     * Checks if the key is in the given array
+     *
+     * @param key a key to check for in the array
+     * @param searchArray the array to search for the key in
+     * @return true if the key is in the array, and false otherwise
+     */
+    public static boolean array_key_exists(Env env,
+	    @ReadOnly Value key,
+	    @ReadOnly Value searchArray) {
+
+
+	if (!searchArray.isset() || !key.isset()) {
+	    return false;
+	}
+
+	if (!(searchArray.isArray() || searchArray.isObject())) {
+	    env.warning(
+		    L.l("'" + searchArray.toString()
+		    + "' is an unexpected argument, expected "
+		    + "ArrayValue or ObjectValue"));
+	    return false;
+	}
+
+	if (!(key.isString() || key.isLongConvertible())) {
+	    env.warning(
+		    L.l(
+		    "The first argument (a '{0}') should be "
+		    + "either a string or an integer",
+		    key.getType()));
+	    return false;
+	}
+
+	return searchArray.keyExists(key);
+    }
+
+    /**
+     * Returns an array of the keys in the given array
+     *
+     * @param array the array to obtain the keys for
+     * @param searchValue the corresponding value of the returned key array
+     * @return an array containing the keys
+     */
+    public static Value array_keys(Env env,
+	    @ReadOnly ArrayValue array,
+	    @Optional @ReadOnly Value searchValue,
+	    @Optional boolean isStrict) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	if (searchValue.isDefault()) {
+	    return array.getKeys();
+	}
+
+	ArrayValue newArray = new ArrayValueImpl(array.getSize());
+
+	int i = 0;
+
+	Iterator<Map.Entry<Value, Value>> iter = array.getIterator(env);
+
+	while (iter.hasNext()) {
+	    Map.Entry<Value, Value> entry = iter.next();
+	    Value entryKey = entry.getKey();
+	    Value entryValue = entry.getValue();
+
+	    if (entryValue.eq(searchValue)) {
+		newArray.append(LongValue.create(i++), entryKey);
+	    }
+	}
+
+	return newArray;
+    }
+
+    /**
+     * Maps the given function with the array arguments.
+     *
+     * @param fun the function name
+     * @param args the vector of array arguments
+     * @return an array with all of the mapped values
+     */
+    public static Value array_map(Env env, Callable fun,
+	    ArrayValue arg, Value[] args) {
+	// XXX: drupal
+	if (arg == null) {
+	    return NullValue.NULL;
+	}
+
+	// quercus/1730
+	Iterator<Map.Entry<Value, Value>> argIter = arg.entrySet().iterator();
+
+	Iterator[] iters = new Iterator[args.length];
+	for (int i = 0; i < args.length; i++) {
+	    if (!(args[i] instanceof ArrayValue)) {
+		throw env.createErrorException(L.l("expected array"));
+	    }
+
+	    ArrayValue argArray = (ArrayValue) args[i];
+
+	    iters[i] = argArray.values().iterator();
+	}
+
+	ArrayValue resultArray = new ArrayValueImpl();
+
+	Value[] param = new Value[args.length + 1];
+	while (argIter.hasNext()) {
+	    Map.Entry<Value, Value> entry = argIter.next();
+
+	    param[0] = entry.getValue();
+
+	    for (int i = 0; i < iters.length; i++) {
+		param[i + 1] = (Value) iters[i].next();
+
+		if (param[i + 1] == null) {
+		    param[i + 1] = NullValue.NULL;
+		}
+	    }
+
+	    resultArray.put(entry.getKey(), fun.call(env, param));
+	}
+
+	return resultArray;
+    }
+
+    /**
+     * Maps the given function with the array arguments.
+     *
+     * @param args the vector of array arguments
+     * @return an array with all of the mapped values
+     */
+    public static Value array_merge_recursive(Env env, Value[] args) {
+	// quercus/173a
+
+	ArrayValue result = new ArrayValueImpl();
+
+	for (Value arg : args) {
+	    if (!(arg.toValue() instanceof ArrayValue)) {
+		continue;
+	    }
+
+	    arrayMergeRecursiveImpl(env, result, (ArrayValue) arg.toValue());
+	}
+
+	return result;
+    }
+
+    /**
+     * Maps the given function with the array arguments.
+     *
+     * @param args the vector of array arguments
+     * @return an array with all of the mapped values
+     */
+    public static Value array_merge(Env env, Value[] args) {
+	// php/1731
+
+	ArrayValue result = new ArrayValueImpl();
+
+	for (Value arg : args) {
+	    if (arg.isNull()) {
+		return NullValue.NULL;
+	    }
+
+	    Value argValue = arg.toValue();
+
+	    if (!argValue.isArray()) {
+		continue;
+	    }
+
+	    ArrayValue array = argValue.toArrayValue(env);
+
+	    Iterator<Map.Entry<Value, Value>> iter = array.getIterator(env);
+
+	    while (iter.hasNext()) {
+		Map.Entry<Value, Value> entry = iter.next();
+
+		Value key = entry.getKey();
+		Value value;
+
+		if (entry instanceof ArrayValue.Entry) {
+		    // php/173z, php/1747
+		    value = ((ArrayValue.Entry) entry).getRawValue();
+		} else {
+		    value = entry.getValue();
+		}
+
+		if (!(value instanceof Var)) {
+		    value = value.copy();
+		}
+
+		// php/1745
+		if (key.isNumberConvertible()) {
+		    result.put(value);
+		} else {
+		    result.append(key, value);
+		}
+	    }
+	}
+
+	return result;
+    }
+
+    private static void arrayMergeRecursiveImpl(Env env,
+	    ArrayValue result,
+	    ArrayValue array) {
+	Iterator<Map.Entry<Value, Value>> iter = array.getIterator(env);
+
+	while (iter.hasNext()) {
+	    Map.Entry<Value, Value> entry = iter.next();
+
+	    Value key = entry.getKey();
+	    Value value;
+
+	    if (entry instanceof ArrayValue.Entry) {
+		// php/1744, php/1746
+		value = ((ArrayValue.Entry) entry).getRawValue();
+	    } else {
+		value = entry.getValue();
+	    }
+
+	    if (!(value instanceof Var)) {
+		value = value.copy();
+	    }
+
+	    if (key.isNumberConvertible()) {
+		result.put(value);
+	    } else {
+		Value oldValue = result.get(key).toValue();
+
+		if (oldValue != null && oldValue.isset()) {
+		    if (oldValue.isArray() && value.isArray()) {
+			arrayMergeRecursiveImpl(env,
+				oldValue.toArrayValue(env),
+				value.toArrayValue(env));
+		    } else if (oldValue.isArray()) {
+			oldValue.put(value);
+		    } else if (value.isArray()) {
+			value.put(oldValue);
+		    } else {
+			ArrayValue newArray = new ArrayValueImpl();
+
+			newArray.put(oldValue);
+			newArray.put(value);
+
+			result.put(key, newArray);
+		    }
+		} else {
+		    result.put(key, value);
+		}
+	    }
+	}
+    }
+
+    /**
+     * Sort the arrays like rows in a database.
+     * @param arrays  arrays to sort
+     *
+     * @return true on success, and false on failure
+     */
+    public static boolean array_multisort(Env env, Value[] arrays) {
+	boolean isNewKeys = true;
+
+	if (arrays.length == 0 || !arrays[0].isArray()) {
+	    env.warning("the first argument must be an array");
+
+	    return false;
+	}
+
+	Value primary = arrays[0];
+
+	Iterator<Value> keyIter = primary.getKeyIterator(env);
+
+	while (keyIter.hasNext()) {
+	    if (!(keyIter.next() instanceof LongValue)) {
+		isNewKeys = false;
+		break;
+	    }
+	}
+
+	Value[] rows = primary.getKeyArray(env);
+
+	int maxsize = 0;
+	for (int i = 0; i < arrays.length; i++) {
+	    if (arrays[i] instanceof ArrayValue) {
+		maxsize = Math.max(maxsize, arrays[i].getSize());
+	    }
+	}
+
+	// create the identity permutation [1..n]
+	LongValue[] p = new LongValue[maxsize];
+	for (int i = 0; i < rows.length; i++) {
+	    p[i] = LongValue.create(i);
+	}
+
+	java.util.Arrays.sort(p, new MultiSortComparator(env, rows, arrays));
+
+	// apply the permuation
+	for (int i = 0; i < arrays.length; i++) {
+	    if (arrays[i].isArray()) {
+		permute(env, (ArrayValue) arrays[i], p, isNewKeys);
+	    }
+	}
+
+	return true;
+    }
+
+    /*
+     *  Apply a permutation to an array; on return, each element of
+     *  array[i] holds the value that was in array[permutation[i]]
+     *  before the call.
+     */
+    private static void permute(Env env,
+	    ArrayValue array,
+	    Value[] permutation,
+	    boolean isNewKeys) {
+	Value[] keys = array.getKeyArray(env);
+	Value[] values = array.getValueArray(env);
+
+	array.clear();
+
+	if (isNewKeys) {
+	    for (int i = 0; i < permutation.length; i++) {
+		int p = permutation[i].toInt();
+
+		Value value = values[p];
+		array.put(LongValue.create(i), value.toValue().copy());
+	    }
+	} else {
+	    for (int i = 0; i < permutation.length; i++) {
+		int p = permutation[i].toInt();
+
+		Value key = keys[p];
+		Value value = values[p];
+		array.put(key, value.toValue().copy());
+	    }
+	}
+    }
+
+    /**
+     * Returns an array with either the front/end padded with the pad value.  If
+     * the pad size is positive, the padding is performed on the end.  If
+     * negative, then the array is padded on the front.  The pad size is the new
+     * array size.  If this size is not greater than the current array size, then
+     * the original input array is returned.
+     *
+     * @param input the array to pad
+     * @param padSize the amount to pad the array by
+     * @param padValue determines front/back padding and the value to place in the
+     * padded space
+     * @return a padded array
+     */
+    public static Value array_pad(Env env,
+	    ArrayValue input,
+	    long padSize,
+	    Value padValue) {
+	if (input == null) {
+	    return NullValue.NULL;
+	}
+
+	long inputSize = input.getSize();
+
+	long size = Math.abs(padSize);
+
+	if (input.getSize() >= size) {
+	    return input;
+	}
+
+	if (size - inputSize > 1048576) {
+	    env.warning("You may only pad up to 1048576 elements at a time");
+
+	    return BooleanValue.FALSE;
+	}
+
+	ArrayValue paddedArray = new ArrayValueImpl();
+
+	boolean padFront = padSize < 0;
+
+	Iterator<Value> keyIterator = input.keySet().iterator();
+
+	for (long ctr = 0; ctr < size; ctr++) {
+	    Value newValue;
+
+	    if (padFront && ctr < size - inputSize) {
+		newValue = padValue;
+	    } else if ((!padFront) && ctr >= inputSize) {
+		newValue = padValue;
+	    } else {
+		newValue = input.get(keyIterator.next());
+	    }
+
+	    paddedArray.put(LongValue.create(ctr), newValue);
+	}
+
+	return paddedArray;
+    }
+
+    /**
+     * Pops off the top element
+     */
+    public static Value array_pop(Env env, @Reference Value array) {
+	return array.pop(env);
     }
 
     /**
@@ -734,10 +1512,8 @@ public class ArrayModule
 
 	for (Map.Entry<Value, Value> entry : array.entrySet()) {
 	    try {
-		// TODO: will this callback modify the array?
 		result = callable.call(env, result, entry.getValue());
 	    } catch (Exception t) {
-		// TODO: may be used for error checking later
 		log.log(Level.WARNING, t.toString(), t);
 		env.warning("An error occurred while invoking the reduction callback");
 
@@ -748,6 +1524,8 @@ public class ArrayModule
 	return result;
     }
 
+    // XXX: array_replace_recursive
+    // XXX: array_replace
     /**
      * Returns the inputted array reversed, preserving the keys if keyed is true
      *
@@ -1029,1887 +1807,6 @@ public class ArrayModule
 	return DoubleValue.create(sum);
     }
 
-    // TODO: array_udiff
-    // TODO: array_udiff_assoc
-    // TODO: array_udiff_uassoc
-    // TODO: array_uintersect
-    // TODO: array_uintersect_assoc
-    // TODO: array_uintersect_uassoc
-    /**
-     * Returns the inputted array without duplicates
-     *
-     * @param array the array to get rid of the duplicates from
-     * @return an array without duplicates
-     */
-    public static Value array_unique(Env env,
-	    ArrayValue array) {
-	if (array == null) {
-	    return BooleanValue.FALSE;
-	}
-
-	array.sort(CNO_VALUE_NORMAL, NO_KEY_RESET, NOT_STRICT);
-
-	Map.Entry<Value, Value> lastEntry = null;
-
-	ArrayValue uniqueArray = new ArrayValueImpl();
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    Value entryValue = entry.getValue();
-
-	    if (lastEntry == null) {
-		uniqueArray.put(entry.getKey(), entryValue);
-
-		lastEntry = entry;
-
-		continue;
-	    }
-
-	    Value lastEntryValue = lastEntry.getValue();
-
-	    if (!entryValue.toString().equals(lastEntryValue.toString())) {
-		uniqueArray.put(entry.getKey(), entryValue);
-	    }
-
-	    lastEntry = entry;
-	}
-
-	uniqueArray.sort(CNO_KEY_NORMAL, NO_KEY_RESET, NOT_STRICT);
-
-	return uniqueArray;
-    }
-
-    /**
-     * Prepends the elements to the array
-     *
-     * @param array the array to shift
-     * @param values
-     * @return the left most value in the array
-     */
-    public static Value array_unshift(Env env,
-	    @Reference Value value,
-	    Value[] values) {
-	ArrayValue array = value.toArrayValue(env);
-
-	if (array == null) {
-	    return BooleanValue.FALSE;
-	}
-
-	for (int i = values.length - 1; i >= 0; i--) {
-	    array.unshift(values[i]);
-	}
-
-	array.keyReset(0, NOT_STRICT);
-
-	return LongValue.create(array.getSize());
-    }
-
-    /**
-     * Returns the values in the passed array with numerical indices.
-     *
-     * @param array the array to get the values from
-     * @return an array with the values of the passed array
-     */
-    public static Value array_values(Env env,
-	    ArrayValue array) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	return array.getValues();
-    }
-
-    /**
-     * Executes a callback on each of the elements in the array.
-     *
-     * @param array the array to walk along
-     * @param callback the callback function
-     * @param userData extra parameter required by the callback function
-     *
-     * @return true if the walk succeeded, false otherwise
-     */
-    public static boolean array_walk(Env env,
-	    @Reference Value arrayVar,
-	    Callable callback,
-	    @Optional("NULL") Value userData) {
-	if (callback == null || !callback.isValid(env)) {
-	    env.error(L.l("'{0}' is an unknown function.",
-		    callback.getCallbackName()));
-	    return false;
-	}
-
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return false;
-	}
-
-	try {
-	    Iterator<Map.Entry<Value, Value>> iter = array.getIterator(env);
-
-	    while (iter.hasNext()) {
-		Map.Entry<Value, Value> entry = iter.next();
-
-		Value key = entry.getKey();
-		Value value;
-
-		// php/1741
-		if (entry instanceof ArrayValue.Entry) {
-		    value = ((ArrayValue.Entry) entry).getRawValue();
-		} else {
-		    value = entry.getValue();
-		}
-
-		callback.callArray(env, array, key, value, key, userData);
-	    }
-
-	    return true;
-	} catch (Exception e) {
-	    log.log(Level.WARNING, e.toString(), e);
-	    env.warning("An error occured while invoking the callback", e);
-
-	    return false;
-	}
-    }
-
-    /**
-     * Recursively executes a callback function on all elements in the array,
-     * including elements of elements (i.e., arrays within arrays).  Returns true
-     * if the process succeeded, otherwise false.
-     *
-     * @param array the array to walk
-     * @param call the name of the callback function
-     * @param extra extra parameter required by the callback function
-     * @return true if the walk succedded, false otherwise
-     */
-    public static boolean array_walk_recursive(Env env,
-	    @Reference Value arrayVar,
-	    Callable callback,
-	    @Optional("NULL") Value extra) {
-	if (callback == null || !callback.isValid(env)) {
-	    env.error(
-		    L.l("'{0}' is an unknown function.", callback.getCallbackName()));
-	    return false;
-	}
-
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return false;
-	}
-
-	try {
-	    Iterator<Map.Entry<Value, Value>> iter = array.getIterator(env);
-
-	    while (iter.hasNext()) {
-		Map.Entry<Value, Value> entry = iter.next();
-
-		Value key = entry.getKey();
-		Value value;
-
-		// php/1742
-		if (entry instanceof ArrayValue.Entry) {
-		    value = ((ArrayValue.Entry) entry).getRawValue();
-		} else {
-		    value = entry.getValue();
-		}
-
-		if (value.isArray()) {
-		    boolean result = array_walk_recursive(env,
-			    (ArrayValue) value.toValue(),
-			    callback,
-			    extra);
-
-		    if (!result) {
-			return false;
-		    }
-		} else {
-		    callback.callArray(env, array, key, value, key, extra);
-		}
-	    }
-
-	    return true;
-	} catch (Exception e) {
-	    log.log(Level.WARNING, e.toString(), e);
-	    env.warning("An error occured while invoking the callback", e);
-
-	    return false;
-	}
-    }
-
-    /**
-     * Sorts the array based on values in reverse order, preserving keys
-     *
-     * @param array the array to sort
-     * @param sortFlag provides optional methods to process the sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static boolean arsort(Env env,
-	    @Reference Value arrayVar,
-	    @Optional long sortFlag) {
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return false;
-	}
-
-	switch ((int) sortFlag) {
-	    case SORT_STRING:
-		array.sort(CS_VALUE_REVERSE, NO_KEY_RESET, NOT_STRICT);
-		break;
-	    case SORT_NUMERIC:
-		array.sort(CN_VALUE_REVERSE, NO_KEY_RESET, NOT_STRICT);
-		break;
-	    case SORT_LOCALE_STRING:
-		Locale locale = env.getLocaleInfo().getCollate().getLocale();
-		array.sort(new CompareLocale(ArrayValue.GET_VALUE, SORT_REVERSE,
-			Collator.getInstance(locale)),
-			NO_KEY_RESET, NOT_STRICT);
-		break;
-	    default:
-		array.sort(CNO_VALUE_REVERSE, NO_KEY_RESET, NOT_STRICT);
-		break;
-	}
-
-	return true;
-    }
-
-    /**
-     * Sorts the array based on values in ascending order, preserving keys
-     *
-     * @param array the array to sort
-     * @param sortFlag provides optional methods to process the sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static boolean asort(Env env,
-	    @Reference Value arrayVar,
-	    @Optional long sortFlag) {
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return false;
-	}
-
-	switch ((int) sortFlag) {
-	    case SORT_STRING:
-		array.sort(CS_VALUE_NORMAL, NO_KEY_RESET, NOT_STRICT);
-		break;
-	    case SORT_NUMERIC:
-		array.sort(CN_VALUE_NORMAL, NO_KEY_RESET, NOT_STRICT);
-		break;
-	    case SORT_LOCALE_STRING:
-		Locale locale = env.getLocaleInfo().getCollate().getLocale();
-		array.sort(new CompareLocale(ArrayValue.GET_VALUE, SORT_NORMAL,
-			Collator.getInstance(locale)),
-			NO_KEY_RESET, NOT_STRICT);
-		break;
-	    default:
-		array.sort(CNO_VALUE_NORMAL, NO_KEY_RESET, NOT_STRICT);
-		break;
-	}
-
-	return true;
-    }
-
-    /**
-     * Sorts the array based on keys in ascending order, preserving keys
-     *
-     * @param array the array to sort
-     * @param sortFlag provides optional methods to process the sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static boolean ksort(Env env,
-	    @Reference Value arrayVar,
-	    @Optional long sortFlag) {
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return false;
-	}
-
-	switch ((int) sortFlag) {
-	    case SORT_STRING:
-		array.sort(CS_KEY_NORMAL, NO_KEY_RESET, NOT_STRICT);
-		break;
-	    case SORT_NUMERIC:
-		array.sort(CN_KEY_NORMAL, NO_KEY_RESET, NOT_STRICT);
-		break;
-	    case SORT_LOCALE_STRING:
-		Locale locale = env.getLocaleInfo().getCollate().getLocale();
-		array.sort(new CompareLocale(ArrayValue.GET_KEY, SORT_NORMAL,
-			Collator.getInstance(locale)),
-			NO_KEY_RESET, NOT_STRICT);
-		break;
-	    default:
-		array.sort(CNO_KEY_NORMAL, NO_KEY_RESET, NOT_STRICT);
-		break;
-	}
-
-	return true;
-    }
-
-    /**
-     * Sorts the array based on keys in reverse order, preserving keys
-     *
-     * @param array the array to sort
-     * @param sortFlag provides optional methods to process the sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static boolean krsort(Env env,
-	    @Reference Value arrayVar,
-	    @Optional long sortFlag) {
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return false;
-	}
-
-	switch ((int) sortFlag) {
-	    case SORT_STRING:
-		array.sort(CS_KEY_REVERSE, NO_KEY_RESET, NOT_STRICT);
-		break;
-	    case SORT_NUMERIC:
-		array.sort(CN_KEY_REVERSE, NO_KEY_RESET, NOT_STRICT);
-		break;
-	    case SORT_LOCALE_STRING:
-		Locale locale = env.getLocaleInfo().getCollate().getLocale();
-		array.sort(new CompareLocale(ArrayValue.GET_KEY, SORT_REVERSE,
-			Collator.getInstance(locale)),
-			NO_KEY_RESET, NOT_STRICT);
-		break;
-	    default:
-		array.sort(CNO_KEY_REVERSE, NO_KEY_RESET, NOT_STRICT);
-		break;
-	}
-
-	return true;
-    }
-
-    /**
-     * Sorts the array based on string values using natural order, preserving
-     * keys, case sensitive
-     *
-     * @param array the array to sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static Value natsort(Env env, @Reference Value arrayVar) {
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	trimArrayStrings(array);
-
-	array.sort(CNA_VALUE_NORMAL_SENSITIVE, NO_KEY_RESET, NOT_STRICT);
-
-	return BooleanValue.TRUE;
-    }
-
-    /**
-     * Sorts the array based on string values using natural order, preserving
-     * keys, case insensitive
-     *
-     * @param array the array to sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static Value natcasesort(Env env, @Reference Value arrayVar) {
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	trimArrayStrings(array);
-
-	array.sort(CNA_VALUE_NORMAL_INSENSITIVE, NO_KEY_RESET, NOT_STRICT);
-
-	return BooleanValue.TRUE;
-    }
-
-    /**
-     * Helper function for natsort and natcasesort to trim the string in the
-     * array
-     *
-     * @param array the array to trim strings from
-     */
-    private static void trimArrayStrings(ArrayValue array) {
-	if (array != null) {
-
-	    for (Map.Entry<Value, Value> entry : array.entrySet()) {
-		Value entryValue = entry.getValue();
-
-		if (entryValue instanceof StringValue) {
-		    array.put(entry.getKey(),
-			    StringValue.create(entryValue.toString().trim()));
-		}
-	    }
-	}
-    }
-
-    // TODO: compact
-    /**
-     * Determines if the key is in the array
-     *
-     * @param needle the array to sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static boolean in_array(@ReadOnly Value needle,
-	    @ReadOnly ArrayValue stack,
-	    @Optional("false") boolean strict) {
-	if (stack == null) {
-	    return false;
-	}
-
-	Value result;
-
-	if (strict) {
-	    result = stack.containsStrict(needle);
-	} else {
-	    result = stack.contains(needle);
-	}
-
-	return !result.isNull();
-    }
-
-    /**
-     * Sorts the array based on values in ascending order
-     *
-     * @param array the array to sort
-     * @param sortFlag provides optional methods to process the sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static boolean sort(Env env,
-	    @Reference Value arrayVar,
-	    @Optional long sortFlag) {
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return false;
-	}
-
-	switch ((int) sortFlag) {
-	    case SORT_STRING:
-		array.sort(CS_VALUE_NORMAL, KEY_RESET, STRICT);
-		break;
-	    case SORT_NUMERIC:
-		array.sort(CN_VALUE_NORMAL, KEY_RESET, STRICT);
-		break;
-	    case SORT_LOCALE_STRING:
-		Locale locale = env.getLocaleInfo().getCollate().getLocale();
-		array.sort(new CompareLocale(ArrayValue.GET_VALUE, SORT_NORMAL,
-			Collator.getInstance(locale)),
-			KEY_RESET, STRICT);
-		break;
-	    default:
-		array.sort(CNO_VALUE_NORMAL, KEY_RESET, STRICT);
-		break;
-	}
-
-	return true;
-    }
-
-    /**
-     * Sorts the array based on values in reverse order
-     *
-     * @param array the array to sort
-     * @param sortFlag provides optional methods to process the sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static boolean rsort(Env env,
-	    @Reference Value arrayVar,
-	    @Optional long sortFlag) {
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return false;
-	}
-
-	switch ((int) sortFlag) {
-	    case SORT_STRING:
-		array.sort(CS_VALUE_REVERSE, KEY_RESET, STRICT);
-		break;
-	    case SORT_NUMERIC:
-		array.sort(CN_VALUE_REVERSE, KEY_RESET, STRICT);
-		break;
-	    case SORT_LOCALE_STRING:
-		Locale locale = env.getLocaleInfo().getCollate().getLocale();
-		array.sort(new CompareLocale(ArrayValue.GET_VALUE, SORT_REVERSE,
-			Collator.getInstance(locale)),
-			KEY_RESET, STRICT);
-		break;
-	    default:
-		array.sort(CNO_VALUE_REVERSE, KEY_RESET, STRICT);
-		break;
-	}
-
-	return true;
-    }
-
-    /**
-     * Sorts the array based on values in ascending order using a callback
-     * function
-     *
-     * @param array the array to sort
-     * @param func the name of the callback function
-     * @param sortFlag provides optional methods to process the sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static boolean usort(Env env,
-	    @Reference Value arrayVar,
-	    Callable func,
-	    @Optional long sortFlag) {
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return false;
-	}
-
-	if (func == null) {
-	    return false;
-	} else if (!func.isValid(env)) {
-	    env.warning(L.l("Invalid comparison function"));
-	    return false;
-	}
-
-	CompareCallBack cmp;
-
-	// TODO: callback needs to be able to modify array?
-	cmp = new CompareCallBack(ArrayValue.GET_VALUE, SORT_NORMAL, func, env);
-
-	array.sort(cmp, KEY_RESET, STRICT);
-
-	return true;
-    }
-
-    /**
-     * Sorts the array based on values in ascending order using a callback
-     * function
-     *
-     * @param array the array to sort
-     * @param func the name of the callback function
-     * @param sortFlag provides optional methods to process the sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static boolean uasort(Env env,
-	    @Reference Value arrayVar,
-	    Callable func,
-	    @Optional long sortFlag) {
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return false;
-	}
-
-	if (func == null) {
-	    return false;
-	}
-
-	if (!func.isValid(env)) {
-	    env.warning(L.l("Invalid comparison function"));
-	    return false;
-	}
-
-	// TODO: callback needs to be able to modify array?
-	array.sort(new CompareCallBack(ArrayValue.GET_VALUE, SORT_NORMAL, func,
-		env), NO_KEY_RESET, NOT_STRICT);
-
-	return true;
-    }
-
-    /**
-     * Sorts the array based on values in ascending order using a callback
-     * function
-     *
-     * @param array the array to sort
-     * @param func the name of the callback function
-     * @param sortFlag provides optional methods to process the sort
-     * @return true if the sort works, false otherwise
-     * @throws ClassCastException if the elements are not mutually comparable
-     */
-    public static boolean uksort(Env env,
-	    @Reference Value arrayVar,
-	    Callable func,
-	    @Optional long sortFlag) {
-	ArrayValue array = arrayVar.toArrayValue(env);
-
-	if (array == null) {
-	    return false;
-	}
-
-	if (!func.isValid(env)) {
-	    env.warning(L.l("Invalid comparison function"));
-	    return false;
-	}
-
-	CompareCallBack cmp;
-
-	// TODO: callback needs to be able to modify array?
-	cmp = new CompareCallBack(ArrayValue.GET_KEY, SORT_NORMAL, func, env);
-
-	array.sort(cmp, NO_KEY_RESET, NOT_STRICT);
-
-	return true;
-    }
-
-    /**
-     * Creates an array using the start and end values provided
-     *
-     * @param start the 0 index element
-     * @param end the length - 1 index element
-     * @param step the new value is increased by this to determine the value for
-     * the next element
-     * @return the new array
-     */
-    public static Value range(Env env,
-	    @ReadOnly Value start,
-	    @ReadOnly Value end,
-	    @Optional("1") long step) {
-	if (step < 1) {
-	    step = 1;
-	}
-
-	if (!start.getType().equals(end.getType())) {
-	    start = LongValue.create(start.toLong());
-	    end = LongValue.create(end.toLong());
-	} else if (Character.isDigit(start.toChar())) {
-	    start = LongValue.create(start.toLong());
-	    end = LongValue.create(end.toLong());
-	} else {
-	    start = rangeIncrement(start, 0);
-	    end = rangeIncrement(end, 0);
-	}
-
-	if (start.eq(end)) {
-	} else if (start instanceof StringValue
-		&& (Math.abs(end.toChar() - start.toChar()) < step)) {
-	    env.warning("steps exceeds the specified range");
-
-	    return BooleanValue.FALSE;
-	} else if (start instanceof LongValue
-		&& (Math.abs(end.toLong() - start.toLong()) < step)) {
-	    env.warning("steps exceeds the specified range");
-
-	    return BooleanValue.FALSE;
-	}
-
-	boolean increment = true;
-
-	if (!end.geq(start)) {
-	    step *= -1;
-	    increment = false;
-	}
-
-	ArrayValue array = new ArrayValueImpl();
-
-	do {
-	    array.put(start);
-
-	    start = rangeIncrement(start, step);
-	} while ((increment && start.leq(end))
-		|| (!increment && start.geq(end)));
-
-	return array;
-    }
-
-    private static Value rangeIncrement(Value value, long step) {
-	if (value.isString()) {
-	    return StringValue.create((char) (value.toChar() + step));
-	}
-
-	return LongValue.create(value.toLong() + step);
-    }
-
-    // TODO:You'll need to mark the function as XXX:, because I need to add an
-    // attribute like @ModifiedSymbolTable and change some analysis of the
-    // compilation based on that attribute.
-    //
-    // Basically, the compiled mode uses Java variables to store PHP
-    // variables.  The extract() call messes that up, or at least forces the
-    // compiler to synchronize its view of the variables.
-    // (email Re:extract: symbol table)
-    /**
-     * Inputs new variables into the symbol table from the passed array
-     *
-     * @param array the array contained the new variables
-     * @return the number of new variables added from the array to the symbol
-     *         table
-     */
-    @UsesSymbolTable(replace = true)
-    public static Value extract(Env env,
-	    ArrayValue array) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	int completedSymbols = 0;
-
-	for (Value entryKey : array.keySet()) {
-	    Value entryValue;
-
-	    entryValue = array.get(entryKey);
-
-	    StringValue symbolName = entryKey.toStringValue();
-
-	    if (validVariableName(symbolName)) {
-		env.setValue(symbolName, entryValue);
-
-		completedSymbols++;
-	    }
-	}
-
-	return LongValue.create(completedSymbols);
-    }
-
-    /**
-     * Inputs new variables into the symbol table from the passed array
-     *
-     * @param array the array contained the new variables
-     * @param rawType flag to determine how to handle collisions
-     * @param valuePrefix used along with the flag
-     * @return the number of new variables added from the array to the symbol
-     *         table
-     */
-    @UsesSymbolTable
-    public static Value extract(Env env,
-	    ArrayValue array,
-	    long rawType,
-	    @Optional("NULL") Value valuePrefix) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	long extractType = rawType & ~EXTR_REFS;
-
-	boolean extrRefs = (rawType & EXTR_REFS) != 0;
-
-	if (extractType < EXTR_OVERWRITE
-		|| extractType > EXTR_IF_EXISTS && extractType != EXTR_REFS) {
-	    env.warning("Unknown extract type");
-
-	    return NullValue.NULL;
-	}
-
-	if (extractType >= EXTR_PREFIX_SAME
-		&& extractType <= EXTR_PREFIX_IF_EXISTS
-		&& (valuePrefix == null || !(valuePrefix.isString()))) {
-	    env.warning("Prefix expected to be specified");
-
-	    return NullValue.NULL;
-	}
-
-	String prefix = "";
-
-	if (valuePrefix instanceof StringValue) {
-	    prefix = valuePrefix.toString() + "_";
-	}
-
-	int completedSymbols = 0;
-
-	for (Value entryKey : array.keySet()) {
-	    Value entryValue;
-
-	    if (extrRefs) {
-		entryValue = array.getVar(entryKey);
-	    } else {
-		entryValue = array.get(entryKey);
-	    }
-
-	    StringValue symbolName = entryKey.toStringValue();
-
-	    Value tableValue = env.getValue(symbolName);
-
-	    switch ((int) extractType) {
-		case EXTR_SKIP:
-		    if (!tableValue.isNull()) {
-			symbolName = env.createString("");
-		    }
-
-		    break;
-		case EXTR_PREFIX_SAME:
-		    if (!tableValue.isNull()) {
-			symbolName = env.createString(prefix + symbolName);
-		    }
-
-		    break;
-		case EXTR_PREFIX_ALL:
-		    symbolName = env.createString(prefix + symbolName);
-
-		    break;
-		case EXTR_PREFIX_INVALID:
-		    if (!validVariableName(symbolName)) {
-			symbolName = env.createString(prefix + symbolName);
-		    }
-
-		    break;
-		case EXTR_IF_EXISTS:
-		    if (tableValue.isNull()) {
-			symbolName = env.createString("");//entryValue = tableValue;
-		    }
-		    break;
-		case EXTR_PREFIX_IF_EXISTS:
-		    if (!tableValue.isNull()) {
-			symbolName = env.createString(prefix + symbolName);
-		    } else {
-			symbolName = env.createString("");
-		    }
-
-		    break;
-		default:
-
-		    break;
-	    }
-
-	    if (validVariableName(symbolName)) {
-		env.setValue(symbolName, entryValue);
-
-		completedSymbols++;
-	    }
-	}
-
-	return LongValue.create(completedSymbols);
-    }
-
-    /**
-     * Helper function for extract to determine if a variable name is valid
-     *
-     * @param variableName the name to check
-     * @return true if the name is valid, false otherwise
-     */
-    private static boolean validVariableName(StringValue variableName) {
-	if (variableName.length() < 1) {
-	    return false;
-	}
-
-	char checkChar = variableName.charAt(0);
-
-	if (!Character.isLetter(checkChar) && checkChar != '_') {
-	    return false;
-	}
-
-	for (int k = 1; k < variableName.length(); k++) {
-	    checkChar = variableName.charAt(k);
-
-	    if (!Character.isLetterOrDigit(checkChar) && checkChar != '_') {
-		return false;
-	    }
-	}
-
-	return true;
-    }
-
-    /**
-     * Returns an array with everything that is in array and not in the other
-     * arrays using a passed callback function for comparing
-     *
-     * @param array the primary array
-     * @param arrays the vector of arrays to check the primary array's values
-     * against
-     * @return an array with all of the values that are in the primary array but
-     *         not in the other arrays
-     */
-    public static Value array_diff(Env env, ArrayValue array, Value[] arrays) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	if (arrays.length < 1) {
-	    env.warning("Wrong parameter count for array_diff()");
-
-	    return NullValue.NULL;
-	}
-
-	ArrayValue diffArray = new ArrayValueImpl();
-
-	boolean valueFound;
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    valueFound = false;
-
-	    Value entryValue = entry.getValue();
-
-	    for (int k = 0; k < arrays.length && !valueFound; k++) {
-		if (!(arrays[k] instanceof ArrayValue)) {
-		    env.warning("Argument #" + (k + 2) + " is not an array");
-
-		    return NullValue.NULL;
-		}
-
-		valueFound =
-			!((ArrayValue) arrays[k]).contains(entryValue).isNull();
-	    }
-
-	    if (!valueFound) {
-		diffArray.put(entry.getKey(), entryValue);
-	    }
-	}
-
-	return diffArray;
-    }
-
-    /*
-     * Returns an array whose keys are the values of the keyArray passed in,
-     * and whose values are all the value passed in.
-     *
-     * @param keyArray whose values are used to populate the keys of the new
-     * array
-     * @param value used as the value of the keys
-     *
-     * @return newly filled array
-     */
-    public static ArrayValue array_fill_keys(Env env,
-	    ArrayValue keyArray,
-	    Value value) {
-	ArrayValue array = new ArrayValueImpl();
-
-	Iterator<Value> iter = keyArray.getValueIterator(env);
-
-	while (iter.hasNext()) {
-	    array.put(iter.next(), value.copy());
-	}
-
-	return array;
-    }
-
-    /**
-     * Returns an array with everything that is in array and not in the other
-     * arrays, keys also used
-     *
-     * @param array the primary array
-     * @param arrays the vector of arrays to check the primary array's values
-     * against
-     * @return an array with all of the values that are in the primary array but
-     *         not in the other arrays
-     */
-    public static Value array_diff_assoc(Env env,
-	    ArrayValue array,
-	    Value[] arrays) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	if (arrays.length < 1) {
-	    env.warning("Wrong parameter count for array_diff()");
-
-	    return NullValue.NULL;
-	}
-
-	ArrayValue diffArray = new ArrayValueImpl();
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    boolean valueFound = false;
-
-	    Value entryValue = entry.getValue();
-
-	    Value entryKey = entry.getKey();
-
-	    for (int k = 0; k < arrays.length && !valueFound; k++) {
-		if (!(arrays[k] instanceof ArrayValue)) {
-		    env.warning("Argument #" + (k + 2) + " is not an array");
-
-		    return NullValue.NULL;
-		}
-
-		valueFound =
-			((ArrayValue) arrays[k]).contains(entryValue).eq(entryKey);
-	    }
-
-	    if (!valueFound) {
-		diffArray.put(entryKey, entryValue);
-	    }
-	}
-
-	return diffArray;
-    }
-
-    /**
-     * Returns an array with everything that is in array and not in the other
-     * arrays, keys used for comparison
-     *
-     * @param array the primary array
-     * @param arrays the vector of arrays to check the primary array's values
-     * against
-     * @return an array with all of the values that are in the primary array but
-     *         not in the other arrays
-     */
-    public static Value array_diff_key(Env env,
-	    ArrayValue array,
-	    Value[] arrays) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	if (arrays.length < 1) {
-	    env.warning("Wrong parameter count for array_diff()");
-
-	    return NullValue.NULL;
-	}
-
-	ArrayValue diffArray = new ArrayValueImpl();
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    boolean keyFound = false;
-
-	    Value entryKey = entry.getKey();
-
-	    for (int k = 0; k < arrays.length && !keyFound; k++) {
-		if (!(arrays[k] instanceof ArrayValue)) {
-		    env.warning("Argument #" + (k + 2) + " is not an array");
-
-		    return NullValue.NULL;
-		}
-
-		keyFound = ((ArrayValue) arrays[k]).containsKey(entryKey) != null;
-	    }
-
-	    if (!keyFound) {
-		diffArray.put(entryKey, entry.getValue());
-	    }
-	}
-
-	return diffArray;
-    }
-
-    /**
-     * Returns an array with everything that is in array and not in the other
-     * arrays, keys used for comparison aswell
-     *
-     * @param array the primary array
-     * @param arrays the vector of arrays to check the primary array's values
-     * against.  The last element is the callback function.
-     * @return an array with all of the values that are in the primary array but
-     *         not in the other arrays
-     */
-    public static Value array_diff_uassoc(Env env,
-	    ArrayValue array,
-	    Value[] arrays) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	if (arrays.length < 2) {
-	    env.warning("Wrong parameter count for array_diff()");
-
-	    return NullValue.NULL;
-	}
-
-	AbstractFunction func =
-		env.findFunction(arrays[arrays.length - 1].toString().intern());
-
-	if (func == null) {
-	    env.warning("Invalid comparison function");
-
-	    return NullValue.NULL;
-	}
-
-	ArrayValue diffArray = new ArrayValueImpl();
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    boolean ValueFound = false;
-
-	    Value entryValue = entry.getValue();
-
-	    Value entryKey = entry.getKey();
-
-	    for (int k = 0; k < arrays.length - 1 && !ValueFound; k++) {
-		if (!(arrays[k] instanceof ArrayValue)) {
-		    env.warning("Argument #" + (k + 2) + " is not an array");
-
-		    return NullValue.NULL;
-		}
-
-		Value searchKey = ((ArrayValue) arrays[k]).contains(entryValue);
-
-		if (!searchKey.isNull()) {
-		    ValueFound = ((int) func.call(env, searchKey, entryKey).toLong())
-			    == 0;
-		}
-	    }
-
-	    if (!ValueFound) {
-		diffArray.put(entryKey, entryValue);
-	    }
-	}
-
-	return diffArray;
-    }
-
-    /**
-     * Returns an array with everything that is in array and not in the other
-     * arrays, keys used for comparison only
-     *
-     * @param array the primary array
-     * @param arrays the vector of arrays to check the primary array's values
-     * against.  The last element is the callback function.
-     * @return an array with all of the values that are in the primary array but
-     *         not in the other arrays
-     */
-    public static Value array_diff_ukey(Env env,
-	    ArrayValue array,
-	    Value[] arrays) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	if (arrays.length < 2) {
-	    env.warning("Wrong parameter count for array_diff()");
-
-	    return NullValue.NULL;
-	}
-
-	AbstractFunction func =
-		env.findFunction(arrays[arrays.length - 1].toString().intern());
-
-	if (func == null) {
-	    env.warning("Invalid comparison function");
-
-	    return NullValue.NULL;
-	}
-
-	ArrayValue diffArray = new ArrayValueImpl();
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    boolean keyFound = false;
-
-	    Value entryKey = entry.getKey();
-
-	    for (int k = 0; k < arrays.length - 1 && !keyFound; k++) {
-		if (!(arrays[k] instanceof ArrayValue)) {
-		    env.warning("Argument #" + (k + 2) + " is not an array");
-
-		    return NullValue.NULL;
-		}
-
-		Iterator<Value> keyItr = ((ArrayValue) arrays[k]).keySet().iterator();
-
-		keyFound = false;
-
-		while (keyItr.hasNext() && !keyFound) {
-		    Value currentKey = keyItr.next();
-
-		    keyFound = ((int) func.call(env, entryKey, currentKey).toLong()) == 0;
-		}
-	    }
-
-	    if (!keyFound) {
-		diffArray.put(entryKey, entry.getValue());
-	    }
-	}
-
-	return diffArray;
-    }
-
-    /**
-     * Returns an array with everything that is in array and also in the other
-     * arrays
-     *
-     * @param array the primary array
-     * @param arrays the vector of arrays to check the primary array's values
-     * against.  The last element is the callback function.
-     * @return an array with all of the values that are in the primary array and
-     *         in the other arrays
-     */
-    public static Value array_intersect(Env env,
-	    ArrayValue array,
-	    Value[] arrays) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	if (arrays.length < 1) {
-	    env.warning("Wrong parameter count for array_diff()");
-
-	    return NullValue.NULL;
-	}
-
-	ArrayValue interArray = new ArrayValueImpl();
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    boolean valueFound = false;
-
-	    Value entryValue = entry.getValue();
-
-	    for (int k = 0; k < arrays.length; k++) {
-		if (!(arrays[k] instanceof ArrayValue)) {
-		    env.warning("Argument #" + (k + 2) + " is not an array");
-
-		    return NullValue.NULL;
-		}
-
-		if (k > 0 && !valueFound) {
-		    break;
-		}
-
-		valueFound =
-			!((ArrayValue) arrays[k]).contains(entryValue).isNull();
-	    }
-
-	    if (valueFound) {
-		interArray.put(entry.getKey(), entryValue);
-	    }
-	}
-
-	return interArray;
-    }
-
-    /**
-     * Returns an array with everything that is in array and also in the other
-     * arrays, keys are also used in the comparison
-     *
-     * @param array the primary array
-     * @param arrays the vector of arrays to check the primary array's values
-     * against.  The last element is the callback function.
-     * @return an array with all of the values that are in the primary array and
-     *         in the other arrays
-     */
-    public static Value array_intersect_assoc(Env env,
-	    ArrayValue array,
-	    Value[] arrays) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	if (arrays.length < 1) {
-	    env.warning("Wrong parameter count for array_diff()");
-
-	    return NullValue.NULL;
-	}
-
-	ArrayValue interArray = new ArrayValueImpl();
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    boolean valueFound = false;
-
-	    Value entryKey = entry.getKey();
-
-	    Value entryValue = entry.getValue();
-
-	    for (int k = 0; k < arrays.length; k++) {
-		if (!(arrays[k] instanceof ArrayValue)) {
-		    env.warning("Argument #" + (k + 2) + " is not an array");
-
-		    return NullValue.NULL;
-		}
-
-		if (k > 0 && !valueFound) {
-		    break;
-		}
-
-		Value searchValue = ((ArrayValue) arrays[k]).containsKey(entryKey);
-
-		if (searchValue != null) {
-		    valueFound = searchValue.eq(entryValue);
-		} else {
-		    valueFound = false;
-		}
-	    }
-
-	    if (valueFound) {
-		interArray.put(entryKey, entryValue);
-	    }
-	}
-
-	return interArray;
-    }
-
-    /**
-     * Returns an array with everything that is in array and also in the other
-     * arrays, keys are only used in the comparison
-     *
-     * @param array the primary array
-     * @param arrays the vector of arrays to check the primary array's values
-     * against.  The last element is the callback function.
-     * @return an array with all of the values that are in the primary array and
-     *         in the other arrays
-     */
-    public static Value array_intersect_key(Env env,
-	    ArrayValue array,
-	    Value[] arrays) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	if (arrays.length < 1) {
-	    env.warning("Wrong parameter count for array_diff()");
-
-	    return NullValue.NULL;
-	}
-
-	ArrayValue interArray = new ArrayValueImpl();
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    boolean keyFound = false;
-
-	    Value entryKey = entry.getKey();
-
-	    for (int k = 0; k < arrays.length; k++) {
-		if (!(arrays[k] instanceof ArrayValue)) {
-		    env.warning("Argument #" + (k + 2) + " is not an array");
-
-		    return NullValue.NULL;
-		}
-
-		if (k > 0 && !keyFound) {
-		    break;
-		}
-
-		keyFound = ((ArrayValue) arrays[k]).containsKey(entryKey) != null;
-	    }
-
-	    if (keyFound) {
-		interArray.put(entryKey, entry.getValue());
-	    }
-	}
-
-	return interArray;
-    }
-
-    /**
-     * Returns an array with everything that is in array and also in the other
-     * arrays, keys are also used in the comparison.  Uses a callback function for
-     * evalutation the keys.
-     *
-     * @param array the primary array
-     * @param arrays the vector of arrays to check the primary array's values
-     * against.  The last element is the callback function.
-     * @return an array with all of the values that are in the primary array and
-     *         in the other arrays
-     */
-    public static Value array_intersect_uassoc(Env env,
-	    ArrayValue array,
-	    Value[] arrays) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	if (arrays.length < 2) {
-	    env.warning("Wrong parameter count for array_diff()");
-
-	    return NullValue.NULL;
-	}
-
-	AbstractFunction func =
-		env.findFunction(arrays[arrays.length - 1].toString().intern());
-
-	if (func == null) {
-	    env.warning("Invalid comparison function");
-
-	    return NullValue.NULL;
-	}
-
-	ArrayValue interArray = new ArrayValueImpl();
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    boolean valueFound = false;
-
-	    Value entryKey = entry.getKey();
-
-	    Value entryValue = entry.getValue();
-
-	    for (int k = 0; k < arrays.length - 1; k++) {
-		if (!(arrays[k] instanceof ArrayValue)) {
-		    env.warning("Argument #" + (k + 2) + " is not an array");
-
-		    return NullValue.NULL;
-		}
-
-		if (k > 0 && !valueFound) {
-		    break;
-		}
-
-		Value searchValue = ((ArrayValue) arrays[k]).containsKey(entryKey);
-
-		if (searchValue != null) {
-		    valueFound = func.call(env, searchValue, entryValue).toLong() == 0;
-		} else {
-		    valueFound = false;
-		}
-	    }
-
-	    if (valueFound) {
-		interArray.put(entryKey, entryValue);
-	    }
-	}
-
-	return interArray;
-    }
-
-    /**
-     * Returns an array with everything that is in array and also in the other
-     * arrays, keys are only used in the comparison.  Uses a callback function for
-     * evalutation the keys.
-     *
-     * @param array the primary array
-     * @param arrays the vector of arrays to check the primary array's values
-     * against.  The last element is the callback function.
-     * @return an array with all of the values that are in the primary array and
-     *         in the other arrays
-     */
-    public static Value array_intersect_ukey(Env env,
-	    ArrayValue array,
-	    Value[] arrays) {
-	if (array == null) {
-	    return NullValue.NULL;
-	}
-
-	if (arrays.length < 2) {
-	    env.warning("Wrong parameter count for array_diff()");
-
-	    return NullValue.NULL;
-	}
-
-	AbstractFunction func =
-		env.findFunction(arrays[arrays.length - 1].toString().intern());
-
-	if (func == null) {
-	    env.warning("Invalid comparison function");
-
-	    return NullValue.NULL;
-	}
-
-	ArrayValue interArray = new ArrayValueImpl();
-
-	for (Map.Entry<Value, Value> entry : array.entrySet()) {
-	    boolean keyFound = false;
-
-	    Value entryKey = entry.getKey();
-
-	    for (int k = 0; k < arrays.length - 1; k++) {
-		if (!(arrays[k] instanceof ArrayValue)) {
-		    env.warning("Argument #" + (k + 2) + " is not an array");
-
-		    return NullValue.NULL;
-		}
-
-		if (k > 0 && !keyFound) {
-		    break;
-		}
-
-		Iterator<Value> keyItr = ((ArrayValue) arrays[k]).keySet().iterator();
-
-		keyFound = false;
-
-		while (keyItr.hasNext() && !keyFound) {
-		    Value currentKey = keyItr.next();
-
-		    keyFound = ((int) func.call(env, entryKey, currentKey).toLong()) == 0;
-		}
-
-	    }
-
-	    if (keyFound) {
-		interArray.put(entryKey, entry.getValue());
-	    }
-	}
-
-	return interArray;
-    }
-
-    /**
-     * Maps the given function with the array arguments.
-     * XXX: callback modifying array?
-     *
-     * @param fun the function name
-     * @param args the vector of array arguments
-     * @return an array with all of the mapped values
-     */
-    public static Value array_map(Env env, Callable fun,
-	    ArrayValue arg, Value[] args) {
-	// TODO: drupal
-	if (arg == null) {
-	    return NullValue.NULL;
-	}
-
-	// quercus/1730
-	Iterator<Map.Entry<Value, Value>> argIter = arg.entrySet().iterator();
-
-	Iterator[] iters = new Iterator[args.length];
-	for (int i = 0; i < args.length; i++) {
-	    if (!(args[i] instanceof ArrayValue)) {
-		throw env.createErrorException(L.l("expected array"));
-	    }
-
-	    ArrayValue argArray = (ArrayValue) args[i];
-
-	    iters[i] = argArray.values().iterator();
-	}
-
-	ArrayValue resultArray = new ArrayValueImpl();
-
-	Value[] param = new Value[args.length + 1];
-	while (argIter.hasNext()) {
-	    Map.Entry<Value, Value> entry = argIter.next();
-
-	    param[0] = entry.getValue();
-
-	    for (int i = 0; i < iters.length; i++) {
-		param[i + 1] = (Value) iters[i].next();
-
-		if (param[i + 1] == null) {
-		    param[i + 1] = NullValue.NULL;
-		}
-	    }
-
-	    resultArray.put(entry.getKey(), fun.call(env, param));
-	}
-
-	return resultArray;
-    }
-
-    /**
-     * Maps the given function with the array arguments.
-     *
-     * @param args the vector of array arguments
-     * @return an array with all of the mapped values
-     */
-    public static Value array_merge(Env env, Value[] args) {
-	// php/1731
-
-	ArrayValue result = new ArrayValueImpl();
-
-	for (Value arg : args) {
-	    if (arg.isNull()) {
-		return NullValue.NULL;
-	    }
-
-	    Value argValue = arg.toValue();
-
-	    if (!argValue.isArray()) {
-		continue;
-	    }
-
-	    ArrayValue array = argValue.toArrayValue(env);
-
-	    Iterator<Map.Entry<Value, Value>> iter = array.getIterator(env);
-
-	    while (iter.hasNext()) {
-		Map.Entry<Value, Value> entry = iter.next();
-
-		Value key = entry.getKey();
-		Value value;
-
-		if (entry instanceof ArrayValue.Entry) {
-		    // php/173z, php/1747
-		    value = ((ArrayValue.Entry) entry).getRawValue();
-		} else {
-		    value = entry.getValue();
-		}
-
-		if (!(value instanceof Var)) {
-		    value = value.copy();
-		}
-
-		// php/1745
-		if (key.isNumberConvertible()) {
-		    result.put(value);
-		} else {
-		    result.append(key, value);
-		}
-	    }
-	}
-
-	return result;
-    }
-
-    /**
-     * Maps the given function with the array arguments.
-     *
-     * @param args the vector of array arguments
-     * @return an array with all of the mapped values
-     */
-    public static Value array_merge_recursive(Env env, Value[] args) {
-	// quercus/173a
-
-	ArrayValue result = new ArrayValueImpl();
-
-	for (Value arg : args) {
-	    if (!(arg.toValue() instanceof ArrayValue)) {
-		continue;
-	    }
-
-	    arrayMergeRecursiveImpl(env, result, (ArrayValue) arg.toValue());
-	}
-
-	return result;
-    }
-
-    private static void arrayMergeRecursiveImpl(Env env,
-	    ArrayValue result,
-	    ArrayValue array) {
-	Iterator<Map.Entry<Value, Value>> iter = array.getIterator(env);
-
-	while (iter.hasNext()) {
-	    Map.Entry<Value, Value> entry = iter.next();
-
-	    Value key = entry.getKey();
-	    Value value;
-
-	    if (entry instanceof ArrayValue.Entry) {
-		// php/1744, php/1746
-		value = ((ArrayValue.Entry) entry).getRawValue();
-	    } else {
-		value = entry.getValue();
-	    }
-
-	    if (!(value instanceof Var)) {
-		value = value.copy();
-	    }
-
-	    if (key.isNumberConvertible()) {
-		result.put(value);
-	    } else {
-		Value oldValue = result.get(key).toValue();
-
-		if (oldValue != null && oldValue.isset()) {
-		    if (oldValue.isArray() && value.isArray()) {
-			arrayMergeRecursiveImpl(env,
-				oldValue.toArrayValue(env),
-				value.toArrayValue(env));
-		    } else if (oldValue.isArray()) {
-			oldValue.put(value);
-		    } else if (value.isArray()) {
-			// TODO: s/b insert?
-			value.put(oldValue);
-		    } else {
-			ArrayValue newArray = new ArrayValueImpl();
-
-			newArray.put(oldValue);
-			newArray.put(value);
-
-			result.put(key, newArray);
-		    }
-		} else {
-		    result.put(key, value);
-		}
-	    }
-	}
-    }
-
-    /**
-     * Sort the arrays like rows in a database.
-     * @param arrays  arrays to sort
-     *
-     * @return true on success, and false on failure
-     */
-    public static boolean array_multisort(Env env, Value[] arrays) {
-	boolean isNewKeys = true;
-
-	if (arrays.length == 0 || !arrays[0].isArray()) {
-	    env.warning("the first argument must be an array");
-
-	    return false;
-	}
-
-	Value primary = arrays[0];
-
-	Iterator<Value> keyIter = primary.getKeyIterator(env);
-
-	while (keyIter.hasNext()) {
-	    if (!(keyIter.next() instanceof LongValue)) {
-		isNewKeys = false;
-		break;
-	    }
-	}
-
-	Value[] rows = primary.getKeyArray(env);
-
-	int maxsize = 0;
-	for (int i = 0; i < arrays.length; i++) {
-	    if (arrays[i] instanceof ArrayValue) {
-		maxsize = Math.max(maxsize, arrays[i].getSize());
-	    }
-	}
-
-	// create the identity permutation [1..n]
-	LongValue[] p = new LongValue[maxsize];
-	for (int i = 0; i < rows.length; i++) {
-	    p[i] = LongValue.create(i);
-	}
-
-	java.util.Arrays.sort(p, new MultiSortComparator(env, rows, arrays));
-
-	// apply the permuation
-	for (int i = 0; i < arrays.length; i++) {
-	    if (arrays[i].isArray()) {
-		permute(env, (ArrayValue) arrays[i], p, isNewKeys);
-	    }
-	}
-
-	return true;
-    }
-
-    /*
-     *  Apply a permutation to an array; on return, each element of
-     *  array[i] holds the value that was in array[permutation[i]]
-     *  before the call.
-     */
-    private static void permute(Env env,
-	    ArrayValue array,
-	    Value[] permutation,
-	    boolean isNewKeys) {
-	Value[] keys = array.getKeyArray(env);
-	Value[] values = array.getValueArray(env);
-
-	array.clear();
-
-	if (isNewKeys) {
-	    for (int i = 0; i < permutation.length; i++) {
-		int p = permutation[i].toInt();
-
-		Value value = values[p];
-		array.put(LongValue.create(i), value.toValue().copy());
-	    }
-	} else {
-	    for (int i = 0; i < permutation.length; i++) {
-		int p = permutation[i].toInt();
-
-		Value key = keys[p];
-		Value value = values[p];
-		array.put(key, value.toValue().copy());
-	    }
-	}
-    }
-
-    public static Value array_replace(Env env, ArrayValue array, Value[] replaces) {
-	ArrayValue result = new ArrayValueImpl();
-
-	result = array;
-
-	for (int i = 0; i < replaces.length; i++) {
-	    Entry<Value, Value>[] values = replaces[i].toArrayValue(env).toEntryArray();
-
-	    for (int j = 0; j < values.length; j++) {
-		result.append(values[j].getKey(), values[j].getValue());
-	    }
-	}
-
-	return result;
-    }
-
-    // TODO: Performance Test asort
-    /**
-     * Sorts the array.
-     */
-    /*public Value asort(Env env,
-    Value value,
-    @Optional int mode)
-    {
-    if (! (value instanceof ArrayValue)) {
-    env.warning(L.l("asort requires array at '{0}'", value));
-    return BooleanValue.FALSE;
-    }
-
-    ArrayValue array = (ArrayValue) value;
-
-    array.asort();
-
-    return BooleanValue.TRUE;
-    }*/
-    // TODO: Performance Test ksort
-    /**
-     * Sorts the array.
-     */
-    /*public Value ksort(Env env,
-    Value value,
-    @Optional int mode)
-    {
-    if (! (value instanceof ArrayValue)) {
-    env.warning(L.l("asort requires array at '{0}'", value));
-    return BooleanValue.FALSE;
-    }
-
-    ArrayValue array = (ArrayValue) value;
-
-    array.ksort();
-
-    return BooleanValue.TRUE;
-    }*/
-    /**
-     * Creates an array with all the values of the first array that are not
-     * present in the other arrays, using a provided callback function to
-     * determine equivalence.
-     *
-     * @param arrays first array is checked against the rest.  Last element is the
-     * callback function.
-     * @return an array with all the values of the first array that are not in the
-     *         rest
-     */
-    public static Value array_udiff(Env env, Value[] arrays) {
-	if (arrays.length < 3) {
-	    env.warning("Wrong paremeter count for array_udiff()");
-
-	    return NullValue.NULL;
-	}
-
-	if (!(arrays[0] instanceof ArrayValue)) {
-	    env.warning("Argument #1 is not an array");
-
-	    return NullValue.NULL;
-	}
-
-	ArrayValue array = (ArrayValue) arrays[0];
-
-	Value callbackValue = arrays[arrays.length - 1];
-
-	Callable cmp = callbackValue.toCallable(env);
-
-	if (!cmp.isValid(env)) {
-	    return NullValue.NULL;
-	}
-
-	ArrayValue diffArray = new ArrayValueImpl();
-
-	boolean isFound = false;
-
-	for (Value entryKey : array.keySet()) {
-	    Value entryValue = array.get(entryKey);
-
-	    for (int k = 1; k < arrays.length - 1 && !isFound; k++) {
-		if (!(arrays[k] instanceof ArrayValue)) {
-		    env.warning("Argument #" + (k + 1) + " is not an array");
-
-		    return NullValue.NULL;
-		}
-
-		ArrayValue checkArray = (ArrayValue) arrays[k];
-
-		for (Map.Entry<Value, Value> entry : checkArray.entrySet()) {
-		    try {
-			isFound = cmp.call(env, entryValue, entry.getValue()).toLong() == 0;
-		    } catch (Exception t) {
-			log.log(Level.WARNING, t.toString(), t);
-
-			env.warning("An error occurred while invoking the filter callback");
-
-			return NullValue.NULL;
-		    }
-
-		    if (isFound) {
-			break;
-		    }
-		}
-	    }
-
-	    if (!isFound) {
-		diffArray.put(entryKey, entryValue);
-	    }
-
-	    isFound = false;
-	}
-
-	return diffArray;
-    }
-
     /**
      * Creates an array with all the values of the first array that are not
      * present in the other arrays, using a provided callback function to
@@ -3091,19 +1988,18 @@ public class ArrayModule
     }
 
     /**
-     * Creates an array with all the values of the first array that are present in
-     * the other arrays, using a provided callback function to determine
-     * equivalence.
-     * XXX: callback modifying arrays?
+     * Creates an array with all the values of the first array that are not
+     * present in the other arrays, using a provided callback function to
+     * determine equivalence.
      *
      * @param arrays first array is checked against the rest.  Last element is the
      * callback function.
-     * @return an array with all the values of the first array that are in the
+     * @return an array with all the values of the first array that are not in the
      *         rest
      */
-    public static Value array_uintersect(Env env, Value[] arrays) {
+    public static Value array_udiff(Env env, Value[] arrays) {
 	if (arrays.length < 3) {
-	    env.warning("Wrong paremeter count for array_uintersect()");
+	    env.warning("Wrong paremeter count for array_udiff()");
 
 	    return NullValue.NULL;
 	}
@@ -3124,14 +2020,14 @@ public class ArrayModule
 	    return NullValue.NULL;
 	}
 
-	ArrayValue interArray = new ArrayValueImpl();
+	ArrayValue diffArray = new ArrayValueImpl();
 
-	boolean isFound = true;
+	boolean isFound = false;
 
 	for (Value entryKey : array.keySet()) {
 	    Value entryValue = array.get(entryKey);
 
-	    for (int k = 1; k < arrays.length - 1 && isFound; k++) {
+	    for (int k = 1; k < arrays.length - 1 && !isFound; k++) {
 		if (!(arrays[k] instanceof ArrayValue)) {
 		    env.warning("Argument #" + (k + 1) + " is not an array");
 
@@ -3143,7 +2039,7 @@ public class ArrayModule
 		for (Map.Entry<Value, Value> entry : checkArray.entrySet()) {
 		    try {
 			isFound = cmp.call(env, entryValue, entry.getValue()).toLong() == 0;
-		    } catch (Throwable t) {
+		    } catch (Exception t) {
 			log.log(Level.WARNING, t.toString(), t);
 
 			env.warning("An error occurred while invoking the filter callback");
@@ -3157,12 +2053,14 @@ public class ArrayModule
 		}
 	    }
 
-	    if (isFound) {
-		interArray.put(entryKey, entryValue);
+	    if (!isFound) {
+		diffArray.put(entryKey, entryValue);
 	    }
+
+	    isFound = false;
 	}
 
-	return interArray;
+	return diffArray;
     }
 
     /**
@@ -3170,7 +2068,6 @@ public class ArrayModule
      * the other arrays, using a provided callback function to determine
      * equivalence. Also checks the keys for equivalence using an internal
      * comparison.
-     * XXX: callback modifying arrays?
      *
      * @param arrays first array is checked against the rest.  Last element is the
      * callback function.
@@ -3254,7 +2151,6 @@ public class ArrayModule
      * the other arrays, using a provided callback function to determine
      * equivalence. Also checks the keys for equivalence using a pass callback
      * function
-     * XXX: callback modifying arrays?
      *
      * @param arrays first array is checked against the rest.  Last two elements
      * are the callback functions.
@@ -3344,6 +2240,358 @@ public class ArrayModule
     }
 
     /**
+     * Creates an array with all the values of the first array that are present in
+     * the other arrays, using a provided callback function to determine
+     * equivalence.
+     *
+     * @param arrays first array is checked against the rest.  Last element is the
+     * callback function.
+     * @return an array with all the values of the first array that are in the
+     *         rest
+     */
+    public static Value array_uintersect(Env env, Value[] arrays) {
+	if (arrays.length < 3) {
+	    env.warning("Wrong paremeter count for array_uintersect()");
+
+	    return NullValue.NULL;
+	}
+
+	if (!(arrays[0] instanceof ArrayValue)) {
+	    env.warning("Argument #1 is not an array");
+
+	    return NullValue.NULL;
+	}
+
+	ArrayValue array = (ArrayValue) arrays[0];
+
+	Value callbackValue = arrays[arrays.length - 1];
+
+	Callable cmp = callbackValue.toCallable(env);
+
+	if (!cmp.isValid(env)) {
+	    return NullValue.NULL;
+	}
+
+	ArrayValue interArray = new ArrayValueImpl();
+
+	boolean isFound = true;
+
+	for (Value entryKey : array.keySet()) {
+	    Value entryValue = array.get(entryKey);
+
+	    for (int k = 1; k < arrays.length - 1 && isFound; k++) {
+		if (!(arrays[k] instanceof ArrayValue)) {
+		    env.warning("Argument #" + (k + 1) + " is not an array");
+
+		    return NullValue.NULL;
+		}
+
+		ArrayValue checkArray = (ArrayValue) arrays[k];
+
+		for (Map.Entry<Value, Value> entry : checkArray.entrySet()) {
+		    try {
+			isFound = cmp.call(env, entryValue, entry.getValue()).toLong() == 0;
+		    } catch (Throwable t) {
+			log.log(Level.WARNING, t.toString(), t);
+
+			env.warning("An error occurred while invoking the filter callback");
+
+			return NullValue.NULL;
+		    }
+
+		    if (isFound) {
+			break;
+		    }
+		}
+	    }
+
+	    if (isFound) {
+		interArray.put(entryKey, entryValue);
+	    }
+	}
+
+	return interArray;
+    }
+
+    /**
+     * Returns the inputted array without duplicates
+     *
+     * @param array the array to get rid of the duplicates from
+     * @return an array without duplicates
+     */
+    public static Value array_unique(Env env,
+	    ArrayValue array) {
+	if (array == null) {
+	    return BooleanValue.FALSE;
+	}
+
+	array.sort(CNO_VALUE_NORMAL, NO_KEY_RESET, NOT_STRICT);
+
+	Map.Entry<Value, Value> lastEntry = null;
+
+	ArrayValue uniqueArray = new ArrayValueImpl();
+
+	for (Map.Entry<Value, Value> entry : array.entrySet()) {
+	    Value entryValue = entry.getValue();
+
+	    if (lastEntry == null) {
+		uniqueArray.put(entry.getKey(), entryValue);
+
+		lastEntry = entry;
+
+		continue;
+	    }
+
+	    Value lastEntryValue = lastEntry.getValue();
+
+	    if (!entryValue.toString().equals(lastEntryValue.toString())) {
+		uniqueArray.put(entry.getKey(), entryValue);
+	    }
+
+	    lastEntry = entry;
+	}
+
+	uniqueArray.sort(CNO_KEY_NORMAL, NO_KEY_RESET, NOT_STRICT);
+
+	return uniqueArray;
+    }
+
+    /**
+     * Prepends the elements to the array
+     *
+     * @param array the array to shift
+     * @param values
+     * @return the left most value in the array
+     */
+    public static Value array_unshift(Env env,
+	    @Reference Value value,
+	    Value[] values) {
+	ArrayValue array = value.toArrayValue(env);
+
+	if (array == null) {
+	    return BooleanValue.FALSE;
+	}
+
+	for (int i = values.length - 1; i >= 0; i--) {
+	    array.unshift(values[i]);
+	}
+
+	array.keyReset(0, NOT_STRICT);
+
+	return LongValue.create(array.getSize());
+    }
+
+    /**
+     * Returns the values in the passed array with numerical indices.
+     *
+     * @param array the array to get the values from
+     * @return an array with the values of the passed array
+     */
+    public static Value array_values(Env env,
+	    ArrayValue array) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	return array.getValues();
+    }
+
+    /**
+     * Recursively executes a callback function on all elements in the array,
+     * including elements of elements (i.e., arrays within arrays).  Returns true
+     * if the process succeeded, otherwise false.
+     *
+     * @param array the array to walk
+     * @param call the name of the callback function
+     * @param extra extra parameter required by the callback function
+     * @return true if the walk succedded, false otherwise
+     */
+    public static boolean array_walk_recursive(Env env,
+	    @Reference Value arrayVar,
+	    Callable callback,
+	    @Optional("NULL") Value extra) {
+	if (callback == null || !callback.isValid(env)) {
+	    env.error(
+		    L.l("'{0}' is an unknown function.", callback.getCallbackName()));
+	    return false;
+	}
+
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return false;
+	}
+
+	try {
+	    Iterator<Map.Entry<Value, Value>> iter = array.getIterator(env);
+
+	    while (iter.hasNext()) {
+		Map.Entry<Value, Value> entry = iter.next();
+
+		Value key = entry.getKey();
+		Value value;
+
+		// php/1742
+		if (entry instanceof ArrayValue.Entry) {
+		    value = ((ArrayValue.Entry) entry).getRawValue();
+		} else {
+		    value = entry.getValue();
+		}
+
+		if (value.isArray()) {
+		    boolean result = array_walk_recursive(env,
+			    (ArrayValue) value.toValue(),
+			    callback,
+			    extra);
+
+		    if (!result) {
+			return false;
+		    }
+		} else {
+		    callback.callArray(env, array, key, value, key, extra);
+		}
+	    }
+
+	    return true;
+	} catch (Exception e) {
+	    log.log(Level.WARNING, e.toString(), e);
+	    env.warning("An error occured while invoking the callback", e);
+
+	    return false;
+	}
+    }
+
+    /**
+     * Executes a callback on each of the elements in the array.
+     *
+     * @param array the array to walk along
+     * @param callback the callback function
+     * @param userData extra parameter required by the callback function
+     *
+     * @return true if the walk succeeded, false otherwise
+     */
+    public static boolean array_walk(Env env,
+	    @Reference Value arrayVar,
+	    Callable callback,
+	    @Optional("NULL") Value userData) {
+	if (callback == null || !callback.isValid(env)) {
+	    env.error(L.l("'{0}' is an unknown function.",
+		    callback.getCallbackName()));
+	    return false;
+	}
+
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return false;
+	}
+
+	try {
+	    Iterator<Map.Entry<Value, Value>> iter = array.getIterator(env);
+
+	    while (iter.hasNext()) {
+		Map.Entry<Value, Value> entry = iter.next();
+
+		Value key = entry.getKey();
+		Value value;
+
+		// php/1741
+		if (entry instanceof ArrayValue.Entry) {
+		    value = ((ArrayValue.Entry) entry).getRawValue();
+		} else {
+		    value = entry.getValue();
+		}
+
+		callback.callArray(env, array, key, value, key, userData);
+	    }
+
+	    return true;
+	} catch (Exception e) {
+	    log.log(Level.WARNING, e.toString(), e);
+	    env.warning("An error occured while invoking the callback", e);
+
+	    return false;
+	}
+    }
+
+    // array - implemented internally
+    /**
+     * Sorts the array based on values in reverse order, preserving keys
+     *
+     * @param array the array to sort
+     * @param sortFlag provides optional methods to process the sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static boolean arsort(Env env,
+	    @Reference Value arrayVar,
+	    @Optional long sortFlag) {
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return false;
+	}
+
+	switch ((int) sortFlag) {
+	    case SORT_STRING:
+		array.sort(CS_VALUE_REVERSE, NO_KEY_RESET, NOT_STRICT);
+		break;
+	    case SORT_NUMERIC:
+		array.sort(CN_VALUE_REVERSE, NO_KEY_RESET, NOT_STRICT);
+		break;
+	    case SORT_LOCALE_STRING:
+		Locale locale = env.getLocaleInfo().getCollate().getLocale();
+		array.sort(new CompareLocale(ArrayValue.GET_VALUE, SORT_REVERSE,
+			Collator.getInstance(locale)),
+			NO_KEY_RESET, NOT_STRICT);
+		break;
+	    default:
+		array.sort(CNO_VALUE_REVERSE, NO_KEY_RESET, NOT_STRICT);
+		break;
+	}
+
+	return true;
+    }
+
+    /**
+     * Sorts the array based on values in ascending order, preserving keys
+     *
+     * @param array the array to sort
+     * @param sortFlag provides optional methods to process the sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static boolean asort(Env env,
+	    @Reference Value arrayVar,
+	    @Optional long sortFlag) {
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return false;
+	}
+
+	switch ((int) sortFlag) {
+	    case SORT_STRING:
+		array.sort(CS_VALUE_NORMAL, NO_KEY_RESET, NOT_STRICT);
+		break;
+	    case SORT_NUMERIC:
+		array.sort(CN_VALUE_NORMAL, NO_KEY_RESET, NOT_STRICT);
+		break;
+	    case SORT_LOCALE_STRING:
+		Locale locale = env.getLocaleInfo().getCollate().getLocale();
+		array.sort(new CompareLocale(ArrayValue.GET_VALUE, SORT_NORMAL,
+			Collator.getInstance(locale)),
+			NO_KEY_RESET, NOT_STRICT);
+		break;
+	    default:
+		array.sort(CNO_VALUE_NORMAL, NO_KEY_RESET, NOT_STRICT);
+		break;
+	}
+
+	return true;
+    }
+
+    /**
      * Creates an array of corresponding values to variables in the symbol name.
      * The passed parameters are the names of the variables to be added to the
      * array.
@@ -3377,10 +2625,698 @@ public class ArrayModule
     /**
      * Returns the size of the array.
      */
+    public static long count(Env env,
+	    @ReadOnly Value value,
+	    @Optional int countMethod) {
+	boolean isRecursive = countMethod == COUNT_RECURSIVE;
+
+	if (!isRecursive) {
+	    return value.getCount(env);
+	} else {
+	    return value.getCountRecursive(env);
+	}
+    }
+
+    /**
+     * Returns the current value of the array.
+     */
+    public static Value current(@ReadOnly Value value) {
+	return value.current();
+    }
+
+    /**
+     * Returns the next value of the array.
+     */
+    public static Value each(Env env, @Reference Value value) {
+	if (value instanceof Var) {
+	    value = value.toValue();
+
+	    if (value.isArray()) {
+		return value.toArrayValue(env).each();
+	    } else {
+		env.warning(L.l("each() requires argument to be an array"));
+
+		return NullValue.NULL;
+	    }
+	} else {
+	    return env.error(L.l("each() argument must be a variable"));
+	}
+    }
+
+    /**
+     * Resets the pointer to the end
+     */
+    public static Value end(@Reference Value value) {
+	return value.end();
+    }
+
+    // Basically, the compiled mode uses Java variables to store PHP
+    // variables.  The extract() call messes that up, or at least forces the
+    // compiler to synchronize its view of the variables.
+    // (email Re:extract: symbol table)
+    /**
+     * Inputs new variables into the symbol table from the passed array
+     *
+     * @param array the array contained the new variables
+     * @return the number of new variables added from the array to the symbol
+     *         table
+     */
+    @UsesSymbolTable(replace = true)
+    public static Value extract(Env env,
+	    ArrayValue array) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	int completedSymbols = 0;
+
+	for (Value entryKey : array.keySet()) {
+	    Value entryValue;
+
+	    entryValue = array.get(entryKey);
+
+	    StringValue symbolName = entryKey.toStringValue();
+
+	    if (validVariableName(symbolName)) {
+		env.setValue(symbolName, entryValue);
+
+		completedSymbols++;
+	    }
+	}
+
+	return LongValue.create(completedSymbols);
+    }
+
+    /**
+     * Inputs new variables into the symbol table from the passed array
+     *
+     * @param array the array contained the new variables
+     * @param rawType flag to determine how to handle collisions
+     * @param valuePrefix used along with the flag
+     * @return the number of new variables added from the array to the symbol
+     *         table
+     */
+    @UsesSymbolTable
+    public static Value extract(Env env,
+	    ArrayValue array,
+	    long rawType,
+	    @Optional("NULL") Value valuePrefix) {
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	long extractType = rawType & ~EXTR_REFS;
+
+	boolean extrRefs = (rawType & EXTR_REFS) != 0;
+
+	if (extractType < EXTR_OVERWRITE
+		|| extractType > EXTR_IF_EXISTS && extractType != EXTR_REFS) {
+	    env.warning("Unknown extract type");
+
+	    return NullValue.NULL;
+	}
+
+	if (extractType >= EXTR_PREFIX_SAME
+		&& extractType <= EXTR_PREFIX_IF_EXISTS
+		&& (valuePrefix == null || !(valuePrefix.isString()))) {
+	    env.warning("Prefix expected to be specified");
+
+	    return NullValue.NULL;
+	}
+
+	String prefix = "";
+
+	if (valuePrefix instanceof StringValue) {
+	    prefix = valuePrefix.toString() + "_";
+	}
+
+	int completedSymbols = 0;
+
+	for (Value entryKey : array.keySet()) {
+	    Value entryValue;
+
+	    if (extrRefs) {
+		entryValue = array.getVar(entryKey);
+	    } else {
+		entryValue = array.get(entryKey);
+	    }
+
+	    StringValue symbolName = entryKey.toStringValue();
+
+	    Value tableValue = env.getValue(symbolName);
+
+	    switch ((int) extractType) {
+		case EXTR_SKIP:
+		    if (!tableValue.isNull()) {
+			symbolName = env.createString("");
+		    }
+
+		    break;
+		case EXTR_PREFIX_SAME:
+		    if (!tableValue.isNull()) {
+			symbolName = env.createString(prefix + symbolName);
+		    }
+
+		    break;
+		case EXTR_PREFIX_ALL:
+		    symbolName = env.createString(prefix + symbolName);
+
+		    break;
+		case EXTR_PREFIX_INVALID:
+		    if (!validVariableName(symbolName)) {
+			symbolName = env.createString(prefix + symbolName);
+		    }
+
+		    break;
+		case EXTR_IF_EXISTS:
+		    if (tableValue.isNull()) {
+			symbolName = env.createString("");//entryValue = tableValue;
+		    }
+		    break;
+		case EXTR_PREFIX_IF_EXISTS:
+		    if (!tableValue.isNull()) {
+			symbolName = env.createString(prefix + symbolName);
+		    } else {
+			symbolName = env.createString("");
+		    }
+
+		    break;
+		default:
+
+		    break;
+	    }
+
+	    if (validVariableName(symbolName)) {
+		env.setValue(symbolName, entryValue);
+
+		completedSymbols++;
+	    }
+	}
+
+	return LongValue.create(completedSymbols);
+    }
+
+    /**
+     * Helper function for extract to determine if a variable name is valid
+     *
+     * @param variableName the name to check
+     * @return true if the name is valid, false otherwise
+     */
+    private static boolean validVariableName(StringValue variableName) {
+	if (variableName.length() < 1) {
+	    return false;
+	}
+
+	char checkChar = variableName.charAt(0);
+
+	if (!Character.isLetter(checkChar) && checkChar != '_') {
+	    return false;
+	}
+
+	for (int k = 1; k < variableName.length(); k++) {
+	    checkChar = variableName.charAt(k);
+
+	    if (!Character.isLetterOrDigit(checkChar) && checkChar != '_') {
+		return false;
+	    }
+	}
+
+	return true;
+    }
+
+    /**
+     * Determines if the key is in the array
+     *
+     * @param needle the array to sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static boolean in_array(@ReadOnly Value needle,
+	    @ReadOnly ArrayValue stack,
+	    @Optional("false") boolean strict) {
+	if (stack == null) {
+	    return false;
+	}
+
+	Value result;
+
+	if (strict) {
+	    result = stack.containsStrict(needle);
+	} else {
+	    result = stack.contains(needle);
+	}
+
+	return !result.isNull();
+    }
+
+    /**
+     * Returns the current key of the array.
+     */
+    public static Value key(@ReadOnly Value value) {
+	return value.key();
+    }
+
+    /**
+     * Undocumented alias for {@link #array_key_exists}.
+     */
+    public static boolean key_exists(Env env,
+	    @ReadOnly Value key,
+	    @ReadOnly Value searchArray) {
+	return array_key_exists(env, key, searchArray);
+    }
+
+    /**
+     * Sorts the array based on keys in reverse order, preserving keys
+     *
+     * @param array the array to sort
+     * @param sortFlag provides optional methods to process the sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static boolean krsort(Env env,
+	    @Reference Value arrayVar,
+	    @Optional long sortFlag) {
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return false;
+	}
+
+	switch ((int) sortFlag) {
+	    case SORT_STRING:
+		array.sort(CS_KEY_REVERSE, NO_KEY_RESET, NOT_STRICT);
+		break;
+	    case SORT_NUMERIC:
+		array.sort(CN_KEY_REVERSE, NO_KEY_RESET, NOT_STRICT);
+		break;
+	    case SORT_LOCALE_STRING:
+		Locale locale = env.getLocaleInfo().getCollate().getLocale();
+		array.sort(new CompareLocale(ArrayValue.GET_KEY, SORT_REVERSE,
+			Collator.getInstance(locale)),
+			NO_KEY_RESET, NOT_STRICT);
+		break;
+	    default:
+		array.sort(CNO_KEY_REVERSE, NO_KEY_RESET, NOT_STRICT);
+		break;
+	}
+
+	return true;
+    }
+
+    /**
+     * Sorts the array based on keys in ascending order, preserving keys
+     *
+     * @param array the array to sort
+     * @param sortFlag provides optional methods to process the sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static boolean ksort(Env env,
+	    @Reference Value arrayVar,
+	    @Optional long sortFlag) {
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return false;
+	}
+
+	switch ((int) sortFlag) {
+	    case SORT_STRING:
+		array.sort(CS_KEY_NORMAL, NO_KEY_RESET, NOT_STRICT);
+		break;
+	    case SORT_NUMERIC:
+		array.sort(CN_KEY_NORMAL, NO_KEY_RESET, NOT_STRICT);
+		break;
+	    case SORT_LOCALE_STRING:
+		Locale locale = env.getLocaleInfo().getCollate().getLocale();
+		array.sort(new CompareLocale(ArrayValue.GET_KEY, SORT_NORMAL,
+			Collator.getInstance(locale)),
+			NO_KEY_RESET, NOT_STRICT);
+		break;
+	    default:
+		array.sort(CNO_KEY_NORMAL, NO_KEY_RESET, NOT_STRICT);
+		break;
+	}
+
+	return true;
+    }
+
+    // list is internal expression
+    /**
+     * Sorts the array based on string values using natural order, preserving
+     * keys, case insensitive
+     *
+     * @param array the array to sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static Value natcasesort(Env env, @Reference Value arrayVar) {
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	trimArrayStrings(array);
+
+	array.sort(CNA_VALUE_NORMAL_INSENSITIVE, NO_KEY_RESET, NOT_STRICT);
+
+	return BooleanValue.TRUE;
+    }
+
+    /**
+     * Sorts the array based on string values using natural order, preserving
+     * keys, case sensitive
+     *
+     * @param array the array to sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static Value natsort(Env env, @Reference Value arrayVar) {
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return NullValue.NULL;
+	}
+
+	trimArrayStrings(array);
+
+	array.sort(CNA_VALUE_NORMAL_SENSITIVE, NO_KEY_RESET, NOT_STRICT);
+
+	return BooleanValue.TRUE;
+    }
+
+    /**
+     * Helper function for natsort and natcasesort to trim the string in the
+     * array
+     *
+     * @param array the array to trim strings from
+     */
+    private static void trimArrayStrings(ArrayValue array) {
+	if (array != null) {
+
+	    for (Map.Entry<Value, Value> entry : array.entrySet()) {
+		Value entryValue = entry.getValue();
+
+		if (entryValue instanceof StringValue) {
+		    array.put(entry.getKey(),
+			    StringValue.create(entryValue.toString().trim()));
+		}
+	    }
+	}
+    }
+
+    /**
+     * Returns the next value of the array.
+     */
+    public static Value next(@Reference Value value) {
+	return value.next();
+    }
+
+    /**
+     * Returns the current value of the array.
+     */
+    public static Value pos(@ReadOnly Value value) {
+	return current(value);
+    }
+
+    /**
+     * Returns the previous value of the array.
+     */
+    public static Value prev(@Reference Value array) {
+	return array.prev();
+    }
+
+    /**
+     * Creates an array using the start and end values provided
+     *
+     * @param start the 0 index element
+     * @param end the length - 1 index element
+     * @param step the new value is increased by this to determine the value for
+     * the next element
+     * @return the new array
+     */
+    public static Value range(Env env,
+	    @ReadOnly Value start,
+	    @ReadOnly Value end,
+	    @Optional("1") long step) {
+	if (step < 1) {
+	    step = 1;
+	}
+
+	if (!start.getType().equals(end.getType())) {
+	    start = LongValue.create(start.toLong());
+	    end = LongValue.create(end.toLong());
+	} else if (Character.isDigit(start.toChar())) {
+	    start = LongValue.create(start.toLong());
+	    end = LongValue.create(end.toLong());
+	} else {
+	    start = rangeIncrement(start, 0);
+	    end = rangeIncrement(end, 0);
+	}
+
+	if (start.eq(end)) {
+	} else if (start instanceof StringValue
+		&& (Math.abs(end.toChar() - start.toChar()) < step)) {
+	    env.warning("steps exceeds the specified range");
+
+	    return BooleanValue.FALSE;
+	} else if (start instanceof LongValue
+		&& (Math.abs(end.toLong() - start.toLong()) < step)) {
+	    env.warning("steps exceeds the specified range");
+
+	    return BooleanValue.FALSE;
+	}
+
+	boolean increment = true;
+
+	if (!end.geq(start)) {
+	    step *= -1;
+	    increment = false;
+	}
+
+	ArrayValue array = new ArrayValueImpl();
+
+	do {
+	    array.put(start);
+
+	    start = rangeIncrement(start, step);
+	} while ((increment && start.leq(end))
+		|| (!increment && start.geq(end)));
+
+	return array;
+    }
+
+    private static Value rangeIncrement(Value value, long step) {
+	if (value.isString()) {
+	    return StringValue.create((char) (value.toChar() + step));
+	}
+
+	return LongValue.create(value.toLong() + step);
+    }
+
+    /**
+     * Resets the pointer
+     */
+    public static Value reset(@Reference Value array) {
+	return array.reset();
+    }
+
+    /**
+     * Sorts the array based on values in reverse order
+     *
+     * @param array the array to sort
+     * @param sortFlag provides optional methods to process the sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static boolean rsort(Env env,
+	    @Reference Value arrayVar,
+	    @Optional long sortFlag) {
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return false;
+	}
+
+	switch ((int) sortFlag) {
+	    case SORT_STRING:
+		array.sort(CS_VALUE_REVERSE, KEY_RESET, STRICT);
+		break;
+	    case SORT_NUMERIC:
+		array.sort(CN_VALUE_REVERSE, KEY_RESET, STRICT);
+		break;
+	    case SORT_LOCALE_STRING:
+		Locale locale = env.getLocaleInfo().getCollate().getLocale();
+		array.sort(new CompareLocale(ArrayValue.GET_VALUE, SORT_REVERSE,
+			Collator.getInstance(locale)),
+			KEY_RESET, STRICT);
+		break;
+	    default:
+		array.sort(CNO_VALUE_REVERSE, KEY_RESET, STRICT);
+		break;
+	}
+
+	return true;
+    }
+
+    /**
+     * Returns the current value of the array.
+     */
+    public static Value shuffle(Env env, @Reference Value array) {
+	return array.shuffle();
+    }
+
+    /**
+     * Returns the size of the array.
+     */
     public static long sizeof(Env env,
 	    @ReadOnly Value value,
 	    @Optional int countMethod) {
 	return count(env, value, countMethod);
+    }
+
+    /**
+     * Sorts the array based on values in ascending order
+     *
+     * @param array the array to sort
+     * @param sortFlag provides optional methods to process the sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static boolean sort(Env env,
+	    @Reference Value arrayVar,
+	    @Optional long sortFlag) {
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return false;
+	}
+
+	switch ((int) sortFlag) {
+	    case SORT_STRING:
+		array.sort(CS_VALUE_NORMAL, KEY_RESET, STRICT);
+		break;
+	    case SORT_NUMERIC:
+		array.sort(CN_VALUE_NORMAL, KEY_RESET, STRICT);
+		break;
+	    case SORT_LOCALE_STRING:
+		Locale locale = env.getLocaleInfo().getCollate().getLocale();
+		array.sort(new CompareLocale(ArrayValue.GET_VALUE, SORT_NORMAL,
+			Collator.getInstance(locale)),
+			KEY_RESET, STRICT);
+		break;
+	    default:
+		array.sort(CNO_VALUE_NORMAL, KEY_RESET, STRICT);
+		break;
+	}
+
+	return true;
+    }
+
+    /**
+     * Sorts the array based on values in ascending order using a callback
+     * function
+     *
+     * @param array the array to sort
+     * @param func the name of the callback function
+     * @param sortFlag provides optional methods to process the sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static boolean uasort(Env env,
+	    @Reference Value arrayVar,
+	    Callable func,
+	    @Optional long sortFlag) {
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return false;
+	}
+
+	if (func == null) {
+	    return false;
+	}
+
+	if (!func.isValid(env)) {
+	    env.warning(L.l("Invalid comparison function"));
+	    return false;
+	}
+
+	array.sort(new CompareCallBack(ArrayValue.GET_VALUE, SORT_NORMAL, func,
+		env), NO_KEY_RESET, NOT_STRICT);
+
+	return true;
+    }
+
+    /**
+     * Sorts the array based on values in ascending order using a callback
+     * function
+     *
+     * @param array the array to sort
+     * @param func the name of the callback function
+     * @param sortFlag provides optional methods to process the sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static boolean uksort(Env env,
+	    @Reference Value arrayVar,
+	    Callable func,
+	    @Optional long sortFlag) {
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return false;
+	}
+
+	if (!func.isValid(env)) {
+	    env.warning(L.l("Invalid comparison function"));
+	    return false;
+	}
+
+	CompareCallBack cmp;
+
+	cmp = new CompareCallBack(ArrayValue.GET_KEY, SORT_NORMAL, func, env);
+
+	array.sort(cmp, NO_KEY_RESET, NOT_STRICT);
+
+	return true;
+    }
+
+    /**
+     * Sorts the array based on values in ascending order using a callback
+     * function
+     *
+     * @param array the array to sort
+     * @param func the name of the callback function
+     * @param sortFlag provides optional methods to process the sort
+     * @return true if the sort works, false otherwise
+     * @throws ClassCastException if the elements are not mutually comparable
+     */
+    public static boolean usort(Env env,
+	    @Reference Value arrayVar,
+	    Callable func,
+	    @Optional long sortFlag) {
+	ArrayValue array = arrayVar.toArrayValue(env);
+
+	if (array == null) {
+	    return false;
+	}
+
+	if (func == null) {
+	    return false;
+	} else if (!func.isValid(env)) {
+	    env.warning(L.l("Invalid comparison function"));
+	    return false;
+	}
+
+	CompareCallBack cmp;
+
+	cmp = new CompareCallBack(ArrayValue.GET_VALUE, SORT_NORMAL, func, env);
+
+	array.sort(cmp, KEY_RESET, STRICT);
+
+	return true;
     }
 
     private static class CompareString
