@@ -1524,8 +1524,59 @@ public class ArrayModule
 	return result;
     }
 
-    // XXX: array_replace_recursive
-    // XXX: array_replace
+    /**
+     * Replace elements in the first array with values from successive ones
+     */
+    public static Value array_replace_recursive(Env env,
+	    Value[] args) {
+	ArrayValue result = new ArrayValueImpl();
+
+	for (int i = 0; i < args.length; i++) {
+	    replaceRecursive(env, result, args[i]);
+	}
+
+	return result;
+    }
+
+    private static void replaceRecursive(Env env,
+	    Value result,
+	    Value newValue) {
+	Iterator<Map.Entry<Value, Value>> iter = newValue.toArray().getIterator(env);
+
+	while (iter.hasNext()) {
+	    Map.Entry<Value, Value> entry = iter.next();
+
+	    Value key = entry.getKey();
+	    Value value = entry.getValue();
+
+	    if (value.isArray()) {
+		replaceRecursive(env, result.getArray(key), value);
+	    } else {
+		result.put(key, value);
+	    }
+	}
+    }
+
+    /**
+     * Replace elements in the first array with values from successive ones
+     */
+    public static Value array_replace(Env env,
+	    Value[] args) {
+	ArrayValue result = new ArrayValueImpl();
+
+	for (int i = 0; i < args.length; i++) {
+	    Iterator<Map.Entry<Value, Value>> iter = args[i].toArray().getIterator(env);
+
+	    while (iter.hasNext()) {
+		Map.Entry<Value, Value> entry = iter.next();
+
+		result.put(entry.getKey(), entry.getValue());
+	    }
+	}
+
+	return result;
+    }
+
     /**
      * Returns the inputted array reversed, preserving the keys if keyed is true
      *
