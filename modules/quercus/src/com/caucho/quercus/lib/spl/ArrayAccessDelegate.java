@@ -76,4 +76,9 @@ public class ArrayAccessDelegate implements ArrayDelegate {
 
 	return qThis.callMethod(env, OFFSET_UNSET, index);
     }
+
+    @Override
+    public long count(ObjectValue qThis) {
+	return 1;
+    }
 }

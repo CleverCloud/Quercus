@@ -1958,6 +1958,13 @@ abstract public class Value implements java.io.Serializable {
      * Returns an iterator for the key => value pairs.
      */
     public Iterator<Map.Entry<Value, Value>> getIterator(Env env) {
+	return getBaseIterator(env);
+    }
+
+    /**
+     * Returns an iterator for the key => value pairs.
+     */
+    public Iterator<Map.Entry<Value, Value>> getBaseIterator(Env env) {
 	Set<Map.Entry<Value, Value>> emptySet = Collections.emptySet();
 
 	return emptySet.iterator();

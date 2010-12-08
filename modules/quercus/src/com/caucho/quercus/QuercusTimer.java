@@ -92,6 +92,13 @@ public class QuercusTimer {
 
     public void shutdown() {
 	_isRunnable = false;
+
+	LockSupport.unpark(_timerThread);
+
+	try {
+	    Thread.sleep(1);
+	} catch (Exception e) {
+	}
     }
 
     class TimerThread extends Thread {

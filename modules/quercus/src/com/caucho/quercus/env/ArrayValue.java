@@ -778,7 +778,7 @@ abstract public class ArrayValue extends Value {
     }
 
     @Override
-    public Iterator<Map.Entry<Value, Value>> getIterator(Env env) {
+    public Iterator<Map.Entry<Value, Value>> getBaseIterator(Env env) {
 	return new EntryIterator(getHead());
     }
 

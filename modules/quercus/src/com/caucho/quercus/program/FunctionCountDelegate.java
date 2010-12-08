@@ -26,40 +26,41 @@
  *
  * @author Sam
  */
-package com.caucho.quercus.env;
+package com.caucho.quercus.program;
+
+import java.util.Map;
+import java.util.Iterator;
+
+import com.caucho.quercus.env.*;
 
 /**
  * A delegate that performs Array operations for Quercus objects.
  */
-public interface ArrayDelegate {
+public class FunctionCountDelegate implements CountDelegate {
+
+    private JavaInvoker _count;
+
+    public FunctionCountDelegate() {
+    }
+
+    /**
+     * Sets the custom function for the array get.
+     */
+    public void setCount(JavaInvoker count) {
+	_count = count;
+    }
 
     /**
      * Returns the value for the specified key.
      */
-    public Value get(ObjectValue qThis, Value key);
-
-    /**
-     * Sets the value for the spoecified key.
-     */
-    public Value put(ObjectValue qThis, Value key, Value value);
-
-    /**
-     * Appends a value.
-     */
-    public Value put(ObjectValue qThis, Value value);
-
-    /**
-     * Returns true if the value is set
-     */
-    public boolean isset(ObjectValue qThis, Value key);
-
-    /**
-     * Removes the value at the speified key.
-     */
-    public Value unset(ObjectValue qThis, Value key);
-
-    /**
-     * Returns the array count
-     */
-    public long count(ObjectValue qThis);
+    @Override
+    public int count(ObjectValue qThis) {
+	if (_count != null) {
+	    return _count.callMethod(Env.getInstance(),
+		    _count.getQuercusClass(),
+		    qThis).toInt();
+	} else {
+	    return 1;
+	}
+    }
 }

@@ -720,8 +720,16 @@ public class ObjectExtValue extends ObjectValue
 	if (delegate != null) {
 	    return delegate.getIterator(env, this);
 	} else {
-	    return new KeyValueIterator(_entries);
+	    return getBaseIterator(env);
 	}
+    }
+
+    /**
+     * Returns an iterator for the key => value pairs.
+     */
+    @Override
+    public Iterator<Map.Entry<Value, Value>> getBaseIterator(Env env) {
+	return new KeyValueIterator(_entries);
     }
 
     /**
