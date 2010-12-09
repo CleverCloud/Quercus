@@ -1,13 +1,41 @@
 ChangeLog for Quercus by Clever Cloud
 -------------------------------------
 
+Version 4.0.11c-dev
+-------------------
+- Refreshing repo from Caucho's SVN: applying r7541, r7561 to r7563, r7583, r7588, r7621 to r7624,
+  r7627, r7628, r7629, r7631, r7670, r7674, r7712, r7713, r7737
+- Adding php.ini example file and browscap.ini for get_browser()
+- Adding support of array_replace() and array_replace_recursive()
+- Adding support of show_source()
+- Fixing #3: regression caused by c#4139
+- Adding support of 53 constants for nl_langinfo()
+- Adding support of PEAR_EXTENSION_DIR, PHP_EXTENSION_DIR, PHP_LIBDIR, PHP_CONFIG_FILE_PATH
+- Adding support of PHP_SAPI, PHP_ZTS, PHP_BINDIR, PHP_SHLIB_SUFFIX, PHP_CONFIG_FILE_SCAN_DIR
+- Improving SPL Exceptions and behavior when no message provided
+- Fixing c#3683: PgSql fails on PDO with non-standard port
+- Adding support of apc_add()
+- Fixing #13: Unicode issue with constants
+- PDO: adding jdbc url support (thanks to terefang)
+- Fixing #2: adding support of mysql_set_charset() and JDBC encoding, adding init-params 'jdbc-encoding' and 'unicode'
+- Updating nl2br(), adding support of is_xhtml optional argument
+- Adding support of PHP_DEBUG, PHP_VERSION_ID, INI_USER, INI_PERDIR, INI_SYSTEM and INI_ALL
+- Improving php_uname()
+- Improving phpversion(), adding support of PHP_EXTRA_VERSION
+- Moving PDF Module to quercus-module sub-repo (QExt)
+- strptime only supports a, A, b, B, C, d, D, F, h, H, I, j, m, M, n, p, P, r, R, S, t, T, y, Y, z, Z
+- Fixing #11 (c#4264): 'strptime' PHP function is not supported in Quercus
+- Adding Joda Time 1.6.2
+- Fixing #10: cURL Content-Type header issue
+
+
 Version 4.0.10c 18-Sep-2010
 ---------------------------
-- Fixing c#4125 : ob_get_clean() does not exec ob_end_clean()
-- Fixing c#4139 : "unknown lexeme:/ in" error when a comment is between 'implements' keyword and '{'
+- Fixing c#4125: ob_get_clean() does not exec ob_end_clean()
+- Fixing c#4139: "unknown lexeme:/ in" error when a comment is between 'implements' keyword and '{'
 - Adding URL Rewrite Filter 4.0
 - Adding MySQL Connector 5.1.13 (quercus-war)
-- Fixing #1 : reserved constant PHP_EOL
-- Adding QITS : Quercus Implementation Testing System
-- Adding reserved constants : PHP_INT_MAX, PHP_INT_SIZE, CURRENCY_SYMBOL, INT_CURR_SYMBOL
-- Adding reserved constants : E_DEPRECATED, E_USER_DEPRECATED
+- Fixing #1: reserved constant PHP_EOL
+- Adding QITS: Quercus Implementation Testing System
+- Adding reserved constants: PHP_INT_MAX, PHP_INT_SIZE, CURRENCY_SYMBOL, INT_CURR_SYMBOL
+- Adding reserved constants: E_DEPRECATED, E_USER_DEPRECATED
