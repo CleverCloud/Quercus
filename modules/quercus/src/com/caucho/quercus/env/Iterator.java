@@ -26,17 +26,38 @@
  *
  * @author Sam
  */
-package com.caucho.quercus.lib.spl;
+package com.caucho.quercus.env;
 
+import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.Value;
 import com.caucho.quercus.annotation.Delegates;
-import com.caucho.quercus.env.ObjectValue;
 
-@Delegates(IteratorAggregateDelegate.class)
-public interface IteratorAggregate
+@Delegates(IteratorDelegate.class)
+public interface Iterator
 	extends Traversable {
 
     /**
-     * Returns the iterator.
+     * Returns the current value.
      */
-    public ObjectValue getIterator();
+    public Value current(Env env);
+
+    /**
+     * Returns the current key.
+     */
+    public Value key(Env env);
+
+    /**
+     * Advances to the next row.
+     */
+    public void next(Env env);
+
+    /**
+     * Rewinds the iterator so it is at the first row.
+     */
+    public void rewind();
+
+    /**
+     * Returns true if the iterator currently points to a valid row.
+     */
+    public boolean valid();
 }

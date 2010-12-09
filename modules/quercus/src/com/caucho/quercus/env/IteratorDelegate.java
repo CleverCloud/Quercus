@@ -26,7 +26,7 @@
  *
  * @author Sam
  */
-package com.caucho.quercus.lib.spl;
+package com.caucho.quercus.env;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.ObjectValue;

@@ -24,15 +24,9 @@
  *   59 Temple Place, Suite 330
  *   Boston, MA 02111-1307  USA
  *
- * @author Nam Nguyen
+ * @author Sam
  */
-package com.caucho.quercus.lib.spl;
+package com.caucho.quercus.env;
 
-import com.caucho.quercus.env.Value;
-
-public interface Serializable {
-
-    public Value serialize();
-
-    public Value unserialize(Value serialized);
+public interface Traversable {
 }

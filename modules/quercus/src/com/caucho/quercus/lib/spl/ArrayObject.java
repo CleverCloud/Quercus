@@ -28,6 +28,9 @@
  */
 package com.caucho.quercus.lib.spl;
 
+import com.caucho.quercus.env.IteratorAggregate;
+import com.caucho.quercus.env.Traversable;
+import com.caucho.quercus.env.ArrayAccess;
 import com.caucho.quercus.annotation.Name;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.*;

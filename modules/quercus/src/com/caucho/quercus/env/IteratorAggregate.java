@@ -26,7 +26,17 @@
  *
  * @author Sam
  */
-package com.caucho.quercus.lib.spl;
+package com.caucho.quercus.env;
 
-public interface Traversable {
+import com.caucho.quercus.annotation.Delegates;
+import com.caucho.quercus.env.ObjectValue;
+
+@Delegates(IteratorAggregateDelegate.class)
+public interface IteratorAggregate
+	extends Traversable {
+
+    /**
+     * Returns the iterator.
+     */
+    public ObjectValue getIterator();
 }

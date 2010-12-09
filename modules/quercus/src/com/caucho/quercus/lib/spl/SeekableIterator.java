@@ -28,6 +28,7 @@
  */
 package com.caucho.quercus.lib.spl;
 
+import com.caucho.quercus.env.Iterator;
 import com.caucho.quercus.env.Env;
 
 public interface SeekableIterator

@@ -24,40 +24,15 @@
  *   59 Temple Place, Suite 330
  *   Boston, MA 02111-1307  USA
  *
- * @author Sam
+ * @author Nam Nguyen
  */
-package com.caucho.quercus.lib.spl;
+package com.caucho.quercus.env;
 
-import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
-import com.caucho.quercus.annotation.Delegates;
 
-@Delegates(IteratorDelegate.class)
-public interface Iterator
-	extends Traversable {
+public interface Serializable {
 
-    /**
-     * Returns the current value.
-     */
-    public Value current(Env env);
+    public Value serialize();
 
-    /**
-     * Returns the current key.
-     */
-    public Value key(Env env);
-
-    /**
-     * Advances to the next row.
-     */
-    public void next(Env env);
-
-    /**
-     * Rewinds the iterator so it is at the first row.
-     */
-    public void rewind();
-
-    /**
-     * Returns true if the iterator currently points to a valid row.
-     */
-    public boolean valid();
+    public Value unserialize(Value serialized);
 }

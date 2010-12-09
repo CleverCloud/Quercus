@@ -28,6 +28,8 @@
  */
 package com.caucho.quercus.lib.spl;
 
+import com.caucho.quercus.env.Iterator;
+
 public interface RecursiveIterator
 	extends Iterator {
 

@@ -28,6 +28,7 @@
  */
 package com.caucho.quercus.lib.spl;
 
+import com.caucho.quercus.env.ArrayAccess;
 import com.caucho.quercus.annotation.Hide;
 import com.caucho.quercus.annotation.Name;
 import com.caucho.quercus.annotation.Optional;

@@ -26,7 +26,7 @@
  *
  * @author Sam
  */
-package com.caucho.quercus.lib.spl;
+package com.caucho.quercus.env;
 
 import com.caucho.quercus.QuercusException;
 import com.caucho.quercus.env.ConstStringValue;
