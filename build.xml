@@ -10,7 +10,7 @@
   <property name="debian.component" value="universe"/>
 
   <target name="compile" 
-          depends="init, hessian, javaee, jaxstream, jcache, portlet, script, resin-kernel, quercus, inject">
+          depends="init, hessian, javaee, inject, resin-kernel, quercus">
   </target>
 
   <!--
@@ -229,15 +229,6 @@
     </antcall>
   </target>
 
-  <target name="jaxstream" depends="init">
-    <antcall target="module" inheritRefs="true">
-      <param name="module.name" value="jaxstream"/>
-      <param name="module.jar" value="jaxstream-15.jar"/>
-      <param name="module.dist" value="${lib}"/>
-      <!--param name="javac.source" value="1.5"/-->
-    </antcall>
-  </target>
-
   <target name="jws" depends="init">
     <antcall target="module" inheritRefs="true">
       <param name="module.name" value="jws"/>
@@ -376,13 +367,6 @@
 	  
   </target>
   
-  <target name="portlet" depends="init">
-    <antcall target="module" inheritRefs="true">
-      <param name="module.name" value="portlet"/>
-      <param name="module.jar" value="portlet-10.jar"/>
-    </antcall>
-  </target>
-  
   <target name="resin-kernel" depends="init, inject, servlet16, version">
     <antcall target="module" inheritRefs="true">
       <param name="module.name" value="kernel"/>
@@ -391,13 +375,6 @@
     </antcall>
   </target>
 
-  <target name="script" depends="init">
-    <antcall target="module" inheritRefs="true">
-      <param name="module.name" value="script"/>
-      <param name="module.jar" value="script-10.jar"/>
-    </antcall>
-  </target>
-  
   <target name="support" depends="init, compat">
     <mkdir dir="plugins"/>
     
@@ -412,14 +389,6 @@
       <param name="module.name" value="experiment"/>
       <param name="module.jar" value="experiment.jar"/>
       <!--param name="javac.source" value="1.5"/-->
-    </antcall>
-  </target>
-
-  <target name="jcache" depends="init">
-    <antcall target="module" inheritRefs="true">
-      <param name="module.name" value="jcache"/>
-      <param name="module.dist" value="${lib}"/>
-      <param name="module.jar" value="jcache-16.jar"/>
     </antcall>
   </target>
 
@@ -453,7 +422,7 @@
 
   </target>
 
-  <target name="javaee" depends="ejb, jca, jms, jpa, servlet16, jcache, jstl, jta, jws, inject">
+  <target name="javaee" depends="ejb, jca, jms, jpa, servlet16, jstl, jta, jws, inject">
     <!--
        - javaee-16.jar
       -->
@@ -463,10 +432,6 @@
       </fileset>
       
       <fileset dir="${resin.modules}/jca/classes">
-        <exclude name="**/.*"/>
-      </fileset>
-      
-      <fileset dir="${resin.modules}/jcache/classes">
         <exclude name="**/.*"/>
       </fileset>
       
