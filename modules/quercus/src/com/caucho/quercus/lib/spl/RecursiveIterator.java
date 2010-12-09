@@ -28,10 +28,10 @@
  */
 package com.caucho.quercus.lib.spl;
 
-import com.caucho.quercus.env.Iterator;
+import com.caucho.quercus.env.IteratorClass;
 
 public interface RecursiveIterator
-	extends Iterator {
+	extends IteratorClass {
 
     public boolean hasChildren();
 

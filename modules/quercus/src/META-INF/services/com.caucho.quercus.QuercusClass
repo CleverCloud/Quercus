@@ -35,17 +35,17 @@ com.caucho.quercus.lib.reflection.ReflectionParameter provides Reflection
 com.caucho.quercus.lib.reflection.ReflectionProperty provides Reflection
 com.caucho.quercus.lib.reflection.Reflector provides Reflection
 com.caucho.quercus.lib.simplexml.SimpleXMLElement provides SimpleXML
-com.caucho.quercus.lib.spl.ArrayAccess
+com.caucho.quercus.env.ArrayAccess
 com.caucho.quercus.lib.spl.ArrayIterator
 com.caucho.quercus.lib.spl.ArrayObject
 com.caucho.quercus.lib.spl.Countable
-com.caucho.quercus.lib.spl.Iterator
-com.caucho.quercus.lib.spl.IteratorAggregate
+com.caucho.quercus.env.IteratorClass as Iterator
+com.caucho.quercus.env.IteratorAggregate
 com.caucho.quercus.lib.spl.OuterIterator
 com.caucho.quercus.lib.spl.RecursiveIterator
 com.caucho.quercus.lib.spl.SeekableIterator
-com.caucho.quercus.lib.spl.Serializable
-com.caucho.quercus.lib.spl.Traversable
+com.caucho.quercus.env.Serializable
+com.caucho.quercus.env.Traversable
 com.caucho.quercus.lib.dom.DOMAttr provides dom
 com.caucho.quercus.lib.dom.DOMComment provides dom
 com.caucho.quercus.lib.dom.DOMDocument provides dom

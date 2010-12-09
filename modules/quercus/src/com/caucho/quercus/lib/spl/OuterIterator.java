@@ -28,11 +28,11 @@
  */
 package com.caucho.quercus.lib.spl;
 
-import com.caucho.quercus.env.Iterator;
+import com.caucho.quercus.env.IteratorClass;
 import com.caucho.quercus.env.Value;
 
 public interface OuterIterator
-	extends Iterator {
+	extends IteratorClass {
 
     public Value getInnerIterator();
 }

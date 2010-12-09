@@ -33,7 +33,7 @@ import com.caucho.quercus.env.Value;
 import com.caucho.quercus.annotation.Delegates;
 
 @Delegates(IteratorDelegate.class)
-public interface Iterator
+public interface IteratorClass
 	extends Traversable {
 
     /**
