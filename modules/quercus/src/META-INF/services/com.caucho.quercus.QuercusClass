@@ -1,6 +1,8 @@
 com.caucho.quercus.lib.date.DateTime
 com.caucho.quercus.lib.date.DateTimeZone
 com.caucho.quercus.lib.db.Mysqli
+com.caucho.quercus.lib.db.MysqliResult as Mysqli_Result
+com.caucho.quercus.lib.db.MysqliStatement as Mysqli_Stmt
 com.caucho.quercus.lib.db.OracleOciCollection
 com.caucho.quercus.lib.db.OracleOciLob
 com.caucho.quercus.lib.db.PDO provides PDO
