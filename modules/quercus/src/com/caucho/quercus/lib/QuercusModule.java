@@ -67,6 +67,14 @@ public class QuercusModule extends AbstractQuercusModule {
     }
 
     /**
+     * Returns the version date of Quercus.
+     */
+    @Name("quercus_version_date")
+    public static String version_date(Env env) {
+	return env.getQuercus().getVersionDate();
+    }
+
+    /**
      * Returns true if this is the Professional version.
      */
     @Name("quercus_is_pro")

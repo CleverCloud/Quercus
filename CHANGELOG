@@ -1,8 +1,9 @@
 ChangeLog for Quercus by Clever Cloud
 -------------------------------------
 
-Version 4.0.11c-dev
+Version cc-4.0.14.1-dev
 -------------------
+- Adding quercus_version_date()
 - Refreshing repo from Caucho's SVN: applying r7541, r7561 to r7563, r7583, r7588, r7621 to r7624,
   r7627, r7628, r7629, r7631, r7670, r7674, r7712, r7713, r7737
 - Adding php.ini example file and browscap.ini for get_browser()
