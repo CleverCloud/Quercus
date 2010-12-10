@@ -60,7 +60,7 @@ public class OptionsModule extends AbstractQuercusModule {
     private static final L10N L = new L10N(OptionsModule.class);
     private static final Logger log = Logger.getLogger(OptionsModule.class.getName());
     private static final String phpVersion = (new QuercusContext()).getPhpVersion();
-    private static final String[] phpVersionEArray = phpVersion.split("-");
+    private static final String[] phpVersionEArray = phpVersion.split("-", 2);
     private static final String[] phpVersionArray = phpVersionEArray[0].split("\\.");
     // php/1a0q (phpMyAdmin)
     public static final String PHP_OS = System.getProperty("os.name").toUpperCase();
