@@ -31,7 +31,7 @@ package com.caucho.quercus;
 public class QuercusVersion {
 
     public static String getVersionNumber() {
-	return "cc-4.0.14.1-dev";
+	return "cc-4.0.14.1";
     }
 
     public static String getVersionDate() {
