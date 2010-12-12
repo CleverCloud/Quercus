@@ -4260,7 +4260,7 @@ public class Env {
 
 	value.putField(this, "file", createString(location.getFileName()));
 	value.putField(this, "line", LongValue.create(location.getLineNumber()));
-	value.putField(this, "trace", ErrorModule.debug_backtrace(this));
+	value.putField(this, "trace", ErrorModule.debug_backtrace(this, false));
 
 	return value;
     }
@@ -4280,7 +4280,7 @@ public class Env {
 
 	value.putField(this, "file", createString(elt.getFileName()));
 	value.putField(this, "line", LongValue.create(elt.getLineNumber()));
-	value.putField(this, "trace", ErrorModule.debug_backtrace(this));
+	value.putField(this, "trace", ErrorModule.debug_backtrace(this, false));
 
 	if ((e instanceof QuercusException) && e.getCause() != null) {
 	    e = e.getCause();

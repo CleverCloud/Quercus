@@ -74,7 +74,7 @@ public class ExceptionClass {
 	    value.putField(env, "line", LongValue.create(location.getLineNumber()));
 	}
 
-	value.putField(env, "trace", ErrorModule.debug_backtrace(env));
+	value.putField(env, "trace", ErrorModule.debug_backtrace(env, false));
 	QuercusException e = new QuercusException();
 	e.fillInStackTrace();
 

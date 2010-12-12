@@ -74,6 +74,7 @@ public class ErrorModule extends AbstractQuercusModule {
     public static final StringValue FUNCTION = new ConstStringValue("function");
     public static final StringValue LINE = new ConstStringValue("line");
     public static final StringValue TYPE = new ConstStringValue("type");
+    public static final StringValue OBJECT = new ConstStringValue("object");
 
     /**
      * Returns the default php.ini values.
@@ -96,7 +97,7 @@ public class ErrorModule extends AbstractQuercusModule {
     /**
      * Produces a backtrace
      */
-    public static Value debug_backtrace(Env env) {
+    public static Value debug_backtrace(Env env, @Optional("true") boolean provide_object) {
 	ArrayValue result = new ArrayValueImpl();
 
 	Exception e = new Exception();
