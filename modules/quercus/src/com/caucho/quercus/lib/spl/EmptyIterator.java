@@ -28,9 +28,30 @@
  */
 package com.caucho.quercus.lib.spl;
 
+import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.IteratorClass;
 import com.caucho.quercus.env.Value;
 
-public abstract class FilterIterator extends IteratorIterator {
+public class EmptyIterator implements IteratorClass {
 
-    public abstract Value accept();
+    public Value current(Env env) {
+	throw new UnsupportedOperationException("Not supported.");
+    }
+
+    public Value key(Env env) {
+	throw new UnsupportedOperationException("Not supported.");
+    }
+
+    public void next(Env env) {
+	throw new UnsupportedOperationException("Not supported.");
+    }
+
+    public void rewind() {
+	throw new UnsupportedOperationException("Not supported.");
+    }
+
+    public boolean valid() {
+	throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

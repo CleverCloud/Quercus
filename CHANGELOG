@@ -3,7 +3,7 @@ ChangeLog for Quercus by Clever Cloud
 
 Version cc-4.0.14.2-dev
 -----------------------
-- SPL: adding FilterIterator and IteratorIterator
+- SPL: adding FilterIterator, IteratorIterator, EmptyIterator
 
 
 Version cc-4.0.14.1 10-Dec-2010
