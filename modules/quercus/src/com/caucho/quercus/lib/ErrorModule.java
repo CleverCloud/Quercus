@@ -96,6 +96,7 @@ public class ErrorModule extends AbstractQuercusModule {
 
     /**
      * Produces a backtrace
+     * TODO: provide object
      */
     public static Value debug_backtrace(Env env, @Optional("true") boolean provide_object) {
 	ArrayValue result = new ArrayValueImpl();

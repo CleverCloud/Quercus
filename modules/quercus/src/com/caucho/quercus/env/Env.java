@@ -338,6 +338,7 @@ public class Env {
 	    _includeMap.put(_selfPath, _page);
 	}
 
+	// TODO: delete internal Autoload Callback
 	_internalAutoload = new InternalAutoloadCallback("com/caucho/quercus/php/");
 
 	// Define the constant string PHP_VERSION
