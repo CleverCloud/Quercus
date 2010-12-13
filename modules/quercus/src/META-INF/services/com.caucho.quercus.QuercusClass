@@ -46,6 +46,8 @@ com.caucho.quercus.env.IteratorAggregate
 com.caucho.quercus.lib.spl.OuterIterator
 com.caucho.quercus.lib.spl.RecursiveIterator
 com.caucho.quercus.lib.spl.SeekableIterator
+com.caucho.quercus.lib.spl.IteratorIterator
+com.caucho.quercus.lib.spl.FilterIterator
 com.caucho.quercus.env.Serializable
 com.caucho.quercus.env.Traversable
 com.caucho.quercus.lib.dom.DOMAttr provides dom
