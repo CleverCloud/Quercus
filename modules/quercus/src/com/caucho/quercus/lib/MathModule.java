@@ -29,6 +29,7 @@
 package com.caucho.quercus.lib;
 
 import com.caucho.quercus.annotation.Optional;
+import com.caucho.quercus.annotation.ReturnNullAsFalse;
 import com.caucho.quercus.env.*;
 import com.caucho.quercus.module.AbstractQuercusModule;
 import com.caucho.quercus.program.JavaClassDef;
@@ -434,6 +435,16 @@ public class MathModule extends AbstractQuercusModule {
 
     public static double log(double value) {
 	return Math.log(value);
+    }
+
+    @ReturnNullAsFalse
+    public static DoubleValue log(Env env, double value, double base) {
+	if (base <= 0) {
+	    env.warning(L.l("base must be greater than 0"));
+	    return null;
+	}
+
+	return new DoubleValue(Math.log(value) / Math.log(base));
     }
 
     public static double log10(double value) {
