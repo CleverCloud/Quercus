@@ -29,14 +29,6 @@
 package com.caucho.quercus;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
-import com.caucho.quercus.env.Env;
-import com.caucho.quercus.page.QuercusPage;
-import com.caucho.vfs.Path;
-import com.caucho.vfs.StdoutStream;
-import com.caucho.vfs.StringPath;
-import com.caucho.vfs.WriteStream;
 
 public class CliQuercus extends Quercus {
 

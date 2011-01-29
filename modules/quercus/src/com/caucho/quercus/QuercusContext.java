@@ -30,8 +30,6 @@ package com.caucho.quercus;
 
 import com.caucho.config.ConfigException;
 import com.caucho.java.JavaCompiler;
-import com.caucho.java.WorkDir;
-import com.caucho.loader.SimpleLoader;
 import com.caucho.quercus.annotation.ClassImplementation;
 import com.caucho.quercus.env.*;
 import com.caucho.quercus.expr.ExprFactory;
@@ -46,7 +44,6 @@ import com.caucho.quercus.page.PageManager;
 import com.caucho.quercus.page.QuercusPage;
 import com.caucho.quercus.parser.QuercusParser;
 import com.caucho.quercus.program.*;
-import com.caucho.quercus.QuercusVersion;
 import com.caucho.util.*;
 import com.caucho.vfs.*;
 
