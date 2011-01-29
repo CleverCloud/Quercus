@@ -910,6 +910,22 @@ public class PostgresModule extends AbstractQuercusModule {
     }
 
     /**
+     * Escape a string for insertion into a text field
+     */
+    @ReturnNullAsFalse
+    public static StringValue pg_escape_string(Env env,
+	    @NotNull Postgres conn,
+	    StringValue data) {
+	try {
+	    return conn.realEscapeString(data);
+
+	} catch (Exception ex) {
+	    log.log(Level.FINE, ex.toString(), ex);
+	    return null;
+	}
+    }
+
+    /**
      * Sends a request to execute a prepared statement with given parameters,
      * and waits for the result
      */
