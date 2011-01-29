@@ -3,7 +3,9 @@ ChangeLog for Quercus by Clever Cloud
 
 Version cc-4.0.14.2-dev
 -----------------------
-
+- Fixing #21: pg_escape_string() missing argument
+- Fixing #20: Missing log function with 2 parameters
+- Adding optional argument 'provide_object' in debug_backtrace(), not used for this time
 
 Version cc-4.0.14.1 10-Dec-2010
 -------------------------------
