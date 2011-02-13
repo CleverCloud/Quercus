@@ -162,6 +162,7 @@ public class StringModule extends AbstractQuercusModule {
     private static final BigInteger BIG_TEN = new BigInteger("10");
     private static final BigInteger BIG_2_64 = BigInteger.ONE.shiftLeft(64);
     private static final FreeList<MessageDigest> _md5FreeList = new FreeList<MessageDigest>(16);
+    private static final int LEVENSHTEIN_MAX_LENGTH = 255;
 
     /**
      * Escapes a string using C syntax.
@@ -794,34 +795,66 @@ public class StringModule extends AbstractQuercusModule {
      *
      * @param str1 first string
      * @param str2 second string
-     * @param cost_ins defines the cost of insertion *ignored*
-     * @param cost_rep defines the cost of replacement *ignored*
-     * @param cost_del defines the cost of deletion *ignored*
+     * @param cost_ins defines the cost of insertion
+     * @param cost_rep defines the cost of replacement
+     * @param cost_del defines the cost of deletion
      * @return int Levenshtein-Distance between the two argument strings
-     *
-     * TODO adding support of cost_ins, cost_rep and cost_del arguments
      */
-    public static int levenshtein(String str1, String str2, @Optional int cost_ins, @Optional int cost_rep, @Optional int cost_del) {
-	int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+    public static int levenshtein(Env env, String str1, String str2, @Optional("1") int cost_ins, @Optional("1") int cost_rep, @Optional("1") int cost_del) {
 
-	for (int i = 0; i < dp.length; i++) {
-	    for (int j = 0; j < dp[i].length; j++) {
+	int distance = -1;
+	int i1, i2, c0, c1, c2, l1, l2;
 
-		dp[i][j] = i == 0 ? j : j == 0 ? i : 0;
+	l1 = str1.length();
+	l2 = str2.length();
 
-		if (i > 0 && j > 0) {
+	int[] p1 = new int[l2 + 1];
+	int[] p2 = new int[l2 + 1];
+	int[] tmp = new int[l2 + 1];
 
-		    if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
-			dp[i][j] = dp[i - 1][j - 1];
-		    } else {
-			dp[i][j] = Math.min(dp[i][j - 1] + 1, Math.min(
-				dp[i - 1][j - 1] + 1, dp[i - 1][j] + 1));
-		    }
-
-		}
-	    }
+	if (l1 == 0) {
+	    return l2 * cost_ins;
 	}
-	return dp[str1.length()][str2.length()];
+	if (l2 == 0) {
+	    return l1 * cost_del;
+	}
+
+	// TODO: keep this limitation ? really ?
+	if ((l1 > LEVENSHTEIN_MAX_LENGTH) || (l2 > LEVENSHTEIN_MAX_LENGTH)) {
+	    distance = -1;
+	} else {
+
+	    for (i2 = 0; i2 <= l2; i2++) {
+		p1[i2] = i2 * cost_ins;
+	    }
+	    for (i1 = 0; i1 < l1; i1++) {
+		p2[0] = p1[0] + cost_del;
+
+		for (i2 = 0; i2 < l2; i2++) {
+		    c0 = p1[i2] + ((str1.charAt(i1) == str2.charAt(i2)) ? 0 : cost_rep);
+		    c1 = p1[i2 + 1] + cost_del;
+		    if (c1 < c0) {
+			c0 = c1;
+		    }
+		    c2 = p2[i2] + cost_ins;
+		    if (c2 < c0) {
+			c0 = c2;
+		    }
+		    p2[i2 + 1] = c0;
+		}
+		tmp = p1;
+		p1 = p2;
+		p2 = tmp;
+	    }
+	    c0 = p1[l2];
+	    distance = c0;
+	}
+
+	if (distance < 0) {
+	    env.warning(L.l("Argument string(s) too long"));
+	}
+
+	return distance;
     }
 
     /**
