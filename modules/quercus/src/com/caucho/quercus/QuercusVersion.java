@@ -35,6 +35,6 @@ public class QuercusVersion {
     }
 
     public static String getVersionDate() {
-	return "20110213";
+	return "20110214";
     }
 }

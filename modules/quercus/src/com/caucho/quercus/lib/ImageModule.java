@@ -106,14 +106,14 @@ public class ImageModule extends AbstractQuercusModule {
      * Retrieve information about the currently installed GD library
      */
     public static Value gd_info() {
-	return (new ArrayValueImpl().append(StringValue.create("GD Version"), // ] => 2.0 or higher
-		StringValue.create("2.0 or higher")).append(StringValue.create("FreeType Support"), // ] => 1
+	return (new ArrayValueImpl().append(StringValue.create("GD Version"), // ] => 2.0
+		StringValue.create("2.0")).append(StringValue.create("FreeType Support"), // ] => 1
 		BooleanValue.TRUE).append(
 		StringValue.create("FreeType Linkage"), // ] => with freetype
 		StringValue.create("with freetype")).append(StringValue.create("T1Lib Support"), // ] => 1
 		BooleanValue.TRUE).append(StringValue.create("GIF Read Support"), // ] => 1
 		BooleanValue.TRUE).append(StringValue.create("GIF Create Support"), // ] => 1
-		BooleanValue.TRUE).append(StringValue.create("JPG Support"), // ] => 1
+		BooleanValue.TRUE).append(StringValue.create("JPEG Support"), // ] => 1
 		BooleanValue.TRUE).append(StringValue.create("PNG Support"), // ] => 1
 		BooleanValue.TRUE).append(StringValue.create("WBMP Support"), // ] => 1
 		BooleanValue.TRUE).append(StringValue.create("XPM Support"), // ] =>

@@ -3,6 +3,7 @@ ChangeLog for Quercus by Clever Cloud
 
 Version cc-4.0.14.2-dev
 -----------------------
+- GD: Fixing version and renaming 'JPG Support' to 'JPEG Support' according to PHP 5.3.0
 - Moving APC Module to quercus-modules (QExt)
 - Fixing #8: levenshtein: support of optional arguments
 - Fixing #21: pg_escape_string() missing argument
