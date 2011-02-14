@@ -102,12 +102,12 @@ public class Env {
     public static final int E_USER_ERROR = 1 << B_USER_ERROR;
     public static final int E_USER_WARNING = 1 << B_USER_WARNING;
     public static final int E_USER_NOTICE = 1 << B_USER_NOTICE;
-    public static final int E_ALL = 6143; //(4096 + 2048 - 1)
+    public static final int E_ALL = 30719; // E_ERROR | E_WARNING | E_PARSE | E_NOTICE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING | E_USER_ERROR | E_USER_WARNING | E_USER_NOTICE | E_RECOVERABLE_ERROR | E_DEPRECATED | E_USER_DEPRECATED
     public static final int E_STRICT = 1 << B_STRICT;
     public static final int E_RECOVERABLE_ERROR = 1 << B_RECOVERABLE_ERROR;
     public static final int E_DEPRECATED = 1 << B_DEPRECATED;
     public static final int E_USER_DEPRECATED = 1 << B_USER_DEPRECATED;
-    public static final int E_DEFAULT = E_ALL & ~E_NOTICE;
+    public static final int E_DEFAULT = 30711; // E_ALL & ~E_NOTICE
     private static final int _SERVER = 1;
     private static final int _GET = 2;
     private static final int _POST = 3;
@@ -3673,6 +3673,7 @@ public class Env {
 	Path pwd = _page.getPwd(this);
 
 	setPwd(pwd);
+
 	try {
 	    return executePageTop(_page);
 	} catch (QuercusLanguageException e) {

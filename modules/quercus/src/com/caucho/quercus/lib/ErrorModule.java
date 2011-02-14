@@ -591,7 +591,7 @@ public class ErrorModule extends AbstractQuercusModule {
 	    @Optional("E_USER_NOTICE") int code) {
 	return trigger_error(env, msg, code);
     }
-    static final IniDefinition INI_ERROR_REPORING = _iniDefinitions.add("error_reporting", Env.E_DEFAULT, PHP_INI_ALL);
+    static final IniDefinition INI_ERROR_REPORTING = _iniDefinitions.add("error_reporting", Env.E_ALL, PHP_INI_ALL);
     static final IniDefinition INI_DISPLAY_ERRORS = _iniDefinitions.add("display_errors", "1", PHP_INI_ALL);
     static final IniDefinition INI_DISPLAY_STARTUP_ERRORS = _iniDefinitions.add("display_startup_errors", false, PHP_INI_ALL);
     static final IniDefinition INI_LOG_ERRORS = _iniDefinitions.add("log_errors", false, PHP_INI_ALL);
