@@ -249,6 +249,7 @@ public class Env {
     private int[] _querySeparatorMap;
     public static final int[] DEFAULT_QUERY_SEPARATOR_MAP;
     private CharBuffer _cb = new CharBuffer();
+    private String[] _authRequest;
 
     public Env(QuercusContext quercus,
 	    QuercusPage page,
@@ -352,6 +353,18 @@ public class Env {
 	addConstant("PHP_LIBDIR", new ConstStringValue(getPwd() + "WEB-INF/lib/"), true);
 	addConstant("PHP_CONFIG_FILE_PATH", new ConstStringValue(getPwd() + "WEB-INF/"), true);
 	addConstant("PHP_CONFIG_FILE_SCAN_DIR", new ConstStringValue(getPwd() + "WEB-INF/"), true);
+
+	// c#0004403 - #27
+	String _authHeader = request.getHeader("authorization");
+	if (_authHeader != null) {
+	    _authRequest = _authHeader.split(" ");
+	    if (_authRequest[0].equals("Basic")) {
+		// BASIC auth
+		String[] _auth64 = Base64.decode(_authRequest[1]).split(":");
+		getGlobalVar("_SERVER").put(new ConstStringValue("PHP_AUTH_USER"), new ConstStringValue(_auth64[0]));
+		getGlobalVar("_SERVER").put(new ConstStringValue("PHP_AUTH_PW"), new ConstStringValue(_auth64[1]));
+	    }
+	}
 
 	// STDIN, STDOUT, STDERR
 	// php://stdin, php://stdout, php://stderr
