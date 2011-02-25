@@ -3,6 +3,8 @@ ChangeLog for Quercus by Clever Cloud
 
 Version cc-4.0.14.2-dev
 -----------------------
+- Optimizing rand() and mt_rand(), leaving com.caucho.util.RandomUtil
+- Fixing #28 (c#4396): function pack has a bug
 - Fixing #27 (c#4403): $_SERVER["PHP_USER_AUTH"] is always empty (HTTP Basic Auth)
 - GD: Fixing version and renaming 'JPG Support' to 'JPEG Support' according to PHP 5.3.0
 - Moving APC Module to quercus-modules (QExt)
