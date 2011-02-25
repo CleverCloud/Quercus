@@ -1558,7 +1558,7 @@ public class MiscModule extends AbstractQuercusModule {
 
 		long v = arg.toLong();
 
-		for (int k = _bytes - 1; k >= 0; k--) {
+		for (int k = 0; k < _bytes; k++) {
 		    bb.appendByte((int) (v >> (8 * k)));
 		}
 	    }
