@@ -7,21 +7,22 @@ com.caucho.quercus.lib.db.OracleOciCollection
 com.caucho.quercus.lib.db.OracleOciLob
 com.caucho.quercus.lib.db.PDO provides PDO
 com.caucho.quercus.lib.db.PDOException provides PDO
+com.caucho.quercus.lib.db.PDOStatement provides PDO
 com.caucho.quercus.lib.exception.ExceptionClass as Exception
-com.caucho.quercus.lib.exception.ErrorException as ErrorException
-com.caucho.quercus.lib.spl.LogicException as LogicException
-com.caucho.quercus.lib.spl.BadFunctionCallException as BadFunctionCallException
-com.caucho.quercus.lib.spl.BadMethodCallException as BadMethodCallException
-com.caucho.quercus.lib.spl.DomainException as DomainException
-com.caucho.quercus.lib.spl.InvalidArgumentException as InvalidArgumentException
-com.caucho.quercus.lib.spl.LengthException as LengthException
-com.caucho.quercus.lib.spl.OutOfBoundsException as OutOfBoundsException
-com.caucho.quercus.lib.spl.OutOfRangeException as OutOfRangeException
-com.caucho.quercus.lib.spl.OverflowException as OverflowException
-com.caucho.quercus.lib.spl.RangeException as RangeException
-com.caucho.quercus.lib.spl.RuntimeException as RuntimeException
-com.caucho.quercus.lib.spl.UnderflowException as UnderflowException
-com.caucho.quercus.lib.spl.UnexpectedValueException as UnexpectedValueException
+com.caucho.quercus.lib.exception.ErrorException
+com.caucho.quercus.lib.spl.LogicException
+com.caucho.quercus.lib.spl.BadFunctionCallException
+com.caucho.quercus.lib.spl.BadMethodCallException
+com.caucho.quercus.lib.spl.DomainException
+com.caucho.quercus.lib.spl.InvalidArgumentException
+com.caucho.quercus.lib.spl.LengthException
+com.caucho.quercus.lib.spl.OutOfBoundsException
+com.caucho.quercus.lib.spl.OutOfRangeException
+com.caucho.quercus.lib.spl.OverflowException
+com.caucho.quercus.lib.spl.RangeException
+com.caucho.quercus.lib.spl.RuntimeException
+com.caucho.quercus.lib.spl.UnderflowException
+com.caucho.quercus.lib.spl.UnexpectedValueException
 com.caucho.quercus.lib.Java
 com.caucho.quercus.lib.jms.JMSQueue
 com.caucho.quercus.lib.Memcache provides memcache
@@ -60,3 +61,4 @@ com.caucho.quercus.lib.dom.DOMXPath provides dom
 com.caucho.quercus.lib.resin.MBeanServer
 com.caucho.quercus.lib.xml.XmlReader
 com.caucho.quercus.lib.xml.XMLWriter
+com.caucho.quercus.lib.zip.ZipArchive provides ZipArchive
