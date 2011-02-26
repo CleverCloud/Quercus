@@ -56,6 +56,12 @@ public class ImageModule extends AbstractQuercusModule {
 
     private static final Logger log = Logger.getLogger(ImageModule.class.getName());
     private static final L10N L = new L10N(ImageModule.class);
+    public static final String GD_VERSION = "2.0.36";
+    public static final int GD_MAJOR_VERSION = 2;
+    public static final int GD_MINOR_VERSION = 0;
+    public static final int GD_RELEASE_VERSION = 36;
+    public static final int GD_BUNDLED = 0;
+    public static final String GD_EXTRA_VERSION = "";
     public static final long IMG_GIF = 0x1;
     public static final long IMG_JPG = 0x2;
     public static final long IMG_JPEG = 0x2;
