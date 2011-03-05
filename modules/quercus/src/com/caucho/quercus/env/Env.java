@@ -4422,7 +4422,7 @@ public class Env {
      * Returns a PHP value for a Java object
      *
      * @param isNullAsFalse what to return if <i>obj</i> is null, if true return
-     * {@link BooleanValue.FALSE} otherwise return {@link NullValue.NULL)
+     * {@link BooleanValue.FALSE} otherwise return {@link NullValue.NULL}
      */
     public Value wrapJava(Object obj, boolean isNullAsFalse) {
 	if (obj == null) {
@@ -4440,7 +4440,7 @@ public class Env {
      * Returns a PHP value for a Java object
      *
      * @param isNullAsFalse what to return if <i>obj</i> is null, if true return
-     * {@link BooleanValue.FALSE} otherwise return {@link NullValue.NULL)
+     * {@link BooleanValue.FALSE} otherwise return {@link NullValue.NULL}
      */
     public Value wrapJava(Object obj, JavaClassDef def, boolean isNullAsFalse) {
 	if (obj == null) {
@@ -4475,7 +4475,7 @@ public class Env {
      * Returns a PHP value for a Java object
      *
      * @param isNullAsFalse what to return if <i>obj</i> is null, if true return
-     * {@link BooleanValue.FALSE} otherwise return {@link NullValue.NULL)
+     * {@link BooleanValue.FALSE} otherwise return {@link NullValue.NULL}
      */
     public Value wrapJava(Object obj, JavaClassDef def) {
 	if (obj == null) {

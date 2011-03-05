@@ -42,7 +42,7 @@ import java.util.Map;
 
 /**
  * A delegate that intercepts requests for iterator's and delegates
- * them to the iterator returned by {@link IteratorAggregate@getIterator()}
+ * them to the iterator returned by {@link IteratorAggregate#getIterator()}
  */
 public class IteratorAggregateDelegate
 	implements TraversableDelegate {
