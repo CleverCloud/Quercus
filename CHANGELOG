@@ -3,6 +3,9 @@ ChangeLog for Quercus by Clever Cloud
 
 Version cc-4.0.14.2-dev
 -----------------------
+- Adding support of ZipArchive class
+- Adding support of GD_VERSION, GD_MAJOR_VERSION, GD_MINOR_VERSION, GD_RELEASE_VERSION,
+  GD_EXTRA_VERSION and GD_BUNDLED
 - Optimizing rand() and mt_rand(), leaving com.caucho.util.RandomUtil
 - Fixing #28 (c#4396): function pack has a bug
 - Fixing #27 (c#4403): $_SERVER["PHP_USER_AUTH"] is always empty (HTTP Basic Auth)
