@@ -1,5 +1,0 @@
-<ivy-module version="2.0">
-  <info organisation="com.caucho" module="resin-jws" revision="@VERSION@">
-    <license name="GPL"/>
-  </info>
-</ivy-module>
