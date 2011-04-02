@@ -1,6 +1,5 @@
 /lib/
+build/
 classes/
 dist/
-/modules/kernel/src/com/caucho/Version.java
-/modules/resin/src/manifest
 /nbproject/
