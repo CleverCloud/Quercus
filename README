@@ -10,18 +10,25 @@ README
 
 I. What is Quercus ?
 -----------------------------------------------------
-Quercus is Caucho Technology’s fast, open-source, 100% Java implementation of the PHP language.
+Caucho's Quercus (TM) is a fast, 100% Java implementation of the PHP language
+allowing developers to use PHP flexibility for the web interface and Java for
+stability.
 
 
 II. Why a development branch maintained by Clever Cloud ?
 -----------------------------------------------------
-Clever Cloud has copied the Quercus project, maintained and copyrighted by Caucho Technology, to have a best response for issues and features requests. Quercus is a part of Caucho's project Resin.
-You can find the Git-port of Caucho's SVN here : http://github.com/Kdecherf/resin
+Clever Cloud has copied the Quercus project, maintained and copyrighted by
+Caucho Technology, to have a best response for issues fixing and features
+requests. Quercus is a part of Caucho's project Resin.
+You can find the Git-port of Caucho's SVN here :
+http://github.com/Kdecherf/resin
 
 
 III. Compiling
 -----------------------------------------------------
-Just launch ant and wait ;-)
+We are using Gradle <http://gradle.org>. Please install it before doing
+anything.
+Launch gradle build to build entire project.
 
 
 IV. Installing
@@ -31,5 +38,7 @@ IV. Installing
 
 V. Report an issue
 -----------------------------------------------------
-If you find an issue with our version of Quercus, please report it on the GitHub bugtracker : http://github.com/CleverCloud/Quercus/issues
-If the issue comes from Caucho's code, we will copy it on the Caucho's bugtracker with patches.
+If you find an issue with our version of Quercus, please report it on the
+GitHub bugtracker : http://github.com/CleverCloud/Quercus/issues
+If the issue comes from Caucho's code, we will copy it on the Caucho's
+bugtracker with patches.

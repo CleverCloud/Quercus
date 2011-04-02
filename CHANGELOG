@@ -3,7 +3,8 @@ ChangeLog for Quercus by Clever Cloud
 
 Version cc-4.0.14.2-dev
 -----------------------
-- Adding support of ZipArchive class
+- IMPORTANT: Moving from Ant to Gradle
+- IMPORTANT: Deleting all Resin modules except kernel
 - Adding support of GD_VERSION, GD_MAJOR_VERSION, GD_MINOR_VERSION, GD_RELEASE_VERSION,
   GD_EXTRA_VERSION and GD_BUNDLED
 - Optimizing rand() and mt_rand(), leaving com.caucho.util.RandomUtil
