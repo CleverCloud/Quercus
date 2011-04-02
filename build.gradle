@@ -1,0 +1,25 @@
+dependsOnChildren()
+
+allprojects {
+    apply plugin: 'java'
+}
+
+subprojects {
+    repositories {
+        mavenRepo urls: "http://download.java.net/maven/2/"
+    }
+}
+
+project(':resin') {
+    dependencies {
+	compile ("javax:javaee-api:6.0")
+    }
+}
+
+project(':quercus') {
+    dependencies {
+	compile project(':resin')
+	compile fileTree(dir: 'lib', include: '*.jar')
+    }
+    metaInf << file('src/main/java/META-INF/')
+}
