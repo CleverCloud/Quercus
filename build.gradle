@@ -21,5 +21,17 @@ project(':quercus') {
 	compile project(':resin')
 	compile fileTree(dir: 'lib', include: '*.jar')
     }
+
+    task prepareJava << {
+	String buildV = ["./bin/prepareJava.sh", "$projectDir/src/main/java/com/caucho/quercus/QuercusVersion.java"].execute().text
+    }
+
+    task cleanJava << {
+	String cleanV = ["./bin/cleanJava.sh", "$projectDir/src/main/java/com/caucho/quercus/QuercusVersion.java"].execute().text
+    }
+
+    compileJava.dependsOn prepareJava
+    jar.dependsOn cleanJava
+
     metaInf << file('src/main/java/META-INF/')
 }
