@@ -79,8 +79,7 @@ public class BeforeBeanDiscoveryImpl implements BeforeBeanDiscovery
   }
 
   @Override
-  public void addInterceptorBinding(Class<? extends Annotation> bindingType,
-                                    Annotation... bindings)
+  public void addInterceptorBinding(Class<? extends Annotation> bindingType)
   {
   }
 

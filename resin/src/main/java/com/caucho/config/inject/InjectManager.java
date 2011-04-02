@@ -1564,20 +1564,6 @@ public final class InjectManager
       }
     }
   }
-
-  @Override
-  public <X> Bean<X> getMostSpecializedBean(Bean<X> bean)
-  {
-    throw new UnsupportedOperationException();
-    /*
-    Bean<?> special = _specializedMap.get(bean.getBeanClass());
-    
-    if (special != null)
-      return (Bean<X>) special;
-    else
-      return bean;
-      */
-  }
   
   @Module
   public boolean isSpecialized(Class<?> beanClass)
