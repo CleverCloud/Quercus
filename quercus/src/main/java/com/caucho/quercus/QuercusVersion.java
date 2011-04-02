@@ -31,10 +31,10 @@ package com.caucho.quercus;
 public class QuercusVersion {
 
     public static String getVersionNumber() {
-	return "cc-4.0.14.2-dev";
+	return "@@Version@@";
     }
 
     public static String getVersionDate() {
-	return "20110226";
+	return "@@VersionDate@@";
     }
 }
