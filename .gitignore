@@ -3,3 +3,4 @@ build/
 classes/
 dist/
 /nbproject/
+/.gradle/
