@@ -1,2 +1,0 @@
-activemq=org.apache.activemq.command.ActiveMQTopic
-activemq.temp=org.apache.activemq.command.ActiveMQTempTopic

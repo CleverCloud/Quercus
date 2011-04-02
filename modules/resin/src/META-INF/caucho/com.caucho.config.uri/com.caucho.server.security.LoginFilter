@@ -1,3 +1,0 @@
-basic=com.caucho.server.security.BasicLogin
-form=com.caucho.server.security.FormLogin
-ssl=com.caucho.server.security.ClientCertLogin

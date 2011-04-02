@@ -1,3 +1,0 @@
-activemq=org.apache.activemq.ActiveMQConnectionFactory
-activemq.ssl=org.apache.activemq.ActiveMQSslConnectionFactory
-activemq.xa=org.apache.activemq.ActiveMQXAConnectionFactory

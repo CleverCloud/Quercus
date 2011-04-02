@@ -1,5 +1,0 @@
-include "../resin/resin-content.rnc"
-
-start = r_host
-
-

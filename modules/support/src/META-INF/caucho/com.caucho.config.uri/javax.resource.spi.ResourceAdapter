@@ -1,3 +1,0 @@
-activemq=org.apache.activemq.ra.ActiveMQResourceAdapter
-jackrabbit=org.apache.jackrabbit.jca.JCAResourceAdapter
-
