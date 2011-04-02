@@ -19,7 +19,7 @@ project(':resin') {
 project(':quercus') {
     dependencies {
 	compile project(':resin')
-	compile fileTree(dir: 'lib', include: '*.jar')
+	compile fileTree(dir: 'libs', include: '*.jar')
     }
 
     task prepareJava << {
