@@ -11,5 +11,8 @@ else
 VER=$BR
 fi
 
+if [[ -z $1 ]]; then
+echo $VER
+else
 sed -i -e s/"@@Version@@"/$VER/ -e s/"@@VersionDate@@"/$DATE/ $1
-
+fi

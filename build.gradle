@@ -5,6 +5,8 @@ allprojects {
 }
 
 subprojects {
+    version = ["./bin/prepareJava.sh"].execute().text
+    
     repositories {
         mavenRepo urls: "http://download.java.net/maven/2/"
     }
