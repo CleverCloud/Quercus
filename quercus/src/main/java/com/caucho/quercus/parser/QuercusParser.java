@@ -4344,10 +4344,7 @@ public class QuercusParser {
 	    throw error(L.l("expected identifier at {0}.", tokenName(token)));
 	}
 
-	if (_lexeme.indexOf('\\') >= 0) {
-	    throw error(L.l("namespace identifier is not allowed at '{0}'",
-		    _lexeme));
-	} else if (_peek == '\\') {
+	if (_peek == '\\') {
 	    throw error(L.l("namespace identifier is not allowed at '{0}\\'",
 		    _lexeme));
 	}
