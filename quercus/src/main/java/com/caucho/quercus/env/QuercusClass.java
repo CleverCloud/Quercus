@@ -1041,7 +1041,10 @@ public class QuercusClass extends NullValue {
      */
     public Value issetField(Env env, Value qThis, StringValue name) {
 	if (issetField(name) && _fieldMap.get(name).isPublic()) {
-	    return BooleanValue.TRUE;    // TODO: move to ObjectExtValue if possible
+	    Value field = qThis.getField(env, name);
+	    if (field != null && field.isset()) {
+		return BooleanValue.TRUE;    // TODO: move to ObjectExtValue if possible
+	    }
 	}
 
 	// basically a copy of the __get code with slightly different semantics
