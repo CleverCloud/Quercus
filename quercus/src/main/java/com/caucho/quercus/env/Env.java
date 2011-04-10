@@ -3713,8 +3713,12 @@ public class Env {
      */
     private void uncaughtExceptionError(QuercusLanguageException e) {
 	Location location = e.getLocation(this);
-	String type = e.getValue().getClassName();
+	String type = e.getValue().toString();
 	String message = e.getMessage(this);
+
+	if ("".equals(type)) {
+	    type = e.getValue().getType();
+	}
 
 	if (message.equals("")) {
 	    error(location,

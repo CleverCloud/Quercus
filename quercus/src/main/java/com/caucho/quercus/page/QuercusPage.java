@@ -164,8 +164,12 @@ abstract public class QuercusPage {
      */
     private void uncaughtExceptionError(Env env, QuercusLanguageException e) {
 	Location location = e.getLocation(env);
-	String type = e.getValue().getClassName();
+	String type = e.getValue().toString();
 	String message = e.getMessage(env);
+
+	if ("".equals(type)) {
+	    type = e.getValue().getType();
+	}
 
 	if (message.equals("")) {
 	    env.error(location,
