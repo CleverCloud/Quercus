@@ -27,11 +27,11 @@
  */
 package com.caucho.quercus.lib.db;
 
-import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.QuercusLanguageException;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.Location;
+import com.caucho.quercus.env.StringValue;
 
 public class PDOException
 	extends QuercusLanguageException {
@@ -41,7 +41,7 @@ public class PDOException
     private Location _location;
 
     public PDOException(String code, String message) {
-	super(NullValue.NULL);
+	super(StringValue.create("PDOException"));
 
 	_code = code;
 	_message = "SQLSTATE[" + code + "]: " + message;
