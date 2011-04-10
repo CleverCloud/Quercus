@@ -124,6 +124,19 @@ public class PDO implements EnvCleanup {
     public static final int PARAM_STMT = 4;
     public static final int PARAM_BOOL = 5;
     public static final int PARAM_INPUT_OUTPUT = 0x80000000;
+    // MySQL-specific constants
+    public static final int MYSQL_ATTR_USE_BUFFERED_QUERY = 1000;
+    public static final int MYSQL_ATTR_LOCAL_INFILE = 1001;
+    public static final int MYSQL_ATTR_INIT_COMMAND = 1002;
+    public static final int MYSQL_ATTR_READ_DEFAULT_FILE = 1003;
+    public static final int MYSQL_ATTR_READ_DEFAULT_GROUP = 1004;
+    public static final int MYSQL_ATTR_MAX_BUFFER_SIZE = 1005;
+    public static final int MYSQL_ATTR_COMPRESS = 1006;
+    public static final int MYSQL_ATTR_DIRECT_QUERY = 1007;
+    public static final int MYSQL_ATTR_FOUND_ROWS = 1008;
+    public static final int MYSQL_ATTR_IGNORE_SPACE = 1009;
+    public static final Value MYSQL_ATTR_INIT_COMMAND_V = StringValue.create(MYSQL_ATTR_INIT_COMMAND);
+    public static final Value ATTR_ERRMODE_V = StringValue.create(ATTR_ERRMODE);
     private final Env _env;
     private final String _dsn;
     private String _user;
@@ -169,6 +182,17 @@ public class PDO implements EnvCleanup {
 		_conn = ds.getConnection(_user, _password);
 	    } else {
 		_conn = ds.getConnection();
+	    }
+
+	    // TODO: move this code into a parseOptions() function
+	    if (options != null) {
+		// gh#29
+		if (options.keyExists(ATTR_ERRMODE_V)) {
+		    _error.setErrmode(options.get(ATTR_ERRMODE_V).toInt());
+		}
+		if (options.keyExists(MYSQL_ATTR_INIT_COMMAND_V)) {
+		    exec(options.get(MYSQL_ATTR_INIT_COMMAND_V).toString());
+		}
 	    }
 	} catch (RuntimeException e) {
 	    throw e;
