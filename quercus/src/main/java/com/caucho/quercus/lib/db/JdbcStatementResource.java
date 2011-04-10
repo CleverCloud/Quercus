@@ -655,7 +655,7 @@ public class JdbcStatementResource {
 			_stmt.setObject(i, param);
 		    } else {
 			Class cl = Class.forName("org.postgresql.util.PGobject");
-			Constructor constructor = cl.getDeclaredConstructor(null);
+			Constructor constructor = cl.getDeclaredConstructor((Class)null);
 			Object object = constructor.newInstance();
 
 			Method method = cl.getDeclaredMethod(

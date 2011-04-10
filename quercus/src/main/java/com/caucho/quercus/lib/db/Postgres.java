@@ -320,7 +320,7 @@ public class Postgres extends JdbcConnectionResource {
 
 	    // Get the postgres specific server error message
 	    Class cl = Class.forName("org.postgresql.util.PSQLException");
-	    Method method = cl.getDeclaredMethod("getServerErrorMessage", null);
+	    Method method = cl.getDeclaredMethod("getServerErrorMessage", (Class)null);
 	    _serverErrorMessage = method.invoke(e, new Object[]{});
 	} catch (Exception ex) {
 	    log.log(Level.FINE, ex.toString(), ex);
