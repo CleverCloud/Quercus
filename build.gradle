@@ -8,7 +8,7 @@ subprojects {
     version = ["./bin/prepareJava.sh"].execute().text
     
     repositories {
-        mavenRepo urls: "http://download.java.net/maven/2/"
+        mavenRepo urls: ["http://download.java.net/maven/2/", "http://repo2.maven.org/maven2/"]
     }
 }
 
@@ -21,6 +21,7 @@ project(':resin') {
 project(':quercus') {
     dependencies {
 	compile project(':resin')
+	compile "org.bouncycastle:bcprov-jdk16:1.46", "org.bouncycastle:bcpg-jdk16:1.46", "org.bouncycastle:bcmail-jdk16:1.46", "org.bouncycastle:bctsp-jdk16:1.46"
 	compile fileTree(dir: 'libs', include: '*.jar')
     }
 
@@ -36,4 +37,14 @@ project(':quercus') {
     jar.dependsOn cleanJava
 
     metaInf << file('src/main/java/META-INF/')
+}
+
+project(':app') {
+    version = ""
+    apply plugin: 'war'
+    dependencies {
+	compile(project(':quercus')){
+	   exclude module: 'javaee-api'
+	}
+    }
 }
