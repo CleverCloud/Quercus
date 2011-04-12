@@ -4945,12 +4945,15 @@ public class StringModule extends AbstractQuercusModule {
 
 	int end = haystackLength - needleLength + 1;
 
-	for (int i = offset; i < end; i++) {
-	    if (haystack.startsWith(needle, i)) {
+	int i = offset;
+        while (i < end) {
+           if (haystack.startsWith(needle, i)) {
 		count++;
 		i += needleLength;
-	    }
-	}
+	    } else {
+         	i++;
+            }
+        }
 
 	return LongValue.create(count);
     }

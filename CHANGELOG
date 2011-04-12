@@ -5,6 +5,9 @@ Version cc-4.0.14.2-dev
 -----------------------
 - IMPORTANT: Moving from Ant to Gradle
 - IMPORTANT: Deleting all Resin modules except kernel
+- Fixing #35 (c#4494): substr_count does not provide an accurate count when the search
+  string is repeated in succession
+- Fixing #29: unknown constant PDO::MYSQL_ATTR_INIT_COMMAND
 - Fixing #33 (c#4483): Root-level namespace not working
 - Fixing #32 (c#4477): PHP isset returns true unexpectedly. Thanks to mhixson
 - Fixing #30: Version number issue with Gradle and Maven
