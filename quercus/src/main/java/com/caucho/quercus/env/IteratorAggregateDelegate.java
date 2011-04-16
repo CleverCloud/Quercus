@@ -29,12 +29,6 @@
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.QuercusException;
-import com.caucho.quercus.env.ConstStringValue;
-import com.caucho.quercus.env.TraversableDelegate;
-import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.ObjectValue;
-import com.caucho.quercus.env.StringBuilderValue;
-import com.caucho.quercus.env.Value;
 import com.caucho.util.L10N;
 
 import java.util.Iterator;
@@ -51,6 +45,7 @@ public class IteratorAggregateDelegate
    private static final StringBuilderValue GET_ITERATOR = new ConstStringValue("getIterator");
    private static final IteratorDelegate _iteratorDelegate = new IteratorDelegate();
 
+   @Override
    public Iterator<Map.Entry<Value, Value>> getIterator(Env env, ObjectValue qThis) {
       Value target = getTarget(env, qThis);
 
@@ -62,6 +57,7 @@ public class IteratorAggregateDelegate
       }
    }
 
+   @Override
    public Iterator<Value> getKeyIterator(Env env, ObjectValue qThis) {
       Value target = getTarget(env, qThis);
 
@@ -73,6 +69,7 @@ public class IteratorAggregateDelegate
       }
    }
 
+   @Override
    public Iterator<Value> getValueIterator(Env env, ObjectValue qThis) {
       Value target = getTarget(env, qThis);
 

@@ -55,6 +55,7 @@ public class BinaryInstanceOfExpr extends AbstractUnaryExpr {
    /**
     * Returns true for a boolean.
     */
+   @Override
    public boolean isBoolean() {
       return true;
    }
@@ -62,6 +63,7 @@ public class BinaryInstanceOfExpr extends AbstractUnaryExpr {
    /**
     * Evaluates the equality as a boolean.
     */
+   @Override
    public Value eval(Env env) {
       return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
    }
@@ -69,11 +71,13 @@ public class BinaryInstanceOfExpr extends AbstractUnaryExpr {
    /**
     * Evaluates the equality as a boolean.
     */
+   @Override
    public boolean evalBoolean(Env env) {
       // php/03p1
       return _expr.eval(env).isA(_right);
    }
 
+   @Override
    public String toString() {
       return "(" + _expr + " instanceof " + _right + ")";
    }

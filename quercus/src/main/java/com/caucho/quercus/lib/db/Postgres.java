@@ -34,11 +34,9 @@ import com.caucho.quercus.env.ConnectionEntry;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.StringValue;
-import com.caucho.quercus.env.Value;
 import com.caucho.util.L10N;
 
 import java.lang.reflect.Method;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -193,6 +191,7 @@ public class Postgres extends JdbcConnectionResource {
    /**
     * Creates a database-specific result.
     */
+   @Override
    protected JdbcResultResource createResult(Env env,
            Statement stmt,
            ResultSet rs) {
@@ -232,6 +231,7 @@ public class Postgres extends JdbcConnectionResource {
     * This function is overriden in Postgres to keep
     * result set references for php/430a (see also php/1f33)
     */
+   @Override
    protected void keepResourceValues(Statement stmt) {
       setResultResource(createResult(getEnv(), stmt, null));
    }
@@ -240,6 +240,7 @@ public class Postgres extends JdbcConnectionResource {
     * This function is overriden in Postgres to keep
     * statement references for php/430a
     */
+   @Override
    protected boolean keepStatementOpen() {
       return true;
    }
@@ -297,6 +298,7 @@ public class Postgres extends JdbcConnectionResource {
     * @param str a string
     * @return the string escaped for SQL statements
     */
+   @Override
    protected StringValue realEscapeString(StringValue str) {
       return pgRealEscapeString(str);
    }
@@ -305,6 +307,7 @@ public class Postgres extends JdbcConnectionResource {
     * This function is overriden in Postgres to clear
     * any postgres specific server error message
     */
+   @Override
    protected void clearErrors() {
       super.clearErrors();
       _serverErrorMessage = null;
@@ -314,6 +317,7 @@ public class Postgres extends JdbcConnectionResource {
     * This function is overriden in Postgres to save
     * the postgres specific server error message
     */
+   @Override
    protected void saveErrors(SQLException e) {
       try {
          super.saveErrors(e);
@@ -334,6 +338,7 @@ public class Postgres extends JdbcConnectionResource {
       return _serverErrorMessage;
    }
 
+   @Override
    public String toString() {
       if (isConnected()) {
          return "Postgres[" + getHost() + "]";
@@ -350,6 +355,7 @@ public class Postgres extends JdbcConnectionResource {
     * any attempt to set the encoding to anything other
     * than UNICODE.
     */
+   @Override
    public String getClientEncoding() {
       return "UNICODE";
    }
@@ -360,6 +366,7 @@ public class Postgres extends JdbcConnectionResource {
     * supports UNICODE as the client encoding.
     * Return true to indicate success in all cases.
     */
+   @Override
    public boolean setClientEncoding(String encoding) {
       return true;
    }

@@ -28,37 +28,9 @@
  */
 package com.caucho.quercus.lib.simplexml;
 
-import com.caucho.quercus.annotation.Name;
-import com.caucho.quercus.annotation.Optional;
-import com.caucho.quercus.annotation.ReturnNullAsFalse;
-import com.caucho.quercus.annotation.EntrySet;
 import com.caucho.quercus.env.*;
-import com.caucho.quercus.program.JavaClassDef;
-import com.caucho.util.L10N;
-import com.caucho.vfs.Path;
-import com.caucho.vfs.ReadStream;
-import com.caucho.vfs.WriteStream;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
 import java.util.*;
-import java.util.logging.*;
 
 /**
  * SimpleXMLElement object oriented API facade.
@@ -113,6 +85,7 @@ public class SimpleXMLAttribute extends SimpleXMLElement {
     * invokes this method, it expects an iterator that
     * contains objects that implement Map.Entry.
     */
+   @Override
    public Iterator iterator() {
       if (_attributes != null) {
          return _attributes.iterator();
@@ -156,6 +129,7 @@ public class SimpleXMLAttribute extends SimpleXMLElement {
     * Implementation for getting the indices of this class.
     * i.e. <code>$a->foo[0]</code>
     */
+   @Override
    public Value __get(Env env, Value indexV) {
       if (indexV.isString()) {
          String name = indexV.toString();

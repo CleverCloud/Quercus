@@ -52,6 +52,7 @@ public class ChainedMap<K, V> implements VarMap<K, V> {
    /**
     * Sets the value
     */
+   @Override
    public void put(K key, V value) {
       _map.put(key, value);
    }
@@ -59,6 +60,7 @@ public class ChainedMap<K, V> implements VarMap<K, V> {
    /**
     * Remove the value
     */
+   @Override
    public V remove(K key) {
       return _map.remove(key);
    }
@@ -66,6 +68,7 @@ public class ChainedMap<K, V> implements VarMap<K, V> {
    /**
     * Gets a value.
     */
+   @Override
    public V get(K key) {
       V value = _map.get(key);
 

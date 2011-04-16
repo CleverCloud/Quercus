@@ -66,6 +66,7 @@ public class ConditionalExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       if (_test.evalBoolean(env)) {
          return _trueExpr.eval(env);
@@ -81,6 +82,7 @@ public class ConditionalExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public boolean evalBoolean(Env env) {
       if (_test.evalBoolean(env)) {
          return _trueExpr.evalBoolean(env);
@@ -96,6 +98,7 @@ public class ConditionalExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalCopy(Env env) {
       if (_test.evalBoolean(env)) {
          return _trueExpr.evalCopy(env);
@@ -104,6 +107,7 @@ public class ConditionalExpr extends Expr {
       }
    }
 
+   @Override
    public String toString() {
       return "(" + _test + " ? " + _trueExpr + " : " + _falseExpr + ")";
    }

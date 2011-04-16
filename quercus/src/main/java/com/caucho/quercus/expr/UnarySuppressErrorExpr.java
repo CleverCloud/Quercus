@@ -51,6 +51,7 @@ public class UnarySuppressErrorExpr extends AbstractUnaryExpr {
    /**
     * Creates the assignment.
     */
+   @Override
    public Expr createAssign(QuercusParser parser, Expr value)
            throws IOException {
       // php/03j2
@@ -62,6 +63,7 @@ public class UnarySuppressErrorExpr extends AbstractUnaryExpr {
    /**
     * Creates the assignment.
     */
+   @Override
    public Expr createAssignRef(QuercusParser parser,
            Expr value)
            throws IOException {
@@ -78,6 +80,7 @@ public class UnarySuppressErrorExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       int oldErrorMask = env.setErrorMask(0);
 
@@ -95,6 +98,7 @@ public class UnarySuppressErrorExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public boolean evalBoolean(Env env) {
       int oldErrorMask = env.setErrorMask(0);
 
@@ -112,6 +116,7 @@ public class UnarySuppressErrorExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public String evalString(Env env) {
       int oldErrorMask = env.setErrorMask(0);
 
@@ -129,6 +134,7 @@ public class UnarySuppressErrorExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalCopy(Env env) {
       int oldErrorMask = env.setErrorMask(0);
 
@@ -139,6 +145,7 @@ public class UnarySuppressErrorExpr extends AbstractUnaryExpr {
       }
    }
 
+   @Override
    public String toString() {
       return "@" + _expr;
    }

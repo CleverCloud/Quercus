@@ -30,8 +30,6 @@ package com.caucho.quercus.env;
 
 import com.caucho.quercus.QuercusException;
 import com.caucho.quercus.QuercusRuntimeException;
-import com.caucho.quercus.env.ArrayValue.Entry;
-import com.caucho.quercus.expr.Expr;
 import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.quercus.marshal.Marshal;
 import com.caucho.util.L10N;
@@ -1981,14 +1979,17 @@ abstract public class Value implements java.io.Serializable {
 
       return new Iterator<Value>() {
 
+         @Override
          public boolean hasNext() {
             return iter.hasNext();
          }
 
+         @Override
          public Value next() {
             return iter.next().getKey();
          }
 
+         @Override
          public void remove() {
             iter.remove();
          }
@@ -2020,14 +2021,17 @@ abstract public class Value implements java.io.Serializable {
 
       return new Iterator<Value>() {
 
+         @Override
          public boolean hasNext() {
             return iter.hasNext();
          }
 
+         @Override
          public Value next() {
             return iter.next().getValue();
          }
 
+         @Override
          public void remove() {
             iter.remove();
          }

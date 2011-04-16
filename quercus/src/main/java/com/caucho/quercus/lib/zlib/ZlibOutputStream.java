@@ -139,6 +139,7 @@ public class ZlibOutputStream extends AbstractBinaryOutput {
     *
     * @param input
     */
+   @Override
    public void write(int v)
            throws IOException {
       _out.write(v);
@@ -155,6 +156,7 @@ public class ZlibOutputStream extends AbstractBinaryOutput {
     * @param offset
     * @param length
     */
+   @Override
    public void write(byte[] buffer, int offset, int length)
            throws IOException {
       _out.write(buffer, offset, length);
@@ -187,13 +189,16 @@ public class ZlibOutputStream extends AbstractBinaryOutput {
       _os.flush();
    }
 
+   @Override
    public void flush() {
    }
 
+   @Override
    public void closeWrite() {
       close();
    }
 
+   @Override
    public void close() {
       try {
          DeflaterOutputStream out = _out;
@@ -214,6 +219,7 @@ public class ZlibOutputStream extends AbstractBinaryOutput {
    /**
     * Returns false always for a write stream.
     */
+   @Override
    public boolean isEOF() {
       return false;
    }
@@ -221,6 +227,7 @@ public class ZlibOutputStream extends AbstractBinaryOutput {
    /**
     * Tells the position in the gzip stream
     */
+   @Override
    public long getPosition() {
       return _inputSize;
    }
@@ -228,6 +235,7 @@ public class ZlibOutputStream extends AbstractBinaryOutput {
    /**
     * Sets the position.
     */
+   @Override
    public boolean setPosition(long offset) {
       if (offset < _inputSize) {
          return false;
@@ -249,6 +257,7 @@ public class ZlibOutputStream extends AbstractBinaryOutput {
       }
    }
 
+   @Override
    public String toString() {
       return "ZlibOutputStream[]";
    }

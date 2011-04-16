@@ -74,6 +74,7 @@ public class QuercusException extends RuntimeException {
       return qExn;
    }
 
+   @Override
    public String getMessage() {
       String msg = super.getMessage();
 

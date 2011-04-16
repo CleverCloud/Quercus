@@ -47,6 +47,7 @@ public final class EnvVarImpl extends EnvVar {
    /**
     * Returns the current value.
     */
+   @Override
    public Value get() {
       return _var.toValue();
    }
@@ -54,6 +55,7 @@ public final class EnvVarImpl extends EnvVar {
    /**
     * Sets the current value.
     */
+   @Override
    public Value set(Value value) {
       return _var.set(value);
    }
@@ -61,6 +63,7 @@ public final class EnvVarImpl extends EnvVar {
    /**
     * Returns the current Var.
     */
+   @Override
    public Var getVar() {
       return _var;
    }
@@ -68,6 +71,7 @@ public final class EnvVarImpl extends EnvVar {
    /**
     * Sets the var.
     */
+   @Override
    public Var setVar(Var var) {
       _var = var;
 

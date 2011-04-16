@@ -38,6 +38,7 @@ public class SessionVar extends Var {
    /**
     * Sets the value.
     */
+   @Override
    public Value set(Value value) {
       if (value instanceof SessionArrayValue) {
          super.set(value);
@@ -64,6 +65,7 @@ public class SessionVar extends Var {
    /**
     * Sets the value.
     */
+   @Override
    protected Value setRaw(Value value) {
       throw new QuercusModuleException(L.l("Can't set this variable"));
    }

@@ -49,6 +49,7 @@ public class BinaryGeqExpr extends AbstractBinaryExpr {
    /**
     * Returns true for a boolean.
     */
+   @Override
    public boolean isBoolean() {
       return true;
    }
@@ -56,6 +57,7 @@ public class BinaryGeqExpr extends AbstractBinaryExpr {
    /**
     * Evaluates the equality as a boolean.
     */
+   @Override
    public Value eval(Env env) {
       return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
    }
@@ -63,6 +65,7 @@ public class BinaryGeqExpr extends AbstractBinaryExpr {
    /**
     * Evaluates the equality as a boolean.
     */
+   @Override
    public boolean evalBoolean(Env env) {
       Value lValue = _left.eval(env);
       Value rValue = _right.eval(env);
@@ -70,6 +73,7 @@ public class BinaryGeqExpr extends AbstractBinaryExpr {
       return lValue.geq(rValue);
    }
 
+   @Override
    public String toString() {
       return "(" + _left + " >= " + _right + ")";
    }

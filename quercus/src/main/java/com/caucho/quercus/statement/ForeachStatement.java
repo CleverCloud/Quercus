@@ -78,6 +78,7 @@ public class ForeachStatement
       return true;
    }
 
+   @Override
    public Value execute(Env env) {
       Value origObj = _objExpr.eval(env);
       Value obj = origObj.copy(); // php/0669

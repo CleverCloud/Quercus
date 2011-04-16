@@ -28,8 +28,6 @@
  */
 package com.caucho.quercus.lib.curl;
 
-import com.caucho.quercus.QuercusModuleException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -140,6 +140,7 @@ abstract public class UnicodeValue extends StringValue {
    /**
     * Cost to convert to a UnicodeValue
     */
+   @Override
    public int toUnicodeValueMarshalCost() {
       return Marshal.COST_IDENTICAL;
    }

@@ -45,8 +45,6 @@ import com.caucho.vfs.WriteStream;
 
 import java.io.IOException;
 import java.lang.ref.*;
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -822,10 +820,12 @@ public class VariableModule extends AbstractQuercusModule {
          _stringRef = new SoftReference<StringValue>(string);
       }
 
+      @Override
       public int hashCode() {
          return _hash;
       }
 
+      @Override
       public boolean equals(Object o) {
          if (this == o) {
             return true;

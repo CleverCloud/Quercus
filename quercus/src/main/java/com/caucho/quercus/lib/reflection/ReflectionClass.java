@@ -41,13 +41,11 @@ import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.ClassField;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.MethodMap;
-import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.ObjectValue;
 import com.caucho.quercus.env.QuercusClass;
 import com.caucho.quercus.env.QuercusLanguageException;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
-import com.caucho.quercus.env.Var;
 import com.caucho.quercus.expr.Expr;
 import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.quercus.program.ClassDef;
@@ -77,7 +75,7 @@ public class ReflectionClass
       return _cls;
    }
 
-   final private ReflectionClass __clone() {
+   private ReflectionClass __clone() {
       return new ReflectionClass(_cls);
    }
 
@@ -440,6 +438,7 @@ public class ReflectionClass
       return _cls.getExtension();
    }
 
+   @Override
    public String toString() {
       return "ReflectionClass[" + _name + "]";
    }

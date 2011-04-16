@@ -28,11 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.ObjectValue;
-
-import com.caucho.quercus.env.TraversableDelegate;
-import com.caucho.quercus.env.Value;
 import com.caucho.util.L10N;
 
 import java.util.Iterator;
@@ -47,10 +42,12 @@ public class IteratorDelegate implements TraversableDelegate {
 
    private static final L10N L = new L10N(IteratorDelegate.class);
 
+   @Override
    public Iterator<Map.Entry<Value, Value>> getIterator(Env env, ObjectValue qThis) {
       return new EntryIterator(env, qThis);
    }
 
+   @Override
    public Iterator<Value> getKeyIterator(Env env, ObjectValue qThis) {
       // doesn't belong here
       // php/4ar3
@@ -59,6 +56,7 @@ public class IteratorDelegate implements TraversableDelegate {
       return new KeyIterator(env, qThis);
    }
 
+   @Override
    public Iterator<Value> getValueIterator(Env env, ObjectValue qThis) {
       return new ValueIterator(env, (ObjectValue) qThis);
    }
@@ -91,14 +89,17 @@ public class IteratorDelegate implements TraversableDelegate {
          _value = value;
       }
 
+      @Override
       public Value getKey() {
          return _key;
       }
 
+      @Override
       public Value getValue() {
          return _value;
       }
 
+      @Override
       public Value setValue(Value value) {
          throw new UnsupportedOperationException();
       }

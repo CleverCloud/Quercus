@@ -50,6 +50,7 @@ public class ThisMethodExpr extends ObjectMethodExpr {
    //
    // java code generation
    //
+   @Override
    public String toString() {
       return "$this->$" + _methodName + "()";
    }

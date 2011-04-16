@@ -49,6 +49,7 @@ public class GlobalStatement extends Statement {
       _var = var;
    }
 
+   @Override
    public Value execute(Env env) {
       try {
          env.setRef(_var.getName(), env.getGlobalVar(_var.getName()));

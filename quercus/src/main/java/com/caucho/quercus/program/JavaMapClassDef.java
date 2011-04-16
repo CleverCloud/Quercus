@@ -44,6 +44,7 @@ public class JavaMapClassDef extends JavaClassDef {
       super(moduleContext, name, type);
    }
 
+   @Override
    public Value wrap(Env env, Object obj) {
       if (!_isInit) {
          init();

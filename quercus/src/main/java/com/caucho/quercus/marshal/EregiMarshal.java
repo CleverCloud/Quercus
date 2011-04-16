@@ -41,14 +41,17 @@ public class EregiMarshal extends StringMarshal {
 
    public static final EregiMarshal MARSHAL = new EregiMarshal();
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return RegexpModule.createEregi(env, expr.eval(env));
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return RegexpModule.createEregi(env, value);
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       throw new UnsupportedOperationException(getClass().getName());
    }

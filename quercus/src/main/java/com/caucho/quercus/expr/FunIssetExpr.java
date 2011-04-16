@@ -49,6 +49,7 @@ public class FunIssetExpr extends AbstractUnaryExpr {
    /**
     * Return true as a boolean.
     */
+   @Override
    public boolean isBoolean() {
       return true;
    }
@@ -60,10 +61,12 @@ public class FunIssetExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return _expr.evalIsset(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
    }
 
+   @Override
    public String toString() {
       return "isset(" + _expr + ")";
    }

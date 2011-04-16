@@ -949,6 +949,7 @@ abstract public class ArrayValue extends Value {
     *
     * XXX: change name to appendArg
     */
+   @Override
    abstract public ArrayValue append(Value key, Value value);
 
    /**
@@ -996,11 +997,13 @@ abstract public class ArrayValue extends Value {
    /**
     * Pops the top value.
     */
+   @Override
    abstract public Value pop(Env env);
 
    /**
     * Shuffles the array
     */
+   @Override
    abstract public Value shuffle();
 
    /**
@@ -1136,6 +1139,7 @@ abstract public class ArrayValue extends Value {
     *
     * @return the value if it is found in the array, NULL otherwise
     */
+   @Override
    abstract public Value containsKey(Value key);
 
    /**
@@ -1410,6 +1414,7 @@ abstract public class ArrayValue extends Value {
    /**
     * Converts to a key.
     */
+   @Override
    public Value toKey() {
       return ARRAY;
    }
@@ -1536,11 +1541,13 @@ abstract public class ArrayValue extends Value {
          return _value;
       }
 
+      @Override
       public Value getValue() {
          // return _var != null ? _var.toValue() : _value;
          return _value.toValue();
       }
 
+      @Override
       public Value getKey() {
          return _key;
       }
@@ -1591,6 +1598,7 @@ abstract public class ArrayValue extends Value {
          return _value.toValue();
       }
 
+      @Override
       public Value setValue(Value value) {
          Value oldValue = _value;
 
@@ -1728,6 +1736,7 @@ abstract public class ArrayValue extends Value {
    /**
     * Returns the field keys.
     */
+   @Override
    public Value[] getKeyArray(Env env) {
       int len = getSize();
       Value[] keys = new Value[len];
@@ -1744,6 +1753,7 @@ abstract public class ArrayValue extends Value {
    /**
     * Returns the field values.
     */
+   @Override
    public Value[] getValueArray(Env env) {
       int len = getSize();
       Value[] values = new Value[len];
@@ -1880,10 +1890,12 @@ abstract public class ArrayValue extends Value {
          _current = head;
       }
 
+      @Override
       public boolean hasNext() {
          return _current != null;
       }
 
+      @Override
       public Map.Entry<Value, Value> next() {
          if (_current != null) {
             Map.Entry<Value, Value> next = _current;
@@ -1895,6 +1907,7 @@ abstract public class ArrayValue extends Value {
          }
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -1909,10 +1922,12 @@ abstract public class ArrayValue extends Value {
          _current = head;
       }
 
+      @Override
       public boolean hasNext() {
          return _current != null;
       }
 
+      @Override
       public Value next() {
          if (_current != null) {
             Value next = _current.getKey();
@@ -1924,6 +1939,7 @@ abstract public class ArrayValue extends Value {
          }
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -1938,10 +1954,12 @@ abstract public class ArrayValue extends Value {
          _current = head;
       }
 
+      @Override
       public boolean hasNext() {
          return _current != null;
       }
 
+      @Override
       public Value next() {
          if (_current != null) {
             Value next = _current.getValue();
@@ -1953,6 +1971,7 @@ abstract public class ArrayValue extends Value {
          }
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -1966,6 +1985,7 @@ abstract public class ArrayValue extends Value {
       private ValueComparator() {
       }
 
+      @Override
       public int compare(Map.Entry<Value, Value> aEntry,
               Map.Entry<Value, Value> bEntry) {
          try {
@@ -1993,6 +2013,7 @@ abstract public class ArrayValue extends Value {
       private KeyComparator() {
       }
 
+      @Override
       public int compare(Map.Entry<Value, Value> aEntry,
               Map.Entry<Value, Value> bEntry) {
          try {

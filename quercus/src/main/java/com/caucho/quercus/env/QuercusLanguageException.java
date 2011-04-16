@@ -30,7 +30,6 @@ package com.caucho.quercus.env;
 
 import com.caucho.quercus.Location;
 import com.caucho.quercus.QuercusException;
-import com.caucho.quercus.lib.VariableModule;
 
 /**
  * Parent of PHP exceptions

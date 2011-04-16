@@ -167,6 +167,7 @@ public class ThisFieldVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalArray(Env env) {
       Value obj = env.getThis();
 
@@ -180,6 +181,7 @@ public class ThisFieldVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalObject(Env env) {
       Value obj = env.getThis();
 
@@ -193,12 +195,14 @@ public class ThisFieldVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public void evalUnset(Env env) {
       Value obj = env.getThis();
 
       obj.unsetThisField(_nameExpr.evalStringValue(env));
    }
 
+   @Override
    public String toString() {
       return "$this->{" + _nameExpr + "}";
    }

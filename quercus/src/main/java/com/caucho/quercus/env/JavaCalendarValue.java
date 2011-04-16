@@ -62,6 +62,7 @@ public class JavaCalendarValue extends JavaValue {
       return _calendar;
    }
 
+   @Override
    public String toString() {
       return _calendar.getTime().toString();
    }

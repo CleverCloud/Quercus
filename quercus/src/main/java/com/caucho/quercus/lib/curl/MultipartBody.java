@@ -55,6 +55,7 @@ public class MultipartBody extends PostBody {
    private byte[] _boundaryBytes;
    private long _length;
 
+   @Override
    protected boolean init(Env env, Value body) {
       _boundary = createBoundary();
       _boundaryBytes = _boundary.getBytes();
@@ -103,14 +104,17 @@ public class MultipartBody extends PostBody {
       return size;
    }
 
+   @Override
    public String getContentType(@Optional String contentType) {
       return "multipart/form-data; boundary=\"" + _boundary + "\"";
    }
 
+   @Override
    public long getContentLength() {
       return _length;
    }
 
+   @Override
    public void writeTo(Env env,
            OutputStream os)
            throws IOException {
@@ -213,10 +217,12 @@ public class MultipartBody extends PostBody {
          _value = value;
       }
 
+      @Override
       long getLengthImpl() {
          return _value.length();
       }
 
+      @Override
       void writeData(Env env, OutputStream os)
               throws IOException {
          os.write(_value.toString().getBytes());
@@ -234,10 +240,12 @@ public class MultipartBody extends PostBody {
          _path = path;
       }
 
+      @Override
       long getLengthImpl() {
          return _path.getLength();
       }
 
+      @Override
       void writeData(Env env, OutputStream os)
               throws IOException {
          TempBuffer tempBuf = null;

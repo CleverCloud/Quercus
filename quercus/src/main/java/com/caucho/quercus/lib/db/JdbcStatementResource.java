@@ -31,7 +31,6 @@ package com.caucho.quercus.lib.db;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NullValue;
-import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.UnsetValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.Var;
@@ -731,6 +730,7 @@ public class JdbcStatementResource {
     *
     * @return the string representation for this object
     */
+   @Override
    public String toString() {
       return getClass().getName() + "[" + _conn + "]";
    }

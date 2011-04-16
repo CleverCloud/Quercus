@@ -160,6 +160,7 @@ abstract public class Callback extends Value implements Callable {
     *
     * @param env the calling environment
     */
+   @Override
    abstract public Value call(Env env, Value[] args);
 
    /**
@@ -173,6 +174,7 @@ abstract public class Callback extends Value implements Callable {
     * Returns the name of the callback.
     *
     */
+   @Override
    abstract public String getCallbackName();
 
    /**
@@ -181,6 +183,7 @@ abstract public class Callback extends Value implements Callable {
     */
    abstract public boolean isInternal(Env env);
 
+   @Override
    public String toString() {
       return "Callback" + getCallbackName() + "]";
    }

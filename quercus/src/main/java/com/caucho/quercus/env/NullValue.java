@@ -395,6 +395,7 @@ public class NullValue extends Value
     * string update ($a[0] = 'A').  Creates an array automatically if
     * necessary.
     */
+   @Override
    public Value append(Value index, Value value) {
       return new ArrayValueImpl().append(index, value);
    }
@@ -410,6 +411,7 @@ public class NullValue extends Value
    /**
     * Converts to a StringValue.
     */
+   @Override
    public StringValue toStringValue() {
       Env env = Env.getInstance();
 

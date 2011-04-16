@@ -28,10 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.Location;
-import com.caucho.quercus.expr.Expr;
-import com.caucho.quercus.function.AbstractFunction;
-import com.caucho.quercus.marshal.Marshal;
 import com.caucho.vfs.WriteStream;
 
 import java.io.IOException;
@@ -69,6 +65,7 @@ public class Var extends Value
       return this;
    }
 
+   @Override
    public boolean isVar() {
       return true;
    }
@@ -768,6 +765,7 @@ public class Var extends Value
    /**
     * Converts to a string builder
     */
+   @Override
    public StringValue toStringBuilder(Env env, StringValue value) {
       return _value.toStringBuilder(env, value);
    }
@@ -797,6 +795,7 @@ public class Var extends Value
    /**
     * Copy for serialization
     */
+   @Override
    public Value copyTree(Env env, CopyRoot root) {
       return _value.copyTree(env, root);
    }
@@ -1016,6 +1015,7 @@ public class Var extends Value
    /**
     * Binary And.
     */
+   @Override
    public Value bitAnd(Value rValue) {
       return _value.bitAnd(rValue);
    }
@@ -1023,6 +1023,7 @@ public class Var extends Value
    /**
     * Binary or.
     */
+   @Override
    public Value bitOr(Value rValue) {
       return _value.bitOr(rValue);
    }
@@ -1038,6 +1039,7 @@ public class Var extends Value
    /**
     * Absolute value.
     */
+   @Override
    public Value abs() {
       return _value.abs();
    }
@@ -1121,6 +1123,7 @@ public class Var extends Value
    /**
     * Returns the count, as returned by the global php count() function
     */
+   @Override
    public int getCount(Env env) {
       return _value.getCount(env);
    }
@@ -1128,6 +1131,7 @@ public class Var extends Value
    /**
     * Returns the count, as returned by the global php count() function
     */
+   @Override
    public int getCountRecursive(Env env) {
       return _value.getCountRecursive(env);
    }
@@ -1429,6 +1433,7 @@ public class Var extends Value
    /**
     * Initializes a new field, does not call __set if it is defined.
     */
+   @Override
    public void initField(StringValue key,
            Value value,
            FieldVisibility visibility) {
@@ -1569,6 +1574,7 @@ public class Var extends Value
    /**
     * Evaluates the function.
     */
+   @Override
    public Value call(Env env, Value[] args) {
       return _value.call(env, args);
    }
@@ -1576,6 +1582,7 @@ public class Var extends Value
    /**
     * Evaluates the function, returning a reference.
     */
+   @Override
    public Value callRef(Env env, Value[] args) {
       return _value.callRef(env, args);
    }
@@ -1583,6 +1590,7 @@ public class Var extends Value
    /**
     * Evaluates the function, returning a copy
     */
+   @Override
    public Value callCopy(Env env, Value[] args) {
       return _value.callCopy(env, args);
    }

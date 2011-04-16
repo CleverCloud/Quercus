@@ -48,6 +48,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
    /**
     * Returns the full name of the ScriptEngine.
     */
+   @Override
    public String getEngineName() {
       return "Caucho Quercus Script Engine";
    }
@@ -55,6 +56,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
    /**
     * Returns the version of the ScriptEngine.
     */
+   @Override
    public String getEngineVersion() {
       try {
          //return com.caucho.Version.VERSION;
@@ -73,6 +75,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
     * Returns an array of filename extensions normally used by this
     * language.
     */
+   @Override
    public List<String> getExtensions() {
       ArrayList<String> ext = new ArrayList<String>();
       ext.add("php");
@@ -82,6 +85,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
    /**
     * Returns the mime-types for scripts for the engine.
     */
+   @Override
    public List<String> getMimeTypes() {
       return new ArrayList<String>();
    }
@@ -90,6 +94,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
     * Returns the short names for the scripts for the engine,
     * e.g. {"javascript", "rhino"}
     */
+   @Override
    public List<String> getNames() {
       ArrayList<String> names = new ArrayList<String>();
       names.add("quercus");
@@ -100,6 +105,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
    /**
     * Returns the name of the supported language.
     */
+   @Override
    public String getLanguageName() {
       return "php";
    }
@@ -107,6 +113,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
    /**
     * Returns the version of the scripting language.
     */
+   @Override
    public String getLanguageVersion() {
       return "5.3.2";
    }
@@ -119,6 +126,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
     * <li>THREADING
     * </ul>
     */
+   @Override
    public Object getParameter(String key) {
       if ("THREADING".equals(key)) {
          return "THREAD-ISOLATED";
@@ -140,6 +148,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
    /**
     * Returns a string which could invoke a method of a Java object.
     */
+   @Override
    public String getMethodCallSyntax(String obj, String m, String[] args) {
       StringBuilder sb = new StringBuilder();
 
@@ -164,6 +173,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
    /**
     * Returns a string which generates an output statement.
     */
+   @Override
    public String getOutputStatement(String toDisplay) {
       return "echo(\'" + toDisplay.replace("\'", "\\\'") + "\');";
    }
@@ -171,6 +181,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
    /**
     * Returns a string which generates a valid program.
     */
+   @Override
    public String getProgram(String[] statements) {
       StringBuilder sb = new StringBuilder();
 
@@ -189,6 +200,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
    /**
     * Returns a ScriptEngine instance.
     */
+   @Override
    public ScriptEngine getScriptEngine() {
       return new QuercusScriptEngine(this, createQuercus());
    }
@@ -205,6 +217,7 @@ public class QuercusScriptEngineFactory implements ScriptEngineFactory {
       return quercus;
    }
 
+   @Override
    public String toString() {
       return "QuercusScriptEngineFactory[]";
    }

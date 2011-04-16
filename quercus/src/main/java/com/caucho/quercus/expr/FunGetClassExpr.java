@@ -31,7 +31,6 @@ package com.caucho.quercus.expr;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.parser.QuercusParser;
-import com.caucho.util.L10N;
 
 /**
  * Represents returns the current class.
@@ -62,6 +61,7 @@ public class FunGetClassExpr extends Expr {
       return env.createString(_className);
    }
 
+   @Override
    public String toString() {
       return "get_class()";
    }

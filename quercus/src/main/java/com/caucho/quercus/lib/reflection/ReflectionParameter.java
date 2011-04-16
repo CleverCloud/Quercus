@@ -58,7 +58,7 @@ public class ReflectionParameter
       _clsName = clsName;
    }
 
-   final private void __clone() {
+   private void __clone() {
    }
 
    public static ReflectionParameter __construct(Env env,
@@ -154,6 +154,7 @@ public class ReflectionParameter
       return _arg.getDefault().eval(env);
    }
 
+   @Override
    public String toString() {
       return "ReflectionParameter["
               + _fun.getName() + "(" + _arg.getName() + ")]";

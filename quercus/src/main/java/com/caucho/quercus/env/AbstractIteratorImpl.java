@@ -1,9 +1,5 @@
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.ObjectValue;
-import com.caucho.quercus.env.QuercusClass;
-import com.caucho.quercus.env.Value;
 import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.util.L10N;
 
@@ -42,6 +38,7 @@ public abstract class AbstractIteratorImpl<T> implements Iterator<T> {
       _needNext = false;
    }
 
+   @Override
    public boolean hasNext() {
       if (_needNext) {
          _nextFun.callMethod(_env, _qClass, _obj);
@@ -52,6 +49,7 @@ public abstract class AbstractIteratorImpl<T> implements Iterator<T> {
       return _validFun.callMethod(_env, _qClass, _obj).toBoolean();
    }
 
+   @Override
    public T next() {
       return getCurrent();
    }
@@ -66,6 +64,7 @@ public abstract class AbstractIteratorImpl<T> implements Iterator<T> {
       return _currentFun.callMethod(_env, _qClass, _obj);
    }
 
+   @Override
    public void remove() {
       throw new UnsupportedOperationException();
    }

@@ -241,6 +241,7 @@ public class DOMNode<T extends Node>
       return _delegate.setUserData(key, data, null);
    }
 
+   @Override
    public String toString() {
       return getClass().getSimpleName();
    }

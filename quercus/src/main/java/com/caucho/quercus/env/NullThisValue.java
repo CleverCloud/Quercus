@@ -30,10 +30,6 @@ package com.caucho.quercus.env;
 
 import java.io.Serializable;
 
-import com.caucho.quercus.QuercusException;
-import com.caucho.quercus.expr.Expr;
-import com.caucho.quercus.program.ClassDef;
-
 /**
  * Represents a PHP null value, used for 
  */

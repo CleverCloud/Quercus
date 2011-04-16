@@ -127,6 +127,7 @@ public class ClassFieldExpr extends AbstractVarExpr {
               _className, _varName));
    }
 
+   @Override
    public String toString() {
       return _className + "::$" + _varName;
    }

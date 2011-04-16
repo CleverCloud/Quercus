@@ -198,6 +198,7 @@ public class SocketModule extends AbstractQuercusModule {
    /**
     * Returns the constants defined by this module.
     */
+   @Override
    public Map<StringValue, Value> getConstMap() {
       return _constMap;
    }

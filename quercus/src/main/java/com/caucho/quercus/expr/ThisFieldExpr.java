@@ -37,7 +37,6 @@ import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Var;
 import com.caucho.quercus.parser.QuercusParser;
-import com.caucho.quercus.program.InterpretedClassDef;
 import com.caucho.util.L10N;
 
 /**
@@ -82,6 +81,7 @@ public class ThisFieldExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value obj = env.getThis();
 
@@ -99,6 +99,7 @@ public class ThisFieldExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalCopy(Env env) {
       Value obj = env.getThis();
 
@@ -211,6 +212,7 @@ public class ThisFieldExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalArray(Env env) {
       Value obj = env.getThis();
 
@@ -228,6 +230,7 @@ public class ThisFieldExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalObject(Env env) {
       Value obj = env.getThis();
 
@@ -245,6 +248,7 @@ public class ThisFieldExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public void evalUnset(Env env) {
       Value obj = env.getThis();
 
@@ -255,6 +259,7 @@ public class ThisFieldExpr extends AbstractVarExpr {
       obj.unsetThisField(_name);
    }
 
+   @Override
    public String toString() {
       return "$this->" + _name;
    }

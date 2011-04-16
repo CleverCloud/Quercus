@@ -291,6 +291,7 @@ public class DOMImplementation {
       return wrapper;
    }
 
+   @Override
    public String toString() {
       return getClass().getSimpleName();
    }

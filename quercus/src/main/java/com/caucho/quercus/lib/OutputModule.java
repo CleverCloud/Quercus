@@ -35,9 +35,6 @@ import com.caucho.quercus.module.ModuleStartupListener;
 import com.caucho.quercus.module.IniDefinitions;
 import com.caucho.quercus.module.IniDefinition;
 import com.caucho.util.L10N;
-import com.caucho.vfs.StreamImplOutputStream;
-import com.caucho.vfs.TempStream;
-import com.caucho.vfs.TempBuffer;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -77,10 +74,12 @@ public class OutputModule extends AbstractQuercusModule
    /**
     * Returns the default php.ini values.
     */
+   @Override
    public IniDefinitions getIniDefinitions() {
       return _iniDefinitions;
    }
 
+   @Override
    public void startup(Env env) {
       boolean isOutputBuffering = INI_OUTPUT_BUFFERING.getAsBoolean(env);
       String handlerName = INI_OUTPUT_HANDLER.getAsString(env);

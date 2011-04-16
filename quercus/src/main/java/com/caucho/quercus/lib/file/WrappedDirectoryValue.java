@@ -64,6 +64,7 @@ public class WrappedDirectoryValue extends DirectoryValue {
    /**
     * Returns the next value.
     */
+   @Override
    public Value readdir() {
       if (_env.isUnicodeSemantics()) {
          return _wrapper.callMethod(_env, DIR_READDIR_U);
@@ -75,6 +76,7 @@ public class WrappedDirectoryValue extends DirectoryValue {
    /**
     * Rewinds the directory
     */
+   @Override
    public void rewinddir() {
       if (_env.isUnicodeSemantics()) {
          _wrapper.callMethod(_env, DIR_REWINDDIR_U);
@@ -86,6 +88,7 @@ public class WrappedDirectoryValue extends DirectoryValue {
    /**
     * Closes the directory
     */
+   @Override
    public void close() {
       if (_env.isUnicodeSemantics()) {
          _wrapper.callMethod(_env, DIR_CLOSEDIR_U);
@@ -98,6 +101,7 @@ public class WrappedDirectoryValue extends DirectoryValue {
     * Converts to a string.
     * @param env
     */
+   @Override
    public String toString() {
       return "Directory[]";
    }

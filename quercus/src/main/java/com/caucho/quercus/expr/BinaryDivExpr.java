@@ -29,7 +29,6 @@
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
-import com.caucho.quercus.env.DoubleValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 
@@ -49,6 +48,7 @@ public class BinaryDivExpr extends AbstractBinaryExpr {
    /**
     * Returns true for a double.
     */
+   @Override
    public boolean isDouble() {
       return true;
    }
@@ -60,6 +60,7 @@ public class BinaryDivExpr extends AbstractBinaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value lValue = _left.eval(env);
       Value rValue = _right.eval(env);
@@ -67,6 +68,7 @@ public class BinaryDivExpr extends AbstractBinaryExpr {
       return lValue.div(rValue);
    }
 
+   @Override
    public String toString() {
       return "(" + _left + " / " + _right + ")";
    }

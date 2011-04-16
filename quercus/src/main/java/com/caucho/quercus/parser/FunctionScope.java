@@ -58,6 +58,7 @@ public class FunctionScope extends Scope {
    /*
     * Returns true if scope is local to a function.
     */
+   @Override
    public boolean isFunction() {
       return true;
    }
@@ -65,6 +66,7 @@ public class FunctionScope extends Scope {
    /**
     * Adds a function.
     */
+   @Override
    public void addFunction(String name,
            Function function,
            boolean isTop) {
@@ -95,6 +97,7 @@ public class FunctionScope extends Scope {
    /**
     * Adds a class
     */
+   @Override
    public InterpretedClassDef addClass(Location location,
            String name,
            String parentName,
@@ -122,6 +125,7 @@ public class FunctionScope extends Scope {
    /*
     *  Adds a conditional class.
     */
+   @Override
    protected void addConditionalClass(InterpretedClassDef def) {
       if (_conditionalClassMap == null) {
          _conditionalClassMap = new HashMap<String, InterpretedClassDef>(1);

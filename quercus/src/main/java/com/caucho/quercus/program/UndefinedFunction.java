@@ -49,6 +49,7 @@ public class UndefinedFunction extends AbstractFunction {
       _globalId = globalId;
    }
 
+   @Override
    public String getName() {
       return _name;
    }
@@ -56,6 +57,7 @@ public class UndefinedFunction extends AbstractFunction {
    /**
     * Evaluates the function.
     */
+   @Override
    public Value call(Env env, Value[] args) {
       if (_globalId > 0) {
          AbstractFunction fun = env._fun[_globalId];
@@ -67,6 +69,7 @@ public class UndefinedFunction extends AbstractFunction {
       return env.error(L.l("'{0}' is an unknown function.", _name));
    }
 
+   @Override
    public String toString() {
       return "UndefinedFunction[" + _name + "]";
    }

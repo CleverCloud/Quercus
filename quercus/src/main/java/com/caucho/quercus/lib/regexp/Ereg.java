@@ -42,6 +42,7 @@ public class Ereg extends Regexp {
       _flags |= Regcomp.SINGLE_LINE;
    }
 
+   @Override
    public String toString() {
       return "Ereg[" + _pattern + "]";
    }

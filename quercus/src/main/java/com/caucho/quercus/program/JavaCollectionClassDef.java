@@ -30,12 +30,10 @@ package com.caucho.quercus.program;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.JavaCollectionAdapter;
-import com.caucho.quercus.env.JavaListAdapter;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.module.ModuleContext;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Represents an introspected Java class.
@@ -46,6 +44,7 @@ public class JavaCollectionClassDef extends JavaClassDef {
       super(moduleContext, name, type);
    }
 
+   @Override
    public Value wrap(Env env, Object obj) {
       if (!_isInit) {
          init();

@@ -78,6 +78,7 @@ public class GZInputStream extends InputStream {
    /**
     * Returns 0 if gzip EOF has been reached, 1 otherwise
     */
+   @Override
    public int available()
            throws IOException {
       if (!_isGzip) {
@@ -90,6 +91,7 @@ public class GZInputStream extends InputStream {
       return 1;
    }
 
+   @Override
    public void close()
            throws IOException {
       _inflater.end();
@@ -99,6 +101,7 @@ public class GZInputStream extends InputStream {
     * mark() and reset() are not supported by this class.
     * @return false always
     */
+   @Override
    public boolean markSupported() {
       return false;
    }
@@ -107,6 +110,7 @@ public class GZInputStream extends InputStream {
     * Returns the byte read, -1 if EOF
     * @return number of bytes read, or -1 if EOF
     */
+   @Override
    public int read() throws IOException {
       byte[] b = new byte[1];
       int n = read(b);
@@ -122,6 +126,7 @@ public class GZInputStream extends InputStream {
     *  stores the resulting uncompressed data into the byte array.
     * @return number of bytes read, or -1 upon EOF
     */
+   @Override
    public int read(byte[] b)
            throws IOException {
       return read(b, 0, b.length);
@@ -132,6 +137,7 @@ public class GZInputStream extends InputStream {
     *  stores the resulting uncompressed data into the byte array.
     * @return number of bytes read, or -1 upon EOF
     */
+   @Override
    public int read(byte[] b, int off, int len)
            throws IOException {
       if (len <= 0 || off < 0 || off + len > b.length) {
@@ -192,6 +198,7 @@ public class GZInputStream extends InputStream {
     * @param n number of bytes to skip
     * @return actual number of bytes skipped
     */
+   @Override
    public long skip(long n)
            throws IOException {
       if (_eof || n <= 0) {

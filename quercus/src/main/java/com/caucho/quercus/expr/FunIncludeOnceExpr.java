@@ -76,6 +76,7 @@ public class FunIncludeOnceExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       StringValue name = _expr.eval(env).toStringValue();
 
@@ -100,6 +101,7 @@ public class FunIncludeOnceExpr extends AbstractUnaryExpr {
       return _isRequire;
    }
 
+   @Override
    public String toString() {
       return _expr.toString();
    }

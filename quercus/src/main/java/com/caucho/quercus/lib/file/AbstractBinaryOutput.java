@@ -50,6 +50,7 @@ abstract public class AbstractBinaryOutput
    /**
     * Returns self as the output stream.
     */
+   @Override
    public OutputStream getOutputStream() {
       return this;
    }
@@ -57,6 +58,7 @@ abstract public class AbstractBinaryOutput
    /**
     * Writes to a stream.
     */
+   @Override
    public int write(InputStream is, int length) {
       int writeLength = 0;
 
@@ -96,6 +98,7 @@ abstract public class AbstractBinaryOutput
    /**
     * Prints a string to a file.
     */
+   @Override
    public void print(char v)
            throws IOException {
       write((byte) v);
@@ -104,6 +107,7 @@ abstract public class AbstractBinaryOutput
    /**
     * Prints a string to a file.
     */
+   @Override
    public void print(String v)
            throws IOException {
       for (int i = 0; i < v.length(); i++) {
@@ -114,6 +118,7 @@ abstract public class AbstractBinaryOutput
    /**
     * Flushes the output.
     */
+   @Override
    public void flush()
            throws IOException {
    }
@@ -121,6 +126,7 @@ abstract public class AbstractBinaryOutput
    /**
     * Closes the file.
     */
+   @Override
    public void closeWrite() {
       close();
    }
@@ -128,12 +134,14 @@ abstract public class AbstractBinaryOutput
    /**
     * Closes the stream.
     */
+   @Override
    public void close() {
    }
 
    /**
     * Returns false always for output streams
     */
+   @Override
    public boolean isEOF() {
       return false;
    }
@@ -141,6 +149,7 @@ abstract public class AbstractBinaryOutput
    /**
     * Tells the position in the stream
     */
+   @Override
    public long getPosition() {
       return 0;
    }
@@ -148,10 +157,12 @@ abstract public class AbstractBinaryOutput
    /**
     * Sets the position.
     */
+   @Override
    public boolean setPosition(long offset) {
       return false;
    }
 
+   @Override
    public long seek(long offset, int whence) {
       long position;
 
@@ -180,6 +191,7 @@ abstract public class AbstractBinaryOutput
       return "stream";
    }
 
+   @Override
    public Value stat() {
       return BooleanValue.FALSE;
    }

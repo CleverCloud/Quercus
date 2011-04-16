@@ -557,7 +557,6 @@ class Regcomp {
       }
 
       RegexpNode.ConditionalHead groupHead = null;
-      ;
       RegexpNode groupTail = null;
 
       if ('1' <= (ch = pattern.peek()) && ch <= '9') {

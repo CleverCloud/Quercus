@@ -44,6 +44,7 @@ public class UnicodeEregi extends UnicodeEreg {
       _flags |= Regcomp.IGNORE_CASE;
    }
 
+   @Override
    public String toString() {
       return "UnicodeEregi[" + _pattern + "]";
    }

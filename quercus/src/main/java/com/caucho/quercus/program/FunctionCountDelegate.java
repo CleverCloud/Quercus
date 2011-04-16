@@ -28,9 +28,6 @@
  */
 package com.caucho.quercus.program;
 
-import java.util.Map;
-import java.util.Iterator;
-
 import com.caucho.quercus.env.*;
 
 /**

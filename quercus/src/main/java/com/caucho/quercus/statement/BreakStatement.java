@@ -32,7 +32,6 @@ import java.util.ArrayList;
 
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.BreakValue;
-import com.caucho.quercus.env.ContinueValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
@@ -58,6 +57,7 @@ public class BreakStatement extends Statement {
    /**
     * Executes the statement, returning the expression value.
     */
+   @Override
    public Value execute(Env env) {
       if (_target == null) {
          return BreakValue.BREAK;

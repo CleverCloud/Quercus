@@ -172,6 +172,7 @@ public class TokenModule extends AbstractQuercusModule {
    private static final IntMap _reservedMap = new IntMap();
    private static final IniDefinitions _iniDefinitions = new IniDefinitions();
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"tokenizer"};
    }
@@ -179,6 +180,7 @@ public class TokenModule extends AbstractQuercusModule {
    /**
     * Returns the default php.ini values.
     */
+   @Override
    public IniDefinitions getIniDefinitions() {
       return _iniDefinitions;
    }

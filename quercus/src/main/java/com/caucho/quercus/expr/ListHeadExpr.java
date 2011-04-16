@@ -69,6 +69,7 @@ public class ListHeadExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       throw new UnsupportedOperationException();
    }
@@ -80,6 +81,7 @@ public class ListHeadExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalAssignValue(Env env, Value value) {
       int len = _varList.length;
 

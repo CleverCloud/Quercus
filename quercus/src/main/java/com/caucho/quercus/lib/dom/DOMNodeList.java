@@ -54,6 +54,7 @@ public class DOMNodeList
       return _delegate.getLength();
    }
 
+   @Override
    public String toString() {
       return getClass().getSimpleName();
    }

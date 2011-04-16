@@ -28,12 +28,8 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.util.L10N;
-import com.caucho.vfs.WriteStream;
 
-import java.io.IOException;
-import java.util.IdentityHashMap;
 
 /**
  * Represents a call to an object's method

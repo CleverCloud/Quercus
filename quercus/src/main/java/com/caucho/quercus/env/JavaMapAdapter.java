@@ -29,9 +29,6 @@
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.QuercusRuntimeException;
-import com.caucho.quercus.env.ArrayValue.Entry;
-import com.caucho.quercus.env.JavaCollectionAdapter.KeyIterator;
-import com.caucho.quercus.env.JavaCollectionAdapter.ValueIterator;
 import com.caucho.quercus.program.JavaClassDef;
 
 import java.util.*;
@@ -197,6 +194,7 @@ public class JavaMapAdapter
     *
     * @return the value if it is found in the array, NULL otherwise
     */
+   @Override
    public Value containsKey(Value key) {
       return BooleanValue.create(_map.containsKey(key.toJavaObject()));
    }
@@ -290,10 +288,12 @@ public class JavaMapAdapter
          _iterator = _map.entrySet().iterator();
       }
 
+      @Override
       public boolean hasNext() {
          return _iterator.hasNext();
       }
 
+      @Override
       public Map.Entry<Value, Value> next() {
          Map.Entry entry = _iterator.next();
 
@@ -303,6 +303,7 @@ public class JavaMapAdapter
          return new ArrayValue.Entry(key, value);
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -334,14 +335,17 @@ public class JavaMapAdapter
          _iterator = _map.values().iterator();
       }
 
+      @Override
       public boolean hasNext() {
          return _iterator.hasNext();
       }
 
+      @Override
       public Value next() {
          return wrapJava(_iterator.next());
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -356,14 +360,17 @@ public class JavaMapAdapter
          _iterator = _map.keySet().iterator();
       }
 
+      @Override
       public boolean hasNext() {
          return _iterator.hasNext();
       }
 
+      @Override
       public Value next() {
          return wrapJava(_iterator.next());
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }

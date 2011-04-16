@@ -32,7 +32,6 @@ import com.caucho.config.ConfigException;
 import com.caucho.quercus.QuercusRuntimeException;
 import com.caucho.quercus.env.*;
 import com.caucho.quercus.expr.ExprFactory;
-import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.quercus.marshal.Marshal;
 import com.caucho.quercus.marshal.MarshalFactory;
 import com.caucho.quercus.program.ClassDef;

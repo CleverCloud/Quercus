@@ -109,6 +109,7 @@ public class ServerArrayValue extends ArrayValueImpl {
    /**
     * Converts to an object.
     */
+   @Override
    public Object toObject() {
       return null;
    }
@@ -116,6 +117,7 @@ public class ServerArrayValue extends ArrayValueImpl {
    /**
     * Adds a new value.
     */
+   @Override
    public ArrayValue append(Value key, Value value) {
       if (!_isFilled) {
          fillMap();
@@ -127,6 +129,7 @@ public class ServerArrayValue extends ArrayValueImpl {
    /**
     * Adds a new value.
     */
+   @Override
    public Value put(Value value) {
       if (!_isFilled) {
          fillMap();
@@ -138,6 +141,7 @@ public class ServerArrayValue extends ArrayValueImpl {
    /**
     * Gets a new value.
     */
+   @Override
    public Value get(Value key) {
       if (!_isFilled) {
          fillMap();
@@ -161,6 +165,7 @@ public class ServerArrayValue extends ArrayValueImpl {
    /**
     * Returns the array ref.
     */
+   @Override
    public Var getVar(Value key) {
       if (!_isFilled) {
          fillMap();
@@ -172,6 +177,7 @@ public class ServerArrayValue extends ArrayValueImpl {
    /**
     * Copy for assignment.
     */
+   @Override
    public Value copy() {
       if (!_isFilled) {
          fillMap();
@@ -183,6 +189,7 @@ public class ServerArrayValue extends ArrayValueImpl {
    /**
     * Copy for saving a function arguments.
     */
+   @Override
    public Value copySaveFunArg() {
       if (!_isFilled) {
          fillMap();
@@ -194,6 +201,7 @@ public class ServerArrayValue extends ArrayValueImpl {
    /**
     * Returns an iterator of the entries.
     */
+   @Override
    public Set<Map.Entry<Value, Value>> entrySet() {
       if (!_isFilled) {
          fillMap();
@@ -205,6 +213,7 @@ public class ServerArrayValue extends ArrayValueImpl {
    /**
     * Convenience for lib.
     */
+   @Override
    public void put(String key, String value) {
       if (!_isFilled) {
          fillMap();

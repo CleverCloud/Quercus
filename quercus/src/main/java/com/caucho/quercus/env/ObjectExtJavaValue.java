@@ -93,6 +93,7 @@ public class ObjectExtJavaValue extends ObjectExtValue
    /**
     * Sets fields not specified by the value.
     */
+   @Override
    protected Value putFieldExt(Env env, StringValue name, Value value) {
       if (_object == null) {
          createJavaObject(env);
@@ -131,6 +132,7 @@ public class ObjectExtJavaValue extends ObjectExtValue
       return javaWrapper.toJavaObject();
    }
 
+   @Override
    public void varDumpImpl(Env env,
            WriteStream out,
            int depth,

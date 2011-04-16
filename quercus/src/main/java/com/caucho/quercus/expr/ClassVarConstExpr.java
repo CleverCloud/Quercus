@@ -33,7 +33,6 @@ import java.util.ArrayList;
 
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.QuercusClass;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.parser.QuercusParser;
 import com.caucho.util.L10N;
@@ -75,12 +74,14 @@ public class ClassVarConstExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       String className = _className.evalString(env);
 
       return env.getClass(className).getConstant(env, _name);
    }
 
+   @Override
    public String toString() {
       return _className + "::" + _name;
    }

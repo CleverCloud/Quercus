@@ -34,24 +34,27 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.JavaValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
-import com.caucho.vfs.Path;
 
 public class InputStreamMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new InputStreamMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return marshal(env, expr.eval(env), expectedClass);
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return value.toInputStream();
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       return env.wrapJava((InputStream) value);
    }

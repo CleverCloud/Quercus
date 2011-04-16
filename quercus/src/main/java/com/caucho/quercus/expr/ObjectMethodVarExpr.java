@@ -30,7 +30,6 @@ package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.*;
-import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.util.L10N;
 
 import java.util.ArrayList;
@@ -86,6 +85,7 @@ public class ObjectMethodVarExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value[] values = new Value[_args.length];
 
@@ -108,6 +108,7 @@ public class ObjectMethodVarExpr extends Expr {
       }
    }
 
+   @Override
    public String toString() {
       return _objExpr + "->" + _name + "()";
    }

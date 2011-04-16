@@ -58,12 +58,14 @@ public class JavaMarshal extends Marshal {
       _isUnmarshalNullAsFalse = isUnmarshalNullAsFalse;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class argClass) {
       Value value = expr.eval(env);
 
       return marshal(env, value, argClass);
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class argClass) {
       if (!value.isset()) {
          if (_isNotNull) {
@@ -96,11 +98,12 @@ public class JavaMarshal extends Marshal {
       return obj;
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       return env.wrapJava(value, _def, _isUnmarshalNullAsFalse);
    }
 
-   protected final static String shortName(Class cl) {
+   protected static String shortName(Class cl) {
       String name = cl.getName();
 
       int p = name.lastIndexOf('.');

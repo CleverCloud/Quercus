@@ -43,14 +43,17 @@ public class DOMNodeListDelegate
    public DOMNodeListDelegate() {
    }
 
+   @Override
    public Iterator<Value> getKeyIterator(Env env, ObjectValue obj) {
       return new DOMNodeListKeyIterator((DOMNodeList) obj.toJavaObject());
    }
 
+   @Override
    public Iterator<Value> getValueIterator(Env env, ObjectValue obj) {
       return new DOMNodeListValueIterator(env, (DOMNodeList) obj.toJavaObject());
    }
 
+   @Override
    public Iterator<Map.Entry<Value, Value>> getIterator(Env env, ObjectValue obj) {
       return new DOMNodeListIterator(env, (DOMNodeList) obj.toJavaObject());
    }
@@ -65,14 +68,17 @@ public class DOMNodeListDelegate
          _list = list;
       }
 
+      @Override
       public boolean hasNext() {
          return _index < _list.getLength();
       }
 
+      @Override
       public Value next() {
          return LongValue.create(_index++);
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -90,14 +96,17 @@ public class DOMNodeListDelegate
          _list = list;
       }
 
+      @Override
       public boolean hasNext() {
          return _index < _list.getLength();
       }
 
+      @Override
       public Value next() {
          return _env.wrapJava(_list.item(_index++));
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -115,14 +124,17 @@ public class DOMNodeListDelegate
          _list = list;
       }
 
+      @Override
       public boolean hasNext() {
          return _index < _list.getLength();
       }
 
+      @Override
       public Map.Entry<Value, Value> next() {
          return new DOMNodeListEntry(_index, _env.wrapJava(_list.item(_index++)));
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -139,14 +151,17 @@ public class DOMNodeListDelegate
          _value = value;
       }
 
+      @Override
       public Value getKey() {
          return LongValue.create(_key);
       }
 
+      @Override
       public Value getValue() {
          return _value;
       }
 
+      @Override
       public Value setValue(Value value) {
          throw new UnsupportedOperationException();
       }

@@ -36,7 +36,6 @@ import com.caucho.quercus.env.NullThisValue;
 import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.QuercusClass;
-import com.caucho.quercus.env.UnsetValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.Var;
 import com.caucho.quercus.expr.Expr;
@@ -46,7 +45,6 @@ import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.quercus.statement.*;
 import com.caucho.util.L10N;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -115,6 +113,7 @@ public class Function extends AbstractFunction {
    /**
     * Returns the name.
     */
+   @Override
    public String getName() {
       return _name;
    }
@@ -152,6 +151,7 @@ public class Function extends AbstractFunction {
    /**
     * Returns the args.
     */
+   @Override
    public Arg[] getArgs() {
       return _args;
    }
@@ -177,6 +177,7 @@ public class Function extends AbstractFunction {
    /**
     * True for a returns reference.
     */
+   @Override
    public boolean isReturnsReference() {
       return _isReturnsReference;
    }
@@ -468,6 +469,7 @@ public class Function extends AbstractFunction {
       return _info.isUsesSymbolTable() || _info.isVariableVar();
    }
 
+   @Override
    public String toString() {
       return getClass().getSimpleName() + "[" + _name + "]";
    }

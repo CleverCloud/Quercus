@@ -29,10 +29,8 @@
 package com.caucho.quercus.env;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.IdentityHashMap;
 
-import com.caucho.quercus.Location;
 import com.caucho.vfs.WriteStream;
 
 /**
@@ -57,6 +55,7 @@ abstract public class ArgValue extends Value {
       return toLocalValue().toStringValue();
    }
 
+   @Override
    public StringValue toStringValue(Env env) {
       return toLocalValue().toStringValue(env);
    }

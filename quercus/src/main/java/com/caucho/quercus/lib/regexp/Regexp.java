@@ -337,6 +337,7 @@ public class Regexp {
       return encoder.encode(env, source);
    }
 
+   @Override
    public String toString() {
       return getClass().getSimpleName() + "[" + _pattern + "]";
    }

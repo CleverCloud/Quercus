@@ -33,8 +33,6 @@ import java.util.ArrayList;
 
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.NullValue;
-import com.caucho.quercus.env.QuercusClass;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Var;
@@ -146,12 +144,14 @@ public class ClassVirtualFieldVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public void evalUnset(Env env) {
       env.error(getLocation(),
               L.l("{0}::${1}: Cannot unset static variables.",
               env.getCallingClass().getName(), _varName));
    }
 
+   @Override
    public String toString() {
       return "static::$" + _varName;
    }

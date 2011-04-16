@@ -287,6 +287,7 @@ public class OracleOciCollection {
       }
    }
 
+   @Override
    public String toString() {
       return "OracleOciCollection()";
    }

@@ -28,9 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.Location;
-import com.caucho.quercus.expr.Expr;
-import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.vfs.WriteStream;
 
 import java.io.IOException;
@@ -174,6 +171,7 @@ public class JavaAdapterVar extends Value {
    /**
     * Returns true for a long-value.
     */
+   @Override
    public boolean isLong() {
       return getValue().isLong();
    }
@@ -181,6 +179,7 @@ public class JavaAdapterVar extends Value {
    /**
     * Returns true for a long-value.
     */
+   @Override
    public boolean isDouble() {
       return getValue().isDouble();
    }
@@ -396,6 +395,7 @@ public class JavaAdapterVar extends Value {
    /**
     * Converts to a Java BigDecimal.
     */
+   @Override
    public BigDecimal toBigDecimal() {
       return getValue().toBigDecimal();
    }
@@ -403,6 +403,7 @@ public class JavaAdapterVar extends Value {
    /**
     * Converts to a Java BigInteger.
     */
+   @Override
    public BigInteger toBigInteger() {
       return getValue().toBigInteger();
    }
@@ -692,6 +693,7 @@ public class JavaAdapterVar extends Value {
    /**
     * Binary And.
     */
+   @Override
    public Value bitAnd(Value rValue) {
       return getValue().bitAnd(rValue);
    }
@@ -699,6 +701,7 @@ public class JavaAdapterVar extends Value {
    /**
     * Binary or.
     */
+   @Override
    public Value bitOr(Value rValue) {
       return getValue().bitOr(rValue);
    }
@@ -714,6 +717,7 @@ public class JavaAdapterVar extends Value {
    /**
     * Absolute value.
     */
+   @Override
    public Value abs() {
       return getValue().abs();
    }
@@ -1019,6 +1023,7 @@ public class JavaAdapterVar extends Value {
    /**
     * Initializes a new field, does not call __set if it is defined.
     */
+   @Override
    public void initField(StringValue key,
            Value value,
            FieldVisibility visibility) {

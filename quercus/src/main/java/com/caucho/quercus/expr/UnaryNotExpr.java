@@ -49,6 +49,7 @@ public class UnaryNotExpr extends AbstractUnaryExpr {
    /**
     * Return true as a boolean.
     */
+   @Override
    public boolean isBoolean() {
       return true;
    }
@@ -56,6 +57,7 @@ public class UnaryNotExpr extends AbstractUnaryExpr {
    /**
     * Evaluates the equality as a boolean.
     */
+   @Override
    public Value eval(Env env) {
       return _expr.evalBoolean(env) ? BooleanValue.FALSE : BooleanValue.TRUE;
    }
@@ -63,10 +65,12 @@ public class UnaryNotExpr extends AbstractUnaryExpr {
    /**
     * Evaluates the equality as a boolean.
     */
+   @Override
    public boolean evalBoolean(Env env) {
       return !_expr.evalBoolean(env);
    }
 
+   @Override
    public String toString() {
       return "! " + _expr;
    }

@@ -53,10 +53,12 @@ public class ToDoubleExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return new DoubleValue(_expr.evalDouble(env));
    }
 
+   @Override
    public String toString() {
       return "((float) " + _expr + ")";
    }

@@ -31,7 +31,6 @@ package com.caucho.quercus.expr;
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
-import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.Var;
 
 /**
@@ -74,6 +73,7 @@ public class ArrayGetExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value array = _expr.eval(env);
       Value index = _index.eval(env);
@@ -88,6 +88,7 @@ public class ArrayGetExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalCopy(Env env) {
       Value array = _expr.eval(env);
       Value index = _index.eval(env);
@@ -102,6 +103,7 @@ public class ArrayGetExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalArray(Env env) {
       Value array = _expr.evalArray(env);
       Value index = _index.eval(env);
@@ -116,6 +118,7 @@ public class ArrayGetExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalDirty(Env env) {
       Value array = _expr.eval(env);
       Value index = _index.eval(env);
@@ -130,6 +133,7 @@ public class ArrayGetExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalObject(Env env) {
       Value array = _expr.evalArray(env);
       Value index = _index.eval(env);
@@ -215,6 +219,7 @@ public class ArrayGetExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public void evalUnset(Env env) {
       /*
       Value array = _expr.evalDirty(env);
@@ -227,6 +232,7 @@ public class ArrayGetExpr extends AbstractVarExpr {
       _expr.evalUnsetArray(env, index);
    }
 
+   @Override
    public String toString() {
       return _expr + "[" + _index + "]";
    }

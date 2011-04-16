@@ -69,11 +69,13 @@ public class UdpInputOutput
       _domain = domain;
    }
 
+   @Override
    public void bind(SocketAddress address)
            throws IOException {
       _socket.bind(address);
    }
 
+   @Override
    public void connect(SocketAddress address)
            throws IOException {
       _socket.connect(address);
@@ -81,6 +83,7 @@ public class UdpInputOutput
       init();
    }
 
+   @Override
    public void init() {
       DatagramStream sock = new DatagramStream(_socket);
       sock.setThrowReadInterrupts(true);
@@ -88,6 +91,7 @@ public class UdpInputOutput
       init(sock.getInputStream(), sock.getOutputStream());
    }
 
+   @Override
    public void setTimeout(long timeout) {
       try {
          if (_socket != null) {
@@ -98,6 +102,7 @@ public class UdpInputOutput
       }
    }
 
+   @Override
    public void setError(int error) {
       _error = error;
    }
@@ -105,6 +110,7 @@ public class UdpInputOutput
    /**
     * Returns the current location in the file.
     */
+   @Override
    public long getPosition() {
       if (_stream != null) {
          return _stream.getPosition();
@@ -116,6 +122,7 @@ public class UdpInputOutput
    /**
     * Sets the current location in the file.
     */
+   @Override
    public boolean setPosition(long offset) {
       if (_stream == null) {
          return false;
@@ -133,6 +140,7 @@ public class UdpInputOutput
    /**
     * Unread the last byte.
     */
+   @Override
    public void unread()
            throws IOException {
       if (_stream != null) {
@@ -144,6 +152,7 @@ public class UdpInputOutput
    /**
     * Implements the EnvCleanup interface.
     */
+   @Override
    public void cleanup() {
       DatagramSocket s = _socket;
       _socket = null;
@@ -153,6 +162,7 @@ public class UdpInputOutput
       }
    }
 
+   @Override
    public String toString() {
       if (_socket != null) {
          return "UdpInputOutput["

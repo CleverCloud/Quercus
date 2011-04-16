@@ -34,8 +34,6 @@ import com.caucho.util.L10N;
 import com.caucho.vfs.*;
 import com.caucho.quercus.module.AbstractQuercusModule;
 
-import java.io.*;
-import java.util.*;
 import java.util.logging.*;
 
 /**
@@ -46,6 +44,7 @@ public class XMLWriterModule extends AbstractQuercusModule {
    private static final Logger log = Logger.getLogger(XMLWriterModule.class.getName());
    private static final L10N L = new L10N(XMLWriterModule.class);
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"XMLWriter"};
    }

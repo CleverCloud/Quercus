@@ -28,17 +28,14 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.QuercusException;
 import com.caucho.quercus.QuercusRuntimeException;
 import com.caucho.quercus.expr.ClassConstExpr;
 import com.caucho.quercus.expr.Expr;
-import com.caucho.quercus.expr.LiteralStringExpr;
 import com.caucho.quercus.module.ModuleContext;
 import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.quercus.program.ClassDef;
 import com.caucho.quercus.program.InstanceInitializer;
 import com.caucho.quercus.program.JavaClassDef;
-import com.caucho.util.IntMap;
 import com.caucho.util.L10N;
 
 import java.lang.ref.WeakReference;
@@ -914,6 +911,7 @@ public class QuercusClass extends NullValue {
    /**
     * Returns true for an implementation of a class
     */
+   @Override
    public boolean isA(String name) {
       return _instanceofSet.contains(name.toLowerCase());
    }
@@ -1754,10 +1752,12 @@ public class QuercusClass extends NullValue {
       return this;
    }
 
+   @Override
    public int hashCode() {
       return _className.hashCode();
    }
 
+   @Override
    public boolean equals(Object o) {
       if (this == o) {
          return true;
@@ -1782,6 +1782,7 @@ public class QuercusClass extends NullValue {
       }
    }
 
+   @Override
    public String toString() {
       return getClass().getSimpleName() + "[" + getName() + "]";
    }

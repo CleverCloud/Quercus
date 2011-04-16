@@ -132,12 +132,14 @@ public class ClassVarFieldVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public void evalUnset(Env env) {
       env.error(getLocation(),
               L.l("{0}::${1}: Cannot unset class variables.",
               _className, _varName));
    }
 
+   @Override
    public String toString() {
       return _className + "::$" + _varName;
    }

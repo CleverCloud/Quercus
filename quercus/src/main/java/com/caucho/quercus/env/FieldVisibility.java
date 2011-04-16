@@ -28,24 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.Location;
-import com.caucho.quercus.expr.Expr;
-import com.caucho.quercus.expr.LiteralStringExpr;
-import com.caucho.quercus.function.AbstractFunction;
-import com.caucho.vfs.WriteStream;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.AbstractSet;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 /**
  * Represents a PHP field visibility
  */

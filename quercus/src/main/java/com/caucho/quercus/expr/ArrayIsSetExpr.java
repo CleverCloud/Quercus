@@ -53,6 +53,7 @@ public class ArrayIsSetExpr extends Expr {
       _index = index;
    }
 
+   @Override
    public boolean isBoolean() {
       return true;
    }
@@ -64,6 +65,7 @@ public class ArrayIsSetExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
    }
@@ -75,6 +77,7 @@ public class ArrayIsSetExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public boolean evalBoolean(Env env) {
       Value array = _expr.eval(env);
       Value index = _index.eval(env);
@@ -82,6 +85,7 @@ public class ArrayIsSetExpr extends Expr {
       return array.get(index) != UnsetValue.UNSET;
    }
 
+   @Override
    public String toString() {
       return "isset(" + _expr + "[" + _index + "])";
    }

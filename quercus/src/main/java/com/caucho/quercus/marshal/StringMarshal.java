@@ -40,18 +40,22 @@ public class StringMarshal extends Marshal {
 
    public static final StringMarshal MARSHAL = new StringMarshal();
 
+   @Override
    public boolean isString() {
       return true;
    }
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return expr.evalString(env);
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
 
       return value.toJavaString();
@@ -85,6 +89,7 @@ public class StringMarshal extends Marshal {
        */
    }
 
+   @Override
    public int getMarshalingCost(Expr expr) {
       if (expr.isString()) {
          return Marshal.ZERO;

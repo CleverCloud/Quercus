@@ -37,22 +37,27 @@ public class ByteMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new ByteMarshal();
 
+   @Override
    public boolean isLong() {
       return true;
    }
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return new Byte((byte) expr.evalLong(env));
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return new Byte((byte) value.toLong());
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value == null) {
          return LongValue.ZERO;

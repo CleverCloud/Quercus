@@ -31,16 +31,11 @@ package com.caucho.quercus.lib.file;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.EnvCleanup;
 import com.caucho.quercus.env.Value;
-import com.caucho.quercus.resources.StreamContextResource;
-import com.caucho.vfs.HttpPath;
-import com.caucho.vfs.HttpStreamWrapper;
 import com.caucho.vfs.Path;
 import com.caucho.vfs.ReadStream;
 import com.caucho.vfs.LockableStream;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.logging.*;
 
 /**
@@ -79,6 +74,7 @@ public class FileInput extends ReadStreamInput
    /**
     * Opens a copy.
     */
+   @Override
    public BinaryInput openCopy()
            throws IOException {
       return new FileInput(_env, _path);
@@ -91,6 +87,7 @@ public class FileInput extends ReadStreamInput
       return getPath().getLength();
    }
 
+   @Override
    public long seek(long offset, int whence) {
       long position;
 
@@ -117,6 +114,7 @@ public class FileInput extends ReadStreamInput
    /**
     * Lock the shared advisory lock.
     */
+   @Override
    public boolean lock(boolean shared, boolean block) {
       return _is.lock(shared, block);
    }
@@ -124,14 +122,17 @@ public class FileInput extends ReadStreamInput
    /**
     * Unlock the advisory lock.
     */
+   @Override
    public boolean unlock() {
       return _is.unlock();
    }
 
+   @Override
    public Value stat() {
       return FileModule.statImpl(_env, getPath());
    }
 
+   @Override
    public void close() {
       _env.removeCleanup(this);
 
@@ -141,6 +142,7 @@ public class FileInput extends ReadStreamInput
    /**
     * Implements the EnvCleanup interface.
     */
+   @Override
    public void cleanup() {
       super.close();
    }
@@ -148,6 +150,7 @@ public class FileInput extends ReadStreamInput
    /**
     * Converts to a string.
     */
+   @Override
    public String toString() {
       return "FileInput[" + getPath() + "]";
    }

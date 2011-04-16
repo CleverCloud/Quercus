@@ -49,6 +49,7 @@ public class UnaryBitNotExpr extends AbstractUnaryExpr {
    /**
     * Returns true for a long.
     */
+   @Override
    public boolean isLong() {
       return true;
    }
@@ -60,12 +61,14 @@ public class UnaryBitNotExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       long lValue = _expr.evalLong(env);
 
       return LongValue.create(~lValue);
    }
 
+   @Override
    public String toString() {
       return "(~ " + _expr + ")";
    }

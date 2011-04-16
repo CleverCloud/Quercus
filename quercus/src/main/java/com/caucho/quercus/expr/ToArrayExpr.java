@@ -53,6 +53,7 @@ public class ToArrayExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return _expr.eval(env).toArray();
    }
@@ -64,6 +65,7 @@ public class ToArrayExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalCopy(Env env) {
       Value value = _expr.eval(env).toValue();
 
@@ -74,6 +76,7 @@ public class ToArrayExpr extends AbstractUnaryExpr {
       }
    }
 
+   @Override
    public String toString() {
       return "((array) " + _expr + ")";
    }

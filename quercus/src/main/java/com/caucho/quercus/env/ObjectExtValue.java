@@ -28,8 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.expr.Expr;
-import com.caucho.quercus.expr.LiteralStringExpr;
 import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.util.Primes;
 import com.caucho.util.Alarm;
@@ -1109,6 +1107,7 @@ public class ObjectExtValue extends ObjectValue
    /**
     * Append to a string builder.
     */
+   @Override
    public StringValue appendTo(UnicodeBuilderValue sb) {
       return sb.append(toString(Env.getInstance()));
    }
@@ -1116,6 +1115,7 @@ public class ObjectExtValue extends ObjectValue
    /**
     * Append to a binary builder.
     */
+   @Override
    public StringValue appendTo(StringBuilderValue sb) {
       return sb.append(toString(Env.getInstance()));
    }
@@ -1123,6 +1123,7 @@ public class ObjectExtValue extends ObjectValue
    /**
     * Append to a binary builder.
     */
+   @Override
    public StringValue appendTo(BinaryBuilderValue sb) {
       return sb.appendBytes(toString(Env.getInstance()));
    }
@@ -1130,6 +1131,7 @@ public class ObjectExtValue extends ObjectValue
    /**
     * Append to a binary builder.
     */
+   @Override
    public StringValue appendTo(LargeStringBuilderValue sb) {
       return sb.append(toString(Env.getInstance()));
    }
@@ -1145,6 +1147,7 @@ public class ObjectExtValue extends ObjectValue
    /**
     * Converts to a java String object.
     */
+   @Override
    public String toJavaString() {
       return toString(Env.getInstance()).toString();
    }
@@ -1219,6 +1222,7 @@ public class ObjectExtValue extends ObjectValue
    // debugging
    //
    //XXX: push up to super, and use varDumpObject
+   @Override
    public void varDumpImpl(Env env,
            WriteStream out,
            int depth,
@@ -1436,6 +1440,7 @@ public class ObjectExtValue extends ObjectValue
          _list = list;
       }
 
+      @Override
       public boolean hasNext() {
          if (_entry != null) {
             return true;
@@ -1447,6 +1452,7 @@ public class ObjectExtValue extends ObjectValue
          return _index < _list.length;
       }
 
+      @Override
       public Entry next() {
          if (_entry != null) {
             Entry entry = _entry;
@@ -1468,6 +1474,7 @@ public class ObjectExtValue extends ObjectValue
          return entry;
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -1484,6 +1491,7 @@ public class ObjectExtValue extends ObjectValue
          _list = list;
       }
 
+      @Override
       public boolean hasNext() {
          if (_entry != null) {
             return true;
@@ -1495,6 +1503,7 @@ public class ObjectExtValue extends ObjectValue
          return _index < _list.length;
       }
 
+      @Override
       public Map.Entry<Value, Value> next() {
          if (_entry != null) {
             Entry entry = _entry;
@@ -1516,6 +1525,7 @@ public class ObjectExtValue extends ObjectValue
          return entry;
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -1532,6 +1542,7 @@ public class ObjectExtValue extends ObjectValue
          _list = list;
       }
 
+      @Override
       public boolean hasNext() {
          if (_entry != null) {
             return true;
@@ -1543,6 +1554,7 @@ public class ObjectExtValue extends ObjectValue
          return _index < _list.length;
       }
 
+      @Override
       public Value next() {
          if (_entry != null) {
             Entry entry = _entry;
@@ -1564,6 +1576,7 @@ public class ObjectExtValue extends ObjectValue
          return entry._value;
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -1580,6 +1593,7 @@ public class ObjectExtValue extends ObjectValue
          _list = list;
       }
 
+      @Override
       public boolean hasNext() {
          if (_entry != null) {
             return true;
@@ -1591,6 +1605,7 @@ public class ObjectExtValue extends ObjectValue
          return _index < _list.length;
       }
 
+      @Override
       public Value next() {
          if (_entry != null) {
             Entry entry = _entry;
@@ -1612,6 +1627,7 @@ public class ObjectExtValue extends ObjectValue
          return entry._key;
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -1657,6 +1673,7 @@ public class ObjectExtValue extends ObjectValue
          _value = entry._value.copy(env, map);
       }
 
+      @Override
       public Value getValue() {
          return _value.toValue();
       }
@@ -1665,6 +1682,7 @@ public class ObjectExtValue extends ObjectValue
          return _value;
       }
 
+      @Override
       public StringValue getKey() {
          return _key;
       }
@@ -1709,6 +1727,7 @@ public class ObjectExtValue extends ObjectValue
          return _value.toValue();
       }
 
+      @Override
       public Value setValue(Value value) {
          Value oldValue = toValue();
 
@@ -1775,6 +1794,7 @@ public class ObjectExtValue extends ObjectValue
          return new Entry(_key, copy, _visibility);
       }
 
+      @Override
       public int compareTo(Map.Entry<Value, Value> other) {
          if (other == null) {
             return 1;

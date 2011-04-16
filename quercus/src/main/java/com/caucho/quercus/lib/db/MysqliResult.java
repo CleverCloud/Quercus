@@ -796,6 +796,7 @@ public class MysqliResult extends JdbcResultResource {
     * Given the JDBC type of the field at the given offset,
     * return a PHP type string.
     */
+   @Override
    protected String getFieldType(int fieldOffset, int jdbcType) {
       if (jdbcType == Types.TIMESTAMP) {
          // The Mysql types DATETIME and TIMESTAMP both map to Types.TIMESTAMP

@@ -28,7 +28,6 @@
  */
 package com.caucho.quercus.lib.file;
 
-import com.caucho.quercus.QuercusModuleException;
 import com.caucho.quercus.annotation.NotNull;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.annotation.Reference;
@@ -78,6 +77,7 @@ public class StreamModule extends AbstractQuercusModule {
     *
     * @return the new constant chain
     */
+   @Override
    public Map<StringValue, Value> getConstMap() {
       return _constMap;
    }

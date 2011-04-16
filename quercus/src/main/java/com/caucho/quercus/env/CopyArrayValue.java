@@ -29,10 +29,8 @@
 package com.caucho.quercus.env;
 
 import java.util.IdentityHashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
-import com.caucho.quercus.Location;
 
 /**
  * Represents a PHP array value.
@@ -50,6 +48,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Converts to a boolean.
     */
+   @Override
    public boolean toBoolean() {
       if (_copyArray != null) {
          return _copyArray.toBoolean();
@@ -61,6 +60,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Copy for assignment.
     */
+   @Override
    public Value copy() {
       if (_copyArray != null) {
          return _copyArray.copy();
@@ -72,6 +72,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Copy for serialization
     */
+   @Override
    public Value copy(Env env, IdentityHashMap<Value, Value> map) {
       if (_copyArray != null) {
          return _copyArray.copy(env, map);
@@ -83,6 +84,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Copy for saving a function arguments.
     */
+   @Override
    public Value copySaveFunArg() {
       if (_copyArray != null) {
          return _copyArray.copySaveFunArg();
@@ -94,6 +96,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Returns the size.
     */
+   @Override
    public int getSize() {
       if (_copyArray != null) {
          return _copyArray.getSize();
@@ -105,6 +108,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Clears the array
     */
+   @Override
    public void clear() {
       getCopyArray().clear();
    }
@@ -120,6 +124,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Add
     */
+   @Override
    public Value put(Value value) {
       return getCopyArray().put(value);
    }
@@ -127,6 +132,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Add
     */
+   @Override
    public ArrayValue unshift(Value value) {
       return getCopyArray().unshift(value);
    }
@@ -134,6 +140,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Splices.
     */
+   @Override
    public ArrayValue splice(int start, int end, ArrayValue replace) {
       return getCopyArray().splice(start, end, replace);
    }
@@ -141,6 +148,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Slices.
     */
+   @Override
    public ArrayValue slice(Env env, int start, int end, boolean isPreserveKeys) {
       return getCopyArray().slice(env, start, end, isPreserveKeys);
    }
@@ -148,6 +156,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Returns the value as an array.
     */
+   @Override
    public Value getArray(Value fieldName) {
       return getCopyArray().getArray(fieldName);
    }
@@ -179,6 +188,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Sets the array ref.
     */
+   @Override
    public Var putVar() {
       return getCopyArray().putVar();
    }
@@ -186,6 +196,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Add
     */
+   @Override
    public ArrayValue append(Value key, Value value) {
       return getCopyArray().append(key, value);
    }
@@ -193,6 +204,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Add
     */
+   @Override
    public ArrayValue append(Value value) {
       return getCopyArray().append(value);
    }
@@ -200,6 +212,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Gets a new value.
     */
+   @Override
    public Value get(Value key) {
       if (_copyArray != null) {
          return _copyArray.get(key);
@@ -215,6 +228,7 @@ public class CopyArrayValue extends ArrayValue {
     *
     * @return the key if it is found in the array, NULL otherwise
     */
+   @Override
    public Value contains(Value value) {
       if (_copyArray != null) {
          return _copyArray.contains(value);
@@ -230,6 +244,7 @@ public class CopyArrayValue extends ArrayValue {
     *
     * @return the key if it is found in the array, NULL otherwise
     */
+   @Override
    public Value containsStrict(Value value) {
       if (_copyArray != null) {
          return _copyArray.containsStrict(value);
@@ -245,6 +260,7 @@ public class CopyArrayValue extends ArrayValue {
     *
     * @return the value if it is found in the array, NULL otherwise
     */
+   @Override
    public Value containsKey(Value key) {
       if (_copyArray != null) {
          return _copyArray.containsKey(key);
@@ -256,6 +272,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Removes a value.
     */
+   @Override
    public Value remove(Value key) {
       return getCopyArray().remove(key);
    }
@@ -263,6 +280,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Returns the array ref.
     */
+   @Override
    public Var getVar(Value index) {
       return getCopyArray().getVar(index);
    }
@@ -278,6 +296,7 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Pops the top value.
     */
+   @Override
    public Value createTailKey() {
       return getCopyArray().createTailKey();
    }
@@ -285,10 +304,12 @@ public class CopyArrayValue extends ArrayValue {
    /**
     * Shuffles the array
     */
+   @Override
    public Value shuffle() {
       return getCopyArray().shuffle();
    }
 
+   @Override
    public Entry getHead() {
       if (_copyArray != null) {
          return _copyArray.getHead();
@@ -297,6 +318,7 @@ public class CopyArrayValue extends ArrayValue {
       }
    }
 
+   @Override
    protected Entry getTail() {
       if (_copyArray != null) {
          return _copyArray.getTail();

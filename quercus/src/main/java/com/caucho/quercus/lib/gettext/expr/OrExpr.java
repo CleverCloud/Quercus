@@ -34,6 +34,7 @@ public class OrExpr extends BinaryExpr {
       super(_left, _right);
    }
 
+   @Override
    public int eval(int n) {
       if (_left.eval(n) != 0 || _right.eval(n) != 0) {
          return 1;

@@ -29,20 +29,16 @@
 package com.caucho.quercus.lib.db;
 
 import com.caucho.quercus.QuercusException;
-import com.caucho.quercus.UnimplementedException;
 import com.caucho.quercus.annotation.Optional;
-import com.caucho.quercus.annotation.ResourceType;
 import com.caucho.quercus.annotation.ReturnNullAsFalse;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.ConnectionEntry;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.StringValue;
-import com.caucho.quercus.env.UnicodeValueImpl;
 import com.caucho.quercus.env.Value;
 import com.caucho.util.L10N;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -453,7 +449,7 @@ public class Mysqli extends JdbcConnectionResource {
       } else {
          // php/142h
 
-         if (_checkedDriverVersion != null && _checkedDriverVersion != "") {
+         if (_checkedDriverVersion != null && "".equals(_checkedDriverVersion)) {
             // A connection has already been made and the driver
             // version has been validated.
 
@@ -929,6 +925,7 @@ public class Mysqli extends JdbcConnectionResource {
    /**
     * Rolls the current transaction back.
     */
+   @Override
    public boolean rollback() {
       return super.rollback();
    }
@@ -1582,6 +1579,7 @@ public class Mysqli extends JdbcConnectionResource {
    }
 
    // Invoked to close a connection.
+   @Override
    public boolean close(Env env) {
       /*
       if (_isPersistent)
@@ -1594,6 +1592,7 @@ public class Mysqli extends JdbcConnectionResource {
    /**
     * Converts to a string.
     */
+   @Override
    public String toString() {
       if (_conn != null && _conn.getConnection() != null) {
          Class cls = _conn.getConnection().getClass();

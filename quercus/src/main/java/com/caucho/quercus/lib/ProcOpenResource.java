@@ -31,9 +31,7 @@ package com.caucho.quercus.lib;
 import com.caucho.quercus.annotation.ResourceType;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.EnvCleanup;
-import com.caucho.quercus.lib.file.BinaryStream;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -144,6 +142,7 @@ public class ProcOpenResource
    /**
     * Implements the EnvCleanup interface.
     */
+   @Override
    public void cleanup() {
       pclose();
    }

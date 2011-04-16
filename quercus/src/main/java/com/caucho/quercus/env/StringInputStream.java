@@ -44,6 +44,7 @@ public class StringInputStream extends InputStream {
       _length = s.length();
    }
 
+   @Override
    public int read() {
       if (_index < _length) {
          return _string.charAt(_index++);
@@ -52,6 +53,7 @@ public class StringInputStream extends InputStream {
       }
    }
 
+   @Override
    public int read(byte[] buffer, int offset, int length) {
       int sublen = _length - _index;
 

@@ -31,14 +31,12 @@ package com.caucho.quercus.lib.session;
 import com.caucho.config.ConfigException;
 import com.caucho.quercus.QuercusContext;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.StringBuilderValue;
 import com.caucho.quercus.env.SessionArrayValue;
 import com.caucho.util.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -475,6 +473,7 @@ public class QuercusSessionManager
    /**
     * Timeout for reaping old sessions.
     */
+   @Override
    public void handleAlarm(Alarm alarm) {
       try {
          _sessionList.clear();

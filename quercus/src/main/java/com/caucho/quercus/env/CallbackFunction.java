@@ -75,6 +75,7 @@ public class CallbackFunction extends Callback {
    /**
     * Serializes the value.
     */
+   @Override
    public void serialize(Env env, StringBuilder sb) {
       String name;
 
@@ -158,6 +159,7 @@ public class CallbackFunction extends Callback {
       return getFunction(env).call(env, args);
    }
 
+   @Override
    public String getCallbackName() {
       return _funName;
    }
@@ -178,10 +180,12 @@ public class CallbackFunction extends Callback {
    /**
     * Exports the value.
     */
+   @Override
    public void varExport(StringBuilder sb) {
       sb.append("'' . \"\\0\" . '" + _funName.substring(1) + "'");
    }
 
+   @Override
    public String toString() {
       return getClass().getName() + '[' + _funName + ']';
    }

@@ -30,7 +30,6 @@ package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.QuercusException;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.lib.regexp.RegexpModule;
 import com.caucho.quercus.lib.regexp.Regexp;
@@ -46,6 +45,7 @@ public class RegexpMarshal extends StringMarshal {
    private static final Logger log = Logger.getLogger(RegexpModule.class.getName());
    public static final RegexpMarshal MARSHAL = new RegexpMarshal();
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       try {
          return RegexpModule.createRegexp(env, expr.evalStringValue(env));
@@ -56,6 +56,7 @@ public class RegexpMarshal extends StringMarshal {
       }
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       try {
          return RegexpModule.createRegexp(env, value.toStringValue(env));
@@ -67,6 +68,7 @@ public class RegexpMarshal extends StringMarshal {
       }
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       throw new UnsupportedOperationException(getClass().getName());
    }

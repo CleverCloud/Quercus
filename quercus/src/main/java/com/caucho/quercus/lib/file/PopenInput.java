@@ -64,6 +64,7 @@ public class PopenInput extends ReadStreamInput
    /**
     * Opens a copy.
     */
+   @Override
    public BinaryInput openCopy()
            throws IOException {
       return new PopenInput(_env, _process);
@@ -79,6 +80,7 @@ public class PopenInput extends ReadStreamInput
    /**
     * Converts to a string.
     */
+   @Override
    public String toString() {
       return "PopenInput[" + _process + "]";
    }
@@ -95,6 +97,7 @@ public class PopenInput extends ReadStreamInput
       }
    }
 
+   @Override
    public void close() {
       pclose();
    }
@@ -102,6 +105,7 @@ public class PopenInput extends ReadStreamInput
    /**
     * Implements the EnvCleanup interface.
     */
+   @Override
    public void cleanup() {
       pclose();
    }

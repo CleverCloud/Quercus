@@ -82,6 +82,7 @@ public class ClassMethodExpr extends AbstractMethodExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       QuercusClass cl = env.findClass(_className);
 
@@ -121,6 +122,7 @@ public class ClassMethodExpr extends AbstractMethodExpr {
       }
    }
 
+   @Override
    public String toString() {
       return _className + "::" + _methodName + "()";
    }

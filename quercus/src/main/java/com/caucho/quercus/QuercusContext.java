@@ -1888,6 +1888,7 @@ public class QuercusContext {
          _scriptPwd = scriptPwd;
       }
 
+      @Override
       public int hashCode() {
          int hash = 37;
 
@@ -1899,6 +1900,7 @@ public class QuercusContext {
          return hash;
       }
 
+      @Override
       public boolean equals(Object o) {
          if (!(o instanceof IncludeKey)) {
             return false;
@@ -1932,6 +1934,7 @@ public class QuercusContext {
          LockSupport.unpark(this);
       }
 
+      @Override
       public void run() {
          while (_isRunnable) {
             if (_quantumCount >= _timeout) {

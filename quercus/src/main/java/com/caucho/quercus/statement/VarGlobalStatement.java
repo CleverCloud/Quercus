@@ -51,6 +51,7 @@ public class VarGlobalStatement extends Statement {
       _varExpr = var.getExpr();
    }
 
+   @Override
    public Value execute(Env env) {
       StringValue name = _varExpr.evalStringValue(env);
 

@@ -41,6 +41,7 @@ public class PhpStdin extends AbstractBinaryInput {
       super(env, new ReadStream(new VfsStream(System.in, null)));
    }
 
+   @Override
    public String toString() {
       return "PhpStdin[]";
    }

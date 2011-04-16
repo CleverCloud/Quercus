@@ -34,16 +34,12 @@ import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.annotation.ReturnNullAsFalse;
 import com.caucho.quercus.env.*;
 import com.caucho.quercus.lib.MiscModule;
-import com.caucho.quercus.lib.UrlModule;
 import com.caucho.quercus.lib.string.StringModule;
 import com.caucho.quercus.module.AbstractQuercusModule;
 import com.caucho.quercus.module.IniDefinitions;
 import com.caucho.quercus.module.IniDefinition;
 import com.caucho.quercus.resources.StreamContextResource;
-import com.caucho.util.Alarm;
 import com.caucho.util.L10N;
-import com.caucho.vfs.FilePath;
-import com.caucho.vfs.NotFoundPath;
 import com.caucho.vfs.Path;
 import com.caucho.vfs.ReadStream;
 import com.caucho.vfs.WriteStream;
@@ -110,6 +106,7 @@ public class FileModule extends AbstractQuercusModule {
    /**
     * Returns the default quercus.ini values.
     */
+   @Override
    public IniDefinitions getIniDefinitions() {
       return _iniDefinitions;
    }
@@ -117,6 +114,7 @@ public class FileModule extends AbstractQuercusModule {
    /**
     * Returns the constants defined by this module.
     */
+   @Override
    public Map<StringValue, Value> getConstMap() {
       return _constMap;
    }
@@ -3067,6 +3065,7 @@ public class FileModule extends AbstractQuercusModule {
          _path = path;
       }
 
+      @Override
       public void cleanup()
               throws IOException {
          _path.remove();

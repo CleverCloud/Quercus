@@ -277,6 +277,7 @@ public class PDO implements EnvCleanup {
    /**
     * Implements the EnvCleanup interface.
     */
+   @Override
    public void cleanup() {
       Connection conn = _conn;
 
@@ -996,6 +997,7 @@ public class PDO implements EnvCleanup {
       return attr;
    }
 
+   @Override
    public String toString() {
       // do not show password!
       if (_dsn == null) {

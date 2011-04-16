@@ -52,6 +52,7 @@ public class UnaryCopyExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return _expr.eval(env).copy();
    }
@@ -68,6 +69,7 @@ public class UnaryCopyExpr extends AbstractUnaryExpr {
       return eval(env);
    }
 
+   @Override
    public String toString() {
       return _expr.toString();
    }

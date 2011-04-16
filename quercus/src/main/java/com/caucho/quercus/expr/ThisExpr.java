@@ -28,7 +28,6 @@
  */
 package com.caucho.quercus.expr;
 
-import com.caucho.quercus.Location;
 import com.caucho.quercus.env.*;
 import com.caucho.quercus.program.InterpretedClassDef;
 import com.caucho.util.L10N;
@@ -74,6 +73,7 @@ public class ThisExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return env.getThis();
    }
@@ -137,10 +137,12 @@ public class ThisExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public void evalUnset(Env env) {
       env.error(getLocation(), "can't unset $this");
    }
 
+   @Override
    public String toString() {
       return "$this";
    }

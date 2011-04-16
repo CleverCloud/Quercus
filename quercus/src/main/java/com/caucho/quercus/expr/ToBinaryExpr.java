@@ -51,6 +51,7 @@ public class ToBinaryExpr extends ToStringExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value value = _expr.eval(env).toValue();
 
@@ -61,6 +62,7 @@ public class ToBinaryExpr extends ToStringExpr {
       }
    }
 
+   @Override
    public String toString() {
       return "((binary) " + _expr + ")";
    }

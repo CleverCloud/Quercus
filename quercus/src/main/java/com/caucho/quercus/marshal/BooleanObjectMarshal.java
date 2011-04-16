@@ -38,10 +38,12 @@ public class BooleanObjectMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new BooleanObjectMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return expr.evalBoolean(env) ? Boolean.TRUE : Boolean.FALSE;
    }
@@ -55,6 +57,7 @@ public class BooleanObjectMarshal extends Marshal {
       }
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value == null) {
          return NullValue.NULL;

@@ -49,6 +49,7 @@ public class HttpPostRequest
    /**
     * Initializes the connection.
     */
+   @Override
    protected boolean init(Env env)
            throws ProtocolException {
       if (!super.init(env)) {
@@ -77,6 +78,7 @@ public class HttpPostRequest
    /**
     * Transfer data to the server.
     */
+   @Override
    protected void transfer(Env env)
            throws IOException {
       super.transfer(env);

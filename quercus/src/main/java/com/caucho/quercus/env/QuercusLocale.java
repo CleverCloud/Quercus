@@ -48,6 +48,7 @@ public class QuercusLocale {
       return _charset;
    }
 
+   @Override
    public String toString() {
       return _locale.toString();
    }

@@ -74,6 +74,7 @@ public class McryptModule extends AbstractQuercusModule {
    public static final String MCRYPT_RIJNDAEL_192 = "rijndael-192";
    public static final String MCRYPT_RIJNDAEL_256 = "rijndael-256";
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"mcrypt"};
    }

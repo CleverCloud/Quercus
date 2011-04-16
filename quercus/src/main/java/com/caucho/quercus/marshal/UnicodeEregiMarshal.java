@@ -30,9 +30,7 @@ package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
-import com.caucho.quercus.lib.regexp.Ereg;
 import com.caucho.quercus.lib.regexp.RegexpModule;
-import com.caucho.quercus.lib.regexp.Regexp;
 import com.caucho.quercus.lib.regexp.UnicodeEregi;
 import com.caucho.quercus.expr.Expr;
 
@@ -43,15 +41,18 @@ public class UnicodeEregiMarshal extends StringMarshal {
 
    public static final UnicodeEregiMarshal MARSHAL = new UnicodeEregiMarshal();
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return RegexpModule.createUnicodeEregi(env,
               expr.eval(env).toStringValue());
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return RegexpModule.createUnicodeEregi(env, value.toStringValue());
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       throw new UnsupportedOperationException(getClass().getName());
    }

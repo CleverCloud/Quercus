@@ -214,6 +214,7 @@ public class MysqliStatement extends JdbcStatementResource {
     * @param env the PHP executing environment
     * @return true on success or false on failure
     */
+   @Override
    public boolean execute(Env env) {
       try {
          return super.execute(env);
@@ -230,6 +231,7 @@ public class MysqliStatement extends JdbcStatementResource {
     * @return true on success, false on failure or
     * null if no more rows/data exists
     */
+   @Override
    public Value fetch(Env env) {
       try {
          return super.fetch(env);
@@ -309,6 +311,7 @@ public class MysqliStatement extends JdbcStatementResource {
     * @param query SQL query
     * @return true on success or false on failure
     */
+   @Override
    public boolean prepare(Env env,
            StringValue query) {
       try {

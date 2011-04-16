@@ -58,6 +58,7 @@ public class DOMElement extends DOMNode<Element> {
       super(impl, node);
    }
 
+   @Override
    public String getNodeValue()
            throws DOMException {
       // php/1zd1
@@ -218,6 +219,7 @@ public class DOMElement extends DOMNode<Element> {
       }
    }
 
+   @Override
    public void setNodeValue(String nodeValue)
            throws DOMException {
       // php/1zd1

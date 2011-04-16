@@ -65,6 +65,7 @@ public class ZlibModule extends AbstractQuercusModule {
    public static final int FORCE_DEFLATE = 0x2;
    private int _dbg;
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"zlib"};
    }
@@ -386,7 +387,7 @@ public class ZlibModule extends AbstractQuercusModule {
    public Value zlib_get_coding_type(Env env) {
       String ini = env.getIniString("zlib.output_compression");
 
-      if (ini == null || ini == "") {
+      if (ini == null || "".equals(ini)) {
          return BooleanValue.FALSE;
       }
 

@@ -70,6 +70,7 @@ public class PostgresStatement extends JdbcStatementResource {
     * @param env the PHP executing environment
     * @return true on success or false on failure
     */
+   @Override
    public boolean execute(Env env) {
       try {
 

@@ -206,6 +206,7 @@ public class JMSQueue {
       }
    }
 
+   @Override
    protected void finalize() {
       try {
          _connection.close();

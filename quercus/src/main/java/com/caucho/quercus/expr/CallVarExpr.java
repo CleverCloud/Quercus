@@ -29,12 +29,10 @@
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
-import com.caucho.quercus.env.Closure;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.parser.QuercusParser;
-import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.util.L10N;
 
 import java.util.ArrayList;
@@ -75,6 +73,7 @@ public class CallVarExpr extends Expr {
     * Returns the reference of the value.
     * @param location
     */
+   @Override
    public Expr createRef(QuercusParser parser) {
       return parser.getFactory().createRef(this);
    }
@@ -83,6 +82,7 @@ public class CallVarExpr extends Expr {
     * Returns the copy of the value.
     * @param location
     */
+   @Override
    public Expr createCopy(ExprFactory factory) {
       return this;
    }
@@ -131,6 +131,7 @@ public class CallVarExpr extends Expr {
       }
    }
 
+   @Override
    public String toString() {
       return _name + "()";
    }

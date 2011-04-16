@@ -49,6 +49,7 @@ public class Utf8Encoder
       return true;
    }
 
+   @Override
    public boolean isEncodable(Env env, StringValue str) {
       int len = str.length();
       for (int i = 0; i < len; i++) {

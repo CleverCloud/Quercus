@@ -30,7 +30,6 @@ package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.Value;
 
 /**
@@ -49,6 +48,7 @@ public class BinaryBitXorExpr extends AbstractBinaryExpr {
    /**
     * Returns true for a long.
     */
+   @Override
    public boolean isLong() {
       return true;
    }
@@ -60,6 +60,7 @@ public class BinaryBitXorExpr extends AbstractBinaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value lValue = _left.eval(env);
       Value rValue = _right.eval(env);
@@ -67,6 +68,7 @@ public class BinaryBitXorExpr extends AbstractBinaryExpr {
       return lValue.bitXor(rValue);
    }
 
+   @Override
    public String toString() {
       return "(" + _left + " ^ " + _right + ")";
    }

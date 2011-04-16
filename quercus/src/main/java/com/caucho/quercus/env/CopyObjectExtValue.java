@@ -28,24 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.Location;
-import com.caucho.quercus.expr.Expr;
-import com.caucho.quercus.expr.LiteralStringExpr;
-import com.caucho.quercus.function.AbstractFunction;
-import com.caucho.vfs.WriteStream;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.AbstractSet;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 /**
  * Represents a copy of an object value for serialization/apc
  */
@@ -139,6 +121,7 @@ public class CopyObjectExtValue extends ObjectExtValue {
       return super.putThisField(env, name, value);
    }
 
+   @Override
    protected Value putFieldExt(Env env, StringValue name, Value value) {
       return null;
    }
@@ -178,6 +161,7 @@ public class CopyObjectExtValue extends ObjectExtValue {
    /**
     * Removes the field ref.
     */
+   @Override
    public void unsetThisArray(Env env, StringValue name, Value index) {
       _root.setModified();
 

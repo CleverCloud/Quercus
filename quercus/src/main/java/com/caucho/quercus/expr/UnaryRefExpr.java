@@ -30,10 +30,8 @@ package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.ArgRef;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.Var;
-import com.caucho.quercus.lib.VariableModule;
 import com.caucho.quercus.parser.QuercusParser;
 
 /**
@@ -52,6 +50,7 @@ public class UnaryRefExpr extends AbstractUnaryExpr {
    /**
     * Returns true for a reference.
     */
+   @Override
    public boolean isRef() {
       return true;
    }
@@ -74,6 +73,7 @@ public class UnaryRefExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       // quercus/0d28
       Value value = getExpr().evalVar(env);
@@ -102,6 +102,7 @@ public class UnaryRefExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Var evalVar(Env env) {
       Var value = getExpr().evalVar(env);
 
@@ -115,6 +116,7 @@ public class UnaryRefExpr extends AbstractUnaryExpr {
        */
    }
 
+   @Override
    public String toString() {
       return _expr.toString();
    }

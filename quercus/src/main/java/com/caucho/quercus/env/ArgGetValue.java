@@ -28,12 +28,8 @@
  */
 package com.caucho.quercus.env;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.IdentityHashMap;
 
-import com.caucho.quercus.Location;
-import com.caucho.vfs.WriteStream;
 
 /**
  * Represents an array-get argument which might be a call to a reference.
@@ -51,6 +47,7 @@ public class ArgGetValue extends ArgValue
       _index = index;
    }
 
+   @Override
    public Value toRefValue() {
       // php/0425
       return toLocalValue();

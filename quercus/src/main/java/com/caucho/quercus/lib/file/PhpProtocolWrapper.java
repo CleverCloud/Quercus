@@ -35,8 +35,6 @@ import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.util.L10N;
 
-import java.io.IOException;
-
 public class PhpProtocolWrapper extends ProtocolWrapper {
 
    private static final L10N L = new L10N(PhpProtocolWrapper.class);
@@ -44,6 +42,7 @@ public class PhpProtocolWrapper extends ProtocolWrapper {
    public PhpProtocolWrapper() {
    }
 
+   @Override
    public BinaryStream fopen(Env env, StringValue pathV, StringValue mode,
            LongValue options) {
       String path = pathV.toString();
@@ -66,24 +65,28 @@ public class PhpProtocolWrapper extends ProtocolWrapper {
       return null;
    }
 
+   @Override
    public Value opendir(Env env, StringValue path, LongValue flags) {
       env.warning(L.l("opendir not supported by protocol"));
 
       return BooleanValue.FALSE;
    }
 
+   @Override
    public boolean unlink(Env env, StringValue path) {
       env.warning(L.l("unlink not supported by protocol"));
 
       return false;
    }
 
+   @Override
    public boolean rename(Env env, StringValue path_from, StringValue path_to) {
       env.warning(L.l("rename not supported by protocol"));
 
       return false;
    }
 
+   @Override
    public boolean mkdir(Env env,
            StringValue path, LongValue mode, LongValue options) {
       env.warning(L.l("mkdir not supported by protocol"));
@@ -91,12 +94,14 @@ public class PhpProtocolWrapper extends ProtocolWrapper {
       return false;
    }
 
+   @Override
    public boolean rmdir(Env env, StringValue path, LongValue options) {
       env.warning(L.l("rmdir not supported by protocol"));
 
       return false;
    }
 
+   @Override
    public Value url_stat(Env env, StringValue path, LongValue flags) {
       env.warning(L.l("stat not supported by protocol"));
 

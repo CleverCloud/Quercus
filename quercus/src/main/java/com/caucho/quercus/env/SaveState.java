@@ -31,9 +31,6 @@ package com.caucho.quercus.env;
 import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.quercus.page.QuercusPage;
 import com.caucho.quercus.program.ClassDef;
-import com.caucho.quercus.env.QuercusClass;
-import com.caucho.quercus.env.Value;
-import com.caucho.quercus.env.EnvVar;
 import com.caucho.util.IntMap;
 import com.caucho.vfs.Path;
 

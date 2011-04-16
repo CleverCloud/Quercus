@@ -38,7 +38,6 @@ import com.caucho.quercus.lib.regexp.Regexp;
 import com.caucho.quercus.lib.regexp.UnicodeEreg;
 import com.caucho.quercus.lib.regexp.UnicodeEregi;
 import com.caucho.quercus.program.JavaClassDef;
-import com.caucho.util.L10N;
 import com.caucho.vfs.Path;
 
 import java.io.InputStream;

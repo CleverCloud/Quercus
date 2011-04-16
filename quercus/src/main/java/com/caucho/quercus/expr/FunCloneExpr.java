@@ -52,10 +52,12 @@ public class FunCloneExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return _expr.eval(env).clone(env);
    }
 
+   @Override
    public String toString() {
       return "clone " + _expr.toString();
    }

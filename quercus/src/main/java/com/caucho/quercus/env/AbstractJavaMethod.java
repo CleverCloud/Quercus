@@ -28,14 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import java.io.IOException;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-
-import com.caucho.quercus.QuercusContext;
-import com.caucho.quercus.QuercusException;
-import com.caucho.quercus.expr.ParamDefaultExpr;
 import com.caucho.quercus.expr.Expr;
 import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.util.L10N;

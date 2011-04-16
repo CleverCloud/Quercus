@@ -28,9 +28,6 @@
  */
 package com.caucho.quercus.lib.spl;
 
-import com.caucho.quercus.env.IteratorAggregate;
-import com.caucho.quercus.env.Traversable;
-import com.caucho.quercus.env.ArrayAccess;
 import com.caucho.quercus.annotation.Name;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.*;
@@ -91,6 +88,7 @@ public class ArrayObject
       }
    }
 
+   @Override
    public int count() {
       return _value.getCount(_env);
    }
@@ -111,6 +109,7 @@ public class ArrayObject
       return _flags;
    }
 
+   @Override
    public ObjectValue getIterator() {
       Value[] args = new Value[]{_value, LongValue.create(_flags)};
 
@@ -139,18 +138,22 @@ public class ArrayObject
       }
    }
 
+   @Override
    public boolean offsetExists(Value offset) {
       return _value.get(offset).isset();
    }
 
+   @Override
    public Value offsetGet(Value offset) {
       return _value.get(offset);
    }
 
+   @Override
    public Value offsetSet(Value offset, Value value) {
       return _value.put(offset, value);
    }
 
+   @Override
    public Value offsetUnset(Value offset) {
       return _value.remove(offset);
    }

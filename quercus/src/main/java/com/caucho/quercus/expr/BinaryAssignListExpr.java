@@ -52,6 +52,7 @@ public class BinaryAssignListExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value value = _value.eval(env);
 
@@ -67,6 +68,7 @@ public class BinaryAssignListExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalCopy(Env env) {
       return eval(env).copy();
    }

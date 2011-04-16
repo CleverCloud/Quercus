@@ -28,7 +28,6 @@
  */
 package com.caucho.quercus.expr;
 
-import com.caucho.quercus.env.BinaryBuilderValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
@@ -70,6 +69,7 @@ public class BinaryAppendExpr extends Expr {
    /**
     * Returns true for a string.
     */
+   @Override
    public boolean isString() {
       return true;
    }
@@ -122,6 +122,7 @@ public class BinaryAppendExpr extends Expr {
       }
    }
 
+   @Override
    public String toString() {
       if (_next != null) {
          return "(" + _value + " . " + _next + ")";

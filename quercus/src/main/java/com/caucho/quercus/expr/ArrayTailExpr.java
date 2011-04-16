@@ -32,7 +32,6 @@ import com.caucho.quercus.Location;
 import com.caucho.quercus.env.ArrayValue;
 import com.caucho.quercus.env.ArrayValueImpl;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.Var;
 
@@ -55,6 +54,7 @@ public class ArrayTailExpr extends AbstractVarExpr {
    /**
     * Returns true for an expression that can be read (only $a[] uses this)
     */
+   @Override
    public boolean canRead() {
       return false;
    }
@@ -73,6 +73,7 @@ public class ArrayTailExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return env.error(getLocation(), "Cannot use [] as a read-value.");
    }
@@ -96,6 +97,7 @@ public class ArrayTailExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Var evalVar(Env env) {
       Value obj = _expr.evalVar(env);
 
@@ -109,6 +111,7 @@ public class ArrayTailExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalArray(Env env) {
       Value obj = _expr.evalArray(env);
 
@@ -126,6 +129,7 @@ public class ArrayTailExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalObject(Env env) {
       Value array = _expr.evalArray(env);
 
@@ -177,10 +181,12 @@ public class ArrayTailExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public void evalUnset(Env env) {
       throw new UnsupportedOperationException();
    }
 
+   @Override
    public String toString() {
       return _expr + "[]";
    }

@@ -88,6 +88,7 @@ public class JavaValue extends ObjectValue
    /**
     * Converts to a double.
     */
+   @Override
    public long toLong() {
       return StringValue.parseLong(toString(Env.getInstance()));
    }
@@ -95,6 +96,7 @@ public class JavaValue extends ObjectValue
    /**
     * Converts to a double.
     */
+   @Override
    public double toDouble() {
       return toDouble(toString(Env.getInstance()).toString());
    }
@@ -235,6 +237,7 @@ public class JavaValue extends ObjectValue
       }
    }
 
+   @Override
    public Set<? extends Map.Entry<Value, Value>> entrySet() {
       return _classDef.entrySet(_object);
    }
@@ -464,6 +467,7 @@ public class JavaValue extends ObjectValue
    /**
     * Encodes the value in JSON.
     */
+   @Override
    public void jsonEncode(Env env, StringValue sb) {
       if (_classDef.jsonEncode(env, _object, sb)) {
          return;
@@ -475,6 +479,7 @@ public class JavaValue extends ObjectValue
    /**
     * Converts to a string.
     */
+   @Override
    public String toString() {
       //return toString(Env.getInstance()).toString();
 
@@ -602,14 +607,17 @@ public class JavaValue extends ObjectValue
          _value = value;
       }
 
+      @Override
       public Value getKey() {
          return _key;
       }
 
+      @Override
       public Value getValue() {
          return _value;
       }
 
+      @Override
       public Value setValue(Value value) {
          return _value;
       }

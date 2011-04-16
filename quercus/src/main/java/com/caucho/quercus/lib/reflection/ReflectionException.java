@@ -47,10 +47,12 @@ public class ReflectionException extends QuercusLanguageException {
       _message = msg;
    }
 
+   @Override
    public String getMessage() {
       return _message;
    }
 
+   @Override
    public String getMessage(Env env) {
       return getMessage();
    }

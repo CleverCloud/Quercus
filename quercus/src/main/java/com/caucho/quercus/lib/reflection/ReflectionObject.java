@@ -36,7 +36,7 @@ import com.caucho.quercus.env.Value;
 
 public class ReflectionObject extends ReflectionClass {
 
-   final private void __clone() {
+   private void __clone() {
    }
 
    protected ReflectionObject(QuercusClass cls) {
@@ -59,6 +59,7 @@ public class ReflectionObject extends ReflectionClass {
       return null;
    }
 
+   @Override
    public String toString() {
       return "ReflectionObject[" + getName() + "]";
    }

@@ -48,6 +48,7 @@ public class EnvCloseable implements EnvCleanup {
     * method should be invoked.
     */
 
+   @Override
    public void cleanup()
            throws Exception {
       _obj.close();

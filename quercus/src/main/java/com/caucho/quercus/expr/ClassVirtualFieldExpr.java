@@ -142,12 +142,14 @@ public class ClassVirtualFieldExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public void evalUnset(Env env) {
       env.error(getLocation(),
               L.l("{0}::${1}: Cannot unset static variables.",
               env.getCallingClass().getName(), _varName));
    }
 
+   @Override
    public String toString() {
       return "static::$" + _varName;
    }

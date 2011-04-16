@@ -67,142 +67,172 @@ abstract public class ValueType {
    }
    public static final ValueType NULL = new ValueType() {
 
+      @Override
       public String toString() {
          return "ValueType.NULL";
       }
    };
    public static final ValueType BOOLEAN = new ValueType() {
 
+      @Override
       public boolean isBoolean() {
          return true;
       }
 
+      @Override
       public String toString() {
          return "ValueType.BOOLEAN";
       }
    };
    public static final ValueType LONG = new ValueType() {
 
+      @Override
       public boolean isLong() {
          return true;
       }
 
+      @Override
       public boolean isLongCmp() {
          return true;
       }
 
+      @Override
       public boolean isLongAdd() {
          return true;
       }
 
+      @Override
       public boolean isNumber() {
          return true;
       }
 
+      @Override
       public boolean isNumberCmp() {
          return true;
       }
 
+      @Override
       public boolean isNumberAdd() {
          return true;
       }
 
+      @Override
       public String toString() {
          return "ValueType.LONG";
       }
    };
    public static final ValueType LONG_EQ = new ValueType() {
 
+      @Override
       public boolean isLongCmp() {
          return true;
       }
 
+      @Override
       public boolean isLongAdd() {
          return true;
       }
 
+      @Override
       public boolean isNumberCmp() {
          return true;
       }
 
+      @Override
       public boolean isNumberAdd() {
          return true;
       }
 
+      @Override
       public String toString() {
          return "ValueType.LONG_EQ";
       }
    };
    public static final ValueType LONG_ADD = new ValueType() {
 
+      @Override
       public boolean isLongAdd() {
          return true;
       }
 
+      @Override
       public boolean isNumberAdd() {
          return true;
       }
 
+      @Override
       public String toString() {
          return "ValueType.LONG_ADD";
       }
    };
    public static final ValueType DOUBLE = new ValueType() {
 
+      @Override
       public boolean isDouble() {
          return true;
       }
 
+      @Override
       public boolean isNumber() {
          return true;
       }
 
+      @Override
       public boolean isNumberCmp() {
          return true;
       }
 
+      @Override
       public boolean isNumberAdd() {
          return true;
       }
 
+      @Override
       public String toString() {
          return "ValueType.DOUBLE";
       }
    };
    public static final ValueType DOUBLE_CMP = new ValueType() {
 
+      @Override
       public boolean isNumberCmp() {
          return true;
       }
 
+      @Override
       public boolean isNumberAdd() {
          return true;
       }
 
+      @Override
       public String toString() {
          return "ValueType.DOUBLE_CMP";
       }
    };
    public static final ValueType STRING = new ValueType() {
 
+      @Override
       public String toString() {
          return "ValueType.STRING";
       }
    };
    public static final ValueType ARRAY = new ValueType() {
 
+      @Override
       public String toString() {
          return "ValueType.ARRAY";
       }
    };
    public static final ValueType OBJECT = new ValueType() {
 
+      @Override
       public String toString() {
          return "ValueType.OBJECT";
       }
    };
    public static final ValueType VALUE = new ValueType() {
 
+      @Override
       public String toString() {
          return "ValueType.VALUE";
       }

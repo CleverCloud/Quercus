@@ -37,6 +37,7 @@ public class PDOModule extends AbstractQuercusModule {
    /**
     * Returns true for the pdo extension.
     */
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"PDO"};
    }

@@ -2140,7 +2140,7 @@ public class Env {
     *
     * @param var the current value of the variable
     */
-   public static final Value getLocalVar(Value var) {
+   public static Value getLocalVar(Value var) {
       if (var == null) {
          var = new Var();
       }
@@ -2153,7 +2153,7 @@ public class Env {
     *
     * @param var the current value of the variable
     */
-   public static final Value getLocalValue(Value var) {
+   public static Value getLocalValue(Value var) {
       if (var != null) {
          return var;
       } else {
@@ -2166,7 +2166,7 @@ public class Env {
     *
     * @param var the current value of the variable
     */
-   public static final Value setLocalVar(Value var, Value value) {
+   public static Value setLocalVar(Value var, Value value) {
       value = value.toValue();
 
       if (var instanceof Var) {
@@ -6845,6 +6845,7 @@ public class Env {
          _fieldName = fieldName;
       }
 
+      @Override
       public boolean equals(Object o) {
          if (!(o instanceof FieldGetEntry)) {
             return false;
@@ -6888,10 +6889,12 @@ public class Env {
          _hash = hash;
       }
 
+      @Override
       public int hashCode() {
          return _hash;
       }
 
+      @Override
       public boolean equals(Object o) {
          ClassKey key = (ClassKey) o;
 

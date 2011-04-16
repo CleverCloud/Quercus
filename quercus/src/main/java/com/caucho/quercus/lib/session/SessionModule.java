@@ -40,7 +40,6 @@ import com.caucho.util.L10N;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.logging.Logger;
-import java.util.Iterator;
 
 /**
  * Quercus session handling
@@ -55,14 +54,17 @@ public class SessionModule extends AbstractQuercusModule
    /**
     * Returns the default php.ini values.
     */
+   @Override
    public IniDefinitions getIniDefinitions() {
       return _iniDefinitions;
    }
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"session"};
    }
 
+   @Override
    public void startup(Env env) {
       if (env.getConfigVar("session.auto_start").toBoolean()) {
          session_start(env);

@@ -86,6 +86,7 @@ public class GoogleQuercusServletImpl extends QuercusServletImpl {
       return ws;
    }
 
+   @Override
    Path getPath(HttpServletRequest req) {
       String scriptPath = QuercusRequestAdapter.getPageServletPath(req);
       String pathInfo = QuercusRequestAdapter.getPagePathInfo(req);

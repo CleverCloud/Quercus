@@ -32,12 +32,10 @@ import com.caucho.quercus.QuercusModuleException;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.EnvCleanup;
 import com.caucho.quercus.env.Value;
-import com.caucho.vfs.FilePath;
 import com.caucho.vfs.Path;
 import com.caucho.vfs.WriteStream;
 import com.caucho.vfs.LockableStream;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -79,6 +77,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Returns the write stream.
     */
+   @Override
    public OutputStream getOutputStream() {
       return _os;
    }
@@ -93,6 +92,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Prints a string to a file.
     */
+   @Override
    public void print(char v)
            throws IOException {
       if (_os != null) {
@@ -103,6 +103,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Prints a string to a file.
     */
+   @Override
    public void print(String v)
            throws IOException {
       if (_os != null) {
@@ -113,6 +114,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Writes a character
     */
+   @Override
    public void write(int ch)
            throws IOException {
       if (_os != null) {
@@ -123,6 +125,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Writes a buffer to a file.
     */
+   @Override
    public void write(byte[] buffer, int offset, int length)
            throws IOException {
       if (_os != null) {
@@ -133,6 +136,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Flushes the output.
     */
+   @Override
    public void flush()
            throws IOException {
       if (_os != null) {
@@ -143,6 +147,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Closes the file.
     */
+   @Override
    public void closeWrite() {
       close();
    }
@@ -150,6 +155,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Closes the file.
     */
+   @Override
    public void close() {
       _env.removeCleanup(this);
 
@@ -159,6 +165,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Implements the EnvCleanup interface.
     */
+   @Override
    public void cleanup() {
       try {
          WriteStream os = _os;
@@ -175,6 +182,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Lock the shared advisory lock.
     */
+   @Override
    public boolean lock(boolean shared, boolean block) {
       return _os.lock(shared, block);
    }
@@ -182,10 +190,12 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Unlock the advisory lock.
     */
+   @Override
    public boolean unlock() {
       return _os.unlock();
    }
 
+   @Override
    public Value stat() {
       return FileModule.statImpl(_env, getPath());
    }
@@ -193,6 +203,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Returns the current location in the file.
     */
+   @Override
    public long getPosition() {
       if (_os == null) {
          return -1;
@@ -204,6 +215,7 @@ public class FileOutput extends AbstractBinaryOutput
    /**
     * Sets the current location in the stream
     */
+   @Override
    public boolean setPosition(long offset) {
       if (_os == null) {
          return false;
@@ -220,6 +232,7 @@ public class FileOutput extends AbstractBinaryOutput
     * Converts to a string.
     * @param env
     */
+   @Override
    public String toString() {
       return "FileOutput[" + getPath() + "]";
    }

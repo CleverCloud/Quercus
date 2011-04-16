@@ -41,14 +41,17 @@ public class BinaryInputMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new BinaryInputMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return marshal(env, expr.eval(env), expectedClass);
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       if (value == null) {
          return null;
@@ -85,6 +88,7 @@ public class BinaryInputMarshal extends Marshal {
       }
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       return (Value) value;
    }

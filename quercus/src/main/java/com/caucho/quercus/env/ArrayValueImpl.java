@@ -272,6 +272,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Returns the type.
     */
+   @Override
    public String getType() {
       return "array";
    }
@@ -279,6 +280,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Converts to a boolean.
     */
+   @Override
    public boolean toBoolean() {
       return _size != 0;
    }
@@ -287,6 +289,7 @@ public class ArrayValueImpl extends ArrayValue
     * Converts to a string.
     * @param env
     */
+   @Override
    public StringValue toString(Env env) {
       return env.createString("Array");
    }
@@ -294,6 +297,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Converts to an object.
     */
+   @Override
    public Object toObject() {
       return null;
    }
@@ -301,6 +305,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Copy the value.
     */
+   @Override
    public Value copy() {
       // php/1704
       reset();
@@ -322,6 +327,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Copy for serialization
     */
+   @Override
    public Value copy(Env env, IdentityHashMap<Value, Value> map) {
       Value oldValue = map.get(this);
 
@@ -351,6 +357,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Copy for saving a method's arguments.
     */
+   @Override
    public Value copySaveFunArg() {
       return new ArrayValueImpl(this);
    }
@@ -399,6 +406,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Returns the size.
     */
+   @Override
    public int getSize() {
       return size();
    }
@@ -406,6 +414,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Clears the array
     */
+   @Override
    public void clear() {
       if (_isDirty) {
          _isDirty = false;
@@ -423,6 +432,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Returns true for an array.
     */
+   @Override
    public boolean isArray() {
       return true;
    }
@@ -430,6 +440,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Adds a new value.
     */
+   @Override
    public ArrayValue append(Value key, Value value) {
       if (_isDirty) {
          copyOnWrite();
@@ -453,6 +464,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Add to the beginning
     */
+   @Override
    public ArrayValue unshift(Value value) {
       if (_isDirty) {
          copyOnWrite();
@@ -486,6 +498,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Replace a section of the array.
     */
+   @Override
    public ArrayValue splice(int start, int end, ArrayValue replace) {
       if (_isDirty) {
          copyOnWrite();
@@ -652,6 +665,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Returns the value as an array.
     */
+   @Override
    public Value getArray(Value index) {
       // php/3482, php/3483
 
@@ -676,6 +690,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Returns the value as an array, using copy on write if necessary.
     */
+   @Override
    public Value getDirty(Value index) {
       if (_isDirty) {
          copyOnWrite();
@@ -687,6 +702,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Add
     */
+   @Override
    public Value put(Value value) {
       if (_isDirty) {
          copyOnWrite();
@@ -702,6 +718,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Sets the array ref.
     */
+   @Override
    public Var putVar() {
       if (_isDirty) {
          copyOnWrite();
@@ -716,6 +733,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Creatse a tail index.
     */
+   @Override
    public Value createTailKey() {
       if (_nextAvailableIndex < 0) {
          updateNextAvailableIndex();
@@ -727,6 +745,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Gets a new value.
     */
+   @Override
    public Value get(Value key) {
       key = key.toKey();
 
@@ -1175,10 +1194,12 @@ public class ArrayValueImpl extends ArrayValue
       }
    }
 
+   @Override
    public final Entry getHead() {
       return _head;
    }
 
+   @Override
    protected final Entry getTail() {
       return _tail;
    }
@@ -1186,6 +1207,7 @@ public class ArrayValueImpl extends ArrayValue
    /**
     * Shuffles the array
     */
+   @Override
    public Value shuffle() {
       if (_isDirty) {
          copyOnWrite();
@@ -1295,6 +1317,7 @@ public class ArrayValueImpl extends ArrayValue
     *
     * @param out the writer to the Java source code.
     */
+   @Override
    public void generate(PrintWriter out)
            throws IOException {
       out.print("new ConstArrayValue(");

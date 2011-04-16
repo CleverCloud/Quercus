@@ -51,6 +51,7 @@ public class BinarySubExpr extends AbstractBinaryExpr {
     * @param env the quercus environment
     * @return the resulting value
     */
+   @Override
    public Value eval(Env env) {
       Value lValue = _left.eval(env);
       Value rValue = _right.eval(env);
@@ -58,6 +59,7 @@ public class BinarySubExpr extends AbstractBinaryExpr {
       return lValue.sub(rValue);
    }
 
+   @Override
    public String toString() {
       return "(" + _left + " + " + _right + ")";
    }

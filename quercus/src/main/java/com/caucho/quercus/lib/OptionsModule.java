@@ -50,7 +50,6 @@ import java.util.TreeSet;
 import java.util.logging.*;
 import java.util.Currency;
 import java.util.Locale;
-import java.lang.Integer;
 
 /**
  * PHP options
@@ -110,6 +109,7 @@ public class OptionsModule extends AbstractQuercusModule {
    /**
     * Returns the default php.ini values.
     */
+   @Override
    public IniDefinitions getIniDefinitions() {
       return _iniDefinitions;
    }

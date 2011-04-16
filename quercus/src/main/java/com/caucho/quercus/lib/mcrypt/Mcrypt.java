@@ -369,6 +369,7 @@ public class Mcrypt {
       }
    }
 
+   @Override
    public String toString() {
       return "Mcrypt[" + _algorithm + ", " + _mode + "]";
    }

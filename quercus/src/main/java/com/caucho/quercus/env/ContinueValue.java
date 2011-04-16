@@ -54,6 +54,7 @@ public class ContinueValue extends Value {
    /**
     * Converts to a boolean.
     */
+   @Override
    public boolean toBoolean() {
       return false;
    }
@@ -61,6 +62,7 @@ public class ContinueValue extends Value {
    /**
     * Converts to a long.
     */
+   @Override
    public long toLong() {
       return 0;
    }
@@ -68,6 +70,7 @@ public class ContinueValue extends Value {
    /**
     * Converts to a double.
     */
+   @Override
    public double toDouble() {
       return 0;
    }
@@ -83,6 +86,7 @@ public class ContinueValue extends Value {
     * Prints the value.
     * @param env
     */
+   @Override
    public void print(Env env) {
    }
 }

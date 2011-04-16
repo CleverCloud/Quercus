@@ -28,16 +28,11 @@
  */
 package com.caucho.quercus.env;
 
-import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import com.caucho.inject.Module;
-import com.caucho.quercus.env.ArrayValue.Entry;
-import com.caucho.quercus.env.ArrayValue.EntryIterator;
-import com.caucho.quercus.env.ArrayValue.KeyIterator;
-import com.caucho.quercus.env.ArrayValue.ValueIterator;
 
 /**
  * Represents the server
@@ -54,6 +49,7 @@ public class GlobalArrayValue extends ArrayValueImpl {
    /**
     * Converts to an object.
     */
+   @Override
    public Object toObject() {
       return null;
    }
@@ -66,6 +62,7 @@ public class GlobalArrayValue extends ArrayValueImpl {
    /**
     * Adds a new value.
     */
+   @Override
    public ArrayValue append(Value key, Value value) {
       _env.setGlobalValue(key.toStringValue(), value);
 
@@ -75,6 +72,7 @@ public class GlobalArrayValue extends ArrayValueImpl {
    /**
     * Gets a new value.
     */
+   @Override
    public Value get(Value key) {
       return _env.getGlobalValue(key.toStringValue());
    }
@@ -100,6 +98,7 @@ public class GlobalArrayValue extends ArrayValueImpl {
    /**
     * Returns the value as an array.
     */
+   @Override
    public Value getArray(Value index) {
       Value array = getVar(index).toAutoArray();
 
@@ -121,6 +120,7 @@ public class GlobalArrayValue extends ArrayValueImpl {
    /**
     * Copy for assignment.
     */
+   @Override
    public Value copy() {
       return this;
    }
@@ -128,6 +128,7 @@ public class GlobalArrayValue extends ArrayValueImpl {
    /*
     * Returns the size.
     */
+   @Override
    public int getSize() {
       return _env.getGlobalEnv().size();
    }
@@ -135,6 +136,7 @@ public class GlobalArrayValue extends ArrayValueImpl {
    /**
     * Gets a new value.
     */
+   @Override
    public Value containsKey(Value key) {
       EnvVar var = _env.getGlobalEnv().get(key.toStringValue());
 
@@ -156,6 +158,7 @@ public class GlobalArrayValue extends ArrayValueImpl {
    /**
     * Returns true if the key exists in the array.
     */
+   @Override
    public boolean keyExists(Value key) {
       EnvVar var = _env.getGlobalEnv().get(key.toStringValue());
 
@@ -166,6 +169,7 @@ public class GlobalArrayValue extends ArrayValueImpl {
     * Prints the value.
     * @param env
     */
+   @Override
    public void print(Env env) {
       env.print("Array");
    }
@@ -181,6 +185,7 @@ public class GlobalArrayValue extends ArrayValueImpl {
    /**
     * Returns an iterator of the entries.
     */
+   @Override
    public Set<Map.Entry<Value, Value>> entrySet() {
       return createAndFillArray().entrySet();
    }

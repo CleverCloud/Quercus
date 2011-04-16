@@ -65,6 +65,7 @@ public class VarVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       StringValue varName = _var.evalStringValue(env);
 
@@ -149,6 +150,7 @@ public class VarVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalArray(Env env) {
       StringValue varName = _var.evalStringValue(env);
 
@@ -165,6 +167,7 @@ public class VarVarExpr extends AbstractVarExpr {
       }
    }
 
+   @Override
    public String toString() {
       return "$" + _var;
    }

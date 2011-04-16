@@ -75,6 +75,7 @@ public class SimpleXMLChildren extends SimpleXMLElement {
     * @return xml string
     */
    @ReturnNullAsFalse
+   @Override
    public StringValue asXML(Env env) {
       if (_children != null) {
          return _children.get(0).toXML(env);

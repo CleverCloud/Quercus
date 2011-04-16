@@ -80,6 +80,7 @@ public class SwitchStatement extends Statement {
    /**
     * Executes the 'switch' statement, returning any value.
     */
+   @Override
    public Value execute(Env env) {
       try {
          Value testValue = _value.eval(env);
@@ -142,6 +143,7 @@ public class SwitchStatement extends Statement {
    /**
     * Returns true if control can go past the statement.
     */
+   @Override
    public int fallThrough() {
       return FALL_THROUGH;
       /* php/367t, php/367u

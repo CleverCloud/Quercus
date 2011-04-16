@@ -31,16 +31,10 @@ package com.caucho.quercus.expr;
 import com.caucho.quercus.*;
 import com.caucho.quercus.env.Closure;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.NullValue;
-import com.caucho.quercus.env.QuercusClass;
-import com.caucho.quercus.env.UnsetValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.parser.QuercusParser;
 import com.caucho.quercus.program.Function;
-import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.util.L10N;
-
-import java.util.ArrayList;
 
 /**
  * Represents a PHP closure expression.
@@ -132,6 +126,7 @@ public class ClosureExpr extends Expr {
       return new Closure(env, _fun);
    }
 
+   @Override
    public String toString() {
       return getName() + "()";
    }

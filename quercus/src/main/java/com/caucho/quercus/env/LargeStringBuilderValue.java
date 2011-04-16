@@ -33,7 +33,6 @@ import java.util.*;
 
 import com.caucho.vfs.*;
 import com.caucho.quercus.QuercusRuntimeException;
-import com.caucho.util.*;
 
 /**
  * Represents a 8-bit PHP 5 style binary builder (unicode.semantics = off),
@@ -106,6 +105,7 @@ public class LargeStringBuilderValue
    /**
     * Returns true for a double
     */
+   @Override
    public boolean isDouble() {
       return false;
    }
@@ -245,6 +245,7 @@ public class LargeStringBuilderValue
     * Each character becomes one byte, characters with values above 255 are
     * not correctly preserved.
     */
+   @Override
    public byte[] toBytes() {
       byte[] bytes = new byte[_length];
 
@@ -262,6 +263,7 @@ public class LargeStringBuilderValue
    /**
     * Returns the character at an index
     */
+   @Override
    public Value get(Value key) {
       return charValueAt(key.toLong());
    }
@@ -448,6 +450,7 @@ public class LargeStringBuilderValue
    /**
     * Append a Java buffer to the value.
     */
+   @Override
    public StringValue append(CharSequence buf, int head, int tail) {
       int len = tail - head;
 
@@ -481,6 +484,7 @@ public class LargeStringBuilderValue
    /**
     * Append a buffer to the value.
     */
+   @Override
    public final StringValue append(byte[] buf, int offset, int length) {
       ensureCapacity(_length + length);
 
@@ -506,6 +510,7 @@ public class LargeStringBuilderValue
    /**
     * Append a double to the value.
     */
+   @Override
    public final StringValue append(byte[] buf) {
       return append(buf, 0, buf.length);
    }
@@ -581,6 +586,7 @@ public class LargeStringBuilderValue
     * Append from an input stream, using InputStream.read semantics,
     * i.e. just call is.read once even if more data is available.
     */
+   @Override
    public int appendRead(InputStream is, long length) {
       try {
          int offset = _length % SIZE;
@@ -614,6 +620,7 @@ public class LargeStringBuilderValue
     * Append from an input stream, reading from the input stream until
     * end of file or the length is reached.
     */
+   @Override
    public int appendReadAll(InputStream is, long length) {
       int readLength = 0;
 
@@ -634,6 +641,7 @@ public class LargeStringBuilderValue
    /**
     * Append to a string builder.
     */
+   @Override
    public StringValue appendTo(UnicodeBuilderValue sb) {
       if (length() == 0) {
          return sb;
@@ -663,6 +671,7 @@ public class LargeStringBuilderValue
     * Prints the value.
     * @param env
     */
+   @Override
    public void print(Env env) {
       for (int i = 0; i < _length; i += SIZE) {
          int chunk = i / SIZE;
@@ -680,6 +689,7 @@ public class LargeStringBuilderValue
     * Prints the value.
     * @param env
     */
+   @Override
    public void print(Env env, WriteStream out) {
       try {
          for (int i = 0; i < _length; i += SIZE) {
@@ -700,6 +710,7 @@ public class LargeStringBuilderValue
    /**
     * Serializes the value.
     */
+   @Override
    public void serialize(Env env, StringBuilder sb) {
       sb.append("s:");
       sb.append(_length);

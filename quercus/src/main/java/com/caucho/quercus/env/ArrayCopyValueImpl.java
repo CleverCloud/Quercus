@@ -28,8 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import java.util.IdentityHashMap;
-
 /**
  * Represents a PHP array value copied as part of deserialization or APC.
  *
@@ -53,6 +51,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl {
    /**
     * Clears the array
     */
+   @Override
    public void clear() {
       _root.setModified();
 
@@ -62,6 +61,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl {
    /**
     * Adds a new value.
     */
+   @Override
    public Value put(Value key, Value value) {
       if (_root != null) {
          _root.setModified();
@@ -73,6 +73,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl {
    /**
     * Adds a new value.
     */
+   @Override
    public ArrayValue append(Value key, Value value) {
       if (_root != null) {
          _root.setModified();
@@ -84,6 +85,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl {
    /**
     * Add to the beginning
     */
+   @Override
    public ArrayValue unshift(Value value) {
       _root.setModified();
 
@@ -93,6 +95,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl {
    /**
     * Replace a section of the array.
     */
+   @Override
    public ArrayValue splice(int start, int end, ArrayValue replace) {
       _root.setModified();
 
@@ -111,6 +114,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl {
    /**
     * Returns the value as an array, using copy on write if necessary.
     */
+   @Override
    public Value getDirty(Value index) {
       _root.setModified();
 
@@ -120,6 +124,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl {
    /**
     * Add
     */
+   @Override
    public Value put(Value value) {
       _root.setModified();
 
@@ -129,6 +134,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl {
    /**
     * Sets the array ref.
     */
+   @Override
    public Var putVar() {
       _root.setModified();
 
@@ -148,6 +154,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl {
    /**
     * Returns the array ref.
     */
+   @Override
    public Var getVar(Value index) {
       _root.setModified();
 
@@ -167,6 +174,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl {
    /**
     * Copy the value.
     */
+   @Override
    public Value copy() {
       return copy(Env.getInstance());
    }
@@ -190,6 +198,7 @@ public class ArrayCopyValueImpl extends ArrayValueImpl {
    /**
     * Copy for saving a method's arguments.
     */
+   @Override
    public Value copySaveFunArg() {
       return copy();
    }

@@ -28,7 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.QuercusException;
 import com.caucho.vfs.WriteStream;
 
 import java.io.IOException;
@@ -60,6 +59,7 @@ public class BreakValue extends Value {
    /**
     * Converts to a boolean.
     */
+   @Override
    public boolean toBoolean() {
       return false;
    }
@@ -67,6 +67,7 @@ public class BreakValue extends Value {
    /**
     * Converts to a long.
     */
+   @Override
    public long toLong() {
       return 0;
    }
@@ -74,6 +75,7 @@ public class BreakValue extends Value {
    /**
     * Converts to a double.
     */
+   @Override
    public double toDouble() {
       return 0;
    }
@@ -89,9 +91,11 @@ public class BreakValue extends Value {
     * Prints the value.
     * @param env
     */
+   @Override
    public void print(Env env) {
    }
 
+   @Override
    public void varDumpImpl(Env env,
            WriteStream out,
            int depth,

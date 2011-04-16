@@ -30,12 +30,8 @@ package com.caucho.quercus.lib.gettext;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringValue;
-import com.caucho.quercus.lib.gettext.expr.PluralExpr;
 import com.caucho.vfs.Path;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class GettextDomain {
 
@@ -80,6 +76,7 @@ public class GettextDomain {
       return path != null;
    }
 
+   @Override
    public String toString() {
       return _name;
    }

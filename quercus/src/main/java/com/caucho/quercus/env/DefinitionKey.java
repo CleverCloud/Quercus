@@ -47,10 +47,12 @@ public final class DefinitionKey {
       _includePageRef = new WeakReference<QuercusPage>(includePage);
    }
 
+   @Override
    public int hashCode() {
       return (int) _crc;
    }
 
+   @Override
    public boolean equals(Object o) {
       if (!(o instanceof DefinitionKey)) {
          return false;
@@ -68,6 +70,7 @@ public final class DefinitionKey {
       return (_crc == key._crc && page.equals(keyPage));
    }
 
+   @Override
    public String toString() {
       QuercusPage page = _includePageRef.get();
 

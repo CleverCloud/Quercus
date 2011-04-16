@@ -50,6 +50,7 @@ public class BinaryInstanceOfVarExpr extends AbstractBinaryExpr {
    /**
     * Returns true for a boolean.
     */
+   @Override
    public boolean isBoolean() {
       return true;
    }
@@ -57,6 +58,7 @@ public class BinaryInstanceOfVarExpr extends AbstractBinaryExpr {
    /**
     * Evaluates the equality as a boolean.
     */
+   @Override
    public Value eval(Env env) {
       return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
    }
@@ -64,6 +66,7 @@ public class BinaryInstanceOfVarExpr extends AbstractBinaryExpr {
    /**
     * Evaluates the equality as a boolean.
     */
+   @Override
    public boolean evalBoolean(Env env) {
       Value lValue = _left.eval(env);
       Value rValue = _right.eval(env);
@@ -71,6 +74,7 @@ public class BinaryInstanceOfVarExpr extends AbstractBinaryExpr {
       return lValue.isA(rValue);
    }
 
+   @Override
    public String toString() {
       return "(" + _left + " instanceof " + _right + ")";
    }

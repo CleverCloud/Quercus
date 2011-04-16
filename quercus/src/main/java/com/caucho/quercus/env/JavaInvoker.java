@@ -289,6 +289,7 @@ abstract public class JavaInvoker
    /**
     * Returns true if the environment has rest-style arguments.
     */
+   @Override
    public boolean getHasRestArgs() {
       if (!_isInit) {
          init();
@@ -346,6 +347,7 @@ abstract public class JavaInvoker
    /**
     * Returns true if the result is a boolean.
     */
+   @Override
    public boolean isBoolean() {
       if (!_isInit) {
          init();
@@ -357,6 +359,7 @@ abstract public class JavaInvoker
    /**
     * Returns true if the result is a string.
     */
+   @Override
    public boolean isString() {
       if (!_isInit) {
          init();
@@ -368,6 +371,7 @@ abstract public class JavaInvoker
    /**
     * Returns true if the result is a long.
     */
+   @Override
    public boolean isLong() {
       if (!_isInit) {
          init();
@@ -379,6 +383,7 @@ abstract public class JavaInvoker
    /**
     * Returns true if the result is a double.
     */
+   @Override
    public boolean isDouble() {
       if (!_isInit) {
          init();
@@ -387,6 +392,7 @@ abstract public class JavaInvoker
       return _unmarshalReturn.isDouble();
    }
 
+   @Override
    public String getName() {
       return _name;
    }
@@ -464,6 +470,7 @@ abstract public class JavaInvoker
    /**
     * Returns the cost of marshaling for this method.
     */
+   @Override
    public int getMarshalingCost(Value[] args) {
       if (!_isInit) {
          init();
@@ -510,6 +517,7 @@ abstract public class JavaInvoker
       return cost;
    }
 
+   @Override
    public int getMarshalingCost(Expr[] args) {
       if (!_isInit) {
          init();

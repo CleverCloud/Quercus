@@ -48,6 +48,7 @@ public class UnsetBinaryValue
    /**
     * Returns the length of the string.
     */
+   @Override
    public int length() {
       return -1;
    }

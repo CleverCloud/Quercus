@@ -28,15 +28,7 @@
  */
 package com.caucho.quercus.lib.db;
 
-import com.caucho.util.*;
-import com.caucho.vfs.*;
-
-import java.io.*;
-import java.net.*;
-import java.sql.*;
-import java.util.*;
-import java.util.logging.*;
-import javax.sql.*;
+import java.sql.Statement;
 
 /**
  * Extra Statement metadata for a Quercus Mysql connection.

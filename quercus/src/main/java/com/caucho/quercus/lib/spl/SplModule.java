@@ -29,14 +29,10 @@
 package com.caucho.quercus.lib.spl;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.*;
 import com.caucho.quercus.module.AbstractQuercusModule;
-import com.caucho.quercus.function.AbstractFunction;
-import com.caucho.util.CharBuffer;
 
 /*
  * XXX: Not finished.
@@ -45,6 +41,7 @@ public class SplModule extends AbstractQuercusModule {
 
    private static String DEFAULT_EXTENSIONS = ".php,.inc";
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"SPL"};
    }

@@ -52,6 +52,7 @@ public class LiteralNullExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalConstant() {
       return NullValue.NULL;
    }
@@ -59,6 +60,7 @@ public class LiteralNullExpr extends Expr {
    /**
     * Returns true for a literal expression.
     */
+   @Override
    public boolean isLiteral() {
       return true;
    }
@@ -70,6 +72,7 @@ public class LiteralNullExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return NullValue.create();
    }
@@ -77,6 +80,7 @@ public class LiteralNullExpr extends Expr {
    //
    // Java code generation
    //
+   @Override
    public String toString() {
       return "null";
    }

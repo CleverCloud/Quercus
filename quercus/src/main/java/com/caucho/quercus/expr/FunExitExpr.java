@@ -29,11 +29,8 @@
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
-import com.caucho.quercus.QuercusExitException;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
-
-import java.io.IOException;
 
 /**
  * Represents the exit expression
@@ -67,6 +64,7 @@ public class FunExitExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       if (_value != null) {
          Value msg = _value.eval(env);

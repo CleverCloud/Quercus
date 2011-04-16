@@ -71,6 +71,7 @@ public class AbstractBinaryInput
    /**
     * Returns the input stream.
     */
+   @Override
    public InputStream getInputStream() {
       return _is;
    }
@@ -78,6 +79,7 @@ public class AbstractBinaryInput
    /**
     * Opens a copy.
     */
+   @Override
    public BinaryInput openCopy()
            throws IOException {
       throw new UnsupportedOperationException(getClass().getName());
@@ -93,6 +95,7 @@ public class AbstractBinaryInput
    /**
     * Unread the last byte.
     */
+   @Override
    public void unread()
            throws IOException {
       if (_is != null) {
@@ -104,6 +107,7 @@ public class AbstractBinaryInput
    /**
     * Reads a character from a file, returning -1 on EOF.
     */
+   @Override
    public int read()
            throws IOException {
       if (_is != null) {
@@ -124,6 +128,7 @@ public class AbstractBinaryInput
    /**
     * Reads a buffer from a file, returning -1 on EOF.
     */
+   @Override
    public int read(byte[] buffer, int offset, int length)
            throws IOException {
       if (_is != null) {
@@ -164,6 +169,7 @@ public class AbstractBinaryInput
    /**
     * Reads into a binary builder.
     */
+   @Override
    public StringValue read(int length)
            throws IOException {
       if (_is == null) {
@@ -182,6 +188,7 @@ public class AbstractBinaryInput
    /**
     * Reads the optional linefeed character from a \r\n
     */
+   @Override
    public boolean readOptionalLinefeed()
            throws IOException {
       if (_is == null) {
@@ -208,6 +215,7 @@ public class AbstractBinaryInput
    /**
     * Reads a line from a file, returning null on EOF.
     */
+   @Override
    public StringValue readLine(long length)
            throws IOException {
       return _lineReader.readLine(_env, this, length);
@@ -216,6 +224,7 @@ public class AbstractBinaryInput
    /**
     * Appends to a string builder.
     */
+   @Override
    public StringValue appendTo(StringValue builder)
            throws IOException {
       if (_is != null) {
@@ -228,6 +237,7 @@ public class AbstractBinaryInput
    /**
     * Returns true on the EOF.
     */
+   @Override
    public boolean isEOF() {
       if (_is == null) {
          return true;
@@ -239,6 +249,7 @@ public class AbstractBinaryInput
    /**
     * Returns the current location in the file.
     */
+   @Override
    public long getPosition() {
       if (_is == null) {
          return -1;
@@ -250,6 +261,7 @@ public class AbstractBinaryInput
    /**
     * Sets the current location in the file.
     */
+   @Override
    public boolean setPosition(long offset) {
       if (_is == null) {
          return false;
@@ -264,6 +276,7 @@ public class AbstractBinaryInput
       }
    }
 
+   @Override
    public long seek(long offset, int whence) {
       long position;
 
@@ -288,6 +301,7 @@ public class AbstractBinaryInput
       }
    }
 
+   @Override
    public Value stat() {
       return BooleanValue.FALSE;
    }
@@ -297,6 +311,7 @@ public class AbstractBinaryInput
     * The isEOF method will return true
     * after this method has been invoked.
     */
+   @Override
    public void closeRead() {
       ReadStream is = _is;
       _is = null;
@@ -321,6 +336,7 @@ public class AbstractBinaryInput
    /**
     * Closes the file.
     */
+   @Override
    public void close() {
       closeRead();
    }
@@ -328,6 +344,7 @@ public class AbstractBinaryInput
    /**
     * Converts to a string.
     */
+   @Override
    public String toString() {
       if (_is != null) {
          return "AbstractBinaryInput[" + _is.getPath() + "]";

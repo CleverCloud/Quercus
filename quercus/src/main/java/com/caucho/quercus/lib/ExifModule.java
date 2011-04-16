@@ -30,7 +30,6 @@ package com.caucho.quercus.lib;
 
 import com.caucho.quercus.QuercusException;
 import com.caucho.quercus.annotation.Optional;
-import com.caucho.quercus.annotation.Reference;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.LongValue;

@@ -29,11 +29,8 @@
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
-import com.caucho.quercus.QuercusDieException;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
-
-import java.io.IOException;
 
 /**
  * Represents the die expression

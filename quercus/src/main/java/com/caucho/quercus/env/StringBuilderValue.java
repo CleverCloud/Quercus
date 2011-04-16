@@ -244,7 +244,7 @@ public class StringBuilderValue
       return getValueType(_buffer, 0, _length);
    }
 
-   public static final ValueType getValueType(byte[] buffer,
+   public static ValueType getValueType(byte[] buffer,
            int offset,
            int len) {
       if (len == 0) {
@@ -363,7 +363,7 @@ public class StringBuilderValue
       return toDouble(_buffer, 0, _length);
    }
 
-   public static final double toDouble(byte[] buffer, int offset, int len) {
+   public static double toDouble(byte[] buffer, int offset, int len) {
       int start = offset;
       int i = offset;
       int ch = 0;
@@ -615,6 +615,7 @@ public class StringBuilderValue
     * Each character becomes one byte, characters with values above 255 are
     * not correctly preserved.
     */
+   @Override
    public final byte[] toBytes() {
       byte[] bytes = new byte[_length];
 
@@ -629,6 +630,7 @@ public class StringBuilderValue
    /**
     * Returns the character at an index
     */
+   @Override
    public final Value get(Value key) {
       return charValueAt(key.toLong());
    }
@@ -768,6 +770,7 @@ public class StringBuilderValue
    /**
     * Returns the first index of the match string, starting from the head.
     */
+   @Override
    public int indexOf(char match) {
       final int length = _length;
       final byte[] buffer = _buffer;
@@ -887,6 +890,7 @@ public class StringBuilderValue
    /**
     * Returns true if the region matches
     */
+   @Override
    public boolean regionMatches(int offset,
            char[] mBuffer,
            int mOffset,
@@ -911,6 +915,7 @@ public class StringBuilderValue
    /**
     * Returns true if the region matches
     */
+   @Override
    public boolean regionMatchesIgnoreCase(int offset,
            char[] mBuffer,
            int mOffset,
@@ -969,6 +974,7 @@ public class StringBuilderValue
    /**
     * Converts to a string builder
     */
+   @Override
    public StringValue copyStringBuilder() {
       return new StringBuilderValue(this);
    }
@@ -1016,6 +1022,7 @@ public class StringBuilderValue
    /**
     * Converts to a string builder
     */
+   @Override
    public StringValue toStringBuilder(Env env, StringValue value) {
       if (_length + value.length() >= LARGE_BUILDER_THRESHOLD) {
          LargeStringBuilderValue v = new LargeStringBuilderValue(this);
@@ -1329,6 +1336,7 @@ public class StringBuilderValue
    /**
     * Append a buffer to the value.
     */
+   @Override
    public final StringValue append(byte[] buf, int offset, int length) {
       int end = _length + length;
 
@@ -1351,6 +1359,7 @@ public class StringBuilderValue
    /**
     * Append a double to the value.
     */
+   @Override
    public final StringValue append(byte[] buf) {
       return append(buf, 0, buf.length);
    }
@@ -1539,6 +1548,7 @@ public class StringBuilderValue
    /**
     * Return true if the array value is set
     */
+   @Override
    public boolean isset(Value indexV) {
       int index = indexV.toInt();
 
@@ -1552,6 +1562,7 @@ public class StringBuilderValue
     * Prints the value.
     * @param env
     */
+   @Override
    public void print(Env env) {
       env.write(_buffer, 0, _length);
    }
@@ -1560,6 +1571,7 @@ public class StringBuilderValue
     * Prints the value.
     * @param env
     */
+   @Override
    public void print(Env env, WriteStream out) {
       try {
          out.write(_buffer, 0, _length);
@@ -1571,6 +1583,7 @@ public class StringBuilderValue
    /**
     * Serializes the value.
     */
+   @Override
    public void serialize(Env env, StringBuilder sb) {
       sb.append("s:");
       sb.append(_length);
@@ -1648,6 +1661,7 @@ public class StringBuilderValue
       return crc.getValue() & 0xffffffff;
    }
 
+   @Override
    public void ensureAppendCapacity(int newCapacity) {
       ensureCapacity(_length + newCapacity);
    }

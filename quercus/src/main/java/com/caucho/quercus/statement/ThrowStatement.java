@@ -29,7 +29,6 @@
 package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
-import com.caucho.quercus.QuercusException;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
@@ -53,6 +52,7 @@ public class ThrowStatement extends Statement {
    /**
     * Executes the statement, returning the expression value.
     */
+   @Override
    public Value execute(Env env) {
       throw _expr.eval(env).toException(env,
               getLocation().getFileName(),
@@ -62,6 +62,7 @@ public class ThrowStatement extends Statement {
    /**
     * Returns true if control can go past the statement.
     */
+   @Override
    public int fallThrough() {
       return RETURN;
    }

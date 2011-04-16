@@ -87,6 +87,7 @@ public class ProcOpenInput extends ReadStreamInput
    /**
     * Opens a copy.
     */
+   @Override
    public BinaryInput openCopy()
            throws IOException {
       return new ProcOpenInput(_env, _in, _out);
@@ -102,6 +103,7 @@ public class ProcOpenInput extends ReadStreamInput
    /**
     * Converts to a string.
     */
+   @Override
    public String toString() {
       if (_out != null) {
          return "ProcOpenInput[" + _out + "]";
@@ -110,6 +112,7 @@ public class ProcOpenInput extends ReadStreamInput
       }
    }
 
+   @Override
    public void close() {
       _env.removeCleanup(this);
 
@@ -119,6 +122,7 @@ public class ProcOpenInput extends ReadStreamInput
    /**
     * Implements the EnvCleanup interface.
     */
+   @Override
    public void cleanup() {
       try {
          if (_out != null) {

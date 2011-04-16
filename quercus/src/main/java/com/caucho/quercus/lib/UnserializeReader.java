@@ -770,6 +770,7 @@ public final class UnserializeReader {
          _length = length;
       }
 
+      @Override
       public int hashCode() {
          char[] buffer = _buffer;
          int offset = _offset;
@@ -783,6 +784,7 @@ public final class UnserializeReader {
          return hash;
       }
 
+      @Override
       public boolean equals(Object o) {
          if (!(o instanceof StringKey)) {
             return false;

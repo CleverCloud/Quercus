@@ -37,14 +37,17 @@ public class VoidMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new VoidMarshal();
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       throw new UnsupportedOperationException();
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       throw new UnsupportedOperationException();
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       return NullValue.NULL;
    }

@@ -53,10 +53,12 @@ public class ToLongExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return LongValue.create(_expr.evalLong(env));
    }
 
+   @Override
    public String toString() {
       return "((long) " + _expr + ")";
    }

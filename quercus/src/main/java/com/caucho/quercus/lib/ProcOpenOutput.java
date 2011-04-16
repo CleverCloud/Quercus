@@ -63,6 +63,7 @@ public class ProcOpenOutput extends AbstractBinaryOutput
    /**
     * Returns the write stream.
     */
+   @Override
    public OutputStream getOutputStream() {
       return _os;
    }
@@ -70,6 +71,7 @@ public class ProcOpenOutput extends AbstractBinaryOutput
    /**
     * Prints a string to a file.
     */
+   @Override
    public void print(char v)
            throws IOException {
       if (_os != null) {
@@ -80,6 +82,7 @@ public class ProcOpenOutput extends AbstractBinaryOutput
    /**
     * Prints a string to a file.
     */
+   @Override
    public void print(String v)
            throws IOException {
       if (_os != null) {
@@ -90,6 +93,7 @@ public class ProcOpenOutput extends AbstractBinaryOutput
    /**
     * Writes a character
     */
+   @Override
    public void write(int ch)
            throws IOException {
       if (_os != null) {
@@ -100,6 +104,7 @@ public class ProcOpenOutput extends AbstractBinaryOutput
    /**
     * Writes a buffer to a file.
     */
+   @Override
    public void write(byte[] buffer, int offset, int length)
            throws IOException {
       if (_os != null) {
@@ -110,6 +115,7 @@ public class ProcOpenOutput extends AbstractBinaryOutput
    /**
     * Flushes the output.
     */
+   @Override
    public void flush() {
       try {
          if (_os != null) {
@@ -123,6 +129,7 @@ public class ProcOpenOutput extends AbstractBinaryOutput
    /**
     * Closes the file.
     */
+   @Override
    public void closeWrite() {
       close();
    }
@@ -130,6 +137,7 @@ public class ProcOpenOutput extends AbstractBinaryOutput
    /**
     * Closes the file.
     */
+   @Override
    public void close() {
       _env.removeCleanup(this);
 
@@ -139,6 +147,7 @@ public class ProcOpenOutput extends AbstractBinaryOutput
    /**
     * Implements the EnvCleanup interface.
     */
+   @Override
    public void cleanup() {
       try {
          WriteStream os = _os;
@@ -156,6 +165,7 @@ public class ProcOpenOutput extends AbstractBinaryOutput
     * Converts to a string.
     * @param env
     */
+   @Override
    public String toString() {
       return "ProcOpenOutput[pipe]";
    }

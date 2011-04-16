@@ -49,6 +49,7 @@ public class BinaryOrExpr extends AbstractBinaryExpr {
    /**
     * Returns true for a boolean.
     */
+   @Override
    public boolean isBoolean() {
       return true;
    }
@@ -60,6 +61,7 @@ public class BinaryOrExpr extends AbstractBinaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       if (_left.evalBoolean(env) || _right.evalBoolean(env)) {
          return BooleanValue.TRUE;
@@ -75,10 +77,12 @@ public class BinaryOrExpr extends AbstractBinaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public boolean evalBoolean(Env env) {
       return _left.evalBoolean(env) || _right.evalBoolean(env);
    }
 
+   @Override
    public String toString() {
       return "(" + _left + " || " + _right + ")";
    }

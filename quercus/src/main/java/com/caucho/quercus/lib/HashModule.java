@@ -28,7 +28,6 @@
  */
 package com.caucho.quercus.lib;
 
-import com.caucho.config.ConfigException;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.*;
 import com.caucho.quercus.module.*;
@@ -61,6 +60,7 @@ public class HashModule extends AbstractQuercusModule {
    public HashModule() {
    }
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"hash"};
    }
@@ -428,6 +428,7 @@ public class HashModule extends AbstractQuercusModule {
          _digest.update(value);
       }
 
+      @Override
       void update(StringValue value) {
          int len = value.length();
 
@@ -438,14 +439,17 @@ public class HashModule extends AbstractQuercusModule {
          }
       }
 
+      @Override
       void update(byte[] buffer, int offset, int length) {
          _digest.update(buffer, offset, length);
       }
 
+      @Override
       byte[] digest() {
          return _digest.digest();
       }
 
+      @Override
       HashContext copy() {
          try {
             return new HashDigestContext((MessageDigest) _digest.clone());
@@ -456,6 +460,7 @@ public class HashModule extends AbstractQuercusModule {
          }
       }
 
+      @Override
       public String toString() {
          return (getClass().getSimpleName() + "[" + _digest + "]");
       }
@@ -473,6 +478,7 @@ public class HashModule extends AbstractQuercusModule {
          _digest.update(value);
       }
 
+      @Override
       void update(StringValue value) {
          int len = value.length();
 
@@ -501,14 +507,17 @@ public class HashModule extends AbstractQuercusModule {
          TempBuffer.free(tBuf);
       }
 
+      @Override
       void update(byte[] buffer, int offset, int length) {
          _digest.update(buffer, offset, length);
       }
 
+      @Override
       byte[] digest() {
          return _digest.doFinal();
       }
 
+      @Override
       HashContext copy() {
          try {
             return new HashDigestContext((MessageDigest) _digest.clone());
@@ -519,6 +528,7 @@ public class HashModule extends AbstractQuercusModule {
          }
       }
 
+      @Override
       public String toString() {
          return (getClass().getSimpleName() + "[" + _digest + "]");
       }

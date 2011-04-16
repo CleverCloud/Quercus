@@ -37,22 +37,27 @@ public class FloatMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new FloatMarshal();
 
+   @Override
    public boolean isDouble() {
       return true;
    }
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return new Float((float) expr.evalDouble(env));
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return new Float((float) value.toDouble());
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value == null) {
          return DoubleValue.ZERO;

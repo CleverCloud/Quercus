@@ -49,6 +49,7 @@ public class LazyStaticMap extends AbstractMap<StringValue, Var> {
    /**
     * Returns the matching value, or null.
     */
+   @Override
    public Var get(Object key) {
       return (Var) get((StringValue) key);
    }
@@ -87,6 +88,7 @@ public class LazyStaticMap extends AbstractMap<StringValue, Var> {
       return _extMap.put(key, newVar);
    }
 
+   @Override
    public Set<Map.Entry<StringValue, Var>> entrySet() {
       return _extMap.entrySet();
    }

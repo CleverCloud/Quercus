@@ -44,18 +44,22 @@ public class ClassMarshal extends Marshal {
    private static final Logger log = Logger.getLogger(ClassMarshal.class.getName());
    public static final ClassMarshal MARSHAL = new ClassMarshal();
 
+   @Override
    public boolean isString() {
       return true;
    }
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return marshal(env, expr.eval(env), expectedClass);
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       Object obj = value.toJavaObject();
 
@@ -83,6 +87,7 @@ public class ClassMarshal extends Marshal {
       }
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value == null) {
          return NullValue.NULL;
@@ -117,6 +122,7 @@ public class ClassMarshal extends Marshal {
        */
    }
 
+   @Override
    public int getMarshalingCost(Expr expr) {
       if (expr.isString()) {
          return Marshal.ZERO;

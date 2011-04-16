@@ -28,18 +28,13 @@
  */
 package com.caucho.quercus.marshal;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import com.caucho.quercus.env.DoubleValue;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.BigDecimalValue;
 import com.caucho.quercus.env.BigIntegerValue;
 import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
-import com.caucho.quercus.program.JavaClassDef;
-import com.caucho.util.L10N;
 
 /**
  * Code for marshalling arguments.
@@ -48,14 +43,17 @@ public class BigIntegerMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new BigIntegerMarshal();
 
+   @Override
    public Object marshal(Env env, Expr expr, Class argClass) {
       return expr.eval(env).toBigInteger();
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class argClass) {
       return value.toBigInteger();
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       return env.wrapJava((BigInteger) value);
    }

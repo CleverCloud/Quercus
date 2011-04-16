@@ -30,8 +30,6 @@ package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.StringValue;
-import com.caucho.quercus.env.UnicodeValueImpl;
 import com.caucho.quercus.env.Value;
 
 /**
@@ -62,10 +60,12 @@ public class ToStringExpr extends AbstractUnaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return _expr.eval(env).toString(env);
    }
 
+   @Override
    public String toString() {
       return "((string) " + _expr + ")";
    }

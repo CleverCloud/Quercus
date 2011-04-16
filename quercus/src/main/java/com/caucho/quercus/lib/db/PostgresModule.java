@@ -117,6 +117,7 @@ public class PostgresModule extends AbstractQuercusModule {
    /**
     * Returns true for the postgres extension.
     */
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"postgres", "pgsql"};
    }

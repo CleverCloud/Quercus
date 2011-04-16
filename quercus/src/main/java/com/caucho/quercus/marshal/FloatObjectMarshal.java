@@ -37,10 +37,12 @@ public class FloatObjectMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new FloatObjectMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return new Float((float) expr.evalDouble(env));
    }
@@ -50,6 +52,7 @@ public class FloatObjectMarshal extends Marshal {
       return value.toJavaFloat();
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value == null) {
          return DoubleValue.ZERO;

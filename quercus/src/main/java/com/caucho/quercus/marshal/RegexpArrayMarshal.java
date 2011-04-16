@@ -29,7 +29,6 @@
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.lib.regexp.RegexpModule;
 import com.caucho.quercus.lib.regexp.Regexp;
@@ -42,14 +41,17 @@ public class RegexpArrayMarshal extends StringMarshal {
 
    public static final RegexpMarshal MARSHAL = new RegexpMarshal();
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return RegexpModule.createRegexpArray(env, expr.eval(env));
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return RegexpModule.createRegexpArray(env, value);
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       throw new UnsupportedOperationException(getClass().getName());
    }

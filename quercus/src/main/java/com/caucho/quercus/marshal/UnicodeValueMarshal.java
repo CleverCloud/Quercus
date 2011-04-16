@@ -29,7 +29,6 @@
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.UnicodeValueImpl;
 import com.caucho.quercus.env.UnicodeValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
@@ -38,6 +37,7 @@ public class UnicodeValueMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new UnicodeValueMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
@@ -50,14 +50,17 @@ public class UnicodeValueMarshal extends Marshal {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return expr.eval(env).toUnicodeValue(env);
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return value.toUnicodeValue(env);
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value instanceof UnicodeValue) {
          return (UnicodeValue) value;

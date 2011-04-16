@@ -29,7 +29,6 @@
 package com.caucho.quercus.env;
 
 import com.caucho.quercus.annotation.Delegates;
-import com.caucho.quercus.env.ObjectValue;
 
 @Delegates(IteratorAggregateDelegate.class)
 public interface IteratorAggregate

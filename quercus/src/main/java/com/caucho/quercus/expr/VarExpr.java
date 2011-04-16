@@ -31,11 +31,8 @@ package com.caucho.quercus.expr;
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.ArrayValueImpl;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.MethodIntern;
-import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.StringValue;
-import com.caucho.quercus.env.ConstStringValue;
 import com.caucho.quercus.env.Var;
 import com.caucho.quercus.parser.QuercusParser;
 
@@ -144,6 +141,7 @@ public class VarExpr
    /**
     * Evaluates the expression as an isset() statement.
     */
+   @Override
    public boolean evalIsset(Env env) {
       return env.getValue(_name, false, false).isset();
    }
@@ -210,6 +208,7 @@ public class VarExpr
     * @param env the calling environment.
     * @return the expression value.
     */
+   @Override
    public Value evalObject(Env env) {
       Value value;
 
@@ -242,6 +241,7 @@ public class VarExpr
     * @param env the calling environment.
     * @return the expression value.
     */
+   @Override
    public Var evalVar(Env env) {
       return env.getVar(_name);
    }
@@ -301,10 +301,12 @@ public class VarExpr
       env.unsetLocalVar(_name);
    }
 
+   @Override
    public int hashCode() {
       return _name.hashCode();
    }
 
+   @Override
    public boolean equals(Object o) {
       if (this == o) {
          return true;
@@ -317,6 +319,7 @@ public class VarExpr
       return _var == var._var;
    }
 
+   @Override
    public String toString() {
       return "$" + _name;
    }

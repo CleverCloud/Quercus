@@ -29,7 +29,6 @@
 package com.caucho.quercus.lib;
 
 import com.caucho.quercus.QuercusException;
-import com.caucho.quercus.QuercusModuleException;
 import com.caucho.quercus.annotation.NotNull;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.annotation.ReturnNullAsFalse;
@@ -104,6 +103,7 @@ public class ImageModule extends AbstractQuercusModule {
    public static final int IMG_FILTER_MEAN_REMOVAL = 9;
    public static final int IMG_FILTER_SMOOTH = 10;
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"gd"};
    }
@@ -1845,6 +1845,7 @@ public class ImageModule extends AbstractQuercusModule {
          }
       }
 
+      @Override
       public String toString() {
          return "resource(Image)";
       }

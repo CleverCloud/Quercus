@@ -38,6 +38,7 @@ public class DoubleValueMarshal
 
    public static final Marshal MARSHAL = new DoubleValueMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
@@ -50,14 +51,17 @@ public class DoubleValueMarshal
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return expr.eval(env).toDoubleValue();
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return value.toDoubleValue();
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value instanceof DoubleValue) {
          return (DoubleValue) value;

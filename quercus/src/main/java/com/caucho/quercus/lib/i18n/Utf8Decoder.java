@@ -46,6 +46,7 @@ public class Utf8Decoder
       super(charset);
    }
 
+   @Override
    public boolean isUtf8() {
       return true;
    }

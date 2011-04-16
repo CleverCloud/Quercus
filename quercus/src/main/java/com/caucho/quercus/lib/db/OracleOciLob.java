@@ -671,6 +671,7 @@ public class OracleOciLob {
       }
    }
 
+   @Override
    public String toString() {
 
       String typeName = "UNKNOWN";

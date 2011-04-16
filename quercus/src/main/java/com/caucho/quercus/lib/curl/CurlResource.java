@@ -769,6 +769,7 @@ public class CurlResource {
    /**
     * Returns a copy of this resource.
     */
+   @Override
    public CurlResource clone() {
       CurlResource curl = new CurlResource();
 
@@ -820,6 +821,7 @@ public class CurlResource {
       return curl;
    }
 
+   @Override
    public String toString() {
       return "CurlResource[" + _requestMethod + "]";
    }

@@ -54,6 +54,7 @@ public class LiteralLongExpr extends Expr {
    /**
     * Returns true for a literal expression.
     */
+   @Override
    public boolean isLiteral() {
       return true;
    }
@@ -61,6 +62,7 @@ public class LiteralLongExpr extends Expr {
    /**
     * Returns true for a long value.
     */
+   @Override
    public boolean isLong() {
       return true;
    }
@@ -72,10 +74,12 @@ public class LiteralLongExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return _objValue;
    }
 
+   @Override
    public String toString() {
       return String.valueOf(_value);
    }

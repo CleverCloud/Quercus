@@ -37,18 +37,22 @@ public class CharacterObjectMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new CharacterObjectMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return new Character(expr.evalChar(env));
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return value.toJavaCharacter();
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value == null) {
          return NullValue.NULL;

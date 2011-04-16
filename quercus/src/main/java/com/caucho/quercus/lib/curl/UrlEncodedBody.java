@@ -41,6 +41,7 @@ public class UrlEncodedBody extends PostBody {
    private StringValue _body;
    private int _length;
 
+   @Override
    protected boolean init(Env env, Value body) {
       _body = body.toStringValue(env);
       _length = _body.length();
@@ -48,6 +49,7 @@ public class UrlEncodedBody extends PostBody {
       return true;
    }
 
+   @Override
    public String getContentType(@Optional String contentType) {
       if (contentType != null) {
          return contentType;
@@ -56,10 +58,12 @@ public class UrlEncodedBody extends PostBody {
       }
    }
 
+   @Override
    public long getContentLength() {
       return (long) _length;
    }
 
+   @Override
    public void writeTo(Env env, OutputStream os)
            throws IOException {
       for (int i = 0; i < _length; i++) {

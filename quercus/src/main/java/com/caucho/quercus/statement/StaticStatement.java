@@ -30,7 +30,6 @@ package com.caucho.quercus.statement;
 
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.QuercusClass;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Var;
@@ -56,6 +55,7 @@ public class StaticStatement extends Statement {
       _initValue = initValue;
    }
 
+   @Override
    public Value execute(Env env) {
       try {
          if (_staticName == null) {

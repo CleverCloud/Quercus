@@ -138,6 +138,7 @@ public class ConnectionEntry implements EnvCleanup {
       }
    }
 
+   @Override
    public void cleanup()
            throws SQLException {
       Connection conn = _conn;
@@ -148,6 +149,7 @@ public class ConnectionEntry implements EnvCleanup {
       }
    }
 
+   @Override
    public String toString() {
       return getClass().getSimpleName() + "[ds=" + _ds + ", user=" + _user + "]";
    }

@@ -28,8 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.QuercusRuntimeException;
-import com.caucho.quercus.env.ArrayValue.Entry;
 import com.caucho.quercus.program.JavaClassDef;
 
 import java.util.*;
@@ -216,14 +214,17 @@ public class JavaCollectionAdapter extends JavaAdapter {
          _iterator = _collection.iterator();
       }
 
+      @Override
       public boolean hasNext() {
          return _iterator.hasNext();
       }
 
+      @Override
       public Map.Entry<Object, Object> next() {
          return new CollectionEntry(_index++, _iterator.next());
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -240,14 +241,17 @@ public class JavaCollectionAdapter extends JavaAdapter {
          _value = value;
       }
 
+      @Override
       public Object getKey() {
          return _key;
       }
 
+      @Override
       public Object getValue() {
          return _value;
       }
 
+      @Override
       public Object setValue(Object value) {
          Object oldValue = _value;
 
@@ -285,16 +289,19 @@ public class JavaCollectionAdapter extends JavaAdapter {
          _iterator = _collection.iterator();
       }
 
+      @Override
       public boolean hasNext() {
          return _iterator.hasNext();
       }
 
+      @Override
       public Map.Entry<Value, Value> next() {
          Value val = wrapJava(_iterator.next());
 
          return new ArrayValue.Entry(LongValue.create(_index++), val);
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -328,16 +335,19 @@ public class JavaCollectionAdapter extends JavaAdapter {
          _iterator = _collection.iterator();
       }
 
+      @Override
       public boolean hasNext() {
          return _iterator.hasNext();
       }
 
+      @Override
       public Value next() {
          _iterator.next();
 
          return LongValue.create(_index++);
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -352,14 +362,17 @@ public class JavaCollectionAdapter extends JavaAdapter {
          _iterator = _collection.iterator();
       }
 
+      @Override
       public boolean hasNext() {
          return _iterator.hasNext();
       }
 
+      @Override
       public Value next() {
          return wrapJava(_iterator.next());
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }

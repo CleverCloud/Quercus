@@ -28,9 +28,6 @@
  */
 package com.caucho.quercus.lib.db;
 
-import com.caucho.util.IntArray;
-import com.caucho.util.IntMap;
-
 public class MysqlLatin1Utility {
    // Mysql's "latin1" is not strict ISO-8859-1 as it is more like
    // ISO-8859-1 supplemented with some of Windows-1252 0x80-0x9F

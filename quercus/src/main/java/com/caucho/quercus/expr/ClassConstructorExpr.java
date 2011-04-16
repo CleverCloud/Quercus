@@ -35,7 +35,6 @@ import com.caucho.quercus.env.QuercusClass;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.function.AbstractFunction;
-import com.caucho.quercus.program.Arg;
 import com.caucho.util.L10N;
 
 import java.util.ArrayList;
@@ -84,6 +83,7 @@ public class ClassConstructorExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       QuercusClass cl = env.findClass(_className);
 
@@ -108,6 +108,7 @@ public class ClassConstructorExpr extends Expr {
       }
    }
 
+   @Override
    public String toString() {
       return _className + "::" + _name + "()";
    }

@@ -65,6 +65,7 @@ public class DoubleValue extends NumberValue
    /**
     * Returns the type.
     */
+   @Override
    public String getType() {
       // php/0142
 
@@ -82,6 +83,7 @@ public class DoubleValue extends NumberValue
    /**
     * Returns true for a double.
     */
+   @Override
    public boolean isDoubleConvertible() {
       return true;
    }
@@ -89,6 +91,7 @@ public class DoubleValue extends NumberValue
    /**
     * Returns true for integer looking doubles.
     */
+   @Override
    public boolean isLongConvertible() {
       return _value == (double) ((long) _value);
    }
@@ -173,6 +176,7 @@ public class DoubleValue extends NumberValue
    /**
     * Converts to a boolean.
     */
+   @Override
    public boolean toBoolean() {
       return _value != 0;
    }
@@ -180,6 +184,7 @@ public class DoubleValue extends NumberValue
    /**
     * Converts to a long.
     */
+   @Override
    public long toLong() {
       if ((_value > (double) Long.MAX_VALUE)
               || (_value < (double) Long.MIN_VALUE)) {
@@ -192,6 +197,7 @@ public class DoubleValue extends NumberValue
    /**
     * Converts to a double.
     */
+   @Override
    public double toDouble() {
       return _value;
    }
@@ -199,6 +205,7 @@ public class DoubleValue extends NumberValue
    /**
     * Converts to a double.
     */
+   @Override
    public DoubleValue toDoubleValue() {
       return this;
    }
@@ -214,6 +221,7 @@ public class DoubleValue extends NumberValue
    /**
     * Converts to a key.
     */
+   @Override
    public Value toKey() {
       return LongValue.create((long) _value);
    }
@@ -221,6 +229,7 @@ public class DoubleValue extends NumberValue
    /**
     * Converts to a java object.
     */
+   @Override
    public Object toJavaObject() {
       return new Double(_value);
    }
@@ -228,6 +237,7 @@ public class DoubleValue extends NumberValue
    /**
     * Negates the value.
     */
+   @Override
    public Value neg() {
       return new DoubleValue(-_value);
    }
@@ -235,6 +245,7 @@ public class DoubleValue extends NumberValue
    /**
     * Returns the value
     */
+   @Override
    public Value pos() {
       return this;
    }
@@ -242,6 +253,7 @@ public class DoubleValue extends NumberValue
    /**
     * Multiplies to the following value.
     */
+   @Override
    public Value add(Value rValue) {
       return new DoubleValue(_value + rValue.toDouble());
    }
@@ -249,6 +261,7 @@ public class DoubleValue extends NumberValue
    /**
     * Multiplies to the following value.
     */
+   @Override
    public Value add(long lValue) {
       return new DoubleValue(lValue + _value);
    }
@@ -311,6 +324,7 @@ public class DoubleValue extends NumberValue
    /**
     * Increment the following value.
     */
+   @Override
    public Value increment(int incr) {
       return new DoubleValue(_value + incr);
    }
@@ -318,6 +332,7 @@ public class DoubleValue extends NumberValue
    /**
     * Multiplies to the following value.
     */
+   @Override
    public Value mul(Value rValue) {
       return new DoubleValue(_value * rValue.toDouble());
    }
@@ -325,6 +340,7 @@ public class DoubleValue extends NumberValue
    /**
     * Multiplies to the following value.
     */
+   @Override
    public Value mul(long lValue) {
       return new DoubleValue(lValue * _value);
    }
@@ -332,6 +348,7 @@ public class DoubleValue extends NumberValue
    /**
     * Absolute value.
     */
+   @Override
    public Value abs() {
       if (_value >= 0) {
          return this;
@@ -343,6 +360,7 @@ public class DoubleValue extends NumberValue
    /**
     * Returns true for equality
     */
+   @Override
    public boolean eql(Value rValue) {
       rValue = rValue.toValue();
 
@@ -359,6 +377,7 @@ public class DoubleValue extends NumberValue
     * Converts to a string.
     * @param env
     */
+   @Override
    public String toString() {
       long longValue = (long) _value;
 
@@ -422,6 +441,7 @@ public class DoubleValue extends NumberValue
     * Prints the value.
     * @param env
     */
+   @Override
    public void print(Env env) {
       env.print(toString());
    }
@@ -429,6 +449,7 @@ public class DoubleValue extends NumberValue
    /**
     * Serializes the value.
     */
+   @Override
    public void serialize(Env env, StringBuilder sb) {
       sb.append("d:");
       sb.append(_value);
@@ -438,6 +459,7 @@ public class DoubleValue extends NumberValue
    /**
     * Exports the value.
     */
+   @Override
    public void varExport(StringBuilder sb) {
       sb.append(toString());
    }
@@ -450,6 +472,7 @@ public class DoubleValue extends NumberValue
     *
     * @param out the writer to the Java source code.
     */
+   @Override
    public void generate(PrintWriter out)
            throws IOException {
       if (_value == 0) {
@@ -466,6 +489,7 @@ public class DoubleValue extends NumberValue
    /**
     * Returns the hash code
     */
+   @Override
    public int hashCode() {
       return (int) (37 + 65521 * _value);
    }
@@ -473,6 +497,7 @@ public class DoubleValue extends NumberValue
    /**
     * Compare for equality.
     */
+   @Override
    public boolean equals(Object o) {
       if (this == o) {
          return true;
@@ -485,6 +510,7 @@ public class DoubleValue extends NumberValue
       return _value == value._value;
    }
 
+   @Override
    public void varDumpImpl(Env env,
            WriteStream out,
            int depth,

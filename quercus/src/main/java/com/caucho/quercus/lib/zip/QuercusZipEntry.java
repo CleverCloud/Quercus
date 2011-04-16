@@ -27,14 +27,12 @@
  */
 package com.caucho.quercus.lib.zip;
 
-import com.caucho.quercus.*;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.annotation.ReturnNullAsFalse;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.lib.file.BinaryInput;
 import com.caucho.util.L10N;
-import com.caucho.vfs.TempBuffer;
 
 import java.io.*;
 import java.util.logging.Logger;
@@ -170,6 +168,7 @@ public class QuercusZipEntry {
       }
    }
 
+   @Override
    public String toString() {
       return "QuercusZipEntry[" + _entry.getName() + "]";
    }

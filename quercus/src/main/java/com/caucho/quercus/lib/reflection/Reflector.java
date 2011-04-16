@@ -29,10 +29,6 @@
 package com.caucho.quercus.lib.reflection;
 
 import com.caucho.quercus.annotation.ClassImplementation;
-import com.caucho.quercus.annotation.Optional;
-import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.StringValue;
-import com.caucho.quercus.env.Value;
 
 @ClassImplementation
 public interface Reflector {

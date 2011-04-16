@@ -29,8 +29,6 @@
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.NullValue;
-import com.caucho.quercus.env.UnexpectedValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
@@ -59,6 +57,7 @@ public class ExpectMarshal extends Marshal {
       }
    }
 
+   @Override
    public boolean isReadOnly() {
       return false;
    }
@@ -71,14 +70,17 @@ public class ExpectMarshal extends Marshal {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return expect(env, expr.eval(env));
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return expect(env, value.toValue());
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       return (Value) value;
    }

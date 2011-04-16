@@ -126,6 +126,7 @@ public final class CompiledConstStringValue
       _compiledHashCode = hashCode;
    }
 
+   @Override
    public boolean isStatic() {
       return true;
    }
@@ -183,6 +184,7 @@ public final class CompiledConstStringValue
       return _compiledHashCode;
    }
 
+   @Override
    public final String toString() {
       return _string;
    }

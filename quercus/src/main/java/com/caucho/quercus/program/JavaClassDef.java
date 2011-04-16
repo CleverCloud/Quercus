@@ -1370,6 +1370,7 @@ public class JavaClassDef extends ClassDef {
          _iteratorMethod = iterator;
       }
 
+      @Override
       public Iterator<Map.Entry<Value, Value>> getIterator(Env env, ObjectValue qThis) {
          try {
             Iterator iterator = (Iterator) _iteratorMethod.invoke(qThis.toJavaObject());
@@ -1382,6 +1383,7 @@ public class JavaClassDef extends ClassDef {
          }
       }
 
+      @Override
       public Iterator<Value> getKeyIterator(Env env, ObjectValue qThis) {
          try {
             Iterator iterator =
@@ -1395,6 +1397,7 @@ public class JavaClassDef extends ClassDef {
          }
       }
 
+      @Override
       public Iterator<Value> getValueIterator(Env env, ObjectValue qThis) {
          try {
             Iterator iterator =
@@ -1419,16 +1422,19 @@ public class JavaClassDef extends ClassDef {
          _iterator = iterator;
       }
 
+      @Override
       public Value next() {
          _iterator.next();
 
          return LongValue.create(_index++);
       }
 
+      @Override
       public boolean hasNext() {
          return _iterator.hasNext();
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -1445,10 +1451,12 @@ public class JavaClassDef extends ClassDef {
          _iterator = iterator;
       }
 
+      @Override
       public Value next() {
          return _env.wrapJava(_iterator.next());
       }
 
+      @Override
       public boolean hasNext() {
          if (_iterator != null) {
             return _iterator.hasNext();
@@ -1457,6 +1465,7 @@ public class JavaClassDef extends ClassDef {
          }
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -1474,6 +1483,7 @@ public class JavaClassDef extends ClassDef {
          _iterator = iterator;
       }
 
+      @Override
       public Map.Entry<Value, Value> next() {
          Object next = _iterator.next();
          int index = _index++;
@@ -1495,6 +1505,7 @@ public class JavaClassDef extends ClassDef {
          }
       }
 
+      @Override
       public boolean hasNext() {
          if (_iterator != null) {
             return _iterator.hasNext();
@@ -1503,6 +1514,7 @@ public class JavaClassDef extends ClassDef {
          }
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -1519,14 +1531,17 @@ public class JavaClassDef extends ClassDef {
          _value = value;
       }
 
+      @Override
       public Value getKey() {
          return _key;
       }
 
+      @Override
       public Value getValue() {
          return _value;
       }
 
+      @Override
       public Value setValue(Value value) {
          throw new UnsupportedOperationException();
       }

@@ -29,7 +29,6 @@
 package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
-import com.caucho.quercus.QuercusException;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.QuercusClass;
@@ -77,6 +76,7 @@ public class ObjectNewVarExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       String name = _name.evalString(env).intern();
       QuercusClass cl = env.findAbstractClass(name);
@@ -100,6 +100,7 @@ public class ObjectNewVarExpr extends Expr {
       }
    }
 
+   @Override
    public String toString() {
       return _name + "()";
    }

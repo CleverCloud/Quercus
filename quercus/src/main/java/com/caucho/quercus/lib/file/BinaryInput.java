@@ -32,7 +32,6 @@ import com.caucho.quercus.env.StringValue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * Interface for a Quercus binary input stream
@@ -95,16 +94,19 @@ public interface BinaryInput extends BinaryStream {
    /**
     * Returns the current location in the stream
     */
+   @Override
    public long getPosition();
 
    /**
     * Sets the current location in the stream
     */
+   @Override
    public boolean setPosition(long offset);
 
    /**
     * Closes the stream.
     */
+   @Override
    public void close();
 
    /**

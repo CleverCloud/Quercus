@@ -62,6 +62,7 @@ public class ClassStaticStatement
       _initValue = initValue;
    }
 
+   @Override
    public Value execute(Env env) {
       try {
          // TODO: this isn't reliable, needs to be Quercus-based

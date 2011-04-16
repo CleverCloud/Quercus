@@ -71,7 +71,7 @@ public class ReflectionProperty
       return new ReflectionProperty(prop);
    }
 
-   final private void __clone() {
+   private void __clone() {
    }
 
    public static ReflectionProperty __construct(Env env,
@@ -141,6 +141,7 @@ public class ReflectionProperty
       return _prop.getComment(env);
    }
 
+   @Override
    public String toString() {
       return "ReflectionProperty[" + _prop.toString() + "]";
    }
@@ -225,6 +226,7 @@ public class ReflectionProperty
          return def.getFieldComment(_nameV);
       }
 
+      @Override
       public String toString() {
          if (_cls.getName() != null) {
             return _cls.getName() + "->" + _nameV;
@@ -276,6 +278,7 @@ public class ReflectionProperty
          return null;
       }
 
+      @Override
       public String getComment(Env env) {
          QuercusClass cls = getDeclaringClass(env, _cls);
 
@@ -284,6 +287,7 @@ public class ReflectionProperty
          return def.getStaticFieldComment(_name.toString());
       }
 
+      @Override
       public String toString() {
          if (_cls.getName() != null) {
             return _cls.getName() + "::" + _name;

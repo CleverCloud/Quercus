@@ -37,18 +37,22 @@ public class LongObjectMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new LongObjectMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return new Long(expr.evalLong(env));
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return value.toJavaLong();
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value == null) {
          return LongValue.ZERO;

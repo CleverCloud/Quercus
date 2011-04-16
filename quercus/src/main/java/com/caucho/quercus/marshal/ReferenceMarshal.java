@@ -36,14 +36,17 @@ public class ReferenceMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new ReferenceMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return false;
    }
 
+   @Override
    public boolean isReference() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       // quercus/0d1k
       return expr.evalRef(env);
@@ -54,6 +57,7 @@ public class ReferenceMarshal extends Marshal {
       return value.toLocalVarDeclAsRef();
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       throw new UnsupportedOperationException();
    }

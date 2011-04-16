@@ -266,6 +266,7 @@ abstract public class ClassDef {
       return null;
    }
 
+   @Override
    public String toString() {
       return getClass().getSimpleName()
               + "@"

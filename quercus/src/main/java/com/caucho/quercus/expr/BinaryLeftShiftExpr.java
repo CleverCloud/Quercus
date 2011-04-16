@@ -48,6 +48,7 @@ public class BinaryLeftShiftExpr extends AbstractBinaryExpr {
    /**
     * Returns true for a long.
     */
+   @Override
    public boolean isLong() {
       return true;
    }
@@ -59,6 +60,7 @@ public class BinaryLeftShiftExpr extends AbstractBinaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value lValue = _left.eval(env);
       Value rValue = _right.eval(env);
@@ -66,6 +68,7 @@ public class BinaryLeftShiftExpr extends AbstractBinaryExpr {
       return lValue.lshift(rValue);
    }
 
+   @Override
    public String toString() {
       return "(" + _left + " << " + _right + ")";
    }

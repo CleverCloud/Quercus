@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.caucho.quercus.env.ArrayValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.EnvCleanup;
 import com.caucho.quercus.env.StringValue;
@@ -189,6 +188,7 @@ public class HttpInputOutput extends AbstractBinaryOutput
    /**
     * Appends to a string builder.
     */
+   @Override
    public StringValue appendTo(StringValue builder)
            throws IOException {
       if (_is != null) {
@@ -201,6 +201,7 @@ public class HttpInputOutput extends AbstractBinaryOutput
    /**
     * Returns the read stream.
     */
+   @Override
    public InputStream getInputStream() {
       return _is;
    }
@@ -208,6 +209,7 @@ public class HttpInputOutput extends AbstractBinaryOutput
    /**
     * Opens a copy.
     */
+   @Override
    public BinaryInput openCopy()
            throws IOException {
       return new HttpInputOutput(_env, _path, _context);
@@ -216,6 +218,7 @@ public class HttpInputOutput extends AbstractBinaryOutput
    /**
     * Reads a character from a file, returning -1 on EOF.
     */
+   @Override
    public int read()
            throws IOException {
       if (_is != null) {
@@ -228,6 +231,7 @@ public class HttpInputOutput extends AbstractBinaryOutput
    /**
     * Reads a buffer from a file, returning -1 on EOF.
     */
+   @Override
    public int read(byte[] buffer, int offset, int length)
            throws IOException {
       if (_is != null) {
@@ -252,6 +256,7 @@ public class HttpInputOutput extends AbstractBinaryOutput
    /**
     * Reads a Binary string.
     */
+   @Override
    public StringValue read(int length)
            throws IOException {
       StringValue bb = _env.createBinaryBuilder();
@@ -295,6 +300,7 @@ public class HttpInputOutput extends AbstractBinaryOutput
    /**
     * Reads the optional linefeed character from a \r\n
     */
+   @Override
    public boolean readOptionalLinefeed()
            throws IOException {
       int ch = read();
@@ -310,6 +316,7 @@ public class HttpInputOutput extends AbstractBinaryOutput
    /**
     * Returns true on the EOF.
     */
+   @Override
    public boolean isEOF() {
       try {
          if (_is == null) {
@@ -364,6 +371,7 @@ public class HttpInputOutput extends AbstractBinaryOutput
    /**
     * Closes the file for reading.
     */
+   @Override
    public void closeRead() {
       close();
    }
@@ -371,6 +379,7 @@ public class HttpInputOutput extends AbstractBinaryOutput
    /**
     * Closes the file.
     */
+   @Override
    public void close() {
       _env.removeCleanup(this);
 
@@ -398,6 +407,7 @@ public class HttpInputOutput extends AbstractBinaryOutput
       }
    }
 
+   @Override
    public String toString() {
       return "HttpInputOutput[" + _path + "]";
    }

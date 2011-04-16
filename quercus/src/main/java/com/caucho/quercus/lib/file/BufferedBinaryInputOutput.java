@@ -73,6 +73,7 @@ abstract public class BufferedBinaryInputOutput
    /**
     * Unread the last byte.
     */
+   @Override
    public void unread()
            throws IOException {
       if (_is != null) {
@@ -84,6 +85,7 @@ abstract public class BufferedBinaryInputOutput
    /**
     * Reads a character from a file, returning -1 on EOF.
     */
+   @Override
    public int read()
            throws IOException {
       try {
@@ -154,6 +156,7 @@ abstract public class BufferedBinaryInputOutput
    /**
     * Reads a line from a file, returning null on EOF.
     */
+   @Override
    public StringValue readLine(long length)
            throws IOException {
       try {
@@ -173,6 +176,7 @@ abstract public class BufferedBinaryInputOutput
    /**
     * Returns the current location in the file.
     */
+   @Override
    public long getPosition() {
       if (_is != null) {
          return _is.getPosition();
@@ -184,6 +188,7 @@ abstract public class BufferedBinaryInputOutput
    /**
     * Sets the current location in the file.
     */
+   @Override
    public boolean setPosition(long offset) {
       if (_is == null) {
          return false;
@@ -198,6 +203,7 @@ abstract public class BufferedBinaryInputOutput
       }
    }
 
+   @Override
    public Value stat() {
       return BooleanValue.FALSE;
    }
@@ -205,6 +211,7 @@ abstract public class BufferedBinaryInputOutput
    /**
     * Converts to a string.
     */
+   @Override
    public String toString() {
       if (_is != null) {
          return "BufferedBinaryInputOutput[" + _is.getPath() + "]";

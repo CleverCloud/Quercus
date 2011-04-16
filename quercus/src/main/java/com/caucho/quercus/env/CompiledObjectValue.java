@@ -28,14 +28,12 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.expr.Expr;
 import com.caucho.quercus.function.AbstractFunction;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;

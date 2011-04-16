@@ -45,6 +45,7 @@ public class LazySaveEnvVar extends EnvVar {
    /**
     * Returns the current value.
     */
+   @Override
    public Value get() {
       return getEnvVar().get();
    }
@@ -52,6 +53,7 @@ public class LazySaveEnvVar extends EnvVar {
    /**
     * Sets the current value.
     */
+   @Override
    public Value set(Value value) {
       return getEnvVar().set(value);
    }
@@ -59,6 +61,7 @@ public class LazySaveEnvVar extends EnvVar {
    /**
     * Returns the current Var.
     */
+   @Override
    public Var getVar() {
       return getEnvVar().getVar();
    }
@@ -66,6 +69,7 @@ public class LazySaveEnvVar extends EnvVar {
    /**
     * Sets the var.
     */
+   @Override
    public Var setVar(Var var) {
       return getEnvVar().setVar(var);
    }

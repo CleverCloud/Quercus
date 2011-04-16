@@ -32,7 +32,6 @@ import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.ConstStringValue;
 import com.caucho.quercus.env.StringValue;
-import com.caucho.quercus.env.StringBuilderValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.parser.QuercusParser;
 
@@ -66,6 +65,7 @@ public class LiteralStringExpr extends Expr {
    /**
     * Returns true for a literal expression.
     */
+   @Override
    public boolean isLiteral() {
       return true;
    }
@@ -73,6 +73,7 @@ public class LiteralStringExpr extends Expr {
    /**
     * Returns true if the expression evaluates to a string.
     */
+   @Override
    public boolean isString() {
       return true;
    }
@@ -83,6 +84,7 @@ public class LiteralStringExpr extends Expr {
    /**
     * Creates a class field $class::foo
     */
+   @Override
    public Expr createClassConst(QuercusParser parser, String name) {
       ExprFactory factory = parser.getExprFactory();
 
@@ -108,6 +110,7 @@ public class LiteralStringExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalConstant() {
       return _value;
    }
@@ -119,6 +122,7 @@ public class LiteralStringExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return _value;
    }
@@ -135,6 +139,7 @@ public class LiteralStringExpr extends Expr {
       return _value;
    }
 
+   @Override
    public String toString() {
       return "\"" + _value + "\"";
    }

@@ -48,6 +48,7 @@ public class BinaryMulExpr extends AbstractBinaryExpr {
    /**
     * Return true for a double value
     */
+   @Override
    public boolean isDouble() {
       return _left.isDouble() || _right.isDouble();
    }
@@ -55,6 +56,7 @@ public class BinaryMulExpr extends AbstractBinaryExpr {
    /**
     * Return true for a long value
     */
+   @Override
    public boolean isLong() {
       return _left.isLong() && _right.isLong();
    }
@@ -62,6 +64,7 @@ public class BinaryMulExpr extends AbstractBinaryExpr {
    /**
     * Return true for a number
     */
+   @Override
    public boolean isNumber() {
       return true;
    }
@@ -73,6 +76,7 @@ public class BinaryMulExpr extends AbstractBinaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value lValue = _left.eval(env);
       Value rValue = _right.eval(env);
@@ -80,6 +84,7 @@ public class BinaryMulExpr extends AbstractBinaryExpr {
       return lValue.mul(rValue);
    }
 
+   @Override
    public String toString() {
       return "(" + _left + " * " + _right + ")";
    }

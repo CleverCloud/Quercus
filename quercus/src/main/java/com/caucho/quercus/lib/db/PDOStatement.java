@@ -367,6 +367,7 @@ public class PDOStatement
    /**
     * Implements the EnvCleanup interface.
     */
+   @Override
    public void cleanup() {
       ResultSet resultSet = _resultSet;
       Statement statement = _statement;
@@ -1064,6 +1065,7 @@ public class PDOStatement
    /**
     * Returns an iterator of the values.
     */
+   @Override
    public Iterator<Value> iterator() {
       Value value = fetchAll(0, -1);
 
@@ -1393,6 +1395,7 @@ public class PDOStatement
       return true;
    }
 
+   @Override
    public String toString() {
       return "PDOStatement[" + _query + "]";
    }

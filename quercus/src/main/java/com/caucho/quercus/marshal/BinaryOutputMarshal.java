@@ -32,26 +32,26 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.JavaValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
-import com.caucho.quercus.lib.file.BinaryInput;
 import com.caucho.quercus.lib.file.BinaryOutput;
-import com.caucho.quercus.lib.file.ReadStreamInput;
 import com.caucho.quercus.lib.file.WriteStreamOutput;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 
 public class BinaryOutputMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new BinaryOutputMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return marshal(env, expr.eval(env), expectedClass);
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       if (value == null) {
          return null;
@@ -90,6 +90,7 @@ public class BinaryOutputMarshal extends Marshal {
       }
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       return (Value) value;
    }

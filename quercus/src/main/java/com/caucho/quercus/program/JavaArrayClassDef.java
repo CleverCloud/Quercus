@@ -28,34 +28,12 @@
  */
 package com.caucho.quercus.program;
 
-import com.caucho.quercus.QuercusContext;
-import com.caucho.quercus.QuercusModuleException;
-import com.caucho.quercus.QuercusException;
-import com.caucho.quercus.QuercusRuntimeException;
-import com.caucho.quercus.annotation.*;
 import com.caucho.quercus.env.*;
-import com.caucho.quercus.expr.Expr;
-import com.caucho.quercus.expr.LiteralExpr;
-import com.caucho.quercus.marshal.JavaMarshal;
 import com.caucho.quercus.marshal.Marshal;
 import com.caucho.quercus.marshal.MarshalFactory;
 import com.caucho.quercus.module.ModuleContext;
-import com.caucho.util.L10N;
-import com.caucho.vfs.WriteStream;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URL;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Represents an introspected Java class.

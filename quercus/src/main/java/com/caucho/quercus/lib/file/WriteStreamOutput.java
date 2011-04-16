@@ -52,10 +52,12 @@ public class WriteStreamOutput extends OutputStream implements BinaryOutput {
    /**
     * Returns the input stream.
     */
+   @Override
    public OutputStream getOutputStream() {
       return _os;
    }
 
+   @Override
    public void close() {
       OutputStream os = _os;
       _os = null;
@@ -167,6 +169,7 @@ public class WriteStreamOutput extends OutputStream implements BinaryOutput {
    /**
     * Converts to a string.
     */
+   @Override
    public String toString() {
       return "WriteStreamOutput[" + _os + "]";
    }

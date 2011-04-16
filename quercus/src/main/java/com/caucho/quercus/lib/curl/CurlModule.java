@@ -37,7 +37,6 @@ import com.caucho.quercus.annotation.ReturnNullAsFalse;
 import com.caucho.quercus.env.*;
 import com.caucho.quercus.lib.file.BinaryInput;
 import com.caucho.quercus.lib.file.BinaryOutput;
-import com.caucho.quercus.lib.file.FileModule;
 import com.caucho.quercus.module.AbstractQuercusModule;
 import com.caucho.util.L10N;
 import com.caucho.util.QDate;
@@ -45,9 +44,7 @@ import com.caucho.vfs.Path;
 import com.caucho.vfs.ReadStream;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CurlModule
@@ -274,6 +271,7 @@ public class CurlModule
    public static final int CURLPROXY_HTTP = 203;
    public static final int CURLPROXY_SOCKS5 = 204;
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"curl"};
    }

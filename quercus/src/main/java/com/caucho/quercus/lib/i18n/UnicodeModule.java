@@ -38,8 +38,6 @@ import com.caucho.quercus.module.IniDefinitions;
 import com.caucho.util.L10N;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,6 +63,7 @@ public class UnicodeModule extends AbstractQuercusModule {
    /**
     * Returns the extensions implemented by the module.
     */
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"iconv"};
    }
@@ -72,6 +71,7 @@ public class UnicodeModule extends AbstractQuercusModule {
    /**
     * Returns the default quercus.ini values.
     */
+   @Override
    public IniDefinitions getIniDefinitions() {
       return _iniDefinitions;
    }

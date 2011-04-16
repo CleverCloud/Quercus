@@ -30,19 +30,14 @@ package com.caucho.quercus.lib.simplexml;
 import com.caucho.quercus.UnimplementedException;
 import com.caucho.quercus.annotation.NotNull;
 import com.caucho.quercus.annotation.Optional;
-import com.caucho.quercus.annotation.ReturnNullAsFalse;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.ObjectExtJavaValue;
 import com.caucho.quercus.env.QuercusClass;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.module.AbstractQuercusModule;
-import com.caucho.quercus.program.ClassDef;
-import com.caucho.quercus.program.JavaClassDef;
 import com.caucho.util.L10N;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -54,6 +49,7 @@ public class SimpleXMLModule
    private static final Logger log = Logger.getLogger(SimpleXMLModule.class.getName());
    private static final L10N L = new L10N(SimpleXMLModule.class);
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"SimpleXML"};
    }

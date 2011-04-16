@@ -30,7 +30,6 @@ package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringValue;
-import com.caucho.quercus.env.UnicodeValueImpl;
 import com.caucho.vfs.Path;
 import com.caucho.vfs.ReadStream;
 
@@ -65,6 +64,7 @@ public class FileReadValue extends FileValue {
    /**
     * Reads a character from a file, returning -1 on EOF.
     */
+   @Override
    public int read()
            throws IOException {
       if (_is != null) {
@@ -85,6 +85,7 @@ public class FileReadValue extends FileValue {
    /**
     * Reads a buffer from a file, returning -1 on EOF.
     */
+   @Override
    public int read(byte[] buffer, int offset, int length)
            throws IOException {
       if (_is != null) {
@@ -105,6 +106,7 @@ public class FileReadValue extends FileValue {
    /**
     * Reads the optional linefeed character from a \r\n
     */
+   @Override
    public boolean readOptionalLinefeed()
            throws IOException {
       if (_is != null) {
@@ -148,6 +150,7 @@ public class FileReadValue extends FileValue {
    /**
     * Returns true on the EOF.
     */
+   @Override
    public boolean isEOF() {
       if (_is == null) {
          return true;
@@ -166,6 +169,7 @@ public class FileReadValue extends FileValue {
    /**
     * Returns the current location in the file.
     */
+   @Override
    public long getPosition() {
       if (_is == null) {
          return -1;
@@ -177,6 +181,7 @@ public class FileReadValue extends FileValue {
    /**
     * Closes the file.
     */
+   @Override
    public void close() {
       ReadStream is = _is;
       _is = null;
@@ -190,6 +195,7 @@ public class FileReadValue extends FileValue {
     * Converts to a string.
     * @param env
     */
+   @Override
    public String toString() {
       return "File[" + getPath() + "]";
    }

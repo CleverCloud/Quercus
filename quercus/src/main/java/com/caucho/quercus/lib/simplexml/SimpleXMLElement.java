@@ -369,11 +369,13 @@ public class SimpleXMLElement implements Map.Entry<String, Object> {
    // Map.Entry api for iterator
    //
    @Hide
+   @Override
    public String getKey() {
       return _name;
    }
 
    @Hide
+   @Override
    public Object getValue() {
       if (_children == null) {
          return _text;
@@ -383,6 +385,7 @@ public class SimpleXMLElement implements Map.Entry<String, Object> {
    }
 
    @Hide
+   @Override
    public Object setValue(Object value) {
       return wrapJava(_env, _cls, this);
    }
@@ -1260,6 +1263,7 @@ public class SimpleXMLElement implements Map.Entry<String, Object> {
          _size = children.size();
       }
 
+      @Override
       public boolean hasNext() {
          for (; _index < _size; _index++) {
             SimpleXMLElement elt = _children.get(_index);
@@ -1272,6 +1276,7 @@ public class SimpleXMLElement implements Map.Entry<String, Object> {
          return false;
       }
 
+      @Override
       public Object next() {
          while (_index < _size) {
             SimpleXMLElement elt = _children.get(_index++);
@@ -1284,6 +1289,7 @@ public class SimpleXMLElement implements Map.Entry<String, Object> {
          return null;
       }
 
+      @Override
       public void remove() {
       }
    }

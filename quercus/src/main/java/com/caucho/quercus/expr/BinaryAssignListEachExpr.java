@@ -28,7 +28,6 @@
  */
 package com.caucho.quercus.expr;
 
-import com.caucho.quercus.env.ArrayValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.Value;

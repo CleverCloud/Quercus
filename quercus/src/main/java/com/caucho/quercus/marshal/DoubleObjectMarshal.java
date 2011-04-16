@@ -37,18 +37,22 @@ public class DoubleObjectMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new DoubleObjectMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return new Double(expr.evalDouble(env));
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return value.toJavaDouble();
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value == null) {
          return DoubleValue.ZERO;

@@ -35,6 +35,7 @@ import com.caucho.quercus.module.AbstractQuercusModule;
 public class CtypeModule
         extends AbstractQuercusModule {
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"ctype"};
    }

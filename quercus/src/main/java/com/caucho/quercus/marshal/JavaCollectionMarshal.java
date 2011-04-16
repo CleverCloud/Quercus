@@ -30,7 +30,6 @@ package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.JavaCollectionAdapter;
-import com.caucho.quercus.env.JavaListAdapter;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.program.JavaClassDef;
 import com.caucho.util.L10N;
@@ -53,6 +52,7 @@ public class JavaCollectionMarshal extends JavaMarshal {
       super(def, isNotNull, isUnmarshalNullAsFalse);
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class argClass) {
       if (!value.isset()) {
          if (_isNotNull) {

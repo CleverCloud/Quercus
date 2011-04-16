@@ -81,6 +81,7 @@ public class BlockStatement extends Statement {
    /**
     * Returns true if the statement can fallthrough.
     */
+   @Override
    public int fallThrough() {
       for (int i = 0; i < getStatements().length; i++) {
          Statement stmt = getStatements()[i];
@@ -95,6 +96,7 @@ public class BlockStatement extends Statement {
       return FALL_THROUGH;
    }
 
+   @Override
    public Value execute(Env env) {
       for (int i = 0; i < _statements.length; i++) {
          Statement statement = _statements[i];

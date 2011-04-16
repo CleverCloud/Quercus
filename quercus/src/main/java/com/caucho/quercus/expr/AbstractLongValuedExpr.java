@@ -52,6 +52,7 @@ abstract public class AbstractLongValuedExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return LongValue.create(evalLong(env));
    }
@@ -63,6 +64,7 @@ abstract public class AbstractLongValuedExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public boolean evalBoolean(Env env) {
       return evalLong(env) != 0;
    }
@@ -74,6 +76,7 @@ abstract public class AbstractLongValuedExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public double evalDouble(Env env) {
       return evalLong(env);
    }
@@ -85,5 +88,6 @@ abstract public class AbstractLongValuedExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    abstract public long evalLong(Env env);
 }

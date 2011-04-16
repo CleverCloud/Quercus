@@ -45,9 +45,7 @@ public class JavaByteObjectArrayMarshal extends JavaArrayMarshal {
       }
 
       byte[] data = new byte[byteValue.length];
-      for (int i = 0; i < data.length; i++) {
-         data[i] = byteValue[i];
-      }
+      System.arraycopy(byteValue, 0, data, 0, data.length);
 
       return env.createBinaryBuilder(data);
    }

@@ -28,10 +28,7 @@
  */
 package com.caucho.quercus.marshal;
 
-import java.net.URL;
-
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.JavaURLValue;
 import com.caucho.quercus.env.JavaValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
@@ -41,18 +38,22 @@ public class PathMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new PathMarshal();
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return env.lookupPwd(expr.eval(env));
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return env.lookupPwd(value);
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       // TODO: need test
       return env.getQuercus().getJavaClassDefinition(value.getClass().getName()).wrap(env, value);

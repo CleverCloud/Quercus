@@ -76,6 +76,7 @@ public class MysqlModule extends AbstractQuercusModule {
    /**
     * Returns true for the mysql extension.
     */
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"mysql"};
    }

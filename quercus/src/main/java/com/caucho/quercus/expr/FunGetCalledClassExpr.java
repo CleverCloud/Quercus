@@ -30,8 +30,6 @@ package com.caucho.quercus.expr;
 
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.*;
-import com.caucho.quercus.parser.QuercusParser;
-import com.caucho.quercus.program.InterpretedClassDef;
 import com.caucho.util.L10N;
 
 /**
@@ -64,6 +62,7 @@ public class FunGetCalledClassExpr extends Expr {
       }
    }
 
+   @Override
    public String toString() {
       return "get_called_class()";
    }

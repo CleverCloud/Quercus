@@ -228,6 +228,7 @@ public class JdbcColumnMetaData {
       return isBlob(_jdbcType);
    }
 
+   @Override
    public String toString() {
       return "JdbcColumnMetaData[" + getName() + "]";
    }

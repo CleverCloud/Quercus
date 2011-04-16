@@ -52,6 +52,7 @@ public class UnaryPostIncrementExpr extends AbstractUnaryExpr {
       _incr = incr;
    }
 
+   @Override
    public Value eval(Env env) {
       return _expr.evalPostIncrement(env, _incr);
    }
@@ -59,6 +60,7 @@ public class UnaryPostIncrementExpr extends AbstractUnaryExpr {
    /**
     * Return true for a double value
     */
+   @Override
    public boolean isDouble() {
       return _expr.isDouble();
    }
@@ -66,6 +68,7 @@ public class UnaryPostIncrementExpr extends AbstractUnaryExpr {
    /**
     * Return true for a long value
     */
+   @Override
    public boolean isLong() {
       return _expr.isLong();
    }
@@ -73,10 +76,12 @@ public class UnaryPostIncrementExpr extends AbstractUnaryExpr {
    /**
     * Return true for a number
     */
+   @Override
    public boolean isNumber() {
       return true;
    }
 
+   @Override
    public String toString() {
       if (_incr > 0) {
          return _expr + "++";

@@ -41,9 +41,7 @@ import com.caucho.quercus.module.AbstractQuercusModule;
 import com.caucho.util.L10N;
 import com.caucho.util.LruCache;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
@@ -2190,6 +2188,7 @@ public class RegexpModule
               StringValue sb,
               RegexpState regexpState);
 
+      @Override
       public String toString() {
          return getClass().getSimpleName() + "[]";
       }
@@ -2215,6 +2214,7 @@ public class RegexpModule
          return sb.appendBytes(_text, 0, _text.length);
       }
 
+      @Override
       public String toString() {
          StringBuilder sb = new StringBuilder();
          sb.append(getClass().getSimpleName());
@@ -2251,6 +2251,7 @@ public class RegexpModule
          return sb;
       }
 
+      @Override
       public String toString() {
          return getClass().getSimpleName() + "[" + _group + "]";
       }
@@ -2303,6 +2304,7 @@ public class RegexpModule
          return sb;
       }
 
+      @Override
       public String toString() {
          return getClass().getSimpleName() + "[" + _group + "]";
       }
@@ -2395,6 +2397,7 @@ public class RegexpModule
          _encoding = encoding;
       }
 
+      @Override
       public boolean equals(Object o) {
          if (!(o instanceof UnicodeEregKey)) {
             return false;

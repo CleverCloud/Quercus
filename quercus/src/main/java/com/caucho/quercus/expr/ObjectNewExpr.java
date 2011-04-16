@@ -75,6 +75,7 @@ public class ObjectNewExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value[] args = new Value[_args.length];
 
@@ -95,6 +96,7 @@ public class ObjectNewExpr extends Expr {
       }
    }
 
+   @Override
    public String toString() {
       return _name + "()";
    }

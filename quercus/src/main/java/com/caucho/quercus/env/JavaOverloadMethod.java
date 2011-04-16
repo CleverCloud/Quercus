@@ -63,6 +63,7 @@ public class JavaOverloadMethod extends AbstractJavaMethod {
    /**
     * Returns an overloaded java method.
     */
+   @Override
    public AbstractJavaMethod overload(AbstractJavaMethod fun) {
       if (fun.getHasRestArgs()) {
          int len = fun.getMinArgLength();
@@ -305,6 +306,7 @@ public class JavaOverloadMethod extends AbstractJavaMethod {
    /**
     * Returns the cost of marshaling for this method given the args.
     */
+   @Override
    public int getMarshalingCost(Value[] args) {
       AbstractJavaMethod[] methods = null;
 
@@ -320,6 +322,7 @@ public class JavaOverloadMethod extends AbstractJavaMethod {
    /**
     * Returns the cost of marshaling for this method given the args.
     */
+   @Override
    public int getMarshalingCost(Expr[] args) {
       throw new UnsupportedOperationException();
       /*
@@ -350,6 +353,7 @@ public class JavaOverloadMethod extends AbstractJavaMethod {
       return "unknown";
    }
 
+   @Override
    public String toString() {
       return "JavaOverloadMethod[" + getName() + "]";
    }

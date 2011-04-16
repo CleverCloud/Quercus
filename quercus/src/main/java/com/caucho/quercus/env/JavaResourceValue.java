@@ -28,7 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.env.Env;
 import com.caucho.quercus.program.JavaClassDef;
 
 import java.io.Serializable;

@@ -99,6 +99,7 @@ public class ObjectFieldVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Var evalVar(Env env) {
       // quercus/0d1k
       Value value = _objExpr.evalObject(env);
@@ -113,6 +114,7 @@ public class ObjectFieldVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value obj = _objExpr.eval(env);
 
@@ -158,6 +160,7 @@ public class ObjectFieldVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalArray(Env env) {
       Value obj = _objExpr.evalObject(env);
 
@@ -171,6 +174,7 @@ public class ObjectFieldVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalObject(Env env) {
       Value obj = _objExpr.evalObject(env);
 
@@ -184,12 +188,14 @@ public class ObjectFieldVarExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public void evalUnset(Env env) {
       Value obj = _objExpr.eval(env);
 
       obj.unsetField(_nameExpr.evalStringValue(env));
    }
 
+   @Override
    public String toString() {
       return _objExpr + "->{" + _nameExpr + "}";
    }

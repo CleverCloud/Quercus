@@ -28,8 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.Value;
 import com.caucho.quercus.annotation.Delegates;
 
 @Delegates(IteratorDelegate.class)

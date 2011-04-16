@@ -55,6 +55,7 @@ public class ImportExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       if (_isWildcard) {
          env.addWildcardImport(_name);
@@ -65,6 +66,7 @@ public class ImportExpr extends Expr {
       return NullValue.NULL;
    }
 
+   @Override
    public String toString() {
       if (_isWildcard) {
          return "import " + _name + ".*;";

@@ -29,7 +29,6 @@
 package com.caucho.quercus.lib.db;
 
 import com.caucho.quercus.env.Env;
-import com.caucho.util.Alarm;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -131,6 +130,7 @@ public class JdbcTableMetaData {
       return env.getCurrentTime() - _lastModified <= _maxIdleTime;
    }
 
+   @Override
    public String toString() {
       return "JdbcTableMetaData[" + getName() + "]";
    }

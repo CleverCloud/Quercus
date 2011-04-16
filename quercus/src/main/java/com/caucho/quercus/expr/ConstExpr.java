@@ -31,7 +31,6 @@ package com.caucho.quercus.expr;
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringBuilderValue;
-import com.caucho.quercus.env.UnicodeValueImpl;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.parser.QuercusParser;
 
@@ -151,6 +150,7 @@ public class ConstExpr extends Expr {
    /**
     * Returns true for literal
     */
+   @Override
    public Value evalConstant() {
       return new StringBuilderValue(_var);
    }
@@ -162,10 +162,12 @@ public class ConstExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       return env.getConstant(_var);
    }
 
+   @Override
    public String toString() {
       return _var;
    }

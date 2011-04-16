@@ -28,8 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.env.Value;
-
 public interface Serializable {
 
    public Value serialize();

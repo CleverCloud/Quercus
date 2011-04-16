@@ -32,10 +32,8 @@ import com.caucho.config.ConfigException;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringValue;
-import com.caucho.quercus.env.BinaryValue;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.LongValue;
-import com.caucho.quercus.env.UnicodeValueImpl;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.module.AbstractQuercusModule;
 import com.caucho.util.L10N;
@@ -118,6 +116,7 @@ public class MhashModule extends AbstractQuercusModule {
       addAlgorithm(MHASH_MD2, "MD2", "MD2");
    }
 
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"mhash"};
    }
@@ -274,6 +273,7 @@ public class MhashModule extends AbstractQuercusModule {
          }
       }
 
+      @Override
       public String toString() {
          return "MhashAlgorithm[name=" + _name
                  + " java-name=" + _javaName

@@ -44,10 +44,12 @@ public class JavaArrayMarshal extends Marshal {
       _expectedClass = expectedClass;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return marshal(env, expr.eval(env), expectedClass);
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       /*
       if (! value.isset()) {
@@ -74,6 +76,7 @@ public class JavaArrayMarshal extends Marshal {
       return array;
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       return env.wrapJava(value);
    }

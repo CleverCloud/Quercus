@@ -123,6 +123,7 @@ public class ArgGetFieldValue extends ArgValue {
    /**
     * Converts to a variable.
     */
+   @Override
    public Var toVar() {
       return new Var(toValue());
    }

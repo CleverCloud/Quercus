@@ -37,9 +37,7 @@ import com.caucho.quercus.module.AbstractQuercusModule;
 import com.caucho.util.Base64;
 import com.caucho.util.CharBuffer;
 import com.caucho.util.L10N;
-import com.caucho.vfs.TempBuffer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

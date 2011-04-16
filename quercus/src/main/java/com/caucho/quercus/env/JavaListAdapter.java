@@ -30,8 +30,6 @@ package com.caucho.quercus.env;
 
 import com.caucho.quercus.program.JavaClassDef;
 
-import com.caucho.quercus.QuercusRuntimeException;
-
 import java.util.*;
 import java.util.logging.*;
 
@@ -58,6 +56,7 @@ public class JavaListAdapter
    /**
     * Adds a new value.
     */
+   @Override
    public Value putImpl(Value key, Value value) {
       int pos = key.toInt();
       int size = getSize();
@@ -81,6 +80,7 @@ public class JavaListAdapter
    /**
     * Gets a new value.
     */
+   @Override
    public Value get(Value key) {
       int pos = key.toInt();
 
@@ -94,6 +94,7 @@ public class JavaListAdapter
    /**
     * Removes a value.
     */
+   @Override
    public Value remove(Value key) {
       int pos = key.toInt();
 
@@ -125,6 +126,7 @@ public class JavaListAdapter
     *
     * @throws NullPointerException
     */
+   @Override
    public Value contains(Value value) {
       for (Map.Entry<Value, Value> entry : entrySet()) {
          if (entry.getValue().equals(value)) {
@@ -138,6 +140,7 @@ public class JavaListAdapter
    /**
     * Returns the current value.
     */
+   @Override
    public Value current() {
       if (_next < _list.size()) {
          return wrapJava(_list.get(_next));
@@ -149,6 +152,7 @@ public class JavaListAdapter
    /**
     * Returns the current key
     */
+   @Override
    public Value key() {
       if (_next < _list.size()) {
          return LongValue.create(_next);
@@ -160,6 +164,7 @@ public class JavaListAdapter
    /**
     * Returns true if there are more elements.
     */
+   @Override
    public boolean hasCurrent() {
       return _next < _list.size();
    }
@@ -167,6 +172,7 @@ public class JavaListAdapter
    /**
     * Returns the next value.
     */
+   @Override
    public Value next() {
       if (_next < _list.size()) {
          return wrapJava(_list.get(_next++));
@@ -178,6 +184,7 @@ public class JavaListAdapter
    /**
     * Returns the previous value.
     */
+   @Override
    public Value prev() {
       if (_next > 0) {
          return wrapJava(_list.get(_next--));
@@ -189,6 +196,7 @@ public class JavaListAdapter
    /**
     * The each iterator
     */
+   @Override
    public Value each() {
       if (_next < _list.size()) {
          ArrayValue result = new ArrayValueImpl();
@@ -210,6 +218,7 @@ public class JavaListAdapter
    /**
     * Returns the first value.
     */
+   @Override
    public Value reset() {
       _next = 0;
 
@@ -219,6 +228,7 @@ public class JavaListAdapter
    /**
     * Returns the last value.
     */
+   @Override
    public Value end() {
       _next = _list.size();
 

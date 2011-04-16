@@ -379,6 +379,7 @@ public class FunctionInfo {
       return name;
    }
 
+   @Override
    public String toString() {
       return "FunctionInfo[" + _name + "]";
    }

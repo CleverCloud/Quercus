@@ -41,16 +41,19 @@ public class PhpStderr extends AbstractBinaryOutput {
    /**
     * Writes a buffer.
     */
+   @Override
    public void write(byte[] buffer, int offset, int length)
            throws IOException {
       System.err.write(buffer, offset, length);
    }
 
+   @Override
    public void write(int b)
            throws IOException {
       System.err.write(b);
    }
 
+   @Override
    public String toString() {
       return "PhpStderr[]";
    }

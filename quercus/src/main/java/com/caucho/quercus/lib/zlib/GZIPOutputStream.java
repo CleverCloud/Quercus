@@ -134,6 +134,7 @@ public class GZIPOutputStream extends DeflaterOutputStream {
     *
     * @param input
     */
+   @Override
    public void write(int v)
            throws IOException {
       super.write(v);
@@ -148,6 +149,7 @@ public class GZIPOutputStream extends DeflaterOutputStream {
     * @param offset
     * @param length
     */
+   @Override
    public void write(byte[] buffer, int offset, int length)
            throws IOException {
       super.write(buffer, offset, length);
@@ -157,6 +159,7 @@ public class GZIPOutputStream extends DeflaterOutputStream {
       }
    }
 
+   @Override
    public void finish()
            throws IOException {
       super.finish();
@@ -191,6 +194,7 @@ public class GZIPOutputStream extends DeflaterOutputStream {
    /**
     * Calls super function, which in turn closes the underlying 'in' stream
     */
+   @Override
    public void close()
            throws IOException {
       if (!def.finished()) {

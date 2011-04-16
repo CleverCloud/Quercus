@@ -36,7 +36,6 @@ import com.caucho.quercus.expr.ExprFactory;
 import com.caucho.quercus.statement.*;
 import com.caucho.util.L10N;
 
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
@@ -62,10 +61,12 @@ public class MethodDeclaration extends Function {
       _qClass = qClass;
    }
 
+   @Override
    public boolean isAbstract() {
       return true;
    }
 
+   @Override
    public boolean isObjectMethod() {
       return true;
    }
@@ -83,10 +84,12 @@ public class MethodDeclaration extends Function {
    /**
     * Evaluates the function.
     */
+   @Override
    public Value call(Env env, Value[] args) {
       throw new UnsupportedOperationException();
    }
 
+   @Override
    public String toString() {
       return getClass().getSimpleName() + "[" + getName() + "]";
    }

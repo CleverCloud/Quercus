@@ -40,8 +40,6 @@ import com.caucho.util.L10N;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**

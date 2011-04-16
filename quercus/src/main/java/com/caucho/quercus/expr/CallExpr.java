@@ -32,9 +32,7 @@ import com.caucho.quercus.*;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NullValue;
 import com.caucho.quercus.env.QuercusClass;
-import com.caucho.quercus.env.UnsetValue;
 import com.caucho.quercus.env.Value;
-import com.caucho.quercus.parser.QuercusParser;
 import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.util.L10N;
 
@@ -103,6 +101,7 @@ public class CallExpr extends Expr {
    /**
     * Returns the location if known.
     */
+   @Override
    public String getFunctionLocation() {
       return " [" + _name + "]";
    }
@@ -244,6 +243,7 @@ public class CallExpr extends Expr {
       return fun.evalArguments(env, this, _args);
    }
 
+   @Override
    public String toString() {
       return _name + "()";
    }

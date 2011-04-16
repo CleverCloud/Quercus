@@ -122,6 +122,7 @@ public class BinaryBuilderValue
    /**
     * Returns true for a BinaryValue.
     */
+   @Override
    public boolean isBinary() {
       return true;
    }
@@ -362,6 +363,7 @@ public class BinaryBuilderValue
    /**
     * Converts to a string builder
     */
+   @Override
    public StringValue toStringBuilder(Env env, StringValue value) {
       if (value.isUnicode()) {
          UnicodeBuilderValue sb = new UnicodeBuilderValue(this);
@@ -517,6 +519,7 @@ public class BinaryBuilderValue
    /**
     * Append to a string builder.
     */
+   @Override
    public StringValue appendTo(UnicodeBuilderValue sb) {
       if (length() == 0) {
          return sb;

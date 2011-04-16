@@ -37,6 +37,7 @@ public class UnicodeEreg extends Ereg {
       super(rawRegexp);
    }
 
+   @Override
    public String toString() {
       return "UnicodeEreg[" + _pattern + "]";
    }

@@ -431,12 +431,14 @@ public class QuercusProgram {
       }
    }
 
+   @Override
    public String toString() {
       return getClass().getSimpleName() + "[" + _sourceFile + "]";
    }
 
    class PageDependency implements Dependency {
 
+      @Override
       public boolean isModified() {
          if (_compiledPage != null) {
             return _compiledPage.isModified();
@@ -445,6 +447,7 @@ public class QuercusProgram {
          }
       }
 
+      @Override
       public boolean logModified(Logger log) {
          if (isModified()) {
             log.finer(_sourceFile + " is modified");

@@ -240,6 +240,7 @@ abstract public class AbstractFunction extends Callback {
    /**
     * Returns true for a boolean function.
     */
+   @Override
    public boolean isBoolean() {
       return false;
    }
@@ -247,6 +248,7 @@ abstract public class AbstractFunction extends Callback {
    /**
     * Returns true for a string function.
     */
+   @Override
    public boolean isString() {
       return false;
    }
@@ -254,6 +256,7 @@ abstract public class AbstractFunction extends Callback {
    /**
     * Returns true for a long function.
     */
+   @Override
    public boolean isLong() {
       return false;
    }
@@ -261,6 +264,7 @@ abstract public class AbstractFunction extends Callback {
    /**
     * Returns true for a double function.
     */
+   @Override
    public boolean isDouble() {
       return false;
    }

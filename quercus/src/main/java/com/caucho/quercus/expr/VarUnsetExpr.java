@@ -56,16 +56,19 @@ public class VarUnsetExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       _var.evalUnset(env);
 
       return NullValue.NULL;
    }
 
+   @Override
    public int hashCode() {
       return _var.hashCode();
    }
 
+   @Override
    public boolean equals(Object o) {
       if (this == o) {
          return true;
@@ -78,6 +81,7 @@ public class VarUnsetExpr extends Expr {
       return _var == expr._var;
    }
 
+   @Override
    public String toString() {
       return "unset(" + _var + ")";
    }

@@ -73,6 +73,7 @@ public class FunArrayExpr extends Expr {
    /**
     * Returns true if the expression evaluates to an array.
     */
+   @Override
    public boolean isArray() {
       return true;
    }
@@ -80,6 +81,7 @@ public class FunArrayExpr extends Expr {
    /**
     * Returns true for a constant array.
     */
+   @Override
    public boolean isConstant() {
       for (int i = 0; i < _keys.length; i++) {
          if (_keys[i] != null && !_keys[i].isConstant()) {
@@ -103,6 +105,7 @@ public class FunArrayExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       ArrayValue array = new ArrayValueImpl();
 
@@ -125,6 +128,7 @@ public class FunArrayExpr extends Expr {
       return array;
    }
 
+   @Override
    public String toString() {
       return "array()";
    }

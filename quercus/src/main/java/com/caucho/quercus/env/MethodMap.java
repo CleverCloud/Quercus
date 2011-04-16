@@ -275,10 +275,12 @@ public final class MethodMap<V> {
          _next = entry;
       }
 
+      @Override
       public boolean hasNext() {
          return _next != null;
       }
 
+      @Override
       public V next() {
          V value = _next._value;
 
@@ -287,10 +289,12 @@ public final class MethodMap<V> {
          return value;
       }
 
+      @Override
       public Iterator<V> iterator() {
          return this;
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }

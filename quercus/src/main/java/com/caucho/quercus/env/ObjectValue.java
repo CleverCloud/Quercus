@@ -95,6 +95,7 @@ abstract public class ObjectValue extends Value {
    /**
     * Returns the value's class name.
     */
+   @Override
    public String getClassName() {
       return _className;
    }
@@ -246,6 +247,7 @@ abstract public class ObjectValue extends Value {
     * string update ($a[0] = 'A').  Creates an array automatically if
     * necessary.
     */
+   @Override
    public Value append(Value index, Value value) {
       put(index, value);
 
@@ -385,6 +387,7 @@ abstract public class ObjectValue extends Value {
    /**
     * Adds a new value.
     */
+   @Override
    public Value putField(Env env, String key, Value value) {
       return putThisField(env, env.createString(key), value);
    }

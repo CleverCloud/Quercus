@@ -48,6 +48,7 @@ public class BinaryModExpr extends AbstractBinaryExpr {
    /**
     * Return true for a long.
     */
+   @Override
    public boolean isLong() {
       return true;
    }
@@ -55,6 +56,7 @@ public class BinaryModExpr extends AbstractBinaryExpr {
    /**
     * Return true for a long.
     */
+   @Override
    public boolean isNumber() {
       return true;
    }
@@ -66,6 +68,7 @@ public class BinaryModExpr extends AbstractBinaryExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value lValue = _left.eval(env);
       Value rValue = _right.eval(env);
@@ -73,6 +76,7 @@ public class BinaryModExpr extends AbstractBinaryExpr {
       return lValue.mod(rValue);
    }
 
+   @Override
    public String toString() {
       return "(" + _left + " % " + _right + ")";
    }

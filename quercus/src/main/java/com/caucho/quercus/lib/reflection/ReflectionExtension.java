@@ -54,7 +54,7 @@ public class ReflectionExtension
       _name = extension;
    }
 
-   final private void __clone() {
+   private void __clone() {
    }
 
    public static ReflectionExtension __construct(Env env, String name) {
@@ -161,6 +161,7 @@ public class ReflectionExtension
       return array;
    }
 
+   @Override
    public String toString() {
       return "ReflectionExtension[" + _name + "]";
    }

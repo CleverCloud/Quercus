@@ -37,22 +37,27 @@ public class ShortMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new ShortMarshal();
 
+   @Override
    public boolean isLong() {
       return true;
    }
 
+   @Override
    public boolean isReadOnly() {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return new Short((short) expr.evalLong(env));
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return new Short((short) value.toLong());
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value == null) {
          return LongValue.ZERO;

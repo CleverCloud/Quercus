@@ -28,9 +28,6 @@
  */
 package com.caucho.quercus.program;
 
-import java.util.Map;
-import java.util.Iterator;
-
 import com.caucho.quercus.env.*;
 
 /**
@@ -69,6 +66,7 @@ public class FunctionArrayDelegate implements ArrayDelegate {
    /**
     * Returns the value for the specified key.
     */
+   @Override
    public Value get(ObjectValue qThis, Value key) {
       if (_arrayGet != null) {
          return _arrayGet.callMethod(Env.getInstance(),
@@ -83,6 +81,7 @@ public class FunctionArrayDelegate implements ArrayDelegate {
    /**
     * Sets the value for the spoecified key.
     */
+   @Override
    public Value put(ObjectValue qThis, Value key, Value value) {
       if (_arrayPut != null) {
          return _arrayPut.callMethod(Env.getInstance(),
@@ -96,6 +95,7 @@ public class FunctionArrayDelegate implements ArrayDelegate {
    /**
     * Appends a value.
     */
+   @Override
    public Value put(ObjectValue qThis, Value value) {
       if (_arrayPut != null) {
          return _arrayPut.callMethod(Env.getInstance(),
@@ -109,6 +109,7 @@ public class FunctionArrayDelegate implements ArrayDelegate {
    /**
     * Returns true if the value is set
     */
+   @Override
    public boolean isset(ObjectValue qThis, Value key) {
       return get(qThis, key).isset();
    }
@@ -116,6 +117,7 @@ public class FunctionArrayDelegate implements ArrayDelegate {
    /**
     * Removes the value at the speified key.
     */
+   @Override
    public Value unset(ObjectValue qThis, Value key) {
       return UnsetValue.UNSET;
    }

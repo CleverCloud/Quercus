@@ -28,7 +28,6 @@
  */
 package com.caucho.quercus.expr;
 
-import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 
@@ -53,6 +52,7 @@ public class ConditionalShortExpr extends Expr {
     *
     * @return the expression value.
     */
+   @Override
    public Value eval(Env env) {
       Value value = _test.eval(env);
 
@@ -63,6 +63,7 @@ public class ConditionalShortExpr extends Expr {
       }
    }
 
+   @Override
    public String toString() {
       return "(" + _test + " ?: " + _falseExpr + ")";
    }

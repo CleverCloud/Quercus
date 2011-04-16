@@ -93,6 +93,7 @@ public class InterpretedClassDef extends ClassDef
    /**
     * True for an abstract class.
     */
+   @Override
    public boolean isAbstract() {
       return _isAbstract;
    }
@@ -107,6 +108,7 @@ public class InterpretedClassDef extends ClassDef
    /**
     * True for an interface class.
     */
+   @Override
    public boolean isInterface() {
       return _isInterface;
    }
@@ -121,6 +123,7 @@ public class InterpretedClassDef extends ClassDef
    /*
     * Returns true for a final class.
     */
+   @Override
    public boolean isFinal() {
       return _isFinal;
    }
@@ -160,6 +163,7 @@ public class InterpretedClassDef extends ClassDef
    /**
     * Initialize the quercus class.
     */
+   @Override
    public void initClass(QuercusClass cl) {
       if (_constructor != null) {
          cl.setConstructor(_constructor);
@@ -291,6 +295,7 @@ public class InterpretedClassDef extends ClassDef
    /**
     * Return a const value.
     */
+   @Override
    public Expr findConstant(String name) {
       return _constMap.get(name);
    }
@@ -351,6 +356,7 @@ public class InterpretedClassDef extends ClassDef
    /**
     * Initialize the fields
     */
+   @Override
    public void initInstance(Env env, Value value) {
       ObjectValue object = (ObjectValue) value;
 
@@ -370,6 +376,7 @@ public class InterpretedClassDef extends ClassDef
    /**
     * Returns the constructor
     */
+   @Override
    public AbstractFunction findConstructor() {
       return _constructor;
    }
@@ -417,14 +424,17 @@ public class InterpretedClassDef extends ClassDef
       }
    }
 
+   @Override
    public Set<Map.Entry<StringValue, FieldEntry>> fieldSet() {
       return _fieldMap.entrySet();
    }
 
+   @Override
    public Set<Map.Entry<String, StaticFieldEntry>> staticFieldSet() {
       return _staticFieldMap.entrySet();
    }
 
+   @Override
    public Set<Map.Entry<String, AbstractFunction>> functionSet() {
       return _functionMap.entrySet();
    }

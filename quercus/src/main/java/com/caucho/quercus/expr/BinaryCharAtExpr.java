@@ -99,6 +99,7 @@ public class BinaryCharAtExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public Value evalAssignRef(Env env, Value value) {
       Value obj = _objExpr.eval(env);
 
@@ -117,10 +118,12 @@ public class BinaryCharAtExpr extends AbstractVarExpr {
     *
     * @return the expression value.
     */
+   @Override
    public void evalUnset(Env env) {
       throw new UnsupportedOperationException();
    }
 
+   @Override
    public String toString() {
       return _objExpr + "{" + _indexExpr + "}";
    }

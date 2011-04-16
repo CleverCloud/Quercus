@@ -29,7 +29,6 @@
 package com.caucho.quercus.marshal;
 
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
@@ -43,6 +42,7 @@ public class ValueMarshal extends Marshal {
       _isPassThru = isPassThru;
    }
 
+   @Override
    public boolean isReadOnly() {
       return false;
    }
@@ -55,10 +55,12 @@ public class ValueMarshal extends Marshal {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return expr.eval(env);
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       if (_isPassThru) {
          // php/0433
@@ -70,6 +72,7 @@ public class ValueMarshal extends Marshal {
       }
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       return (Value) value;
    }

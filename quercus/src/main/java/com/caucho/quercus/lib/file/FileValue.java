@@ -29,7 +29,6 @@
 package com.caucho.quercus.lib.file;
 
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.UnicodeBuilderValue;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.resources.StreamResource;
 import com.caucho.vfs.Path;
@@ -58,6 +57,7 @@ public class FileValue extends StreamResource {
    /**
     * Reads a character from a file, returning -1 on EOF.
     */
+   @Override
    public int read()
            throws IOException {
       return -1;
@@ -103,6 +103,7 @@ public class FileValue extends StreamResource {
    /**
     * Prints a string to a file.
     */
+   @Override
    public void print(String v)
            throws IOException {
    }
@@ -110,6 +111,7 @@ public class FileValue extends StreamResource {
    /**
     * Closes the file.
     */
+   @Override
    public void close() {
    }
 
@@ -117,6 +119,7 @@ public class FileValue extends StreamResource {
     * Converts to a string.
     * @param env
     */
+   @Override
    public String toString() {
       return "File[" + _path + "]";
    }

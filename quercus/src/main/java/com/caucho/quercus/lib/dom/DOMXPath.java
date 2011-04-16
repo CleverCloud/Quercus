@@ -179,6 +179,7 @@ public class DOMXPath {
          list.add(prefix);
       }
 
+      @Override
       public String getNamespaceURI(String prefix) {
          for (Map.Entry<String, LinkedHashSet<String>> entry : _namespaceMap.entrySet()) {
             if (entry.getValue().contains(prefix)) {
@@ -189,6 +190,7 @@ public class DOMXPath {
          return null;
       }
 
+      @Override
       public String getPrefix(String namespaceURI) {
          Iterator<String> iter = getPrefixes(namespaceURI);
 
@@ -199,6 +201,7 @@ public class DOMXPath {
          }
       }
 
+      @Override
       public Iterator<String> getPrefixes(String namespaceURI) {
          LinkedHashSet<String> prefixList = _namespaceMap.get(namespaceURI);
 

@@ -36,7 +36,6 @@ import com.caucho.vfs.WriteStream;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.security.KeyManagementException;
@@ -99,14 +98,17 @@ public class TcpInputOutput
       javax.net.ssl.TrustManager tm =
               new javax.net.ssl.X509TrustManager() {
 
+                 @Override
                  public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                     return null;
                  }
 
+                 @Override
                  public void checkClientTrusted(
                          java.security.cert.X509Certificate[] cert, String foo) {
                  }
 
+                 @Override
                  public void checkServerTrusted(
                          java.security.cert.X509Certificate[] cert, String foo) {
                  }
@@ -119,11 +121,13 @@ public class TcpInputOutput
       return factory.createSocket(s, host, port, true);
    }
 
+   @Override
    public void bind(SocketAddress address)
            throws IOException {
       _socket.bind(address);
    }
 
+   @Override
    public void connect(SocketAddress address)
            throws IOException {
       _socket.connect(address);
@@ -131,6 +135,7 @@ public class TcpInputOutput
       init();
    }
 
+   @Override
    public void setError(int errno) {
       _errno = errno;
    }
@@ -139,6 +144,7 @@ public class TcpInputOutput
       return _errno;
    }
 
+   @Override
    public void init() {
       SocketStream sock = new SocketStream(_socket);
       sock.setThrowReadInterrupts(true);
@@ -149,6 +155,7 @@ public class TcpInputOutput
       init(is, os);
    }
 
+   @Override
    public void setTimeout(long timeout) {
       try {
          if (_socket != null) {
@@ -189,6 +196,7 @@ public class TcpInputOutput
    /**
     * Implements the EnvCleanup interface.
     */
+   @Override
    public void cleanup() {
       Socket s = _socket;
       _socket = null;
@@ -202,6 +210,7 @@ public class TcpInputOutput
       }
    }
 
+   @Override
    public String toString() {
       if (_socket != null) {
          return "TcpInputOutput[" + _socket.getInetAddress()

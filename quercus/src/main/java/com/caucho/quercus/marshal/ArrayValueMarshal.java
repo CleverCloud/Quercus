@@ -39,10 +39,12 @@ public class ArrayValueMarshal extends Marshal {
 
    public static final Marshal MARSHAL = new ArrayValueMarshal();
 
+   @Override
    public boolean isReference() {
       return true;
    }
 
+   @Override
    public boolean isReadOnly() {
       return false;
    }
@@ -55,14 +57,17 @@ public class ArrayValueMarshal extends Marshal {
       return true;
    }
 
+   @Override
    public Object marshal(Env env, Expr expr, Class expectedClass) {
       return expr.eval(env).toArrayValue(env);
    }
 
+   @Override
    public Object marshal(Env env, Value value, Class expectedClass) {
       return value.toArrayValue(env);
    }
 
+   @Override
    public Value unmarshal(Env env, Object value) {
       if (value instanceof ArrayValue) {
          return (ArrayValue) value;

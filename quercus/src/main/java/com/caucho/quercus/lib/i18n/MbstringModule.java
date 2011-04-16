@@ -35,8 +35,6 @@ import com.caucho.quercus.annotation.Reference;
 import com.caucho.quercus.annotation.VariableArguments;
 import com.caucho.quercus.env.*;
 import com.caucho.quercus.lib.mail.MailModule;
-import com.caucho.quercus.lib.regexp.Ereg;
-import com.caucho.quercus.lib.regexp.Eregi;
 import com.caucho.quercus.lib.regexp.RegexpModule;
 import com.caucho.quercus.lib.regexp.UnicodeEreg;
 import com.caucho.quercus.lib.regexp.UnicodeEregi;
@@ -69,6 +67,7 @@ public class MbstringModule
    /**
     * Returns the extensions implemented by the module.
     */
+   @Override
    public String[] getLoadedExtensions() {
       return new String[]{"mbstring"};
    }
@@ -76,6 +75,7 @@ public class MbstringModule
    /**
     * Returns the default php.ini values.
     */
+   @Override
    public IniDefinitions getIniDefinitions() {
       return _iniDefinitions;
    }

@@ -31,7 +31,6 @@ package com.caucho.quercus.expr;
 import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
-import com.caucho.quercus.env.Var;
 
 /**
  * Represents a PHP assignment expression.
@@ -115,6 +114,7 @@ public class BinaryAssignExpr extends Expr {
       return _var.eval(env);
    }
 
+   @Override
    public String toString() {
       return _var + "=" + _value;
    }

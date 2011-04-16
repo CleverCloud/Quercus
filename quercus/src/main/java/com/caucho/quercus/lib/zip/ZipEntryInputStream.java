@@ -71,11 +71,13 @@ public class ZipEntryInputStream extends ReadStreamInput {
    /**
     * Opens a copy.
     */
+   @Override
    public BinaryInput openCopy()
            throws IOException {
       return new ZipEntryInputStream(_in.openCopy(), _position);
    }
 
+   @Override
    public String toString() {
       return "ZipEntryInputStream[]";
    }

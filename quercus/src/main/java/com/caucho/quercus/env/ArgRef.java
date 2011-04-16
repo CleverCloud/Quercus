@@ -28,8 +28,6 @@
  */
 package com.caucho.quercus.env;
 
-import com.caucho.quercus.expr.Expr;
-import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.vfs.WriteStream;
 
 import java.io.IOException;
@@ -90,6 +88,7 @@ public class ArgRef extends Value
    /**
     * Returns true for a long-value.
     */
+   @Override
    public boolean isLong() {
       return _var.isLong();
    }
@@ -97,6 +96,7 @@ public class ArgRef extends Value
    /**
     * Returns true for a long-value.
     */
+   @Override
    public boolean isDouble() {
       return _var.isDouble();
    }
@@ -443,6 +443,7 @@ public class ArgRef extends Value
    /**
     * Absolute value.
     */
+   @Override
    public Value abs() {
       return _var.abs();
    }

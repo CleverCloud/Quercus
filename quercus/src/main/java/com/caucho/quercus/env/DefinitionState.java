@@ -382,6 +382,7 @@ public final class DefinitionState {
          }
       }
 
+      @Override
       public int hashCode() {
          int hash = 37;
 
@@ -403,6 +404,7 @@ public final class DefinitionState {
          return hash;
       }
 
+      @Override
       public boolean equals(Object o) {
          ClassKey key = (ClassKey) o;
 

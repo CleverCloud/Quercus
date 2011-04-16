@@ -69,7 +69,7 @@ public class HttpRequest
    /**
     * Returns a HttpRequest specific to the Http request method.
     */
-   public static final HttpRequest getRequest(CurlResource curl) {
+   public static HttpRequest getRequest(CurlResource curl) {
       String requestMethod = curl.getRequestMethod();
 
       if (requestMethod.equals("GET")) {
@@ -300,7 +300,7 @@ public class HttpRequest
    /**
     * Returns the server response header.
     */
-   private final Value getHeader(Env env, StringValue bb) {
+   private Value getHeader(Env env, StringValue bb) {
       // Append server response to the very top
       bb.append(_conn.getHeaderField(0));
 
@@ -373,7 +373,7 @@ public class HttpRequest
    /**
     * Returns the server response body.
     */
-   private final Value getBody(Env env, StringValue bb)
+   private Value getBody(Env env, StringValue bb)
            throws SocketTimeoutException, IOException {
       InputStream in;
 
@@ -427,6 +427,7 @@ public class HttpRequest
    /**
     * Cleanup resources associated with this connection.
     */
+   @Override
    public void cleanup() {
       if (_conn != null) {
          _conn.close();

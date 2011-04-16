@@ -28,7 +28,6 @@
  */
 package com.caucho.quercus.lib.db;
 
-import com.caucho.quercus.QuercusModuleException;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.ConnectionEntry;
 import com.caucho.quercus.env.Env;
@@ -531,6 +530,7 @@ public abstract class JdbcConnectionResource
     * environment is being cleaned up after a quercus
     * request has been processed.
     */
+   @Override
    public void cleanup() {
       if (log.isLoggable(Level.FINER)) {
          log.finer(this + " cleanup()");
@@ -928,6 +928,7 @@ public abstract class JdbcConnectionResource
    /**
     * Converts to a string.
     */
+   @Override
    public String toString() {
       if (_conn != null) {
          return getClass().getSimpleName() + "[" + _conn.getConnection() + "]";
@@ -1037,6 +1038,7 @@ public abstract class JdbcConnectionResource
          _table = table;
       }
 
+      @Override
       public int hashCode() {
          int hash = 37;
 
@@ -1059,6 +1061,7 @@ public abstract class JdbcConnectionResource
          return hash;
       }
 
+      @Override
       public boolean equals(Object o) {
          if (this == o) {
             return true;
@@ -1144,6 +1147,7 @@ public abstract class JdbcConnectionResource
          return _token.equalsIgnoreCase(token);
       }
 
+      @Override
       public String toString() {
          if (_token == null) {
             _token = _query.substring(_start, _end);

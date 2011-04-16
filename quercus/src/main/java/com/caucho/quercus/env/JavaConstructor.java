@@ -97,6 +97,7 @@ public class JavaConstructor extends JavaInvoker {
       return _argLength;
    }
 
+   @Override
    public Object invoke(Object obj, Object[] args) {
       try {
          obj = _constructor.newInstance(args);

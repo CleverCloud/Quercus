@@ -33,7 +33,6 @@ import com.caucho.quercus.QuercusContext;
 import com.caucho.quercus.QuercusRuntimeException;
 import com.caucho.quercus.module.QuercusModule;
 import com.caucho.util.L10N;
-import com.caucho.vfs.Path;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

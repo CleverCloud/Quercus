@@ -28,16 +28,11 @@
  */
 package com.caucho.quercus.lib.curl;
 
-import com.caucho.quercus.QuercusModuleException;
-
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.*;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLPeerUnverifiedException;
 
 /**
  * Represents a HttpURLConnection wrapper.

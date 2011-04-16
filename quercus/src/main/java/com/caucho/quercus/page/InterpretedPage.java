@@ -79,6 +79,7 @@ public class InterpretedPage extends QuercusPage {
     *
     * @param env the calling environment
     */
+   @Override
    public Value execute(Env env) {
       Value result = _program.execute(env);
 
@@ -92,6 +93,7 @@ public class InterpretedPage extends QuercusPage {
    /**
     * Returns the pwd according to the source page.
     */
+   @Override
    public Path getPwd(Env env) {
       return getSelfPath(env).getParent();
    }
@@ -99,6 +101,7 @@ public class InterpretedPage extends QuercusPage {
    /**
     * Returns the pwd according to the source page.
     */
+   @Override
    public Path getSelfPath(Env env) {
       return _program.getSourcePath();
    }
@@ -106,6 +109,7 @@ public class InterpretedPage extends QuercusPage {
    /**
     * Imports the page definitions.
     */
+   @Override
    public void init(Env env) {
       _program.init(env);
    }
@@ -113,6 +117,7 @@ public class InterpretedPage extends QuercusPage {
    /**
     * Imports the page definitions.
     */
+   @Override
    public void importDefinitions(Env env) {
       _program.importDefinitions(env);
    }
@@ -120,6 +125,7 @@ public class InterpretedPage extends QuercusPage {
    /**
     * Finds the function
     */
+   @Override
    public AbstractFunction findFunction(String name) {
       return _program.findFunction(name);
    }
@@ -127,6 +133,7 @@ public class InterpretedPage extends QuercusPage {
    /**
     * Finds the class
     */
+   @Override
    public InterpretedClassDef findClass(String name) {
       //return _program.findClass(name);
       return null;
@@ -135,6 +142,7 @@ public class InterpretedPage extends QuercusPage {
    /**
     * Returns the class map.
     */
+   @Override
    public HashMap<String, ClassDef> getClassMap() {
       //return _program.getClassMap();
       return null;
@@ -150,6 +158,7 @@ public class InterpretedPage extends QuercusPage {
       return _program.setRuntimeFunction(funList);
    }
 
+   @Override
    public boolean equals(Object o) {
       if (!(o instanceof InterpretedPage)) {
          return false;
@@ -160,6 +169,7 @@ public class InterpretedPage extends QuercusPage {
       return _program == page._program;
    }
 
+   @Override
    public String toString() {
       return getClass().getSimpleName() + "[" + _program.getSourcePath() + "]";
    }

@@ -4814,6 +4814,7 @@ public class StringModule extends AbstractQuercusModule {
    static class StrtrComparator<T extends Map.Entry<Value, Value>>
            implements Comparator<T> {
 
+      @Override
       public int compare(T a, T b) {
          int lenA = a.getKey().length();
          int lenB = b.getKey().length();

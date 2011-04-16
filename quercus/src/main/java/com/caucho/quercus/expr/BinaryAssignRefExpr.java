@@ -110,6 +110,7 @@ public class BinaryAssignRefExpr extends Expr {
       return value;
    }
 
+   @Override
    public String toString() {
       return "(" + _var + " =& " + _value + ")";
    }
