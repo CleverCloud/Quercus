@@ -43,40 +43,40 @@ import java.util.zip.ZipInputStream;
  */
 public class ZipEntryInputStream extends ReadStreamInput {
 
-    private static final L10N L = new L10N(ZipEntryInputStream.class);
-    private final BinaryInput _in;
-    private final long _position;
+   private static final L10N L = new L10N(ZipEntryInputStream.class);
+   private final BinaryInput _in;
+   private final long _position;
 
-    public ZipEntryInputStream(BinaryInput in, long position)
-	    throws IOException {
-	super(Env.getInstance());
+   public ZipEntryInputStream(BinaryInput in, long position)
+           throws IOException {
+      super(Env.getInstance());
 
-	_in = in;
-	_position = position;
+      _in = in;
+      _position = position;
 
-	in.setPosition(_position);
+      in.setPosition(_position);
 
-	ZipInputStream zipInputStream = new ZipInputStream(in.getInputStream());
+      ZipInputStream zipInputStream = new ZipInputStream(in.getInputStream());
 
-	ZipEntry curEntry = zipInputStream.getNextEntry();
+      ZipEntry curEntry = zipInputStream.getNextEntry();
 
-	if (curEntry == null) {
-	    throw new IOException(
-		    L.l("ZipEntry at position {0} not found", _position));
-	}
+      if (curEntry == null) {
+         throw new IOException(
+                 L.l("ZipEntry at position {0} not found", _position));
+      }
 
-	init(new ReadStream(new VfsStream(zipInputStream, null)));
-    }
+      init(new ReadStream(new VfsStream(zipInputStream, null)));
+   }
 
-    /**
-     * Opens a copy.
-     */
-    public BinaryInput openCopy()
-	    throws IOException {
-	return new ZipEntryInputStream(_in.openCopy(), _position);
-    }
+   /**
+    * Opens a copy.
+    */
+   public BinaryInput openCopy()
+           throws IOException {
+      return new ZipEntryInputStream(_in.openCopy(), _position);
+   }
 
-    public String toString() {
-	return "ZipEntryInputStream[]";
-    }
+   public String toString() {
+      return "ZipEntryInputStream[]";
+   }
 }

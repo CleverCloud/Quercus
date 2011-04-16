@@ -36,8 +36,8 @@ import java.util.Iterator;
  */
 public interface CountDelegate {
 
-    /**
-     * Returns the object's count
-     */
-    public int count(ObjectValue qThis);
+   /**
+    * Returns the object's count
+    */
+   public int count(ObjectValue qThis);
 }

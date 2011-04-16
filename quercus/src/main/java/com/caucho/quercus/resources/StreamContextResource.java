@@ -35,64 +35,64 @@ import com.caucho.quercus.env.*;
  */
 public class StreamContextResource extends ResourceValue {
 
-    private ArrayValue _options;
-    private ArrayValue _parameters;
+   private ArrayValue _options;
+   private ArrayValue _parameters;
 
-    public StreamContextResource() {
-	this(null);
-    }
+   public StreamContextResource() {
+      this(null);
+   }
 
-    public StreamContextResource(ArrayValue options) {
-	this(options, null);
-    }
+   public StreamContextResource(ArrayValue options) {
+      this(options, null);
+   }
 
-    public StreamContextResource(ArrayValue options, ArrayValue parameters) {
-	if (options == null) {
-	    options = new ArrayValueImpl();
-	}
+   public StreamContextResource(ArrayValue options, ArrayValue parameters) {
+      if (options == null) {
+         options = new ArrayValueImpl();
+      }
 
-	if (parameters == null) {
-	    parameters = new ArrayValueImpl();
-	}
+      if (parameters == null) {
+         parameters = new ArrayValueImpl();
+      }
 
-	_options = options;
-	_parameters = parameters;
-    }
+      _options = options;
+      _parameters = parameters;
+   }
 
-    /**
-     * Returns the options.
-     */
-    public ArrayValue getOptions() {
-	return _options;
-    }
+   /**
+    * Returns the options.
+    */
+   public ArrayValue getOptions() {
+      return _options;
+   }
 
-    /**
-     * Sets the options.
-     */
-    public void setOptions(ArrayValue options) {
-	_options = options;
-    }
+   /**
+    * Sets the options.
+    */
+   public void setOptions(ArrayValue options) {
+      _options = options;
+   }
 
-    /**
-     * Sets an option
-     */
-    public void setOption(Env env, StringValue wrapper,
-	    StringValue option, Value value) {
-	_options.getArray(wrapper).put(option, value);
-    }
+   /**
+    * Sets an option
+    */
+   public void setOption(Env env, StringValue wrapper,
+           StringValue option, Value value) {
+      _options.getArray(wrapper).put(option, value);
+   }
 
-    /**
-     * Sets the parameters.
-     */
-    public void setParameters(ArrayValue parameters) {
-	_parameters = parameters;
-    }
+   /**
+    * Sets the parameters.
+    */
+   public void setParameters(ArrayValue parameters) {
+      _parameters = parameters;
+   }
 
-    /**
-     * Converts to a string.
-     * @param env
-     */
-    public StringValue toString(Env env) {
-	return env.createString("StreamContextResource[]");
-    }
+   /**
+    * Converts to a string.
+    * @param env
+    */
+   public StringValue toString(Env env) {
+      return env.createString("StreamContextResource[]");
+   }
 }

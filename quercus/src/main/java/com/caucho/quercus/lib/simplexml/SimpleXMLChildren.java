@@ -41,45 +41,45 @@ import com.caucho.quercus.env.Value;
  */
 public class SimpleXMLChildren extends SimpleXMLElement {
 
-    protected SimpleXMLChildren(Env env, QuercusClass cls,
-	    SimpleXMLElement parent, String name) {
-	super(env, cls, parent, name);
-    }
+   protected SimpleXMLChildren(Env env, QuercusClass cls,
+           SimpleXMLElement parent, String name) {
+      super(env, cls, parent, name);
+   }
 
-    /**
-     * Implementation for getting the indices of this class.
-     * i.e. <code>$a->foo[0]</code>
-     */
-    @Override
-    public Value __get(Env env, Value indexV) {
-	if (indexV.isString()) {
-	    String name = indexV.toString();
+   /**
+    * Implementation for getting the indices of this class.
+    * i.e. <code>$a->foo[0]</code>
+    */
+   @Override
+   public Value __get(Env env, Value indexV) {
+      if (indexV.isString()) {
+         String name = indexV.toString();
 
-	    return wrapJava(env, _cls, getAttribute(name));
-	} else if (indexV.isLongConvertible()) {
-	    int i = indexV.toInt();
+         return wrapJava(env, _cls, getAttribute(name));
+      } else if (indexV.isLongConvertible()) {
+         int i = indexV.toInt();
 
-	    if (_children != null && i < _children.size()) {
-		return wrapJava(env, _cls, _children.get(i));
-	    } else {
-		return NullValue.NULL;
-	    }
-	} else {
-	    return NullValue.NULL;
-	}
-    }
+         if (_children != null && i < _children.size()) {
+            return wrapJava(env, _cls, _children.get(i));
+         } else {
+            return NullValue.NULL;
+         }
+      } else {
+         return NullValue.NULL;
+      }
+   }
 
-    /**
-     * Converts node tree to a valid xml string.
-     *
-     * @return xml string
-     */
-    @ReturnNullAsFalse
-    public StringValue asXML(Env env) {
-	if (_children != null) {
-	    return _children.get(0).toXML(env);
-	} else {
-	    return null;
-	}
-    }
+   /**
+    * Converts node tree to a valid xml string.
+    *
+    * @return xml string
+    */
+   @ReturnNullAsFalse
+   public StringValue asXML(Env env) {
+      if (_children != null) {
+         return _children.get(0).toXML(env);
+      } else {
+         return null;
+      }
+   }
 }

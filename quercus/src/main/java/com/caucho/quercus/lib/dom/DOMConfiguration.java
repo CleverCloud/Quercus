@@ -29,36 +29,36 @@
 package com.caucho.quercus.lib.dom;
 
 public class DOMConfiguration
-	extends DOMWrapper<org.w3c.dom.DOMConfiguration> {
+        extends DOMWrapper<org.w3c.dom.DOMConfiguration> {
 
-    DOMConfiguration(
-	    DOMImplementation impl, org.w3c.dom.DOMConfiguration delegate) {
-	super(impl, delegate);
-    }
+   DOMConfiguration(
+           DOMImplementation impl, org.w3c.dom.DOMConfiguration delegate) {
+      super(impl, delegate);
+   }
 
-    public boolean canSetParameter(String name, Object value) {
-	return _delegate.canSetParameter(name, value);
-    }
+   public boolean canSetParameter(String name, Object value) {
+      return _delegate.canSetParameter(name, value);
+   }
 
-    public Object getParameter(String name)
-	    throws DOMException {
-	try {
-	    return wrap(_delegate.getParameter(name));
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public Object getParameter(String name)
+           throws DOMException {
+      try {
+         return wrap(_delegate.getParameter(name));
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public DOMStringList getParameterNames() {
-	return wrap(_delegate.getParameterNames());
-    }
+   public DOMStringList getParameterNames() {
+      return wrap(_delegate.getParameterNames());
+   }
 
-    public void setParameter(String name, Object value)
-	    throws DOMException {
-	try {
-	    _delegate.setParameter(name, value);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public void setParameter(String name, Object value)
+           throws DOMException {
+      try {
+         _delegate.setParameter(name, value);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 }

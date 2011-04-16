@@ -34,10 +34,10 @@ import com.caucho.quercus.module.AbstractQuercusModule;
  */
 public class PDOModule extends AbstractQuercusModule {
 
-    /**
-     * Returns true for the pdo extension.
-     */
-    public String[] getLoadedExtensions() {
-	return new String[]{"PDO"};
-    }
+   /**
+    * Returns true for the pdo extension.
+    */
+   public String[] getLoadedExtensions() {
+      return new String[]{"PDO"};
+   }
 }

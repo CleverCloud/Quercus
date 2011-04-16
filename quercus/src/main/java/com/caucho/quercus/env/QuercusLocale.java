@@ -32,23 +32,23 @@ import java.util.Locale;
 
 public class QuercusLocale {
 
-    private final Locale _locale;
-    private final String _charset;
+   private final Locale _locale;
+   private final String _charset;
 
-    public QuercusLocale(Locale locale, String charset) {
-	_locale = locale;
-	_charset = charset;
-    }
+   public QuercusLocale(Locale locale, String charset) {
+      _locale = locale;
+      _charset = charset;
+   }
 
-    public Locale getLocale() {
-	return _locale;
-    }
+   public Locale getLocale() {
+      return _locale;
+   }
 
-    public String getCharset() {
-	return _charset;
-    }
+   public String getCharset() {
+      return _charset;
+   }
 
-    public String toString() {
-	return _locale.toString();
-    }
+   public String toString() {
+      return _locale.toString();
+   }
 }

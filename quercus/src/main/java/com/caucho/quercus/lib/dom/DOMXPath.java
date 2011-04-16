@@ -50,217 +50,217 @@ import com.caucho.xpath.Expr;
 
 public class DOMXPath {
 
-    private DOMNamespaceContext _context;
-    private DOMDocument _document;
+   private DOMNamespaceContext _context;
+   private DOMDocument _document;
 
-    public static DOMXPath __construct(Env env, DOMDocument document) {
-	return new DOMXPath(env, document);
-    }
+   public static DOMXPath __construct(Env env, DOMDocument document) {
+      return new DOMXPath(env, document);
+   }
 
-    private DOMXPath(Env env, DOMDocument document) {
-	_document = document;
-    }
+   private DOMXPath(Env env, DOMDocument document) {
+      _document = document;
+   }
 
-    public Object evaluate(Env env,
-	    String expression) {
-	Node node = _document.getDelegate();
+   public Object evaluate(Env env,
+           String expression) {
+      Node node = _document.getDelegate();
 
-	NodeList nodeList = (NodeList) query(env, expression, node);
+      NodeList nodeList = (NodeList) query(env, expression, node);
 
-	if (nodeList.getLength() == 1) {
-	    return _document.wrap(nodeList.item(0));
-	} else {
-	    return _document.wrap(nodeList);
-	}
+      if (nodeList.getLength() == 1) {
+         return _document.wrap(nodeList.item(0));
+      } else {
+         return _document.wrap(nodeList);
+      }
 
-    }
+   }
 
-    public DOMNodeList query(Env env,
-	    String expression,
-	    @Optional DOMNode<Node> contextNode) {
-	Node node;
+   public DOMNodeList query(Env env,
+           String expression,
+           @Optional DOMNode<Node> contextNode) {
+      Node node;
 
-	if (contextNode != null) {
-	    node = contextNode.getDelegate();
-	} else {
-	    node = _document.getDelegate();
-	}
+      if (contextNode != null) {
+         node = contextNode.getDelegate();
+      } else {
+         node = _document.getDelegate();
+      }
 
-	NodeList nodeList = (NodeList) query(env, expression, node);
+      NodeList nodeList = (NodeList) query(env, expression, node);
 
-	return _document.wrap(nodeList);
-    }
+      return _document.wrap(nodeList);
+   }
 
-    private NodeList query(Env env, String pattern, Node node) {
-	// the JDKs xpath is extremely inefficient, causing benchmark
-	// problems with mediawiki
+   private NodeList query(Env env, String pattern, Node node) {
+      // the JDKs xpath is extremely inefficient, causing benchmark
+      // problems with mediawiki
 
-	try {
-	    Expr expr = com.caucho.xpath.XPath.parseExpr(pattern);
+      try {
+         Expr expr = com.caucho.xpath.XPath.parseExpr(pattern);
 
-	    return (NodeList) expr.evalObject(node);
-	} catch (Exception e) {
-	    throw new QuercusModuleException(e);
-	}
-    }
+         return (NodeList) expr.evalObject(node);
+      } catch (Exception e) {
+         throw new QuercusModuleException(e);
+      }
+   }
 
-    /*
-    private NodeList query(Env env, String pattern, Node node)
-    {
-    try {
-    if (_context == null) {
-    Quercus quercus = env.getQuercus();
+   /*
+   private NodeList query(Env env, String pattern, Node node)
+   {
+   try {
+   if (_context == null) {
+   Quercus quercus = env.getQuercus();
 
-    ExpressionCache cache
-    = (ExpressionCache) quercus.getSpecial("caucho.domxpath.cache");
+   ExpressionCache cache
+   = (ExpressionCache) quercus.getSpecial("caucho.domxpath.cache");
 
-    if (cache == null) {
-    cache = new ExpressionCache();
-    quercus.setSpecial("caucho.domxpath.cache", cache);
-    }
+   if (cache == null) {
+   cache = new ExpressionCache();
+   quercus.setSpecial("caucho.domxpath.cache", cache);
+   }
 
-    XPathExpression expr = cache.compile(pattern);
+   XPathExpression expr = cache.compile(pattern);
 
-    NodeList nodeList
-    = (NodeList) expr.evaluate(node, XPathConstants.NODESET);
+   NodeList nodeList
+   = (NodeList) expr.evaluate(node, XPathConstants.NODESET);
 
-    cache.free(pattern, expr);
+   cache.free(pattern, expr);
 
-    return nodeList;
-    }
-    else {
-    XPath xpath = (XPath) env.getSpecialValue("caucho.domxpath.xpath");
+   return nodeList;
+   }
+   else {
+   XPath xpath = (XPath) env.getSpecialValue("caucho.domxpath.xpath");
 
-    if (xpath == null) {
-    XPathFactory factory = XPathFactory.newInstance();
-    xpath = factory.newXPath();
-    env.setSpecialValue("caucho.domxpath.xpath", xpath);
-    }
+   if (xpath == null) {
+   XPathFactory factory = XPathFactory.newInstance();
+   xpath = factory.newXPath();
+   env.setSpecialValue("caucho.domxpath.xpath", xpath);
+   }
 
-    xpath.setNamespaceContext(_context);
+   xpath.setNamespaceContext(_context);
 
-    XPathExpression expr = xpath.compile(pattern);
+   XPathExpression expr = xpath.compile(pattern);
 
-    NodeList nodeList
-    = (NodeList) expr.evaluate(node, XPathConstants.NODESET);
+   NodeList nodeList
+   = (NodeList) expr.evaluate(node, XPathConstants.NODESET);
 
-    return nodeList;
-    }
-    }
-    catch (XPathExpressionException e) {
-    throw new QuercusModuleException(e);
-    }
-    }
-     */
-    public boolean registerNamespace(String prefix, String namespaceURI) {
-	if (_context == null) {
-	    _context = new DOMNamespaceContext();
-	}
+   return nodeList;
+   }
+   }
+   catch (XPathExpressionException e) {
+   throw new QuercusModuleException(e);
+   }
+   }
+    */
+   public boolean registerNamespace(String prefix, String namespaceURI) {
+      if (_context == null) {
+         _context = new DOMNamespaceContext();
+      }
 
-	_context.addNamespace(prefix, namespaceURI);
+      _context.addNamespace(prefix, namespaceURI);
 
-	return true;
-    }
+      return true;
+   }
 
-    public class DOMNamespaceContext
-	    implements NamespaceContext {
+   public class DOMNamespaceContext
+           implements NamespaceContext {
 
-	private HashMap<String, LinkedHashSet<String>> _namespaceMap = new HashMap<String, LinkedHashSet<String>>();
+      private HashMap<String, LinkedHashSet<String>> _namespaceMap = new HashMap<String, LinkedHashSet<String>>();
 
-	protected void addNamespace(String prefix, String namespaceURI) {
-	    LinkedHashSet<String> list = _namespaceMap.get(namespaceURI);
+      protected void addNamespace(String prefix, String namespaceURI) {
+         LinkedHashSet<String> list = _namespaceMap.get(namespaceURI);
 
-	    if (list == null) {
-		list = new LinkedHashSet<String>();
+         if (list == null) {
+            list = new LinkedHashSet<String>();
 
-		_namespaceMap.put(namespaceURI, list);
-	    }
+            _namespaceMap.put(namespaceURI, list);
+         }
 
-	    list.add(prefix);
-	}
+         list.add(prefix);
+      }
 
-	public String getNamespaceURI(String prefix) {
-	    for (Map.Entry<String, LinkedHashSet<String>> entry : _namespaceMap.entrySet()) {
-		if (entry.getValue().contains(prefix)) {
-		    return entry.getKey();
-		}
-	    }
+      public String getNamespaceURI(String prefix) {
+         for (Map.Entry<String, LinkedHashSet<String>> entry : _namespaceMap.entrySet()) {
+            if (entry.getValue().contains(prefix)) {
+               return entry.getKey();
+            }
+         }
 
-	    return null;
-	}
+         return null;
+      }
 
-	public String getPrefix(String namespaceURI) {
-	    Iterator<String> iter = getPrefixes(namespaceURI);
+      public String getPrefix(String namespaceURI) {
+         Iterator<String> iter = getPrefixes(namespaceURI);
 
-	    if (iter != null) {
-		return iter.next();
-	    } else {
-		return null;
-	    }
-	}
+         if (iter != null) {
+            return iter.next();
+         } else {
+            return null;
+         }
+      }
 
-	public Iterator<String> getPrefixes(String namespaceURI) {
-	    LinkedHashSet<String> prefixList = _namespaceMap.get(namespaceURI);
+      public Iterator<String> getPrefixes(String namespaceURI) {
+         LinkedHashSet<String> prefixList = _namespaceMap.get(namespaceURI);
 
-	    if (prefixList != null) {
-		return prefixList.iterator();
-	    } else {
-		return null;
-	    }
-	}
-    }
+         if (prefixList != null) {
+            return prefixList.iterator();
+         } else {
+            return null;
+         }
+      }
+   }
 
-    static class ExpressionCache {
+   static class ExpressionCache {
 
-	private final XPathFactory _factory = XPathFactory.newInstance();
-	private final LruCache<String, ExpressionEntry> _xpathCache = new LruCache<String, ExpressionEntry>(1024);
+      private final XPathFactory _factory = XPathFactory.newInstance();
+      private final LruCache<String, ExpressionEntry> _xpathCache = new LruCache<String, ExpressionEntry>(1024);
 
-	XPathExpression compile(String pattern)
-		throws XPathExpressionException {
-	    ExpressionEntry entry = _xpathCache.get(pattern);
-	    XPathExpression expr = null;
+      XPathExpression compile(String pattern)
+              throws XPathExpressionException {
+         ExpressionEntry entry = _xpathCache.get(pattern);
+         XPathExpression expr = null;
 
-	    if (entry != null) {
-		expr = entry.allocate();
-	    }
+         if (entry != null) {
+            expr = entry.allocate();
+         }
 
-	    if (expr == null) {
-		XPath xpath = _factory.newXPath();
-		expr = xpath.compile(pattern);
-	    }
+         if (expr == null) {
+            XPath xpath = _factory.newXPath();
+            expr = xpath.compile(pattern);
+         }
 
-	    return expr;
-	}
+         return expr;
+      }
 
-	void free(String pattern, XPathExpression expr) {
-	    ExpressionEntry entry = _xpathCache.get(pattern);
+      void free(String pattern, XPathExpression expr) {
+         ExpressionEntry entry = _xpathCache.get(pattern);
 
-	    if (entry == null) {
-		entry = new ExpressionEntry();
-		_xpathCache.put(pattern, entry);
-	    }
+         if (entry == null) {
+            entry = new ExpressionEntry();
+            _xpathCache.put(pattern, entry);
+         }
 
-	    entry.free(expr);
-	}
-    }
+         entry.free(expr);
+      }
+   }
 
-    static class ExpressionEntry {
+   static class ExpressionEntry {
 
-	private XPathExpression _expr;
+      private XPathExpression _expr;
 
-	XPathExpression allocate() {
-	    synchronized (this) {
-		XPathExpression expr = _expr;
-		_expr = null;
+      XPathExpression allocate() {
+         synchronized (this) {
+            XPathExpression expr = _expr;
+            _expr = null;
 
-		return expr;
-	    }
-	}
+            return expr;
+         }
+      }
 
-	void free(XPathExpression expr) {
-	    synchronized (this) {
-		_expr = expr;
-	    }
-	}
-    }
+      void free(XPathExpression expr) {
+         synchronized (this) {
+            _expr = expr;
+         }
+      }
+   }
 }

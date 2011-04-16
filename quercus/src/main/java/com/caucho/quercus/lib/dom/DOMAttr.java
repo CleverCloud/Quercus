@@ -35,53 +35,53 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
 public class DOMAttr
-	extends DOMNode<Attr> {
+        extends DOMNode<Attr> {
 
-    public static DOMAttr __construct(
-	    Env env, String name, @Optional String value) {
-	DOMAttr attr = getImpl(env).createAttr(name);
+   public static DOMAttr __construct(
+           Env env, String name, @Optional String value) {
+      DOMAttr attr = getImpl(env).createAttr(name);
 
-	if (value != null && value.length() > 0) {
-	    attr.setNodeValue(value);
-	}
+      if (value != null && value.length() > 0) {
+         attr.setNodeValue(value);
+      }
 
-	return attr;
-    }
+      return attr;
+   }
 
-    DOMAttr(DOMImplementation impl, Attr delegate) {
-	super(impl, delegate);
-    }
+   DOMAttr(DOMImplementation impl, Attr delegate) {
+      super(impl, delegate);
+   }
 
-    public String getName() {
-	return _delegate.getName();
-    }
+   public String getName() {
+      return _delegate.getName();
+   }
 
-    public Element getOwnerElement() {
-	return wrap(_delegate.getOwnerElement());
-    }
+   public Element getOwnerElement() {
+      return wrap(_delegate.getOwnerElement());
+   }
 
-    public DOMTypeInfo getSchemaTypeInfo() {
-	return wrap(_delegate.getSchemaTypeInfo());
-    }
+   public DOMTypeInfo getSchemaTypeInfo() {
+      return wrap(_delegate.getSchemaTypeInfo());
+   }
 
-    public boolean getSpecified() {
-	return _delegate.getSpecified();
-    }
+   public boolean getSpecified() {
+      return _delegate.getSpecified();
+   }
 
-    public String getValue() {
-	return _delegate.getValue();
-    }
+   public String getValue() {
+      return _delegate.getValue();
+   }
 
-    public boolean isId() {
-	return _delegate.isId();
-    }
+   public boolean isId() {
+      return _delegate.isId();
+   }
 
-    public void setValue(String value)
-	    throws DOMException {
-	try {
-	    _delegate.setValue(value);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public void setValue(String value)
+           throws DOMException {
+      try {
+         _delegate.setValue(value);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 }

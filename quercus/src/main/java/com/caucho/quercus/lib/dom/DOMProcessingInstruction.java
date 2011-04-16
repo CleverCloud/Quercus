@@ -34,38 +34,38 @@ import com.caucho.quercus.env.Env;
 import org.w3c.dom.ProcessingInstruction;
 
 public class DOMProcessingInstruction
-	extends DOMNode<ProcessingInstruction> {
+        extends DOMNode<ProcessingInstruction> {
 
-    public static DOMProcessingInstruction __construct(
-	    Env env, String name, @Optional String data) {
-	DOMProcessingInstruction pi = getImpl(env).createProcessingInstruction(name);
+   public static DOMProcessingInstruction __construct(
+           Env env, String name, @Optional String data) {
+      DOMProcessingInstruction pi = getImpl(env).createProcessingInstruction(name);
 
-	if (data != null && data.length() > 0) {
-	    pi.setData(data);
-	}
+      if (data != null && data.length() > 0) {
+         pi.setData(data);
+      }
 
-	return pi;
-    }
+      return pi;
+   }
 
-    DOMProcessingInstruction(
-	    DOMImplementation impl, ProcessingInstruction delegate) {
-	super(impl, delegate);
-    }
+   DOMProcessingInstruction(
+           DOMImplementation impl, ProcessingInstruction delegate) {
+      super(impl, delegate);
+   }
 
-    public String getData() {
-	return _delegate.getData();
-    }
+   public String getData() {
+      return _delegate.getData();
+   }
 
-    public String getTarget() {
-	return _delegate.getTarget();
-    }
+   public String getTarget() {
+      return _delegate.getTarget();
+   }
 
-    public void setData(String data)
-	    throws DOMException {
-	try {
-	    _delegate.setData(data);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public void setData(String data)
+           throws DOMException {
+      try {
+         _delegate.setData(data);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 }

@@ -31,9 +31,9 @@ package com.caucho.quercus.lib.reflection;
 import com.caucho.quercus.module.AbstractQuercusModule;
 
 public class ReflectionModule
-	extends AbstractQuercusModule {
+        extends AbstractQuercusModule {
 
-    public String[] getLoadedExtensions() {
-	return new String[]{"Reflection"};
-    }
+   public String[] getLoadedExtensions() {
+      return new String[]{"Reflection"};
+   }
 }

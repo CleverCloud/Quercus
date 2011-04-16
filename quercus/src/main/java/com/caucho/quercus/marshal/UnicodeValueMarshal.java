@@ -36,56 +36,56 @@ import com.caucho.quercus.expr.Expr;
 
 public class UnicodeValueMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new UnicodeValueMarshal();
+   public static final Marshal MARSHAL = new UnicodeValueMarshal();
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    /**
-     * Return true if is a Value.
-     */
-    @Override
-    public boolean isValue() {
-	return true;
-    }
+   /**
+    * Return true if is a Value.
+    */
+   @Override
+   public boolean isValue() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return expr.eval(env).toUnicodeValue(env);
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return expr.eval(env).toUnicodeValue(env);
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return value.toUnicodeValue(env);
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return value.toUnicodeValue(env);
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	if (value instanceof UnicodeValue) {
-	    return (UnicodeValue) value;
-	} else if (value instanceof Value) {
-	    return ((Value) value).toUnicodeValue(env);
-	} else {
-	    return env.createString(String.valueOf(value));
-	}
-    }
+   public Value unmarshal(Env env, Object value) {
+      if (value instanceof UnicodeValue) {
+         return (UnicodeValue) value;
+      } else if (value instanceof Value) {
+         return ((Value) value).toUnicodeValue(env);
+      } else {
+         return env.createString(String.valueOf(value));
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	return argValue.toUnicodeValueMarshalCost();
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      return argValue.toUnicodeValueMarshalCost();
 
-	/*
-	if (argValue.isUnicode())
-	return Marshal.ZERO;
-	else if (argValue.isString())
-	return Marshal.TWO;
-	else if (! (argValue.isArray() || argValue.isObject()))
-	return Marshal.THREE;
-	else
-	return Marshal.FOUR;
-	 */
-    }
+      /*
+      if (argValue.isUnicode())
+      return Marshal.ZERO;
+      else if (argValue.isString())
+      return Marshal.TWO;
+      else if (! (argValue.isArray() || argValue.isObject()))
+      return Marshal.THREE;
+      else
+      return Marshal.FOUR;
+       */
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return UnicodeValue.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return UnicodeValue.class;
+   }
 }

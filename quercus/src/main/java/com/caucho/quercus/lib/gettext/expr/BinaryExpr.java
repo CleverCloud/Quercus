@@ -30,13 +30,13 @@ package com.caucho.quercus.lib.gettext.expr;
 
 abstract public class BinaryExpr implements Expr {
 
-    protected Expr _left;
-    protected Expr _right;
+   protected Expr _left;
+   protected Expr _right;
 
-    public BinaryExpr(Expr left, Expr right) {
-	_left = left;
-	_right = right;
-    }
+   public BinaryExpr(Expr left, Expr right) {
+      _left = left;
+      _right = right;
+   }
 
-    abstract public int eval(int n);
+   abstract public int eval(int n);
 }

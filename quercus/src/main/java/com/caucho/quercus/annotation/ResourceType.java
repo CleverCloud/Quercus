@@ -40,5 +40,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ResourceType {
 
-    public String value() default "Unknown";
+   public String value() default "Unknown";
 }

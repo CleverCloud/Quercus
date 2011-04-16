@@ -41,31 +41,31 @@ import java.util.logging.Logger;
  */
 public class JavaURLValue extends JavaValue {
 
-    private static final Logger log = Logger.getLogger(JavaURLValue.class.getName());
-    private final URL _url;
+   private static final Logger log = Logger.getLogger(JavaURLValue.class.getName());
+   private final URL _url;
 
-    public JavaURLValue(Env env, URL url, JavaClassDef def) {
-	super(env, url, def);
-	_url = url;
-    }
+   public JavaURLValue(Env env, URL url, JavaClassDef def) {
+      super(env, url, def);
+      _url = url;
+   }
 
-    /**
-     * Converts to a Java URL.
-     */
-    @Override
-    public URL toJavaURL(Env env) {
-	return _url;
-    }
+   /**
+    * Converts to a Java URL.
+    */
+   @Override
+   public URL toJavaURL(Env env) {
+      return _url;
+   }
 
-    /**
-     * Converts to a Java InputStream.
-     */
-    @Override
-    public InputStream toInputStream() {
-	try {
-	    return _url.openStream();
-	} catch (IOException e) {
-	    throw new QuercusRuntimeException(e);
-	}
-    }
+   /**
+    * Converts to a Java InputStream.
+    */
+   @Override
+   public InputStream toInputStream() {
+      try {
+         return _url.openStream();
+      } catch (IOException e) {
+         throw new QuercusRuntimeException(e);
+      }
+   }
 }

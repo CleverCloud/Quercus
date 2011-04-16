@@ -42,15 +42,15 @@ import java.util.List;
  */
 public class JavaCollectionClassDef extends JavaClassDef {
 
-    JavaCollectionClassDef(ModuleContext moduleContext, String name, Class type) {
-	super(moduleContext, name, type);
-    }
+   JavaCollectionClassDef(ModuleContext moduleContext, String name, Class type) {
+      super(moduleContext, name, type);
+   }
 
-    public Value wrap(Env env, Object obj) {
-	if (!_isInit) {
-	    init();
-	}
+   public Value wrap(Env env, Object obj) {
+      if (!_isInit) {
+         init();
+      }
 
-	return new JavaCollectionAdapter((Collection) obj, this);
-    }
+      return new JavaCollectionAdapter((Collection) obj, this);
+   }
 }

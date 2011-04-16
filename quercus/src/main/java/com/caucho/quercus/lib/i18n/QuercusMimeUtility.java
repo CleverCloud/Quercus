@@ -48,142 +48,142 @@ import com.caucho.quercus.env.Value;
 
 public class QuercusMimeUtility {
 
-    private static final Logger log = Logger.getLogger(
-	    QuercusMimeUtility.class.getName());
+   private static final Logger log = Logger.getLogger(
+           QuercusMimeUtility.class.getName());
 
-    /*
-     * Returns an array of decoded Mime headers/fields.
-     */
-    public static Value decodeMimeHeaders(Env env,
-	    StringValue encodedHeaders,
-	    String charset)
-	    throws UnsupportedEncodingException {
-	ArrayValue headers = new ArrayValueImpl();
+   /*
+    * Returns an array of decoded Mime headers/fields.
+    */
+   public static Value decodeMimeHeaders(Env env,
+           StringValue encodedHeaders,
+           String charset)
+           throws UnsupportedEncodingException {
+      ArrayValue headers = new ArrayValueImpl();
 
-	try {
-	    Enumeration<Header> enumeration = new InternetHeaders(encodedHeaders.toInputStream()).getAllHeaders();
+      try {
+         Enumeration<Header> enumeration = new InternetHeaders(encodedHeaders.toInputStream()).getAllHeaders();
 
-	    while (enumeration.hasMoreElements()) {
-		Header header = enumeration.nextElement();
+         while (enumeration.hasMoreElements()) {
+            Header header = enumeration.nextElement();
 
-		StringValue name = QuercusMimeUtility.decodeMime(env, header.getName(), charset);
-		StringValue val = QuercusMimeUtility.decodeMime(env, header.getValue(), charset);
+            StringValue name = QuercusMimeUtility.decodeMime(env, header.getName(), charset);
+            StringValue val = QuercusMimeUtility.decodeMime(env, header.getValue(), charset);
 
-		Value headerName;
-		if ((headerName = headers.containsKey(name)) == null) {
-		    headers.put(name, val);
-		    continue;
-		}
+            Value headerName;
+            if ((headerName = headers.containsKey(name)) == null) {
+               headers.put(name, val);
+               continue;
+            }
 
-		ArrayValue inner;
-		if (headerName.isArray()) {
-		    inner = headerName.toArrayValue(env);
-		} else {
-		    inner = new ArrayValueImpl();
-		    inner.put(headerName);
-		}
+            ArrayValue inner;
+            if (headerName.isArray()) {
+               inner = headerName.toArrayValue(env);
+            } else {
+               inner = new ArrayValueImpl();
+               inner.put(headerName);
+            }
 
-		inner.put(val);
-		headers.put(name, inner);
-	    }
+            inner.put(val);
+            headers.put(name, inner);
+         }
 
-	    return headers;
+         return headers;
 
-	} catch (MessagingException e) {
-	    log.log(Level.FINE, e.getMessage(), e);
-	    env.warning(e.getMessage());
+      } catch (MessagingException e) {
+         log.log(Level.FINE, e.getMessage(), e);
+         env.warning(e.getMessage());
 
-	    return BooleanValue.FALSE;
-	}
-    }
+         return BooleanValue.FALSE;
+      }
+   }
 
-    /**
-     * Returns decoded Mime header/field.
-     */
-    public static StringValue decodeMime(Env env,
-	    CharSequence word,
-	    String charset)
-	    throws UnsupportedEncodingException {
-	String decodedStr = MimeUtility.decodeText(word.toString());
+   /**
+    * Returns decoded Mime header/field.
+    */
+   public static StringValue decodeMime(Env env,
+           CharSequence word,
+           String charset)
+           throws UnsupportedEncodingException {
+      String decodedStr = MimeUtility.decodeText(word.toString());
 
-	StringValue str = env.createString(MimeUtility.unfold(decodedStr));
+      StringValue str = env.createString(MimeUtility.unfold(decodedStr));
 
-	return str.toBinaryValue(charset);
-    }
+      return str.toBinaryValue(charset);
+   }
 
-    public static Value encodeMime(Env env,
-	    StringValue name,
-	    StringValue value,
-	    String inCharset,
-	    String outCharset,
-	    String scheme)
-	    throws UnsupportedEncodingException {
-	return encodeMime(env,
-		name,
-		value,
-		inCharset,
-		outCharset,
-		scheme,
-		"\r\n",
-		76);
-    }
+   public static Value encodeMime(Env env,
+           StringValue name,
+           StringValue value,
+           String inCharset,
+           String outCharset,
+           String scheme)
+           throws UnsupportedEncodingException {
+      return encodeMime(env,
+              name,
+              value,
+              inCharset,
+              outCharset,
+              scheme,
+              "\r\n",
+              76);
+   }
 
-    /**
-     * Encodes a MIME header.
-     *
-     * XXX: preferences
-     *
-     * @param field_name header field name
-     * @param field_value header field value
-     * @param preferences
-     * @return encoded mime header
-     */
-    public static StringValue encodeMime(Env env,
-	    StringValue name,
-	    StringValue value,
-	    String inCharset,
-	    String outCharset,
-	    String scheme,
-	    String lineBreakChars,
-	    int lineLength)
-	    throws UnsupportedEncodingException {
-	Decoder decoder = Decoder.create(inCharset);
+   /**
+    * Encodes a MIME header.
+    *
+    * XXX: preferences
+    *
+    * @param field_name header field name
+    * @param field_value header field value
+    * @param preferences
+    * @return encoded mime header
+    */
+   public static StringValue encodeMime(Env env,
+           StringValue name,
+           StringValue value,
+           String inCharset,
+           String outCharset,
+           String scheme,
+           String lineBreakChars,
+           int lineLength)
+           throws UnsupportedEncodingException {
+      Decoder decoder = Decoder.create(inCharset);
 
-	CharSequence nameUnicode = decoder.decode(env, name);
+      CharSequence nameUnicode = decoder.decode(env, name);
 
-	decoder.reset();
-	String valueUnicode = decoder.decode(env, value).toString();
+      decoder.reset();
+      String valueUnicode = decoder.decode(env, value).toString();
 
-	StringValue sb = env.createUnicodeBuilder();
-	sb.append(UnicodeUtility.encode(env, nameUnicode, outCharset));
-	sb.append(':');
-	sb.append(' ');
+      StringValue sb = env.createUnicodeBuilder();
+      sb.append(UnicodeUtility.encode(env, nameUnicode, outCharset));
+      sb.append(':');
+      sb.append(' ');
 
-	String word = encodeMimeWord(valueUnicode.toString(),
-		outCharset,
-		scheme,
-		lineBreakChars,
-		lineLength);
+      String word = encodeMimeWord(valueUnicode.toString(),
+              outCharset,
+              scheme,
+              lineBreakChars,
+              lineLength);
 
-	sb.append(MimeUtility.fold(sb.length(), word));
+      sb.append(MimeUtility.fold(sb.length(), word));
 
-	return sb;
-    }
+      return sb;
+   }
 
-    public static String encodeMimeWord(String value,
-	    String charset,
-	    String scheme,
-	    String lineBreakChars,
-	    int lineLength)
-	    throws UnsupportedEncodingException {
-	if (lineLength != 76) {
-	    throw new UnimplementedException("Mime line length option");
-	}
+   public static String encodeMimeWord(String value,
+           String charset,
+           String scheme,
+           String lineBreakChars,
+           int lineLength)
+           throws UnsupportedEncodingException {
+      if (lineLength != 76) {
+         throw new UnimplementedException("Mime line length option");
+      }
 
-	if (!lineBreakChars.equals("\r\n")) {
-	    throw new UnimplementedException("Mime line break option");
-	}
+      if (!lineBreakChars.equals("\r\n")) {
+         throw new UnimplementedException("Mime line break option");
+      }
 
-	return MimeUtility.encodeWord(value, charset, scheme);
-    }
+      return MimeUtility.encodeWord(value, charset, scheme);
+   }
 }

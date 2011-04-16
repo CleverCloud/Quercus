@@ -43,163 +43,163 @@ import java.util.Map;
  * Represents a foreach statement.
  */
 public class ForeachStatement
-	extends Statement {
+        extends Statement {
 
-    protected final Expr _objExpr;
-    protected final AbstractVarExpr _key;
-    protected final AbstractVarExpr _value;
-    protected final boolean _isRef;
-    protected final Statement _block;
-    protected final String _label;
+   protected final Expr _objExpr;
+   protected final AbstractVarExpr _key;
+   protected final AbstractVarExpr _value;
+   protected final boolean _isRef;
+   protected final Statement _block;
+   protected final String _label;
 
-    public ForeachStatement(Location location,
-	    Expr objExpr,
-	    AbstractVarExpr key,
-	    AbstractVarExpr value,
-	    boolean isRef,
-	    Statement block,
-	    String label) {
-	super(location);
+   public ForeachStatement(Location location,
+           Expr objExpr,
+           AbstractVarExpr key,
+           AbstractVarExpr value,
+           boolean isRef,
+           Statement block,
+           String label) {
+      super(location);
 
-	_objExpr = objExpr;
+      _objExpr = objExpr;
 
-	_key = key;
-	_value = value;
-	_isRef = isRef;
+      _key = key;
+      _value = value;
+      _isRef = isRef;
 
-	_block = block;
-	_label = label;
+      _block = block;
+      _label = label;
 
-	block.setParent(this);
-    }
+      block.setParent(this);
+   }
 
-    @Override
-    public boolean isLoop() {
-	return true;
-    }
+   @Override
+   public boolean isLoop() {
+      return true;
+   }
 
-    public Value execute(Env env) {
-	Value origObj = _objExpr.eval(env);
-	Value obj = origObj.copy(); // php/0669
+   public Value execute(Env env) {
+      Value origObj = _objExpr.eval(env);
+      Value obj = origObj.copy(); // php/0669
 
-	if (_key == null && !_isRef) {
-	    Iterator<Value> iter = obj.getValueIterator(env);
+      if (_key == null && !_isRef) {
+         Iterator<Value> iter = obj.getValueIterator(env);
 
-	    while (iter.hasNext()) {
-		Value value = iter.next();
+         while (iter.hasNext()) {
+            Value value = iter.next();
 
-		value = value.copy(); // php/0662
+            value = value.copy(); // php/0662
 
-		_value.evalAssignValue(env, value);
+            _value.evalAssignValue(env, value);
 
-		Value result = _block.execute(env);
+            Value result = _block.execute(env);
 
-		if (result == null) {
-		} else if (result instanceof ContinueValue) {
-		    ContinueValue conValue = (ContinueValue) result;
+            if (result == null) {
+            } else if (result instanceof ContinueValue) {
+               ContinueValue conValue = (ContinueValue) result;
 
-		    int target = conValue.getTarget();
+               int target = conValue.getTarget();
 
-		    if (target > 1) {
-			return new ContinueValue(target - 1);
-		    }
-		} else if (result instanceof BreakValue) {
-		    BreakValue breakValue = (BreakValue) result;
+               if (target > 1) {
+                  return new ContinueValue(target - 1);
+               }
+            } else if (result instanceof BreakValue) {
+               BreakValue breakValue = (BreakValue) result;
 
-		    int target = breakValue.getTarget();
+               int target = breakValue.getTarget();
 
-		    if (target > 1) {
-			return new BreakValue(target - 1);
-		    } else {
-			break;
-		    }
-		} else {
-		    return result;
-		}
-	    }
+               if (target > 1) {
+                  return new BreakValue(target - 1);
+               } else {
+                  break;
+               }
+            } else {
+               return result;
+            }
+         }
 
-	    return null;
-	} else if (_isRef) {
-	    Iterator<Value> iter = obj.getKeyIterator(env);
+         return null;
+      } else if (_isRef) {
+         Iterator<Value> iter = obj.getKeyIterator(env);
 
-	    while (iter.hasNext()) {
-		Value key = iter.next();
+         while (iter.hasNext()) {
+            Value key = iter.next();
 
-		if (_key != null) {
-		    _key.evalAssignValue(env, key);
-		}
+            if (_key != null) {
+               _key.evalAssignValue(env, key);
+            }
 
-		Value value = origObj.getVar(key);
+            Value value = origObj.getVar(key);
 
-		// php/0667
-		_value.evalAssignRef(env, value);
+            // php/0667
+            _value.evalAssignRef(env, value);
 
-		Value result = _block.execute(env);
+            Value result = _block.execute(env);
 
-		if (result == null) {
-		} else if (result instanceof ContinueValue) {
-		    ContinueValue conValue = (ContinueValue) result;
+            if (result == null) {
+            } else if (result instanceof ContinueValue) {
+               ContinueValue conValue = (ContinueValue) result;
 
-		    int target = conValue.getTarget();
+               int target = conValue.getTarget();
 
-		    if (target > 1) {
-			return new ContinueValue(target - 1);
-		    }
-		} else if (result instanceof BreakValue) {
-		    BreakValue breakValue = (BreakValue) result;
+               if (target > 1) {
+                  return new ContinueValue(target - 1);
+               }
+            } else if (result instanceof BreakValue) {
+               BreakValue breakValue = (BreakValue) result;
 
-		    int target = breakValue.getTarget();
+               int target = breakValue.getTarget();
 
-		    if (target > 1) {
-			return new BreakValue(target - 1);
-		    } else {
-			break;
-		    }
-		} else {
-		    return result;
-		}
-	    }
-	} else {
-	    Iterator<Map.Entry<Value, Value>> iter = obj.getIterator(env);
+               if (target > 1) {
+                  return new BreakValue(target - 1);
+               } else {
+                  break;
+               }
+            } else {
+               return result;
+            }
+         }
+      } else {
+         Iterator<Map.Entry<Value, Value>> iter = obj.getIterator(env);
 
-	    while (iter.hasNext()) {
-		Map.Entry<Value, Value> entry = iter.next();
-		Value key = entry.getKey();
-		Value value = entry.getValue();
+         while (iter.hasNext()) {
+            Map.Entry<Value, Value> entry = iter.next();
+            Value key = entry.getKey();
+            Value value = entry.getValue();
 
-		value = value.copy(); // php/066w
+            value = value.copy(); // php/066w
 
-		_key.evalAssignValue(env, key);
+            _key.evalAssignValue(env, key);
 
-		_value.evalAssignValue(env, value);
+            _value.evalAssignValue(env, value);
 
-		Value result = _block.execute(env);
+            Value result = _block.execute(env);
 
-		if (result == null) {
-		} else if (result instanceof ContinueValue) {
-		    ContinueValue conValue = (ContinueValue) result;
+            if (result == null) {
+            } else if (result instanceof ContinueValue) {
+               ContinueValue conValue = (ContinueValue) result;
 
-		    int target = conValue.getTarget();
+               int target = conValue.getTarget();
 
-		    if (target > 1) {
-			return new ContinueValue(target - 1);
-		    }
-		} else if (result instanceof BreakValue) {
-		    BreakValue breakValue = (BreakValue) result;
+               if (target > 1) {
+                  return new ContinueValue(target - 1);
+               }
+            } else if (result instanceof BreakValue) {
+               BreakValue breakValue = (BreakValue) result;
 
-		    int target = breakValue.getTarget();
+               int target = breakValue.getTarget();
 
-		    if (target > 1) {
-			return new BreakValue(target - 1);
-		    } else {
-			break;
-		    }
-		} else {
-		    return result;
-		}
-	    }
-	}
+               if (target > 1) {
+                  return new BreakValue(target - 1);
+               } else {
+                  break;
+               }
+            } else {
+               return result;
+            }
+         }
+      }
 
-	return null;
-    }
+      return null;
+   }
 }

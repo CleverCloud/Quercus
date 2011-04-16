@@ -36,30 +36,30 @@ import java.io.IOException;
 
 public class Directory {
 
-    public DirectoryValue handle;
-    public String path;
+   public DirectoryValue handle;
+   public String path;
 
-    protected Directory(Env env, Path path)
-	    throws IOException {
-	handle = new DirectoryValue(env, path);
-	env.addCleanup(handle);
+   protected Directory(Env env, Path path)
+           throws IOException {
+      handle = new DirectoryValue(env, path);
+      env.addCleanup(handle);
 
-	this.path = path.toString();
-    }
+      this.path = path.toString();
+   }
 
-    public Value read(Env env) {
-	return handle.readdir();
-    }
+   public Value read(Env env) {
+      return handle.readdir();
+   }
 
-    public void rewind() {
-	handle.rewinddir();
-    }
+   public void rewind() {
+      handle.rewinddir();
+   }
 
-    public void close() {
-	handle.close();
-    }
+   public void close() {
+      handle.close();
+   }
 
-    public String toString() {
-	return "Directory[]";
-    }
+   public String toString() {
+      return "Directory[]";
+   }
 }

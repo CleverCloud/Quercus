@@ -37,17 +37,17 @@ import com.caucho.quercus.function.AbstractFunction;
  */
 public class UnsetFunction extends AbstractFunction {
 
-    private final long _crc;
+   private final long _crc;
 
-    public UnsetFunction(long crc) {
-	_crc = crc;
-    }
+   public UnsetFunction(long crc) {
+      _crc = crc;
+   }
 
-    public long getCrc() {
-	return _crc;
-    }
+   public long getCrc() {
+      return _crc;
+   }
 
-    public Value call(Env env, Value[] args) {
-	throw new UnsupportedOperationException();
-    }
+   public Value call(Env env, Value[] args) {
+      throw new UnsupportedOperationException();
+   }
 }

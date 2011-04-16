@@ -43,66 +43,66 @@ import javax.net.ssl.SSLPeerUnverifiedException;
  * Represents a HttpURLConnection wrapper.
  */
 public class HttpsConnection
-	extends HttpConnection {
+        extends HttpConnection {
 
-    protected HttpsConnection(URL url,
-	    String username,
-	    String password)
-	    throws IOException {
-	super(url, username, password);
-    }
+   protected HttpsConnection(URL url,
+           String username,
+           String password)
+           throws IOException {
+      super(url, username, password);
+   }
 
-    public HttpsConnection(URL url,
-	    String username,
-	    String password,
-	    URL proxyURL,
-	    String proxyUsername,
-	    String proxyPassword,
-	    String proxyType)
-	    throws IOException {
-	super(url, username, password,
-		proxyURL, proxyUsername, proxyPassword, proxyType);
-    }
+   public HttpsConnection(URL url,
+           String username,
+           String password,
+           URL proxyURL,
+           String proxyUsername,
+           String proxyPassword,
+           String proxyType)
+           throws IOException {
+      super(url, username, password,
+              proxyURL, proxyUsername, proxyPassword, proxyType);
+   }
 
-    @Override
-    protected void init(CurlResource curl)
-	    throws IOException {
-	Proxy proxy = getProxy();
+   @Override
+   protected void init(CurlResource curl)
+           throws IOException {
+      Proxy proxy = getProxy();
 
-	HttpsURLConnection conn;
+      HttpsURLConnection conn;
 
-	if (proxy != null) {
-	    conn = (HttpsURLConnection) getURL().openConnection(proxy);
-	} else {
-	    conn = (HttpsURLConnection) getURL().openConnection();
-	}
+      if (proxy != null) {
+         conn = (HttpsURLConnection) getURL().openConnection(proxy);
+      } else {
+         conn = (HttpsURLConnection) getURL().openConnection();
+      }
 
-	HostnameVerifier hostnameVerifier = CurlHostnameVerifier.create(curl.getIsVerifySSLPeer(),
-		curl.getIsVerifySSLCommonName(),
-		curl.getIsVerifySSLHostname());
+      HostnameVerifier hostnameVerifier = CurlHostnameVerifier.create(curl.getIsVerifySSLPeer(),
+              curl.getIsVerifySSLCommonName(),
+              curl.getIsVerifySSLHostname());
 
-	conn.setHostnameVerifier(hostnameVerifier);
+      conn.setHostnameVerifier(hostnameVerifier);
 
-	setConnection(conn);
-    }
-    /**
-     * Connects to the server.
-     */
-    /*
-    @Override
-    public void connect(CurlResource curl)
-    throws ConnectException, ProtocolException, SocketTimeoutException,
-    IOException
-    {
-    try {
-    super.connect(curl);
+      setConnection(conn);
+   }
+   /**
+    * Connects to the server.
+    */
+   /*
+   @Override
+   public void connect(CurlResource curl)
+   throws ConnectException, ProtocolException, SocketTimeoutException,
+   IOException
+   {
+   try {
+   super.connect(curl);
 
-    ((HttpsURLConnection)getConnection()).getServerCertificates();
-    }
-    catch (SSLPeerUnverifiedException e) {
-    if (curl.getIsVerifySSLPeer())
-    throw e;
-    }
-    }
-     */
+   ((HttpsURLConnection)getConnection()).getServerCertificates();
+   }
+   catch (SSLPeerUnverifiedException e) {
+   if (curl.getIsVerifySSLPeer())
+   throw e;
+   }
+   }
+    */
 }

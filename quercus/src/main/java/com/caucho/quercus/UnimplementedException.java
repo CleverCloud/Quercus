@@ -30,38 +30,38 @@ package com.caucho.quercus;
 import com.caucho.util.L10N;
 
 public class UnimplementedException
-	extends UnsupportedOperationException {
+        extends UnsupportedOperationException {
 
-    private final static L10N L = new L10N(UnimplementedException.class);
-    private static final String MESSAGE = "{0} has not been implemented. "
-	    + "A more recent version of Quercus may be available "
-	    + "at http://www.caucho.com/download "
-	    + "Requests for unimplemented features can be "
-	    + "entered in the bugtracking system at http://bugs.caucho.com";
+   private final static L10N L = new L10N(UnimplementedException.class);
+   private static final String MESSAGE = "{0} has not been implemented. "
+           + "A more recent version of Quercus may be available "
+           + "at http://www.caucho.com/download "
+           + "Requests for unimplemented features can be "
+           + "entered in the bugtracking system at http://bugs.caucho.com";
 
-    public UnimplementedException() {
-	super(createMessage(null));
-    }
+   public UnimplementedException() {
+      super(createMessage(null));
+   }
 
-    public UnimplementedException(String functionality) {
-	super(createMessage(functionality));
-    }
+   public UnimplementedException(String functionality) {
+      super(createMessage(functionality));
+   }
 
-    public UnimplementedException(String functionality, Throwable cause) {
-	super(createMessage(functionality), cause);
-    }
+   public UnimplementedException(String functionality, Throwable cause) {
+      super(createMessage(functionality), cause);
+   }
 
-    public UnimplementedException(Throwable cause) {
-	super(createMessage(null), cause);
-    }
+   public UnimplementedException(Throwable cause) {
+      super(createMessage(null), cause);
+   }
 
-    private static String createMessage(String functionality) {
-	if (functionality == null) {
-	    functionality = "This functionality";
-	} else {
-	    functionality = "`" + functionality + "'";
-	}
+   private static String createMessage(String functionality) {
+      if (functionality == null) {
+         functionality = "This functionality";
+      } else {
+         functionality = "`" + functionality + "'";
+      }
 
-	return L.l(MESSAGE, functionality);
-    }
+      return L.l(MESSAGE, functionality);
+   }
 }

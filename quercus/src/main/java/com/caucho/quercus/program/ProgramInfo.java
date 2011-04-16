@@ -40,25 +40,25 @@ import java.util.HashMap;
  */
 public class ProgramInfo {
 
-    private final QuercusContext _quercus;
-    private boolean _hasNonPublicMethods;
+   private final QuercusContext _quercus;
+   private boolean _hasNonPublicMethods;
 
-    public ProgramInfo(QuercusContext quercus) {
-	_quercus = quercus;
-    }
+   public ProgramInfo(QuercusContext quercus) {
+      _quercus = quercus;
+   }
 
-    /**
-     * Returns the owning quercus.
-     */
-    public QuercusContext getPhp() {
-	return _quercus;
-    }
+   /**
+    * Returns the owning quercus.
+    */
+   public QuercusContext getPhp() {
+      return _quercus;
+   }
 
-    public boolean getHasNonPublicMethods() {
-	return _hasNonPublicMethods;
-    }
+   public boolean getHasNonPublicMethods() {
+      return _hasNonPublicMethods;
+   }
 
-    public void setHasNonPublicMethods(boolean val) {
-	_hasNonPublicMethods = val;
-    }
+   public void setHasNonPublicMethods(boolean val) {
+      _hasNonPublicMethods = val;
+   }
 }

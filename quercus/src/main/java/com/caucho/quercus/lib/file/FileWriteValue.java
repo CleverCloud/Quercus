@@ -40,96 +40,96 @@ import java.util.logging.Logger;
  */
 public class FileWriteValue extends FileValue {
 
-    private static final Logger log = Logger.getLogger(FileReadValue.class.getName());
-    private WriteStream _os;
-    private long _offset;
+   private static final Logger log = Logger.getLogger(FileReadValue.class.getName());
+   private WriteStream _os;
+   private long _offset;
 
-    public FileWriteValue(Path path)
-	    throws IOException {
-	super(path);
+   public FileWriteValue(Path path)
+           throws IOException {
+      super(path);
 
-	_os = path.openWrite();
-    }
+      _os = path.openWrite();
+   }
 
-    public FileWriteValue(Path path, boolean isAppend)
-	    throws IOException {
-	super(path);
+   public FileWriteValue(Path path, boolean isAppend)
+           throws IOException {
+      super(path);
 
-	if (isAppend) {
-	    _os = path.openAppend();
-	} else {
-	    _os = path.openWrite();
-	}
-    }
+      if (isAppend) {
+         _os = path.openAppend();
+      } else {
+         _os = path.openWrite();
+      }
+   }
 
-    /**
-     * Prints a string to a file.
-     */
-    public void print(char v)
-	    throws IOException {
-	if (_os != null) {
-	    _os.print(v);
-	}
-    }
+   /**
+    * Prints a string to a file.
+    */
+   public void print(char v)
+           throws IOException {
+      if (_os != null) {
+         _os.print(v);
+      }
+   }
 
-    /**
-     * Prints a string to a file.
-     */
-    public void print(String v)
-	    throws IOException {
-	if (_os != null) {
-	    _os.print(v);
-	}
-    }
+   /**
+    * Prints a string to a file.
+    */
+   public void print(String v)
+           throws IOException {
+      if (_os != null) {
+         _os.print(v);
+      }
+   }
 
-    /**
-     * Writes a buffer to a file.
-     */
-    public int write(byte[] buffer, int offset, int length)
-	    throws IOException {
-	if (_os != null) {
-	    _os.write(buffer, offset, length);
+   /**
+    * Writes a buffer to a file.
+    */
+   public int write(byte[] buffer, int offset, int length)
+           throws IOException {
+      if (_os != null) {
+         _os.write(buffer, offset, length);
 
-	    return length;
-	}
+         return length;
+      }
 
-	return 0;
-    }
+      return 0;
+   }
 
-    /**
-     * Flushes the output.
-     */
-    public void flush() {
-	try {
-	    if (_os != null) {
-		_os.flush();
-	    }
-	} catch (IOException e) {
-	    log.log(Level.FINE, e.toString(), e);
-	}
-    }
+   /**
+    * Flushes the output.
+    */
+   public void flush() {
+      try {
+         if (_os != null) {
+            _os.flush();
+         }
+      } catch (IOException e) {
+         log.log(Level.FINE, e.toString(), e);
+      }
+   }
 
-    /**
-     * Closes the file.
-     */
-    public void close() {
-	try {
-	    WriteStream os = _os;
-	    _os = null;
+   /**
+    * Closes the file.
+    */
+   public void close() {
+      try {
+         WriteStream os = _os;
+         _os = null;
 
-	    if (os != null) {
-		os.close();
-	    }
-	} catch (IOException e) {
-	    log.log(Level.FINE, e.toString(), e);
-	}
-    }
+         if (os != null) {
+            os.close();
+         }
+      } catch (IOException e) {
+         log.log(Level.FINE, e.toString(), e);
+      }
+   }
 
-    /**
-     * Converts to a string.
-     * @param env
-     */
-    public String toString() {
-	return "File[" + getPath() + "]";
-    }
+   /**
+    * Converts to a string.
+    * @param env
+    */
+   public String toString() {
+      return "File[" + getPath() + "]";
+   }
 }

@@ -38,16 +38,16 @@ import com.caucho.quercus.env.Value;
 @ClassImplementation
 public class Reflection {
 
-    public static Value export(Env env,
-	    Reflector r,
-	    @Optional boolean isReturn) {
-	return null;
-    }
+   public static Value export(Env env,
+           Reflector r,
+           @Optional boolean isReturn) {
+      return null;
+   }
 
-    public static ArrayValue getModifierNames(int modifierValue) {
-	ArrayValue array = new ArrayValueImpl();
+   public static ArrayValue getModifierNames(int modifierValue) {
+      ArrayValue array = new ArrayValueImpl();
 
 
-	return array;
-    }
+      return array;
+   }
 }

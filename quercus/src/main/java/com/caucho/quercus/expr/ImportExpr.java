@@ -38,38 +38,38 @@ import com.caucho.quercus.env.Value;
  */
 public class ImportExpr extends Expr {
 
-    protected final String _name;
-    protected final boolean _isWildcard;
+   protected final String _name;
+   protected final boolean _isWildcard;
 
-    public ImportExpr(Location location, String name, boolean isWildcard) {
-	super(location);
+   public ImportExpr(Location location, String name, boolean isWildcard) {
+      super(location);
 
-	_name = name;
-	_isWildcard = isWildcard;
-    }
+      _name = name;
+      _isWildcard = isWildcard;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	if (_isWildcard) {
-	    env.addWildcardImport(_name);
-	} else {
-	    env.putQualifiedImport(_name);
-	}
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      if (_isWildcard) {
+         env.addWildcardImport(_name);
+      } else {
+         env.putQualifiedImport(_name);
+      }
 
-	return NullValue.NULL;
-    }
+      return NullValue.NULL;
+   }
 
-    public String toString() {
-	if (_isWildcard) {
-	    return "import " + _name + ".*;";
-	} else {
-	    return "import " + _name + ";";
-	}
-    }
+   public String toString() {
+      if (_isWildcard) {
+         return "import " + _name + ".*;";
+      } else {
+         return "import " + _name + ";";
+      }
+   }
 }

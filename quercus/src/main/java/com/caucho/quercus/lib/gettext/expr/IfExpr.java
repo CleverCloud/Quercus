@@ -30,21 +30,21 @@ package com.caucho.quercus.lib.gettext.expr;
 
 public class IfExpr implements Expr {
 
-    protected Expr _testExpr;
-    protected Expr _trueExpr;
-    protected Expr _falseExpr;
+   protected Expr _testExpr;
+   protected Expr _trueExpr;
+   protected Expr _falseExpr;
 
-    public IfExpr(Expr testExpr, Expr trueExpr, Expr falseExpr) {
-	_testExpr = testExpr;
-	_trueExpr = trueExpr;
-	_falseExpr = falseExpr;
-    }
+   public IfExpr(Expr testExpr, Expr trueExpr, Expr falseExpr) {
+      _testExpr = testExpr;
+      _trueExpr = trueExpr;
+      _falseExpr = falseExpr;
+   }
 
-    public int eval(int n) {
-	if (_testExpr.eval(n) != 0) {
-	    return _trueExpr.eval(n);
-	} else {
-	    return _falseExpr.eval(n);
-	}
-    }
+   public int eval(int n) {
+      if (_testExpr.eval(n) != 0) {
+         return _trueExpr.eval(n);
+      } else {
+         return _falseExpr.eval(n);
+      }
+   }
 }

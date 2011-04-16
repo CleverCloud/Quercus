@@ -37,26 +37,26 @@ import com.caucho.quercus.env.Value;
  */
 public class UnaryPlusExpr extends AbstractUnaryExpr {
 
-    public UnaryPlusExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public UnaryPlusExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public UnaryPlusExpr(Expr expr) {
-	super(expr);
-    }
+   public UnaryPlusExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return _expr.eval(env).pos();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return _expr.eval(env).pos();
+   }
 
-    public String toString() {
-	return "+" + _expr;
-    }
+   public String toString() {
+      return "+" + _expr;
+   }
 }

@@ -30,15 +30,15 @@ package com.caucho.quercus.lib.gettext.expr;
 
 public class NEQExpr extends BinaryExpr {
 
-    public NEQExpr(Expr _left, Expr _right) {
-	super(_left, _right);
-    }
+   public NEQExpr(Expr _left, Expr _right) {
+      super(_left, _right);
+   }
 
-    public int eval(int n) {
-	if (_left.eval(n) != _right.eval(n)) {
-	    return 1;
-	} else {
-	    return 0;
-	}
-    }
+   public int eval(int n) {
+      if (_left.eval(n) != _right.eval(n)) {
+         return 1;
+      } else {
+         return 0;
+      }
+   }
 }

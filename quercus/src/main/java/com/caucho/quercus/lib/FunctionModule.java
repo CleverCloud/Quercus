@@ -48,147 +48,147 @@ import java.util.logging.Logger;
  */
 public class FunctionModule extends AbstractQuercusModule {
 
-    private static final L10N L = new L10N(FunctionModule.class);
-    private static final Logger log = Logger.getLogger(FunctionModule.class.getName());
+   private static final L10N L = new L10N(FunctionModule.class);
+   private static final Logger log = Logger.getLogger(FunctionModule.class.getName());
 
-    /**
-     * Calls a user function
-     */
-    public static Value call_user_func(Env env,
-	    Callable function,
-	    Value[] args) {
-	return function.call(env, args).copyReturn();
-    }
+   /**
+    * Calls a user function
+    */
+   public static Value call_user_func(Env env,
+           Callable function,
+           Value[] args) {
+      return function.call(env, args).copyReturn();
+   }
 
-    /**
-     * Calls a user function
-     */
-    public static Value call_user_func_array(Env env,
-	    Callable function,
-	    Value arg) {
-	if (function == null) {
-	    env.warning(
-		    "call_user_func_array: first argument is not a valid function");
-	    return NullValue.NULL;
-	}
+   /**
+    * Calls a user function
+    */
+   public static Value call_user_func_array(Env env,
+           Callable function,
+           Value arg) {
+      if (function == null) {
+         env.warning(
+                 "call_user_func_array: first argument is not a valid function");
+         return NullValue.NULL;
+      }
 
-	ArrayValue argArray;
+      ArrayValue argArray;
 
-	if (arg.isArray()) {
-	    argArray = (ArrayValue) arg.toArray();
-	} else {
-	    argArray = new ArrayValueImpl().append(arg);
-	}
+      if (arg.isArray()) {
+         argArray = (ArrayValue) arg.toArray();
+      } else {
+         argArray = new ArrayValueImpl().append(arg);
+      }
 
-	Value[] args;
+      Value[] args;
 
-	if (argArray != null) {
-	    args = new Value[argArray.getSize()];
+      if (argArray != null) {
+         args = new Value[argArray.getSize()];
 
-	    int i = 0;
+         int i = 0;
 
-	    for (Map.Entry<Value, Value> entry : argArray.entrySet()) {
-		ArrayValue.Entry arrayEntry = (ArrayValue.Entry) entry;
+         for (Map.Entry<Value, Value> entry : argArray.entrySet()) {
+            ArrayValue.Entry arrayEntry = (ArrayValue.Entry) entry;
 
-		args[i++] = arrayEntry.getRawValue();
-	    }
-	} else {
-	    args = new Value[0];
-	}
+            args[i++] = arrayEntry.getRawValue();
+         }
+      } else {
+         args = new Value[0];
+      }
 
-	return function.call(env, args).copyReturn();
-    }
+      return function.call(env, args).copyReturn();
+   }
 
-    /**
-     * Creates an anonymous function
-     */
-    public static Value create_function(Env env,
-	    String args,
-	    String code) {
-	try {
-	    AbstractFunction fun = env.createAnonymousFunction(args, code);
+   /**
+    * Creates an anonymous function
+    */
+   public static Value create_function(Env env,
+           String args,
+           String code) {
+      try {
+         AbstractFunction fun = env.createAnonymousFunction(args, code);
 
-	    return new CallbackFunction(fun, fun.getName());
-	} catch (IOException e) {
-	    env.warning(e.getMessage());
+         return new CallbackFunction(fun, fun.getName());
+      } catch (IOException e) {
+         env.warning(e.getMessage());
 
-	    return BooleanValue.FALSE;
-	}
-    }
+         return BooleanValue.FALSE;
+      }
+   }
 
-    /**
-     * Returns the nth function argument.
-     */
-    @VariableArguments
-    public static Value func_get_arg(Env env, int index) {
-	Value[] args = env.getFunctionArgs();
+   /**
+    * Returns the nth function argument.
+    */
+   @VariableArguments
+   public static Value func_get_arg(Env env, int index) {
+      Value[] args = env.getFunctionArgs();
 
-	if (0 <= index && index < args.length) {
-	    return args[index];
-	} else {
-	    // TODO: warning
-	    return NullValue.NULL;
-	}
-    }
+      if (0 <= index && index < args.length) {
+         return args[index];
+      } else {
+         // TODO: warning
+         return NullValue.NULL;
+      }
+   }
 
-    /**
-     * Returns the function arguments as an array.
-     */
-    @VariableArguments
-    public static Value func_get_args(Env env) {
-	Value[] args = env.getFunctionArgs();
+   /**
+    * Returns the function arguments as an array.
+    */
+   @VariableArguments
+   public static Value func_get_args(Env env) {
+      Value[] args = env.getFunctionArgs();
 
-	ArrayValue result = new ArrayValueImpl();
-	if (args != null) {
-	    for (int i = 0; i < args.length; i++) {
-		result.put(args[i]);
-	    }
-	}
+      ArrayValue result = new ArrayValueImpl();
+      if (args != null) {
+         for (int i = 0; i < args.length; i++) {
+            result.put(args[i]);
+         }
+      }
 
-	return result;
-    }
+      return result;
+   }
 
-    /**
-     * Returns the number of arguments to the function.
-     */
-    @VariableArguments
-    public static Value func_num_args(Env env) {
-	Value[] args = env.getFunctionArgs();
+   /**
+    * Returns the number of arguments to the function.
+    */
+   @VariableArguments
+   public static Value func_num_args(Env env) {
+      Value[] args = env.getFunctionArgs();
 
-	if (args != null && args.length > 0) {
-	    return LongValue.create(args.length);
-	} else {
-	    return LongValue.ZERO;
-	}
-    }
+      if (args != null && args.length > 0) {
+         return LongValue.create(args.length);
+      } else {
+         return LongValue.ZERO;
+      }
+   }
 
-    /**
-     * Returns true if the function exists.
-     *
-     * @param env the PHP environment
-     * @param name the function name
-     */
-    public static boolean function_exists(Env env, String name) {
-	return name != null && env.findFunction(name) != null;
-    }
+   /**
+    * Returns true if the function exists.
+    *
+    * @param env the PHP environment
+    * @param name the function name
+    */
+   public static boolean function_exists(Env env, String name) {
+      return name != null && env.findFunction(name) != null;
+   }
 
-    /**
-     * Returns an array of the defined functions
-     */
-    public static Value get_defined_functions(Env env) {
-	return env.getDefinedFunctions();
-    }
+   /**
+    * Returns an array of the defined functions
+    */
+   public static Value get_defined_functions(Env env) {
+      return env.getDefinedFunctions();
+   }
 
-    /**
-     * Registers a shutdown function.
-     */
-    public static Value register_shutdown_function(Env env,
-	    Callable fun,
-	    Value[] args) {
-	env.addShutdown(fun, args);
+   /**
+    * Registers a shutdown function.
+    */
+   public static Value register_shutdown_function(Env env,
+           Callable fun,
+           Value[] args) {
+      env.addShutdown(fun, args);
 
-	return NullValue.NULL;
-    }
-    // TODO: register_tick_function
-    // TODO: unregister_tick_function
+      return NullValue.NULL;
+   }
+   // TODO: register_tick_function
+   // TODO: unregister_tick_function
 }

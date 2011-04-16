@@ -39,88 +39,88 @@ import com.caucho.quercus.program.Arg;
 
 public abstract class ReflectionFunctionAbstract {
 
-    private AbstractFunction _fun;
+   private AbstractFunction _fun;
 
-    protected ReflectionFunctionAbstract(AbstractFunction fun) {
-	_fun = fun;
+   protected ReflectionFunctionAbstract(AbstractFunction fun) {
+      _fun = fun;
 
-	if (fun == null) {
-	    throw new NullPointerException();
-	}
-    }
+      if (fun == null) {
+         throw new NullPointerException();
+      }
+   }
 
-    protected AbstractFunction getFunction() {
-	return _fun;
-    }
+   protected AbstractFunction getFunction() {
+      return _fun;
+   }
 
-    private void __clone() {
-    }
+   private void __clone() {
+   }
 
-    public String getName() {
-	return _fun.getName();
-    }
+   public String getName() {
+      return _fun.getName();
+   }
 
-    public boolean isInternal() {
-	return false;
-    }
+   public boolean isInternal() {
+      return false;
+   }
 
-    public boolean isUserDefined() {
-	return false;
-    }
+   public boolean isUserDefined() {
+      return false;
+   }
 
-    public String getFileName() {
-	return _fun.getLocation().getFileName();
-    }
+   public String getFileName() {
+      return _fun.getLocation().getFileName();
+   }
 
-    public int getStartLine() {
-	return _fun.getLocation().getLineNumber();
-    }
+   public int getStartLine() {
+      return _fun.getLocation().getLineNumber();
+   }
 
-    public int getEndLine() {
-	// TODO
-	return _fun.getLocation().getLineNumber();
-    }
+   public int getEndLine() {
+      // TODO
+      return _fun.getLocation().getLineNumber();
+   }
 
-    @ReturnNullAsFalse
-    public String getDocComment() {
-	return _fun.getComment();
-    }
+   @ReturnNullAsFalse
+   public String getDocComment() {
+      return _fun.getComment();
+   }
 
-    public ArrayValue getStaticVariables() {
-	// TODO
-	return null;
-    }
+   public ArrayValue getStaticVariables() {
+      // TODO
+      return null;
+   }
 
-    public boolean returnsReference() {
-	return _fun.isReturnsReference();
-    }
+   public boolean returnsReference() {
+      return _fun.isReturnsReference();
+   }
 
-    public ArrayValue getParameters(Env env) {
-	ArrayValue array = new ArrayValueImpl();
+   public ArrayValue getParameters(Env env) {
+      ArrayValue array = new ArrayValueImpl();
 
-	Arg[] args = _fun.getArgs();
+      Arg[] args = _fun.getArgs();
 
-	for (int i = 0; i < args.length; i++) {
-	    array.put(env.wrapJava(new ReflectionParameter(_fun, args[i])));
-	}
+      for (int i = 0; i < args.length; i++) {
+         array.put(env.wrapJava(new ReflectionParameter(_fun, args[i])));
+      }
 
-	return array;
-    }
+      return array;
+   }
 
-    public int getNumberOfParameters() {
-	return _fun.getArgs().length;
-    }
+   public int getNumberOfParameters() {
+      return _fun.getArgs().length;
+   }
 
-    public int getNumberOfRequiredParameters() {
-	Arg[] args = _fun.getArgs();
+   public int getNumberOfRequiredParameters() {
+      Arg[] args = _fun.getArgs();
 
-	int requiredParams = 0;
-	for (int i = 0; i < args.length; i++) {
-	    if (args[i].getDefault() instanceof ParamRequiredExpr) {
-		requiredParams++;
-	    }
-	}
+      int requiredParams = 0;
+      for (int i = 0; i < args.length; i++) {
+         if (args[i].getDefault() instanceof ParamRequiredExpr) {
+            requiredParams++;
+         }
+      }
 
-	return requiredParams;
-    }
+      return requiredParams;
+   }
 }

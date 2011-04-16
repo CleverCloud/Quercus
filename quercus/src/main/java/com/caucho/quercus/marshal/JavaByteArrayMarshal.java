@@ -33,35 +33,35 @@ import com.caucho.quercus.env.Value;
 
 public class JavaByteArrayMarshal extends JavaArrayMarshal {
 
-    public static final Marshal MARSHAL = new JavaByteArrayMarshal();
+   public static final Marshal MARSHAL = new JavaByteArrayMarshal();
 
-    @Override
-    public Value unmarshal(Env env, Object value) {
-	return env.createBinaryBuilder((byte[]) value);
-    }
+   @Override
+   public Value unmarshal(Env env, Object value) {
+      return env.createBinaryBuilder((byte[]) value);
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	return argValue.toByteArrayMarshalCost();
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      return argValue.toByteArrayMarshalCost();
 
-	/*
-	if (argValue.isString()) {
-	if (argValue.isUnicode())
-	return Marshal.UNICODE_BYTE_ARRAY_COST;
-	else if (argValue.isBinary())
-	return Marshal.BINARY_BYTE_ARRAY_COST;
-	else
-	return Marshal.PHP5_BYTE_ARRAY_COST;
-	}
-	else if (argValue.isArray())
-	return Marshal.THREE;
-	else
-	return Marshal.FOUR;
-	 */
-    }
+      /*
+      if (argValue.isString()) {
+      if (argValue.isUnicode())
+      return Marshal.UNICODE_BYTE_ARRAY_COST;
+      else if (argValue.isBinary())
+      return Marshal.BINARY_BYTE_ARRAY_COST;
+      else
+      return Marshal.PHP5_BYTE_ARRAY_COST;
+      }
+      else if (argValue.isArray())
+      return Marshal.THREE;
+      else
+      return Marshal.FOUR;
+       */
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return byte[].class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return byte[].class;
+   }
 }

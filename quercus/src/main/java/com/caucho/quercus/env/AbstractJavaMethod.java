@@ -45,180 +45,180 @@ import com.caucho.util.L10N;
  */
 abstract public class AbstractJavaMethod extends AbstractFunction {
 
-    private static final L10N L = new L10N(AbstractJavaMethod.class);
-    private static final Object[] NULL_ARGS = new Object[0];
-    private static final Value[] NULL_VALUES = new Value[0];
+   private static final L10N L = new L10N(AbstractJavaMethod.class);
+   private static final Object[] NULL_ARGS = new Object[0];
+   private static final Value[] NULL_VALUES = new Value[0];
 
-    /**
-     * Returns the minimally required number of arguments.
-     */
-    abstract public int getMinArgLength();
+   /**
+    * Returns the minimally required number of arguments.
+    */
+   abstract public int getMinArgLength();
 
-    /**
-     * Returns the maximum number of arguments allowed.
-     */
-    abstract public int getMaxArgLength();
+   /**
+    * Returns the maximum number of arguments allowed.
+    */
+   abstract public int getMaxArgLength();
 
-    /**
-     * Returns true if the function can take in unlimited number of args.
-     */
-    abstract public boolean getHasRestArgs();
+   /**
+    * Returns true if the function can take in unlimited number of args.
+    */
+   abstract public boolean getHasRestArgs();
 
-    abstract public int getMarshalingCost(Value[] args);
+   abstract public int getMarshalingCost(Value[] args);
 
-    abstract public int getMarshalingCost(Expr[] args);
+   abstract public int getMarshalingCost(Expr[] args);
 
-    public Class getJavaDeclaringClass() {
-	return null;
-    }
+   public Class getJavaDeclaringClass() {
+      return null;
+   }
 
-    public Class[] getJavaParameterTypes() {
-	return null;
-    }
+   public Class[] getJavaParameterTypes() {
+      return null;
+   }
 
-    /**
-     * Returns an overloaded java method.
-     */
-    public AbstractJavaMethod overload(AbstractJavaMethod fun) {
-	// same method can occur for interfaces and overrides
-	if (isSameMethod(this, fun)) {
-	    // php/5220
-	    if (getJavaDeclaringClass().isAssignableFrom(fun.getJavaDeclaringClass())) {
-		return fun;
-	    } else {
-		return this;
-	    }
-	}
+   /**
+    * Returns an overloaded java method.
+    */
+   public AbstractJavaMethod overload(AbstractJavaMethod fun) {
+      // same method can occur for interfaces and overrides
+      if (isSameMethod(this, fun)) {
+         // php/5220
+         if (getJavaDeclaringClass().isAssignableFrom(fun.getJavaDeclaringClass())) {
+            return fun;
+         } else {
+            return this;
+         }
+      }
 
-	AbstractJavaMethod method = new JavaOverloadMethod(this);
+      AbstractJavaMethod method = new JavaOverloadMethod(this);
 
-	method = method.overload(fun);
+      method = method.overload(fun);
 
-	return method;
-    }
+      return method;
+   }
 
-    /**
-     * Checks for the same method, e.g. for multiple interfaces declaring
-     * the same method.
-     */
-    private boolean isSameMethod(AbstractJavaMethod funA,
-	    AbstractJavaMethod funB) {
-	Class[] paramTypesA = funA.getJavaParameterTypes();
-	Class[] paramTypesB = funB.getJavaParameterTypes();
+   /**
+    * Checks for the same method, e.g. for multiple interfaces declaring
+    * the same method.
+    */
+   private boolean isSameMethod(AbstractJavaMethod funA,
+           AbstractJavaMethod funB) {
+      Class[] paramTypesA = funA.getJavaParameterTypes();
+      Class[] paramTypesB = funB.getJavaParameterTypes();
 
-	if (paramTypesA == null || paramTypesB == null) {
-	    return false;
-	}
+      if (paramTypesA == null || paramTypesB == null) {
+         return false;
+      }
 
-	if (paramTypesA.length != paramTypesB.length) {
-	    return false;
-	}
+      if (paramTypesA.length != paramTypesB.length) {
+         return false;
+      }
 
-	for (int i = 0; i < paramTypesA.length; i++) {
-	    if (!paramTypesA[i].equals(paramTypesB[i])) {
-		return false;
-	    }
-	}
+      for (int i = 0; i < paramTypesA.length; i++) {
+         if (!paramTypesA[i].equals(paramTypesB[i])) {
+            return false;
+         }
+      }
 
-	return true;
-    }
+      return true;
+   }
 
-    @Override
-    abstract public Value callMethod(Env env,
-	    QuercusClass qClass,
-	    Value qThis,
-	    Value[] args);
+   @Override
+   abstract public Value callMethod(Env env,
+           QuercusClass qClass,
+           Value qThis,
+           Value[] args);
 
-    /**
-     * Evaluates the function, returning a copy
-     */
-    @Override
-    public Value callCopy(Env env, Value[] args) {
-	return call(env, args);
-    }
+   /**
+    * Evaluates the function, returning a copy
+    */
+   @Override
+   public Value callCopy(Env env, Value[] args) {
+      return call(env, args);
+   }
 
-    @Override
-    public Value call(Env env, Value[] args) {
-	return callMethod(env, getQuercusClass(), (Value) null, args);
-    }
+   @Override
+   public Value call(Env env, Value[] args) {
+      return callMethod(env, getQuercusClass(), (Value) null, args);
+   }
 
-    @Override
-    public Value call(Env env) {
-	return callMethod(env, getQuercusClass(), (Value) null,
-		new Value[0]);
-    }
+   @Override
+   public Value call(Env env) {
+      return callMethod(env, getQuercusClass(), (Value) null,
+              new Value[0]);
+   }
 
-    @Override
-    public Value call(Env env, Value a1) {
-	return callMethod(env, getQuercusClass(), (Value) null,
-		new Value[]{a1});
-    }
+   @Override
+   public Value call(Env env, Value a1) {
+      return callMethod(env, getQuercusClass(), (Value) null,
+              new Value[]{a1});
+   }
 
-    @Override
-    public Value call(Env env, Value a1, Value a2) {
-	return callMethod(env, getQuercusClass(), (Value) null,
-		new Value[]{a1, a2});
-    }
+   @Override
+   public Value call(Env env, Value a1, Value a2) {
+      return callMethod(env, getQuercusClass(), (Value) null,
+              new Value[]{a1, a2});
+   }
 
-    @Override
-    public Value call(Env env, Value a1, Value a2, Value a3) {
-	return callMethod(env, getQuercusClass(), (Value) null,
-		new Value[]{a1, a2, a3});
-    }
+   @Override
+   public Value call(Env env, Value a1, Value a2, Value a3) {
+      return callMethod(env, getQuercusClass(), (Value) null,
+              new Value[]{a1, a2, a3});
+   }
 
-    @Override
-    public Value call(Env env,
-	    Value a1, Value a2, Value a3, Value a4) {
-	return callMethod(env, getQuercusClass(), (Value) null,
-		new Value[]{a1, a2, a3, a4});
-    }
+   @Override
+   public Value call(Env env,
+           Value a1, Value a2, Value a3, Value a4) {
+      return callMethod(env, getQuercusClass(), (Value) null,
+              new Value[]{a1, a2, a3, a4});
+   }
 
-    @Override
-    public Value call(Env env,
-	    Value a1, Value a2, Value a3, Value a4, Value a5) {
-	return callMethod(env, getQuercusClass(), (Value) null,
-		new Value[]{a1, a2, a3, a4, a5});
-    }
+   @Override
+   public Value call(Env env,
+           Value a1, Value a2, Value a3, Value a4, Value a5) {
+      return callMethod(env, getQuercusClass(), (Value) null,
+              new Value[]{a1, a2, a3, a4, a5});
+   }
 
-    @Override
-    public Value callMethod(Env env, QuercusClass qClass, Value qThis) {
-	return callMethod(env, qClass, qThis, new Value[0]);
-    }
+   @Override
+   public Value callMethod(Env env, QuercusClass qClass, Value qThis) {
+      return callMethod(env, qClass, qThis, new Value[0]);
+   }
 
-    @Override
-    public Value callMethod(Env env, QuercusClass qClass, Value qThis, Value a1) {
-	return callMethod(env, qClass, qThis, new Value[]{a1});
-    }
+   @Override
+   public Value callMethod(Env env, QuercusClass qClass, Value qThis, Value a1) {
+      return callMethod(env, qClass, qThis, new Value[]{a1});
+   }
 
-    @Override
-    public Value callMethod(Env env,
-	    QuercusClass qClass,
-	    Value qThis,
-	    Value a1,
-	    Value a2) {
-	return callMethod(env, qClass, qThis, new Value[]{a1, a2});
-    }
+   @Override
+   public Value callMethod(Env env,
+           QuercusClass qClass,
+           Value qThis,
+           Value a1,
+           Value a2) {
+      return callMethod(env, qClass, qThis, new Value[]{a1, a2});
+   }
 
-    @Override
-    public Value callMethod(Env env,
-	    QuercusClass qClass,
-	    Value qThis,
-	    Value a1,
-	    Value a2,
-	    Value a3) {
-	return callMethod(env, qClass, qThis, new Value[]{a1, a2, a3});
-    }
+   @Override
+   public Value callMethod(Env env,
+           QuercusClass qClass,
+           Value qThis,
+           Value a1,
+           Value a2,
+           Value a3) {
+      return callMethod(env, qClass, qThis, new Value[]{a1, a2, a3});
+   }
 
-    @Override
-    public Value callMethod(Env env, QuercusClass qClass, Value qThis,
-	    Value a1, Value a2, Value a3, Value a4) {
-	return callMethod(env, qClass, qThis, new Value[]{a1, a2, a3, a4});
-    }
+   @Override
+   public Value callMethod(Env env, QuercusClass qClass, Value qThis,
+           Value a1, Value a2, Value a3, Value a4) {
+      return callMethod(env, qClass, qThis, new Value[]{a1, a2, a3, a4});
+   }
 
-    @Override
-    public Value callMethod(Env env, QuercusClass qClass, Value qThis,
-	    Value a1, Value a2, Value a3, Value a4, Value a5) {
-	return callMethod(env, qClass, qThis,
-		new Value[]{a1, a2, a3, a4, a5});
-    }
+   @Override
+   public Value callMethod(Env env, QuercusClass qClass, Value qThis,
+           Value a1, Value a2, Value a3, Value a4, Value a5) {
+      return callMethod(env, qClass, qThis,
+              new Value[]{a1, a2, a3, a4, a5});
+   }
 }

@@ -35,18 +35,18 @@ import com.caucho.quercus.QuercusException;
  */
 public class QuercusValueException extends QuercusException {
 
-    public QuercusValueException() {
-    }
+   public QuercusValueException() {
+   }
 
-    public QuercusValueException(String msg) {
-	super(msg);
-    }
+   public QuercusValueException(String msg) {
+      super(msg);
+   }
 
-    public QuercusValueException(Throwable cause) {
-	super(cause);
-    }
+   public QuercusValueException(Throwable cause) {
+      super(cause);
+   }
 
-    public QuercusValueException(String msg, Throwable cause) {
-	super(msg, cause);
-    }
+   public QuercusValueException(String msg, Throwable cause) {
+      super(msg, cause);
+   }
 }

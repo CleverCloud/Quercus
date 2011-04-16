@@ -37,39 +37,39 @@ import com.caucho.quercus.expr.Expr;
 
 public class CallableMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new CallableMarshal();
+   public static final Marshal MARSHAL = new CallableMarshal();
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return marshal(env, expr.eval(env), expectedClass);
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return marshal(env, expr.eval(env), expectedClass);
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	Object callable = value.toCallable(env);
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      Object callable = value.toCallable(env);
 
-	return callable;
-    }
+      return callable;
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	throw new UnsupportedOperationException();
-    }
+   public Value unmarshal(Env env, Object value) {
+      throw new UnsupportedOperationException();
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	if (argValue instanceof CallbackFunction) {
-	    return Marshal.ZERO;
-	} else if (argValue.isString()) {
-	    return Marshal.THREE;
-	} else {
-	    return Marshal.FOUR;
-	}
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      if (argValue instanceof CallbackFunction) {
+         return Marshal.ZERO;
+      } else if (argValue.isString()) {
+         return Marshal.THREE;
+      } else {
+         return Marshal.FOUR;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return Callback.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return Callback.class;
+   }
 }

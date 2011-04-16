@@ -42,71 +42,71 @@ import java.io.OutputStream;
 
 public class BinaryOutputMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new BinaryOutputMarshal();
+   public static final Marshal MARSHAL = new BinaryOutputMarshal();
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return marshal(env, expr.eval(env), expectedClass);
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return marshal(env, expr.eval(env), expectedClass);
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	if (value == null) {
-	    return null;
-	} else if (value instanceof BinaryOutput) {
-	    return (BinaryOutput) value;
-	}
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      if (value == null) {
+         return null;
+      } else if (value instanceof BinaryOutput) {
+         return (BinaryOutput) value;
+      }
 
-	Object javaObj = value.toJavaObject();
+      Object javaObj = value.toJavaObject();
 
-	if (javaObj instanceof BinaryOutput) {
-	    return (BinaryOutput) javaObj;
-	} else if (javaObj instanceof OutputStream) {
-	    return new WriteStreamOutput((OutputStream) javaObj);
-	} else {
-	    throw new IllegalStateException(L.l("Cannot marshal {0} to BinaryOutput",
-		    javaObj));
-	}
-    }
+      if (javaObj instanceof BinaryOutput) {
+         return (BinaryOutput) javaObj;
+      } else if (javaObj instanceof OutputStream) {
+         return new WriteStreamOutput((OutputStream) javaObj);
+      } else {
+         throw new IllegalStateException(L.l("Cannot marshal {0} to BinaryOutput",
+                 javaObj));
+      }
+   }
 
-    public static BinaryOutput marshal(Env env, Value value) {
-	if (value == null) {
-	    return null;
-	} else if (value instanceof BinaryOutput) {
-	    return (BinaryOutput) value;
-	}
+   public static BinaryOutput marshal(Env env, Value value) {
+      if (value == null) {
+         return null;
+      } else if (value instanceof BinaryOutput) {
+         return (BinaryOutput) value;
+      }
 
-	Object javaObj = value.toJavaObject();
+      Object javaObj = value.toJavaObject();
 
-	if (javaObj instanceof BinaryOutput) {
-	    return (BinaryOutput) javaObj;
-	} else if (javaObj instanceof OutputStream) {
-	    return new WriteStreamOutput((OutputStream) javaObj);
-	} else {
-	    throw new IllegalStateException(L.l("Cannot marshal {0} to BinaryOutput",
-		    javaObj));
-	}
-    }
+      if (javaObj instanceof BinaryOutput) {
+         return (BinaryOutput) javaObj;
+      } else if (javaObj instanceof OutputStream) {
+         return new WriteStreamOutput((OutputStream) javaObj);
+      } else {
+         throw new IllegalStateException(L.l("Cannot marshal {0} to BinaryOutput",
+                 javaObj));
+      }
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	return (Value) value;
-    }
+   public Value unmarshal(Env env, Object value) {
+      return (Value) value;
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	if (argValue instanceof JavaValue
-		&& OutputStream.class.isAssignableFrom(
-		argValue.toJavaObject().getClass())) {
-	    return Marshal.ZERO;
-	} else {
-	    return Marshal.FOUR;
-	}
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      if (argValue instanceof JavaValue
+              && OutputStream.class.isAssignableFrom(
+              argValue.toJavaObject().getClass())) {
+         return Marshal.ZERO;
+      } else {
+         return Marshal.FOUR;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return BinaryOutput.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return BinaryOutput.class;
+   }
 }

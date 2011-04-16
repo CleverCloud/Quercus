@@ -42,32 +42,32 @@ import java.util.logging.Logger;
  */
 public class OracleResult extends JdbcResultResource {
 
-    private static final Logger log = Logger.getLogger(OracleResult.class.getName());
-    private static final L10N L = new L10N(OracleResult.class);
+   private static final Logger log = Logger.getLogger(OracleResult.class.getName());
+   private static final L10N L = new L10N(OracleResult.class);
 
-    /**
-     * Constructor for OracleResult
-     *
-     * @param stmt the corresponding statement
-     * @param rs the corresponding result set
-     * @param conn the corresponding connection
-     */
-    public OracleResult(Env env,
-	    Statement stmt,
-	    ResultSet rs,
-	    Oracle conn) {
-	super(env, stmt, rs, conn);
-    }
+   /**
+    * Constructor for OracleResult
+    *
+    * @param stmt the corresponding statement
+    * @param rs the corresponding result set
+    * @param conn the corresponding connection
+    */
+   public OracleResult(Env env,
+           Statement stmt,
+           ResultSet rs,
+           Oracle conn) {
+      super(env, stmt, rs, conn);
+   }
 
-    /**
-     * Constructor for OracleResult
-     *
-     * @param metaData the corresponding result set meta data
-     * @param conn the corresponding connection
-     */
-    public OracleResult(Env env,
-	    ResultSetMetaData metaData,
-	    Oracle conn) {
-	super(env, metaData, conn);
-    }
+   /**
+    * Constructor for OracleResult
+    *
+    * @param metaData the corresponding result set meta data
+    * @param conn the corresponding connection
+    */
+   public OracleResult(Env env,
+           ResultSetMetaData metaData,
+           Oracle conn) {
+      super(env, metaData, conn);
+   }
 }

@@ -42,122 +42,122 @@ import java.util.ArrayList;
  */
 public class SwitchStatement extends Statement {
 
-    protected final Expr _value;
-    protected final Expr[][] _cases;
-    protected final BlockStatement[] _blocks;
-    protected final Statement _defaultBlock;
-    protected final String _label;
+   protected final Expr _value;
+   protected final Expr[][] _cases;
+   protected final BlockStatement[] _blocks;
+   protected final Statement _defaultBlock;
+   protected final String _label;
 
-    public SwitchStatement(Location location,
-	    Expr value,
-	    ArrayList<Expr[]> caseList,
-	    ArrayList<BlockStatement> blockList,
-	    Statement defaultBlock,
-	    String label) {
-	super(location);
+   public SwitchStatement(Location location,
+           Expr value,
+           ArrayList<Expr[]> caseList,
+           ArrayList<BlockStatement> blockList,
+           Statement defaultBlock,
+           String label) {
+      super(location);
 
-	_value = value;
+      _value = value;
 
-	_cases = new Expr[caseList.size()][];
-	caseList.toArray(_cases);
+      _cases = new Expr[caseList.size()][];
+      caseList.toArray(_cases);
 
-	_blocks = new BlockStatement[blockList.size()];
-	blockList.toArray(_blocks);
+      _blocks = new BlockStatement[blockList.size()];
+      blockList.toArray(_blocks);
 
-	_defaultBlock = defaultBlock;
+      _defaultBlock = defaultBlock;
 
-	for (int i = 0; i < _blocks.length; i++) {
-	    _blocks[i].setParent(this);
-	}
+      for (int i = 0; i < _blocks.length; i++) {
+         _blocks[i].setParent(this);
+      }
 
-	if (_defaultBlock != null) {
-	    _defaultBlock.setParent(this);
-	}
+      if (_defaultBlock != null) {
+         _defaultBlock.setParent(this);
+      }
 
-	_label = label;
-    }
+      _label = label;
+   }
 
-    /**
-     * Executes the 'switch' statement, returning any value.
-     */
-    public Value execute(Env env) {
-	try {
-	    Value testValue = _value.eval(env);
+   /**
+    * Executes the 'switch' statement, returning any value.
+    */
+   public Value execute(Env env) {
+      try {
+         Value testValue = _value.eval(env);
 
-	    int len = _cases.length;
+         int len = _cases.length;
 
-	    for (int i = 0; i < len; i++) {
-		Expr[] values = _cases[i];
+         for (int i = 0; i < len; i++) {
+            Expr[] values = _cases[i];
 
-		for (int j = 0; j < values.length; j++) {
-		    Value caseValue = values[j].eval(env);
+            for (int j = 0; j < values.length; j++) {
+               Value caseValue = values[j].eval(env);
 
-		    if (testValue.eq(caseValue)) {
-			Value retValue = _blocks[i].execute(env);
+               if (testValue.eq(caseValue)) {
+                  Value retValue = _blocks[i].execute(env);
 
-			if (retValue instanceof BreakValue) {
-			    BreakValue breakValue = (BreakValue) retValue;
+                  if (retValue instanceof BreakValue) {
+                     BreakValue breakValue = (BreakValue) retValue;
 
-			    int target = breakValue.getTarget();
+                     int target = breakValue.getTarget();
 
-			    if (target > 1) {
-				return new BreakValue(target - 1);
-			    } else {
-				return null;
-			    }
-			} else if (retValue instanceof ContinueValue) {
-			    ContinueValue conValue = (ContinueValue) retValue;
+                     if (target > 1) {
+                        return new BreakValue(target - 1);
+                     } else {
+                        return null;
+                     }
+                  } else if (retValue instanceof ContinueValue) {
+                     ContinueValue conValue = (ContinueValue) retValue;
 
-			    int target = conValue.getTarget();
+                     int target = conValue.getTarget();
 
-			    if (target > 1) {
-				return new ContinueValue(target - 1);
-			    } else {
-				return null;
-			    }
-			} else {
-			    return retValue;
-			}
-		    }
-		}
-	    }
+                     if (target > 1) {
+                        return new ContinueValue(target - 1);
+                     } else {
+                        return null;
+                     }
+                  } else {
+                     return retValue;
+                  }
+               }
+            }
+         }
 
-	    if (_defaultBlock != null) {
-		Value retValue = _defaultBlock.execute(env);
+         if (_defaultBlock != null) {
+            Value retValue = _defaultBlock.execute(env);
 
-		if (retValue instanceof BreakValue) {
-		    return null;
-		} else {
-		    return retValue;
-		}
-	    }
+            if (retValue instanceof BreakValue) {
+               return null;
+            } else {
+               return retValue;
+            }
+         }
 
-	} catch (RuntimeException e) {
-	    rethrow(e, RuntimeException.class);
-	}
+      } catch (RuntimeException e) {
+         rethrow(e, RuntimeException.class);
+      }
 
-	return null;
-    }
+      return null;
+   }
 
-    /**
-     * Returns true if control can go past the statement.
-     */
-    public int fallThrough() {
-	return FALL_THROUGH;
-	/* php/367t, php/367u
-	if (_defaultBlock == null)
-	return FALL_THROUGH;
+   /**
+    * Returns true if control can go past the statement.
+    */
+   public int fallThrough() {
+      return FALL_THROUGH;
+      /* php/367t, php/367u
+      if (_defaultBlock == null)
+      return FALL_THROUGH;
 
-	int fallThrough = _defaultBlock.fallThrough();
+      int fallThrough = _defaultBlock.fallThrough();
 
-	for (int i = 0; i < _blocks.length; i++) {
-	fallThrough &= _blocks[i].fallThrough();
-	}
+      for (int i = 0; i < _blocks.length; i++) {
+      fallThrough &= _blocks[i].fallThrough();
+      }
 
-	if (fallThrough == BREAK_FALL_THROUGH)
-	return 0;
-	else
-	return fallThrough;
-	 */
-    }
+      if (fallThrough == BREAK_FALL_THROUGH)
+      return 0;
+      else
+      return fallThrough;
+       */
+   }
 }

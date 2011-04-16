@@ -42,109 +42,109 @@ import java.util.logging.Logger;
  */
 @ResourceType("process")
 public class ProcOpenResource
-	implements EnvCleanup {
+        implements EnvCleanup {
 
-    private static final Logger log = Logger.getLogger(ProcOpenResource.class.getName());
-    private Env _env;
-    private ProcOpenOutput _in;
-    private ProcOpenInput _out;
-    private ProcOpenInput _err;
-    private Process _process;
-    private String _command;
-    private boolean _isRunning = true;
-    private int _exitCode = -1;
+   private static final Logger log = Logger.getLogger(ProcOpenResource.class.getName());
+   private Env _env;
+   private ProcOpenOutput _in;
+   private ProcOpenInput _out;
+   private ProcOpenInput _err;
+   private Process _process;
+   private String _command;
+   private boolean _isRunning = true;
+   private int _exitCode = -1;
 
-    public ProcOpenResource(Env env,
-	    Process process,
-	    ProcOpenOutput in,
-	    ProcOpenInput out,
-	    ProcOpenInput err,
-	    String command) {
-	_env = env;
-	_process = process;
+   public ProcOpenResource(Env env,
+           Process process,
+           ProcOpenOutput in,
+           ProcOpenInput out,
+           ProcOpenInput err,
+           String command) {
+      _env = env;
+      _process = process;
 
-	_in = in;
-	_out = out;
-	_err = err;
-	_command = command;
+      _in = in;
+      _out = out;
+      _err = err;
+      _command = command;
 
-	env.addCleanup(this);
-    }
+      env.addCleanup(this);
+   }
 
-    public boolean isRunning() {
-	if (!_isRunning) {
-	    return false;
-	}
+   public boolean isRunning() {
+      if (!_isRunning) {
+         return false;
+      }
 
-	try {
-	    _exitCode = _process.exitValue();
-	    _isRunning = false;
+      try {
+         _exitCode = _process.exitValue();
+         _isRunning = false;
 
-	    return false;
+         return false;
 
-	} catch (IllegalThreadStateException e) {
-	    return true;
-	}
-    }
+      } catch (IllegalThreadStateException e) {
+         return true;
+      }
+   }
 
-    public int getExitCode() {
-	if (!_isRunning) {
-	    return _exitCode;
-	}
+   public int getExitCode() {
+      if (!_isRunning) {
+         return _exitCode;
+      }
 
-	try {
-	    _exitCode = _process.exitValue();
-	    _isRunning = false;
+      try {
+         _exitCode = _process.exitValue();
+         _isRunning = false;
 
-	    return _exitCode;
-	} catch (IllegalThreadStateException e) {
-	    return -1;
-	}
-    }
+         return _exitCode;
+      } catch (IllegalThreadStateException e) {
+         return -1;
+      }
+   }
 
-    public String getCommand() {
-	return _command;
-    }
+   public String getCommand() {
+      return _command;
+   }
 
-    public int pclose() {
-	try {
-	    if (_in != null) {
-		_in.close();
-	    }
+   public int pclose() {
+      try {
+         if (_in != null) {
+            _in.close();
+         }
 
-	    _out.close();
-	    _err.close();
+         _out.close();
+         _err.close();
 
-	    return _process.waitFor();
-	} catch (Exception e) {
-	    log.log(Level.FINE, e.getMessage());
-	    _env.warning(e);
+         return _process.waitFor();
+      } catch (Exception e) {
+         log.log(Level.FINE, e.getMessage());
+         _env.warning(e);
 
-	    return -1;
-	} finally {
-	    _env.removeCleanup(this);
-	}
-    }
+         return -1;
+      } finally {
+         _env.removeCleanup(this);
+      }
+   }
 
-    public boolean terminate() {
-	if (_in != null) {
-	    _in.close();
-	}
+   public boolean terminate() {
+      if (_in != null) {
+         _in.close();
+      }
 
-	_out.close();
-	_err.close();
+      _out.close();
+      _err.close();
 
-	_process.destroy();
+      _process.destroy();
 
-	_env.removeCleanup(this);
+      _env.removeCleanup(this);
 
-	return true;
-    }
+      return true;
+   }
 
-    /**
-     * Implements the EnvCleanup interface.
-     */
-    public void cleanup() {
-	pclose();
-    }
+   /**
+    * Implements the EnvCleanup interface.
+    */
+   public void cleanup() {
+      pclose();
+   }
 }

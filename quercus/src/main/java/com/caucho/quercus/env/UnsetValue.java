@@ -34,17 +34,17 @@ import java.io.Serializable;
  * Represents a PHP null value.
  */
 public class UnsetValue extends NullValue
-	implements Serializable {
+        implements Serializable {
 
-    public static final UnsetValue UNSET = new UnsetValue();
+   public static final UnsetValue UNSET = new UnsetValue();
 
-    private UnsetValue() {
-    }
+   private UnsetValue() {
+   }
 
-    //
-    // Java Serialization
-    //
-    private Object readResolve() {
-	return UNSET;
-    }
+   //
+   // Java Serialization
+   //
+   private Object readResolve() {
+      return UNSET;
+   }
 }

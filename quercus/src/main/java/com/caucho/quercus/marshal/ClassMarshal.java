@@ -41,92 +41,92 @@ import com.caucho.quercus.expr.Expr;
  */
 public class ClassMarshal extends Marshal {
 
-    private static final Logger log = Logger.getLogger(ClassMarshal.class.getName());
-    public static final ClassMarshal MARSHAL = new ClassMarshal();
+   private static final Logger log = Logger.getLogger(ClassMarshal.class.getName());
+   public static final ClassMarshal MARSHAL = new ClassMarshal();
 
-    public boolean isString() {
-	return true;
-    }
+   public boolean isString() {
+      return true;
+   }
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return marshal(env, expr.eval(env), expectedClass);
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return marshal(env, expr.eval(env), expectedClass);
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	Object obj = value.toJavaObject();
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      Object obj = value.toJavaObject();
 
-	if (obj instanceof Class) {
-	    return (Class) obj;
-	} else {
-	    Thread thread = Thread.currentThread();
-	    ClassLoader loader = thread.getContextClassLoader();
+      if (obj instanceof Class) {
+         return (Class) obj;
+      } else {
+         Thread thread = Thread.currentThread();
+         ClassLoader loader = thread.getContextClassLoader();
 
-	    try {
-		String className = value.toJavaString();
+         try {
+            String className = value.toJavaString();
 
-		if (className == null) {
-		    return null;
-		}
+            if (className == null) {
+               return null;
+            }
 
-		return Class.forName(className, false, loader);
-	    } catch (ClassNotFoundException e) {
-		log.log(Level.FINE, e.toString(), e);
+            return Class.forName(className, false, loader);
+         } catch (ClassNotFoundException e) {
+            log.log(Level.FINE, e.toString(), e);
 
-		env.warning("class argument is an unknown class: " + e);
+            env.warning("class argument is an unknown class: " + e);
 
-		return null;
-	    }
-	}
-    }
+            return null;
+         }
+      }
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	if (value == null) {
-	    return NullValue.NULL;
-	} else {
-	    return env.wrapJava(value);
-	}
-    }
+   public Value unmarshal(Env env, Object value) {
+      if (value == null) {
+         return NullValue.NULL;
+      } else {
+         return env.wrapJava(value);
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	Object javaValue = argValue.toJavaObject();
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      Object javaValue = argValue.toJavaObject();
 
-	if (Class.class.equals(javaValue)) {
-	    return Marshal.COST_IDENTICAL;
-	} else {
-	    return argValue.toStringMarshalCost() + 1;
-	}
+      if (Class.class.equals(javaValue)) {
+         return Marshal.COST_IDENTICAL;
+      } else {
+         return argValue.toStringMarshalCost() + 1;
+      }
 
-	/*
-	if (argValue.isString()) {
-	if (argValue.isUnicode())
-	return Marshal.UNICODE_STRING_COST;
-	else if (argValue.isBinary())
-	return Marshal.BINARY_STRING_COST;
-	else
-	return Marshal.PHP5_STRING_COST;
-	}
-	else if (! (argValue.isArray() || argValue.isObject()))
-	return Marshal.THREE;
-	else
-	return Marshal.FOUR;
-	 */
-    }
+      /*
+      if (argValue.isString()) {
+      if (argValue.isUnicode())
+      return Marshal.UNICODE_STRING_COST;
+      else if (argValue.isBinary())
+      return Marshal.BINARY_STRING_COST;
+      else
+      return Marshal.PHP5_STRING_COST;
+      }
+      else if (! (argValue.isArray() || argValue.isObject()))
+      return Marshal.THREE;
+      else
+      return Marshal.FOUR;
+       */
+   }
 
-    public int getMarshalingCost(Expr expr) {
-	if (expr.isString()) {
-	    return Marshal.ZERO;
-	} else {
-	    return Marshal.FOUR;
-	}
-    }
+   public int getMarshalingCost(Expr expr) {
+      if (expr.isString()) {
+         return Marshal.ZERO;
+      } else {
+         return Marshal.FOUR;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return Class.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return Class.class;
+   }
 }

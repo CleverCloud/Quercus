@@ -35,22 +35,22 @@ import com.caucho.quercus.Location;
  */
 public class VarTempExpr extends VarExpr {
 
-    public VarTempExpr(Location location, VarInfo var) {
-	super(location, var);
-    }
+   public VarTempExpr(Location location, VarInfo var) {
+      super(location, var);
+   }
 
-    public VarTempExpr(VarInfo var) {
-	super(var);
-    }
+   public VarTempExpr(VarInfo var) {
+      super(var);
+   }
 
-    /**
-     * Returns the java variable name.
-     */
-    public String getJavaVar() {
-	return getName().toString();
-    }
+   /**
+    * Returns the java variable name.
+    */
+   public String getJavaVar() {
+      return getName().toString();
+   }
 
-    public String toString() {
-	return "$quercus_" + getName();
-    }
+   public String toString() {
+      return "$quercus_" + getName();
+   }
 }

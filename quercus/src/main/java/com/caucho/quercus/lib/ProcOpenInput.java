@@ -47,93 +47,93 @@ import java.util.logging.Logger;
  * Represents an input stream for a proc_open process.
  */
 public class ProcOpenInput extends ReadStreamInput
-	implements EnvCleanup {
+        implements EnvCleanup {
 
-    private static final Logger log = Logger.getLogger(FileInput.class.getName());
-    private Env _env;
-    private InputStream _in;
-    private FileOutput _out;
+   private static final Logger log = Logger.getLogger(FileInput.class.getName());
+   private Env _env;
+   private InputStream _in;
+   private FileOutput _out;
 
-    public ProcOpenInput(Env env, InputStream in)
-	    throws IOException {
-	super(env);
+   public ProcOpenInput(Env env, InputStream in)
+           throws IOException {
+      super(env);
 
-	_env = env;
-	_in = in;
+      _env = env;
+      _in = in;
 
-	env.addCleanup(this);
+      env.addCleanup(this);
 
-	init(new ReadStream(new VfsStream(in, null)));
-    }
+      init(new ReadStream(new VfsStream(in, null)));
+   }
 
-    public ProcOpenInput(Env env, InputStream in, FileOutput out) {
-	super(env);
+   public ProcOpenInput(Env env, InputStream in, FileOutput out) {
+      super(env);
 
-	_env = env;
-	_in = in;
+      _env = env;
+      _in = in;
 
-	// Invoke removeCleanup() to ensure that out is not closed
-	// before cleanup() is invoked for this object.
+      // Invoke removeCleanup() to ensure that out is not closed
+      // before cleanup() is invoked for this object.
 
-	env.removeCleanup(out);
+      env.removeCleanup(out);
 
-	_out = out;
+      _out = out;
 
-	env.addCleanup(this);
+      env.addCleanup(this);
 
-	init(new ReadStream(new VfsStream(in, null)));
-    }
+      init(new ReadStream(new VfsStream(in, null)));
+   }
 
-    /**
-     * Opens a copy.
-     */
-    public BinaryInput openCopy()
-	    throws IOException {
-	return new ProcOpenInput(_env, _in, _out);
-    }
+   /**
+    * Opens a copy.
+    */
+   public BinaryInput openCopy()
+           throws IOException {
+      return new ProcOpenInput(_env, _in, _out);
+   }
 
-    /**
-     * Returns the number of bytes available to be read, 0 if no known.
-     */
-    public long getLength() {
-	return 0;
-    }
+   /**
+    * Returns the number of bytes available to be read, 0 if no known.
+    */
+   public long getLength() {
+      return 0;
+   }
 
-    /**
-     * Converts to a string.
-     */
-    public String toString() {
-	if (_out != null) {
-	    return "ProcOpenInput[" + _out + "]";
-	} else {
-	    return "ProcOpenInput[pipe]";
-	}
-    }
+   /**
+    * Converts to a string.
+    */
+   public String toString() {
+      if (_out != null) {
+         return "ProcOpenInput[" + _out + "]";
+      } else {
+         return "ProcOpenInput[pipe]";
+      }
+   }
 
-    public void close() {
-	_env.removeCleanup(this);
+   public void close() {
+      _env.removeCleanup(this);
 
-	cleanup();
-    }
+      cleanup();
+   }
 
-    /**
-     * Implements the EnvCleanup interface.
-     */
-    public void cleanup() {
-	try {
-	    if (_out != null) {
-		int ch;
-		while ((ch = _in.read()) >= 0) {
-		    _out.write(ch);
-		}
+   /**
+    * Implements the EnvCleanup interface.
+    */
+   public void cleanup() {
+      try {
+         if (_out != null) {
+            int ch;
+            while ((ch = _in.read()) >= 0) {
+               _out.write(ch);
+            }
 
-		_out.close();
-	    }
+            _out.close();
+         }
 
-	    _in.close();
-	} catch (IOException e) {
-	    log.log(Level.FINE, e.toString(), e);
-	    _env.warning(e);
-	}
-    }
+         _in.close();
+      } catch (IOException e) {
+         log.log(Level.FINE, e.toString(), e);
+         _env.warning(e);
+      }
+   }
 }

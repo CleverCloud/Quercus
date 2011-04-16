@@ -38,15 +38,15 @@ import java.util.Map;
  */
 public interface QuercusModule {
 
-    public Map<StringValue, Value> getConstMap();
+   public Map<StringValue, Value> getConstMap();
 
-    /**
-     * Returns the extensions implemented by the module.
-     */
-    public String[] getLoadedExtensions();
+   /**
+    * Returns the extensions implemented by the module.
+    */
+   public String[] getLoadedExtensions();
 
-    /**
-     * Returns the quercus.init default values.
-     */
-    public IniDefinitions getIniDefinitions();
+   /**
+    * Returns the quercus.init default values.
+    */
+   public IniDefinitions getIniDefinitions();
 }

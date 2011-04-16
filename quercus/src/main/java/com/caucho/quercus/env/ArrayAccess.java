@@ -34,11 +34,11 @@ import com.caucho.quercus.annotation.Delegates;
 @Delegates(ArrayAccessDelegate.class)
 public interface ArrayAccess {
 
-    public boolean offsetExists(Value offset);
+   public boolean offsetExists(Value offset);
 
-    public Value offsetSet(Value offset, Value value);
+   public Value offsetSet(Value offset, Value value);
 
-    public Value offsetGet(Value offset);
+   public Value offsetGet(Value offset);
 
-    public Value offsetUnset(Value offset);
+   public Value offsetUnset(Value offset);
 }

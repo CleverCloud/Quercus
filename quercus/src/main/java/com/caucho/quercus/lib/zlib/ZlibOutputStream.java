@@ -45,211 +45,211 @@ import java.util.zip.DeflaterOutputStream;
  */
 public class ZlibOutputStream extends AbstractBinaryOutput {
 
-    private OutputStream _os;
-    private DeflaterOutputStream _out;
-    private CRC32 _crc32;
-    private static byte[] _header = {
-	(byte) 0x1f, (byte) 0x8b, // gzip file identifier (ID1, ID2)
-	(byte) 0x8, // Deflate compression method (CM)
-	0, // optional flags (FLG)
-	0, 0, 0, 0, // modification time (MTIME)
-	0, // extra optional flags (XFL)
-	(byte) 0x3 // operating system (OS)
-    };
-    private int _encodingMode;
-    private boolean _isGzip;
-    private long _inputSize;
+   private OutputStream _os;
+   private DeflaterOutputStream _out;
+   private CRC32 _crc32;
+   private static byte[] _header = {
+      (byte) 0x1f, (byte) 0x8b, // gzip file identifier (ID1, ID2)
+      (byte) 0x8, // Deflate compression method (CM)
+      0, // optional flags (FLG)
+      0, 0, 0, 0, // modification time (MTIME)
+      0, // extra optional flags (XFL)
+      (byte) 0x3 // operating system (OS)
+   };
+   private int _encodingMode;
+   private boolean _isGzip;
+   private long _inputSize;
 
-    /**
-     * Writes gzip header to OutputStream upon construction.
-     * XXX: set operating system (file architecure) header.
-     *
-     * @param out
-     * @param def
-     */
-    private ZlibOutputStream(OutputStream os, Deflater def)
-	    throws IOException {
-	_os = os;
-	_out = new DeflaterOutputStream(_os, def);
+   /**
+    * Writes gzip header to OutputStream upon construction.
+    * XXX: set operating system (file architecure) header.
+    *
+    * @param out
+    * @param def
+    */
+   private ZlibOutputStream(OutputStream os, Deflater def)
+           throws IOException {
+      _os = os;
+      _out = new DeflaterOutputStream(_os, def);
 
-	_os.write(_header, 0, _header.length);
-    }
+      _os.write(_header, 0, _header.length);
+   }
 
-    /**
-     * @param out
-     * @param compressionLevel
-     * @param strategy Deflate compression strategy
-     * @param encodingMode FORCE_GZIP to write gzwrite compatible output;
-     *    FORCE_DEFLATE to write gzip header and zlib header, but do not
-     *    write crc32 trailer
-     */
-    public ZlibOutputStream(OutputStream os,
-	    int compressionLevel,
-	    int strategy,
-	    int encodingMode)
-	    throws IOException {
-	this(os, createDeflater(compressionLevel, strategy, encodingMode));
+   /**
+    * @param out
+    * @param compressionLevel
+    * @param strategy Deflate compression strategy
+    * @param encodingMode FORCE_GZIP to write gzwrite compatible output;
+    *    FORCE_DEFLATE to write gzip header and zlib header, but do not
+    *    write crc32 trailer
+    */
+   public ZlibOutputStream(OutputStream os,
+           int compressionLevel,
+           int strategy,
+           int encodingMode)
+           throws IOException {
+      this(os, createDeflater(compressionLevel, strategy, encodingMode));
 
-	_isGzip = (encodingMode == ZlibModule.FORCE_GZIP);
+      _isGzip = (encodingMode == ZlibModule.FORCE_GZIP);
 
-	if (_isGzip) {
-	    _crc32 = new CRC32();
-	}
-    }
+      if (_isGzip) {
+         _crc32 = new CRC32();
+      }
+   }
 
-    /**
-     * @param os
-     * @param compressionLevel
-     * @param strategy Deflate compression strategy
-     */
-    public ZlibOutputStream(OutputStream os, int compressionLevel, int strategy)
-	    throws IOException {
-	this(os, compressionLevel, strategy, ZlibModule.FORCE_GZIP);
-    }
+   /**
+    * @param os
+    * @param compressionLevel
+    * @param strategy Deflate compression strategy
+    */
+   public ZlibOutputStream(OutputStream os, int compressionLevel, int strategy)
+           throws IOException {
+      this(os, compressionLevel, strategy, ZlibModule.FORCE_GZIP);
+   }
 
-    public ZlibOutputStream(OutputStream os)
-	    throws IOException {
-	this(os,
-		Deflater.DEFAULT_COMPRESSION,
-		Deflater.DEFAULT_STRATEGY,
-		ZlibModule.FORCE_GZIP);
-    }
+   public ZlibOutputStream(OutputStream os)
+           throws IOException {
+      this(os,
+              Deflater.DEFAULT_COMPRESSION,
+              Deflater.DEFAULT_STRATEGY,
+              ZlibModule.FORCE_GZIP);
+   }
 
-    /**
-     * Creates a deflater based on the Zlib arguments.
-     */
-    private static Deflater createDeflater(int compressionLevel,
-	    int strategy,
-	    int encodingMode) {
-	Deflater def;
+   /**
+    * Creates a deflater based on the Zlib arguments.
+    */
+   private static Deflater createDeflater(int compressionLevel,
+           int strategy,
+           int encodingMode) {
+      Deflater def;
 
-	if (encodingMode == ZlibModule.FORCE_GZIP) {
-	    def = new Deflater(compressionLevel, true);
-	} else {
-	    def = new Deflater(compressionLevel, false);
-	}
+      if (encodingMode == ZlibModule.FORCE_GZIP) {
+         def = new Deflater(compressionLevel, true);
+      } else {
+         def = new Deflater(compressionLevel, false);
+      }
 
-	def.setStrategy(strategy);
+      def.setStrategy(strategy);
 
-	return def;
-    }
+      return def;
+   }
 
-    /**
-     * Writes a byte.
-     *
-     * @param input
-     */
-    public void write(int v)
-	    throws IOException {
-	_out.write(v);
+   /**
+    * Writes a byte.
+    *
+    * @param input
+    */
+   public void write(int v)
+           throws IOException {
+      _out.write(v);
 
-	_inputSize++;
+      _inputSize++;
 
-	if (_isGzip) {
-	    _crc32.update(v);
-	}
-    }
+      if (_isGzip) {
+         _crc32.update(v);
+      }
+   }
 
-    /**
-     * @param input
-     * @param offset
-     * @param length
-     */
-    public void write(byte[] buffer, int offset, int length)
-	    throws IOException {
-	_out.write(buffer, offset, length);
+   /**
+    * @param input
+    * @param offset
+    * @param length
+    */
+   public void write(byte[] buffer, int offset, int length)
+           throws IOException {
+      _out.write(buffer, offset, length);
 
-	_inputSize += length;
+      _inputSize += length;
 
-	if (_isGzip) {
-	    _crc32.update(buffer, offset, length);
-	}
-    }
+      if (_isGzip) {
+         _crc32.update(buffer, offset, length);
+      }
+   }
 
-    private void finish(DeflaterOutputStream out)
-	    throws IOException {
-	out.finish();
+   private void finish(DeflaterOutputStream out)
+           throws IOException {
+      out.finish();
 
-	if (_isGzip) {
-	    long crcValue = _crc32.getValue();
+      if (_isGzip) {
+         long crcValue = _crc32.getValue();
 
-	    _os.write((byte) crcValue);
-	    _os.write((byte) (crcValue >> 8));
-	    _os.write((byte) (crcValue >> 16));
-	    _os.write((byte) (crcValue >> 24));
-	}
+         _os.write((byte) crcValue);
+         _os.write((byte) (crcValue >> 8));
+         _os.write((byte) (crcValue >> 16));
+         _os.write((byte) (crcValue >> 24));
+      }
 
-	_os.write((byte) _inputSize);
-	_os.write((byte) (_inputSize >> 8));
-	_os.write((byte) (_inputSize >> 16));
-	_os.write((byte) (_inputSize >> 24));
+      _os.write((byte) _inputSize);
+      _os.write((byte) (_inputSize >> 8));
+      _os.write((byte) (_inputSize >> 16));
+      _os.write((byte) (_inputSize >> 24));
 
-	_os.flush();
-    }
+      _os.flush();
+   }
 
-    public void flush() {
-    }
+   public void flush() {
+   }
 
-    public void closeWrite() {
-	close();
-    }
+   public void closeWrite() {
+      close();
+   }
 
-    public void close() {
-	try {
-	    DeflaterOutputStream out = _out;
-	    _out = null;
+   public void close() {
+      try {
+         DeflaterOutputStream out = _out;
+         _out = null;
 
-	    if (out != null) {
-		finish(out);
+         if (out != null) {
+            finish(out);
 
-		out.close();
-	    }
+            out.close();
+         }
 
-	    _os.close();
-	} catch (IOException e) {
-	    throw new RuntimeException(e);
-	}
-    }
+         _os.close();
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
 
-    /**
-     * Returns false always for a write stream.
-     */
-    public boolean isEOF() {
-	return false;
-    }
+   /**
+    * Returns false always for a write stream.
+    */
+   public boolean isEOF() {
+      return false;
+   }
 
-    /**
-     * Tells the position in the gzip stream
-     */
-    public long getPosition() {
-	return _inputSize;
-    }
+   /**
+    * Tells the position in the gzip stream
+    */
+   public long getPosition() {
+      return _inputSize;
+   }
 
-    /**
-     * Sets the position.
-     */
-    public boolean setPosition(long offset) {
-	if (offset < _inputSize) {
-	    return false;
-	}
+   /**
+    * Sets the position.
+    */
+   public boolean setPosition(long offset) {
+      if (offset < _inputSize) {
+         return false;
+      }
 
-	offset -= _inputSize;
-	byte[] buffer = new byte[128];
+      offset -= _inputSize;
+      byte[] buffer = new byte[128];
 
-	try {
-	    while (offset > 0) {
-		int sublen = (int) Math.min(offset, buffer.length);
-		write(buffer, 0, sublen);
-		offset -= sublen;
-	    }
+      try {
+         while (offset > 0) {
+            int sublen = (int) Math.min(offset, buffer.length);
+            write(buffer, 0, sublen);
+            offset -= sublen;
+         }
 
-	    return true;
-	} catch (IOException e) {
-	    throw new QuercusModuleException(e);
-	}
-    }
+         return true;
+      } catch (IOException e) {
+         throw new QuercusModuleException(e);
+      }
+   }
 
-    public String toString() {
-	return "ZlibOutputStream[]";
-    }
+   public String toString() {
+      return "ZlibOutputStream[]";
+   }
 }

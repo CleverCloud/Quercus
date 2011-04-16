@@ -37,57 +37,57 @@ import com.caucho.quercus.expr.Expr;
 
 public class ArrayValueMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new ArrayValueMarshal();
+   public static final Marshal MARSHAL = new ArrayValueMarshal();
 
-    public boolean isReference() {
-	return true;
-    }
+   public boolean isReference() {
+      return true;
+   }
 
-    public boolean isReadOnly() {
-	return false;
-    }
+   public boolean isReadOnly() {
+      return false;
+   }
 
-    /**
-     * Return true if is a Value.
-     */
-    @Override
-    public boolean isValue() {
-	return true;
-    }
+   /**
+    * Return true if is a Value.
+    */
+   @Override
+   public boolean isValue() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return expr.eval(env).toArrayValue(env);
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return expr.eval(env).toArrayValue(env);
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return value.toArrayValue(env);
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return value.toArrayValue(env);
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	if (value instanceof ArrayValue) {
-	    return (ArrayValue) value;
-	} else if (value instanceof Value) {
-	    return ((Value) value).toArrayValue(env);
-	} else {
-	    return NullValue.NULL;
-	}
-    }
+   public Value unmarshal(Env env, Object value) {
+      if (value instanceof ArrayValue) {
+         return (ArrayValue) value;
+      } else if (value instanceof Value) {
+         return ((Value) value).toArrayValue(env);
+      } else {
+         return NullValue.NULL;
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	if (argValue.isArray()) {
-	    if (argValue instanceof JavaAdapter) {
-		return Marshal.ONE;
-	    } else {
-		return Marshal.ZERO;
-	    }
-	} else {
-	    return Marshal.FOUR;
-	}
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      if (argValue.isArray()) {
+         if (argValue instanceof JavaAdapter) {
+            return Marshal.ONE;
+         } else {
+            return Marshal.ZERO;
+         }
+      } else {
+         return Marshal.FOUR;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return ArrayValue.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return ArrayValue.class;
+   }
 }

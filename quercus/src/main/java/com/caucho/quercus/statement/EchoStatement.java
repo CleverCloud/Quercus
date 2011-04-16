@@ -38,23 +38,23 @@ import com.caucho.quercus.expr.Expr;
  */
 public class EchoStatement extends Statement {
 
-    protected final Expr _expr;
-    private String _genId;
+   protected final Expr _expr;
+   private String _genId;
 
-    /**
-     * Creates the echo statement.
-     */
-    public EchoStatement(Location location, Expr expr) {
-	super(location);
+   /**
+    * Creates the echo statement.
+    */
+   public EchoStatement(Location location, Expr expr) {
+      super(location);
 
-	_expr = expr;
-    }
+      _expr = expr;
+   }
 
-    public Value execute(Env env) {
-	Value value = _expr.eval(env);
+   public Value execute(Env env) {
+      Value value = _expr.eval(env);
 
-	value.print(env);
+      value.print(env);
 
-	return null;
-    }
+      return null;
+   }
 }

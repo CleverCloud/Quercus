@@ -34,41 +34,41 @@ import com.caucho.quercus.env.Value;
 
 public class JavaCharacterArrayMarshal extends JavaArrayMarshal {
 
-    public static final Marshal MARSHAL = new JavaCharacterArrayMarshal();
+   public static final Marshal MARSHAL = new JavaCharacterArrayMarshal();
 
-    @Override
-    public Value unmarshal(Env env, Object value) {
-	char[] buffer = (char[]) value;
+   @Override
+   public Value unmarshal(Env env, Object value) {
+      char[] buffer = (char[]) value;
 
-	if (buffer != null) {
-	    return env.createString(buffer, 0, buffer.length);
-	} else {
-	    return NullValue.NULL;
-	}
-    }
+      if (buffer != null) {
+         return env.createString(buffer, 0, buffer.length);
+      } else {
+         return NullValue.NULL;
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	return argValue.toCharArrayMarshalCost();
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      return argValue.toCharArrayMarshalCost();
 
-	/*
-	if (argValue.isString()) {
-	if (argValue.isUnicode())
-	return Marshal.UNICODE_CHARACTER_ARRAY_COST;
-	else if (argValue.isBinary())
-	return Marshal.BINARY_CHARACTER_ARRAY_COST;
-	else
-	return Marshal.PHP5_CHARACTER_ARRAY_COST;
-	}
-	else if (argValue.isArray())
-	return Marshal.TWO; // php/0cib
-	else
-	return Marshal.FOUR;
-	 */
-    }
+      /*
+      if (argValue.isString()) {
+      if (argValue.isUnicode())
+      return Marshal.UNICODE_CHARACTER_ARRAY_COST;
+      else if (argValue.isBinary())
+      return Marshal.BINARY_CHARACTER_ARRAY_COST;
+      else
+      return Marshal.PHP5_CHARACTER_ARRAY_COST;
+      }
+      else if (argValue.isArray())
+      return Marshal.TWO; // php/0cib
+      else
+      return Marshal.FOUR;
+       */
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return char[].class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return char[].class;
+   }
 }

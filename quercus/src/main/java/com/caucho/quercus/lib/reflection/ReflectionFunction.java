@@ -36,42 +36,42 @@ import com.caucho.quercus.env.Value;
 import com.caucho.quercus.function.AbstractFunction;
 
 public class ReflectionFunction extends ReflectionFunctionAbstract
-	implements Reflector {
+        implements Reflector {
 
-    public static final int IS_DEPRECATED = 1024 * 256; //262144;  //2^18
+   public static final int IS_DEPRECATED = 1024 * 256; //262144;  //2^18
 
-    protected ReflectionFunction(AbstractFunction fun) {
-	super(fun);
-    }
+   protected ReflectionFunction(AbstractFunction fun) {
+      super(fun);
+   }
 
-    final private void __clone() {
-    }
+   final private void __clone() {
+   }
 
-    public static ReflectionFunction __construct(Env env, String name) {
-	AbstractFunction fun = env.findFunction(name);
+   public static ReflectionFunction __construct(Env env, String name) {
+      AbstractFunction fun = env.findFunction(name);
 
-	if (fun != null) {
-	    return new ReflectionFunction(fun);
-	} else {
-	    return null;
-	}
-    }
+      if (fun != null) {
+         return new ReflectionFunction(fun);
+      } else {
+         return null;
+      }
+   }
 
-    public Value export(Env env,
-	    String name,
-	    @Optional boolean isReturn) {
-	return null;
-    }
+   public Value export(Env env,
+           String name,
+           @Optional boolean isReturn) {
+      return null;
+   }
 
-    public Value invoke(Env env, Value[] args) {
-	return getFunction().call(env, args);
-    }
+   public Value invoke(Env env, Value[] args) {
+      return getFunction().call(env, args);
+   }
 
-    public Value invokeArgs(Env env, ArrayValue args) {
-	return getFunction().call(env, args.getValueArray(env));
-    }
+   public Value invokeArgs(Env env, ArrayValue args) {
+      return getFunction().call(env, args.getValueArray(env));
+   }
 
-    public String toString() {
-	return "ReflectionFunction[" + getName() + "]";
-    }
+   public String toString() {
+      return "ReflectionFunction[" + getName() + "]";
+   }
 }

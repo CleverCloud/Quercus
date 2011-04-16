@@ -38,26 +38,26 @@ import com.caucho.quercus.env.Value;
  */
 public class ToBooleanExpr extends AbstractUnaryExpr {
 
-    public ToBooleanExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public ToBooleanExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public ToBooleanExpr(Expr expr) {
-	super(expr);
-    }
+   public ToBooleanExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return _expr.evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return _expr.evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
+   }
 
-    public String toString() {
-	return "((boolean) " + _expr + ")";
-    }
+   public String toString() {
+      return "((boolean) " + _expr + ")";
+   }
 }

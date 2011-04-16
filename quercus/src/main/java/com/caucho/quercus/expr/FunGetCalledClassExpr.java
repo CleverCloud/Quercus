@@ -39,32 +39,32 @@ import com.caucho.util.L10N;
  */
 public class FunGetCalledClassExpr extends Expr {
 
-    private static final L10N L = new L10N(FunGetCalledClassExpr.class);
+   private static final L10N L = new L10N(FunGetCalledClassExpr.class);
 
-    public FunGetCalledClassExpr(Location location) {
-	super(location);
-    }
+   public FunGetCalledClassExpr(Location location) {
+      super(location);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value eval(Env env) {
-	Value qThis = env.getThis();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value eval(Env env) {
+      Value qThis = env.getThis();
 
-	if (qThis.isNull()) {
-	    env.warning(L.l("get_called_class() must be called in a class context"));
-	    return BooleanValue.FALSE;
-	} else {
-	    return env.createString(qThis.getClassName());
-	}
-    }
+      if (qThis.isNull()) {
+         env.warning(L.l("get_called_class() must be called in a class context"));
+         return BooleanValue.FALSE;
+      } else {
+         return env.createString(qThis.getClassName());
+      }
+   }
 
-    public String toString() {
-	return "get_called_class()";
-    }
+   public String toString() {
+      return "get_called_class()";
+   }
 }

@@ -41,147 +41,147 @@ import com.caucho.quercus.env.Var;
  */
 public class ArrayTailExpr extends AbstractVarExpr {
 
-    protected final Expr _expr;
+   protected final Expr _expr;
 
-    public ArrayTailExpr(Location location, Expr expr) {
-	super(location);
-	_expr = expr;
-    }
+   public ArrayTailExpr(Location location, Expr expr) {
+      super(location);
+      _expr = expr;
+   }
 
-    public ArrayTailExpr(Expr expr) {
-	_expr = expr;
-    }
+   public ArrayTailExpr(Expr expr) {
+      _expr = expr;
+   }
 
-    /**
-     * Returns true for an expression that can be read (only $a[] uses this)
-     */
-    public boolean canRead() {
-	return false;
-    }
+   /**
+    * Returns true for an expression that can be read (only $a[] uses this)
+    */
+   public boolean canRead() {
+      return false;
+   }
 
-    /**
-     * Returns the expr.
-     */
-    public Expr getExpr() {
-	return _expr;
-    }
+   /**
+    * Returns the expr.
+    */
+   public Expr getExpr() {
+      return _expr;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return env.error(getLocation(), "Cannot use [] as a read-value.");
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return env.error(getLocation(), "Cannot use [] as a read-value.");
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalArg(Env env, boolean isTop) {
-	return evalVar(env);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalArg(Env env, boolean isTop) {
+      return evalVar(env);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Var evalVar(Env env) {
-	Value obj = _expr.evalVar(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Var evalVar(Env env) {
+      Value obj = _expr.evalVar(env);
 
-	return obj.putVar();
-    }
+      return obj.putVar();
+   }
 
-    /**
-     * Evaluates the expression, setting an array if unset..
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value evalArray(Env env) {
-	Value obj = _expr.evalArray(env);
+   /**
+    * Evaluates the expression, setting an array if unset..
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value evalArray(Env env) {
+      Value obj = _expr.evalArray(env);
 
-	ArrayValue array = new ArrayValueImpl();
+      ArrayValue array = new ArrayValueImpl();
 
-	obj.put(array);
+      obj.put(array);
 
-	return array;
-    }
+      return array;
+   }
 
-    /**
-     * Evaluates the expression, assigning an object if unset..
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value evalObject(Env env) {
-	Value array = _expr.evalArray(env);
+   /**
+    * Evaluates the expression, assigning an object if unset..
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value evalObject(Env env) {
+      Value array = _expr.evalArray(env);
 
-	Value value = env.createObject();
+      Value value = env.createObject();
 
-	array.put(value);
+      array.put(value);
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalAssignValue(Env env, Value value) {
-	Value array = _expr.evalVar(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalAssignValue(Env env, Value value) {
+      Value array = _expr.evalVar(env);
 
-	array = array.toAutoArray();
+      array = array.toAutoArray();
 
-	array.put(value);
+      array.put(value);
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalAssignRef(Env env, Value value) {
-	Value array = _expr.evalArray(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalAssignRef(Env env, Value value) {
+      Value array = _expr.evalArray(env);
 
-	array.put(value);
+      array.put(value);
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public void evalUnset(Env env) {
-	throw new UnsupportedOperationException();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public void evalUnset(Env env) {
+      throw new UnsupportedOperationException();
+   }
 
-    public String toString() {
-	return _expr + "[]";
-    }
+   public String toString() {
+      return _expr + "[]";
+   }
 }

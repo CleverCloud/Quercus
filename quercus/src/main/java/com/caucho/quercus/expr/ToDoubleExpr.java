@@ -38,26 +38,26 @@ import com.caucho.quercus.env.Value;
  */
 public class ToDoubleExpr extends AbstractUnaryExpr {
 
-    public ToDoubleExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public ToDoubleExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public ToDoubleExpr(Expr expr) {
-	super(expr);
-    }
+   public ToDoubleExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return new DoubleValue(_expr.evalDouble(env));
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return new DoubleValue(_expr.evalDouble(env));
+   }
 
-    public String toString() {
-	return "((float) " + _expr + ")";
-    }
+   public String toString() {
+      return "((float) " + _expr + ")";
+   }
 }

@@ -35,21 +35,21 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class MethodIntern {
 
-    private static final ConcurrentHashMap<String, StringValue> _internMap = new ConcurrentHashMap<String, StringValue>();
+   private static final ConcurrentHashMap<String, StringValue> _internMap = new ConcurrentHashMap<String, StringValue>();
 
-    public static StringValue intern(String name) {
-	StringValue internName = _internMap.get(name);
+   public static StringValue intern(String name) {
+      StringValue internName = _internMap.get(name);
 
-	if (internName == null) {
-	    StringValue string = new CompiledConstStringValue(name);
+      if (internName == null) {
+         StringValue string = new CompiledConstStringValue(name);
 
-	    internName = _internMap.putIfAbsent(name, string);
+         internName = _internMap.putIfAbsent(name, string);
 
-	    if (internName == null) {
-		internName = string;
-	    }
-	}
+         if (internName == null) {
+            internName = string;
+         }
+      }
 
-	return internName;
-    }
+      return internName;
+   }
 }

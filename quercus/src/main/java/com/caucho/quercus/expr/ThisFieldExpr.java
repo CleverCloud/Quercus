@@ -45,217 +45,217 @@ import com.caucho.util.L10N;
  */
 public class ThisFieldExpr extends AbstractVarExpr {
 
-    private static final L10N L = new L10N(ThisFieldExpr.class);
-    protected final ThisExpr _qThis;
-    protected final StringValue _name;
+   private static final L10N L = new L10N(ThisFieldExpr.class);
+   protected final ThisExpr _qThis;
+   protected final StringValue _name;
 
-    public ThisFieldExpr(ThisExpr qThis, StringValue name) {
-	_qThis = qThis;
-	_name = name;
-    }
+   public ThisFieldExpr(ThisExpr qThis, StringValue name) {
+      _qThis = qThis;
+      _name = name;
+   }
 
-    private Value cannotUseThisError(Env env) {
-	return env.error(getLocation(),
-		"Cannot use '$this' when not in object context.");
-    }
+   private Value cannotUseThisError(Env env) {
+      return env.error(getLocation(),
+              "Cannot use '$this' when not in object context.");
+   }
 
-    //
-    // function call creation
-    //
-    /**
-     * Creates a function call expression
-     */
-    @Override
-    public Expr createCall(QuercusParser parser,
-	    Location location,
-	    ArrayList<Expr> args)
-	    throws IOException {
-	ExprFactory factory = parser.getExprFactory();
+   //
+   // function call creation
+   //
+   /**
+    * Creates a function call expression
+    */
+   @Override
+   public Expr createCall(QuercusParser parser,
+           Location location,
+           ArrayList<Expr> args)
+           throws IOException {
+      ExprFactory factory = parser.getExprFactory();
 
-	return factory.createThisMethod(location, _qThis, _name.toString(), args);
-    }
+      return factory.createThisMethod(location, _qThis, _name.toString(), args);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value obj = env.getThis();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value obj = env.getThis();
 
-	if (obj.isNull()) {
-	    return cannotUseThisError(env);
-	}
+      if (obj.isNull()) {
+         return cannotUseThisError(env);
+      }
 
-	return obj.getThisField(env, _name);
-    }
+      return obj.getThisField(env, _name);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value evalCopy(Env env) {
-	Value obj = env.getThis();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value evalCopy(Env env) {
+      Value obj = env.getThis();
 
-	if (obj.isNull()) {
-	    return cannotUseThisError(env);
-	}
+      if (obj.isNull()) {
+         return cannotUseThisError(env);
+      }
 
-	return obj.getThisField(env, _name).copy();
-    }
+      return obj.getThisField(env, _name).copy();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Var evalVar(Env env) {
-	Value obj = env.getThis();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Var evalVar(Env env) {
+      Value obj = env.getThis();
 
-	if (obj.isNull()) {
-	    cannotUseThisError(env);
+      if (obj.isNull()) {
+         cannotUseThisError(env);
 
-	    return new Var();
-	}
+         return new Var();
+      }
 
-	return obj.getThisFieldVar(env, _name);
-    }
+      return obj.getThisFieldVar(env, _name);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalArg(Env env, boolean isTop) {
-	Value obj = env.getThis();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalArg(Env env, boolean isTop) {
+      Value obj = env.getThis();
 
-	if (obj.isNull()) {
-	    return cannotUseThisError(env);
-	}
+      if (obj.isNull()) {
+         return cannotUseThisError(env);
+      }
 
-	return obj.getThisFieldArg(env, _name);
-    }
+      return obj.getThisFieldArg(env, _name);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalAssignValue(Env env, Value value) {
-	Value obj = env.getThis();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalAssignValue(Env env, Value value) {
+      Value obj = env.getThis();
 
-	if (obj.isNull()) {
-	    cannotUseThisError(env);
-	}
+      if (obj.isNull()) {
+         cannotUseThisError(env);
+      }
 
-	obj.putThisField(env, _name, value);
+      obj.putThisField(env, _name, value);
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalAssignRef(Env env, Value value) {
-	Value obj = env.getThis();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalAssignRef(Env env, Value value) {
+      Value obj = env.getThis();
 
-	if (obj.isNull()) {
-	    cannotUseThisError(env);
-	}
+      if (obj.isNull()) {
+         cannotUseThisError(env);
+      }
 
-	obj.putThisField(env, _name, value);
+      obj.putThisField(env, _name, value);
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates as an array index assign ($a[index] = value).
-     */
-    @Override
-    public Value evalArrayAssign(Env env, Value index, Value value) {
-	Value obj = env.getThis();
+   /**
+    * Evaluates as an array index assign ($a[index] = value).
+    */
+   @Override
+   public Value evalArrayAssign(Env env, Value index, Value value) {
+      Value obj = env.getThis();
 
-	if (obj.isNull()) {
-	    cannotUseThisError(env);
-	}
+      if (obj.isNull()) {
+         cannotUseThisError(env);
+      }
 
-	Value fieldVar = obj.getThisFieldVar(env, _name);
+      Value fieldVar = obj.getThisFieldVar(env, _name);
 
-	// php/03mm
-	return fieldVar.put(index, value);
-    }
+      // php/03mm
+      return fieldVar.put(index, value);
+   }
 
-    /**
-     * Evaluates the expression, creating an array if the value is unset..
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value evalArray(Env env) {
-	Value obj = env.getThis();
+   /**
+    * Evaluates the expression, creating an array if the value is unset..
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value evalArray(Env env) {
+      Value obj = env.getThis();
 
-	if (obj.isNull()) {
-	    return cannotUseThisError(env);
-	}
+      if (obj.isNull()) {
+         return cannotUseThisError(env);
+      }
 
-	return obj.getThisFieldArray(env, _name);
-    }
+      return obj.getThisFieldArray(env, _name);
+   }
 
-    /**
-     * Evaluates the expression, creating an array if the value is unset..
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value evalObject(Env env) {
-	Value obj = env.getThis();
+   /**
+    * Evaluates the expression, creating an array if the value is unset..
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value evalObject(Env env) {
+      Value obj = env.getThis();
 
-	if (obj.isNull()) {
-	    return cannotUseThisError(env);
-	}
+      if (obj.isNull()) {
+         return cannotUseThisError(env);
+      }
 
-	return obj.getThisFieldObject(env, _name);
-    }
+      return obj.getThisFieldObject(env, _name);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public void evalUnset(Env env) {
-	Value obj = env.getThis();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public void evalUnset(Env env) {
+      Value obj = env.getThis();
 
-	if (obj.isNull()) {
-	    cannotUseThisError(env);
-	}
+      if (obj.isNull()) {
+         cannotUseThisError(env);
+      }
 
-	obj.unsetThisField(_name);
-    }
+      obj.unsetThisField(_name);
+   }
 
-    public String toString() {
-	return "$this->" + _name;
-    }
+   public String toString() {
+      return "$this->" + _name;
+   }
 }

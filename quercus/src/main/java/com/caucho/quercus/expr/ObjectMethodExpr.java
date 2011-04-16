@@ -44,53 +44,53 @@ import java.util.ArrayList;
  */
 public class ObjectMethodExpr extends AbstractMethodExpr {
 
-    private static final L10N L = new L10N(ObjectMethodExpr.class);
-    protected final Expr _objExpr;
-    protected final StringValue _methodName;
-    protected final Expr[] _args;
+   private static final L10N L = new L10N(ObjectMethodExpr.class);
+   protected final Expr _objExpr;
+   protected final StringValue _methodName;
+   protected final Expr[] _args;
 
-    public ObjectMethodExpr(Location location,
-	    Expr objExpr,
-	    String name,
-	    ArrayList<Expr> args) {
-	super(location);
+   public ObjectMethodExpr(Location location,
+           Expr objExpr,
+           String name,
+           ArrayList<Expr> args) {
+      super(location);
 
-	_objExpr = objExpr;
+      _objExpr = objExpr;
 
-	_methodName = MethodIntern.intern(name);
+      _methodName = MethodIntern.intern(name);
 
-	_args = new Expr[args.size()];
-	args.toArray(_args);
-    }
+      _args = new Expr[args.size()];
+      args.toArray(_args);
+   }
 
-    public ObjectMethodExpr(Expr objExpr, String name, ArrayList<Expr> args) {
-	this(Location.UNKNOWN, objExpr, name, args);
-    }
+   public ObjectMethodExpr(Expr objExpr, String name, ArrayList<Expr> args) {
+      this(Location.UNKNOWN, objExpr, name, args);
+   }
 
-    public String getName() {
-	return _methodName.toString();
-    }
+   public String getName() {
+      return _methodName.toString();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value eval(Env env) {
-	env.checkTimeout();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value eval(Env env) {
+      env.checkTimeout();
 
-	Value obj = _objExpr.eval(env);
+      Value obj = _objExpr.eval(env);
 
-	StringValue methodName = _methodName;
-	int hash = methodName.hashCodeCaseInsensitive();
+      StringValue methodName = _methodName;
+      int hash = methodName.hashCodeCaseInsensitive();
 
-	return eval(env, obj, methodName, hash, _args);
-    }
+      return eval(env, obj, methodName, hash, _args);
+   }
 
-    public String toString() {
-	return _objExpr + "->" + _methodName + "()";
-    }
+   public String toString() {
+      return _objExpr + "->" + _methodName + "()";
+   }
 }

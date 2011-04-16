@@ -46,322 +46,322 @@ import java.util.logging.Logger;
  */
 class POFileParser extends GettextParser {
 
-    private static final Logger log = Logger.getLogger(POFileParser.class.getName());
-    private static final L10N L = new L10N(POFileParser.class);
-    // Parsing constants and variables
-    private static final int MSGID = 256;
-    private static final int MSGID_PLURAL = 257;
-    private static final int MSGSTR = 258;
-    private static final int UNKNOWN = 260;
-    private Env _env;
-    private ReadStream _in;
-    private int _peekChar;
-    private StringValue _string;
+   private static final Logger log = Logger.getLogger(POFileParser.class.getName());
+   private static final L10N L = new L10N(POFileParser.class);
+   // Parsing constants and variables
+   private static final int MSGID = 256;
+   private static final int MSGID_PLURAL = 257;
+   private static final int MSGSTR = 258;
+   private static final int UNKNOWN = 260;
+   private Env _env;
+   private ReadStream _in;
+   private int _peekChar;
+   private StringValue _string;
 
-    POFileParser(Env env, Path path)
-	    throws IOException {
-	_env = env;
+   POFileParser(Env env, Path path)
+           throws IOException {
+      _env = env;
 
-	init(path);
-    }
+      init(path);
+   }
 
-    void init(Path path)
-	    throws IOException {
-	_in = path.openRead();
-	_peekChar = -1;
+   void init(Path path)
+           throws IOException {
+      _in = path.openRead();
+      _peekChar = -1;
 
-	StringValue metadata = getMetadata();
+      StringValue metadata = getMetadata();
 
-	_pluralExpr = PluralExpr.getPluralExpr(metadata);
-	_charset = getCharset(metadata);
+      _pluralExpr = PluralExpr.getPluralExpr(metadata);
+      _charset = getCharset(metadata);
 
-	_in.setEncoding(_charset);
-    }
+      _in.setEncoding(_charset);
+   }
 
-    private StringValue getMetadata()
-	    throws IOException {
-	StringValue metadata = null;
+   private StringValue getMetadata()
+           throws IOException {
+      StringValue metadata = null;
 
-	int token = readToken();
+      int token = readToken();
 
-	while (token >= 0 && token != UNKNOWN) {
-	    if (token == MSGID && _string.length() == 0) {
+      while (token >= 0 && token != UNKNOWN) {
+         if (token == MSGID && _string.length() == 0) {
 
-		if (readToken() == MSGSTR) {
-		    metadata = _string;
-		}
+            if (readToken() == MSGSTR) {
+               metadata = _string;
+            }
 
-		break;
-	    }
-	}
+            break;
+         }
+      }
 
-	_peekChar = -1;
-	_in.setPosition(0);
+      _peekChar = -1;
+      _in.setPosition(0);
 
-	return metadata;
-    }
+      return metadata;
+   }
 
-    /**
-     * Returns the gettext translations.
-     *
-     * @return translations from file, or null on error
-     */
-    HashMap<StringValue, ArrayList<StringValue>> readTranslations()
-	    throws IOException {
-	HashMap<StringValue, ArrayList<StringValue>> translations =
-		new HashMap<StringValue, ArrayList<StringValue>>();
+   /**
+    * Returns the gettext translations.
+    *
+    * @return translations from file, or null on error
+    */
+   HashMap<StringValue, ArrayList<StringValue>> readTranslations()
+           throws IOException {
+      HashMap<StringValue, ArrayList<StringValue>> translations =
+              new HashMap<StringValue, ArrayList<StringValue>>();
 
-	int token = readToken();
+      int token = readToken();
 
-	while (token >= 0) {
-	    if (token != MSGID) {
-		return null;
-	    }
+      while (token >= 0) {
+         if (token != MSGID) {
+            return null;
+         }
 
-	    StringValue msgid = _string;
+         StringValue msgid = _string;
 
-	    token = readToken();
-	    if (token == MSGID_PLURAL) {
-		token = readToken();
-	    }
+         token = readToken();
+         if (token == MSGID_PLURAL) {
+            token = readToken();
+         }
 
-	    ArrayList<StringValue> msgstrs = new ArrayList<StringValue>();
+         ArrayList<StringValue> msgstrs = new ArrayList<StringValue>();
 
-	    for (; token == MSGSTR; token = readToken()) {
-		msgstrs.add(_string);
-	    }
+         for (; token == MSGSTR; token = readToken()) {
+            msgstrs.add(_string);
+         }
 
-	    translations.put(msgid, msgstrs);
-	}
+         translations.put(msgid, msgstrs);
+      }
 
-	return translations;
-    }
+      return translations;
+   }
 
-    private int readToken()
-	    throws IOException {
-	int ch = skipWhitespace();
+   private int readToken()
+           throws IOException {
+      int ch = skipWhitespace();
 
-	switch (ch) {
-	    case '#':
-		skipLine();
-		return readToken();
+      switch (ch) {
+         case '#':
+            skipLine();
+            return readToken();
 
-	    case 'm':
-		if (read() == 's'
-			&& read() == 'g') {
-		    return readMsgToken();
-		} else {
-		    return UNKNOWN;
-		}
+         case 'm':
+            if (read() == 's'
+                    && read() == 'g') {
+               return readMsgToken();
+            } else {
+               return UNKNOWN;
+            }
 
-	    case -1:
-		return -1;
+         case -1:
+            return -1;
 
-	    default:
-		return UNKNOWN;
-	}
-    }
+         default:
+            return UNKNOWN;
+      }
+   }
 
-    private int readMsgToken()
-	    throws IOException {
-	int ch = read();
+   private int readMsgToken()
+           throws IOException {
+      int ch = read();
 
-	switch (ch) {
-	    case 'i':
-		if (read() == 'd') {
-		    return readMsgidToken();
-		} else {
-		    return UNKNOWN;
-		}
+      switch (ch) {
+         case 'i':
+            if (read() == 'd') {
+               return readMsgidToken();
+            } else {
+               return UNKNOWN;
+            }
 
-	    case 's':
-		if (read() == 't'
-			&& read() == 'r') {
-		    return readMsgstrToken();
-		} else {
-		    return UNKNOWN;
-		}
+         case 's':
+            if (read() == 't'
+                    && read() == 'r') {
+               return readMsgstrToken();
+            } else {
+               return UNKNOWN;
+            }
 
-	    default:
-		return UNKNOWN;
-	}
-    }
+         default:
+            return UNKNOWN;
+      }
+   }
 
-    private int readMsgidToken()
-	    throws IOException {
-	int token;
-	int ch = skipWhitespace();
+   private int readMsgidToken()
+           throws IOException {
+      int token;
+      int ch = skipWhitespace();
 
-	if (ch == '_') {
-	    if (read() == 'p'
-		    && read() == 'l'
-		    && read() == 'u'
-		    && read() == 'r'
-		    && read() == 'a'
-		    && read() == 'l') {
-		token = MSGID_PLURAL;
+      if (ch == '_') {
+         if (read() == 'p'
+                 && read() == 'l'
+                 && read() == 'u'
+                 && read() == 'r'
+                 && read() == 'a'
+                 && read() == 'l') {
+            token = MSGID_PLURAL;
 
-		ch = skipWhitespace();
-	    } else {
-		return UNKNOWN;
-	    }
-	} else {
-	    token = MSGID;
-	}
+            ch = skipWhitespace();
+         } else {
+            return UNKNOWN;
+         }
+      } else {
+         token = MSGID;
+      }
 
-	if (ch != '"') {
-	    return UNKNOWN;
-	}
+      if (ch != '"') {
+         return UNKNOWN;
+      }
 
-	return readOriginalString(token);
-    }
+      return readOriginalString(token);
+   }
 
-    private int readMsgstrToken()
-	    throws IOException {
-	int ch = skipWhitespace();
+   private int readMsgstrToken()
+           throws IOException {
+      int ch = skipWhitespace();
 
-	if (ch == '[') {
-	    ch = read();
+      if (ch == '[') {
+         ch = read();
 
-	    while (ch >= 0 && ch != ']') {
-		ch = read();
-	    }
+         while (ch >= 0 && ch != ']') {
+            ch = read();
+         }
 
-	    ch = skipWhitespace();
-	}
+         ch = skipWhitespace();
+      }
 
-	if (ch != '"') {
-	    return UNKNOWN;
-	}
+      if (ch != '"') {
+         return UNKNOWN;
+      }
 
-	return readString(MSGSTR);
-    }
+      return readString(MSGSTR);
+   }
 
-    /**
-     * Reads a string in quotes.
-     */
-    private int readOriginalString(int token)
-	    throws IOException {
-	return readString(_env.createUnicodeBuilder(), token);
-    }
+   /**
+    * Reads a string in quotes.
+    */
+   private int readOriginalString(int token)
+           throws IOException {
+      return readString(_env.createUnicodeBuilder(), token);
+   }
 
-    /**
-     * Reads a string in quotes.
-     */
-    private int readString(int token)
-	    throws IOException {
-	return readString(new UnicodeBuilderValue(), token);
-    }
+   /**
+    * Reads a string in quotes.
+    */
+   private int readString(int token)
+           throws IOException {
+      return readString(new UnicodeBuilderValue(), token);
+   }
 
-    /**
-     * XXX: any other possible character escapes?
-     */
-    private int readString(StringValue sb, int token)
-	    throws IOException {
-	for (int ch = read(); ch != '"'; ch = read()) {
-	    switch (ch) {
-		case '\\':
-		    ch = read();
-		    switch (ch) {
-			case 'n':
-			    sb.append('\n');
-			    break;
-			case 'r':
-			    sb.append('\r');
-			    break;
-			case 't':
-			    sb.append('\t');
-			    break;
-			case '\r':
-			    ch = read();
-			    if (ch != '\n') {
-				_peekChar = ch;
-			    }
-			    break;
-			case '\n':
-			    break;
-			default:
-			    _peekChar = ch;
-			    sb.append('\\');
-		    }
-		    break;
+   /**
+    * XXX: any other possible character escapes?
+    */
+   private int readString(StringValue sb, int token)
+           throws IOException {
+      for (int ch = read(); ch != '"'; ch = read()) {
+         switch (ch) {
+            case '\\':
+               ch = read();
+               switch (ch) {
+                  case 'n':
+                     sb.append('\n');
+                     break;
+                  case 'r':
+                     sb.append('\r');
+                     break;
+                  case 't':
+                     sb.append('\t');
+                     break;
+                  case '\r':
+                     ch = read();
+                     if (ch != '\n') {
+                        _peekChar = ch;
+                     }
+                     break;
+                  case '\n':
+                     break;
+                  default:
+                     _peekChar = ch;
+                     sb.append('\\');
+               }
+               break;
 
-		case -1:
-		    return UNKNOWN;
+            case -1:
+               return UNKNOWN;
 
-		default:
-		    sb.append((char) ch);
-	    }
-	}
+            default:
+               sb.append((char) ch);
+         }
+      }
 
-	// String may be continued on the next line.
+      // String may be continued on the next line.
 
-	int ch = skipWhitespace();
+      int ch = skipWhitespace();
 
-	if (ch == '"') {
-	    return readString(sb, token);
-	} else {
-	    _peekChar = ch;
-	}
+      if (ch == '"') {
+         return readString(sb, token);
+      } else {
+         _peekChar = ch;
+      }
 
-	_string = sb;
-	return token;
-    }
+      _string = sb;
+      return token;
+   }
 
-    private int read()
-	    throws IOException {
-	if (_peekChar >= 0) {
-	    int swap = _peekChar;
-	    _peekChar = -1;
-	    return swap;
-	}
+   private int read()
+           throws IOException {
+      if (_peekChar >= 0) {
+         int swap = _peekChar;
+         _peekChar = -1;
+         return swap;
+      }
 
-	return _in.readChar();
-    }
+      return _in.readChar();
+   }
 
-    private void skipLine()
-	    throws IOException {
-	int ch = read();
+   private void skipLine()
+           throws IOException {
+      int ch = read();
 
-	while (ch >= 0) {
-	    switch (ch) {
-		case '\r':
-		    ch = read();
+      while (ch >= 0) {
+         switch (ch) {
+            case '\r':
+               ch = read();
 
-		    if (ch != '\n') {
-			_peekChar = ch;
-		    }
+               if (ch != '\n') {
+                  _peekChar = ch;
+               }
 
-		    return;
+               return;
 
-		case '\n':
-		    return;
-	    }
+            case '\n':
+               return;
+         }
 
-	    ch = read();
-	}
-    }
+         ch = read();
+      }
+   }
 
-    private int skipWhitespace()
-	    throws IOException {
-	while (true) {
-	    int ch = read();
+   private int skipWhitespace()
+           throws IOException {
+      while (true) {
+         int ch = read();
 
-	    switch (ch) {
-		case ' ':
-		case '\r':
-		case '\n':
-		case '\t':
-		    continue;
-		default:
-		    return ch;
-	    }
-	}
-    }
+         switch (ch) {
+            case ' ':
+            case '\r':
+            case '\n':
+            case '\t':
+               continue;
+            default:
+               return ch;
+         }
+      }
+   }
 
-    void close() {
-	if (_in != null) {
-	    _in.close();
-	}
-    }
+   void close() {
+      if (_in != null) {
+         _in.close();
+      }
+   }
 }

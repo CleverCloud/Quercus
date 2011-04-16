@@ -40,31 +40,31 @@ import com.caucho.quercus.expr.Expr;
  */
 public class EregMarshal extends StringMarshal {
 
-    public static final EregMarshal MARSHAL = new EregMarshal();
+   public static final EregMarshal MARSHAL = new EregMarshal();
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return RegexpModule.createEreg(env, expr.eval(env));
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return RegexpModule.createEreg(env, expr.eval(env));
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return RegexpModule.createEreg(env, value);
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return RegexpModule.createEreg(env, value);
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	throw new UnsupportedOperationException(getClass().getName());
-    }
+   public Value unmarshal(Env env, Object value) {
+      throw new UnsupportedOperationException(getClass().getName());
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	if (argValue.isString()) {
-	    return Marshal.ZERO;
-	} else {
-	    return Marshal.MAX;
-	}
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      if (argValue.isString()) {
+         return Marshal.ZERO;
+      } else {
+         return Marshal.MAX;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return Ereg.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return Ereg.class;
+   }
 }

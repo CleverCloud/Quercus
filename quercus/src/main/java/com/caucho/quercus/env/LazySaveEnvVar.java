@@ -34,54 +34,54 @@ package com.caucho.quercus.env;
  */
 public class LazySaveEnvVar extends EnvVar {
 
-    private int _id;
-    private Value _value;
+   private int _id;
+   private Value _value;
 
-    public LazySaveEnvVar(int id, Value value) {
-	_id = id;
-	_value = value;
-    }
+   public LazySaveEnvVar(int id, Value value) {
+      _id = id;
+      _value = value;
+   }
 
-    /**
-     * Returns the current value.
-     */
-    public Value get() {
-	return getEnvVar().get();
-    }
+   /**
+    * Returns the current value.
+    */
+   public Value get() {
+      return getEnvVar().get();
+   }
 
-    /**
-     * Sets the current value.
-     */
-    public Value set(Value value) {
-	return getEnvVar().set(value);
-    }
+   /**
+    * Sets the current value.
+    */
+   public Value set(Value value) {
+      return getEnvVar().set(value);
+   }
 
-    /**
-     * Returns the current Var.
-     */
-    public Var getVar() {
-	return getEnvVar().getVar();
-    }
+   /**
+    * Returns the current Var.
+    */
+   public Var getVar() {
+      return getEnvVar().getVar();
+   }
 
-    /**
-     * Sets the var.
-     */
-    public Var setVar(Var var) {
-	return getEnvVar().setVar(var);
-    }
+   /**
+    * Sets the var.
+    */
+   public Var setVar(Var var) {
+      return getEnvVar().setVar(var);
+   }
 
-    private EnvVar getEnvVar() {
-	Env env = Env.getCurrent();
-	EnvVar[] globals = env.getGlobalList();
+   private EnvVar getEnvVar() {
+      Env env = Env.getCurrent();
+      EnvVar[] globals = env.getGlobalList();
 
-	if (globals[_id] == this) {
-	    EnvVar var = new EnvVarImpl(new Var());
+      if (globals[_id] == this) {
+         EnvVar var = new EnvVarImpl(new Var());
 
-	    var.set(_value.copy(env));
+         var.set(_value.copy(env));
 
-	    globals[_id] = var;
-	}
+         globals[_id] = var;
+      }
 
-	return globals[_id];
-    }
+      return globals[_id];
+   }
 }

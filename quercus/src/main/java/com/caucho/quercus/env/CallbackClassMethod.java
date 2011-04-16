@@ -40,135 +40,135 @@ import java.util.IdentityHashMap;
  */
 public class CallbackClassMethod extends Callback {
 
-    private static final L10N L = new L10N(CallbackClassMethod.class);
-    private final QuercusClass _qClass;
-    private final StringValue _methodName;
-    private final int _hash;
-    private final Value _qThis;
+   private static final L10N L = new L10N(CallbackClassMethod.class);
+   private final QuercusClass _qClass;
+   private final StringValue _methodName;
+   private final int _hash;
+   private final Value _qThis;
 
-    public CallbackClassMethod(QuercusClass qClass,
-	    StringValue methodName,
-	    Value qThis) {
-	_qClass = qClass;
+   public CallbackClassMethod(QuercusClass qClass,
+           StringValue methodName,
+           Value qThis) {
+      _qClass = qClass;
 
-	_methodName = methodName;
+      _methodName = methodName;
 
-	_hash = methodName.hashCodeCaseInsensitive();
+      _hash = methodName.hashCodeCaseInsensitive();
 
-	_qThis = qThis;
-    }
+      _qThis = qThis;
+   }
 
-    public CallbackClassMethod(QuercusClass qClass,
-	    StringValue methodName) {
-	this(qClass, methodName, qClass);
-    }
+   public CallbackClassMethod(QuercusClass qClass,
+           StringValue methodName) {
+      this(qClass, methodName, qClass);
+   }
 
-    /**
-     * Evaluates the callback with no arguments.
-     *
-     * @param env the calling environment
-     */
-    @Override
-    public Value call(Env env) {
-	return _qClass.callMethod(env, _qThis, _methodName, _hash);
-    }
+   /**
+    * Evaluates the callback with no arguments.
+    *
+    * @param env the calling environment
+    */
+   @Override
+   public Value call(Env env) {
+      return _qClass.callMethod(env, _qThis, _methodName, _hash);
+   }
 
-    /**
-     * Evaluates the callback with 1 argument.
-     *
-     * @param env the calling environment
-     */
-    @Override
-    public Value call(Env env, Value a1) {
-	return _qClass.callMethod(env, _qThis, _methodName, _hash,
-		a1);
-    }
+   /**
+    * Evaluates the callback with 1 argument.
+    *
+    * @param env the calling environment
+    */
+   @Override
+   public Value call(Env env, Value a1) {
+      return _qClass.callMethod(env, _qThis, _methodName, _hash,
+              a1);
+   }
 
-    /**
-     * Evaluates the callback with 2 arguments.
-     *
-     * @param env the calling environment
-     */
-    @Override
-    public Value call(Env env, Value a1, Value a2) {
-	return _qClass.callMethod(env, _qThis, _methodName, _hash,
-		a1, a2);
-    }
+   /**
+    * Evaluates the callback with 2 arguments.
+    *
+    * @param env the calling environment
+    */
+   @Override
+   public Value call(Env env, Value a1, Value a2) {
+      return _qClass.callMethod(env, _qThis, _methodName, _hash,
+              a1, a2);
+   }
 
-    /**
-     * Evaluates the callback with 3 arguments.
-     *
-     * @param env the calling environment
-     */
-    @Override
-    public Value call(Env env, Value a1, Value a2, Value a3) {
-	return _qClass.callMethod(env, _qThis, _methodName, _hash,
-		a1, a2, a3);
-    }
+   /**
+    * Evaluates the callback with 3 arguments.
+    *
+    * @param env the calling environment
+    */
+   @Override
+   public Value call(Env env, Value a1, Value a2, Value a3) {
+      return _qClass.callMethod(env, _qThis, _methodName, _hash,
+              a1, a2, a3);
+   }
 
-    /**
-     * Evaluates the callback with 3 arguments.
-     *
-     * @param env the calling environment
-     */
-    @Override
-    public Value call(Env env, Value a1, Value a2, Value a3,
-	    Value a4) {
-	return _qClass.callMethod(env, _qThis, _methodName, _hash,
-		a1, a2, a3, a4);
-    }
+   /**
+    * Evaluates the callback with 3 arguments.
+    *
+    * @param env the calling environment
+    */
+   @Override
+   public Value call(Env env, Value a1, Value a2, Value a3,
+           Value a4) {
+      return _qClass.callMethod(env, _qThis, _methodName, _hash,
+              a1, a2, a3, a4);
+   }
 
-    /**
-     * Evaluates the callback with 3 arguments.
-     *
-     * @param env the calling environment
-     */
-    @Override
-    public Value call(Env env, Value a1, Value a2, Value a3,
-	    Value a4, Value a5) {
-	return _qClass.callMethod(env, _qThis, _methodName, _hash,
-		a1, a2, a3, a4, a5);
-    }
+   /**
+    * Evaluates the callback with 3 arguments.
+    *
+    * @param env the calling environment
+    */
+   @Override
+   public Value call(Env env, Value a1, Value a2, Value a3,
+           Value a4, Value a5) {
+      return _qClass.callMethod(env, _qThis, _methodName, _hash,
+              a1, a2, a3, a4, a5);
+   }
 
-    @Override
-    public Value call(Env env, Value[] args) {
-	return _qClass.callMethod(env, _qThis, _methodName, _hash, args);
-    }
+   @Override
+   public Value call(Env env, Value[] args) {
+      return _qClass.callMethod(env, _qThis, _methodName, _hash, args);
+   }
 
-    @Override
-    public void varDumpImpl(Env env,
-	    WriteStream out,
-	    int depth,
-	    IdentityHashMap<Value, String> valueSet)
-	    throws IOException {
-	out.print(getClass().getName());
-	out.print('[');
-	out.print(_qClass.getName());
-	out.print(", ");
-	out.print(_methodName);
-	out.print(']');
-    }
+   @Override
+   public void varDumpImpl(Env env,
+           WriteStream out,
+           int depth,
+           IdentityHashMap<Value, String> valueSet)
+           throws IOException {
+      out.print(getClass().getName());
+      out.print('[');
+      out.print(_qClass.getName());
+      out.print(", ");
+      out.print(_methodName);
+      out.print(']');
+   }
 
-    @Override
-    public boolean isValid(Env env) {
-	return true;
-    }
+   @Override
+   public boolean isValid(Env env) {
+      return true;
+   }
 
-    @Override
-    public String getCallbackName() {
-	return _qClass.getName() + "::" + _methodName.toString();
-    }
+   @Override
+   public String getCallbackName() {
+      return _qClass.getName() + "::" + _methodName.toString();
+   }
 
-    @Override
-    public boolean isInternal(Env env) {
-	// return _fun instanceof JavaInvoker;
-	return false;
-    }
+   @Override
+   public boolean isInternal(Env env) {
+      // return _fun instanceof JavaInvoker;
+      return false;
+   }
 
-    private Value error(Env env) {
-	env.warning(L.l("{0}::{1}() is an invalid callback method",
-		_qClass.getName(), _methodName));
+   private Value error(Env env) {
+      env.warning(L.l("{0}::{1}() is an invalid callback method",
+              _qClass.getName(), _methodName));
 
-	return NullValue.NULL;
-    }
+      return NullValue.NULL;
+   }
 }

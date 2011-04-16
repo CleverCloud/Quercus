@@ -37,67 +37,67 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class QDOMFactory
-	implements DOMFactory {
+        implements DOMFactory {
 
-    public Attr createAttr(String name) {
-	return new QAttr(name);
-    }
+   public Attr createAttr(String name) {
+      return new QAttr(name);
+   }
 
-    public Comment createComment() {
-	return new QComment();
-    }
+   public Comment createComment() {
+      return new QComment();
+   }
 
-    public Document createDocument() {
-	return new QDocument();
-    }
+   public Document createDocument() {
+      return new QDocument();
+   }
 
-    public Document createDocument(DocumentType docType) {
-	return new QDocument(docType);
-    }
+   public Document createDocument(DocumentType docType) {
+      return new QDocument(docType);
+   }
 
-    public DocumentType createDocumentType(String qualifiedName) {
-	return new QDocumentType(qualifiedName);
-    }
+   public DocumentType createDocumentType(String qualifiedName) {
+      return new QDocumentType(qualifiedName);
+   }
 
-    public DocumentType createDocumentType(String qualifiedName,
-	    String publicId,
-	    String systemId) {
-	return new QDocumentType(qualifiedName, publicId, systemId);
-    }
+   public DocumentType createDocumentType(String qualifiedName,
+           String publicId,
+           String systemId) {
+      return new QDocumentType(qualifiedName, publicId, systemId);
+   }
 
-    public Element createElement(String name) {
-	return new QElement(name);
-    }
+   public Element createElement(String name) {
+      return new QElement(name);
+   }
 
-    public Element createElement(String name, String namespace) {
-	return new QElement(name, namespace);
-    }
+   public Element createElement(String name, String namespace) {
+      return new QElement(name, namespace);
+   }
 
-    public EntityReference createEntityReference(String name) {
-	return new QEntityReference(name);
-    }
+   public EntityReference createEntityReference(String name) {
+      return new QEntityReference(name);
+   }
 
-    public ProcessingInstruction createProcessingInstruction(String name) {
-	return new QProcessingInstruction(name);
-    }
+   public ProcessingInstruction createProcessingInstruction(String name) {
+      return new QProcessingInstruction(name);
+   }
 
-    public Text createText() {
-	return new QText();
-    }
+   public Text createText() {
+      return new QText();
+   }
 
-    public org.w3c.dom.DOMImplementation getImplementation() {
-	return new QDOMImplementation();
-    }
+   public org.w3c.dom.DOMImplementation getImplementation() {
+      return new QDOMImplementation();
+   }
 
-    public void parseXMLDocument(Document document, InputStream is, String path)
-	    throws IOException, SAXException {
-	Xml xml = new Xml();
-	xml.parseDocument((QDocument) document, is, path);
-    }
+   public void parseXMLDocument(Document document, InputStream is, String path)
+           throws IOException, SAXException {
+      Xml xml = new Xml();
+      xml.parseDocument((QDocument) document, is, path);
+   }
 
-    public void parseHTMLDocument(Document document, InputStream is, String path)
-	    throws IOException, SAXException {
-	Html html = new Html();
-	html.parseDocument((QDocument) document, is, path);
-    }
+   public void parseHTMLDocument(Document document, InputStream is, String path)
+           throws IOException, SAXException {
+      Html html = new Html();
+      html.parseDocument((QDocument) document, is, path);
+   }
 }

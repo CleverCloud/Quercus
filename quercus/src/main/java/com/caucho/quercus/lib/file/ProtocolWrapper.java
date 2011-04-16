@@ -38,78 +38,78 @@ import com.caucho.quercus.function.AbstractFunction;
 
 public class ProtocolWrapper {
 
-    private QuercusClass _qClass;
+   private QuercusClass _qClass;
 
-    protected ProtocolWrapper() {
-    }
+   protected ProtocolWrapper() {
+   }
 
-    public ProtocolWrapper(QuercusClass qClass) {
-	_qClass = qClass;
-    }
+   public ProtocolWrapper(QuercusClass qClass) {
+      _qClass = qClass;
+   }
 
-    public BinaryStream fopen(Env env, StringValue path, StringValue mode,
-	    LongValue options) {
-	return new WrappedStream(env, _qClass, path, mode, options);
-    }
+   public BinaryStream fopen(Env env, StringValue path, StringValue mode,
+           LongValue options) {
+      return new WrappedStream(env, _qClass, path, mode, options);
+   }
 
-    public Value opendir(Env env, StringValue path, LongValue flags) {
-	WrappedDirectoryValue value = new WrappedDirectoryValue(env, _qClass);
+   public Value opendir(Env env, StringValue path, LongValue flags) {
+      WrappedDirectoryValue value = new WrappedDirectoryValue(env, _qClass);
 
-	if (!value.opendir(path, flags)) {
-	    return BooleanValue.FALSE;
-	} else {
-	    return value;
-	}
-    }
+      if (!value.opendir(path, flags)) {
+         return BooleanValue.FALSE;
+      } else {
+         return value;
+      }
+   }
 
-    public boolean unlink(Env env, StringValue path) {
-	AbstractFunction function = _qClass.getStaticFunction("unlink");
+   public boolean unlink(Env env, StringValue path) {
+      AbstractFunction function = _qClass.getStaticFunction("unlink");
 
-	if (function == null) {
-	    return false;
-	}
+      if (function == null) {
+         return false;
+      }
 
-	return function.call(env, path).toBoolean();
-    }
+      return function.call(env, path).toBoolean();
+   }
 
-    public boolean rename(Env env, StringValue path_from, StringValue path_to) {
-	AbstractFunction function = _qClass.getStaticFunction("rename");
+   public boolean rename(Env env, StringValue path_from, StringValue path_to) {
+      AbstractFunction function = _qClass.getStaticFunction("rename");
 
-	if (function == null) {
-	    return false;
-	}
+      if (function == null) {
+         return false;
+      }
 
-	return function.call(env, path_from, path_to).toBoolean();
-    }
+      return function.call(env, path_from, path_to).toBoolean();
+   }
 
-    public boolean mkdir(Env env,
-	    StringValue path, LongValue mode, LongValue options) {
-	AbstractFunction function = _qClass.getStaticFunction("mkdir");
+   public boolean mkdir(Env env,
+           StringValue path, LongValue mode, LongValue options) {
+      AbstractFunction function = _qClass.getStaticFunction("mkdir");
 
-	if (function == null) {
-	    return false;
-	}
+      if (function == null) {
+         return false;
+      }
 
-	return function.call(env, path, mode, options).toBoolean();
-    }
+      return function.call(env, path, mode, options).toBoolean();
+   }
 
-    public boolean rmdir(Env env, StringValue path, LongValue options) {
-	AbstractFunction function = _qClass.getStaticFunction("rmdir");
+   public boolean rmdir(Env env, StringValue path, LongValue options) {
+      AbstractFunction function = _qClass.getStaticFunction("rmdir");
 
-	if (function == null) {
-	    return false;
-	}
+      if (function == null) {
+         return false;
+      }
 
-	return function.call(env, path, options).toBoolean();
-    }
+      return function.call(env, path, options).toBoolean();
+   }
 
-    public Value url_stat(Env env, StringValue path, LongValue flags) {
-	AbstractFunction function = _qClass.getStaticFunction("url_stat");
+   public Value url_stat(Env env, StringValue path, LongValue flags) {
+      AbstractFunction function = _qClass.getStaticFunction("url_stat");
 
-	if (function == null) {
-	    return BooleanValue.FALSE;
-	}
+      if (function == null) {
+         return BooleanValue.FALSE;
+      }
 
-	return function.call(env, path, flags);
-    }
+      return function.call(env, path, flags);
+   }
 }

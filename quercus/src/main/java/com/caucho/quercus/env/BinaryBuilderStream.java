@@ -38,33 +38,33 @@ import java.util.Iterator;
  */
 public class BinaryBuilderStream extends StreamImpl {
 
-    private StringValue _out;
+   private StringValue _out;
 
-    public BinaryBuilderStream(StringValue out) {
-	_out = out;
-    }
+   public BinaryBuilderStream(StringValue out) {
+      _out = out;
+   }
 
-    public StringValue getString() {
-	return _out;
-    }
+   public StringValue getString() {
+      return _out;
+   }
 
-    /**
-     * Returns true if this is a writable stream.
-     */
-    public boolean canWrite() {
-	return true;
-    }
+   /**
+    * Returns true if this is a writable stream.
+    */
+   public boolean canWrite() {
+      return true;
+   }
 
-    /**
-     * Writes a buffer to the underlying stream.
-     *
-     * @param buffer the byte array to write.
-     * @param offset the offset into the byte array.
-     * @param length the number of bytes to write.
-     * @param isEnd true when the write is flushing a close.
-     */
-    public void write(byte[] buffer, int offset, int length, boolean isEnd)
-	    throws IOException {
-	_out.append(buffer, offset, length);
-    }
+   /**
+    * Writes a buffer to the underlying stream.
+    *
+    * @param buffer the byte array to write.
+    * @param offset the offset into the byte array.
+    * @param length the number of bytes to write.
+    * @param isEnd true when the write is flushing a close.
+    */
+   public void write(byte[] buffer, int offset, int length, boolean isEnd)
+           throws IOException {
+      _out.append(buffer, offset, length);
+   }
 }

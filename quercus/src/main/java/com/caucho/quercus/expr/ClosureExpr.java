@@ -47,92 +47,92 @@ import java.util.ArrayList;
  */
 public class ClosureExpr extends Expr {
 
-    private static final L10N L = new L10N(ClosureExpr.class);
-    protected final Function _fun;
+   private static final L10N L = new L10N(ClosureExpr.class);
+   protected final Function _fun;
 
-    public ClosureExpr(Location location, Function fun) {
-	// quercus/120o
-	super(location);
+   public ClosureExpr(Location location, Function fun) {
+      // quercus/120o
+      super(location);
 
-	_fun = fun;
-    }
+      _fun = fun;
+   }
 
-    /**
-     * Returns the name.
-     */
-    public String getName() {
-	return _fun.getName();
-    }
+   /**
+    * Returns the name.
+    */
+   public String getName() {
+      return _fun.getName();
+   }
 
-    /**
-     * Returns the function
-     */
-    public Function getFunction() {
-	return _fun;
-    }
+   /**
+    * Returns the function
+    */
+   public Function getFunction() {
+      return _fun;
+   }
 
-    /**
-     * Returns the location if known.
-     */
-    @Override
-    public String getFunctionLocation() {
-	return " [" + getName() + "]";
-    }
+   /**
+    * Returns the location if known.
+    */
+   @Override
+   public String getFunctionLocation() {
+      return " [" + getName() + "]";
+   }
 
-    /**
-     * Returns the reference of the value.
-     * @param location
-     */
-    @Override
-    public Expr createRef(QuercusParser parser) {
-	return parser.getFactory().createRef(this);
-    }
+   /**
+    * Returns the reference of the value.
+    * @param location
+    */
+   @Override
+   public Expr createRef(QuercusParser parser) {
+      return parser.getFactory().createRef(this);
+   }
 
-    /**
-     * Returns the copy of the value.
-     * @param location
-     */
-    @Override
-    public Expr createCopy(ExprFactory factory) {
-	return this;
-    }
+   /**
+    * Returns the copy of the value.
+    * @param location
+    */
+   @Override
+   public Expr createCopy(ExprFactory factory) {
+      return this;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value eval(Env env) {
-	return evalImpl(env);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value eval(Env env) {
+      return evalImpl(env);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalCopy(Env env) {
-	return evalImpl(env);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalCopy(Env env) {
+      return evalImpl(env);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    private Value evalImpl(Env env) {
-	return new Closure(env, _fun);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   private Value evalImpl(Env env) {
+      return new Closure(env, _fun);
+   }
 
-    public String toString() {
-	return getName() + "()";
-    }
+   public String toString() {
+      return getName() + "()";
+   }
 }

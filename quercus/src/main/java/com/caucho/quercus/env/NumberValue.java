@@ -34,71 +34,71 @@ package com.caucho.quercus.env;
 @SuppressWarnings("serial")
 public abstract class NumberValue extends Value {
 
-    /**
-     * Returns true for equality
-     */
-    @Override
-    public int cmp(Value rValue) {
-	if (rValue.isBoolean() || rValue.isNull()) {
-	    boolean lBool = toBoolean();
-	    boolean rBool = rValue.toBoolean();
+   /**
+    * Returns true for equality
+    */
+   @Override
+   public int cmp(Value rValue) {
+      if (rValue.isBoolean() || rValue.isNull()) {
+         boolean lBool = toBoolean();
+         boolean rBool = rValue.toBoolean();
 
-	    if (!lBool && rBool) {
-		return -1;
-	    }
-	    if (lBool && !rBool) {
-		return 1;
-	    }
+         if (!lBool && rBool) {
+            return -1;
+         }
+         if (lBool && !rBool) {
+            return 1;
+         }
 
-	    return 0;
-	}
+         return 0;
+      }
 
-	double l = toDouble();
-	double r = rValue.toDouble();
+      double l = toDouble();
+      double r = rValue.toDouble();
 
-	if (l == r) {
-	    return 0;
-	} else if (l < r) {
-	    return -1;
-	} else {
-	    return 1;
-	}
-    }
+      if (l == r) {
+         return 0;
+      } else if (l < r) {
+         return -1;
+      } else {
+         return 1;
+      }
+   }
 
-    /**
-     *  Compare two numbers.
-     */
-    public static int compareNum(Value lValue, Value rValue) {
-	Value lVal = lValue.toValue();
-	Value rVal = rValue.toValue();
+   /**
+    *  Compare two numbers.
+    */
+   public static int compareNum(Value lValue, Value rValue) {
+      Value lVal = lValue.toValue();
+      Value rVal = rValue.toValue();
 
-	if (lVal instanceof DoubleValue || rVal instanceof DoubleValue) {
-	    double lDouble = lVal.toDouble();
-	    double rDouble = rVal.toDouble();
-	    if (lDouble < rDouble) {
-		return -1;
-	    }
-	    if (lDouble > rDouble) {
-		return 1;
-	    }
-	    return 0;
-	}
-	long lLong = lVal.toLong();
-	long rLong = rVal.toLong();
-	if (lLong < rLong) {
-	    return -1;
-	}
-	if (lLong > rLong) {
-	    return 1;
-	}
-	return 0;
-    }
+      if (lVal instanceof DoubleValue || rVal instanceof DoubleValue) {
+         double lDouble = lVal.toDouble();
+         double rDouble = rVal.toDouble();
+         if (lDouble < rDouble) {
+            return -1;
+         }
+         if (lDouble > rDouble) {
+            return 1;
+         }
+         return 0;
+      }
+      long lLong = lVal.toLong();
+      long rLong = rVal.toLong();
+      if (lLong < rLong) {
+         return -1;
+      }
+      if (lLong > rLong) {
+         return 1;
+      }
+      return 0;
+   }
 
-    /**
-     * Encodes the value in JSON.
-     */
-    @Override
-    public void jsonEncode(Env env, StringValue sb) {
-	sb.append(toStringValue());
-    }
+   /**
+    * Encodes the value in JSON.
+    */
+   @Override
+   public void jsonEncode(Env env, StringValue sb) {
+      sb.append(toStringValue());
+   }
 }

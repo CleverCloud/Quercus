@@ -39,51 +39,51 @@ import java.net.ProtocolException;
  * Represents a PUT Http request.
  */
 public class HttpPutRequest
-	extends HttpRequest {
+        extends HttpRequest {
 
-    public HttpPutRequest(CurlResource curlResource) {
-	super(curlResource);
-    }
+   public HttpPutRequest(CurlResource curlResource) {
+      super(curlResource);
+   }
 
-    /**
-     * Initializes the connection.
-     */
-    protected boolean init(Env env)
-	    throws ProtocolException {
-	if (!super.init(env)) {
-	    return false;
-	}
+   /**
+    * Initializes the connection.
+    */
+   protected boolean init(Env env)
+           throws ProtocolException {
+      if (!super.init(env)) {
+         return false;
+      }
 
-	getHttpConnection().setDoOutput(true);
+      getHttpConnection().setDoOutput(true);
 
-	return true;
-    }
+      return true;
+   }
 
-    /**
-     * Transfer data to the server.
-     */
-    protected void transfer(Env env)
-	    throws IOException {
-	super.transfer(env);
+   /**
+    * Transfer data to the server.
+    */
+   protected void transfer(Env env)
+           throws IOException {
+      super.transfer(env);
 
-	HttpConnection conn = getHttpConnection();
-	OutputStream out = conn.getOutputStream();
+      HttpConnection conn = getHttpConnection();
+      OutputStream out = conn.getOutputStream();
 
-	CurlResource curl = getCurlResource();
+      CurlResource curl = getCurlResource();
 
-	BinaryInput in = curl.getUploadFile();
-	int length = curl.getUploadFileSize();
+      BinaryInput in = curl.getUploadFile();
+      int length = curl.getUploadFileSize();
 
-	for (int i = 0; i < length; i++) {
-	    int ch = in.read();
+      for (int i = 0; i < length; i++) {
+         int ch = in.read();
 
-	    if (ch < 0) {
-		break;
-	    }
+         if (ch < 0) {
+            break;
+         }
 
-	    out.write(ch);
-	}
+         out.write(ch);
+      }
 
-	out.close();
-    }
+      out.close();
+   }
 }

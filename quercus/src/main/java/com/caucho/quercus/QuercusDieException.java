@@ -33,18 +33,18 @@ package com.caucho.quercus;
  */
 public class QuercusDieException extends QuercusExitException {
 
-    public QuercusDieException() {
-    }
+   public QuercusDieException() {
+   }
 
-    public QuercusDieException(String msg) {
-	super(msg);
-    }
+   public QuercusDieException(String msg) {
+      super(msg);
+   }
 
-    public QuercusDieException(Throwable cause) {
-	super(cause);
-    }
+   public QuercusDieException(Throwable cause) {
+      super(cause);
+   }
 
-    public QuercusDieException(String msg, Throwable cause) {
-	super(msg, cause);
-    }
+   public QuercusDieException(String msg, Throwable cause) {
+      super(msg, cause);
+   }
 }

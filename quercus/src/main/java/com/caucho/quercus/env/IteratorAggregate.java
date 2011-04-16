@@ -33,10 +33,10 @@ import com.caucho.quercus.env.ObjectValue;
 
 @Delegates(IteratorAggregateDelegate.class)
 public interface IteratorAggregate
-	extends Traversable {
+        extends Traversable {
 
-    /**
-     * Returns the iterator.
-     */
-    public ObjectValue getIterator();
+   /**
+    * Returns the iterator.
+    */
+   public ObjectValue getIterator();
 }

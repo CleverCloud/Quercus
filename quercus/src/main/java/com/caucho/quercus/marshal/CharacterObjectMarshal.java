@@ -35,45 +35,45 @@ import com.caucho.quercus.expr.Expr;
 
 public class CharacterObjectMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new CharacterObjectMarshal();
+   public static final Marshal MARSHAL = new CharacterObjectMarshal();
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return new Character(expr.evalChar(env));
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return new Character(expr.evalChar(env));
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return value.toJavaCharacter();
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return value.toJavaCharacter();
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	if (value == null) {
-	    return NullValue.NULL;
-	} else {
-	    return env.createString(value.toString());
-	}
-    }
+   public Value unmarshal(Env env, Object value) {
+      if (value == null) {
+         return NullValue.NULL;
+      } else {
+         return env.createString(value.toString());
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	if (argValue.isUnicode() && argValue.length() == 1) {
-	    return Marshal.ONE;
-	} else if (argValue.isString()
-		&& !argValue.isBinary()
-		&& argValue.length() == 1) {
-	    return Marshal.ONE; // php/0ch1
-	} else if (argValue.isLongConvertible()) {
-	    return Marshal.THREE;
-	} else {
-	    return Marshal.FOUR;
-	}
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      if (argValue.isUnicode() && argValue.length() == 1) {
+         return Marshal.ONE;
+      } else if (argValue.isString()
+              && !argValue.isBinary()
+              && argValue.length() == 1) {
+         return Marshal.ONE; // php/0ch1
+      } else if (argValue.isLongConvertible()) {
+         return Marshal.THREE;
+      } else {
+         return Marshal.FOUR;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return Character.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return Character.class;
+   }
 }

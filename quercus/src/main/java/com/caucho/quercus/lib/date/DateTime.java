@@ -44,122 +44,122 @@ import com.caucho.util.QDate;
  */
 public class DateTime {
 
-    public static final String ATOM = "Y-m-d\\TH:i:sP";
-    public static final String COOKIE = "l, d-M-y H:i:s T";
-    public static final String ISO8601 = "Y-m-d\\TH:i:sO";
-    public static final String RFC822 = "D, d M y H:i:s O";
-    public static final String RFC850 = "l, d-M-y H:i:s T";
-    public static final String RFC1036 = "D, d M y H:i:s O";
-    public static final String RFC1123 = "D, d M Y H:i:s O";
-    public static final String RFC2822 = "D, d M Y H:i:s O";
-    public static final String RFC3339 = "Y-m-d\\TH:i:sP";
-    public static final String RSS = "D, d M Y H:i:s O";
-    public static final String W3C = "Y-m-d\\TH:i:sP";
-    private QDate _qDate;
-    private DateTimeZone _dateTimeZone;
+   public static final String ATOM = "Y-m-d\\TH:i:sP";
+   public static final String COOKIE = "l, d-M-y H:i:s T";
+   public static final String ISO8601 = "Y-m-d\\TH:i:sO";
+   public static final String RFC822 = "D, d M y H:i:s O";
+   public static final String RFC850 = "l, d-M-y H:i:s T";
+   public static final String RFC1036 = "D, d M y H:i:s O";
+   public static final String RFC1123 = "D, d M Y H:i:s O";
+   public static final String RFC2822 = "D, d M Y H:i:s O";
+   public static final String RFC3339 = "Y-m-d\\TH:i:sP";
+   public static final String RSS = "D, d M Y H:i:s O";
+   public static final String W3C = "Y-m-d\\TH:i:sP";
+   private QDate _qDate;
+   private DateTimeZone _dateTimeZone;
 
-    protected DateTime(Env env, String timeString) {
-	this(env, timeString, new DateTimeZone(env));
-    }
+   protected DateTime(Env env, String timeString) {
+      this(env, timeString, new DateTimeZone(env));
+   }
 
-    protected DateTime(Env env, String timeString, DateTimeZone dateTimeZone) {
-	_qDate = new QDate(dateTimeZone.getTimeZone(), env.getCurrentTime());
-	_dateTimeZone = dateTimeZone;
+   protected DateTime(Env env, String timeString, DateTimeZone dateTimeZone) {
+      _qDate = new QDate(dateTimeZone.getTimeZone(), env.getCurrentTime());
+      _dateTimeZone = dateTimeZone;
 
-	init(env, timeString);
-    }
+      init(env, timeString);
+   }
 
-    private void init(Env env, String timeString) {
-	long now = env.getCurrentTime();
-	_qDate.setGMTTime(now);
+   private void init(Env env, String timeString) {
+      long now = env.getCurrentTime();
+      _qDate.setGMTTime(now);
 
-	if (timeString.equals("")) {
-	    _qDate.setHour(0);
-	    _qDate.setMinute(0);
-	    _qDate.setSecond(0);
-	}
+      if (timeString.equals("")) {
+         _qDate.setHour(0);
+         _qDate.setMinute(0);
+         _qDate.setSecond(0);
+      }
 
-	DateParser parser = new DateParser(timeString, _qDate);
+      DateParser parser = new DateParser(timeString, _qDate);
 
-	long time = parser.parse();
+      long time = parser.parse();
 
-	_qDate.setGMTTime(time);
-    }
+      _qDate.setGMTTime(time);
+   }
 
-    public static DateTime __construct(Env env,
-	    @Optional("now") String time,
-	    @Optional DateTimeZone timeZone) {
-	if (timeZone == null) {
-	    return new DateTime(env, time);
-	} else {
-	    return new DateTime(env, time, timeZone);
-	}
-    }
+   public static DateTime __construct(Env env,
+           @Optional("now") String time,
+           @Optional DateTimeZone timeZone) {
+      if (timeZone == null) {
+         return new DateTime(env, time);
+      } else {
+         return new DateTime(env, time, timeZone);
+      }
+   }
 
-    public String format(String format) {
-	long time = _qDate.getGMTTime() / 1000;
+   public String format(String format) {
+      long time = _qDate.getGMTTime() / 1000;
 
-	QDate calendar = new QDate(_qDate.getLocalTimeZone());
+      QDate calendar = new QDate(_qDate.getLocalTimeZone());
 
-	return DateModule.dateImpl(format, time, calendar);
-    }
+      return DateModule.dateImpl(format, time, calendar);
+   }
 
-    public void modify(String modify) {
-	DateParser parser = new DateParser(modify, _qDate);
+   public void modify(String modify) {
+      DateParser parser = new DateParser(modify, _qDate);
 
-	long time = parser.parse();
+      long time = parser.parse();
 
-	setTime(time);
-    }
+      setTime(time);
+   }
 
-    public DateTimeZone getTimeZone() {
-	return _dateTimeZone;
-    }
+   public DateTimeZone getTimeZone() {
+      return _dateTimeZone;
+   }
 
-    public void setTimeZone(Env env, DateTimeZone dateTimeZone) {
-	_dateTimeZone = dateTimeZone;
+   public void setTimeZone(Env env, DateTimeZone dateTimeZone) {
+      _dateTimeZone = dateTimeZone;
 
-	long time = _qDate.getGMTTime();
+      long time = _qDate.getGMTTime();
 
-	_qDate = new QDate(dateTimeZone.getTimeZone(), env.getCurrentTime());
-	_qDate.setGMTTime(time);
-    }
+      _qDate = new QDate(dateTimeZone.getTimeZone(), env.getCurrentTime());
+      _qDate.setGMTTime(time);
+   }
 
-    public long getOffset() {
-	return _qDate.getZoneOffset() / 1000;
-    }
+   public long getOffset() {
+      return _qDate.getZoneOffset() / 1000;
+   }
 
-    public void setTime(int hour,
-	    int minute,
-	    @Optional int second) {
-	_qDate.setTime(hour, minute, second, 0);
-    }
+   public void setTime(int hour,
+           int minute,
+           @Optional int second) {
+      _qDate.setTime(hour, minute, second, 0);
+   }
 
-    public void setDate(int year,
-	    int month,
-	    int day) {
-	_qDate.setDate(year, month - 1, day);
-    }
+   public void setDate(int year,
+           int month,
+           int day) {
+      _qDate.setDate(year, month - 1, day);
+   }
 
-    public void setISODate(int year,
-	    int week, //yes, week, not month
-	    @Optional int day) {
-	throw new UnimplementedException("DateTime::setISODate()");
-    }
+   public void setISODate(int year,
+           int week, //yes, week, not month
+           @Optional int day) {
+      throw new UnimplementedException("DateTime::setISODate()");
+   }
 
-    protected QDate getQDate() {
-	return _qDate;
-    }
+   protected QDate getQDate() {
+      return _qDate;
+   }
 
-    protected long getTime() {
-	return _qDate.getLocalTime();
-    }
+   protected long getTime() {
+      return _qDate.getLocalTime();
+   }
 
-    protected void setTime(long time) {
-	_qDate.setLocalTime(time);
-    }
+   protected void setTime(long time) {
+      _qDate.setLocalTime(time);
+   }
 
-    public String toString() {
-	return format("now");
-    }
+   public String toString() {
+      return format("now");
+   }
 }

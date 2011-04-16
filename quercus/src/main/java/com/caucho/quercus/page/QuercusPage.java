@@ -48,214 +48,214 @@ import java.util.Map;
  */
 abstract public class QuercusPage {
 
-    private static final L10N L = new L10N(QuercusPage.class);
-    private HashMap<String, AbstractFunction> _funMap = new HashMap<String, AbstractFunction>();
-    private HashMap<String, AbstractFunction> _funMapLowerCase = new HashMap<String, AbstractFunction>();
-    private HashMap<String, ClassDef> _classMap = new HashMap<String, ClassDef>();
-    private QuercusPage _profilePage;
+   private static final L10N L = new L10N(QuercusPage.class);
+   private HashMap<String, AbstractFunction> _funMap = new HashMap<String, AbstractFunction>();
+   private HashMap<String, AbstractFunction> _funMapLowerCase = new HashMap<String, AbstractFunction>();
+   private HashMap<String, ClassDef> _classMap = new HashMap<String, ClassDef>();
+   private QuercusPage _profilePage;
 
-    /**
-     * Returns true if the page is modified.
-     */
-    public boolean isModified() {
-	return false;
-    }
+   /**
+    * Returns true if the page is modified.
+    */
+   public boolean isModified() {
+      return false;
+   }
 
-    /**
-     * Returns the compiling page, if any
-     */
-    public QuercusPage getCompiledPage() {
-	return null;
-    }
+   /**
+    * Returns the compiling page, if any
+    */
+   public QuercusPage getCompiledPage() {
+      return null;
+   }
 
-    /**
-     * Returns the user name for profiling, if any
-     */
-    public String getUserPath() {
-	return null;
-    }
+   /**
+    * Returns the user name for profiling, if any
+    */
+   public String getUserPath() {
+      return null;
+   }
 
-    /**
-     * Returns the profiling page, if any
-     */
-    public QuercusPage getProfilePage() {
-	return _profilePage;
-    }
+   /**
+    * Returns the profiling page, if any
+    */
+   public QuercusPage getProfilePage() {
+      return _profilePage;
+   }
 
-    /**
-     * Sets the profiling page, if any
-     */
-    public void setProfilePage(QuercusPage profilePage) {
-	_profilePage = profilePage;
-    }
+   /**
+    * Sets the profiling page, if any
+    */
+   public void setProfilePage(QuercusPage profilePage) {
+      _profilePage = profilePage;
+   }
 
-    /**
-     * Returns the page's path.
-     */
-    abstract public Path getSelfPath(Env env);
+   /**
+    * Returns the page's path.
+    */
+   abstract public Path getSelfPath(Env env);
 
-    /**
-     * Finds a function.
-     */
-    public AbstractFunction findFunction(String name) {
-	AbstractFunction fun = _funMap.get(name);
+   /**
+    * Finds a function.
+    */
+   public AbstractFunction findFunction(String name) {
+      AbstractFunction fun = _funMap.get(name);
 
-	if (fun != null) {
-	    return fun;
-	}
+      if (fun != null) {
+         return fun;
+      }
 
-	fun = _funMapLowerCase.get(name.toLowerCase());
+      fun = _funMapLowerCase.get(name.toLowerCase());
 
-	return fun;
-    }
+      return fun;
+   }
 
-    /**
-     * Finds a function.
-     */
-    public ClassDef findClass(String name) {
-	return _classMap.get(name);
-    }
+   /**
+    * Finds a function.
+    */
+   public ClassDef findClass(String name) {
+      return _classMap.get(name);
+   }
 
-    /**
-     * Returns the class map.
-     */
-    public HashMap<String, ClassDef> getClassMap() {
-	return _classMap;
-    }
+   /**
+    * Returns the class map.
+    */
+   public HashMap<String, ClassDef> getClassMap() {
+      return _classMap;
+   }
 
-    /**
-     * Execute the program as top-level, i.e. not included.
-     *
-     * @param env the calling environment
-     */
-    public Value executeTop(Env env) {
-	QuercusPage compile = getCompiledPage();
+   /**
+    * Execute the program as top-level, i.e. not included.
+    *
+    * @param env the calling environment
+    */
+   public Value executeTop(Env env) {
+      QuercusPage compile = getCompiledPage();
 
-	Path oldPwd = env.getPwd();
+      Path oldPwd = env.getPwd();
 
-	Path pwd = getPwd(env);
+      Path pwd = getPwd(env);
 
-	env.setPwd(pwd);
-	try {
-	    if (compile != null) {
-		return compile.executeTop(env);
-	    }
+      env.setPwd(pwd);
+      try {
+         if (compile != null) {
+            return compile.executeTop(env);
+         }
 
-	    return execute(env);
-	} catch (QuercusLanguageException e) {
-	    if (env.getExceptionHandler() != null) {
-		try {
-		    env.getExceptionHandler().call(env, e.getValue());
-		} catch (QuercusLanguageException e2) {
-		    uncaughtExceptionError(env, e2);
-		}
-	    } else {
-		uncaughtExceptionError(env, e);
-	    }
+         return execute(env);
+      } catch (QuercusLanguageException e) {
+         if (env.getExceptionHandler() != null) {
+            try {
+               env.getExceptionHandler().call(env, e.getValue());
+            } catch (QuercusLanguageException e2) {
+               uncaughtExceptionError(env, e2);
+            }
+         } else {
+            uncaughtExceptionError(env, e);
+         }
 
-	    return NullValue.NULL;
-	} finally {
-	    env.setPwd(oldPwd);
-	}
-    }
+         return NullValue.NULL;
+      } finally {
+         env.setPwd(oldPwd);
+      }
+   }
 
-    /*
-     * Throws an error for this uncaught exception.
-     */
-    private void uncaughtExceptionError(Env env, QuercusLanguageException e) {
-	Location location = e.getLocation(env);
-	String type = e.getValue().toString();
-	String message = e.getMessage(env);
+   /*
+    * Throws an error for this uncaught exception.
+    */
+   private void uncaughtExceptionError(Env env, QuercusLanguageException e) {
+      Location location = e.getLocation(env);
+      String type = e.getValue().toString();
+      String message = e.getMessage(env);
 
-	if ("".equals(type)) {
-	    type = e.getValue().getType();
-	}
+      if ("".equals(type)) {
+         type = e.getValue().getType();
+      }
 
-	if (message.equals("")) {
-	    env.error(location,
-		    L.l(
-		    "Uncaught exception of type '{0}'",
-		    type));
-	} else {
-	    env.error(location,
-		    L.l(
-		    "Uncaught exception of type '{0}' with message '{1}'",
-		    type,
-		    message));
-	}
-    }
+      if (message.equals("")) {
+         env.error(location,
+                 L.l(
+                 "Uncaught exception of type '{0}'",
+                 type));
+      } else {
+         env.error(location,
+                 L.l(
+                 "Uncaught exception of type '{0}' with message '{1}'",
+                 type,
+                 message));
+      }
+   }
 
-    /**
-     * Returns the pwd according to the source page.
-     */
-    public Path getPwd(Env env) {
-	return getSelfPath(env).getParent();
-    }
+   /**
+    * Returns the pwd according to the source page.
+    */
+   public Path getPwd(Env env) {
+      return getSelfPath(env).getParent();
+   }
 
-    /**
-     * Execute the program
-     *
-     * @param env the calling environment
-     */
-    abstract public Value execute(Env env);
+   /**
+    * Execute the program
+    *
+    * @param env the calling environment
+    */
+   abstract public Value execute(Env env);
 
-    /**
-     * Initialize the program
-     *
-     * @param quercus the owning engine
-     */
-    public void init(QuercusContext quercus) {
-    }
+   /**
+    * Initialize the program
+    *
+    * @param quercus the owning engine
+    */
+   public void init(QuercusContext quercus) {
+   }
 
-    /**
-     * Initialize the environment
-     *
-     * @param quercus the owning engine
-     */
-    public void init(Env env) {
-    }
+   /**
+    * Initialize the environment
+    *
+    * @param quercus the owning engine
+    */
+   public void init(Env env) {
+   }
 
-    /**
-     * Imports the page definitions.
-     */
-    public void importDefinitions(Env env) {
-	for (Map.Entry<String, AbstractFunction> entry : _funMap.entrySet()) {
-	    AbstractFunction fun = entry.getValue();
+   /**
+    * Imports the page definitions.
+    */
+   public void importDefinitions(Env env) {
+      for (Map.Entry<String, AbstractFunction> entry : _funMap.entrySet()) {
+         AbstractFunction fun = entry.getValue();
 
-	    if (fun.isGlobal()) {
-		env.addFunction(entry.getKey(), entry.getValue());
-	    }
-	}
+         if (fun.isGlobal()) {
+            env.addFunction(entry.getKey(), entry.getValue());
+         }
+      }
 
-	for (Map.Entry<String, ClassDef> entry : _classMap.entrySet()) {
-	    env.addClassDef(entry.getKey(), entry.getValue());
-	}
-    }
+      for (Map.Entry<String, ClassDef> entry : _classMap.entrySet()) {
+         env.addClassDef(entry.getKey(), entry.getValue());
+      }
+   }
 
-    /**
-     * Adds a function.
-     */
-    protected void addFunction(String name, AbstractFunction fun) {
-	AbstractFunction oldFun = _funMap.put(name, fun);
+   /**
+    * Adds a function.
+    */
+   protected void addFunction(String name, AbstractFunction fun) {
+      AbstractFunction oldFun = _funMap.put(name, fun);
 
-	_funMapLowerCase.put(name.toLowerCase(), fun);
-    }
+      _funMapLowerCase.put(name.toLowerCase(), fun);
+   }
 
-    /**
-     * Adds a class.
-     */
-    protected void addClass(String name, ClassDef cl) {
-	_classMap.put(name, cl);
-    }
+   /**
+    * Adds a class.
+    */
+   protected void addClass(String name, ClassDef cl) {
+      _classMap.put(name, cl);
+   }
 
-    /**
-     * Sets a runtime function array after an env.
-     */
-    public boolean setRuntimeFunction(AbstractFunction[] funList) {
-	return false;
-    }
+   /**
+    * Sets a runtime function array after an env.
+    */
+   public boolean setRuntimeFunction(AbstractFunction[] funList) {
+      return false;
+   }
 
-    public String toString() {
-	return getClass().getSimpleName() + "[]";
-    }
+   public String toString() {
+      return getClass().getSimpleName() + "[]";
+   }
 }

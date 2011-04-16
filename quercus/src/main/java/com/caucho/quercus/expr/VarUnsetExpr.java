@@ -38,47 +38,47 @@ import com.caucho.quercus.env.Value;
  */
 public class VarUnsetExpr extends Expr {
 
-    protected final AbstractVarExpr _var;
+   protected final AbstractVarExpr _var;
 
-    public VarUnsetExpr(Location location, AbstractVarExpr var) {
-	super(location);
-	_var = var;
-    }
+   public VarUnsetExpr(Location location, AbstractVarExpr var) {
+      super(location);
+      _var = var;
+   }
 
-    public VarUnsetExpr(AbstractVarExpr var) {
-	_var = var;
-    }
+   public VarUnsetExpr(AbstractVarExpr var) {
+      _var = var;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	_var.evalUnset(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      _var.evalUnset(env);
 
-	return NullValue.NULL;
-    }
+      return NullValue.NULL;
+   }
 
-    public int hashCode() {
-	return _var.hashCode();
-    }
+   public int hashCode() {
+      return _var.hashCode();
+   }
 
-    public boolean equals(Object o) {
-	if (this == o) {
-	    return true;
-	} else if (getClass() != o.getClass()) {
-	    return false;
-	}
+   public boolean equals(Object o) {
+      if (this == o) {
+         return true;
+      } else if (getClass() != o.getClass()) {
+         return false;
+      }
 
-	VarUnsetExpr expr = (VarUnsetExpr) o;
+      VarUnsetExpr expr = (VarUnsetExpr) o;
 
-	return _var == expr._var;
-    }
+      return _var == expr._var;
+   }
 
-    public String toString() {
-	return "unset(" + _var + ")";
-    }
+   public String toString() {
+      return "unset(" + _var + ")";
+   }
 }

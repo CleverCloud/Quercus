@@ -41,198 +41,198 @@ import java.util.logging.Logger;
  */
 public class OracleStatement extends JdbcStatementResource {
 
-    private static final Logger log = Logger.getLogger(
-	    OracleStatement.class.getName());
-    private static final L10N L = new L10N(OracleStatement.class);
-    // Oracle statement has a notion of number of fetched rows
-    // (See also: OracleModule.oci_num_rows)
-    private int _fetchedRows;
-    // Binding variables for Oracle statements
-    private HashMap<String, Integer> _bindingVariables =
-	    new HashMap<String, Integer>();
-    private OracleOciLob _outParameter;
-    // Oracle internal result buffer
-    private Value _resultBuffer;
-    // Binding variables for Oracle statements with define_by_name
-    // (TOTALLY DIFFERENT FROM ?)
-    //
-    // Example:
-    //
-    // $stmt = oci_parse($conn, "SELECT empno, ename FROM emp");
-    //
-    // /* the define MUST be done BEFORE oci_execute! */
-    //
-    // oci_define_by_name($stmt, "EMPNO", $empno);
-    // oci_define_by_name($stmt, "ENAME", $ename);
-    //
-    // oci_execute($stmt);
-    //
-    // while (oci_fetch($stmt)) {
-    //    echo "empno:" . $empno . "\n";
-    //    echo "ename:" . $ename . "\n";
-    // }
-    //
-    private HashMap<String, Value> _byNameVariables = new HashMap<String, Value>();
+   private static final Logger log = Logger.getLogger(
+           OracleStatement.class.getName());
+   private static final L10N L = new L10N(OracleStatement.class);
+   // Oracle statement has a notion of number of fetched rows
+   // (See also: OracleModule.oci_num_rows)
+   private int _fetchedRows;
+   // Binding variables for Oracle statements
+   private HashMap<String, Integer> _bindingVariables =
+           new HashMap<String, Integer>();
+   private OracleOciLob _outParameter;
+   // Oracle internal result buffer
+   private Value _resultBuffer;
+   // Binding variables for Oracle statements with define_by_name
+   // (TOTALLY DIFFERENT FROM ?)
+   //
+   // Example:
+   //
+   // $stmt = oci_parse($conn, "SELECT empno, ename FROM emp");
+   //
+   // /* the define MUST be done BEFORE oci_execute! */
+   //
+   // oci_define_by_name($stmt, "EMPNO", $empno);
+   // oci_define_by_name($stmt, "ENAME", $ename);
+   //
+   // oci_execute($stmt);
+   //
+   // while (oci_fetch($stmt)) {
+   //    echo "empno:" . $empno . "\n";
+   //    echo "ename:" . $ename . "\n";
+   // }
+   //
+   private HashMap<String, Value> _byNameVariables = new HashMap<String, Value>();
 
-    /**
-     * Constructs an OracleStatement
-     *
-     * @param conn Oracle connection
-     */
-    OracleStatement(Oracle conn) {
-	super(conn);
-	_fetchedRows = 0;
-	_outParameter = null;
-    }
+   /**
+    * Constructs an OracleStatement
+    *
+    * @param conn Oracle connection
+    */
+   OracleStatement(Oracle conn) {
+      super(conn);
+      _fetchedRows = 0;
+      _outParameter = null;
+   }
 
-    /**
-     * Assigns a variable name to the corresponding index
-     *
-     * @param name the variable name
-     * @param value the corresponding index
-     */
-    public void putBindingVariable(String name, Integer value) {
-	_bindingVariables.put(name, value);
-    }
+   /**
+    * Assigns a variable name to the corresponding index
+    *
+    * @param name the variable name
+    * @param value the corresponding index
+    */
+   public void putBindingVariable(String name, Integer value) {
+      _bindingVariables.put(name, value);
+   }
 
-    /**
-     * Returns a binding variable index
-     *
-     * @param name the variable name
-     * @return the binding variable index
-     */
-    public Integer getBindingVariable(String name) {
-	return _bindingVariables.get(name);
-    }
+   /**
+    * Returns a binding variable index
+    *
+    * @param name the variable name
+    * @return the binding variable index
+    */
+   public Integer getBindingVariable(String name) {
+      return _bindingVariables.get(name);
+   }
 
-    /**
-     * Removes a binding variable
-     *
-     * @param name the binding variable name
-     * @return the binding variable index
-     */
-    public Integer removeBindingVariable(String name) {
-	return _bindingVariables.remove(name);
-    }
+   /**
+    * Removes a binding variable
+    *
+    * @param name the binding variable name
+    * @return the binding variable index
+    */
+   public Integer removeBindingVariable(String name) {
+      return _bindingVariables.remove(name);
+   }
 
-    /**
-     * Returns all binding variables
-     *
-     * @return a HashMap of variable name to index values
-     */
-    public HashMap<String, Integer> getBindingVariables() {
-	return _bindingVariables;
-    }
+   /**
+    * Returns all binding variables
+    *
+    * @return a HashMap of variable name to index values
+    */
+   public HashMap<String, Integer> getBindingVariables() {
+      return _bindingVariables;
+   }
 
-    /**
-     * Removes all binding variables
-     */
-    public void resetBindingVariables() {
-	_bindingVariables = new HashMap<String, Integer>();
-    }
+   /**
+    * Removes all binding variables
+    */
+   public void resetBindingVariables() {
+      _bindingVariables = new HashMap<String, Integer>();
+   }
 
-    /**
-     * Sets the internal result buffer
-     */
-    public void setResultBuffer(Value resultBuffer) {
-	_resultBuffer = resultBuffer;
-    }
+   /**
+    * Sets the internal result buffer
+    */
+   public void setResultBuffer(Value resultBuffer) {
+      _resultBuffer = resultBuffer;
+   }
 
-    /**
-     * Returns the internal result buffer
-     *
-     * @return the result buffer
-     */
-    public Value getResultBuffer() {
-	return _resultBuffer;
-    }
+   /**
+    * Returns the internal result buffer
+    *
+    * @return the result buffer
+    */
+   public Value getResultBuffer() {
+      return _resultBuffer;
+   }
 
-    /**
-     * Assigns a value to a variable
-     *
-     * @param name a variable name
-     * @param value the variable value
-     */
-    public void putByNameVariable(String name, Value value) {
-	_byNameVariables.put(name, value);
-    }
+   /**
+    * Assigns a value to a variable
+    *
+    * @param name a variable name
+    * @param value the variable value
+    */
+   public void putByNameVariable(String name, Value value) {
+      _byNameVariables.put(name, value);
+   }
 
-    /**
-     * Returns the variable value by name
-     *
-     * @param name the variable name
-     * @return the variable value
-     */
-    public Value getByNameVariable(String name) {
-	return _byNameVariables.get(name);
-    }
+   /**
+    * Returns the variable value by name
+    *
+    * @param name the variable name
+    * @return the variable value
+    */
+   public Value getByNameVariable(String name) {
+      return _byNameVariables.get(name);
+   }
 
-    /**
-     * Removes a variable given the corresponding name
-     *
-     * @param name the variable name
-     * @return the variable value
-     */
-    public Value removeByNameVariable(String name) {
-	return _byNameVariables.remove(name);
-    }
+   /**
+    * Removes a variable given the corresponding name
+    *
+    * @param name the variable name
+    * @return the variable value
+    */
+   public Value removeByNameVariable(String name) {
+      return _byNameVariables.remove(name);
+   }
 
-    /**
-     * Returns all variable names and corresponding values
-     *
-     * @return a HashMap of variable names to corresponding values
-     */
-    public HashMap<String, Value> getByNameVariables() {
-	return _byNameVariables;
-    }
+   /**
+    * Returns all variable names and corresponding values
+    *
+    * @return a HashMap of variable names to corresponding values
+    */
+   public HashMap<String, Value> getByNameVariables() {
+      return _byNameVariables;
+   }
 
-    /**
-     * Removes all variables
-     */
-    public void resetByNameVariables() {
-	_byNameVariables = new HashMap<String, Value>();
-    }
+   /**
+    * Removes all variables
+    */
+   public void resetByNameVariables() {
+      _byNameVariables = new HashMap<String, Value>();
+   }
 
-    /**
-     * Increases the number of fetched rows.
-     *
-     * @return the new number of fetched rows
-     */
-    protected int increaseFetchedRows() {
-	return ++_fetchedRows;
-    }
+   /**
+    * Increases the number of fetched rows.
+    *
+    * @return the new number of fetched rows
+    */
+   protected int increaseFetchedRows() {
+      return ++_fetchedRows;
+   }
 
-    /**
-     * Gets the underlying callable statement.
-     */
-    protected CallableStatement getCallableStatement() {
-	return (CallableStatement) getPreparedStatement();
-    }
+   /**
+    * Gets the underlying callable statement.
+    */
+   protected CallableStatement getCallableStatement() {
+      return (CallableStatement) getPreparedStatement();
+   }
 
-    /**
-     * Gets the number of fetched rows.
-     *
-     * @return the number of fetched rows
-     */
-    protected int getFetchedRows() {
-	return _fetchedRows;
-    }
+   /**
+    * Gets the number of fetched rows.
+    *
+    * @return the number of fetched rows
+    */
+   protected int getFetchedRows() {
+      return _fetchedRows;
+   }
 
-    /**
-     * Gets the out parameter.
-     *
-     * @return the out parameter
-     */
-    protected OracleOciLob getOutParameter() {
-	return _outParameter;
-    }
+   /**
+    * Gets the out parameter.
+    *
+    * @return the out parameter
+    */
+   protected OracleOciLob getOutParameter() {
+      return _outParameter;
+   }
 
-    /**
-     * Sets the out parameter.
-     *
-     * @param outParameter the new out parameter
-     */
-    protected void setOutParameter(OracleOciLob outParameter) {
-	_outParameter = outParameter;
-    }
+   /**
+    * Sets the out parameter.
+    *
+    * @param outParameter the new out parameter
+    */
+   protected void setOutParameter(OracleOciLob outParameter) {
+      _outParameter = outParameter;
+   }
 }

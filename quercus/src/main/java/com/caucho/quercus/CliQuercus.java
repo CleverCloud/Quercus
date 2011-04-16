@@ -32,8 +32,8 @@ import java.io.IOException;
 
 public class CliQuercus extends Quercus {
 
-    public static void main(String[] args)
-	    throws IOException {
-	Quercus.main(args);
-    }
+   public static void main(String[] args)
+           throws IOException {
+      Quercus.main(args);
+   }
 }

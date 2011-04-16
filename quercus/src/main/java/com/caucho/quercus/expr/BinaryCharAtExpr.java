@@ -39,89 +39,89 @@ import com.caucho.util.L10N;
  */
 public class BinaryCharAtExpr extends AbstractVarExpr {
 
-    private static final L10N L = new L10N(BinaryCharAtExpr.class);
-    protected final Expr _objExpr;
-    protected final Expr _indexExpr;
+   private static final L10N L = new L10N(BinaryCharAtExpr.class);
+   protected final Expr _objExpr;
+   protected final Expr _indexExpr;
 
-    public BinaryCharAtExpr(Location location, Expr objExpr, Expr indexExpr) {
-	super(location);
-	_objExpr = objExpr;
-	_indexExpr = indexExpr;
-    }
+   public BinaryCharAtExpr(Location location, Expr objExpr, Expr indexExpr) {
+      super(location);
+      _objExpr = objExpr;
+      _indexExpr = indexExpr;
+   }
 
-    public BinaryCharAtExpr(Expr objExpr, Expr indexExpr) {
-	_objExpr = objExpr;
-	_indexExpr = indexExpr;
-    }
+   public BinaryCharAtExpr(Expr objExpr, Expr indexExpr) {
+      _objExpr = objExpr;
+      _indexExpr = indexExpr;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value eval(Env env) {
-	Value obj = _objExpr.eval(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value eval(Env env) {
+      Value obj = _objExpr.eval(env);
 
-	return obj.charValueAt(_indexExpr.evalLong(env));
-    }
+      return obj.charValueAt(_indexExpr.evalLong(env));
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Var evalVar(Env env) {
-	return eval(env).toVar();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Var evalVar(Env env) {
+      return eval(env).toVar();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalArg(Env env, boolean isTop) {
-	return eval(env);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalArg(Env env, boolean isTop) {
+      return eval(env);
+   }
 
-    /**
-     * Evaluates the expression as an assignment.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value evalAssignRef(Env env, Value value) {
-	Value obj = _objExpr.eval(env);
+   /**
+    * Evaluates the expression as an assignment.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value evalAssignRef(Env env, Value value) {
+      Value obj = _objExpr.eval(env);
 
-	Value result = obj.setCharValueAt(_indexExpr.evalLong(env),
-		value);
+      Value result = obj.setCharValueAt(_indexExpr.evalLong(env),
+              value);
 
-	_objExpr.evalAssignValue(env, result);
+      _objExpr.evalAssignValue(env, result);
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public void evalUnset(Env env) {
-	throw new UnsupportedOperationException();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public void evalUnset(Env env) {
+      throw new UnsupportedOperationException();
+   }
 
-    public String toString() {
-	return _objExpr + "{" + _indexExpr + "}";
-    }
+   public String toString() {
+      return _objExpr + "{" + _indexExpr + "}";
+   }
 }

@@ -38,28 +38,28 @@ import java.util.logging.Logger;
  */
 public class JavaDateValue extends JavaValue {
 
-    private static final Logger log = Logger.getLogger(JavaDateValue.class.getName());
-    private final Date _date;
+   private static final Logger log = Logger.getLogger(JavaDateValue.class.getName());
+   private final Date _date;
 
-    public JavaDateValue(Env env, Date date, JavaClassDef def) {
-	super(env, date, def);
-	_date = date;
-    }
+   public JavaDateValue(Env env, Date date, JavaClassDef def) {
+      super(env, date, def);
+      _date = date;
+   }
 
-    /**
-     * Converts to a long.
-     */
-    @Override
-    public long toLong() {
-	// return seconds per PHP convention
-	return _date.getTime() / 1000;
-    }
+   /**
+    * Converts to a long.
+    */
+   @Override
+   public long toLong() {
+      // return seconds per PHP convention
+      return _date.getTime() / 1000;
+   }
 
-    /**
-     * Converts to a Java Date.
-     */
-    @Override
-    public Date toJavaDate() {
-	return _date;
-    }
+   /**
+    * Converts to a Java Date.
+    */
+   @Override
+   public Date toJavaDate() {
+      return _date;
+   }
 }

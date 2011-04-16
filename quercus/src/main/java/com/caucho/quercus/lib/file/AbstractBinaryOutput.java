@@ -41,146 +41,146 @@ import java.io.OutputStream;
  * Represents a PHP open file
  */
 abstract public class AbstractBinaryOutput
-	extends OutputStream
-	implements BinaryOutput {
+        extends OutputStream
+        implements BinaryOutput {
 
-    private int lockedShared = 0;
-    private boolean lockedExclusive = false;
+   private int lockedShared = 0;
+   private boolean lockedExclusive = false;
 
-    /**
-     * Returns self as the output stream.
-     */
-    public OutputStream getOutputStream() {
-	return this;
-    }
+   /**
+    * Returns self as the output stream.
+    */
+   public OutputStream getOutputStream() {
+      return this;
+   }
 
-    /**
-     * Writes to a stream.
-     */
-    public int write(InputStream is, int length) {
-	int writeLength = 0;
+   /**
+    * Writes to a stream.
+    */
+   public int write(InputStream is, int length) {
+      int writeLength = 0;
 
-	TempBuffer tb = TempBuffer.allocate();
-	byte[] buffer = tb.getBuffer();
+      TempBuffer tb = TempBuffer.allocate();
+      byte[] buffer = tb.getBuffer();
 
-	try {
-	    while (length > 0) {
-		int sublen;
+      try {
+         while (length > 0) {
+            int sublen;
 
-		if (length < buffer.length) {
-		    sublen = length;
-		} else {
-		    sublen = buffer.length;
-		}
+            if (length < buffer.length) {
+               sublen = length;
+            } else {
+               sublen = buffer.length;
+            }
 
-		sublen = is.read(buffer, 0, sublen);
+            sublen = is.read(buffer, 0, sublen);
 
-		if (sublen < 0) {
-		    break;
-		}
+            if (sublen < 0) {
+               break;
+            }
 
-		write(buffer, 0, sublen);
+            write(buffer, 0, sublen);
 
-		writeLength += sublen;
-		length -= sublen;
-	    }
+            writeLength += sublen;
+            length -= sublen;
+         }
 
-	    return writeLength;
-	} catch (IOException e) {
-	    throw new QuercusModuleException(e);
-	} finally {
-	    TempBuffer.free(tb);
-	}
-    }
+         return writeLength;
+      } catch (IOException e) {
+         throw new QuercusModuleException(e);
+      } finally {
+         TempBuffer.free(tb);
+      }
+   }
 
-    /**
-     * Prints a string to a file.
-     */
-    public void print(char v)
-	    throws IOException {
-	write((byte) v);
-    }
+   /**
+    * Prints a string to a file.
+    */
+   public void print(char v)
+           throws IOException {
+      write((byte) v);
+   }
 
-    /**
-     * Prints a string to a file.
-     */
-    public void print(String v)
-	    throws IOException {
-	for (int i = 0; i < v.length(); i++) {
-	    write(v.charAt(i));
-	}
-    }
+   /**
+    * Prints a string to a file.
+    */
+   public void print(String v)
+           throws IOException {
+      for (int i = 0; i < v.length(); i++) {
+         write(v.charAt(i));
+      }
+   }
 
-    /**
-     * Flushes the output.
-     */
-    public void flush()
-	    throws IOException {
-    }
+   /**
+    * Flushes the output.
+    */
+   public void flush()
+           throws IOException {
+   }
 
-    /**
-     * Closes the file.
-     */
-    public void closeWrite() {
-	close();
-    }
+   /**
+    * Closes the file.
+    */
+   public void closeWrite() {
+      close();
+   }
 
-    /**
-     * Closes the stream.
-     */
-    public void close() {
-    }
+   /**
+    * Closes the stream.
+    */
+   public void close() {
+   }
 
-    /**
-     * Returns false always for output streams
-     */
-    public boolean isEOF() {
-	return false;
-    }
+   /**
+    * Returns false always for output streams
+    */
+   public boolean isEOF() {
+      return false;
+   }
 
-    /**
-     * Tells the position in the stream
-     */
-    public long getPosition() {
-	return 0;
-    }
+   /**
+    * Tells the position in the stream
+    */
+   public long getPosition() {
+      return 0;
+   }
 
-    /**
-     * Sets the position.
-     */
-    public boolean setPosition(long offset) {
-	return false;
-    }
+   /**
+    * Sets the position.
+    */
+   public boolean setPosition(long offset) {
+      return false;
+   }
 
-    public long seek(long offset, int whence) {
-	long position;
+   public long seek(long offset, int whence) {
+      long position;
 
-	switch (whence) {
-	    case BinaryStream.SEEK_CUR:
-		position = getPosition() + offset;
-		break;
-	    case BinaryStream.SEEK_END:
-		// don't necessarily have an end
-		position = getPosition();
-		break;
-	    case BinaryStream.SEEK_SET:
-	    default:
-		position = offset;
-		break;
-	}
+      switch (whence) {
+         case BinaryStream.SEEK_CUR:
+            position = getPosition() + offset;
+            break;
+         case BinaryStream.SEEK_END:
+            // don't necessarily have an end
+            position = getPosition();
+            break;
+         case BinaryStream.SEEK_SET:
+         default:
+            position = offset;
+            break;
+      }
 
-	if (!setPosition(position)) {
-	    return -1L;
-	} else {
-	    return position;
-	}
-    }
+      if (!setPosition(position)) {
+         return -1L;
+      } else {
+         return position;
+      }
+   }
 
-    public String getResourceType() {
-	return "stream";
-    }
+   public String getResourceType() {
+      return "stream";
+   }
 
-    public Value stat() {
-	return BooleanValue.FALSE;
-    }
+   public Value stat() {
+      return BooleanValue.FALSE;
+   }
 }

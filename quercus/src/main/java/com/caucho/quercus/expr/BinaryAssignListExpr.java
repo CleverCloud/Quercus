@@ -36,38 +36,38 @@ import com.caucho.quercus.env.Value;
  */
 public class BinaryAssignListExpr extends Expr {
 
-    protected final ListHeadExpr _listHead;
-    protected final Expr _value;
+   protected final ListHeadExpr _listHead;
+   protected final Expr _value;
 
-    protected BinaryAssignListExpr(ListHeadExpr head, Expr value) {
-	_listHead = head;
+   protected BinaryAssignListExpr(ListHeadExpr head, Expr value) {
+      _listHead = head;
 
-	_value = value;
-    }
+      _value = value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value value = _value.eval(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value value = _value.eval(env);
 
-	_listHead.evalAssignValue(env, value);
+      _listHead.evalAssignValue(env, value);
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value evalCopy(Env env) {
-	return eval(env).copy();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value evalCopy(Env env) {
+      return eval(env).copy();
+   }
 }

@@ -45,118 +45,118 @@ import java.util.logging.Logger;
  * Represents an output stream for a proc_open process.
  */
 public class ProcOpenOutput extends AbstractBinaryOutput
-	implements EnvCleanup {
+        implements EnvCleanup {
 
-    private static final Logger log = Logger.getLogger(PopenOutput.class.getName());
-    private Env _env;
-    private WriteStream _os;
+   private static final Logger log = Logger.getLogger(PopenOutput.class.getName());
+   private Env _env;
+   private WriteStream _os;
 
-    public ProcOpenOutput(Env env, OutputStream out)
-	    throws IOException {
-	_env = env;
+   public ProcOpenOutput(Env env, OutputStream out)
+           throws IOException {
+      _env = env;
 
-	_env.addCleanup(this);
+      _env.addCleanup(this);
 
-	_os = new WriteStream(new VfsStream(null, out));
-    }
+      _os = new WriteStream(new VfsStream(null, out));
+   }
 
-    /**
-     * Returns the write stream.
-     */
-    public OutputStream getOutputStream() {
-	return _os;
-    }
+   /**
+    * Returns the write stream.
+    */
+   public OutputStream getOutputStream() {
+      return _os;
+   }
 
-    /**
-     * Prints a string to a file.
-     */
-    public void print(char v)
-	    throws IOException {
-	if (_os != null) {
-	    _os.print(v);
-	}
-    }
+   /**
+    * Prints a string to a file.
+    */
+   public void print(char v)
+           throws IOException {
+      if (_os != null) {
+         _os.print(v);
+      }
+   }
 
-    /**
-     * Prints a string to a file.
-     */
-    public void print(String v)
-	    throws IOException {
-	if (_os != null) {
-	    _os.print(v);
-	}
-    }
+   /**
+    * Prints a string to a file.
+    */
+   public void print(String v)
+           throws IOException {
+      if (_os != null) {
+         _os.print(v);
+      }
+   }
 
-    /**
-     * Writes a character
-     */
-    public void write(int ch)
-	    throws IOException {
-	if (_os != null) {
-	    _os.write(ch);
-	}
-    }
+   /**
+    * Writes a character
+    */
+   public void write(int ch)
+           throws IOException {
+      if (_os != null) {
+         _os.write(ch);
+      }
+   }
 
-    /**
-     * Writes a buffer to a file.
-     */
-    public void write(byte[] buffer, int offset, int length)
-	    throws IOException {
-	if (_os != null) {
-	    _os.write(buffer, offset, length);
-	}
-    }
+   /**
+    * Writes a buffer to a file.
+    */
+   public void write(byte[] buffer, int offset, int length)
+           throws IOException {
+      if (_os != null) {
+         _os.write(buffer, offset, length);
+      }
+   }
 
-    /**
-     * Flushes the output.
-     */
-    public void flush() {
-	try {
-	    if (_os != null) {
-		_os.flush();
-	    }
-	} catch (IOException e) {
-	    log.log(Level.FINE, e.toString(), e);
-	}
-    }
+   /**
+    * Flushes the output.
+    */
+   public void flush() {
+      try {
+         if (_os != null) {
+            _os.flush();
+         }
+      } catch (IOException e) {
+         log.log(Level.FINE, e.toString(), e);
+      }
+   }
 
-    /**
-     * Closes the file.
-     */
-    public void closeWrite() {
-	close();
-    }
+   /**
+    * Closes the file.
+    */
+   public void closeWrite() {
+      close();
+   }
 
-    /**
-     * Closes the file.
-     */
-    public void close() {
-	_env.removeCleanup(this);
+   /**
+    * Closes the file.
+    */
+   public void close() {
+      _env.removeCleanup(this);
 
-	cleanup();
-    }
+      cleanup();
+   }
 
-    /**
-     * Implements the EnvCleanup interface.
-     */
-    public void cleanup() {
-	try {
-	    WriteStream os = _os;
-	    _os = null;
+   /**
+    * Implements the EnvCleanup interface.
+    */
+   public void cleanup() {
+      try {
+         WriteStream os = _os;
+         _os = null;
 
-	    if (os != null) {
-		os.close();
-	    }
-	} catch (IOException e) {
-	    log.log(Level.FINE, e.toString(), e);
-	}
-    }
+         if (os != null) {
+            os.close();
+         }
+      } catch (IOException e) {
+         log.log(Level.FINE, e.toString(), e);
+      }
+   }
 
-    /**
-     * Converts to a string.
-     * @param env
-     */
-    public String toString() {
-	return "ProcOpenOutput[pipe]";
-    }
+   /**
+    * Converts to a string.
+    * @param env
+    */
+   public String toString() {
+      return "ProcOpenOutput[pipe]";
+   }
 }

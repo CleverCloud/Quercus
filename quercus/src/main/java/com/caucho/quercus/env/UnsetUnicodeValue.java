@@ -29,27 +29,27 @@
 package com.caucho.quercus.env;
 
 public class UnsetUnicodeValue
-	extends UnicodeValueImpl {
+        extends UnicodeValueImpl {
 
-    public static final UnsetUnicodeValue UNSET = new UnsetUnicodeValue();
+   public static final UnsetUnicodeValue UNSET = new UnsetUnicodeValue();
 
-    private UnsetUnicodeValue() {
-	super("");
-    }
+   private UnsetUnicodeValue() {
+      super("");
+   }
 
-    /**
-     * Returns true if string is not empty.
-     */
-    @Override
-    public boolean isset() {
-	return false;
-    }
+   /**
+    * Returns true if string is not empty.
+    */
+   @Override
+   public boolean isset() {
+      return false;
+   }
 
-    /**
-     * Returns the character at an index
-     */
-    @Override
-    public Value charValueAt(long index) {
-	return this;
-    }
+   /**
+    * Returns the character at an index
+    */
+   @Override
+   public Value charValueAt(long index) {
+      return this;
+   }
 }

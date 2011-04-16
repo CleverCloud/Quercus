@@ -33,18 +33,18 @@ package com.caucho.quercus;
  */
 public class QuercusRuntimeException extends QuercusException {
 
-    public QuercusRuntimeException() {
-    }
+   public QuercusRuntimeException() {
+   }
 
-    public QuercusRuntimeException(String msg) {
-	super(msg);
-    }
+   public QuercusRuntimeException(String msg) {
+      super(msg);
+   }
 
-    public QuercusRuntimeException(Throwable cause) {
-	super(cause);
-    }
+   public QuercusRuntimeException(Throwable cause) {
+      super(cause);
+   }
 
-    public QuercusRuntimeException(String msg, Throwable cause) {
-	super(msg, cause);
-    }
+   public QuercusRuntimeException(String msg, Throwable cause) {
+      super(msg, cause);
+   }
 }

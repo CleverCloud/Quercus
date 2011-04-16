@@ -37,48 +37,48 @@ import java.io.OutputStream;
  */
 public interface BinaryOutput extends BinaryStream {
 
-    /**
-     * Returns an OutputStream.
-     */
-    public OutputStream getOutputStream();
+   /**
+    * Returns an OutputStream.
+    */
+   public OutputStream getOutputStream();
 
-    /**
-     * Writes a buffer.
-     */
-    public void write(byte[] buffer, int offset, int length)
-	    throws IOException;
+   /**
+    * Writes a buffer.
+    */
+   public void write(byte[] buffer, int offset, int length)
+           throws IOException;
 
-    /**
-     * Writes a buffer.
-     */
-    public int write(InputStream is, int length)
-	    throws IOException;
+   /**
+    * Writes a buffer.
+    */
+   public int write(InputStream is, int length)
+           throws IOException;
 
-    /**
-     * prints a unicode character
-     */
-    public void print(char ch)
-	    throws IOException;
+   /**
+    * prints a unicode character
+    */
+   public void print(char ch)
+           throws IOException;
 
-    /**
-     * prints
-     */
-    public void print(String s)
-	    throws IOException;
+   /**
+    * prints
+    */
+   public void print(String s)
+           throws IOException;
 
-    /**
-     * Flushes the output
-     */
-    public void flush()
-	    throws IOException;
+   /**
+    * Flushes the output
+    */
+   public void flush()
+           throws IOException;
 
-    /**
-     * Closes the stream for writing
-     */
-    public void closeWrite();
+   /**
+    * Closes the stream for writing
+    */
+   public void closeWrite();
 
-    /**
-     * Closes the stream.
-     */
-    public void close();
+   /**
+    * Closes the stream.
+    */
+   public void close();
 }

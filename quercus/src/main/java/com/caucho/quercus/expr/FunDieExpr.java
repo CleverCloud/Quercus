@@ -40,39 +40,39 @@ import java.io.IOException;
  */
 public class FunDieExpr extends Expr {
 
-    protected Expr _value;
+   protected Expr _value;
 
-    public FunDieExpr(Location location, Expr value) {
-	super(location);
-	_value = value;
-    }
+   public FunDieExpr(Location location, Expr value) {
+      super(location);
+      _value = value;
+   }
 
-    public FunDieExpr(Location location) {
-	super(location);
-	_value = null;
-    }
+   public FunDieExpr(Location location) {
+      super(location);
+      _value = null;
+   }
 
-    public FunDieExpr(Expr value) {
-	_value = value;
-    }
+   public FunDieExpr(Expr value) {
+      _value = value;
+   }
 
-    public FunDieExpr() {
-	_value = null;
-    }
+   public FunDieExpr() {
+      _value = null;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	if (_value != null) {
-	    String msg = _value.evalString(env);
-	    return env.die(msg);
-	} else {
-	    return env.die();
-	}
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      if (_value != null) {
+         String msg = _value.evalString(env);
+         return env.die(msg);
+      } else {
+         return env.die();
+      }
+   }
 }

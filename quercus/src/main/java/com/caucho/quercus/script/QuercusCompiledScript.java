@@ -46,87 +46,87 @@ import java.io.Writer;
  */
 public class QuercusCompiledScript extends CompiledScript {
 
-    private final QuercusScriptEngine _engine;
-    private final QuercusProgram _program;
+   private final QuercusScriptEngine _engine;
+   private final QuercusProgram _program;
 
-    QuercusCompiledScript(QuercusScriptEngine engine, QuercusProgram program) {
-	_engine = engine;
-	_program = program;
-    }
+   QuercusCompiledScript(QuercusScriptEngine engine, QuercusProgram program) {
+      _engine = engine;
+      _program = program;
+   }
 
-    /**
-     * evaluates based on a reader.
-     */
-    public Object eval(ScriptContext cxt)
-	    throws ScriptException {
-	Env env = null;
+   /**
+    * evaluates based on a reader.
+    */
+   public Object eval(ScriptContext cxt)
+           throws ScriptException {
+      Env env = null;
 
-	try {
-	    Writer writer = cxt.getWriter();
+      try {
+         Writer writer = cxt.getWriter();
 
-	    WriteStream out;
+         WriteStream out;
 
-	    if (writer != null) {
-		ReaderWriterStream s = new ReaderWriterStream(null, writer);
-		WriteStream os = new WriteStream(s);
+         if (writer != null) {
+            ReaderWriterStream s = new ReaderWriterStream(null, writer);
+            WriteStream os = new WriteStream(s);
 
-		os.setNewlineString("\n");
+            os.setNewlineString("\n");
 
-		try {
-		    os.setEncoding("utf-8");
-		} catch (Exception e) {
-		}
+            try {
+               os.setEncoding("utf-8");
+            } catch (Exception e) {
+            }
 
-		out = os;
-	    } else {
-		out = new NullWriteStream();
-	    }
+            out = os;
+         } else {
+            out = new NullWriteStream();
+         }
 
-	    QuercusPage page = new InterpretedPage(_program);
+         QuercusPage page = new InterpretedPage(_program);
 
-	    env = new Env(_engine.getQuercus(), page, out, null, null);
+         env = new Env(_engine.getQuercus(), page, out, null, null);
 
-	    env.setScriptContext(cxt);
+         env.setScriptContext(cxt);
 
-	    // php/214g
-	    env.start();
+         // php/214g
+         env.start();
 
-	    Value resultV = _program.execute(env);
+         Value resultV = _program.execute(env);
 
-	    Object result = null;
-	    if (resultV != null) {
-		result = resultV.toJavaObject();
-	    }
+         Object result = null;
+         if (resultV != null) {
+            result = resultV.toJavaObject();
+         }
 
-	    out.flushBuffer();
-	    out.free();
+         out.flushBuffer();
+         out.free();
 
-	    return result;
-	    /*
-	    } catch (ScriptException e) {
-	    throw e;
-	     */
-	} catch (RuntimeException e) {
-	    throw e;
-	} catch (Exception e) {
-	    throw new ScriptException(e);
-	} catch (Throwable e) {
-	    throw new RuntimeException(e);
-	} finally {
-	    if (env != null) {
-		env.close();
-	    }
-	}
-    }
+         return result;
+         /*
+         } catch (ScriptException e) {
+         throw e;
+          */
+      } catch (RuntimeException e) {
+         throw e;
+      } catch (Exception e) {
+         throw new ScriptException(e);
+      } catch (Throwable e) {
+         throw new RuntimeException(e);
+      } finally {
+         if (env != null) {
+            env.close();
+         }
+      }
+   }
 
-    /**
-     * Returns the script engine.
-     */
-    public ScriptEngine getEngine() {
-	return _engine;
-    }
+   /**
+    * Returns the script engine.
+    */
+   public ScriptEngine getEngine() {
+      return _engine;
+   }
 
-    public String toString() {
-	return "QuercusCompiledScript[]";
-    }
+   public String toString() {
+      return "QuercusCompiledScript[]";
+   }
 }

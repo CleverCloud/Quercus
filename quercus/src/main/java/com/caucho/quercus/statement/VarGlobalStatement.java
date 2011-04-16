@@ -40,22 +40,22 @@ import com.caucho.quercus.expr.VarVarExpr;
  */
 public class VarGlobalStatement extends Statement {
 
-    protected Expr _varExpr;
+   protected Expr _varExpr;
 
-    /**
-     * Creates the echo statement.
-     */
-    public VarGlobalStatement(Location location, VarVarExpr var) {
-	super(location);
+   /**
+    * Creates the echo statement.
+    */
+   public VarGlobalStatement(Location location, VarVarExpr var) {
+      super(location);
 
-	_varExpr = var.getExpr();
-    }
+      _varExpr = var.getExpr();
+   }
 
-    public Value execute(Env env) {
-	StringValue name = _varExpr.evalStringValue(env);
+   public Value execute(Env env) {
+      StringValue name = _varExpr.evalStringValue(env);
 
-	env.setRef(name, env.getGlobalVar(name));
+      env.setRef(name, env.getGlobalVar(name));
 
-	return null;
-    }
+      return null;
+   }
 }

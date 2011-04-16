@@ -38,48 +38,48 @@ import com.caucho.quercus.env.Value;
  */
 public class BinaryOrExpr extends AbstractBinaryExpr {
 
-    public BinaryOrExpr(Location location, Expr left, Expr right) {
-	super(location, left, right);
-    }
+   public BinaryOrExpr(Location location, Expr left, Expr right) {
+      super(location, left, right);
+   }
 
-    public BinaryOrExpr(Expr left, Expr right) {
-	super(left, right);
-    }
+   public BinaryOrExpr(Expr left, Expr right) {
+      super(left, right);
+   }
 
-    /**
-     * Returns true for a boolean.
-     */
-    public boolean isBoolean() {
-	return true;
-    }
+   /**
+    * Returns true for a boolean.
+    */
+   public boolean isBoolean() {
+      return true;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	if (_left.evalBoolean(env) || _right.evalBoolean(env)) {
-	    return BooleanValue.TRUE;
-	} else {
-	    return BooleanValue.FALSE;
-	}
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      if (_left.evalBoolean(env) || _right.evalBoolean(env)) {
+         return BooleanValue.TRUE;
+      } else {
+         return BooleanValue.FALSE;
+      }
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public boolean evalBoolean(Env env) {
-	return _left.evalBoolean(env) || _right.evalBoolean(env);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public boolean evalBoolean(Env env) {
+      return _left.evalBoolean(env) || _right.evalBoolean(env);
+   }
 
-    public String toString() {
-	return "(" + _left + " || " + _right + ")";
-    }
+   public String toString() {
+      return "(" + _left + " || " + _right + ")";
+   }
 }

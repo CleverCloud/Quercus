@@ -37,31 +37,31 @@ import java.util.Map.Entry;
  */
 public class FunctionMap {
 
-    private HashMap<String, AbstractJavaMethod> _funMap;
+   private HashMap<String, AbstractJavaMethod> _funMap;
 
-    public FunctionMap() {
-	_funMap = new HashMap<String, AbstractJavaMethod>();
-    }
+   public FunctionMap() {
+      _funMap = new HashMap<String, AbstractJavaMethod>();
+   }
 
-    public AbstractJavaMethod getFunction(String name) {
-	return _funMap.get(name);
-    }
+   public AbstractJavaMethod getFunction(String name) {
+      return _funMap.get(name);
+   }
 
-    public void addFunction(String name, AbstractJavaMethod fun) {
-	AbstractJavaMethod oldFun = _funMap.get(name);
+   public void addFunction(String name, AbstractJavaMethod fun) {
+      AbstractJavaMethod oldFun = _funMap.get(name);
 
-	if (oldFun == null) {
-	    _funMap.put(name, fun);
-	} else {
-	    _funMap.put(name, oldFun.overload(fun));
-	}
-    }
+      if (oldFun == null) {
+         _funMap.put(name, fun);
+      } else {
+         _funMap.put(name, oldFun.overload(fun));
+      }
+   }
 
-    public Set<Entry<String, AbstractJavaMethod>> entrySet() {
-	return _funMap.entrySet();
-    }
+   public Set<Entry<String, AbstractJavaMethod>> entrySet() {
+      return _funMap.entrySet();
+   }
 
-    public Set<String> keySet() {
-	return _funMap.keySet();
-    }
+   public Set<String> keySet() {
+      return _funMap.keySet();
+   }
 }

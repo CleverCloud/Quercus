@@ -38,45 +38,45 @@ import com.caucho.quercus.env.Value;
  */
 public class LiteralLongExpr extends Expr {
 
-    protected final long _value;
-    protected final LongValue _objValue;
+   protected final long _value;
+   protected final LongValue _objValue;
 
-    public LiteralLongExpr(Location location, long value) {
-	super(location);
-	_value = value;
-	_objValue = LongValue.create(_value);
-    }
+   public LiteralLongExpr(Location location, long value) {
+      super(location);
+      _value = value;
+      _objValue = LongValue.create(_value);
+   }
 
-    public LiteralLongExpr(long value) {
-	this(Location.UNKNOWN, value);
-    }
+   public LiteralLongExpr(long value) {
+      this(Location.UNKNOWN, value);
+   }
 
-    /**
-     * Returns true for a literal expression.
-     */
-    public boolean isLiteral() {
-	return true;
-    }
+   /**
+    * Returns true for a literal expression.
+    */
+   public boolean isLiteral() {
+      return true;
+   }
 
-    /**
-     * Returns true for a long value.
-     */
-    public boolean isLong() {
-	return true;
-    }
+   /**
+    * Returns true for a long value.
+    */
+   public boolean isLong() {
+      return true;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return _objValue;
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return _objValue;
+   }
 
-    public String toString() {
-	return String.valueOf(_value);
-    }
+   public String toString() {
+      return String.valueOf(_value);
+   }
 }

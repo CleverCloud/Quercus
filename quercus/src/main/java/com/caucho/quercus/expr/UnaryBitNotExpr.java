@@ -38,35 +38,35 @@ import com.caucho.quercus.env.Value;
  */
 public class UnaryBitNotExpr extends AbstractUnaryExpr {
 
-    public UnaryBitNotExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public UnaryBitNotExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public UnaryBitNotExpr(Expr expr) {
-	super(expr);
-    }
+   public UnaryBitNotExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Returns true for a long.
-     */
-    public boolean isLong() {
-	return true;
-    }
+   /**
+    * Returns true for a long.
+    */
+   public boolean isLong() {
+      return true;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	long lValue = _expr.evalLong(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      long lValue = _expr.evalLong(env);
 
-	return LongValue.create(~lValue);
-    }
+      return LongValue.create(~lValue);
+   }
 
-    public String toString() {
-	return "(~ " + _expr + ")";
-    }
+   public String toString() {
+      return "(~ " + _expr + ")";
+   }
 }

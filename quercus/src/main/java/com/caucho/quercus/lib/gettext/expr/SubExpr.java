@@ -30,11 +30,11 @@ package com.caucho.quercus.lib.gettext.expr;
 
 public class SubExpr extends BinaryExpr {
 
-    public SubExpr(Expr _left, Expr _right) {
-	super(_left, _right);
-    }
+   public SubExpr(Expr _left, Expr _right) {
+      super(_left, _right);
+   }
 
-    public int eval(int n) {
-	return _left.eval(n) - _right.eval(n);
-    }
+   public int eval(int n) {
+      return _left.eval(n) - _right.eval(n);
+   }
 }

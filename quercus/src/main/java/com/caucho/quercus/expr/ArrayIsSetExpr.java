@@ -39,50 +39,50 @@ import com.caucho.quercus.env.Value;
  */
 public class ArrayIsSetExpr extends Expr {
 
-    protected final Expr _expr;
-    protected final Expr _index;
+   protected final Expr _expr;
+   protected final Expr _index;
 
-    public ArrayIsSetExpr(Location location, Expr expr, Expr index) {
-	super(location);
-	_expr = expr;
-	_index = index;
-    }
+   public ArrayIsSetExpr(Location location, Expr expr, Expr index) {
+      super(location);
+      _expr = expr;
+      _index = index;
+   }
 
-    public ArrayIsSetExpr(Expr expr, Expr index) {
-	_expr = expr;
-	_index = index;
-    }
+   public ArrayIsSetExpr(Expr expr, Expr index) {
+      _expr = expr;
+      _index = index;
+   }
 
-    public boolean isBoolean() {
-	return true;
-    }
+   public boolean isBoolean() {
+      return true;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public boolean evalBoolean(Env env) {
-	Value array = _expr.eval(env);
-	Value index = _index.eval(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public boolean evalBoolean(Env env) {
+      Value array = _expr.eval(env);
+      Value index = _index.eval(env);
 
-	return array.get(index) != UnsetValue.UNSET;
-    }
+      return array.get(index) != UnsetValue.UNSET;
+   }
 
-    public String toString() {
-	return "isset(" + _expr + "[" + _index + "])";
-    }
+   public String toString() {
+      return "isset(" + _expr + "[" + _index + "])";
+   }
 }

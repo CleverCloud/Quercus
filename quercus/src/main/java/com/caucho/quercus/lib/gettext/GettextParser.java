@@ -37,59 +37,59 @@ import java.util.HashMap;
 
 abstract class GettextParser {
 
-    PluralExpr _pluralExpr;
-    String _charset;
+   PluralExpr _pluralExpr;
+   String _charset;
 
-    PluralExpr getPluralExpr() {
-	return _pluralExpr;
-    }
+   PluralExpr getPluralExpr() {
+      return _pluralExpr;
+   }
 
-    /*
-     * Returns the charset defined in the PO/MO file.
-     */
-    public String getCharset() {
-	return _charset;
-    }
+   /*
+    * Returns the charset defined in the PO/MO file.
+    */
+   public String getCharset() {
+      return _charset;
+   }
 
-    /**
-     * Extracts the charset from the gettext metadata.
-     */
-    protected static String getCharset(StringValue metadata) {
-	String header = "charset=";
-	int i = metadata.indexOf(header);
+   /**
+    * Extracts the charset from the gettext metadata.
+    */
+   protected static String getCharset(StringValue metadata) {
+      String header = "charset=";
+      int i = metadata.indexOf(header);
 
-	if (i < 0) {
-	    return "UTF-8";
-	}
+      if (i < 0) {
+         return "UTF-8";
+      }
 
-	i = i + header.length();
-	int len = metadata.length();
+      i = i + header.length();
+      int len = metadata.length();
 
-	int j = i + 1;
-	for (; j < len; j++) {
-	    char ch = metadata.charAt(j);
+      int j = i + 1;
+      for (; j < len; j++) {
+         char ch = metadata.charAt(j);
 
-	    switch (ch) {
-		case ' ':
-		case '\t':
-		case '\r':
-		case '\n':
-		    return metadata.substring(i, j).toString();
-		default:
-		    continue;
-	    }
-	}
+         switch (ch) {
+            case ' ':
+            case '\t':
+            case '\r':
+            case '\n':
+               return metadata.substring(i, j).toString();
+            default:
+               continue;
+         }
+      }
 
-	return metadata.substring(i, j).toString();
-    }
+      return metadata.substring(i, j).toString();
+   }
 
-    /**
-     * Returns the gettext translations.
-     *
-     * @return translations from file, or null on error
-     */
-    abstract HashMap<StringValue, ArrayList<StringValue>> readTranslations()
-	    throws IOException;
+   /**
+    * Returns the gettext translations.
+    *
+    * @return translations from file, or null on error
+    */
+   abstract HashMap<StringValue, ArrayList<StringValue>> readTranslations()
+           throws IOException;
 
-    abstract void close();
+   abstract void close();
 }

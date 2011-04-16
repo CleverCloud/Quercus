@@ -37,11 +37,11 @@ import com.caucho.vfs.VfsStream;
  */
 public class PhpStdin extends AbstractBinaryInput {
 
-    public PhpStdin(Env env) {
-	super(env, new ReadStream(new VfsStream(System.in, null)));
-    }
+   public PhpStdin(Env env) {
+      super(env, new ReadStream(new VfsStream(System.in, null)));
+   }
 
-    public String toString() {
-	return "PhpStdin[]";
-    }
+   public String toString() {
+      return "PhpStdin[]";
+   }
 }

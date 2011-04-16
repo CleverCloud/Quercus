@@ -33,56 +33,56 @@ package com.caucho.quercus.env;
  */
 public class ContinueValue extends Value {
 
-    public static final ContinueValue CONTINUE = new ContinueValue();
-    private int _target;
+   public static final ContinueValue CONTINUE = new ContinueValue();
+   private int _target;
 
-    private ContinueValue() {
-    }
+   private ContinueValue() {
+   }
 
-    public ContinueValue(Value target) {
-	_target = target.toInt();
-    }
+   public ContinueValue(Value target) {
+      _target = target.toInt();
+   }
 
-    public ContinueValue(int target) {
-	_target = target;
-    }
+   public ContinueValue(int target) {
+      _target = target;
+   }
 
-    public int getTarget() {
-	return _target;
-    }
+   public int getTarget() {
+      return _target;
+   }
 
-    /**
-     * Converts to a boolean.
-     */
-    public boolean toBoolean() {
-	return false;
-    }
+   /**
+    * Converts to a boolean.
+    */
+   public boolean toBoolean() {
+      return false;
+   }
 
-    /**
-     * Converts to a long.
-     */
-    public long toLong() {
-	return 0;
-    }
+   /**
+    * Converts to a long.
+    */
+   public long toLong() {
+      return 0;
+   }
 
-    /**
-     * Converts to a double.
-     */
-    public double toDouble() {
-	return 0;
-    }
+   /**
+    * Converts to a double.
+    */
+   public double toDouble() {
+      return 0;
+   }
 
-    /**
-     * Converts to an object.
-     */
-    public Object toObject() {
-	return "";
-    }
+   /**
+    * Converts to an object.
+    */
+   public Object toObject() {
+      return "";
+   }
 
-    /**
-     * Prints the value.
-     * @param env
-     */
-    public void print(Env env) {
-    }
+   /**
+    * Prints the value.
+    * @param env
+    */
+   public void print(Env env) {
+   }
 }

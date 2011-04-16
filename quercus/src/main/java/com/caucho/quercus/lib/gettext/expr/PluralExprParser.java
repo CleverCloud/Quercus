@@ -33,373 +33,373 @@ package com.caucho.quercus.lib.gettext.expr;
  */
 class PluralExprParser {
 
-    final static int INTEGER = 256;
-    final static int EQ = 270;
-    final static int NEQ = 271;
-    final static int LE = 272;
-    final static int GE = 273;
-    final static int AND = 280;
-    final static int OR = 281;
-    final static int VARIABLE_N = 290;
-    final static int UNKNOWN = 291;
-    final static int UNSET = 292;
-    private CharSequence _expr;
-    private int _exprLength;
-    private int _parseIndex;
-    private Expr _npluralsExpr;
-    private Expr _pluralExpr;
-    private int _peekToken;
-    private int _integer;
-    private boolean _isError;
-    private boolean _isInitialized;
+   final static int INTEGER = 256;
+   final static int EQ = 270;
+   final static int NEQ = 271;
+   final static int LE = 272;
+   final static int GE = 273;
+   final static int AND = 280;
+   final static int OR = 281;
+   final static int VARIABLE_N = 290;
+   final static int UNKNOWN = 291;
+   final static int UNSET = 292;
+   private CharSequence _expr;
+   private int _exprLength;
+   private int _parseIndex;
+   private Expr _npluralsExpr;
+   private Expr _pluralExpr;
+   private int _peekToken;
+   private int _integer;
+   private boolean _isError;
+   private boolean _isInitialized;
 
-    protected PluralExprParser(CharSequence expr) {
-	_expr = expr;
-	_exprLength = expr.length();
+   protected PluralExprParser(CharSequence expr) {
+      _expr = expr;
+      _exprLength = expr.length();
 
-	_isInitialized = false;
-    }
+      _isInitialized = false;
+   }
 
-    public Expr getNpluralsExpr() {
-	if (!_isInitialized) {
-	    init();
-	}
+   public Expr getNpluralsExpr() {
+      if (!_isInitialized) {
+         init();
+      }
 
-	if (_isError) {
-	    return null;
-	}
+      if (_isError) {
+         return null;
+      }
 
-	return _npluralsExpr;
-    }
+      return _npluralsExpr;
+   }
 
-    public Expr getPluralExpr() {
-	if (!_isInitialized) {
-	    init();
-	}
+   public Expr getPluralExpr() {
+      if (!_isInitialized) {
+         init();
+      }
 
-	if (_isError) {
-	    return null;
-	}
+      if (_isError) {
+         return null;
+      }
 
-	return _pluralExpr;
-    }
+      return _pluralExpr;
+   }
 
-    private void init() {
-	_parseIndex = 0;
-	_peekToken = UNSET;
-	_isError = false;
+   private void init() {
+      _parseIndex = 0;
+      _peekToken = UNSET;
+      _isError = false;
 
-	parseAssignExpr();
-	parseAssignExpr();
+      parseAssignExpr();
+      parseAssignExpr();
 
-	_isInitialized = true;
-    }
+      _isInitialized = true;
+   }
 
-    private void parseAssignExpr() {
-	int ch = consumeWhiteSpace();
+   private void parseAssignExpr() {
+      int ch = consumeWhiteSpace();
 
-	boolean isNplurals;
+      boolean isNplurals;
 
-	if (ch == 'n'
-		&& read() == 'p'
-		&& read() == 'l'
-		&& read() == 'u'
-		&& read() == 'r'
-		&& read() == 'a'
-		&& read() == 'l'
-		&& read() == 's') {
-	    isNplurals = true;
-	} else if (ch == 'p'
-		&& read() == 'l'
-		&& read() == 'u'
-		&& read() == 'r'
-		&& read() == 'a'
-		&& read() == 'l') {
-	    isNplurals = false;
-	} else {
-	    return;
-	}
+      if (ch == 'n'
+              && read() == 'p'
+              && read() == 'l'
+              && read() == 'u'
+              && read() == 'r'
+              && read() == 'a'
+              && read() == 'l'
+              && read() == 's') {
+         isNplurals = true;
+      } else if (ch == 'p'
+              && read() == 'l'
+              && read() == 'u'
+              && read() == 'r'
+              && read() == 'a'
+              && read() == 'l') {
+         isNplurals = false;
+      } else {
+         return;
+      }
 
-	ch = consumeWhiteSpace();
+      ch = consumeWhiteSpace();
 
-	if (ch != '=') {
-	    return;
-	}
+      if (ch != '=') {
+         return;
+      }
 
-	if (isNplurals) {
-	    _npluralsExpr = parseIfExpr();
-	} else {
-	    _pluralExpr = parseIfExpr();
-	}
+      if (isNplurals) {
+         _npluralsExpr = parseIfExpr();
+      } else {
+         _pluralExpr = parseIfExpr();
+      }
 
-	// Read semicolon
-	parseToken();
-    }
+      // Read semicolon
+      parseToken();
+   }
 
-    private Expr parseLiteralExpr() {
-	int token = parseToken();
+   private Expr parseLiteralExpr() {
+      int token = parseToken();
 
-	if (token == INTEGER) {
-	    return new LiteralExpr(_integer);
-	} else if (token == VARIABLE_N) {
-	    return NExpr.N_EXPR;
-	} else {
-	    return error("Expected INTEGER");
-	}
-    }
+      if (token == INTEGER) {
+         return new LiteralExpr(_integer);
+      } else if (token == VARIABLE_N) {
+         return NExpr.N_EXPR;
+      } else {
+         return error("Expected INTEGER");
+      }
+   }
 
-    private Expr parseParenExpr() {
-	int token = parseToken();
+   private Expr parseParenExpr() {
+      int token = parseToken();
 
-	if (token != '(') {
-	    _peekToken = token;
-	    return parseLiteralExpr();
-	}
+      if (token != '(') {
+         _peekToken = token;
+         return parseLiteralExpr();
+      }
 
-	Expr expr = parseIfExpr();
-	if (parseToken() != ')') {
-	    return error("Expected ')'");
-	}
+      Expr expr = parseIfExpr();
+      if (parseToken() != ')') {
+         return error("Expected ')'");
+      }
 
-	return expr;
-    }
+      return expr;
+   }
 
-    private Expr parseMulExpr() {
-	Expr expr = parseParenExpr();
+   private Expr parseMulExpr() {
+      Expr expr = parseParenExpr();
 
-	while (true) {
-	    int token = parseToken();
-	    switch (token) {
-		case '%':
-		    expr = new ModExpr(expr, parseParenExpr());
-		    break;
-		case '*':
-		    expr = new MulExpr(expr, parseParenExpr());
-		    break;
-		case '/':
-		    expr = new DivExpr(expr, parseParenExpr());
-		    break;
-		default:
-		    _peekToken = token;
-		    return expr;
-	    }
-	}
-    }
+      while (true) {
+         int token = parseToken();
+         switch (token) {
+            case '%':
+               expr = new ModExpr(expr, parseParenExpr());
+               break;
+            case '*':
+               expr = new MulExpr(expr, parseParenExpr());
+               break;
+            case '/':
+               expr = new DivExpr(expr, parseParenExpr());
+               break;
+            default:
+               _peekToken = token;
+               return expr;
+         }
+      }
+   }
 
-    private Expr parseAddExpr() {
-	Expr expr = parseMulExpr();
+   private Expr parseAddExpr() {
+      Expr expr = parseMulExpr();
 
-	while (true) {
-	    int token = parseToken();
+      while (true) {
+         int token = parseToken();
 
-	    switch (token) {
-		case '+':
-		    expr = new AddExpr(expr, parseMulExpr());
-		    break;
-		case '-':
-		    expr = new SubExpr(expr, parseMulExpr());
-		    break;
-		default:
-		    _peekToken = token;
-		    return expr;
-	    }
-	}
-    }
+         switch (token) {
+            case '+':
+               expr = new AddExpr(expr, parseMulExpr());
+               break;
+            case '-':
+               expr = new SubExpr(expr, parseMulExpr());
+               break;
+            default:
+               _peekToken = token;
+               return expr;
+         }
+      }
+   }
 
-    private Expr parseCmpExpr() {
-	Expr expr = parseAddExpr();
+   private Expr parseCmpExpr() {
+      Expr expr = parseAddExpr();
 
-	while (true) {
-	    int token = parseToken();
-	    switch (token) {
-		case '>':
-		    expr = new GTExpr(expr, parseAddExpr());
-		    break;
-		case '<':
-		    expr = new LTExpr(expr, parseAddExpr());
-		    break;
-		case GE:
-		    expr = new GEExpr(expr, parseAddExpr());
-		    break;
-		case LE:
-		    expr = new LEExpr(expr, parseAddExpr());
-		    break;
-		case EQ:
-		    expr = new EQExpr(expr, parseAddExpr());
-		    break;
-		case NEQ:
-		    expr = new NEQExpr(expr, parseAddExpr());
-		    break;
-		default:
-		    _peekToken = token;
-		    return expr;
-	    }
-	}
-    }
+      while (true) {
+         int token = parseToken();
+         switch (token) {
+            case '>':
+               expr = new GTExpr(expr, parseAddExpr());
+               break;
+            case '<':
+               expr = new LTExpr(expr, parseAddExpr());
+               break;
+            case GE:
+               expr = new GEExpr(expr, parseAddExpr());
+               break;
+            case LE:
+               expr = new LEExpr(expr, parseAddExpr());
+               break;
+            case EQ:
+               expr = new EQExpr(expr, parseAddExpr());
+               break;
+            case NEQ:
+               expr = new NEQExpr(expr, parseAddExpr());
+               break;
+            default:
+               _peekToken = token;
+               return expr;
+         }
+      }
+   }
 
-    private Expr parseAndExpr() {
-	Expr expr = parseCmpExpr();
+   private Expr parseAndExpr() {
+      Expr expr = parseCmpExpr();
 
-	while (true) {
-	    int token = parseToken();
-	    if (token != AND) {
-		_peekToken = token;
-		return expr;
-	    }
+      while (true) {
+         int token = parseToken();
+         if (token != AND) {
+            _peekToken = token;
+            return expr;
+         }
 
-	    expr = new AndExpr(expr, parseCmpExpr());
-	}
-    }
+         expr = new AndExpr(expr, parseCmpExpr());
+      }
+   }
 
-    private Expr parseOrExpr() {
-	Expr expr = parseAndExpr();
+   private Expr parseOrExpr() {
+      Expr expr = parseAndExpr();
 
-	while (true) {
-	    int token = parseToken();
-	    if (token != OR) {
-		_peekToken = token;
-		return expr;
-	    }
+      while (true) {
+         int token = parseToken();
+         if (token != OR) {
+            _peekToken = token;
+            return expr;
+         }
 
-	    expr = new OrExpr(expr, parseAndExpr());
-	}
-    }
+         expr = new OrExpr(expr, parseAndExpr());
+      }
+   }
 
-    private Expr parseIfExpr() {
-	Expr expr = parseOrExpr();
+   private Expr parseIfExpr() {
+      Expr expr = parseOrExpr();
 
-	int token = parseToken();
-	if (token != '?') {
-	    _peekToken = token;
-	    return expr;
-	}
+      int token = parseToken();
+      if (token != '?') {
+         _peekToken = token;
+         return expr;
+      }
 
-	Expr trueExpr = parseIfExpr();
+      Expr trueExpr = parseIfExpr();
 
-	token = parseToken();
-	if (token != ':') {
-	    return error("Expected ':'");
-	}
+      token = parseToken();
+      if (token != ':') {
+         return error("Expected ':'");
+      }
 
-	Expr falseExpr = parseIfExpr();
+      Expr falseExpr = parseIfExpr();
 
-	return new IfExpr(expr, trueExpr, falseExpr);
-    }
+      return new IfExpr(expr, trueExpr, falseExpr);
+   }
 
-    private int parseToken() {
+   private int parseToken() {
 
-	if (_peekToken != UNSET) {
-	    int toReturn = _peekToken;
-	    _peekToken = UNSET;
-	    return toReturn;
-	}
+      if (_peekToken != UNSET) {
+         int toReturn = _peekToken;
+         _peekToken = UNSET;
+         return toReturn;
+      }
 
-	int ch = consumeWhiteSpace();
+      int ch = consumeWhiteSpace();
 
-	switch (ch) {
-	    case '(':
-	    case ')':
-	    case '?':
-	    case ':':
-	    case ';':
-	    case '+':
-	    case '-':
-	    case '%':
-	    case '*':
-	    case '/':
-		return ch;
-	    case '>':
-		if (read() == '=') {
-		    return GE;
-		}
-		unread();
-		return '>';
-	    case '<':
-		if (read() == '=') {
-		    return LE;
-		}
-		unread();
-		return '<';
-	    case '=':
-		if (read() == '=') {
-		    return EQ;
-		}
-		return UNKNOWN;
-	    case '!':
-		if (read() == '=') {
-		    return NEQ;
-		}
-		return UNKNOWN;
-	    case '&':
-		if (read() == '&') {
-		    return AND;
-		}
-		return UNKNOWN;
-	    case '|':
-		if (read() == '|') {
-		    return OR;
-		}
-		return UNKNOWN;
-	}
+      switch (ch) {
+         case '(':
+         case ')':
+         case '?':
+         case ':':
+         case ';':
+         case '+':
+         case '-':
+         case '%':
+         case '*':
+         case '/':
+            return ch;
+         case '>':
+            if (read() == '=') {
+               return GE;
+            }
+            unread();
+            return '>';
+         case '<':
+            if (read() == '=') {
+               return LE;
+            }
+            unread();
+            return '<';
+         case '=':
+            if (read() == '=') {
+               return EQ;
+            }
+            return UNKNOWN;
+         case '!':
+            if (read() == '=') {
+               return NEQ;
+            }
+            return UNKNOWN;
+         case '&':
+            if (read() == '&') {
+               return AND;
+            }
+            return UNKNOWN;
+         case '|':
+            if (read() == '|') {
+               return OR;
+            }
+            return UNKNOWN;
+      }
 
-	return parseIntegerToken(ch);
-    }
+      return parseIntegerToken(ch);
+   }
 
-    private int parseIntegerToken(int ch) {
-	if ('0' <= ch && ch <= '9') {
-	    _integer = ch - '0';
-	    for (ch = read(); '0' <= ch && ch <= '9'; ch = read()) {
-		_integer = _integer * 10 + ch - '0';
-	    }
+   private int parseIntegerToken(int ch) {
+      if ('0' <= ch && ch <= '9') {
+         _integer = ch - '0';
+         for (ch = read(); '0' <= ch && ch <= '9'; ch = read()) {
+            _integer = _integer * 10 + ch - '0';
+         }
 
-	    unread();
-	    return INTEGER;
-	} else if (ch == 'n') {
-	    if (Character.isLetter(read())) {
-		return UNKNOWN;
-	    }
+         unread();
+         return INTEGER;
+      } else if (ch == 'n') {
+         if (Character.isLetter(read())) {
+            return UNKNOWN;
+         }
 
-	    unread();
-	    return VARIABLE_N;
-	}
+         unread();
+         return VARIABLE_N;
+      }
 
-	return UNKNOWN;
-    }
+      return UNKNOWN;
+   }
 
-    /**
-     * Consumes whitespaces and returns the last non-whitespace character.
-     */
-    private int consumeWhiteSpace() {
-	while (true) {
-	    int ch = read();
-	    switch (ch) {
-		case ' ':
-		case '\n':
-		case '\t':
-		case '\r':
-		    continue;
-		default:
-		    return ch;
-	    }
-	}
-    }
+   /**
+    * Consumes whitespaces and returns the last non-whitespace character.
+    */
+   private int consumeWhiteSpace() {
+      while (true) {
+         int ch = read();
+         switch (ch) {
+            case ' ':
+            case '\n':
+            case '\t':
+            case '\r':
+               continue;
+            default:
+               return ch;
+         }
+      }
+   }
 
-    private int read() {
-	if (_parseIndex < _exprLength) {
-	    return _expr.charAt(_parseIndex++);
-	} else {
-	    return -1;
-	}
-    }
+   private int read() {
+      if (_parseIndex < _exprLength) {
+         return _expr.charAt(_parseIndex++);
+      } else {
+         return -1;
+      }
+   }
 
-    private void unread() {
-	if (_parseIndex > 0 && _parseIndex < _exprLength) {
-	    _parseIndex--;
-	}
-    }
+   private void unread() {
+      if (_parseIndex > 0 && _parseIndex < _exprLength) {
+         _parseIndex--;
+      }
+   }
 
-    private Expr error(String message) {
-	_isError = true;
-	return NExpr.N_EXPR;
-    }
+   private Expr error(String message) {
+      _isError = true;
+      return NExpr.N_EXPR;
+   }
 }

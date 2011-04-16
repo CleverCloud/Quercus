@@ -39,141 +39,141 @@ import java.io.IOException;
  */
 abstract public class UnicodeValue extends StringValue {
 
-    protected UnicodeValue() {
-    }
+   protected UnicodeValue() {
+   }
 
-    @Override
-    public String toDebugString() {
-	StringBuilder sb = new StringBuilder();
+   @Override
+   public String toDebugString() {
+      StringBuilder sb = new StringBuilder();
 
-	int length = length();
+      int length = length();
 
-	sb.append("unicode(");
-	sb.append(length);
-	sb.append(") \"");
+      sb.append("unicode(");
+      sb.append(length);
+      sb.append(") \"");
 
-	int appendLength = length > 256 ? 256 : length;
+      int appendLength = length > 256 ? 256 : length;
 
-	for (int i = 0; i < appendLength; i++) {
-	    sb.append(charAt(i));
-	}
+      for (int i = 0; i < appendLength; i++) {
+         sb.append(charAt(i));
+      }
 
-	if (length > 256) {
-	    sb.append(" ...");
-	}
+      if (length > 256) {
+         sb.append(" ...");
+      }
 
-	sb.append('"');
+      sb.append('"');
 
-	return sb.toString();
-    }
+      return sb.toString();
+   }
 
-    @Override
-    public void varDumpImpl(Env env,
-	    WriteStream out,
-	    int depth,
-	    IdentityHashMap<Value, String> valueSet)
-	    throws IOException {
-	int length = length();
+   @Override
+   public void varDumpImpl(Env env,
+           WriteStream out,
+           int depth,
+           IdentityHashMap<Value, String> valueSet)
+           throws IOException {
+      int length = length();
 
-	if (length < 0) {
-	    length = 0;
-	}
+      if (length < 0) {
+         length = 0;
+      }
 
-	out.print("unicode(");
-	out.print(length);
-	out.print(") \"");
+      out.print("unicode(");
+      out.print(length);
+      out.print(") \"");
 
-	for (int i = 0; i < length; i++) {
-	    out.print(charAt(i));
-	}
+      for (int i = 0; i < length; i++) {
+         out.print(charAt(i));
+      }
 
-	out.print("\"");
-    }
+      out.print("\"");
+   }
 
-    /**
-     * Convert to a unicode value.
-     */
-    @Override
-    public StringValue toUnicodeValue() {
-	return this;
-    }
+   /**
+    * Convert to a unicode value.
+    */
+   @Override
+   public StringValue toUnicodeValue() {
+      return this;
+   }
 
-    /**
-     * Convert to a unicode value.
-     */
-    @Override
-    public StringValue toUnicodeValue(Env env) {
-	return this;
-    }
+   /**
+    * Convert to a unicode value.
+    */
+   @Override
+   public StringValue toUnicodeValue(Env env) {
+      return this;
+   }
 
-    /**
-     * Decodes from charset and returns UnicodeValue.
-     *
-     * @param env
-     * @param charset
-     */
-    @Override
-    public StringValue toUnicodeValue(Env env, String charset) {
-	return this;
-    }
+   /**
+    * Decodes from charset and returns UnicodeValue.
+    *
+    * @param env
+    * @param charset
+    */
+   @Override
+   public StringValue toUnicodeValue(Env env, String charset) {
+      return this;
+   }
 
-    /**
-     * Converts to a string builder
-     */
-    @Override
-    public StringValue toStringBuilder() {
-	UnicodeBuilderValue sb = new UnicodeBuilderValue();
+   /**
+    * Converts to a string builder
+    */
+   @Override
+   public StringValue toStringBuilder() {
+      UnicodeBuilderValue sb = new UnicodeBuilderValue();
 
-	sb.append(this);
+      sb.append(this);
 
-	return sb;
-    }
+      return sb;
+   }
 
-    /**
-     * Returns true for UnicodeValue
-     */
-    @Override
-    public boolean isUnicode() {
-	return true;
-    }
+   /**
+    * Returns true for UnicodeValue
+    */
+   @Override
+   public boolean isUnicode() {
+      return true;
+   }
 
-    /**
-     * Cost to convert to a UnicodeValue
-     */
-    public int toUnicodeValueMarshalCost() {
-	return Marshal.COST_IDENTICAL;
-    }
-    /**
-     * Returns true for equality
-     */
-    /*
-    @Override
-    public boolean eq(Value rValue)
-    {
-    rValue = rValue.toValue();
-    
-    if (rValue.isBoolean()) {
-    return toBoolean() == rValue.toBoolean();
-    }
+   /**
+    * Cost to convert to a UnicodeValue
+    */
+   public int toUnicodeValueMarshalCost() {
+      return Marshal.COST_IDENTICAL;
+   }
+   /**
+    * Returns true for equality
+    */
+   /*
+   @Override
+   public boolean eq(Value rValue)
+   {
+   rValue = rValue.toValue();
 
-    int type = getNumericType();
-    
-    if (type == IS_STRING) {
-    if (rValue.isUnicode())
-    return equals(rValue);
-    else if (rValue.isBinary())
-    return equals(rValue.toUnicodeValue(Env.getInstance()));
-    else if (rValue.isLongConvertible())
-    return toLong() ==  rValue.toLong();
-    else
-    return equals(rValue.toStringValue());
-    }
-    else if (rValue.isString() && rValue.length() == 0)
-    return length() == 0;
-    else if (rValue.isNumberConvertible())
-    return toDouble() == rValue.toDouble();
-    else
-    return equals(rValue.toStringValue());
-    }
-     */
+   if (rValue.isBoolean()) {
+   return toBoolean() == rValue.toBoolean();
+   }
+
+   int type = getNumericType();
+
+   if (type == IS_STRING) {
+   if (rValue.isUnicode())
+   return equals(rValue);
+   else if (rValue.isBinary())
+   return equals(rValue.toUnicodeValue(Env.getInstance()));
+   else if (rValue.isLongConvertible())
+   return toLong() ==  rValue.toLong();
+   else
+   return equals(rValue.toStringValue());
+   }
+   else if (rValue.isString() && rValue.length() == 0)
+   return length() == 0;
+   else if (rValue.isNumberConvertible())
+   return toDouble() == rValue.toDouble();
+   else
+   return equals(rValue.toStringValue());
+   }
+    */
 }

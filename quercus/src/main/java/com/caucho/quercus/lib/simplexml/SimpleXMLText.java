@@ -67,42 +67,42 @@ import java.util.logging.*;
  */
 public class SimpleXMLText extends SimpleXMLElement {
 
-    private static final Logger log = Logger.getLogger(SimpleXMLText.class.getName());
-    private static final L10N L = new L10N(SimpleXMLText.class);
+   private static final Logger log = Logger.getLogger(SimpleXMLText.class.getName());
+   private static final L10N L = new L10N(SimpleXMLText.class);
 
-    protected SimpleXMLText(Env env,
-	    QuercusClass cls) {
-	super(env, cls, null, "#text");
-    }
+   protected SimpleXMLText(Env env,
+           QuercusClass cls) {
+      super(env, cls, null, "#text");
+   }
 
-    protected SimpleXMLText(Env env,
-	    QuercusClass cls,
-	    StringValue text) {
-	super(env, cls, null, "#text");
+   protected SimpleXMLText(Env env,
+           QuercusClass cls,
+           StringValue text) {
+      super(env, cls, null, "#text");
 
-	_text = text;
-    }
+      _text = text;
+   }
 
-    protected boolean isElement() {
-	return false;
-    }
+   protected boolean isElement() {
+      return false;
+   }
 
-    protected boolean isText() {
-	return true;
-    }
+   protected boolean isText() {
+      return true;
+   }
 
-    protected void toXMLImpl(StringValue sb) {
-	sb.append(_text);
-    }
+   protected void toXMLImpl(StringValue sb) {
+      sb.append(_text);
+   }
 
-    public StringValue __toString() {
-	return _text;
-    }
+   public StringValue __toString() {
+      return _text;
+   }
 
-    @Override
-    protected void jsonEncodeImpl(Env env, StringValue sb, boolean isTop) {
-	sb.append('"');
-	sb.append(_text);
-	sb.append('"');
-    }
+   @Override
+   protected void jsonEncodeImpl(Env env, StringValue sb, boolean isTop) {
+      sb.append('"');
+      sb.append(_text);
+      sb.append('"');
+   }
 }

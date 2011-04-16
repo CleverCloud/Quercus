@@ -36,35 +36,35 @@ import java.io.InputStream;
 
 public interface DOMFactory {
 
-    Attr createAttr(String name);
+   Attr createAttr(String name);
 
-    Comment createComment();
+   Comment createComment();
 
-    Document createDocument();
+   Document createDocument();
 
-    Document createDocument(DocumentType docType);
+   Document createDocument(DocumentType docType);
 
-    DocumentType createDocumentType(String qualifiedName);
+   DocumentType createDocumentType(String qualifiedName);
 
-    DocumentType createDocumentType(String qualifiedName,
-	    String publicId,
-	    String systemId);
+   DocumentType createDocumentType(String qualifiedName,
+           String publicId,
+           String systemId);
 
-    Element createElement(String name);
+   Element createElement(String name);
 
-    Element createElement(String name, String namespace);
+   Element createElement(String name, String namespace);
 
-    EntityReference createEntityReference(String name);
+   EntityReference createEntityReference(String name);
 
-    ProcessingInstruction createProcessingInstruction(String name);
+   ProcessingInstruction createProcessingInstruction(String name);
 
-    Text createText();
+   Text createText();
 
-    org.w3c.dom.DOMImplementation getImplementation();
+   org.w3c.dom.DOMImplementation getImplementation();
 
-    void parseXMLDocument(Document document, InputStream is, String path)
-	    throws IOException, SAXException;
+   void parseXMLDocument(Document document, InputStream is, String path)
+           throws IOException, SAXException;
 
-    void parseHTMLDocument(Document document, InputStream is, String path)
-	    throws IOException, SAXException;
+   void parseHTMLDocument(Document document, InputStream is, String path)
+           throws IOException, SAXException;
 }

@@ -43,77 +43,77 @@ import java.util.logging.Logger;
  */
 public class JavaModule extends AbstractQuercusModule {
 
-    private static final Logger log =
-	    Logger.getLogger(JavaModule.class.getName());
-    private static final L10N L = new L10N(JavaModule.class);
+   private static final Logger log =
+           Logger.getLogger(JavaModule.class.getName());
+   private static final L10N L = new L10N(JavaModule.class);
 
-    /**
-     * Call the Java constructor and return the wrapped Java object.
-     * If constructor is not available, then return static class definition.
-     */
-    public static Object java(Env env,
-	    String className,
-	    Value[] args) {
-	try {
-	    JavaClassDef def = env.getJavaClassDefinition(className);
+   /**
+    * Call the Java constructor and return the wrapped Java object.
+    * If constructor is not available, then return static class definition.
+    */
+   public static Object java(Env env,
+           String className,
+           Value[] args) {
+      try {
+         JavaClassDef def = env.getJavaClassDefinition(className);
 
-	    if (def == null) {
-		env.warning(L.l("could not find Java class {0}", className));
-		return null;
-	    }
+         if (def == null) {
+            env.warning(L.l("could not find Java class {0}", className));
+            return null;
+         }
 
-	    Value newObj = def.callNew(env, args);
+         Value newObj = def.callNew(env, args);
 
-	    if (newObj.isNull()) {
-		return new JavaValue(env, null, def);
-	    } else {
-		return newObj;
-	    }
+         if (newObj.isNull()) {
+            return new JavaValue(env, null, def);
+         } else {
+            return newObj;
+         }
 
-	} catch (Exception e) {
-	    log.log(Level.FINE, e.getMessage(), e);
-	    env.warning(e);
+      } catch (Exception e) {
+         log.log(Level.FINE, e.getMessage(), e);
+         env.warning(e);
 
-	    return null;
-	}
-    }
+         return null;
+      }
+   }
 
-    /**
-     * Returns the static class definition of a Java class.
-     */
-    public static Object java_class(Env env,
-	    String className) {
-	try {
-	    JavaClassDef def = env.getJavaClassDefinition(className);
+   /**
+    * Returns the static class definition of a Java class.
+    */
+   public static Object java_class(Env env,
+           String className) {
+      try {
+         JavaClassDef def = env.getJavaClassDefinition(className);
 
-	    if (def == null) {
-		env.warning(L.l("could not find Java class {0}", className));
-		return null;
-	    }
+         if (def == null) {
+            env.warning(L.l("could not find Java class {0}", className));
+            return null;
+         }
 
-	    return new JavaValue(env, def.getType(), def);
-	} catch (Throwable e) {
-	    log.log(Level.FINE, e.getMessage(), e);
-	    env.warning(e);
+         return new JavaValue(env, def.getType(), def);
+      } catch (Throwable e) {
+         log.log(Level.FINE, e.getMessage(), e);
+         env.warning(e);
 
-	    return null;
-	}
-    }
+         return null;
+      }
+   }
 
-    /**
-     * Returns the name of the java class.
-     */
-    public static String get_java_class_name(Env env, Value value) {
-	if (value instanceof JavaValue) {
-	    Object obj = value.toJavaObject();
+   /**
+    * Returns the name of the java class.
+    */
+   public static String get_java_class_name(Env env, Value value) {
+      if (value instanceof JavaValue) {
+         Object obj = value.toJavaObject();
 
-	    if (obj == null) {
-		return String.valueOf(null);
-	    } else {
-		return obj.getClass().getName();
-	    }
-	}
+         if (obj == null) {
+            return String.valueOf(null);
+         } else {
+            return obj.getClass().getName();
+         }
+      }
 
-	return value.getClass().getName();
-    }
+      return value.getClass().getName();
+   }
 }

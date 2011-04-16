@@ -36,8 +36,8 @@ import com.caucho.quercus.env.Value;
  */
 public interface InstanceInitializer {
 
-    /**
-     * Creates a new instance.
-     */
-    public void initInstance(Env env, Value value);
+   /**
+    * Creates a new instance.
+    */
+   public void initInstance(Env env, Value value);
 }

@@ -42,60 +42,60 @@ import java.util.ArrayList;
  */
 public class ObjectNewExpr extends Expr {
 
-    private static final L10N L = new L10N(ObjectNewExpr.class);
-    protected final String _name;
-    protected final Expr[] _args;
+   private static final L10N L = new L10N(ObjectNewExpr.class);
+   protected final String _name;
+   protected final Expr[] _args;
 
-    public ObjectNewExpr(Location location, String name, ArrayList<Expr> args) {
-	super(location);
-	_name = name.intern();
+   public ObjectNewExpr(Location location, String name, ArrayList<Expr> args) {
+      super(location);
+      _name = name.intern();
 
-	_args = new Expr[args.size()];
-	args.toArray(_args);
-    }
+      _args = new Expr[args.size()];
+      args.toArray(_args);
+   }
 
-    public ObjectNewExpr(Location location, String name, Expr[] args) {
-	super(location);
-	_name = name.intern();
-	_args = args;
-    }
+   public ObjectNewExpr(Location location, String name, Expr[] args) {
+      super(location);
+      _name = name.intern();
+      _args = args;
+   }
 
-    public ObjectNewExpr(String name, ArrayList<Expr> args) {
-	this(Location.UNKNOWN, name, args);
-    }
+   public ObjectNewExpr(String name, ArrayList<Expr> args) {
+      this(Location.UNKNOWN, name, args);
+   }
 
-    public ObjectNewExpr(String name, Expr[] args) {
-	this(Location.UNKNOWN, name, args);
-    }
+   public ObjectNewExpr(String name, Expr[] args) {
+      this(Location.UNKNOWN, name, args);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value[] args = new Value[_args.length];
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value[] args = new Value[_args.length];
 
-	for (int i = 0; i < args.length; i++) {
-	    args[i] = _args[i].evalArg(env, true);
-	}
+      for (int i = 0; i < args.length; i++) {
+         args[i] = _args[i].evalArg(env, true);
+      }
 
-	env.pushCall(this, NullValue.NULL, args);
+      env.pushCall(this, NullValue.NULL, args);
 
-	try {
-	    QuercusClass cl = env.findAbstractClass(_name);
+      try {
+         QuercusClass cl = env.findAbstractClass(_name);
 
-	    env.checkTimeout();
+         env.checkTimeout();
 
-	    return cl.callNew(env, args);
-	} finally {
-	    env.popCall();
-	}
-    }
+         return cl.callNew(env, args);
+      } finally {
+         env.popCall();
+      }
+   }
 
-    public String toString() {
-	return _name + "()";
-    }
+   public String toString() {
+      return _name + "()";
+   }
 }

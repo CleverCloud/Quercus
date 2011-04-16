@@ -36,32 +36,32 @@ import com.caucho.quercus.env.*;
  */
 public class ToUnicodeExpr extends ToStringExpr {
 
-    public ToUnicodeExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public ToUnicodeExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public ToUnicodeExpr(Expr expr) {
-	super(expr);
-    }
+   public ToUnicodeExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value value = _expr.eval(env).toValue();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value value = _expr.eval(env).toValue();
 
-	if (value.isUnicode()) {
-	    return value;
-	} else {
-	    return value.toString(env).toUnicode(env);
-	}
-    }
+      if (value.isUnicode()) {
+         return value;
+      } else {
+         return value.toString(env).toUnicode(env);
+      }
+   }
 
-    public String toString() {
-	return "((unicode) " + _expr + ")";
-    }
+   public String toString() {
+      return "((unicode) " + _expr + ")";
+   }
 }

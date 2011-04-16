@@ -51,166 +51,166 @@ import java.util.TreeSet;
  */
 public class CopyObjectExtValue extends ObjectExtValue {
 
-    private CopyRoot _root;
+   private CopyRoot _root;
 
-    public CopyObjectExtValue(Env env, ObjectExtValue copy, CopyRoot root) {
-	super(env, copy, root);
+   public CopyObjectExtValue(Env env, ObjectExtValue copy, CopyRoot root) {
+      super(env, copy, root);
 
-	_root = root;
-    }
+      _root = root;
+   }
 
-    /**
-     * Returns the array ref.
-     */
-    @Override
-    public Var getFieldVar(Env env, StringValue name) {
-	_root.setModified();
+   /**
+    * Returns the array ref.
+    */
+   @Override
+   public Var getFieldVar(Env env, StringValue name) {
+      _root.setModified();
 
-	return super.getFieldVar(env, name);
-    }
+      return super.getFieldVar(env, name);
+   }
 
-    /**
-     * Returns the array ref.
-     */
-    @Override
-    public Var getThisFieldVar(Env env, StringValue name) {
-	_root.setModified();
+   /**
+    * Returns the array ref.
+    */
+   @Override
+   public Var getThisFieldVar(Env env, StringValue name) {
+      _root.setModified();
 
-	return super.getThisFieldVar(env, name);
-    }
+      return super.getThisFieldVar(env, name);
+   }
 
-    /**
-     * Returns the value as an argument which may be a reference.
-     */
-    @Override
-    public Value getFieldArg(Env env, StringValue name, boolean isTop) {
-	_root.setModified();
+   /**
+    * Returns the value as an argument which may be a reference.
+    */
+   @Override
+   public Value getFieldArg(Env env, StringValue name, boolean isTop) {
+      _root.setModified();
 
-	return super.getFieldArg(env, name, isTop);
-    }
+      return super.getFieldArg(env, name, isTop);
+   }
 
-    /**
-     * Returns the value as an argument which may be a reference.
-     */
-    @Override
-    public Value getThisFieldArg(Env env, StringValue name) {
-	_root.setModified();
+   /**
+    * Returns the value as an argument which may be a reference.
+    */
+   @Override
+   public Value getThisFieldArg(Env env, StringValue name) {
+      _root.setModified();
 
-	return super.getThisFieldArg(env, name);
-    }
+      return super.getThisFieldArg(env, name);
+   }
 
-    /**
-     * Returns the value as an argument which may be a reference.
-     */
-    @Override
-    public Value getFieldArgRef(Env env, StringValue name) {
-	_root.setModified();
+   /**
+    * Returns the value as an argument which may be a reference.
+    */
+   @Override
+   public Value getFieldArgRef(Env env, StringValue name) {
+      _root.setModified();
 
-	return super.getFieldArgRef(env, name);
-    }
+      return super.getFieldArgRef(env, name);
+   }
 
-    /**
-     * Returns the value as an argument which may be a reference.
-     */
-    @Override
-    public Value getThisFieldArgRef(Env env, StringValue name) {
-	_root.setModified();
+   /**
+    * Returns the value as an argument which may be a reference.
+    */
+   @Override
+   public Value getThisFieldArgRef(Env env, StringValue name) {
+      _root.setModified();
 
-	return super.getThisFieldArgRef(env, name);
-    }
+      return super.getThisFieldArgRef(env, name);
+   }
 
-    /**
-     * Adds a new value.
-     */
-    @Override
-    public Value putField(Env env, StringValue name, Value value) {
-	_root.setModified();
+   /**
+    * Adds a new value.
+    */
+   @Override
+   public Value putField(Env env, StringValue name, Value value) {
+      _root.setModified();
 
-	return super.putField(env, name, value);
-    }
+      return super.putField(env, name, value);
+   }
 
-    /**
-     * Sets/adds field to this object.
-     */
-    @Override
-    public Value putThisField(Env env, StringValue name, Value value) {
-	_root.setModified();
+   /**
+    * Sets/adds field to this object.
+    */
+   @Override
+   public Value putThisField(Env env, StringValue name, Value value) {
+      _root.setModified();
 
-	return super.putThisField(env, name, value);
-    }
+      return super.putThisField(env, name, value);
+   }
 
-    protected Value putFieldExt(Env env, StringValue name, Value value) {
-	return null;
-    }
+   protected Value putFieldExt(Env env, StringValue name, Value value) {
+      return null;
+   }
 
-    /**
-     * Adds a new value to the object.
-     */
-    @Override
-    public void initField(StringValue key,
-	    Value value,
-	    FieldVisibility visibility) {
-	_root.setModified();
+   /**
+    * Adds a new value to the object.
+    */
+   @Override
+   public void initField(StringValue key,
+           Value value,
+           FieldVisibility visibility) {
+      _root.setModified();
 
-	super.initField(key, value, visibility);
-    }
+      super.initField(key, value, visibility);
+   }
 
-    /**
-     * Removes a value.
-     */
-    @Override
-    public void unsetField(StringValue name) {
-	_root.setModified();
+   /**
+    * Removes a value.
+    */
+   @Override
+   public void unsetField(StringValue name) {
+      _root.setModified();
 
-	super.unsetField(name);
-    }
+      super.unsetField(name);
+   }
 
-    /**
-     * Removes the field ref.
-     */
-    @Override
-    public void unsetArray(Env env, StringValue name, Value index) {
-	_root.setModified();
+   /**
+    * Removes the field ref.
+    */
+   @Override
+   public void unsetArray(Env env, StringValue name, Value index) {
+      _root.setModified();
 
-	super.unsetArray(env, name, index);
-    }
+      super.unsetArray(env, name, index);
+   }
 
-    /**
-     * Removes the field ref.
-     */
-    public void unsetThisArray(Env env, StringValue name, Value index) {
-	_root.setModified();
+   /**
+    * Removes the field ref.
+    */
+   public void unsetThisArray(Env env, StringValue name, Value index) {
+      _root.setModified();
 
-	super.unsetThisArray(env, name, index);
-    }
+      super.unsetThisArray(env, name, index);
+   }
 
-    /**
-     * Sets the array value with the given key.
-     */
-    @Override
-    public Value put(Value key, Value value) {
-	_root.setModified();
+   /**
+    * Sets the array value with the given key.
+    */
+   @Override
+   public Value put(Value key, Value value) {
+      _root.setModified();
 
-	return super.put(key, value);
-    }
+      return super.put(key, value);
+   }
 
-    /**
-     * Appends a new array value
-     */
-    @Override
-    public Value put(Value value) {
-	_root.setModified();
+   /**
+    * Appends a new array value
+    */
+   @Override
+   public Value put(Value value) {
+      _root.setModified();
 
-	return super.put(value);
-    }
+      return super.put(value);
+   }
 
-    /**
-     * Unsets the array value
-     */
-    @Override
-    public Value remove(Value key) {
-	_root.setModified();
+   /**
+    * Unsets the array value
+    */
+   @Override
+   public Value remove(Value key) {
+      _root.setModified();
 
-	return super.remove(key);
-    }
+      return super.remove(key);
+   }
 }

@@ -38,30 +38,30 @@ import com.caucho.quercus.env.Value;
  */
 public class ConstDirExpr extends Expr {
 
-    protected final String _dirName;
+   protected final String _dirName;
 
-    public ConstDirExpr(Location location, String dirName) {
-	super(location);
+   public ConstDirExpr(Location location, String dirName) {
+      super(location);
 
-	_dirName = dirName;
-    }
+      _dirName = dirName;
+   }
 
-    public ConstDirExpr(String dirName) {
-	this(Location.UNKNOWN, dirName);
-    }
+   public ConstDirExpr(String dirName) {
+      this(Location.UNKNOWN, dirName);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return env.createString(_dirName);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return env.createString(_dirName);
+   }
 
-    public String toString() {
-	return _dirName;
-    }
+   public String toString() {
+      return _dirName;
+   }
 }

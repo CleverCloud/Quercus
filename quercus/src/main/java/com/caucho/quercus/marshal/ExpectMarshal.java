@@ -36,60 +36,60 @@ import com.caucho.quercus.expr.Expr;
 
 public class ExpectMarshal extends Marshal {
 
-    protected enum Type {
+   protected enum Type {
 
-	STRING, NUMERIC, BOOLEAN
-    }
-    private Type _type;
-    public static final Marshal MARSHAL_EXPECT_STRING = new ExpectMarshal(Type.STRING);
-    public static final Marshal MARSHAL_EXPECT_NUMERIC = new ExpectMarshal(Type.NUMERIC);
-    public static final Marshal MARSHAL_EXPECT_BOOLEAN = new ExpectMarshal(Type.BOOLEAN);
+      STRING, NUMERIC, BOOLEAN
+   }
+   private Type _type;
+   public static final Marshal MARSHAL_EXPECT_STRING = new ExpectMarshal(Type.STRING);
+   public static final Marshal MARSHAL_EXPECT_NUMERIC = new ExpectMarshal(Type.NUMERIC);
+   public static final Marshal MARSHAL_EXPECT_BOOLEAN = new ExpectMarshal(Type.BOOLEAN);
 
-    protected ExpectMarshal(Type type) {
-	_type = type;
-    }
+   protected ExpectMarshal(Type type) {
+      _type = type;
+   }
 
-    protected Value expect(Env env, Value value) {
-	if (_type == Type.STRING) {
-	    return env.expectString(value);
-	} else if (_type == Type.NUMERIC) {
-	    return env.expectNumeric(value);
-	} else {
-	    return env.expectBoolean(value);
-	}
-    }
+   protected Value expect(Env env, Value value) {
+      if (_type == Type.STRING) {
+         return env.expectString(value);
+      } else if (_type == Type.NUMERIC) {
+         return env.expectNumeric(value);
+      } else {
+         return env.expectBoolean(value);
+      }
+   }
 
-    public boolean isReadOnly() {
-	return false;
-    }
+   public boolean isReadOnly() {
+      return false;
+   }
 
-    /**
-     * Return true if is a Value.
-     */
-    @Override
-    public boolean isValue() {
-	return true;
-    }
+   /**
+    * Return true if is a Value.
+    */
+   @Override
+   public boolean isValue() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return expect(env, expr.eval(env));
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return expect(env, expr.eval(env));
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return expect(env, value.toValue());
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return expect(env, value.toValue());
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	return (Value) value;
-    }
+   public Value unmarshal(Env env, Object value) {
+      return (Value) value;
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	return Marshal.COST_VALUE;
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      return Marshal.COST_VALUE;
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return Value.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return Value.class;
+   }
 }

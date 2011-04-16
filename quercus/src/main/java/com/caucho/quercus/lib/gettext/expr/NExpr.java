@@ -30,12 +30,12 @@ package com.caucho.quercus.lib.gettext.expr;
 
 public class NExpr implements Expr {
 
-    public static final Expr N_EXPR = new NExpr();
+   public static final Expr N_EXPR = new NExpr();
 
-    private NExpr() {
-    }
+   private NExpr() {
+   }
 
-    public int eval(int n) {
-	return n;
-    }
+   public int eval(int n) {
+      return n;
+   }
 }

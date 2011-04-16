@@ -45,100 +45,100 @@ import com.caucho.util.L10N;
  */
 public class ClassVarFieldVarExpr extends AbstractVarExpr {
 
-    private static final L10N L = new L10N(ClassVarFieldVarExpr.class);
-    protected final Expr _className;
-    protected final Expr _varName;
+   private static final L10N L = new L10N(ClassVarFieldVarExpr.class);
+   protected final Expr _className;
+   protected final Expr _varName;
 
-    public ClassVarFieldVarExpr(Expr className, Expr varName) {
-	_className = className;
+   public ClassVarFieldVarExpr(Expr className, Expr varName) {
+      _className = className;
 
-	_varName = varName;
-    }
+      _varName = varName;
+   }
 
-    //
-    // function call creation
-    //
-    /**
-     * Creates a function call expression
-     */
-    @Override
-    public Expr createCall(QuercusParser parser,
-	    Location location,
-	    ArrayList<Expr> args)
-	    throws IOException {
-	ExprFactory factory = parser.getExprFactory();
+   //
+   // function call creation
+   //
+   /**
+    * Creates a function call expression
+    */
+   @Override
+   public Expr createCall(QuercusParser parser,
+           Location location,
+           ArrayList<Expr> args)
+           throws IOException {
+      ExprFactory factory = parser.getExprFactory();
 
-	return factory.createClassMethodCall(location, _className, _varName, args);
-    }
+      return factory.createClassMethodCall(location, _className, _varName, args);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value eval(Env env) {
-	String className = _className.evalString(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value eval(Env env) {
+      String className = _className.evalString(env);
 
-	QuercusClass qClass = env.getClass(className);
+      QuercusClass qClass = env.getClass(className);
 
-	StringValue varName = _varName.evalStringValue(env);
+      StringValue varName = _varName.evalStringValue(env);
 
-	return qClass.getStaticFieldValue(env, varName);
-    }
+      return qClass.getStaticFieldValue(env, varName);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Var evalVar(Env env) {
-	String className = _className.evalString(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Var evalVar(Env env) {
+      String className = _className.evalString(env);
 
-	QuercusClass qClass = env.getClass(className);
+      QuercusClass qClass = env.getClass(className);
 
-	StringValue varName = _varName.evalStringValue(env);
+      StringValue varName = _varName.evalStringValue(env);
 
-	return qClass.getStaticFieldVar(env, varName);
-    }
+      return qClass.getStaticFieldVar(env, varName);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalAssignRef(Env env, Value value) {
-	String className = _className.evalString(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalAssignRef(Env env, Value value) {
+      String className = _className.evalString(env);
 
-	QuercusClass qClass = env.getClass(className);
+      QuercusClass qClass = env.getClass(className);
 
-	StringValue varName = _varName.evalStringValue(env);
+      StringValue varName = _varName.evalStringValue(env);
 
-	return qClass.setStaticFieldRef(env, varName, value);
-    }
+      return qClass.setStaticFieldRef(env, varName, value);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public void evalUnset(Env env) {
-	env.error(getLocation(),
-		L.l("{0}::${1}: Cannot unset class variables.",
-		_className, _varName));
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public void evalUnset(Env env) {
+      env.error(getLocation(),
+              L.l("{0}::${1}: Cannot unset class variables.",
+              _className, _varName));
+   }
 
-    public String toString() {
-	return _className + "::$" + _varName;
-    }
+   public String toString() {
+      return _className + "::$" + _varName;
+   }
 }

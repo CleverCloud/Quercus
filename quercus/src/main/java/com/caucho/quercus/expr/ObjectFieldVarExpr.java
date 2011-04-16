@@ -43,160 +43,160 @@ import com.caucho.util.L10N;
  */
 public class ObjectFieldVarExpr extends AbstractVarExpr {
 
-    private static final L10N L = new L10N(ObjectFieldVarExpr.class);
-    protected final Expr _objExpr;
-    protected final Expr _nameExpr;
+   private static final L10N L = new L10N(ObjectFieldVarExpr.class);
+   protected final Expr _objExpr;
+   protected final Expr _nameExpr;
 
-    public ObjectFieldVarExpr(Location location, Expr objExpr, Expr nameExpr) {
-	super(location);
-	_objExpr = objExpr;
+   public ObjectFieldVarExpr(Location location, Expr objExpr, Expr nameExpr) {
+      super(location);
+      _objExpr = objExpr;
 
-	_nameExpr = nameExpr;
-    }
+      _nameExpr = nameExpr;
+   }
 
-    public ObjectFieldVarExpr(Expr objExpr, Expr nameExpr) {
-	_objExpr = objExpr;
+   public ObjectFieldVarExpr(Expr objExpr, Expr nameExpr) {
+      _objExpr = objExpr;
 
-	_nameExpr = nameExpr;
-    }
+      _nameExpr = nameExpr;
+   }
 
-    //
-    // function call creation
-    //
-    /**
-     * Creates a function call expression
-     */
-    @Override
-    public Expr createCall(QuercusParser parser,
-	    Location location,
-	    ArrayList<Expr> args)
-	    throws IOException {
-	ExprFactory factory = parser.getExprFactory();
+   //
+   // function call creation
+   //
+   /**
+    * Creates a function call expression
+    */
+   @Override
+   public Expr createCall(QuercusParser parser,
+           Location location,
+           ArrayList<Expr> args)
+           throws IOException {
+      ExprFactory factory = parser.getExprFactory();
 
-	return factory.createMethodCall(location, _objExpr, _nameExpr, args);
-    }
+      return factory.createMethodCall(location, _objExpr, _nameExpr, args);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalArg(Env env, boolean isTop) {
-	Value value = _objExpr.evalArg(env, false);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalArg(Env env, boolean isTop) {
+      Value value = _objExpr.evalArg(env, false);
 
-	// TODO: getFieldArg(isTop)
+      // TODO: getFieldArg(isTop)
 
-	return value.getFieldArg(env, _nameExpr.evalStringValue(env), isTop);
-    }
+      return value.getFieldArg(env, _nameExpr.evalStringValue(env), isTop);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Var evalVar(Env env) {
-	// quercus/0d1k
-	Value value = _objExpr.evalObject(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Var evalVar(Env env) {
+      // quercus/0d1k
+      Value value = _objExpr.evalObject(env);
 
-	return value.getFieldVar(env, _nameExpr.evalStringValue(env));
-    }
+      return value.getFieldVar(env, _nameExpr.evalStringValue(env));
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value obj = _objExpr.eval(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value obj = _objExpr.eval(env);
 
-	return obj.getField(env, _nameExpr.evalStringValue(env));
-    }
+      return obj.getField(env, _nameExpr.evalStringValue(env));
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalAssignValue(Env env, Value value) {
-	Value obj = _objExpr.evalObject(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalAssignValue(Env env, Value value) {
+      Value obj = _objExpr.evalObject(env);
 
-	obj.putField(env, _nameExpr.evalStringValue(env), value);
+      obj.putField(env, _nameExpr.evalStringValue(env), value);
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalAssignRef(Env env, Value value) {
-	Value obj = _objExpr.evalObject(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalAssignRef(Env env, Value value) {
+      Value obj = _objExpr.evalObject(env);
 
-	obj.putField(env, _nameExpr.evalStringValue(env), value);
+      obj.putField(env, _nameExpr.evalStringValue(env), value);
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates the expression, creating an array if the field is unset.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value evalArray(Env env) {
-	Value obj = _objExpr.evalObject(env);
+   /**
+    * Evaluates the expression, creating an array if the field is unset.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value evalArray(Env env) {
+      Value obj = _objExpr.evalObject(env);
 
-	return obj.getFieldArray(env, _nameExpr.evalStringValue(env));
-    }
+      return obj.getFieldArray(env, _nameExpr.evalStringValue(env));
+   }
 
-    /**
-     * Evaluates the expression, creating an object if the field is unset.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value evalObject(Env env) {
-	Value obj = _objExpr.evalObject(env);
+   /**
+    * Evaluates the expression, creating an object if the field is unset.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value evalObject(Env env) {
+      Value obj = _objExpr.evalObject(env);
 
-	return obj.getFieldObject(env, _nameExpr.evalStringValue(env));
-    }
+      return obj.getFieldObject(env, _nameExpr.evalStringValue(env));
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public void evalUnset(Env env) {
-	Value obj = _objExpr.eval(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public void evalUnset(Env env) {
+      Value obj = _objExpr.eval(env);
 
-	obj.unsetField(_nameExpr.evalStringValue(env));
-    }
+      obj.unsetField(_nameExpr.evalStringValue(env));
+   }
 
-    public String toString() {
-	return _objExpr + "->{" + _nameExpr + "}";
-    }
+   public String toString() {
+      return _objExpr + "->{" + _nameExpr + "}";
+   }
 
-    @Override
-    public boolean evalIsset(Env env) {
-	Value object = _objExpr.eval(env);
-	return object.issetField(_nameExpr.evalStringValue(env));
-    }
+   @Override
+   public boolean evalIsset(Env env) {
+      Value object = _objExpr.eval(env);
+      return object.issetField(_nameExpr.evalStringValue(env));
+   }
 }

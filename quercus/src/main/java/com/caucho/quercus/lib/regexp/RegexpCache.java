@@ -36,42 +36,42 @@ import com.caucho.quercus.env.StringValue;
  */
 public class RegexpCache {
 
-    private final Regexp[] _cache;
-    private int _head;
-    private static final int MAX_SIZE = 4;
+   private final Regexp[] _cache;
+   private int _head;
+   private static final int MAX_SIZE = 4;
 
-    public RegexpCache() {
-	_cache = new Regexp[MAX_SIZE];
-    }
+   public RegexpCache() {
+      _cache = new Regexp[MAX_SIZE];
+   }
 
-    public Regexp get(Env env, StringValue str) {
-	int head = _head;
+   public Regexp get(Env env, StringValue str) {
+      int head = _head;
 
-	for (int i = 0; i < MAX_SIZE; i++) {
-	    Regexp regexp = _cache[(head + i) % MAX_SIZE];
+      for (int i = 0; i < MAX_SIZE; i++) {
+         Regexp regexp = _cache[(head + i) % MAX_SIZE];
 
-	    if (regexp == null) {
-		break;
-	    } else {
-		StringValue rawRegexp = regexp.getRawRegexp();
+         if (regexp == null) {
+            break;
+         } else {
+            StringValue rawRegexp = regexp.getRawRegexp();
 
-		if (rawRegexp == str || rawRegexp.equals(str)) {
-		    return regexp;
-		}
-	    }
-	}
+            if (rawRegexp == str || rawRegexp.equals(str)) {
+               return regexp;
+            }
+         }
+      }
 
-	Regexp regexp = RegexpModule.createRegexp(env, str);
+      Regexp regexp = RegexpModule.createRegexp(env, str);
 
-	head = head - 1;
+      head = head - 1;
 
-	if (head < 0) {
-	    head = MAX_SIZE - 1;
-	}
+      if (head < 0) {
+         head = MAX_SIZE - 1;
+      }
 
-	_cache[head] = regexp;
-	_head = head;
+      _cache[head] = regexp;
+      _head = head;
 
-	return regexp;
-    }
+      return regexp;
+   }
 }

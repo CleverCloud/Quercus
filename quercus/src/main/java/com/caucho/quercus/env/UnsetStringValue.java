@@ -29,27 +29,27 @@
 package com.caucho.quercus.env;
 
 public class UnsetStringValue
-	extends StringBuilderValue {
+        extends StringBuilderValue {
 
-    public static final UnsetStringValue UNSET = new UnsetStringValue();
+   public static final UnsetStringValue UNSET = new UnsetStringValue();
 
-    private UnsetStringValue() {
-	super("");
-    }
+   private UnsetStringValue() {
+      super("");
+   }
 
-    /**
-     * Returns true if string is not empty.
-     */
-    @Override
-    public boolean isset() {
-	return false;
-    }
+   /**
+    * Returns true if string is not empty.
+    */
+   @Override
+   public boolean isset() {
+      return false;
+   }
 
-    /**
-     * Returns the character at an index
-     */
-    @Override
-    public Value charValueAt(long index) {
-	return this;
-    }
+   /**
+    * Returns the character at an index
+    */
+   @Override
+   public Value charValueAt(long index) {
+      return this;
+   }
 }

@@ -47,142 +47,142 @@ import java.util.Locale;
  */
 class GettextResource {
 
-    private Env _env;
-    protected Path _pathPO;
-    private Path _pathMO;
-    private Path _currentPath;
-    private BasicDependencyContainer _depend;
-    private PluralExpr _pluralExpr;
-    private HashMap<StringValue, ArrayList<StringValue>> _translations;
-    private String _charset;
+   private Env _env;
+   protected Path _pathPO;
+   private Path _pathMO;
+   private Path _currentPath;
+   private BasicDependencyContainer _depend;
+   private PluralExpr _pluralExpr;
+   private HashMap<StringValue, ArrayList<StringValue>> _translations;
+   private String _charset;
 
-    protected GettextResource(Env env,
-	    Path root,
-	    Locale locale,
-	    CharSequence category,
-	    CharSequence domain) {
-	_env = env;
+   protected GettextResource(Env env,
+           Path root,
+           Locale locale,
+           CharSequence category,
+           CharSequence domain) {
+      _env = env;
 
-	StringBuilder sb = new StringBuilder(locale.toString());
-	sb.append('/');
-	sb.append(category);
-	sb.append('/');
-	sb.append(domain);
-	sb.append(".po");
+      StringBuilder sb = new StringBuilder(locale.toString());
+      sb.append('/');
+      sb.append(category);
+      sb.append('/');
+      sb.append(domain);
+      sb.append(".po");
 
-	_pathPO = lookupPath(env, root, sb.toString());
+      _pathPO = lookupPath(env, root, sb.toString());
 
-	sb.setCharAt(sb.length() - 2, 'm');
-	_pathMO = lookupPath(env, root, sb.toString());
+      sb.setCharAt(sb.length() - 2, 'm');
+      _pathMO = lookupPath(env, root, sb.toString());
 
-	init();
-    }
+      init();
+   }
 
-    private Path lookupPath(Env env, Path root, String relPath) {
-	return root.lookup(relPath);
-    }
+   private Path lookupPath(Env env, Path root, String relPath) {
+      return root.lookup(relPath);
+   }
 
-    private void init() {
-	if (_pathPO != null && _pathPO.exists()) {
-	    _currentPath = _pathPO;
-	} else if (_pathMO != null && _pathMO.exists()) {
-	    _currentPath = _pathMO;
-	} else {
-	    return;
-	}
+   private void init() {
+      if (_pathPO != null && _pathPO.exists()) {
+         _currentPath = _pathPO;
+      } else if (_pathMO != null && _pathMO.exists()) {
+         _currentPath = _pathMO;
+      } else {
+         return;
+      }
 
-	try {
-	    GettextParser parser;
+      try {
+         GettextParser parser;
 
-	    if (_depend == null) {
-		_depend = new BasicDependencyContainer();
-	    }
+         if (_depend == null) {
+            _depend = new BasicDependencyContainer();
+         }
 
-	    _depend.add(new Depend(_currentPath));
+         _depend.add(new Depend(_currentPath));
 
-	    if (_currentPath == _pathPO) {
-		parser = new POFileParser(_env, _currentPath);
-	    } else {
-		parser = new MOFileParser(_env, _currentPath);
-	    }
+         if (_currentPath == _pathPO) {
+            parser = new POFileParser(_env, _currentPath);
+         } else {
+            parser = new MOFileParser(_env, _currentPath);
+         }
 
-	    _pluralExpr = parser.getPluralExpr();
-	    _translations = parser.readTranslations();
-	    _charset = parser.getCharset();
+         _pluralExpr = parser.getPluralExpr();
+         _translations = parser.readTranslations();
+         _charset = parser.getCharset();
 
-	    parser.close();
+         parser.close();
 
-	} catch (IOException e) {
-	    throw new QuercusModuleException(e.getMessage());
-	}
-    }
+      } catch (IOException e) {
+         throw new QuercusModuleException(e.getMessage());
+      }
+   }
 
-    /**
-     * Returns the translation for this singular key.
-     *
-     * @param key
-     */
-    protected StringValue getTranslation(StringValue key) {
-	if (isModified()) {
-	    init();
-	}
+   /**
+    * Returns the translation for this singular key.
+    *
+    * @param key
+    */
+   protected StringValue getTranslation(StringValue key) {
+      if (isModified()) {
+         init();
+      }
 
-	return getTranslationImpl(key, 0);
-    }
+      return getTranslationImpl(key, 0);
+   }
 
-    private boolean isModified() {
-	if (_depend == null) {
-	    return true;
-	}
+   private boolean isModified() {
+      if (_depend == null) {
+         return true;
+      }
 
-	return _depend.isModified();
-    }
+      return _depend.isModified();
+   }
 
-    /**
-     * Returns the translation for this plural key.
-     *
-     * @param key
-     * @param quantity
-     */
-    protected StringValue getTranslation(StringValue key, int quantity) {
-	if (isModified()) {
-	    init();
-	}
+   /**
+    * Returns the translation for this plural key.
+    *
+    * @param key
+    * @param quantity
+    */
+   protected StringValue getTranslation(StringValue key, int quantity) {
+      if (isModified()) {
+         init();
+      }
 
-	if (_pluralExpr != null) {
-	    return getTranslationImpl(key, _pluralExpr.eval(quantity));
-	} else {
-	    return null;
-	}
-    }
+      if (_pluralExpr != null) {
+         return getTranslationImpl(key, _pluralExpr.eval(quantity));
+      } else {
+         return null;
+      }
+   }
 
-    /**
-     * Returns the translation for this key at the specified index in the array.
-     *
-     * @param key to find translation of
-     * @param index in the array for this key
-     *
-     * @return translated string, else null on error.
-     */
-    protected StringValue getTranslationImpl(StringValue key, int index) {
-	if (_translations == null) {
-	    return null;
-	}
+   /**
+    * Returns the translation for this key at the specified index in the array.
+    *
+    * @param key to find translation of
+    * @param index in the array for this key
+    *
+    * @return translated string, else null on error.
+    */
+   protected StringValue getTranslationImpl(StringValue key, int index) {
+      if (_translations == null) {
+         return null;
+      }
 
-	ArrayList<StringValue> pluralForms = _translations.get(key);
+      ArrayList<StringValue> pluralForms = _translations.get(key);
 
-	if (pluralForms == null || pluralForms.size() == 0) {
-	    return null;
-	}
+      if (pluralForms == null || pluralForms.size() == 0) {
+         return null;
+      }
 
-	if (index < pluralForms.size()) {
-	    return pluralForms.get(index);
-	} else {
-	    return pluralForms.get(0);
-	}
-    }
+      if (index < pluralForms.size()) {
+         return pluralForms.get(index);
+      } else {
+         return pluralForms.get(0);
+      }
+   }
 
-    protected String getCharset() {
-	return _charset;
-    }
+   protected String getCharset() {
+      return _charset;
+   }
 }

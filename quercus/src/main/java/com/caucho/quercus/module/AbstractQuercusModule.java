@@ -41,42 +41,42 @@ import java.util.Map;
  */
 public class AbstractQuercusModule implements QuercusModule {
 
-    protected static final int PHP_INI_USER = IniDefinition.PHP_INI_USER;
-    protected static final int PHP_INI_PERDIR = IniDefinition.PHP_INI_PERDIR;
-    protected static final int PHP_INI_SYSTEM = IniDefinition.PHP_INI_SYSTEM;
-    protected static final int PHP_INI_ALL = IniDefinition.PHP_INI_ALL;
-    private static final HashMap<StringValue, Value> NULL_MAP = new HashMap<StringValue, Value>();
+   protected static final int PHP_INI_USER = IniDefinition.PHP_INI_USER;
+   protected static final int PHP_INI_PERDIR = IniDefinition.PHP_INI_PERDIR;
+   protected static final int PHP_INI_SYSTEM = IniDefinition.PHP_INI_SYSTEM;
+   protected static final int PHP_INI_ALL = IniDefinition.PHP_INI_ALL;
+   private static final HashMap<StringValue, Value> NULL_MAP = new HashMap<StringValue, Value>();
 
-    public Map<StringValue, Value> getConstMap() {
-	return NULL_MAP;
-    }
+   public Map<StringValue, Value> getConstMap() {
+      return NULL_MAP;
+   }
 
-    /**
-     * Returns the default quercus.ini values.
-     */
-    public IniDefinitions getIniDefinitions() {
-	return IniDefinitions.EMPTY;
-    }
+   /**
+    * Returns the default quercus.ini values.
+    */
+   public IniDefinitions getIniDefinitions() {
+      return IniDefinitions.EMPTY;
+   }
 
-    /**
-     * Returns the extensions loaded by the module.
-     */
-    public String[] getLoadedExtensions() {
-	return new String[0];
-    }
+   /**
+    * Returns the extensions loaded by the module.
+    */
+   public String[] getLoadedExtensions() {
+      return new String[0];
+   }
 
-    protected static void addConstant(Map<StringValue, Value> map,
-	    String name, Value value) {
-	map.put(new ConstStringValue(name), value);
-    }
+   protected static void addConstant(Map<StringValue, Value> map,
+           String name, Value value) {
+      map.put(new ConstStringValue(name), value);
+   }
 
-    protected static void addConstant(Map<StringValue, Value> map,
-	    String name, long value) {
-	map.put(new ConstStringValue(name), LongValue.create(value));
-    }
+   protected static void addConstant(Map<StringValue, Value> map,
+           String name, long value) {
+      map.put(new ConstStringValue(name), LongValue.create(value));
+   }
 
-    protected static void addConstant(Map<StringValue, Value> map,
-	    String name, String value) {
-	map.put(new ConstStringValue(name), StringValue.create(value));
-    }
+   protected static void addConstant(Map<StringValue, Value> map,
+           String name, String value) {
+      map.put(new ConstStringValue(name), StringValue.create(value));
+   }
 }

@@ -41,276 +41,276 @@ import java.util.logging.Level;
  */
 public class OutputBuffer {
 
-    private static final Logger log = Logger.getLogger(OutputBuffer.class.getName());
-    private int _state;
-    private boolean _haveFlushed;
-    private Callable _callback;
-    private final boolean _erase;
-    private final int _chunkSize;
-    private final int _level;
-    private final OutputBuffer _next;
-    private TempStream _tempStream;
-    private WriteStream _out;
-    private final Env _env;
+   private static final Logger log = Logger.getLogger(OutputBuffer.class.getName());
+   private int _state;
+   private boolean _haveFlushed;
+   private Callable _callback;
+   private final boolean _erase;
+   private final int _chunkSize;
+   private final int _level;
+   private final OutputBuffer _next;
+   private TempStream _tempStream;
+   private WriteStream _out;
+   private final Env _env;
 
-    OutputBuffer(OutputBuffer next, Env env, Callable callback,
-	    int chunkSize, boolean erase) {
-	_next = next;
+   OutputBuffer(OutputBuffer next, Env env, Callable callback,
+           int chunkSize, boolean erase) {
+      _next = next;
 
-	if (_next != null) {
-	    _level = _next._level + 1;
-	} else {
-	    _level = 1;
-	}
+      if (_next != null) {
+         _level = _next._level + 1;
+      } else {
+         _level = 1;
+      }
 
-	_erase = erase;
-	_chunkSize = chunkSize;
+      _erase = erase;
+      _chunkSize = chunkSize;
 
-	_env = env;
-	_callback = callback;
+      _env = env;
+      _callback = callback;
 
-	_tempStream = new TempStream();
-	_out = new WriteStream(_tempStream);
+      _tempStream = new TempStream();
+      _out = new WriteStream(_tempStream);
 
-	_out.setNewlineString("\n");
+      _out.setNewlineString("\n");
 
-	String encoding = env.getOutputEncoding();
+      String encoding = env.getOutputEncoding();
 
-	if (encoding != null) {
-	    try {
-		_out.setEncoding(encoding);
-	    } catch (UnsupportedEncodingException e) {
-		if (log.isLoggable(Level.WARNING)) {
-		    log.log(Level.WARNING, e.toString(), e);
-		}
-		try {
-		    _out.setEncoding("UTF-8");
-		} catch (UnsupportedEncodingException e2) {
-		    if (log.isLoggable(Level.WARNING)) {
-			log.log(Level.WARNING, e.toString(), e2);
-		    }
-		}
-	    }
-	}
+      if (encoding != null) {
+         try {
+            _out.setEncoding(encoding);
+         } catch (UnsupportedEncodingException e) {
+            if (log.isLoggable(Level.WARNING)) {
+               log.log(Level.WARNING, e.toString(), e);
+            }
+            try {
+               _out.setEncoding("UTF-8");
+            } catch (UnsupportedEncodingException e2) {
+               if (log.isLoggable(Level.WARNING)) {
+                  log.log(Level.WARNING, e.toString(), e2);
+               }
+            }
+         }
+      }
 
-	_state = OutputModule.PHP_OUTPUT_HANDLER_START;
-	_haveFlushed = false;
-    }
+      _state = OutputModule.PHP_OUTPUT_HANDLER_START;
+      _haveFlushed = false;
+   }
 
-    /**
-     * Returns the next output buffer;
-     */
-    public OutputBuffer getNext() {
-	return _next;
-    }
+   /**
+    * Returns the next output buffer;
+    */
+   public OutputBuffer getNext() {
+      return _next;
+   }
 
-    /**
-     * Returns the writer.
-     */
-    public WriteStream getOut() {
-	return _out;
-    }
+   /**
+    * Returns the writer.
+    */
+   public WriteStream getOut() {
+      return _out;
+   }
 
-    /**
-     * Returns the buffer contents.
-     */
-    public Value getContents() {
-	try {
-	    _out.flush();
+   /**
+    * Returns the buffer contents.
+    */
+   public Value getContents() {
+      try {
+         _out.flush();
 
-	    StringValue bb = _env.createBinaryBuilder(_tempStream.getLength());
+         StringValue bb = _env.createBinaryBuilder(_tempStream.getLength());
 
-	    for (TempBuffer ptr = _tempStream.getHead();
-		    ptr != null;
-		    ptr = ptr.getNext()) {
-		bb.append(ptr.getBuffer(), 0, ptr.getLength());
-	    }
+         for (TempBuffer ptr = _tempStream.getHead();
+                 ptr != null;
+                 ptr = ptr.getNext()) {
+            bb.append(ptr.getBuffer(), 0, ptr.getLength());
+         }
 
-	    return bb;
-	} catch (IOException e) {
-	    _env.error(e.toString(), e);
+         return bb;
+      } catch (IOException e) {
+         _env.error(e.toString(), e);
 
-	    return BooleanValue.FALSE;
-	}
-    }
+         return BooleanValue.FALSE;
+      }
+   }
 
-    /**
-     * Returns the buffer length.
-     */
-    public long getLength() {
-	try {
-	    _out.flush();
+   /**
+    * Returns the buffer length.
+    */
+   public long getLength() {
+      try {
+         _out.flush();
 
-	    return (long) _tempStream.getLength();
-	} catch (IOException e) {
-	    _env.error(e.toString(), e);
+         return (long) _tempStream.getLength();
+      } catch (IOException e) {
+         _env.error(e.toString(), e);
 
-	    return -1L;
-	}
-    }
+         return -1L;
+      }
+   }
 
-    /**
-     * Returns the nesting level.
-     */
-    public int getLevel() {
-	return _level;
-    }
+   /**
+    * Returns the nesting level.
+    */
+   public int getLevel() {
+      return _level;
+   }
 
-    /**
-     * Returns true if this buffer has ever been flushed.
-     */
-    public boolean haveFlushed() {
-	return _haveFlushed;
-    }
+   /**
+    * Returns true if this buffer has ever been flushed.
+    */
+   public boolean haveFlushed() {
+      return _haveFlushed;
+   }
 
-    /**
-     * Returns the erase flag.
-     */
-    public boolean getEraseFlag() {
-	// TODO: Why would anyone need this?  If the erase flag is false,
-	// that supposedly means that the buffer will not be destroyed
-	// until the script finishes, but you can't access the buffer
-	// after it has been popped anyway, so who cares if you delete
-	// it or not?  It is also confusingly named.  More research may
-	// be necessary...
-	return _erase;
-    }
+   /**
+    * Returns the erase flag.
+    */
+   public boolean getEraseFlag() {
+      // TODO: Why would anyone need this?  If the erase flag is false,
+      // that supposedly means that the buffer will not be destroyed
+      // until the script finishes, but you can't access the buffer
+      // after it has been popped anyway, so who cares if you delete
+      // it or not?  It is also confusingly named.  More research may
+      // be necessary...
+      return _erase;
+   }
 
-    /**
-     * Returns the chunk size.
-     */
-    public int getChunkSize() {
-	return _chunkSize;
-    }
+   /**
+    * Returns the chunk size.
+    */
+   public int getChunkSize() {
+      return _chunkSize;
+   }
 
-    /**
-     * Cleans (clears) the buffer.
-     */
-    public void clean() {
-	try {
-	    _state |= OutputModule.PHP_OUTPUT_HANDLER_CONT;
+   /**
+    * Cleans (clears) the buffer.
+    */
+   public void clean() {
+      try {
+         _state |= OutputModule.PHP_OUTPUT_HANDLER_CONT;
 
-	    _out.flush();
+         _out.flush();
 
-	    _tempStream.clearWrite();
+         _tempStream.clearWrite();
 
-	    _state &= ~(OutputModule.PHP_OUTPUT_HANDLER_START);
-	    _state &= ~(OutputModule.PHP_OUTPUT_HANDLER_CONT);
+         _state &= ~(OutputModule.PHP_OUTPUT_HANDLER_START);
+         _state &= ~(OutputModule.PHP_OUTPUT_HANDLER_CONT);
 
-	} catch (IOException e) {
-	    _env.error(e.toString(), e);
-	}
-    }
+      } catch (IOException e) {
+         _env.error(e.toString(), e);
+      }
+   }
 
-    /**
-     * Flushs the data in the stream, calling the callback with appropriate
-     * flags if necessary.
-     */
-    public void flush() {
-	_state |= OutputModule.PHP_OUTPUT_HANDLER_CONT;
+   /**
+    * Flushs the data in the stream, calling the callback with appropriate
+    * flags if necessary.
+    */
+   public void flush() {
+      _state |= OutputModule.PHP_OUTPUT_HANDLER_CONT;
 
-	if (!callCallback()) {
-	    // clear the start and cont flags
-	    doFlush();
-	}
+      if (!callCallback()) {
+         // clear the start and cont flags
+         doFlush();
+      }
 
-	_state &= ~(OutputModule.PHP_OUTPUT_HANDLER_START);
-	_state &= ~(OutputModule.PHP_OUTPUT_HANDLER_CONT);
-	_haveFlushed = true;
-    }
+      _state &= ~(OutputModule.PHP_OUTPUT_HANDLER_START);
+      _state &= ~(OutputModule.PHP_OUTPUT_HANDLER_CONT);
+      _haveFlushed = true;
+   }
 
-    /**
-     * Closes the output buffer.
-     */
-    public void close() {
-	_state |= OutputModule.PHP_OUTPUT_HANDLER_END;
+   /**
+    * Closes the output buffer.
+    */
+   public void close() {
+      _state |= OutputModule.PHP_OUTPUT_HANDLER_END;
 
-	if (!callCallback()) {
-	    // all data that has and ever will be written has now been processed
-	    _state = 0;
+      if (!callCallback()) {
+         // all data that has and ever will be written has now been processed
+         _state = 0;
 
-	    doFlush();
-	}
+         doFlush();
+      }
 
-	WriteStream out = _out;
-	_out = null;
+      WriteStream out = _out;
+      _out = null;
 
-	TempStream tempStream = _tempStream;
-	_tempStream = null;
+      TempStream tempStream = _tempStream;
+      _tempStream = null;
 
-	try {
-	    if (out != null) {
-		out.close();
-	    }
-	} catch (IOException e) {
-	    log.log(Level.FINER, e.toString(), e);
-	}
+      try {
+         if (out != null) {
+            out.close();
+         }
+      } catch (IOException e) {
+         log.log(Level.FINER, e.toString(), e);
+      }
 
-	if (tempStream != null) {
-	    tempStream.destroy();
-	}
-    }
+      if (tempStream != null) {
+         tempStream.destroy();
+      }
+   }
 
-    /**
-     * Invokes the callback using the data in the current buffer.
-     */
-    private boolean callCallback() {
-	if (_callback == null || !_callback.isValid(_env)) {
-	    return false;
-	}
+   /**
+    * Invokes the callback using the data in the current buffer.
+    */
+   private boolean callCallback() {
+      if (_callback == null || !_callback.isValid(_env)) {
+         return false;
+      }
 
-	Value result =
-		_callback.call(_env, getContents(), LongValue.create(_state));
+      Value result =
+              _callback.call(_env, getContents(), LongValue.create(_state));
 
-	// special code to do nothing to the buffer
-	if (result.toValue() != BooleanValue.FALSE) {
-	    // php/1l11, php/1l13
-	    clean();
+      // special code to do nothing to the buffer
+      if (result.toValue() != BooleanValue.FALSE) {
+         // php/1l11, php/1l13
+         clean();
 
-	    result.print(_env, getNextOut());
+         result.print(_env, getNextOut());
 
-	    return true;
-	} else {
-	    return false;
-	}
-    }
+         return true;
+      } else {
+         return false;
+      }
+   }
 
-    /**
-     * Flushes the data without calling the callback.
-     */
-    private void doFlush() {
-	try {
-	    _out.flush();
+   /**
+    * Flushes the data without calling the callback.
+    */
+   private void doFlush() {
+      try {
+         _out.flush();
 
-	    WriteStream out = getNextOut();
+         WriteStream out = getNextOut();
 
-	    _tempStream.writeToStream(out);
+         _tempStream.writeToStream(out);
 
-	    _tempStream.clearWrite();
-	} catch (IOException e) {
-	    _env.error(e.toString(), e);
-	}
-    }
+         _tempStream.clearWrite();
+      } catch (IOException e) {
+         _env.error(e.toString(), e);
+      }
+   }
 
-    private WriteStream getNextOut() {
-	if (_next != null) {
-	    return _next.getOut();
-	} else {
-	    return _env.getOriginalOut();
-	}
-    }
+   private WriteStream getNextOut() {
+      if (_next != null) {
+         return _next.getOut();
+      } else {
+         return _env.getOriginalOut();
+      }
+   }
 
-    /**
-     * Returns the callback for this output buffer.
-     */
-    public Callable getCallback() {
-	return _callback;
-    }
+   /**
+    * Returns the callback for this output buffer.
+    */
+   public Callable getCallback() {
+      return _callback;
+   }
 
-    /**
-     * Sets the callback for this output buffer.
-     */
-    public void setCallback(Callback callback) {
-	_callback = callback;
-    }
+   /**
+    * Sets the callback for this output buffer.
+    */
+   public void setCallback(Callback callback) {
+      _callback = callback;
+   }
 }

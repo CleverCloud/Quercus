@@ -30,11 +30,11 @@ package com.caucho.quercus.lib.gettext.expr;
 
 public class AddExpr extends BinaryExpr {
 
-    public AddExpr(Expr _left, Expr _right) {
-	super(_left, _right);
-    }
+   public AddExpr(Expr _left, Expr _right) {
+      super(_left, _right);
+   }
 
-    public int eval(int n) {
-	return _left.eval(n) + _right.eval(n);
-    }
+   public int eval(int n) {
+      return _left.eval(n) + _right.eval(n);
+   }
 }

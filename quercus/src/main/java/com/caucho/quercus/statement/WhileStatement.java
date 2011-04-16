@@ -40,66 +40,66 @@ import com.caucho.quercus.expr.Expr;
  */
 public class WhileStatement extends Statement {
 
-    protected final Expr _test;
-    protected final Statement _block;
-    protected final String _label;
+   protected final Expr _test;
+   protected final Statement _block;
+   protected final String _label;
 
-    public WhileStatement(Location location,
-	    Expr test,
-	    Statement block,
-	    String label) {
-	super(location);
+   public WhileStatement(Location location,
+           Expr test,
+           Statement block,
+           String label) {
+      super(location);
 
-	_test = test;
-	_block = block;
-	_label = label;
+      _test = test;
+      _block = block;
+      _label = label;
 
-	block.setParent(this);
-    }
+      block.setParent(this);
+   }
 
-    @Override
-    public boolean isLoop() {
-	return true;
-    }
+   @Override
+   public boolean isLoop() {
+      return true;
+   }
 
-    public Value execute(Env env) {
-	try {
-	    env.setLocation(getLocation());
+   public Value execute(Env env) {
+      try {
+         env.setLocation(getLocation());
 
-	    while (_test.evalBoolean(env)) {
-		env.checkTimeout();
+         while (_test.evalBoolean(env)) {
+            env.checkTimeout();
 
-		Value value = _block.execute(env);
+            Value value = _block.execute(env);
 
-		if (value == null) {
-		} else if (value instanceof BreakValue) {
-		    BreakValue breakValue = (BreakValue) value;
+            if (value == null) {
+            } else if (value instanceof BreakValue) {
+               BreakValue breakValue = (BreakValue) value;
 
-		    int target = breakValue.getTarget();
+               int target = breakValue.getTarget();
 
-		    if (target > 1) {
-			return new BreakValue(target - 1);
-		    } else {
-			break;
-		    }
-		} else if (value instanceof ContinueValue) {
-		    ContinueValue conValue = (ContinueValue) value;
+               if (target > 1) {
+                  return new BreakValue(target - 1);
+               } else {
+                  break;
+               }
+            } else if (value instanceof ContinueValue) {
+               ContinueValue conValue = (ContinueValue) value;
 
-		    int target = conValue.getTarget();
+               int target = conValue.getTarget();
 
-		    if (target > 1) {
-			return new ContinueValue(target - 1);
-		    }
-		} else {
-		    return value;
-		}
+               if (target > 1) {
+                  return new ContinueValue(target - 1);
+               }
+            } else {
+               return value;
+            }
 
-		env.setLocation(getLocation());
-	    }
-	} catch (RuntimeException e) {
-	    rethrow(e, RuntimeException.class);
-	}
+            env.setLocation(getLocation());
+         }
+      } catch (RuntimeException e) {
+         rethrow(e, RuntimeException.class);
+      }
 
-	return null;
-    }
+      return null;
+   }
 }

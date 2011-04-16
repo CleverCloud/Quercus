@@ -45,295 +45,295 @@ import java.util.logging.Logger;
  */
 public class ReadStreamInput extends InputStream implements BinaryInput {
 
-    private static final Logger log = Logger.getLogger(ReadStreamInput.class.getName());
-    private Env _env;
-    private LineReader _lineReader;
-    private ReadStream _is;
+   private static final Logger log = Logger.getLogger(ReadStreamInput.class.getName());
+   private Env _env;
+   private LineReader _lineReader;
+   private ReadStream _is;
 
-    public ReadStreamInput(Env env) {
-	_env = env;
-    }
+   public ReadStreamInput(Env env) {
+      _env = env;
+   }
 
-    public ReadStreamInput(Env env, InputStream is) {
-	_env = env;
+   public ReadStreamInput(Env env, InputStream is) {
+      _env = env;
 
-	if (is instanceof ReadStream) {
-	    init((ReadStream) is);
-	} else if (is != null) {
-	    init(new ReadStream(new VfsStream(is, null)));
-	}
-    }
+      if (is instanceof ReadStream) {
+         init((ReadStream) is);
+      } else if (is != null) {
+         init(new ReadStream(new VfsStream(is, null)));
+      }
+   }
 
-    protected ReadStreamInput(Env env, LineReader lineReader) {
-	_env = env;
-	_lineReader = lineReader;
-    }
+   protected ReadStreamInput(Env env, LineReader lineReader) {
+      _env = env;
+      _lineReader = lineReader;
+   }
 
-    protected ReadStreamInput(Env env, LineReader lineReader, ReadStream is) {
-	this(env, lineReader);
-	init(is);
-    }
+   protected ReadStreamInput(Env env, LineReader lineReader, ReadStream is) {
+      this(env, lineReader);
+      init(is);
+   }
 
-    public void init(ReadStream is) {
-	_is = is;
-    }
+   public void init(ReadStream is) {
+      _is = is;
+   }
 
-    /**
-     * Returns the input stream.
-     */
-    public InputStream getInputStream() {
-	return _is;
-    }
+   /**
+    * Returns the input stream.
+    */
+   public InputStream getInputStream() {
+      return _is;
+   }
 
-    /**
-     * Opens a copy.
-     */
-    public BinaryInput openCopy()
-	    throws IOException {
-	return new ReadStreamInput(_env, _lineReader, _is.getPath().openRead());
-    }
+   /**
+    * Opens a copy.
+    */
+   public BinaryInput openCopy()
+           throws IOException {
+      return new ReadStreamInput(_env, _lineReader, _is.getPath().openRead());
+   }
 
-    public void setEncoding(String encoding)
-	    throws UnsupportedEncodingException {
-	if (_is != null) {
-	    _is.setEncoding(encoding);
-	}
-    }
+   public void setEncoding(String encoding)
+           throws UnsupportedEncodingException {
+      if (_is != null) {
+         _is.setEncoding(encoding);
+      }
+   }
 
-    /**
-     *
-     */
-    public void unread()
-	    throws IOException {
-	if (_is != null) {
-	    _is.unread();
-	}
-    }
+   /**
+    *
+    */
+   public void unread()
+           throws IOException {
+      if (_is != null) {
+         _is.unread();
+      }
+   }
 
-    /**
-     * Reads a character from a file, returning -1 on EOF.
-     */
-    public int read()
-	    throws IOException {
-	if (_is != null) {
-	    return _is.read();
-	} else {
-	    return -1;
-	}
-    }
+   /**
+    * Reads a character from a file, returning -1 on EOF.
+    */
+   public int read()
+           throws IOException {
+      if (_is != null) {
+         return _is.read();
+      } else {
+         return -1;
+      }
+   }
 
-    /**
-     * Reads a buffer from a file, returning -1 on EOF.
-     */
-    public int read(byte[] buffer, int offset, int length)
-	    throws IOException {
-	ReadStream is = _is;
+   /**
+    * Reads a buffer from a file, returning -1 on EOF.
+    */
+   public int read(byte[] buffer, int offset, int length)
+           throws IOException {
+      ReadStream is = _is;
 
-	if (is == null) {
-	    return -1;
-	}
+      if (is == null) {
+         return -1;
+      }
 
-	int readLength = 0;
+      int readLength = 0;
 
-	do {
-	    int sublen = is.read(buffer, offset, length);
+      do {
+         int sublen = is.read(buffer, offset, length);
 
-	    if (sublen < 0) {
-		return readLength > 0 ? readLength : sublen;
-	    }
+         if (sublen < 0) {
+            return readLength > 0 ? readLength : sublen;
+         }
 
-	    readLength += sublen;
-	    length -= sublen;
-	    offset += sublen;
-	} while (length > 0 && is.getAvailable() > 0);
+         readLength += sublen;
+         length -= sublen;
+         offset += sublen;
+      } while (length > 0 && is.getAvailable() > 0);
 
-	return readLength;
-    }
+      return readLength;
+   }
 
-    /**
-     * Reads a buffer from a file, returning -1 on EOF.
-     */
-    public int read(char[] buffer, int offset, int length)
-	    throws IOException {
-	if (_is != null) {
-	    return _is.read(buffer, offset, length);
-	} else {
-	    return -1;
-	}
-    }
+   /**
+    * Reads a buffer from a file, returning -1 on EOF.
+    */
+   public int read(char[] buffer, int offset, int length)
+           throws IOException {
+      if (_is != null) {
+         return _is.read(buffer, offset, length);
+      } else {
+         return -1;
+      }
+   }
 
-    /**
-     * Reads into a binary builder.
-     */
-    public StringValue read(int length)
-	    throws IOException {
-	if (_is == null) {
-	    return null;
-	}
+   /**
+    * Reads into a binary builder.
+    */
+   public StringValue read(int length)
+           throws IOException {
+      if (_is == null) {
+         return null;
+      }
 
-	StringValue bb = _env.createBinaryBuilder();
+      StringValue bb = _env.createBinaryBuilder();
 
-	bb.appendReadAll(_is, length);
+      bb.appendReadAll(_is, length);
 
-	return bb;
-    }
+      return bb;
+   }
 
-    /**
-     * Reads the optional linefeed character from a \r\n
-     */
-    public boolean readOptionalLinefeed()
-	    throws IOException {
-	if (_is == null) {
-	    return false;
-	}
+   /**
+    * Reads the optional linefeed character from a \r\n
+    */
+   public boolean readOptionalLinefeed()
+           throws IOException {
+      if (_is == null) {
+         return false;
+      }
 
-	int ch = _is.read();
+      int ch = _is.read();
 
-	if (ch == '\n') {
-	    return true;
-	} else {
-	    _is.unread();
-	    return false;
-	}
-    }
+      if (ch == '\n') {
+         return true;
+      } else {
+         _is.unread();
+         return false;
+      }
+   }
 
-    public void writeToStream(OutputStream os, int length)
-	    throws IOException {
-	if (_is != null) {
-	    _is.writeToStream(os, length);
-	}
-    }
+   public void writeToStream(OutputStream os, int length)
+           throws IOException {
+      if (_is != null) {
+         _is.writeToStream(os, length);
+      }
+   }
 
-    /**
-     * Appends to a string builder.
-     */
-    public StringValue appendTo(StringValue builder) {
-	if (_is != null) {
-	    return builder.append(_is);
-	} else {
-	    return builder;
-	}
-    }
+   /**
+    * Appends to a string builder.
+    */
+   public StringValue appendTo(StringValue builder) {
+      if (_is != null) {
+         return builder.append(_is);
+      } else {
+         return builder;
+      }
+   }
 
-    /**
-     * Reads a line from a file, returning null on EOF.
-     */
-    public StringValue readLine(long length)
-	    throws IOException {
-	return getLineReader().readLine(_env, this, length);
-    }
+   /**
+    * Reads a line from a file, returning null on EOF.
+    */
+   public StringValue readLine(long length)
+           throws IOException {
+      return getLineReader().readLine(_env, this, length);
+   }
 
-    /**
-     * Returns true on the EOF.
-     */
-    public boolean isEOF() {
-	if (_is == null) {
-	    return true;
-	} else {
-	    try {
-		// TODO: not quite right for sockets
-		return _is.available() <= 0;
-	    } catch (IOException e) {
-		log.log(Level.FINE, e.toString(), e);
+   /**
+    * Returns true on the EOF.
+    */
+   public boolean isEOF() {
+      if (_is == null) {
+         return true;
+      } else {
+         try {
+            // TODO: not quite right for sockets
+            return _is.available() <= 0;
+         } catch (IOException e) {
+            log.log(Level.FINE, e.toString(), e);
 
-		return true;
-	    }
-	}
-    }
+            return true;
+         }
+      }
+   }
 
-    /**
-     * Returns the current location in the file.
-     */
-    public long getPosition() {
-	if (_is == null) {
-	    return -1;
-	} else {
-	    return _is.getPosition();
-	}
-    }
+   /**
+    * Returns the current location in the file.
+    */
+   public long getPosition() {
+      if (_is == null) {
+         return -1;
+      } else {
+         return _is.getPosition();
+      }
+   }
 
-    /**
-     * Returns the current location in the file.
-     */
-    public boolean setPosition(long offset) {
-	if (_is == null) {
-	    return false;
-	}
+   /**
+    * Returns the current location in the file.
+    */
+   public boolean setPosition(long offset) {
+      if (_is == null) {
+         return false;
+      }
 
-	try {
-	    return _is.setPosition(offset);
-	} catch (IOException e) {
-	    throw new QuercusModuleException(e);
-	}
-    }
+      try {
+         return _is.setPosition(offset);
+      } catch (IOException e) {
+         throw new QuercusModuleException(e);
+      }
+   }
 
-    public long seek(long offset, int whence) {
-	long position;
+   public long seek(long offset, int whence) {
+      long position;
 
-	switch (whence) {
-	    case BinaryStream.SEEK_CUR:
-		position = getPosition() + offset;
-		break;
-	    case BinaryStream.SEEK_END:
-		// don't necessarily have an end
-		position = getPosition();
-		break;
-	    case BinaryStream.SEEK_SET:
-	    default:
-		position = offset;
-		break;
-	}
+      switch (whence) {
+         case BinaryStream.SEEK_CUR:
+            position = getPosition() + offset;
+            break;
+         case BinaryStream.SEEK_END:
+            // don't necessarily have an end
+            position = getPosition();
+            break;
+         case BinaryStream.SEEK_SET:
+         default:
+            position = offset;
+            break;
+      }
 
-	if (!setPosition(position)) {
-	    return -1L;
-	} else {
-	    return position;
-	}
-    }
+      if (!setPosition(position)) {
+         return -1L;
+      } else {
+         return position;
+      }
+   }
 
-    public Value stat() {
-	return BooleanValue.FALSE;
-    }
+   public Value stat() {
+      return BooleanValue.FALSE;
+   }
 
-    private LineReader getLineReader() {
-	if (_lineReader == null) {
-	    _lineReader = new LineReader(_env);
-	}
+   private LineReader getLineReader() {
+      if (_lineReader == null) {
+         _lineReader = new LineReader(_env);
+      }
 
-	return _lineReader;
-    }
+      return _lineReader;
+   }
 
-    /**
-     * Closes the stream for reading.
-     */
-    public void closeRead() {
-	close();
-    }
+   /**
+    * Closes the stream for reading.
+    */
+   public void closeRead() {
+      close();
+   }
 
-    /**
-     * Closes the file.
-     */
-    public void close() {
-	ReadStream is = _is;
-	_is = null;
+   /**
+    * Closes the file.
+    */
+   public void close() {
+      ReadStream is = _is;
+      _is = null;
 
-	if (is != null) {
-	    is.close();
-	}
-    }
+      if (is != null) {
+         is.close();
+      }
+   }
 
-    public Object toJavaObject() {
-	return this;
-    }
+   public Object toJavaObject() {
+      return this;
+   }
 
-    public String getResourceType() {
-	return "stream";
-    }
+   public String getResourceType() {
+      return "stream";
+   }
 
-    /**
-     * Converts to a string.
-     */
-    public String toString() {
-	return "ReadStreamInput[" + _is.getPath() + "]";
-    }
+   /**
+    * Converts to a string.
+    */
+   public String toString() {
+      return "ReadStreamInput[" + _is.getPath() + "]";
+   }
 }

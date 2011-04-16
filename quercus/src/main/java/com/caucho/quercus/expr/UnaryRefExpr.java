@@ -41,81 +41,81 @@ import com.caucho.quercus.parser.QuercusParser;
  */
 public class UnaryRefExpr extends AbstractUnaryExpr {
 
-    public UnaryRefExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public UnaryRefExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public UnaryRefExpr(Expr expr) {
-	super(expr);
-    }
+   public UnaryRefExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Returns true for a reference.
-     */
-    public boolean isRef() {
-	return true;
-    }
+   /**
+    * Returns true for a reference.
+    */
+   public boolean isRef() {
+      return true;
+   }
 
-    /**
-     * Creates an assignment using this value as the right hand side.
-     */
-    @Override
-    public Expr createAssignFrom(QuercusParser parser,
-	    AbstractVarExpr leftHandSide) {
-	ExprFactory factory = parser.getExprFactory();
+   /**
+    * Creates an assignment using this value as the right hand side.
+    */
+   @Override
+   public Expr createAssignFrom(QuercusParser parser,
+           AbstractVarExpr leftHandSide) {
+      ExprFactory factory = parser.getExprFactory();
 
-	return factory.createAssignRef(leftHandSide, _expr);
-    }
+      return factory.createAssignRef(leftHandSide, _expr);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	// quercus/0d28
-	Value value = getExpr().evalVar(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      // quercus/0d28
+      Value value = getExpr().evalVar(env);
 
-	return value.toRef();
-    }
+      return value.toRef();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalArg(Env env, boolean isTop) {
-	Value value = getExpr().evalVar(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalArg(Env env, boolean isTop) {
+      Value value = getExpr().evalVar(env);
 
-	return value.toArgRef();
-    }
+      return value.toArgRef();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Var evalVar(Env env) {
-	Var value = getExpr().evalVar(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Var evalVar(Env env) {
+      Var value = getExpr().evalVar(env);
 
-	// php/112d
-	return value;
-	/*
-	if (value instanceof Var)
-	return new RefVar((Var) value);
-	else
-	return value;
-	 */
-    }
+      // php/112d
+      return value;
+      /*
+      if (value instanceof Var)
+      return new RefVar((Var) value);
+      else
+      return value;
+       */
+   }
 
-    public String toString() {
-	return _expr.toString();
-    }
+   public String toString() {
+      return _expr.toString();
+   }
 }

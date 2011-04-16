@@ -51,7 +51,7 @@ import java.util.TreeSet;
  */
 public enum FieldVisibility {
 
-    PUBLIC,
-    PRIVATE,
-    PROTECTED
+   PUBLIC,
+   PRIVATE,
+   PROTECTED
 }

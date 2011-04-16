@@ -45,5 +45,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Delegates {
 
-    public Class<?>[] value();
+   public Class<?>[] value();
 }

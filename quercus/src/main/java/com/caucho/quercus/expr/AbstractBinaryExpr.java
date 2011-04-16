@@ -35,31 +35,31 @@ import com.caucho.quercus.Location;
  */
 abstract public class AbstractBinaryExpr extends Expr {
 
-    protected final Expr _left;
-    protected final Expr _right;
+   protected final Expr _left;
+   protected final Expr _right;
 
-    protected AbstractBinaryExpr(Location location, Expr left, Expr right) {
-	super(location);
-	_left = left;
-	_right = right;
-    }
+   protected AbstractBinaryExpr(Location location, Expr left, Expr right) {
+      super(location);
+      _left = left;
+      _right = right;
+   }
 
-    protected AbstractBinaryExpr(Expr left, Expr right) {
-	_left = left;
-	_right = right;
-    }
+   protected AbstractBinaryExpr(Expr left, Expr right) {
+      _left = left;
+      _right = right;
+   }
 
-    /**
-     * Returns the left expression.
-     */
-    public final Expr getLeft() {
-	return _left;
-    }
+   /**
+    * Returns the left expression.
+    */
+   public final Expr getLeft() {
+      return _left;
+   }
 
-    /**
-     * Returns the right expression.
-     */
-    public final Expr getRight() {
-	return _right;
-    }
+   /**
+    * Returns the right expression.
+    */
+   public final Expr getRight() {
+      return _right;
+   }
 }

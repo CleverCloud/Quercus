@@ -44,54 +44,54 @@ import java.util.ArrayList;
  */
 abstract public class AbstractMethodExpr extends Expr {
 
-    protected AbstractMethodExpr(Location location) {
-	super(location);
-    }
+   protected AbstractMethodExpr(Location location) {
+      super(location);
+   }
 
-    /**
-     * Evaluates the expression as a copy
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalCopy(Env env) {
-	return eval(env).copy();
-    }
+   /**
+    * Evaluates the expression as a copy
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalCopy(Env env) {
+      return eval(env).copy();
+   }
 
-    /**
-     * Evaluates the expression as a copy
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalArg(Env env, boolean isTop) {
-	return eval(env).copy();
-    }
+   /**
+    * Evaluates the expression as a copy
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalArg(Env env, boolean isTop) {
+      return eval(env).copy();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    protected Value eval(Env env, Value qThis,
-	    StringValue methodName, int hashCode,
-	    Expr[] argExprs) {
-	Value[] args = evalArgs(env, argExprs);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   protected Value eval(Env env, Value qThis,
+           StringValue methodName, int hashCode,
+           Expr[] argExprs) {
+      Value[] args = evalArgs(env, argExprs);
 
-	env.pushCall(this, qThis, args);
+      env.pushCall(this, qThis, args);
 
-	try {
-	    env.checkTimeout();
+      try {
+         env.checkTimeout();
 
-	    return qThis.callMethod(env, methodName, hashCode, args);
-	} finally {
-	    env.popCall();
-	}
-    }
+         return qThis.callMethod(env, methodName, hashCode, args);
+      } finally {
+         env.popCall();
+      }
+   }
 }

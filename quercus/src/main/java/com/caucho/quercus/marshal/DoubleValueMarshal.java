@@ -34,55 +34,55 @@ import com.caucho.quercus.env.Value;
 import com.caucho.quercus.expr.Expr;
 
 public class DoubleValueMarshal
-	extends Marshal {
+        extends Marshal {
 
-    public static final Marshal MARSHAL = new DoubleValueMarshal();
+   public static final Marshal MARSHAL = new DoubleValueMarshal();
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    /**
-     * Return true if is a Value.
-     */
-    @Override
-    public boolean isValue() {
-	return true;
-    }
+   /**
+    * Return true if is a Value.
+    */
+   @Override
+   public boolean isValue() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return expr.eval(env).toDoubleValue();
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return expr.eval(env).toDoubleValue();
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return value.toDoubleValue();
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return value.toDoubleValue();
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	if (value instanceof DoubleValue) {
-	    return (DoubleValue) value;
-	} else if (value instanceof Value) {
-	    return ((Value) value).toDoubleValue();
-	} else {
-	    return null;
-	}
-    }
+   public Value unmarshal(Env env, Object value) {
+      if (value instanceof DoubleValue) {
+         return (DoubleValue) value;
+      } else if (value instanceof Value) {
+         return ((Value) value).toDoubleValue();
+      } else {
+         return null;
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	if (argValue instanceof DoubleValue) {
-	    return Marshal.ZERO;
-	} else if (argValue.isLongConvertible()) {
-	    return LONG_CONVERTIBLE_DOUBLE_VALUE_COST;
-	} else if (argValue.isDoubleConvertible()) {
-	    return DOUBLE_CONVERTIBLE_DOUBLE_VALUE_COST;
-	} else {
-	    return Marshal.FOUR;
-	}
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      if (argValue instanceof DoubleValue) {
+         return Marshal.ZERO;
+      } else if (argValue.isLongConvertible()) {
+         return LONG_CONVERTIBLE_DOUBLE_VALUE_COST;
+      } else if (argValue.isDoubleConvertible()) {
+         return DOUBLE_CONVERTIBLE_DOUBLE_VALUE_COST;
+      } else {
+         return Marshal.FOUR;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return DoubleValue.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return DoubleValue.class;
+   }
 }

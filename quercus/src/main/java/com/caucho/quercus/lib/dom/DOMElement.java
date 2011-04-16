@@ -35,197 +35,197 @@ import org.w3c.dom.Element;
 
 public class DOMElement extends DOMNode<Element> {
 
-    public static DOMElement __construct(Env env,
-	    String name,
-	    @Optional String textContent,
-	    @Optional String namespace) {
-	DOMElement element;
+   public static DOMElement __construct(Env env,
+           String name,
+           @Optional String textContent,
+           @Optional String namespace) {
+      DOMElement element;
 
-	if (namespace != null && namespace.length() > 0) {
-	    element = getImpl(env).createElement(name, namespace);
-	} else {
-	    element = getImpl(env).createElement(name);
-	}
+      if (namespace != null && namespace.length() > 0) {
+         element = getImpl(env).createElement(name, namespace);
+      } else {
+         element = getImpl(env).createElement(name);
+      }
 
-	if (textContent != null && textContent.length() > 0) {
-	    element.setTextContent(textContent);
-	}
+      if (textContent != null && textContent.length() > 0) {
+         element.setTextContent(textContent);
+      }
 
-	return element;
-    }
+      return element;
+   }
 
-    DOMElement(DOMImplementation impl, Element node) {
-	super(impl, node);
-    }
+   DOMElement(DOMImplementation impl, Element node) {
+      super(impl, node);
+   }
 
-    public String getNodeValue()
-	    throws DOMException {
-	// php/1zd1
-	return getTextContent();
-    }
+   public String getNodeValue()
+           throws DOMException {
+      // php/1zd1
+      return getTextContent();
+   }
 
-    public String getAttribute(String name) {
-	return _delegate.getAttribute(name);
-    }
+   public String getAttribute(String name) {
+      return _delegate.getAttribute(name);
+   }
 
-    public String getAttributeNS(String namespaceURI, String localName)
-	    throws DOMException {
-	try {
-	    return _delegate.getAttributeNS(namespaceURI, localName);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public String getAttributeNS(String namespaceURI, String localName)
+           throws DOMException {
+      try {
+         return _delegate.getAttributeNS(namespaceURI, localName);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public DOMAttr getAttributeNode(String name) {
-	return wrap(_delegate.getAttributeNode(name));
-    }
+   public DOMAttr getAttributeNode(String name) {
+      return wrap(_delegate.getAttributeNode(name));
+   }
 
-    public DOMAttr getAttributeNodeNS(String namespaceURI, String localName)
-	    throws DOMException {
-	try {
-	    return wrap(_delegate.getAttributeNodeNS(namespaceURI, localName));
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public DOMAttr getAttributeNodeNS(String namespaceURI, String localName)
+           throws DOMException {
+      try {
+         return wrap(_delegate.getAttributeNodeNS(namespaceURI, localName));
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public DOMNodeList getElementsByTagName(String name) {
-	return wrap(_delegate.getElementsByTagName(name));
-    }
+   public DOMNodeList getElementsByTagName(String name) {
+      return wrap(_delegate.getElementsByTagName(name));
+   }
 
-    public DOMNodeList getElementsByTagNameNS(
-	    String namespaceURI, String localName) throws DOMException {
-	try {
-	    return wrap(_delegate.getElementsByTagNameNS(namespaceURI, localName));
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public DOMNodeList getElementsByTagNameNS(
+           String namespaceURI, String localName) throws DOMException {
+      try {
+         return wrap(_delegate.getElementsByTagNameNS(namespaceURI, localName));
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public DOMTypeInfo getSchemaTypeInfo() {
-	return wrap(_delegate.getSchemaTypeInfo());
-    }
+   public DOMTypeInfo getSchemaTypeInfo() {
+      return wrap(_delegate.getSchemaTypeInfo());
+   }
 
-    public String getTagName() {
-	return _delegate.getTagName();
-    }
+   public String getTagName() {
+      return _delegate.getTagName();
+   }
 
-    public boolean hasAttribute(String name) {
-	return _delegate.hasAttribute(name);
-    }
+   public boolean hasAttribute(String name) {
+      return _delegate.hasAttribute(name);
+   }
 
-    public boolean hasAttributeNS(String namespaceURI, String localName)
-	    throws DOMException {
-	try {
-	    return _delegate.hasAttributeNS(namespaceURI, localName);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public boolean hasAttributeNS(String namespaceURI, String localName)
+           throws DOMException {
+      try {
+         return _delegate.hasAttributeNS(namespaceURI, localName);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public void removeAttribute(String name)
-	    throws DOMException {
-	try {
-	    _delegate.removeAttribute(name);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public void removeAttribute(String name)
+           throws DOMException {
+      try {
+         _delegate.removeAttribute(name);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public void removeAttributeNS(String namespaceURI, String localName)
-	    throws DOMException {
-	try {
-	    _delegate.removeAttributeNS(namespaceURI, localName);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public void removeAttributeNS(String namespaceURI, String localName)
+           throws DOMException {
+      try {
+         _delegate.removeAttributeNS(namespaceURI, localName);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public DOMAttr removeAttributeNode(DOMAttr oldAttr)
-	    throws DOMException {
-	try {
-	    return wrap(_delegate.removeAttributeNode(oldAttr._delegate));
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public DOMAttr removeAttributeNode(DOMAttr oldAttr)
+           throws DOMException {
+      try {
+         return wrap(_delegate.removeAttributeNode(oldAttr._delegate));
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public void setAttribute(String name, String value)
-	    throws DOMException {
-	try {
-	    _delegate.setAttribute(name, value);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public void setAttribute(String name, String value)
+           throws DOMException {
+      try {
+         _delegate.setAttribute(name, value);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public void setAttributeNS(String namespaceURI,
-	    String qualifiedName,
-	    String value)
-	    throws DOMException {
-	try {
-	    _delegate.setAttributeNS(namespaceURI, qualifiedName, value);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public void setAttributeNS(String namespaceURI,
+           String qualifiedName,
+           String value)
+           throws DOMException {
+      try {
+         _delegate.setAttributeNS(namespaceURI, qualifiedName, value);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public DOMAttr setAttributeNode(DOMAttr newAttr)
-	    throws DOMException {
-	try {
-	    return wrap(_delegate.setAttributeNode(newAttr._delegate));
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public DOMAttr setAttributeNode(DOMAttr newAttr)
+           throws DOMException {
+      try {
+         return wrap(_delegate.setAttributeNode(newAttr._delegate));
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public DOMAttr setAttributeNodeNS(DOMAttr newAttr)
-	    throws DOMException {
-	try {
-	    return wrap(_delegate.setAttributeNodeNS(newAttr._delegate));
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public DOMAttr setAttributeNodeNS(DOMAttr newAttr)
+           throws DOMException {
+      try {
+         return wrap(_delegate.setAttributeNodeNS(newAttr._delegate));
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public void setIdAttribute(String name, boolean isId)
-	    throws DOMException {
-	try {
-	    _delegate.setIdAttribute(name, isId);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public void setIdAttribute(String name, boolean isId)
+           throws DOMException {
+      try {
+         _delegate.setIdAttribute(name, isId);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public void setIdAttributeNS(String namespaceURI,
-	    String localName,
-	    boolean isId)
-	    throws DOMException {
-	try {
-	    _delegate.setIdAttributeNS(namespaceURI, localName, isId);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public void setIdAttributeNS(String namespaceURI,
+           String localName,
+           boolean isId)
+           throws DOMException {
+      try {
+         _delegate.setIdAttributeNS(namespaceURI, localName, isId);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public void setIdAttributeNode(DOMAttr idAttr, boolean isId)
-	    throws DOMException {
-	try {
-	    _delegate.setIdAttributeNode(idAttr._delegate, isId);
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public void setIdAttributeNode(DOMAttr idAttr, boolean isId)
+           throws DOMException {
+      try {
+         _delegate.setIdAttributeNode(idAttr._delegate, isId);
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public void setNodeValue(String nodeValue)
-	    throws DOMException {
-	// php/1zd1
+   public void setNodeValue(String nodeValue)
+           throws DOMException {
+      // php/1zd1
 
-	if (nodeValue == null) {
-	    nodeValue = "";
-	}
+      if (nodeValue == null) {
+         nodeValue = "";
+      }
 
-	setTextContent(nodeValue);
-    }
+      setTextContent(nodeValue);
+   }
 }

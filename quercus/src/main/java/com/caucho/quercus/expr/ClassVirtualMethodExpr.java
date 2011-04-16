@@ -46,67 +46,67 @@ import java.util.ArrayList;
  */
 public class ClassVirtualMethodExpr extends Expr {
 
-    private static final L10N L = new L10N(ClassVirtualMethodExpr.class);
-    protected final StringValue _methodName;
-    private final int _hash;
-    protected final Expr[] _args;
-    protected boolean _isMethod;
+   private static final L10N L = new L10N(ClassVirtualMethodExpr.class);
+   protected final StringValue _methodName;
+   private final int _hash;
+   protected final Expr[] _args;
+   protected boolean _isMethod;
 
-    public ClassVirtualMethodExpr(Location location,
-	    String methodName,
-	    ArrayList<Expr> args) {
-	super(location);
+   public ClassVirtualMethodExpr(Location location,
+           String methodName,
+           ArrayList<Expr> args) {
+      super(location);
 
-	_methodName = MethodIntern.intern(methodName);
-	_hash = _methodName.hashCodeCaseInsensitive();
+      _methodName = MethodIntern.intern(methodName);
+      _hash = _methodName.hashCodeCaseInsensitive();
 
-	_args = new Expr[args.size()];
-	args.toArray(_args);
-    }
+      _args = new Expr[args.size()];
+      args.toArray(_args);
+   }
 
-    public ClassVirtualMethodExpr(Location location,
-	    String name,
-	    Expr[] args) {
-	super(location);
+   public ClassVirtualMethodExpr(Location location,
+           String name,
+           Expr[] args) {
+      super(location);
 
-	_methodName = MethodIntern.intern(name);
-	_hash = _methodName.hashCodeCaseInsensitive();
+      _methodName = MethodIntern.intern(name);
+      _hash = _methodName.hashCodeCaseInsensitive();
 
-	_args = args;
-    }
+      _args = args;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value qThis = env.getThis();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value qThis = env.getThis();
 
-	QuercusClass cls = qThis.getQuercusClass();
+      QuercusClass cls = qThis.getQuercusClass();
 
-	if (cls == null) {
-	    env.error(getLocation(), L.l("no calling class found"));
+      if (cls == null) {
+         env.error(getLocation(), L.l("no calling class found"));
 
-	    return NullValue.NULL;
-	}
+         return NullValue.NULL;
+      }
 
-	Value[] values = evalArgs(env, _args);
+      Value[] values = evalArgs(env, _args);
 
-	env.pushCall(this, cls, values);
+      env.pushCall(this, cls, values);
 
-	try {
-	    env.checkTimeout();
+      try {
+         env.checkTimeout();
 
-	    return cls.callMethod(env, qThis, _methodName, _hash, values);
-	} finally {
-	    env.popCall();
-	}
-    }
+         return cls.callMethod(env, qThis, _methodName, _hash, values);
+      } finally {
+         env.popCall();
+      }
+   }
 
-    public String toString() {
-	return "static::" + _methodName + "()";
-    }
+   public String toString() {
+      return "static::" + _methodName + "()";
+   }
 }

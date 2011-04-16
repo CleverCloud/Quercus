@@ -47,96 +47,96 @@ import java.util.ArrayList;
  */
 public class ClassMethodVarExpr extends AbstractMethodExpr {
 
-    private static final L10N L = new L10N(ClassMethodVarExpr.class);
-    protected final String _className;
-    protected final Expr _nameExpr;
-    protected final Expr[] _args;
-    protected Expr[] _fullArgs;
-    protected AbstractFunction _fun;
-    protected boolean _isMethod;
+   private static final L10N L = new L10N(ClassMethodVarExpr.class);
+   protected final String _className;
+   protected final Expr _nameExpr;
+   protected final Expr[] _args;
+   protected Expr[] _fullArgs;
+   protected AbstractFunction _fun;
+   protected boolean _isMethod;
 
-    public ClassMethodVarExpr(Location location,
-	    String className,
-	    Expr nameExpr,
-	    ArrayList<Expr> args) {
-	super(location);
+   public ClassMethodVarExpr(Location location,
+           String className,
+           Expr nameExpr,
+           ArrayList<Expr> args) {
+      super(location);
 
-	_className = className.intern();
+      _className = className.intern();
 
-	_nameExpr = nameExpr;
+      _nameExpr = nameExpr;
 
-	_args = new Expr[args.size()];
-	args.toArray(_args);
-    }
+      _args = new Expr[args.size()];
+      args.toArray(_args);
+   }
 
-    public ClassMethodVarExpr(Location location,
-	    String className,
-	    Expr nameExpr,
-	    Expr[] args) {
-	super(location);
+   public ClassMethodVarExpr(Location location,
+           String className,
+           Expr nameExpr,
+           Expr[] args) {
+      super(location);
 
-	_className = className.intern();
+      _className = className.intern();
 
-	_nameExpr = nameExpr;
+      _nameExpr = nameExpr;
 
-	_args = args;
-    }
+      _args = args;
+   }
 
-    public ClassMethodVarExpr(String className,
-	    Expr nameExpr,
-	    ArrayList<Expr> args) {
-	this(Location.UNKNOWN, className, nameExpr, args);
-    }
+   public ClassMethodVarExpr(String className,
+           Expr nameExpr,
+           ArrayList<Expr> args) {
+      this(Location.UNKNOWN, className, nameExpr, args);
+   }
 
-    public ClassMethodVarExpr(String className, Expr nameExpr, Expr[] args) {
-	this(Location.UNKNOWN, className, nameExpr, args);
-    }
+   public ClassMethodVarExpr(String className, Expr nameExpr, Expr[] args) {
+      this(Location.UNKNOWN, className, nameExpr, args);
+   }
 
-    /**
-     * Returns the reference of the value.
-     * @param location
-     */
-    @Override
-    public Expr createRef(QuercusParser parser) {
-	return parser.getFactory().createRef(this);
-    }
+   /**
+    * Returns the reference of the value.
+    * @param location
+    */
+   @Override
+   public Expr createRef(QuercusParser parser) {
+      return parser.getFactory().createRef(this);
+   }
 
-    /**
-     * Returns the copy of the value.
-     * @param location
-     */
-    @Override
-    public Expr createCopy(ExprFactory factory) {
-	return factory.createCopy(this);
-    }
+   /**
+    * Returns the copy of the value.
+    * @param location
+    */
+   @Override
+   public Expr createCopy(ExprFactory factory) {
+      return factory.createCopy(this);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value eval(Env env) {
-	QuercusClass cl = env.findClass(_className);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value eval(Env env) {
+      QuercusClass cl = env.findClass(_className);
 
-	if (cl == null) {
-	    env.error(getLocation(), L.l("no matching class {0}", _className));
-	}
+      if (cl == null) {
+         env.error(getLocation(), L.l("no matching class {0}", _className));
+      }
 
-	// qa/0954 - static calls pass the current $this
-	Value qThis = env.getThis();
+      // qa/0954 - static calls pass the current $this
+      Value qThis = env.getThis();
 
-	StringValue methodName = _nameExpr.evalStringValue(env);
+      StringValue methodName = _nameExpr.evalStringValue(env);
 
-	Value[] args = evalArgs(env, _args);
-	int hash = methodName.hashCodeCaseInsensitive();
+      Value[] args = evalArgs(env, _args);
+      int hash = methodName.hashCodeCaseInsensitive();
 
-	return cl.callMethod(env, qThis, methodName, hash, args);
-    }
+      return cl.callMethod(env, qThis, methodName, hash, args);
+   }
 
-    public String toString() {
-	return _nameExpr + "()";
-    }
+   public String toString() {
+      return _nameExpr + "()";
+   }
 }

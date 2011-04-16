@@ -34,27 +34,27 @@ import com.caucho.quercus.annotation.Delegates;
 
 @Delegates(DOMNodeListDelegate.class)
 public class DOMNodeList
-	extends DOMWrapper<NodeList> {
+        extends DOMWrapper<NodeList> {
 
-    DOMNodeList(DOMImplementation impl, NodeList nodeList) {
-	super(impl, nodeList);
-    }
+   DOMNodeList(DOMImplementation impl, NodeList nodeList) {
+      super(impl, nodeList);
+   }
 
-    public DOMNode item(int index) {
-	// php/1zl0
+   public DOMNode item(int index) {
+      // php/1zl0
 
-	if (index < 0) {
-	    return null;
-	}
+      if (index < 0) {
+         return null;
+      }
 
-	return wrap(_delegate.item(index));
-    }
+      return wrap(_delegate.item(index));
+   }
 
-    public int getLength() {
-	return _delegate.getLength();
-    }
+   public int getLength() {
+      return _delegate.getLength();
+   }
 
-    public String toString() {
-	return getClass().getSimpleName();
-    }
+   public String toString() {
+      return getClass().getSimpleName();
+   }
 }

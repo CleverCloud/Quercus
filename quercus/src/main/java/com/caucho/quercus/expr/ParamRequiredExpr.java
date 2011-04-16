@@ -38,30 +38,30 @@ import com.caucho.quercus.env.Value;
  */
 public class ParamRequiredExpr extends Expr {
 
-    public static final ParamRequiredExpr REQUIRED = new ParamRequiredExpr(Location.UNKNOWN);
+   public static final ParamRequiredExpr REQUIRED = new ParamRequiredExpr(Location.UNKNOWN);
 
-    protected ParamRequiredExpr(Location location) {
-	super(location);
-    }
+   protected ParamRequiredExpr(Location location) {
+      super(location);
+   }
 
-    protected ParamRequiredExpr() {
-	super();
-    }
+   protected ParamRequiredExpr() {
+      super();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	env.warning("required argument missing");
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      env.warning("required argument missing");
 
-	return NullValue.NULL;
-    }
+      return NullValue.NULL;
+   }
 
-    public String toString() {
-	return "required";
-    }
+   public String toString() {
+      return "required";
+   }
 }

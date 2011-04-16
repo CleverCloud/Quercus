@@ -32,88 +32,88 @@ package com.caucho.quercus.env;
  * Represents a PHP array value.
  */
 public class ConstArrayValue
-	extends ArrayValueImpl {
+        extends ArrayValueImpl {
 
-    private ConstArrayValue _keys;
-    private ConstArrayValue _values;
-    private Value[] _keysArray;
-    private Value[] _valuesArray;
+   private ConstArrayValue _keys;
+   private ConstArrayValue _values;
+   private Value[] _keysArray;
+   private Value[] _valuesArray;
 
-    public ConstArrayValue(ArrayValueImpl source) {
-	super.copyFrom(source);
-    }
+   public ConstArrayValue(ArrayValueImpl source) {
+      super.copyFrom(source);
+   }
 
-    public ConstArrayValue(ArrayValueComponent[] components) {
-	super(components);
-    }
+   public ConstArrayValue(ArrayValueComponent[] components) {
+      super(components);
+   }
 
-    public ConstArrayValue(Value[] keys, Value[] values) {
-	super(keys, values);
-    }
+   public ConstArrayValue(Value[] keys, Value[] values) {
+      super(keys, values);
+   }
 
-    /**
-     * Copy for assignment.
-     */
-    @Override
-    public Value copy() {
-	//return new CopyArrayValue(this);
+   /**
+    * Copy for assignment.
+    */
+   @Override
+   public Value copy() {
+      //return new CopyArrayValue(this);
 
-	return new ArrayValueImpl(this);
-    }
+      return new ArrayValueImpl(this);
+   }
 
-    /**
-     * Shuffles the array
-     */
-    @Override
-    public Value shuffle() {
-	throw new IllegalStateException();
-    }
+   /**
+    * Shuffles the array
+    */
+   @Override
+   public Value shuffle() {
+      throw new IllegalStateException();
+   }
 
-    /**
-     * Takes the values of this array and puts them in a java array
-     */
-    public Value[] keysToArray() {
-	if (_keysArray == null) {
-	    _keysArray = super.keysToArray();
-	}
+   /**
+    * Takes the values of this array and puts them in a java array
+    */
+   public Value[] keysToArray() {
+      if (_keysArray == null) {
+         _keysArray = super.keysToArray();
+      }
 
-	// TODO: copy?
-	return _keysArray;
-    }
+      // TODO: copy?
+      return _keysArray;
+   }
 
-    /**
-     * Takes the values of this array and puts them in a java array
-     */
-    public Value[] valuesToArray() {
-	if (_valuesArray == null) {
-	    _valuesArray = super.valuesToArray();
-	}
+   /**
+    * Takes the values of this array and puts them in a java array
+    */
+   public Value[] valuesToArray() {
+      if (_valuesArray == null) {
+         _valuesArray = super.valuesToArray();
+      }
 
-	// TODO: copy?
-	return _valuesArray;
-    }
+      // TODO: copy?
+      return _valuesArray;
+   }
 
-    /**
-     * Returns the array keys.
-     */
-    @Override
-    public Value getKeys() {
-	if (_keys == null) {
-	    _keys = new ConstArrayValue((ArrayValueImpl) super.getKeys());
-	}
+   /**
+    * Returns the array keys.
+    */
+   @Override
+   public Value getKeys() {
+      if (_keys == null) {
+         _keys = new ConstArrayValue((ArrayValueImpl) super.getKeys());
+      }
 
-	return _keys.copy();
-    }
+      return _keys.copy();
+   }
 
-    /**
-     * Returns the array keys.
-     */
-    @Override
-    public Value getValues() {
-	if (_values == null) {
-	    _values = new ConstArrayValue((ArrayValueImpl) super.getValues());
-	}
+   /**
+    * Returns the array keys.
+    */
+   @Override
+   public Value getValues() {
+      if (_values == null) {
+         _values = new ConstArrayValue((ArrayValueImpl) super.getValues());
+      }
 
-	return _values.copy();
-    }
+      return _values.copy();
+   }
 }

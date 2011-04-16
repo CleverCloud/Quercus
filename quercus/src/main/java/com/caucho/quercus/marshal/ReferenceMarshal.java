@@ -34,37 +34,37 @@ import com.caucho.quercus.expr.Expr;
 
 public class ReferenceMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new ReferenceMarshal();
+   public static final Marshal MARSHAL = new ReferenceMarshal();
 
-    public boolean isReadOnly() {
-	return false;
-    }
+   public boolean isReadOnly() {
+      return false;
+   }
 
-    public boolean isReference() {
-	return true;
-    }
+   public boolean isReference() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	// quercus/0d1k
-	return expr.evalRef(env);
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      // quercus/0d1k
+      return expr.evalRef(env);
+   }
 
-    @Override
-    public Object marshal(Env env, Value value, Class argClass) {
-	return value.toLocalVarDeclAsRef();
-    }
+   @Override
+   public Object marshal(Env env, Value value, Class argClass) {
+      return value.toLocalVarDeclAsRef();
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	throw new UnsupportedOperationException();
-    }
+   public Value unmarshal(Env env, Object value) {
+      throw new UnsupportedOperationException();
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	return Marshal.ZERO;
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      return Marshal.ZERO;
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return Value.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return Value.class;
+   }
 }

@@ -39,47 +39,47 @@ import com.caucho.quercus.expr.Expr;
  */
 public class BooleanMarshal extends Marshal {
 
-    public static final BooleanMarshal MARSHAL = new BooleanMarshal();
+   public static final BooleanMarshal MARSHAL = new BooleanMarshal();
 
-    public boolean isBoolean() {
-	return true;
-    }
+   public boolean isBoolean() {
+      return true;
+   }
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return expr.evalBoolean(env) ? Boolean.TRUE : Boolean.FALSE;
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return expr.evalBoolean(env) ? Boolean.TRUE : Boolean.FALSE;
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return value.toBoolean() ? Boolean.TRUE : Boolean.FALSE;
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return value.toBoolean() ? Boolean.TRUE : Boolean.FALSE;
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	if (value == null) {
-	    return NullValue.NULL;
-	} else {
-	    return Boolean.TRUE.equals(value)
-		    ? BooleanValue.TRUE
-		    : BooleanValue.FALSE;
-	}
-    }
+   public Value unmarshal(Env env, Object value) {
+      if (value == null) {
+         return NullValue.NULL;
+      } else {
+         return Boolean.TRUE.equals(value)
+                 ? BooleanValue.TRUE
+                 : BooleanValue.FALSE;
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	return argValue.toBooleanMarshalCost();
-	/*
-	if (argValue instanceof BooleanValue)
-	return Marshal.ONE;
-	else
-	return Marshal.THREE;
-	 */
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      return argValue.toBooleanMarshalCost();
+      /*
+      if (argValue instanceof BooleanValue)
+      return Marshal.ONE;
+      else
+      return Marshal.THREE;
+       */
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return boolean.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return boolean.class;
+   }
 }

@@ -43,85 +43,85 @@ import com.caucho.util.L10N;
  */
 public class ClassMethodExpr extends AbstractMethodExpr {
 
-    private static final L10N L = new L10N(ClassMethodExpr.class);
-    protected final String _className;
-    protected final StringValue _methodName;
-    protected final int _hash;
-    protected final Expr[] _args;
-    protected boolean _isMethod;
+   private static final L10N L = new L10N(ClassMethodExpr.class);
+   protected final String _className;
+   protected final StringValue _methodName;
+   protected final int _hash;
+   protected final Expr[] _args;
+   protected boolean _isMethod;
 
-    public ClassMethodExpr(Location location, String className,
-	    String methodName,
-	    ArrayList<Expr> args) {
-	super(location);
-	_className = className.intern();
+   public ClassMethodExpr(Location location, String className,
+           String methodName,
+           ArrayList<Expr> args) {
+      super(location);
+      _className = className.intern();
 
-	_methodName = MethodIntern.intern(methodName);
-	_hash = _methodName.hashCodeCaseInsensitive();
+      _methodName = MethodIntern.intern(methodName);
+      _hash = _methodName.hashCodeCaseInsensitive();
 
-	_args = new Expr[args.size()];
-	args.toArray(_args);
-    }
+      _args = new Expr[args.size()];
+      args.toArray(_args);
+   }
 
-    public ClassMethodExpr(Location location, String className,
-	    String methodName, Expr[] args) {
-	super(location);
+   public ClassMethodExpr(Location location, String className,
+           String methodName, Expr[] args) {
+      super(location);
 
-	_className = className.intern();
+      _className = className.intern();
 
-	_methodName = MethodIntern.intern(methodName);
-	_hash = _methodName.hashCodeCaseInsensitive();
+      _methodName = MethodIntern.intern(methodName);
+      _hash = _methodName.hashCodeCaseInsensitive();
 
-	_args = args;
-    }
+      _args = args;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	QuercusClass cl = env.findClass(_className);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      QuercusClass cl = env.findClass(_className);
 
-	if (cl == null) {
-	    throw env.createErrorException(L.l("{0} is an unknown class",
-		    _className));
-	}
+      if (cl == null) {
+         throw env.createErrorException(L.l("{0} is an unknown class",
+                 _className));
+      }
 
-	Value[] values = evalArgs(env, _args);
+      Value[] values = evalArgs(env, _args);
 
-	Value oldThis = env.getThis();
+      Value oldThis = env.getThis();
 
-	// php/09qe
-	Value qThis = oldThis;
-	/*
-	if (oldThis.isNull()) {
-	qThis = cl;
-	env.setThis(qThis);
-	}
-	else
-	qThis = oldThis;
-	 */
-	// php/024b
-	// qThis = cl;
+      // php/09qe
+      Value qThis = oldThis;
+      /*
+      if (oldThis.isNull()) {
+      qThis = cl;
+      env.setThis(qThis);
+      }
+      else
+      qThis = oldThis;
+       */
+      // php/024b
+      // qThis = cl;
 
-	env.pushCall(this, cl, values);
-	// QuercusClass oldClass = env.setCallingClass(cl);
+      env.pushCall(this, cl, values);
+      // QuercusClass oldClass = env.setCallingClass(cl);
 
-	try {
-	    env.checkTimeout();
+      try {
+         env.checkTimeout();
 
-	    return cl.callMethod(env, qThis, _methodName, _hash, values);
-	} finally {
-	    env.popCall();
-	    env.setThis(oldThis);
-	    // env.setCallingClass(oldClass);
-	}
-    }
+         return cl.callMethod(env, qThis, _methodName, _hash, values);
+      } finally {
+         env.popCall();
+         env.setThis(oldThis);
+         // env.setCallingClass(oldClass);
+      }
+   }
 
-    public String toString() {
-	return _className + "::" + _methodName + "()";
-    }
+   public String toString() {
+      return _className + "::" + _methodName + "()";
+   }
 }

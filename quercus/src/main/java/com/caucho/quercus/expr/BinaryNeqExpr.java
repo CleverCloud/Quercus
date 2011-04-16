@@ -38,32 +38,32 @@ import com.caucho.quercus.env.Value;
  */
 public class BinaryNeqExpr extends AbstractBinaryExpr {
 
-    public BinaryNeqExpr(Location location, Expr left, Expr right) {
-	super(location, left, right);
-    }
+   public BinaryNeqExpr(Location location, Expr left, Expr right) {
+      super(location, left, right);
+   }
 
-    public BinaryNeqExpr(Expr left, Expr right) {
-	super(left, right);
-    }
+   public BinaryNeqExpr(Expr left, Expr right) {
+      super(left, right);
+   }
 
-    /**
-     * Evaluates the equality as a boolean.
-     */
-    public Value eval(Env env) {
-	return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
-    }
+   /**
+    * Evaluates the equality as a boolean.
+    */
+   public Value eval(Env env) {
+      return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
+   }
 
-    /**
-     * Evaluates the equality as a boolean.
-     */
-    public boolean evalBoolean(Env env) {
-	Value lValue = _left.eval(env);
-	Value rValue = _right.eval(env);
+   /**
+    * Evaluates the equality as a boolean.
+    */
+   public boolean evalBoolean(Env env) {
+      Value lValue = _left.eval(env);
+      Value rValue = _right.eval(env);
 
-	return !lValue.eq(rValue);
-    }
+      return !lValue.eq(rValue);
+   }
 
-    public String toString() {
-	return "(" + _left + " != " + _right + ")";
-    }
+   public String toString() {
+      return "(" + _left + " != " + _right + ")";
+   }
 }

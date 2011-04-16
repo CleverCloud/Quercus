@@ -37,38 +37,38 @@ import com.caucho.quercus.env.Value;
  */
 public class UnaryCopyExpr extends AbstractUnaryExpr {
 
-    public UnaryCopyExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public UnaryCopyExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public UnaryCopyExpr(Expr expr) {
-	super(expr);
-    }
+   public UnaryCopyExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return _expr.eval(env).copy();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return _expr.eval(env).copy();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalArg(Env env, boolean isTop) {
-	return eval(env);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalArg(Env env, boolean isTop) {
+      return eval(env);
+   }
 
-    public String toString() {
-	return _expr.toString();
-    }
+   public String toString() {
+      return _expr.toString();
+   }
 }

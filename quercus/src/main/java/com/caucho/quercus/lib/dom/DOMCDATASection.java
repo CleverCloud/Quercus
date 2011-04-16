@@ -31,39 +31,39 @@ package com.caucho.quercus.lib.dom;
 import org.w3c.dom.CDATASection;
 
 public class DOMCDATASection
-	extends DOMCharacterData<CDATASection> {
+        extends DOMCharacterData<CDATASection> {
 
-    DOMCDATASection(DOMImplementation impl, CDATASection delegate) {
-	super(impl, delegate);
-    }
+   DOMCDATASection(DOMImplementation impl, CDATASection delegate) {
+      super(impl, delegate);
+   }
 
-    public String getWholeText() {
-	return _delegate.getWholeText();
-    }
+   public String getWholeText() {
+      return _delegate.getWholeText();
+   }
 
-    public boolean isElementContentWhitespace() {
-	return _delegate.isElementContentWhitespace();
-    }
+   public boolean isElementContentWhitespace() {
+      return _delegate.isElementContentWhitespace();
+   }
 
-    public boolean isWhitespaceInElementContent() {
-	return _delegate.isElementContentWhitespace();
-    }
+   public boolean isWhitespaceInElementContent() {
+      return _delegate.isElementContentWhitespace();
+   }
 
-    public DOMText replaceWholeText(String content)
-	    throws DOMException {
-	try {
-	    return wrap(_delegate.replaceWholeText(content));
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public DOMText replaceWholeText(String content)
+           throws DOMException {
+      try {
+         return wrap(_delegate.replaceWholeText(content));
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 
-    public DOMText splitText(int offset)
-	    throws DOMException {
-	try {
-	    return wrap(_delegate.splitText(offset));
-	} catch (org.w3c.dom.DOMException ex) {
-	    throw wrap(ex);
-	}
-    }
+   public DOMText splitText(int offset)
+           throws DOMException {
+      try {
+         return wrap(_delegate.splitText(offset));
+      } catch (org.w3c.dom.DOMException ex) {
+         throw wrap(ex);
+      }
+   }
 }

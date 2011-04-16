@@ -38,63 +38,63 @@ import com.caucho.quercus.expr.Expr;
  */
 public class StringMarshal extends Marshal {
 
-    public static final StringMarshal MARSHAL = new StringMarshal();
+   public static final StringMarshal MARSHAL = new StringMarshal();
 
-    public boolean isString() {
-	return true;
-    }
+   public boolean isString() {
+      return true;
+   }
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return expr.evalString(env);
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return expr.evalString(env);
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
+   public Object marshal(Env env, Value value, Class expectedClass) {
 
-	return value.toJavaString();
-    }
+      return value.toJavaString();
+   }
 
-    @Override
-    public Value unmarshal(Env env, Object value) {
-	if (value == null) {
-	    return NullValue.NULL;
-	} else {
-	    return env.createString((String) value);
-	}
-    }
+   @Override
+   public Value unmarshal(Env env, Object value) {
+      if (value == null) {
+         return NullValue.NULL;
+      } else {
+         return env.createString((String) value);
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	return argValue.toStringMarshalCost();
-	/*
-	if (argValue.isString()) {
-	if (argValue.isUnicode())
-	return Marshal.UNICODE_STRING_COST;
-	else if (argValue.isBinary())
-	return Marshal.BINARY_STRING_COST;
-	else
-	return Marshal.PHP5_STRING_COST;
-	}
-	else if (! (argValue.isArray() || argValue.isObject()))
-	return Marshal.THREE;
-	else
-	return Marshal.FOUR;
-	 */
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      return argValue.toStringMarshalCost();
+      /*
+      if (argValue.isString()) {
+      if (argValue.isUnicode())
+      return Marshal.UNICODE_STRING_COST;
+      else if (argValue.isBinary())
+      return Marshal.BINARY_STRING_COST;
+      else
+      return Marshal.PHP5_STRING_COST;
+      }
+      else if (! (argValue.isArray() || argValue.isObject()))
+      return Marshal.THREE;
+      else
+      return Marshal.FOUR;
+       */
+   }
 
-    public int getMarshalingCost(Expr expr) {
-	if (expr.isString()) {
-	    return Marshal.ZERO;
-	} else {
-	    return Marshal.FOUR;
-	}
-    }
+   public int getMarshalingCost(Expr expr) {
+      if (expr.isString()) {
+         return Marshal.ZERO;
+      } else {
+         return Marshal.FOUR;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return String.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return String.class;
+   }
 }

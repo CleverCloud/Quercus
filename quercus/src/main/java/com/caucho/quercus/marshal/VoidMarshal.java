@@ -35,17 +35,17 @@ import com.caucho.quercus.expr.Expr;
 
 public class VoidMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new VoidMarshal();
+   public static final Marshal MARSHAL = new VoidMarshal();
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	throw new UnsupportedOperationException();
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      throw new UnsupportedOperationException();
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	throw new UnsupportedOperationException();
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      throw new UnsupportedOperationException();
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	return NullValue.NULL;
-    }
+   public Value unmarshal(Env env, Object value) {
+      return NullValue.NULL;
+   }
 }

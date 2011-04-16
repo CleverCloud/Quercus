@@ -30,13 +30,13 @@ package com.caucho.quercus.lib.gettext.expr;
 
 public class LiteralExpr implements Expr {
 
-    int _literal;
+   int _literal;
 
-    public LiteralExpr(int literal) {
-	_literal = literal;
-    }
+   public LiteralExpr(int literal) {
+      _literal = literal;
+   }
 
-    public int eval(int n) {
-	return _literal;
-    }
+   public int eval(int n) {
+      return _literal;
+   }
 }

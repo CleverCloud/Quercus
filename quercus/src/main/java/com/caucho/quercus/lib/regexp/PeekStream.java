@@ -32,22 +32,22 @@ import com.caucho.quercus.env.*;
 
 class PeekStream {
 
-    int read() {
-	return -1;
-    }
+   int read() {
+      return -1;
+   }
 
-    int peek() {
-	return -1;
-    }
+   int peek() {
+      return -1;
+   }
 
-    void ungetc(int ch) {
-    }
+   void ungetc(int ch) {
+   }
 
-    StringValue createStringBuilder() {
-	return new StringBuilderValue();
-    }
+   StringValue createStringBuilder() {
+      return new StringBuilderValue();
+   }
 
-    String getPattern() {
-	return toString();
-    }
+   String getPattern() {
+      return toString();
+   }
 }

@@ -32,47 +32,47 @@ import com.caucho.quercus.expr.Expr;
 
 public class ClassField {
 
-    private StringValue _name;
-    private Expr _initValue;
-    private FieldVisibility _visibility = FieldVisibility.PUBLIC;
+   private StringValue _name;
+   private Expr _initValue;
+   private FieldVisibility _visibility = FieldVisibility.PUBLIC;
 
-    public ClassField(StringValue name,
-	    Expr initValue,
-	    FieldVisibility visibility) {
-	_name = name;
-	_initValue = initValue;
-	_visibility = visibility;
-    }
+   public ClassField(StringValue name,
+           Expr initValue,
+           FieldVisibility visibility) {
+      _name = name;
+      _initValue = initValue;
+      _visibility = visibility;
+   }
 
-    public ClassField(StringValue name, Expr initValue) {
-	this(name, initValue, FieldVisibility.PUBLIC);
-    }
+   public ClassField(StringValue name, Expr initValue) {
+      this(name, initValue, FieldVisibility.PUBLIC);
+   }
 
-    public StringValue getName() {
-	return _name;
-    }
+   public StringValue getName() {
+      return _name;
+   }
 
-    public Expr getInitValue() {
-	return _initValue;
-    }
+   public Expr getInitValue() {
+      return _initValue;
+   }
 
-    public void setInitValue(Expr initValue) {
-	_initValue = initValue;
-    }
+   public void setInitValue(Expr initValue) {
+      _initValue = initValue;
+   }
 
-    public FieldVisibility getVisibility() {
-	return _visibility;
-    }
+   public FieldVisibility getVisibility() {
+      return _visibility;
+   }
 
-    public boolean isPublic() {
-	return _visibility == FieldVisibility.PUBLIC;
-    }
+   public boolean isPublic() {
+      return _visibility == FieldVisibility.PUBLIC;
+   }
 
-    public boolean isProtected() {
-	return _visibility == FieldVisibility.PROTECTED;
-    }
+   public boolean isProtected() {
+      return _visibility == FieldVisibility.PROTECTED;
+   }
 
-    public boolean isPrivate() {
-	return _visibility == FieldVisibility.PRIVATE;
-    }
+   public boolean isPrivate() {
+      return _visibility == FieldVisibility.PRIVATE;
+   }
 }

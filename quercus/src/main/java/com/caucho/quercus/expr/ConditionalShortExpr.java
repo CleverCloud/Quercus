@@ -37,33 +37,33 @@ import com.caucho.quercus.env.Value;
  */
 public class ConditionalShortExpr extends Expr {
 
-    protected final Expr _test;
-    protected final Expr _falseExpr;
+   protected final Expr _test;
+   protected final Expr _falseExpr;
 
-    public ConditionalShortExpr(Expr test, Expr falseExpr) {
-	_test = test;
+   public ConditionalShortExpr(Expr test, Expr falseExpr) {
+      _test = test;
 
-	_falseExpr = falseExpr;
-    }
+      _falseExpr = falseExpr;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value value = _test.eval(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value value = _test.eval(env);
 
-	if (value.toBoolean()) {
-	    return value;
-	} else {
-	    return _falseExpr.eval(env);
-	}
-    }
+      if (value.toBoolean()) {
+         return value;
+      } else {
+         return _falseExpr.eval(env);
+      }
+   }
 
-    public String toString() {
-	return "(" + _test + " ?: " + _falseExpr + ")";
-    }
+   public String toString() {
+      return "(" + _test + " ?: " + _falseExpr + ")";
+   }
 }

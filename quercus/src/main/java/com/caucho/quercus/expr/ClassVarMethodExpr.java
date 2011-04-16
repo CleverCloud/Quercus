@@ -47,76 +47,76 @@ import java.util.ArrayList;
  */
 public class ClassVarMethodExpr extends Expr {
 
-    private static final L10N L = new L10N(ClassVarMethodExpr.class);
-    protected final Expr _className;
-    protected final StringValue _methodName;
-    protected final Expr[] _args;
-    protected AbstractFunction _fun;
-    protected boolean _isMethod;
+   private static final L10N L = new L10N(ClassVarMethodExpr.class);
+   protected final Expr _className;
+   protected final StringValue _methodName;
+   protected final Expr[] _args;
+   protected AbstractFunction _fun;
+   protected boolean _isMethod;
 
-    public ClassVarMethodExpr(Location location,
-	    Expr className,
-	    String methodName,
-	    ArrayList<Expr> args) {
-	super(location);
+   public ClassVarMethodExpr(Location location,
+           Expr className,
+           String methodName,
+           ArrayList<Expr> args) {
+      super(location);
 
-	_className = className;
+      _className = className;
 
-	_methodName = MethodIntern.intern(methodName);
+      _methodName = MethodIntern.intern(methodName);
 
-	_args = new Expr[args.size()];
-	args.toArray(_args);
-    }
+      _args = new Expr[args.size()];
+      args.toArray(_args);
+   }
 
-    //
-    // expr creation
-    //
-    /**
-     * Returns the reference of the value.
-     * @param location
-     */
-    @Override
-    public Expr createRef(QuercusParser parser) {
-	return parser.getFactory().createRef(this);
-    }
+   //
+   // expr creation
+   //
+   /**
+    * Returns the reference of the value.
+    * @param location
+    */
+   @Override
+   public Expr createRef(QuercusParser parser) {
+      return parser.getFactory().createRef(this);
+   }
 
-    /**
-     * Returns the copy of the value.
-     * @param location
-     */
-    @Override
-    public Expr createCopy(ExprFactory factory) {
-	return factory.createCopy(this);
-    }
+   /**
+    * Returns the copy of the value.
+    * @param location
+    */
+   @Override
+   public Expr createCopy(ExprFactory factory) {
+      return factory.createCopy(this);
+   }
 
-    //
-    // evaluation
-    //
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value eval(Env env) {
-	String className = _className.evalString(env);
+   //
+   // evaluation
+   //
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value eval(Env env) {
+      String className = _className.evalString(env);
 
-	QuercusClass cl = env.findClass(className);
+      QuercusClass cl = env.findClass(className);
 
-	if (cl == null) {
-	    env.error(getLocation(), L.l("no matching class {0}", _className));
-	}
+      if (cl == null) {
+         env.error(getLocation(), L.l("no matching class {0}", _className));
+      }
 
-	int hash = _methodName.hashCodeCaseInsensitive();
+      int hash = _methodName.hashCodeCaseInsensitive();
 
-	return cl.callMethod(env, env.getThis(),
-		_methodName, hash,
-		evalArgs(env, _args));
-    }
+      return cl.callMethod(env, env.getThis(),
+              _methodName, hash,
+              evalArgs(env, _args));
+   }
 
-    public String toString() {
-	return _className + "::" + _methodName + "()";
-    }
+   public String toString() {
+      return _className + "::" + _methodName + "()";
+   }
 }

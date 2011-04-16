@@ -35,8 +35,8 @@ import com.caucho.quercus.env.*;
  */
 public class StreamBucket extends Value {
 
-    public StreamBucket(Env env, BinaryValue data) {
-	putField(env, "data", data);
-	putField(env, "datalen", LongValue.create(data.length()));
-    }
+   public StreamBucket(Env env, BinaryValue data) {
+      putField(env, "data", data);
+      putField(env, "datalen", LongValue.create(data.length()));
+   }
 }

@@ -44,21 +44,21 @@ import java.util.logging.Logger;
  */
 public class PhpBinaryInput extends AbstractBinaryInput {
 
-    private static final Logger log = Logger.getLogger(PhpBinaryInput.class.getName());
+   private static final Logger log = Logger.getLogger(PhpBinaryInput.class.getName());
 
-    public PhpBinaryInput(Env env) {
-	super(env);
+   public PhpBinaryInput(Env env) {
+      super(env);
 
-	StringValue inputData = env.getInputData();
+      StringValue inputData = env.getInputData();
 
-	if (inputData == null) {
-	    inputData = env.getEmptyString();
-	}
+      if (inputData == null) {
+         inputData = env.getEmptyString();
+      }
 
-	init(new ReadStream(new VfsStream(inputData.toInputStream(), null)));
-    }
+      init(new ReadStream(new VfsStream(inputData.toInputStream(), null)));
+   }
 
-    public String toString() {
-	return "PhpBinaryInput[]";
-    }
+   public String toString() {
+      return "PhpBinaryInput[]";
+   }
 }

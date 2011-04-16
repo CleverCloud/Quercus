@@ -43,47 +43,47 @@ import com.caucho.util.L10N;
  */
 public class ClassVirtualConstExpr extends Expr {
 
-    private static final L10N L = new L10N(ClassVirtualMethodExpr.class);
-    protected final String _name;
+   private static final L10N L = new L10N(ClassVirtualMethodExpr.class);
+   protected final String _name;
 
-    public ClassVirtualConstExpr(Location location, String name) {
-	super(location);
+   public ClassVirtualConstExpr(Location location, String name) {
+      super(location);
 
-	_name = name.intern();
-    }
+      _name = name.intern();
+   }
 
-    public ClassVirtualConstExpr(String name) {
-	_name = name.intern();
-    }
+   public ClassVirtualConstExpr(String name) {
+      _name = name.intern();
+   }
 
-    //
-    // function call creation
-    //
-    /**
-     * Creates a function call expression
-     */
-    @Override
-    public Expr createCall(QuercusParser parser,
-	    Location location,
-	    ArrayList<Expr> args)
-	    throws IOException {
-	ExprFactory factory = parser.getExprFactory();
+   //
+   // function call creation
+   //
+   /**
+    * Creates a function call expression
+    */
+   @Override
+   public Expr createCall(QuercusParser parser,
+           Location location,
+           ArrayList<Expr> args)
+           throws IOException {
+      ExprFactory factory = parser.getExprFactory();
 
-	return factory.createClassVirtualMethodCall(location, _name, args);
-    }
+      return factory.createClassVirtualMethodCall(location, _name, args);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return env.getCallingClass().getConstant(env, _name);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return env.getCallingClass().getConstant(env, _name);
+   }
 
-    public String toString() {
-	return "static::" + _name;
-    }
+   public String toString() {
+      return "static::" + _name;
+   }
 }

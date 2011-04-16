@@ -28,12 +28,12 @@
 package com.caucho.quercus;
 
 public class QuercusExecutionException
-	extends Exception {
+        extends Exception {
 
-    public QuercusExecutionException() {
-    }
+   public QuercusExecutionException() {
+   }
 
-    public QuercusExecutionException(String message) {
-	super(message);
-    }
+   public QuercusExecutionException(String message) {
+      super(message);
+   }
 }

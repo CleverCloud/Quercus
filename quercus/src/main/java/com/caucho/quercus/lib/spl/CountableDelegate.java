@@ -43,13 +43,13 @@ import com.caucho.quercus.env.StringValue;
  */
 public class CountableDelegate implements CountDelegate {
 
-    private static final StringValue COUNT_METHOD = new ConstStringValue("count");
+   private static final StringValue COUNT_METHOD = new ConstStringValue("count");
 
-    public int count(ObjectValue qThis) {
-	Env env = Env.getInstance();
+   public int count(ObjectValue qThis) {
+      Env env = Env.getInstance();
 
-	Value count = qThis.callMethod(env, COUNT_METHOD);
+      Value count = qThis.callMethod(env, COUNT_METHOD);
 
-	return count.toInt();
-    }
+      return count.toInt();
+   }
 }

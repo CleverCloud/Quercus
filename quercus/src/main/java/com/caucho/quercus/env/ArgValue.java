@@ -42,60 +42,60 @@ import com.caucho.vfs.WriteStream;
  */
 abstract public class ArgValue extends Value {
 
-    @Override
-    public Value toValue() {
-	return toLocalValue();
-    }
+   @Override
+   public Value toValue() {
+      return toLocalValue();
+   }
 
-    @Override
-    public ArrayValue toArrayValue(Env env) {
-	return toLocalValue().toArrayValue(env);
-    }
+   @Override
+   public ArrayValue toArrayValue(Env env) {
+      return toLocalValue().toArrayValue(env);
+   }
 
-    @Override
-    public StringValue toStringValue() {
-	return toLocalValue().toStringValue();
-    }
+   @Override
+   public StringValue toStringValue() {
+      return toLocalValue().toStringValue();
+   }
 
-    public StringValue toStringValue(Env env) {
-	return toLocalValue().toStringValue(env);
-    }
+   public StringValue toStringValue(Env env) {
+      return toLocalValue().toStringValue(env);
+   }
 
-    @Override
-    public boolean toBoolean() {
-	return toLocalValue().toBoolean();
-    }
+   @Override
+   public boolean toBoolean() {
+      return toLocalValue().toBoolean();
+   }
 
-    @Override
-    public double toDouble() {
-	return toLocalValue().toDouble();
-    }
+   @Override
+   public double toDouble() {
+      return toLocalValue().toDouble();
+   }
 
-    @Override
-    public Value toArray() {
-	return toLocalValue().toArray();
-    }
+   @Override
+   public Value toArray() {
+      return toLocalValue().toArray();
+   }
 
-    @Override
-    public Value toAutoObject(Env env) {
-	return toLocalValue().toObject(env);
-    }
+   @Override
+   public Value toAutoObject(Env env) {
+      return toLocalValue().toObject(env);
+   }
 
-    @Override
-    protected void varDumpImpl(Env env,
-	    WriteStream out,
-	    int depth,
-	    IdentityHashMap<Value, String> valueSet)
-	    throws IOException {
-	toLocalValue().varDumpImpl(env, out, depth, valueSet);
-    }
+   @Override
+   protected void varDumpImpl(Env env,
+           WriteStream out,
+           int depth,
+           IdentityHashMap<Value, String> valueSet)
+           throws IOException {
+      toLocalValue().varDumpImpl(env, out, depth, valueSet);
+   }
 
-    @Override
-    protected void printRImpl(Env env,
-	    WriteStream out,
-	    int depth,
-	    IdentityHashMap<Value, String> valueSet)
-	    throws IOException {
-	toLocalValue().printRImpl(env, out, depth, valueSet);
-    }
+   @Override
+   protected void printRImpl(Env env,
+           WriteStream out,
+           int depth,
+           IdentityHashMap<Value, String> valueSet)
+           throws IOException {
+      toLocalValue().printRImpl(env, out, depth, valueSet);
+   }
 }

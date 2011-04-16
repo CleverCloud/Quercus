@@ -38,33 +38,33 @@ import com.caucho.quercus.expr.Expr;
  */
 public class ExprStatement extends Statement {
 
-    private Expr _expr;
+   private Expr _expr;
 
-    /**
-     * Creates the expression statement.
-     */
-    public ExprStatement(Location location, Expr expr) {
-	super(location);
+   /**
+    * Creates the expression statement.
+    */
+   public ExprStatement(Location location, Expr expr) {
+      super(location);
 
-	_expr = expr;
-    }
+      _expr = expr;
+   }
 
-    /**
-     * Returns the expression.
-     */
-    public Expr getExpr() {
-	return _expr;
-    }
+   /**
+    * Returns the expression.
+    */
+   public Expr getExpr() {
+      return _expr;
+   }
 
-    public Value execute(Env env) {
-	// php/0d92
-	Location oldLocation = env.setLocation(getLocation());
+   public Value execute(Env env) {
+      // php/0d92
+      Location oldLocation = env.setLocation(getLocation());
 
-	// php/1a08
-	_expr.evalTop(env);
+      // php/1a08
+      _expr.evalTop(env);
 
-	env.setLocation(oldLocation);
+      env.setLocation(oldLocation);
 
-	return null;
-    }
+      return null;
+   }
 }

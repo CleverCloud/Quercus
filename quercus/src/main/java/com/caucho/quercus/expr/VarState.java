@@ -33,9 +33,9 @@ package com.caucho.quercus.expr;
  */
 public enum VarState {
 
-    INIT,
-    UNKNOWN,
-    VALID,
-    UNSET,
-    UNDEFINED
+   INIT,
+   UNKNOWN,
+   VALID,
+   UNSET,
+   UNDEFINED
 }

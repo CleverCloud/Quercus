@@ -41,40 +41,40 @@ import com.caucho.quercus.env.Value;
 @SuppressWarnings("serial")
 public class FunSpecialCall extends AbstractFunction {
 
-    private AbstractFunction _call;
-    private StringValue _name;
+   private AbstractFunction _call;
+   private StringValue _name;
 
-    public FunSpecialCall(AbstractFunction call, StringValue name) {
-	_call = call;
-	_name = name;
-    }
+   public FunSpecialCall(AbstractFunction call, StringValue name) {
+      _call = call;
+      _name = name;
+   }
 
-    /**
-     * Evaluates the function.
-     */
-    @Override
-    public Value call(Env env, Value[] args) {
-	ArrayValueImpl arrayArgs = new ArrayValueImpl(args);
+   /**
+    * Evaluates the function.
+    */
+   @Override
+   public Value call(Env env, Value[] args) {
+      ArrayValueImpl arrayArgs = new ArrayValueImpl(args);
 
-	return _call.call(env, _name, arrayArgs);
-    }
+      return _call.call(env, _name, arrayArgs);
+   }
 
-    /**
-     * Evaluates the function.
-     */
-    @Override
-    public Value callMethod(Env env,
-	    QuercusClass qClass,
-	    Value qThis,
-	    Value[] args) {
-	ArrayValueImpl arrayArgs = new ArrayValueImpl(args);
+   /**
+    * Evaluates the function.
+    */
+   @Override
+   public Value callMethod(Env env,
+           QuercusClass qClass,
+           Value qThis,
+           Value[] args) {
+      ArrayValueImpl arrayArgs = new ArrayValueImpl(args);
 
-	return _call.callMethod(env, qClass, qThis,
-		_name, arrayArgs);
-    }
+      return _call.callMethod(env, qClass, qThis,
+              _name, arrayArgs);
+   }
 
-    @Override
-    public String toString() {
-	return getClass().getSimpleName() + "[" + getName() + "]";
-    }
+   @Override
+   public String toString() {
+      return getClass().getSimpleName() + "[" + getName() + "]";
+   }
 }

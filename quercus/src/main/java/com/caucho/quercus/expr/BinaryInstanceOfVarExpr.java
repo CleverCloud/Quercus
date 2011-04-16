@@ -39,39 +39,39 @@ import com.caucho.quercus.env.Value;
  */
 public class BinaryInstanceOfVarExpr extends AbstractBinaryExpr {
 
-    public BinaryInstanceOfVarExpr(Location location, Expr left, Expr right) {
-	super(location, left, right);
-    }
+   public BinaryInstanceOfVarExpr(Location location, Expr left, Expr right) {
+      super(location, left, right);
+   }
 
-    public BinaryInstanceOfVarExpr(Expr left, Expr right) {
-	super(left, right);
-    }
+   public BinaryInstanceOfVarExpr(Expr left, Expr right) {
+      super(left, right);
+   }
 
-    /**
-     * Returns true for a boolean.
-     */
-    public boolean isBoolean() {
-	return true;
-    }
+   /**
+    * Returns true for a boolean.
+    */
+   public boolean isBoolean() {
+      return true;
+   }
 
-    /**
-     * Evaluates the equality as a boolean.
-     */
-    public Value eval(Env env) {
-	return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
-    }
+   /**
+    * Evaluates the equality as a boolean.
+    */
+   public Value eval(Env env) {
+      return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
+   }
 
-    /**
-     * Evaluates the equality as a boolean.
-     */
-    public boolean evalBoolean(Env env) {
-	Value lValue = _left.eval(env);
-	Value rValue = _right.eval(env);
+   /**
+    * Evaluates the equality as a boolean.
+    */
+   public boolean evalBoolean(Env env) {
+      Value lValue = _left.eval(env);
+      Value rValue = _right.eval(env);
 
-	return lValue.isA(rValue);
-    }
+      return lValue.isA(rValue);
+   }
 
-    public String toString() {
-	return "(" + _left + " instanceof " + _right + ")";
-    }
+   public String toString() {
+      return "(" + _left + " instanceof " + _right + ")";
+   }
 }

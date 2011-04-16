@@ -39,64 +39,64 @@ import java.util.IdentityHashMap;
  */
 public class BreakValue extends Value {
 
-    public static final BreakValue BREAK = new BreakValue();
-    private int _target;
+   public static final BreakValue BREAK = new BreakValue();
+   private int _target;
 
-    private BreakValue() {
-    }
+   private BreakValue() {
+   }
 
-    public BreakValue(Value target) {
-	_target = target.toInt();
-    }
+   public BreakValue(Value target) {
+      _target = target.toInt();
+   }
 
-    public BreakValue(int target) {
-	_target = target;
-    }
+   public BreakValue(int target) {
+      _target = target;
+   }
 
-    public int getTarget() {
-	return _target;
-    }
+   public int getTarget() {
+      return _target;
+   }
 
-    /**
-     * Converts to a boolean.
-     */
-    public boolean toBoolean() {
-	return false;
-    }
+   /**
+    * Converts to a boolean.
+    */
+   public boolean toBoolean() {
+      return false;
+   }
 
-    /**
-     * Converts to a long.
-     */
-    public long toLong() {
-	return 0;
-    }
+   /**
+    * Converts to a long.
+    */
+   public long toLong() {
+      return 0;
+   }
 
-    /**
-     * Converts to a double.
-     */
-    public double toDouble() {
-	return 0;
-    }
+   /**
+    * Converts to a double.
+    */
+   public double toDouble() {
+      return 0;
+   }
 
-    /**
-     * Converts to an object.
-     */
-    public Object toObject() {
-	return "";
-    }
+   /**
+    * Converts to an object.
+    */
+   public Object toObject() {
+      return "";
+   }
 
-    /**
-     * Prints the value.
-     * @param env
-     */
-    public void print(Env env) {
-    }
+   /**
+    * Prints the value.
+    * @param env
+    */
+   public void print(Env env) {
+   }
 
-    public void varDumpImpl(Env env,
-	    WriteStream out,
-	    int depth,
-	    IdentityHashMap<Value, String> valueSet)
-	    throws IOException {
-	out.print(getClass().getName());
-    }
+   public void varDumpImpl(Env env,
+           WriteStream out,
+           int depth,
+           IdentityHashMap<Value, String> valueSet)
+           throws IOException {
+      out.print(getClass().getName());
+   }
 }

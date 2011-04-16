@@ -41,135 +41,135 @@ import java.util.Set;
 
 public class IniDefinitions {
 
-    public static final IniDefinitions EMPTY = new IniDefinitions();
-    private HashMap<String, IniDefinition> _defaultMap;
+   public static final IniDefinitions EMPTY = new IniDefinitions();
+   private HashMap<String, IniDefinition> _defaultMap;
 
-    /**
-     * Add an ini default for an ini that has a boolean value.
-     */
-    public IniDefinition add(String name, boolean deflt, int scope) {
-	return add(name,
-		IniDefinition.Type.BOOLEAN,
-		BooleanValue.create(deflt),
-		scope);
-    }
+   /**
+    * Add an ini default for an ini that has a boolean value.
+    */
+   public IniDefinition add(String name, boolean deflt, int scope) {
+      return add(name,
+              IniDefinition.Type.BOOLEAN,
+              BooleanValue.create(deflt),
+              scope);
+   }
 
-    /**
-     * Add an ini default for an ini that has a long value.
-     */
-    public IniDefinition add(String name, long deflt, int scope) {
-	return add(name, IniDefinition.Type.LONG, LongValue.create(deflt), scope);
-    }
+   /**
+    * Add an ini default for an ini that has a long value.
+    */
+   public IniDefinition add(String name, long deflt, int scope) {
+      return add(name, IniDefinition.Type.LONG, LongValue.create(deflt), scope);
+   }
 
-    /**
-     * Add an ini default for an ini that has a string value.
-     */
-    public IniDefinition add(String name, String deflt, int scope) {
-	return add(name,
-		IniDefinition.Type.STRING,
-		StringValue.create(deflt),
-		scope);
-    }
+   /**
+    * Add an ini default for an ini that has a string value.
+    */
+   public IniDefinition add(String name, String deflt, int scope) {
+      return add(name,
+              IniDefinition.Type.STRING,
+              StringValue.create(deflt),
+              scope);
+   }
 
-    private IniDefinition add(String name,
-	    IniDefinition.Type type,
-	    Value deflt,
-	    int scope) {
-	return add(new IniDefinition(name, type, deflt, scope));
-    }
+   private IniDefinition add(String name,
+           IniDefinition.Type type,
+           Value deflt,
+           int scope) {
+      return add(new IniDefinition(name, type, deflt, scope));
+   }
 
-    private IniDefinition add(IniDefinition iniDefinition) {
-	if (_defaultMap == null) {
-	    _defaultMap = new HashMap<String, IniDefinition>();
-	}
+   private IniDefinition add(IniDefinition iniDefinition) {
+      if (_defaultMap == null) {
+         _defaultMap = new HashMap<String, IniDefinition>();
+      }
 
-	_defaultMap.put(iniDefinition.getName(), iniDefinition);
+      _defaultMap.put(iniDefinition.getName(), iniDefinition);
 
-	return iniDefinition;
-    }
+      return iniDefinition;
+   }
 
-    /**
-     * Add an unsupported ini default for an ini that has a boolean value.
-     */
-    public IniDefinition addUnsupported(String name, boolean deflt, int scope) {
-	return addUnsupported(name,
-		IniDefinition.Type.BOOLEAN,
-		BooleanValue.create(deflt),
-		scope);
-    }
+   /**
+    * Add an unsupported ini default for an ini that has a boolean value.
+    */
+   public IniDefinition addUnsupported(String name, boolean deflt, int scope) {
+      return addUnsupported(name,
+              IniDefinition.Type.BOOLEAN,
+              BooleanValue.create(deflt),
+              scope);
+   }
 
-    /**
-     * Add an unsupported ini default for an ini that has a long value.
-     */
-    public IniDefinition addUnsupported(String name, long deflt, int scope) {
-	return addUnsupported(name,
-		IniDefinition.Type.LONG,
-		LongValue.create(deflt),
-		scope);
-    }
+   /**
+    * Add an unsupported ini default for an ini that has a long value.
+    */
+   public IniDefinition addUnsupported(String name, long deflt, int scope) {
+      return addUnsupported(name,
+              IniDefinition.Type.LONG,
+              LongValue.create(deflt),
+              scope);
+   }
 
-    /**
-     * Add an unsupported ini default for an ini that has a string value.
-     */
-    public IniDefinition addUnsupported(String name, String deflt, int scope) {
-	return addUnsupported(name,
-		IniDefinition.Type.STRING,
-		StringValue.create(deflt),
-		scope);
-    }
+   /**
+    * Add an unsupported ini default for an ini that has a string value.
+    */
+   public IniDefinition addUnsupported(String name, String deflt, int scope) {
+      return addUnsupported(name,
+              IniDefinition.Type.STRING,
+              StringValue.create(deflt),
+              scope);
+   }
 
-    private IniDefinition addUnsupported(String name,
-	    IniDefinition.Type type,
-	    Value deflt,
-	    int scope) {
-	return add(new IniDefinition.Unsupported(name, type, deflt, scope));
-    }
+   private IniDefinition addUnsupported(String name,
+           IniDefinition.Type type,
+           Value deflt,
+           int scope) {
+      return add(new IniDefinition.Unsupported(name, type, deflt, scope));
+   }
 
-    public void addAll(IniDefinitions iniDefinitions) {
-	if (iniDefinitions._defaultMap == null) {
-	    return;
-	}
+   public void addAll(IniDefinitions iniDefinitions) {
+      if (iniDefinitions._defaultMap == null) {
+         return;
+      }
 
-	if (_defaultMap == null) {
-	    _defaultMap = new HashMap<String, IniDefinition>();
-	}
+      if (_defaultMap == null) {
+         _defaultMap = new HashMap<String, IniDefinition>();
+      }
 
-	_defaultMap.putAll(iniDefinitions._defaultMap);
-    }
+      _defaultMap.putAll(iniDefinitions._defaultMap);
+   }
 
-    /**
-     * Return a set of all of the names.
-     */
-    public Set<String> getNames() {
-	if (_defaultMap == null) {
-	    return Collections.emptySet();
-	} else {
-	    return _defaultMap.keySet();
-	}
-    }
+   /**
+    * Return a set of all of the names.
+    */
+   public Set<String> getNames() {
+      if (_defaultMap == null) {
+         return Collections.emptySet();
+      } else {
+         return _defaultMap.keySet();
+      }
+   }
 
-    /*
-     * Returns the set of all ini name/value pairs.
-     */
-    public Set<Map.Entry<String, IniDefinition>> entrySet() {
-	if (_defaultMap == null) {
-	    return null;
-	} else {
-	    return _defaultMap.entrySet();
-	}
-    }
+   /*
+    * Returns the set of all ini name/value pairs.
+    */
+   public Set<Map.Entry<String, IniDefinition>> entrySet() {
+      if (_defaultMap == null) {
+         return null;
+      } else {
+         return _defaultMap.entrySet();
+      }
+   }
 
-    public IniDefinition get(String name) {
-	IniDefinition iniDefinition = _defaultMap == null
-		? null
-		: _defaultMap.get(name);
+   public IniDefinition get(String name) {
+      IniDefinition iniDefinition = _defaultMap == null
+              ? null
+              : _defaultMap.get(name);
 
-	if (iniDefinition == null) {
-	    iniDefinition = new IniDefinition.Runtime(name);
+      if (iniDefinition == null) {
+         iniDefinition = new IniDefinition.Runtime(name);
 
-	    add(iniDefinition);
-	}
+         add(iniDefinition);
+      }
 
-	return iniDefinition;
-    }
+      return iniDefinition;
+   }
 }

@@ -38,33 +38,33 @@ import com.caucho.quercus.env.BooleanValue;
  */
 public class FunIssetExpr extends AbstractUnaryExpr {
 
-    public FunIssetExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public FunIssetExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public FunIssetExpr(Expr expr) {
-	super(expr);
-    }
+   public FunIssetExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Return true as a boolean.
-     */
-    public boolean isBoolean() {
-	return true;
-    }
+   /**
+    * Return true as a boolean.
+    */
+   public boolean isBoolean() {
+      return true;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return _expr.evalIsset(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return _expr.evalIsset(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
+   }
 
-    public String toString() {
-	return "isset(" + _expr + ")";
-    }
+   public String toString() {
+      return "isset(" + _expr + ")";
+   }
 }

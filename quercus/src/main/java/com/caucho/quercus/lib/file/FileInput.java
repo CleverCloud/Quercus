@@ -47,108 +47,108 @@ import java.util.logging.*;
  * Represents a Quercus file open for reading
  */
 public class FileInput extends ReadStreamInput
-	implements LockableStream, EnvCleanup {
+        implements LockableStream, EnvCleanup {
 
-    private static final Logger log = Logger.getLogger(FileInput.class.getName());
-    protected Env _env;
-    protected Path _path;
-    protected ReadStream _is;
+   private static final Logger log = Logger.getLogger(FileInput.class.getName());
+   protected Env _env;
+   protected Path _path;
+   protected ReadStream _is;
 
-    public FileInput(Env env, Path path)
-	    throws IOException {
-	super(env);
+   public FileInput(Env env, Path path)
+           throws IOException {
+      super(env);
 
-	_env = env;
+      _env = env;
 
-	env.addCleanup(this);
+      env.addCleanup(this);
 
-	_path = path;
+      _path = path;
 
-	_is = path.openRead();
+      _is = path.openRead();
 
-	init(_is);
-    }
+      init(_is);
+   }
 
-    /**
-     * Returns the path.
-     */
-    public Path getPath() {
-	return _path;
-    }
+   /**
+    * Returns the path.
+    */
+   public Path getPath() {
+      return _path;
+   }
 
-    /**
-     * Opens a copy.
-     */
-    public BinaryInput openCopy()
-	    throws IOException {
-	return new FileInput(_env, _path);
-    }
+   /**
+    * Opens a copy.
+    */
+   public BinaryInput openCopy()
+           throws IOException {
+      return new FileInput(_env, _path);
+   }
 
-    /**
-     * Returns the number of bytes available to be read, 0 if not known.
-     */
-    public long getLength() {
-	return getPath().getLength();
-    }
+   /**
+    * Returns the number of bytes available to be read, 0 if not known.
+    */
+   public long getLength() {
+      return getPath().getLength();
+   }
 
-    public long seek(long offset, int whence) {
-	long position;
+   public long seek(long offset, int whence) {
+      long position;
 
-	switch (whence) {
-	    case BinaryStream.SEEK_CUR:
-		position = getPosition() + offset;
-		break;
-	    case BinaryStream.SEEK_END:
-		position = getLength() + offset;
-		break;
-	    case BinaryStream.SEEK_SET:
-	    default:
-		position = offset;
-		break;
-	}
+      switch (whence) {
+         case BinaryStream.SEEK_CUR:
+            position = getPosition() + offset;
+            break;
+         case BinaryStream.SEEK_END:
+            position = getLength() + offset;
+            break;
+         case BinaryStream.SEEK_SET:
+         default:
+            position = offset;
+            break;
+      }
 
-	if (!setPosition(position)) {
-	    return -1L;
-	} else {
-	    return position;
-	}
-    }
+      if (!setPosition(position)) {
+         return -1L;
+      } else {
+         return position;
+      }
+   }
 
-    /**
-     * Lock the shared advisory lock.
-     */
-    public boolean lock(boolean shared, boolean block) {
-	return _is.lock(shared, block);
-    }
+   /**
+    * Lock the shared advisory lock.
+    */
+   public boolean lock(boolean shared, boolean block) {
+      return _is.lock(shared, block);
+   }
 
-    /**
-     * Unlock the advisory lock.
-     */
-    public boolean unlock() {
-	return _is.unlock();
-    }
+   /**
+    * Unlock the advisory lock.
+    */
+   public boolean unlock() {
+      return _is.unlock();
+   }
 
-    public Value stat() {
-	return FileModule.statImpl(_env, getPath());
-    }
+   public Value stat() {
+      return FileModule.statImpl(_env, getPath());
+   }
 
-    public void close() {
-	_env.removeCleanup(this);
+   public void close() {
+      _env.removeCleanup(this);
 
-	cleanup();
-    }
+      cleanup();
+   }
 
-    /**
-     * Implements the EnvCleanup interface.
-     */
-    public void cleanup() {
-	super.close();
-    }
+   /**
+    * Implements the EnvCleanup interface.
+    */
+   public void cleanup() {
+      super.close();
+   }
 
-    /**
-     * Converts to a string.
-     */
-    public String toString() {
-	return "FileInput[" + getPath() + "]";
-    }
+   /**
+    * Converts to a string.
+    */
+   public String toString() {
+      return "FileInput[" + getPath() + "]";
+   }
 }

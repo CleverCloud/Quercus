@@ -33,53 +33,53 @@ package com.caucho.quercus.profile;
  */
 public class ProfileItem {
 
-    private final String _name;
-    private final String _parent;
-    private final long _count;
-    private final long _micros;
+   private final String _name;
+   private final String _parent;
+   private final long _count;
+   private final long _micros;
 
-    public ProfileItem(String name, String parent, long count, long micros) {
-	_name = name;
-	_parent = parent;
-	_count = count;
-	_micros = micros;
-    }
+   public ProfileItem(String name, String parent, long count, long micros) {
+      _name = name;
+      _parent = parent;
+      _count = count;
+      _micros = micros;
+   }
 
-    /**
-     * Returns the item's function name
-     */
-    public String getName() {
-	return _name;
-    }
+   /**
+    * Returns the item's function name
+    */
+   public String getName() {
+      return _name;
+   }
 
-    /**
-     * Returns the item's parent name
-     */
-    public String getParent() {
-	return _parent;
-    }
+   /**
+    * Returns the item's parent name
+    */
+   public String getParent() {
+      return _parent;
+   }
 
-    /**
-     * Returns the item call count
-     */
-    public long getCount() {
-	return _count;
-    }
+   /**
+    * Returns the item call count
+    */
+   public long getCount() {
+      return _count;
+   }
 
-    /**
-     * Returns the item execution time in microseconds
-     */
-    public long getMicros() {
-	return _micros;
-    }
+   /**
+    * Returns the item execution time in microseconds
+    */
+   public long getMicros() {
+      return _micros;
+   }
 
-    @Override
-    public String toString() {
-	return (getClass().getSimpleName()
-		+ "[" + _name
-		+ ",parent=" + _parent
-		+ ",count=" + _count
-		+ ",micros=" + _micros
-		+ "]");
-    }
+   @Override
+   public String toString() {
+      return (getClass().getSimpleName()
+              + "[" + _name
+              + ",parent=" + _parent
+              + ",count=" + _count
+              + ",micros=" + _micros
+              + "]");
+   }
 }

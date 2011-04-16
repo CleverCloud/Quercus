@@ -43,65 +43,65 @@ import java.io.IOException;
  */
 public class ZlibInputStream extends ReadStreamInput {
 
-    private Env _env;
-    private BinaryInput _in;
-    private GZInputStream _gzIn;
+   private Env _env;
+   private BinaryInput _in;
+   private GZInputStream _gzIn;
 
-    public ZlibInputStream(Env env, BinaryInput in) throws IOException {
-	super(env);
+   public ZlibInputStream(Env env, BinaryInput in) throws IOException {
+      super(env);
 
-	_env = env;
+      _env = env;
 
-	init(in);
-    }
+      init(in);
+   }
 
-    protected void init(BinaryInput in)
-	    throws IOException {
-	_in = in;
+   protected void init(BinaryInput in)
+           throws IOException {
+      _in = in;
 
-	_gzIn = new GZInputStream(in.getInputStream());
-	ReadStream rs = new ReadStream(new VfsStream(_gzIn, null));
+      _gzIn = new GZInputStream(in.getInputStream());
+      ReadStream rs = new ReadStream(new VfsStream(_gzIn, null));
 
-	init(rs);
-    }
+      init(rs);
+   }
 
-    /**
-     * Opens a new copy.
-     */
-    public BinaryInput openCopy()
-	    throws IOException {
-	return new ZlibInputStream(_env, _in.openCopy());
-    }
+   /**
+    * Opens a new copy.
+    */
+   public BinaryInput openCopy()
+           throws IOException {
+      return new ZlibInputStream(_env, _in.openCopy());
+   }
 
-    /**
-     * Sets the position.
-     */
-    public boolean setPosition(long offset) {
-	try {
-	    BinaryInput newIn = _in.openCopy();
+   /**
+    * Sets the position.
+    */
+   public boolean setPosition(long offset) {
+      try {
+         BinaryInput newIn = _in.openCopy();
 
-	    /*
-	    _gzIn.close();
-	    getInputStream().close();
+         /*
+         _gzIn.close();
+         getInputStream().close();
 
-	    _in.close();
-	    _in = null;
-	    _gzIn = null;
-	     */
+         _in.close();
+         _in = null;
+         _gzIn = null;
+          */
 
-	    close();
-	    _in.close();
+         close();
+         _in.close();
 
-	    init(newIn);
+         init(newIn);
 
-	    return skip(offset) == offset;
+         return skip(offset) == offset;
 
-	} catch (IOException e) {
-	    throw new QuercusModuleException(e);
-	}
-    }
+      } catch (IOException e) {
+         throw new QuercusModuleException(e);
+      }
+   }
 
-    public String toString() {
-	return "ZlibInputStream[]";
-    }
+   public String toString() {
+      return "ZlibInputStream[]";
+   }
 }

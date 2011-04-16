@@ -38,46 +38,46 @@ import com.caucho.quercus.env.Value;
  */
 public class LiteralNullExpr extends Expr {
 
-    public static final LiteralNullExpr NULL = new LiteralNullExpr(Location.UNKNOWN);
+   public static final LiteralNullExpr NULL = new LiteralNullExpr(Location.UNKNOWN);
 
-    private LiteralNullExpr(Location location) {
-	super(location);
-    }
+   private LiteralNullExpr(Location location) {
+      super(location);
+   }
 
-    protected LiteralNullExpr() {
-    }
+   protected LiteralNullExpr() {
+   }
 
-    /**
-     * Evaluates the expression as a constant.
-     *
-     * @return the expression value.
-     */
-    public Value evalConstant() {
-	return NullValue.NULL;
-    }
+   /**
+    * Evaluates the expression as a constant.
+    *
+    * @return the expression value.
+    */
+   public Value evalConstant() {
+      return NullValue.NULL;
+   }
 
-    /**
-     * Returns true for a literal expression.
-     */
-    public boolean isLiteral() {
-	return true;
-    }
+   /**
+    * Returns true for a literal expression.
+    */
+   public boolean isLiteral() {
+      return true;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return NullValue.create();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return NullValue.create();
+   }
 
-    //
-    // Java code generation
-    //
-    public String toString() {
-	return "null";
-    }
+   //
+   // Java code generation
+   //
+   public String toString() {
+      return "null";
+   }
 }

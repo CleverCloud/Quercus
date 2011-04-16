@@ -43,54 +43,54 @@ import java.util.logging.*;
  */
 public class RegexpMarshal extends StringMarshal {
 
-    private static final Logger log = Logger.getLogger(RegexpModule.class.getName());
-    public static final RegexpMarshal MARSHAL = new RegexpMarshal();
+   private static final Logger log = Logger.getLogger(RegexpModule.class.getName());
+   public static final RegexpMarshal MARSHAL = new RegexpMarshal();
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	try {
-	    return RegexpModule.createRegexp(env, expr.evalStringValue(env));
-	} catch (QuercusException e) {
-	    env.warning(e);
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      try {
+         return RegexpModule.createRegexp(env, expr.evalStringValue(env));
+      } catch (QuercusException e) {
+         env.warning(e);
 
-	    return null;
-	}
-    }
+         return null;
+      }
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	try {
-	    return RegexpModule.createRegexp(env, value.toStringValue(env));
-	} catch (QuercusException e) {
-	    // php/153t
-	    env.warning(e);
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      try {
+         return RegexpModule.createRegexp(env, value.toStringValue(env));
+      } catch (QuercusException e) {
+         // php/153t
+         env.warning(e);
 
-	    return null;
-	}
-    }
+         return null;
+      }
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	throw new UnsupportedOperationException(getClass().getName());
-    }
+   public Value unmarshal(Env env, Object value) {
+      throw new UnsupportedOperationException(getClass().getName());
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	if (argValue.isString()) {
-	    return Marshal.ZERO;
-	} else {
-	    return Marshal.MAX;
-	}
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      if (argValue.isString()) {
+         return Marshal.ZERO;
+      } else {
+         return Marshal.MAX;
+      }
+   }
 
-    @Override
-    public int getMarshalingCost(Expr expr) {
-	if (expr.isString()) {
-	    return Marshal.ZERO;
-	} else {
-	    return Marshal.MAX;
-	}
-    }
+   @Override
+   public int getMarshalingCost(Expr expr) {
+      if (expr.isString()) {
+         return Marshal.ZERO;
+      } else {
+         return Marshal.MAX;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return Regexp.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return Regexp.class;
+   }
 }

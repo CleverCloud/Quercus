@@ -32,10 +32,10 @@ import com.caucho.quercus.env.IteratorClass;
 import com.caucho.quercus.env.Env;
 
 public interface SeekableIterator
-	extends IteratorClass {
+        extends IteratorClass {
 
-    /**
-     * Seeks to the given offset.
-     */
-    public void seek(Env env, int index);
+   /**
+    * Seeks to the given offset.
+    */
+   public void seek(Env env, int index);
 }

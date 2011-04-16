@@ -36,32 +36,32 @@ import com.caucho.quercus.env.*;
  */
 public class ToBinaryExpr extends ToStringExpr {
 
-    public ToBinaryExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public ToBinaryExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public ToBinaryExpr(Expr expr) {
-	super(expr);
-    }
+   public ToBinaryExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value value = _expr.eval(env).toValue();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value value = _expr.eval(env).toValue();
 
-	if (value.isBinary()) {
-	    return value;
-	} else {
-	    return value.toString(env).toBinaryValue(env);
-	}
-    }
+      if (value.isBinary()) {
+         return value;
+      } else {
+         return value.toString(env).toBinaryValue(env);
+      }
+   }
 
-    public String toString() {
-	return "((binary) " + _expr + ")";
-    }
+   public String toString() {
+      return "((binary) " + _expr + ")";
+   }
 }

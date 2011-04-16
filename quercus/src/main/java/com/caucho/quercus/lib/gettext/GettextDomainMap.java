@@ -38,25 +38,25 @@ import java.util.HashMap;
 
 public class GettextDomainMap {
 
-    private String _current = "messages";
-    private HashMap<String, GettextDomain> _domains = new HashMap<String, GettextDomain>();
+   private String _current = "messages";
+   private HashMap<String, GettextDomain> _domains = new HashMap<String, GettextDomain>();
 
-    public GettextDomain getCurrent(Env env) {
-	return getDomain(env, _current);
-    }
+   public GettextDomain getCurrent(Env env) {
+      return getDomain(env, _current);
+   }
 
-    public void setCurrent(String current) {
-	_current = current;
-    }
+   public void setCurrent(String current) {
+      _current = current;
+   }
 
-    public GettextDomain getDomain(Env env, String name) {
-	GettextDomain domain = _domains.get(name);
+   public GettextDomain getDomain(Env env, String name) {
+      GettextDomain domain = _domains.get(name);
 
-	if (domain == null) {
-	    domain = new GettextDomain(env, name);
-	    _domains.put(name, domain);
-	}
+      if (domain == null) {
+         domain = new GettextDomain(env, name);
+         _domains.put(name, domain);
+      }
 
-	return domain;
-    }
+      return domain;
+   }
 }

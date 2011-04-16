@@ -33,5 +33,4 @@ import com.caucho.quercus.lib.exception.ExceptionClass;
 
 @ClassImplementation
 public class RuntimeException extends ExceptionClass {
-
 }

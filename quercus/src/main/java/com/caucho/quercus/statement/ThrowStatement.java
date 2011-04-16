@@ -39,30 +39,30 @@ import com.caucho.quercus.expr.Expr;
  */
 public class ThrowStatement extends Statement {
 
-    protected Expr _expr;
+   protected Expr _expr;
 
-    /**
-     * Creates the echo statement.
-     */
-    public ThrowStatement(Location location, Expr expr) {
-	super(location);
+   /**
+    * Creates the echo statement.
+    */
+   public ThrowStatement(Location location, Expr expr) {
+      super(location);
 
-	_expr = expr;
-    }
+      _expr = expr;
+   }
 
-    /**
-     * Executes the statement, returning the expression value.
-     */
-    public Value execute(Env env) {
-	throw _expr.eval(env).toException(env,
-		getLocation().getFileName(),
-		getLocation().getLineNumber());
-    }
+   /**
+    * Executes the statement, returning the expression value.
+    */
+   public Value execute(Env env) {
+      throw _expr.eval(env).toException(env,
+              getLocation().getFileName(),
+              getLocation().getLineNumber());
+   }
 
-    /**
-     * Returns true if control can go past the statement.
-     */
-    public int fallThrough() {
-	return RETURN;
-    }
+   /**
+    * Returns true if control can go past the statement.
+    */
+   public int fallThrough() {
+      return RETURN;
+   }
 }

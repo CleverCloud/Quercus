@@ -32,13 +32,13 @@ package com.caucho.quercus.env;
  * Represents a unicode string value.
  */
 public class UnicodeValueImpl
-	extends UnicodeBuilderValue {
+        extends UnicodeBuilderValue {
 
-    protected static final int IS_STRING = 0;
-    protected static final int IS_LONG = 1;
-    protected static final int IS_DOUBLE = 2;
+   protected static final int IS_STRING = 0;
+   protected static final int IS_LONG = 1;
+   protected static final int IS_DOUBLE = 2;
 
-    public UnicodeValueImpl(String value) {
-	super(value);
-    }
+   public UnicodeValueImpl(String value) {
+      super(value);
+   }
 }

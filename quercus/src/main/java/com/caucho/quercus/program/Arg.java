@@ -37,54 +37,54 @@ import com.caucho.quercus.expr.Expr;
  */
 public class Arg {
 
-    private final StringValue _name;
-    private final Expr _default;
-    private final boolean _isReference;
-    private final String _expectedClass;
+   private final StringValue _name;
+   private final Expr _default;
+   private final boolean _isReference;
+   private final String _expectedClass;
 
-    public Arg(String name,
-	    Expr defaultExpr,
-	    boolean isReference,
-	    String expectedClass) {
-	_name = MethodIntern.intern(name);
-	_default = defaultExpr;
-	_isReference = isReference;
-	_expectedClass = expectedClass;
+   public Arg(String name,
+           Expr defaultExpr,
+           boolean isReference,
+           String expectedClass) {
+      _name = MethodIntern.intern(name);
+      _default = defaultExpr;
+      _isReference = isReference;
+      _expectedClass = expectedClass;
 
-	if (_default == null) {
-	    throw new IllegalStateException();
-	}
-    }
+      if (_default == null) {
+         throw new IllegalStateException();
+      }
+   }
 
-    /**
-     * Returns the argument name.
-     */
-    public StringValue getName() {
-	return _name;
-    }
+   /**
+    * Returns the argument name.
+    */
+   public StringValue getName() {
+      return _name;
+   }
 
-    /**
-     * Returns the default expression
-     */
-    public Expr getDefault() {
-	return _default;
-    }
+   /**
+    * Returns the default expression
+    */
+   public Expr getDefault() {
+      return _default;
+   }
 
-    /**
-     * Returns true for a reference argument.
-     */
-    public boolean isReference() {
-	return _isReference;
-    }
+   /**
+    * Returns true for a reference argument.
+    */
+   public boolean isReference() {
+      return _isReference;
+   }
 
-    /**
-     * Returns the expected classname
-     */
-    public String getExpectedClass() {
-	return _expectedClass;
-    }
+   /**
+    * Returns the expected classname
+    */
+   public String getExpectedClass() {
+      return _expectedClass;
+   }
 
-    public String toString() {
-	return "Arg[" + _name + "]";
-    }
+   public String toString() {
+      return "Arg[" + _name + "]";
+   }
 }

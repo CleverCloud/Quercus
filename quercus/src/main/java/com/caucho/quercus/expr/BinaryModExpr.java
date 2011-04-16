@@ -37,43 +37,43 @@ import com.caucho.quercus.env.Value;
  */
 public class BinaryModExpr extends AbstractBinaryExpr {
 
-    public BinaryModExpr(Location location, Expr left, Expr right) {
-	super(location, left, right);
-    }
+   public BinaryModExpr(Location location, Expr left, Expr right) {
+      super(location, left, right);
+   }
 
-    public BinaryModExpr(Expr left, Expr right) {
-	super(left, right);
-    }
+   public BinaryModExpr(Expr left, Expr right) {
+      super(left, right);
+   }
 
-    /**
-     * Return true for a long.
-     */
-    public boolean isLong() {
-	return true;
-    }
+   /**
+    * Return true for a long.
+    */
+   public boolean isLong() {
+      return true;
+   }
 
-    /**
-     * Return true for a long.
-     */
-    public boolean isNumber() {
-	return true;
-    }
+   /**
+    * Return true for a long.
+    */
+   public boolean isNumber() {
+      return true;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value lValue = _left.eval(env);
-	Value rValue = _right.eval(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value lValue = _left.eval(env);
+      Value rValue = _right.eval(env);
 
-	return lValue.mod(rValue);
-    }
+      return lValue.mod(rValue);
+   }
 
-    public String toString() {
-	return "(" + _left + " % " + _right + ")";
-    }
+   public String toString() {
+      return "(" + _left + " % " + _right + ")";
+   }
 }

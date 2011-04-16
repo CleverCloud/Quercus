@@ -41,258 +41,258 @@ import com.caucho.util.Primes;
  */
 public final class MethodMap<V> {
 
-    private static final L10N L = new L10N(MethodMap.class);
-    private final QuercusClass _quercusClass;
-    private final ClassDef _classDef;
-    private Entry<V>[] _entries = new Entry[16];
-    private int _prime = Primes.getBiggestPrime(_entries.length);
-    private int _size;
+   private static final L10N L = new L10N(MethodMap.class);
+   private final QuercusClass _quercusClass;
+   private final ClassDef _classDef;
+   private Entry<V>[] _entries = new Entry[16];
+   private int _prime = Primes.getBiggestPrime(_entries.length);
+   private int _size;
 
-    public MethodMap(QuercusClass quercusClass, ClassDef classDef) {
-	_quercusClass = quercusClass;
-	_classDef = classDef;
-    }
+   public MethodMap(QuercusClass quercusClass, ClassDef classDef) {
+      _quercusClass = quercusClass;
+      _classDef = classDef;
+   }
 
-    public void put(String methodName, V value) {
-	StringValue name = MethodIntern.intern(methodName);
+   public void put(String methodName, V value) {
+      StringValue name = MethodIntern.intern(methodName);
 
-	if (_entries.length <= _size * 4) {
-	    resize();
-	}
+      if (_entries.length <= _size * 4) {
+         resize();
+      }
 
-	int hash = name.hashCodeCaseInsensitive();
+      int hash = name.hashCodeCaseInsensitive();
 
-	int bucket = (hash & 0x7fffffff) % _prime;
+      int bucket = (hash & 0x7fffffff) % _prime;
 
-	Entry<V> entry;
-	for (entry = _entries[bucket]; entry != null; entry = entry.getNext()) {
-	    StringValue entryKey = entry.getKey();
+      Entry<V> entry;
+      for (entry = _entries[bucket]; entry != null; entry = entry.getNext()) {
+         StringValue entryKey = entry.getKey();
 
-	    if (name == entryKey || name.equalsIgnoreCase(entryKey)) {
-		entry.setValue(value);
+         if (name == entryKey || name.equalsIgnoreCase(entryKey)) {
+            entry.setValue(value);
 
-		return;
-	    }
-	}
+            return;
+         }
+      }
 
-	entry = new Entry<V>(name, value);
+      entry = new Entry<V>(name, value);
 
-	entry._next = _entries[bucket];
-	_entries[bucket] = entry;
-	_size++;
+      entry._next = _entries[bucket];
+      _entries[bucket] = entry;
+      _size++;
 
-    }
-
-    public boolean containsKey(StringValue key) {
-	int hash = key.hashCodeCaseInsensitive();
+   }
+
+   public boolean containsKey(StringValue key) {
+      int hash = key.hashCodeCaseInsensitive();
 
-	final int bucket = (hash & 0x7fffffff) % _prime;
+      final int bucket = (hash & 0x7fffffff) % _prime;
 
-	for (Entry<V> entry = _entries[bucket];
-		entry != null;
-		entry = entry.getNext()) {
-	    final StringValue entryKey = entry.getKey();
-
-	    if (key == entryKey || key.equalsIgnoreCase(entryKey)) {
-		return true;
-	    }
-	}
+      for (Entry<V> entry = _entries[bucket];
+              entry != null;
+              entry = entry.getNext()) {
+         final StringValue entryKey = entry.getKey();
+
+         if (key == entryKey || key.equalsIgnoreCase(entryKey)) {
+            return true;
+         }
+      }
 
-	return false;
-    }
+      return false;
+   }
 
-    public final V get(final StringValue key, int hash) {
-	final int bucket = (hash & 0x7fffffff) % _prime;
+   public final V get(final StringValue key, int hash) {
+      final int bucket = (hash & 0x7fffffff) % _prime;
 
-	for (Entry<V> entry = _entries[bucket];
-		entry != null;
-		entry = entry.getNext()) {
-	    final StringValue entryKey = entry.getKey();
+      for (Entry<V> entry = _entries[bucket];
+              entry != null;
+              entry = entry.getNext()) {
+         final StringValue entryKey = entry.getKey();
 
-	    if (key == entryKey || key.equalsIgnoreCase(entryKey)) {
-		return entry._value;
-	    }
-	}
+         if (key == entryKey || key.equalsIgnoreCase(entryKey)) {
+            return entry._value;
+         }
+      }
 
-	AbstractFunction call = null;
+      AbstractFunction call = null;
 
-	if (_quercusClass != null) {
-	    call = _quercusClass.getCall();
-	} else if (_classDef != null) {
-	    call = _classDef.getCall();
-	}
+      if (_quercusClass != null) {
+         call = _quercusClass.getCall();
+      } else if (_classDef != null) {
+         call = _classDef.getCall();
+      }
 
-	if (call != null) {
-	    return (V) new FunSpecialCall(call, key);
-	}
+      if (call != null) {
+         return (V) new FunSpecialCall(call, key);
+      }
 
-	Env env = Env.getCurrent();
+      Env env = Env.getCurrent();
 
-	if (_quercusClass != null) {
-	    env.error(L.l("Call to undefined method {0}::{1}",
-		    _quercusClass.getName(), key));
-	} else {
-	    env.error(L.l("Call to undefined function {0}",
-		    key));
-	}
+      if (_quercusClass != null) {
+         env.error(L.l("Call to undefined method {0}::{1}",
+                 _quercusClass.getName(), key));
+      } else {
+         env.error(L.l("Call to undefined function {0}",
+                 key));
+      }
 
-	throw new IllegalStateException();
-    }
+      throw new IllegalStateException();
+   }
 
-    public V getRaw(StringValue key) {
-	int hash = key.hashCodeCaseInsensitive();
+   public V getRaw(StringValue key) {
+      int hash = key.hashCodeCaseInsensitive();
 
-	int bucket = (hash & 0x7fffffff) % _prime;
+      int bucket = (hash & 0x7fffffff) % _prime;
 
-	for (Entry<V> entry = _entries[bucket];
-		entry != null;
-		entry = entry.getNext()) {
-	    StringValue entryKey = entry.getKey();
+      for (Entry<V> entry = _entries[bucket];
+              entry != null;
+              entry = entry.getNext()) {
+         StringValue entryKey = entry.getKey();
 
-	    if (key == entryKey || key.equalsIgnoreCase(entryKey)) {
-		return entry.getValue();
-	    }
-	}
+         if (key == entryKey || key.equalsIgnoreCase(entryKey)) {
+            return entry.getValue();
+         }
+      }
 
-	return null;
-    }
+      return null;
+   }
 
-    public V get(StringValue key) {
-	return get(key, key.hashCodeCaseInsensitive());
-    }
+   public V get(StringValue key) {
+      return get(key, key.hashCodeCaseInsensitive());
+   }
 
-    public Iterable<V> values() {
-	return new ValueIterator(_entries);
-    }
+   public Iterable<V> values() {
+      return new ValueIterator(_entries);
+   }
 
-    private boolean match(char[] a, char[] b, int length) {
-	if (a.length != length) {
-	    return false;
-	}
+   private boolean match(char[] a, char[] b, int length) {
+      if (a.length != length) {
+         return false;
+      }
 
-	for (int i = length - 1; i >= 0; i--) {
-	    int chA = a[i];
-	    int chB = b[i];
+      for (int i = length - 1; i >= 0; i--) {
+         int chA = a[i];
+         int chB = b[i];
 
-	    if (chA == chB) {
-	    } /*
-	    else if ((chA & ~0x20) != (chB & ~0x20))
-	    return false;
-	     */ else {
-		if ('A' <= chA && chA <= 'Z') {
-		    chA += 'a' - 'A';
-		}
+         if (chA == chB) {
+         } /*
+         else if ((chA & ~0x20) != (chB & ~0x20))
+         return false;
+          */ else {
+            if ('A' <= chA && chA <= 'Z') {
+               chA += 'a' - 'A';
+            }
 
-		if ('A' <= chB && chB <= 'Z') {
-		    chB += 'a' - 'A';
-		}
+            if ('A' <= chB && chB <= 'Z') {
+               chB += 'a' - 'A';
+            }
 
-		if (chA != chB) {
-		    return false;
-		}
-	    }
-	}
+            if (chA != chB) {
+               return false;
+            }
+         }
+      }
 
-	return true;
-    }
+      return true;
+   }
 
-    private void resize() {
-	Entry<V>[] newEntries = new Entry[2 * _entries.length];
-	int newPrime = Primes.getBiggestPrime(newEntries.length);
+   private void resize() {
+      Entry<V>[] newEntries = new Entry[2 * _entries.length];
+      int newPrime = Primes.getBiggestPrime(newEntries.length);
 
-	for (int i = 0; i < _entries.length; i++) {
-	    Entry<V> entry = _entries[i];
+      for (int i = 0; i < _entries.length; i++) {
+         Entry<V> entry = _entries[i];
 
-	    while (entry != null) {
-		Entry<V> next = entry.getNext();
+         while (entry != null) {
+            Entry<V> next = entry.getNext();
 
-		int hash = entry._key.hashCodeCaseInsensitive();
-		int bucket = (hash & 0x7fffffff) % newPrime;
+            int hash = entry._key.hashCodeCaseInsensitive();
+            int bucket = (hash & 0x7fffffff) % newPrime;
 
-		entry.setNext(newEntries[bucket]);
-		newEntries[bucket] = entry;
+            entry.setNext(newEntries[bucket]);
+            newEntries[bucket] = entry;
 
-		entry = next;
-	    }
-	}
+            entry = next;
+         }
+      }
 
-	_entries = newEntries;
-	_prime = newPrime;
-    }
+      _entries = newEntries;
+      _prime = newPrime;
+   }
 
-    final static class Entry<V> {
+   final static class Entry<V> {
 
-	private final StringValue _key;
-	private V _value;
-	private Entry<V> _next;
+      private final StringValue _key;
+      private V _value;
+      private Entry<V> _next;
 
-	Entry(StringValue key, V value) {
-	    _key = key;
-	    _value = value;
-	}
+      Entry(StringValue key, V value) {
+         _key = key;
+         _value = value;
+      }
 
-	public final StringValue getKey() {
-	    return _key;
-	}
+      public final StringValue getKey() {
+         return _key;
+      }
 
-	public final V getValue() {
-	    return _value;
-	}
+      public final V getValue() {
+         return _value;
+      }
 
-	public void setValue(V value) {
-	    _value = value;
-	}
+      public void setValue(V value) {
+         _value = value;
+      }
 
-	public Entry<V> getNext() {
-	    return _next;
-	}
+      public Entry<V> getNext() {
+         return _next;
+      }
 
-	public void setNext(Entry<V> next) {
-	    _next = next;
-	}
-    }
+      public void setNext(Entry<V> next) {
+         _next = next;
+      }
+   }
 
-    final static class ValueIterator<V> implements Iterable<V>, Iterator<V> {
+   final static class ValueIterator<V> implements Iterable<V>, Iterator<V> {
 
-	int _index;
-	Entry<V>[] _entries;
-	Entry<V> _next;
+      int _index;
+      Entry<V>[] _entries;
+      Entry<V> _next;
 
-	public ValueIterator(Entry<V>[] entries) {
-	    _entries = entries;
+      public ValueIterator(Entry<V>[] entries) {
+         _entries = entries;
 
-	    getNext();
-	}
+         getNext();
+      }
 
-	private void getNext() {
-	    Entry<V> entry = _next == null ? null : _next._next;
+      private void getNext() {
+         Entry<V> entry = _next == null ? null : _next._next;
 
-	    while (entry == null
-		    && _index < _entries.length
-		    && (entry = _entries[_index++]) == null) {
-	    }
+         while (entry == null
+                 && _index < _entries.length
+                 && (entry = _entries[_index++]) == null) {
+         }
 
-	    _next = entry;
-	}
+         _next = entry;
+      }
 
-	public boolean hasNext() {
-	    return _next != null;
-	}
+      public boolean hasNext() {
+         return _next != null;
+      }
 
-	public V next() {
-	    V value = _next._value;
+      public V next() {
+         V value = _next._value;
 
-	    getNext();
+         getNext();
 
-	    return value;
-	}
+         return value;
+      }
 
-	public Iterator<V> iterator() {
-	    return this;
-	}
+      public Iterator<V> iterator() {
+         return this;
+      }
 
-	public void remove() {
-	    throw new UnsupportedOperationException();
-	}
-    }
+      public void remove() {
+         throw new UnsupportedOperationException();
+      }
+   }
 }

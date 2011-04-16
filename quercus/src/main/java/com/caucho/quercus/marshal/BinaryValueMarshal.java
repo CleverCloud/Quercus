@@ -37,69 +37,69 @@ import com.caucho.quercus.expr.Expr;
 
 public class BinaryValueMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new BinaryValueMarshal();
+   public static final Marshal MARSHAL = new BinaryValueMarshal();
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    /**
-     * Return true if is a Value.
-     */
-    @Override
-    public boolean isValue() {
-	return true;
-    }
+   /**
+    * Return true if is a Value.
+    */
+   @Override
+   public boolean isValue() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return marshal(env, expr.eval(env), expectedClass);
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return marshal(env, expr.eval(env), expectedClass);
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	Value arg = value.toBinaryValue(env);
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      Value arg = value.toBinaryValue(env);
 
-	assert arg instanceof BinaryValue : ""
-		+ value.getClass()
-		+ ".toBinaryValue() returned a "
-		+ arg.getClass();
+      assert arg instanceof BinaryValue : ""
+              + value.getClass()
+              + ".toBinaryValue() returned a "
+              + arg.getClass();
 
-	return arg;
-    }
+      return arg;
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	if (value instanceof BinaryBuilderValue) {
-	    return (BinaryBuilderValue) value;
-	} else if (value instanceof Value) {
-	    return ((Value) value).toBinaryValue(env);
-	} else {
-	    StringValue ret = env.createBinaryBuilder();
-	    ret.append(value);
-	    return ret;
-	}
-    }
+   public Value unmarshal(Env env, Object value) {
+      if (value instanceof BinaryBuilderValue) {
+         return (BinaryBuilderValue) value;
+      } else if (value instanceof Value) {
+         return ((Value) value).toBinaryValue(env);
+      } else {
+         StringValue ret = env.createBinaryBuilder();
+         ret.append(value);
+         return ret;
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	return argValue.toBinaryValueMarshalCost();
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      return argValue.toBinaryValueMarshalCost();
 
-	/*
-	if (argValue.isString()) {
-	if (argValue.isUnicode())
-	return Marshal.UNICODE_BINARY_VALUE_COST;
-	else if (argValue.isBinary())
-	return Marshal.BINARY_BINARY_VALUE_COST;
-	else
-	return Marshal.PHP5_BINARY_VALUE_COST;
-	}
-	else if (! (argValue.isArray() || argValue.isObject()))
-	return Marshal.THREE;
-	else
-	return Marshal.FOUR;
-	 */
-    }
+      /*
+      if (argValue.isString()) {
+      if (argValue.isUnicode())
+      return Marshal.UNICODE_BINARY_VALUE_COST;
+      else if (argValue.isBinary())
+      return Marshal.BINARY_BINARY_VALUE_COST;
+      else
+      return Marshal.PHP5_BINARY_VALUE_COST;
+      }
+      else if (! (argValue.isArray() || argValue.isObject()))
+      return Marshal.THREE;
+      else
+      return Marshal.FOUR;
+       */
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return BinaryValue.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return BinaryValue.class;
+   }
 }

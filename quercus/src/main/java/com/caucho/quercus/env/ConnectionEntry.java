@@ -36,119 +36,119 @@ import javax.sql.DataSource;
 
 public class ConnectionEntry implements EnvCleanup {
 
-    private static final Logger log = Logger.getLogger(ConnectionEntry.class.getName());
-    private Env _env;
-    private DataSource _ds;
-    private String _user;
-    private String _password;
-    private Connection _conn;
-    private boolean _isReuse;
+   private static final Logger log = Logger.getLogger(ConnectionEntry.class.getName());
+   private Env _env;
+   private DataSource _ds;
+   private String _user;
+   private String _password;
+   private Connection _conn;
+   private boolean _isReuse;
 
-    public ConnectionEntry(Env env) {
-	_env = env;
-    }
+   public ConnectionEntry(Env env) {
+      _env = env;
+   }
 
-    public void init(DataSource ds, String user, String password) {
-	_ds = ds;
-	_user = user;
-	_password = password;
-    }
+   public void init(DataSource ds, String user, String password) {
+      _ds = ds;
+      _user = user;
+      _password = password;
+   }
 
-    public void connect(boolean isReuse)
-	    throws SQLException {
-	if (_conn != null) {
-	    throw new IllegalStateException();
-	}
+   public void connect(boolean isReuse)
+           throws SQLException {
+      if (_conn != null) {
+         throw new IllegalStateException();
+      }
 
-	_isReuse = isReuse;
+      _isReuse = isReuse;
 
-	if (_user != null) {
-	    _conn = _ds.getConnection(_user, _password);
-	} else {
-	    _conn = _ds.getConnection();
-	}
+      if (_user != null) {
+         _conn = _ds.getConnection(_user, _password);
+      } else {
+         _conn = _ds.getConnection();
+      }
 
-	_env.addCleanup(this);
-    }
+      _env.addCleanup(this);
+   }
 
-    public boolean isReusable() {
-	return _isReuse && _conn != null;
-    }
+   public boolean isReusable() {
+      return _isReuse && _conn != null;
+   }
 
-    public Connection getConnection() {
-	return _conn;
-    }
+   public Connection getConnection() {
+      return _conn;
+   }
 
-    public void setCatalog(String catalog)
-	    throws SQLException {
-	_isReuse = false;
+   public void setCatalog(String catalog)
+           throws SQLException {
+      _isReuse = false;
 
-	_conn.setCatalog(catalog);
-    }
+      _conn.setCatalog(catalog);
+   }
 
-    public int hashCode() {
-	int hash = _ds.hashCode();
+   public int hashCode() {
+      int hash = _ds.hashCode();
 
-	if (_user == null) {
-	    return hash;
-	} else {
-	    return 65521 * hash + _user.hashCode();
-	}
-    }
+      if (_user == null) {
+         return hash;
+      } else {
+         return 65521 * hash + _user.hashCode();
+      }
+   }
 
-    public boolean equals(Object o) {
-	if (!(o instanceof ConnectionEntry)) {
-	    return false;
-	}
+   public boolean equals(Object o) {
+      if (!(o instanceof ConnectionEntry)) {
+         return false;
+      }
 
-	ConnectionEntry entry = (ConnectionEntry) o;
+      ConnectionEntry entry = (ConnectionEntry) o;
 
-	if (_ds != entry._ds) {
-	    return false;
-	} else if (_user == null) {
-	    return entry._user == null;
-	} else {
-	    return _user.equals(entry._user);
-	}
-    }
+      if (_ds != entry._ds) {
+         return false;
+      } else if (_user == null) {
+         return entry._user == null;
+      } else {
+         return _user.equals(entry._user);
+      }
+   }
 
-    /**
-     * Notify that the connection should not be reused, e.g. with stateful
-     * mysql commands like the temp tables
-     */
-    public void markForPoolRemoval() {
-	_isReuse = false;
+   /**
+    * Notify that the connection should not be reused, e.g. with stateful
+    * mysql commands like the temp tables
+    */
+   public void markForPoolRemoval() {
+      _isReuse = false;
 
-	if (_conn != null) {
-	    _env.getQuercus().markForPoolRemoval(_conn);
-	}
-    }
+      if (_conn != null) {
+         _env.getQuercus().markForPoolRemoval(_conn);
+      }
+   }
 
-    /**
-     * Called from php code to close the connection.  Reusable entries
-     * are not actually closed until the cleanup phase.
-     */
-    public void phpClose() {
-	try {
-	    if (!_isReuse) {
-		cleanup();
-	    }
-	} catch (SQLException e) {
-	    log.log(Level.WARNING, e.toString(), e);
-	}
-    }
+   /**
+    * Called from php code to close the connection.  Reusable entries
+    * are not actually closed until the cleanup phase.
+    */
+   public void phpClose() {
+      try {
+         if (!_isReuse) {
+            cleanup();
+         }
+      } catch (SQLException e) {
+         log.log(Level.WARNING, e.toString(), e);
+      }
+   }
 
-    public void cleanup()
-	    throws SQLException {
-	Connection conn = _conn;
-	_conn = null;
+   public void cleanup()
+           throws SQLException {
+      Connection conn = _conn;
+      _conn = null;
 
-	if (conn != null) {
-	    conn.close();
-	}
-    }
+      if (conn != null) {
+         conn.close();
+      }
+   }
 
-    public String toString() {
-	return getClass().getSimpleName() + "[ds=" + _ds + ", user=" + _user + "]";
-    }
+   public String toString() {
+      return getClass().getSimpleName() + "[ds=" + _ds + ", user=" + _user + "]";
+   }
 }

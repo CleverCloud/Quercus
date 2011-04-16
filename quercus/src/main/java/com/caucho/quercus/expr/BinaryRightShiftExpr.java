@@ -37,50 +37,50 @@ import com.caucho.quercus.env.Value;
  */
 public class BinaryRightShiftExpr extends AbstractBinaryExpr {
 
-    public BinaryRightShiftExpr(Location location, Expr left, Expr right) {
-	super(location, left, right);
-    }
+   public BinaryRightShiftExpr(Location location, Expr left, Expr right) {
+      super(location, left, right);
+   }
 
-    public BinaryRightShiftExpr(Expr left, Expr right) {
-	super(left, right);
-    }
+   public BinaryRightShiftExpr(Expr left, Expr right) {
+      super(left, right);
+   }
 
-    /**
-     * Returns true for a long expression.
-     */
-    public boolean isLong() {
-	return true;
-    }
+   /**
+    * Returns true for a long expression.
+    */
+   public boolean isLong() {
+      return true;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value lValue = _left.eval(env);
-	Value rValue = _right.eval(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value lValue = _left.eval(env);
+      Value rValue = _right.eval(env);
 
-	return lValue.rshift(rValue);
-    }
+      return lValue.rshift(rValue);
+   }
 
-    /**
-     * Evaluates the expression as a long.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public long evalLong(Env env) {
-	Value lValue = _left.eval(env);
-	Value rValue = _right.eval(env);
+   /**
+    * Evaluates the expression as a long.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public long evalLong(Env env) {
+      Value lValue = _left.eval(env);
+      Value rValue = _right.eval(env);
 
-	return lValue.toLong() >> rValue.toLong();
-    }
+      return lValue.toLong() >> rValue.toLong();
+   }
 
-    public String toString() {
-	return "(" + _left + " >> " + _right + ")";
-    }
+   public String toString() {
+      return "(" + _left + " >> " + _right + ")";
+   }
 }

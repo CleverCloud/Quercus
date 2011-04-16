@@ -42,82 +42,82 @@ import java.io.OutputStream;
  */
 public class FileValue extends StreamResource {
 
-    private Path _path;
+   private Path _path;
 
-    public FileValue(Path path) {
-	_path = path;
-    }
+   public FileValue(Path path) {
+      _path = path;
+   }
 
-    /**
-     * Returns the path.
-     */
-    public Path getPath() {
-	return _path;
-    }
+   /**
+    * Returns the path.
+    */
+   public Path getPath() {
+      return _path;
+   }
 
-    /**
-     * Reads a character from a file, returning -1 on EOF.
-     */
-    public int read()
-	    throws IOException {
-	return -1;
-    }
+   /**
+    * Reads a character from a file, returning -1 on EOF.
+    */
+   public int read()
+           throws IOException {
+      return -1;
+   }
 
-    /**
-     * Reads a line from a file, returning null.
-     */
-    @Override
-    public StringValue readLine(Env env)
-	    throws IOException {
-	StringValue sb = env.createStringBuilder();
+   /**
+    * Reads a line from a file, returning null.
+    */
+   @Override
+   public StringValue readLine(Env env)
+           throws IOException {
+      StringValue sb = env.createStringBuilder();
 
-	int ch;
+      int ch;
 
-	while ((ch = read()) >= 0) {
-	    sb.append((char) ch);
+      while ((ch = read()) >= 0) {
+         sb.append((char) ch);
 
-	    if (ch == '\n') {
-		return sb;
-	    }
-	    // TODO: issues with mac
-	}
+         if (ch == '\n') {
+            return sb;
+         }
+         // TODO: issues with mac
+      }
 
-	if (sb.length() > 0) {
-	    return sb;
-	} else {
-	    return null;
-	}
-    }
+      if (sb.length() > 0) {
+         return sb;
+      } else {
+         return null;
+      }
+   }
 
-    /**
-     * Read a maximum of <i>length</i> bytes from the file and write
-     * them to the outputStream.
-     *
-     * @param os the {@link OutputStream}
-     * @param length the maximum number of bytes to read
-     */
-    public void writeToStream(OutputStream os, int length)
-	    throws IOException {
-    }
+   /**
+    * Read a maximum of <i>length</i> bytes from the file and write
+    * them to the outputStream.
+    *
+    * @param os the {@link OutputStream}
+    * @param length the maximum number of bytes to read
+    */
+   public void writeToStream(OutputStream os, int length)
+           throws IOException {
+   }
 
-    /**
-     * Prints a string to a file.
-     */
-    public void print(String v)
-	    throws IOException {
-    }
+   /**
+    * Prints a string to a file.
+    */
+   public void print(String v)
+           throws IOException {
+   }
 
-    /**
-     * Closes the file.
-     */
-    public void close() {
-    }
+   /**
+    * Closes the file.
+    */
+   public void close() {
+   }
 
-    /**
-     * Converts to a string.
-     * @param env
-     */
-    public String toString() {
-	return "File[" + _path + "]";
-    }
+   /**
+    * Converts to a string.
+    * @param env
+    */
+   public String toString() {
+      return "File[" + _path + "]";
+   }
 }

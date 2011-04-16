@@ -35,47 +35,47 @@ import com.caucho.quercus.expr.Expr;
 
 public class IntegerMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new IntegerMarshal();
+   public static final Marshal MARSHAL = new IntegerMarshal();
 
-    public boolean isLong() {
-	return true;
-    }
+   public boolean isLong() {
+      return true;
+   }
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return new Integer((int) expr.evalLong(env));
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return new Integer((int) expr.evalLong(env));
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return new Integer((int) value.toLong());
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return new Integer((int) value.toLong());
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	if (value == null) {
-	    return LongValue.ZERO;
-	} else {
-	    return LongValue.create(((Number) value).longValue());
-	}
-    }
+   public Value unmarshal(Env env, Object value) {
+      if (value == null) {
+         return LongValue.ZERO;
+      } else {
+         return LongValue.create(((Number) value).longValue());
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	if (argValue instanceof LongValue) {
-	    return Marshal.ONE;
-	} else if (argValue.isLongConvertible()) {
-	    return LONG_CONVERTIBLE_INTEGER_COST;
-	} else if (argValue.isDoubleConvertible()) {
-	    return DOUBLE_CONVERTIBLE_INTEGER_COST;
-	} else {
-	    return Marshal.FOUR;
-	}
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      if (argValue instanceof LongValue) {
+         return Marshal.ONE;
+      } else if (argValue.isLongConvertible()) {
+         return LONG_CONVERTIBLE_INTEGER_COST;
+      } else if (argValue.isDoubleConvertible()) {
+         return DOUBLE_CONVERTIBLE_INTEGER_COST;
+      } else {
+         return Marshal.FOUR;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return int.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return int.class;
+   }
 }

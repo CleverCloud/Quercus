@@ -38,29 +38,29 @@ import com.caucho.quercus.env.*;
  */
 public class FunctionCountDelegate implements CountDelegate {
 
-    private JavaInvoker _count;
+   private JavaInvoker _count;
 
-    public FunctionCountDelegate() {
-    }
+   public FunctionCountDelegate() {
+   }
 
-    /**
-     * Sets the custom function for the array get.
-     */
-    public void setCount(JavaInvoker count) {
-	_count = count;
-    }
+   /**
+    * Sets the custom function for the array get.
+    */
+   public void setCount(JavaInvoker count) {
+      _count = count;
+   }
 
-    /**
-     * Returns the value for the specified key.
-     */
-    @Override
-    public int count(ObjectValue qThis) {
-	if (_count != null) {
-	    return _count.callMethod(Env.getInstance(),
-		    _count.getQuercusClass(),
-		    qThis).toInt();
-	} else {
-	    return 1;
-	}
-    }
+   /**
+    * Returns the value for the specified key.
+    */
+   @Override
+   public int count(ObjectValue qThis) {
+      if (_count != null) {
+         return _count.callMethod(Env.getInstance(),
+                 _count.getQuercusClass(),
+                 qThis).toInt();
+      } else {
+         return 1;
+      }
+   }
 }

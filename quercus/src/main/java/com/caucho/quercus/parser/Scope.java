@@ -40,119 +40,119 @@ import java.util.ArrayList;
  */
 abstract public class Scope {
 
-    protected Scope _parent;
+   protected Scope _parent;
 
-    public Scope() {
-    }
+   public Scope() {
+   }
 
-    public Scope(Scope parent) {
-	_parent = parent;
-    }
+   public Scope(Scope parent) {
+      _parent = parent;
+   }
 
-    /**
-     * Returns true for an abstract scope, e.g. an abstract class or an
-     * interface.
-     */
-    public boolean isAbstract() {
-	return false;
-    }
+   /**
+    * Returns true for an abstract scope, e.g. an abstract class or an
+    * interface.
+    */
+   public boolean isAbstract() {
+      return false;
+   }
 
-    /*
-     * Returns true if scope is global.
-     */
-    public boolean isGlobal() {
-	return false;
-    }
+   /*
+    * Returns true if scope is global.
+    */
+   public boolean isGlobal() {
+      return false;
+   }
 
-    /*
-     * Returns true if scope is within a class.
-     */
-    public boolean isClass() {
-	return false;
-    }
+   /*
+    * Returns true if scope is within a class.
+    */
+   public boolean isClass() {
+      return false;
+   }
 
-    /*
-     * Returns true if scope is local to a function.
-     */
-    public boolean isFunction() {
-	return false;
-    }
+   /*
+    * Returns true if scope is local to a function.
+    */
+   public boolean isFunction() {
+      return false;
+   }
 
-    /*
-     * Returns true if scope is local to an IF statement.
-     */
-    public boolean isIf() {
-	return false;
-    }
+   /*
+    * Returns true if scope is local to an IF statement.
+    */
+   public boolean isIf() {
+      return false;
+   }
 
-    /*
-     * Returns true if scope is local to a switch case statement.
-     */
-    public boolean isSwitchCase() {
-	return false;
-    }
+   /*
+    * Returns true if scope is local to a switch case statement.
+    */
+   public boolean isSwitchCase() {
+      return false;
+   }
 
-    /*
-     * Returns true if scope is local to a while statement.
-     */
-    public boolean isWhile() {
-	return false;
-    }
+   /*
+    * Returns true if scope is local to a while statement.
+    */
+   public boolean isWhile() {
+      return false;
+   }
 
-    /*
-     * Returns true if scope is local to a try statement.
-     */
-    public boolean isTry() {
-	return false;
-    }
+   /*
+    * Returns true if scope is local to a try statement.
+    */
+   public boolean isTry() {
+      return false;
+   }
 
-    /*
-     * Returns the parent scope.
-     */
-    public Scope getParent() {
-	return _parent;
-    }
+   /*
+    * Returns the parent scope.
+    */
+   public Scope getParent() {
+      return _parent;
+   }
 
-    /**
-     * Adds a constant.
-     */
-    public void addConstant(String name, Expr value) {
-	throw new UnsupportedOperationException(getClass().getName());
-    }
+   /**
+    * Adds a constant.
+    */
+   public void addConstant(String name, Expr value) {
+      throw new UnsupportedOperationException(getClass().getName());
+   }
 
-    /**
-     * Adds a function.
-     */
-    abstract public void addFunction(String name,
-	    Function function,
-	    boolean isTop);
+   /**
+    * Adds a function.
+    */
+   abstract public void addFunction(String name,
+           Function function,
+           boolean isTop);
 
-    /*
-     *  Adds a function defined in a conditional block.
-     */
-    protected void addConditionalFunction(String name,
-	    Function function) {
-	addConditionalFunction(function);
-    }
+   /*
+    *  Adds a function defined in a conditional block.
+    */
+   protected void addConditionalFunction(String name,
+           Function function) {
+      addConditionalFunction(function);
+   }
 
-    /*
-     *  Adds a function defined in a conditional block.
-     */
-    protected void addConditionalFunction(Function function) {
-    }
+   /*
+    *  Adds a function defined in a conditional block.
+    */
+   protected void addConditionalFunction(Function function) {
+   }
 
-    /**
-     * Adds a class.
-     */
-    abstract public InterpretedClassDef addClass(Location location,
-	    String name,
-	    String parent,
-	    ArrayList<String> ifaceList,
-	    int index,
-	    boolean isTop);
+   /**
+    * Adds a class.
+    */
+   abstract public InterpretedClassDef addClass(Location location,
+           String name,
+           String parent,
+           ArrayList<String> ifaceList,
+           int index,
+           boolean isTop);
 
-    /*
-     *  Adds a conditional class.
-     */
-    abstract protected void addConditionalClass(InterpretedClassDef def);
+   /*
+    *  Adds a conditional class.
+    */
+   abstract protected void addConditionalClass(InterpretedClassDef def);
 }

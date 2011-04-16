@@ -32,7 +32,7 @@ import com.caucho.quercus.env.Value;
 
 public interface Serializable {
 
-    public Value serialize();
+   public Value serialize();
 
-    public Value unserialize(Value serialized);
+   public Value unserialize(Value serialized);
 }

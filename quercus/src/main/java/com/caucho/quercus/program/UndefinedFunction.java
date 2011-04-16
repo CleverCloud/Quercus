@@ -38,36 +38,36 @@ import com.caucho.util.L10N;
  */
 public class UndefinedFunction extends AbstractFunction {
 
-    private static final L10N L = new L10N(UndefinedFunction.class);
-    private final int _id;
-    private final String _name;
-    private final int _globalId;
+   private static final L10N L = new L10N(UndefinedFunction.class);
+   private final int _id;
+   private final String _name;
+   private final int _globalId;
 
-    public UndefinedFunction(int id, String name, int globalId) {
-	_id = id;
-	_name = name;
-	_globalId = globalId;
-    }
+   public UndefinedFunction(int id, String name, int globalId) {
+      _id = id;
+      _name = name;
+      _globalId = globalId;
+   }
 
-    public String getName() {
-	return _name;
-    }
+   public String getName() {
+      return _name;
+   }
 
-    /**
-     * Evaluates the function.
-     */
-    public Value call(Env env, Value[] args) {
-	if (_globalId > 0) {
-	    AbstractFunction fun = env._fun[_globalId];
-	    env._fun[_id] = fun;
+   /**
+    * Evaluates the function.
+    */
+   public Value call(Env env, Value[] args) {
+      if (_globalId > 0) {
+         AbstractFunction fun = env._fun[_globalId];
+         env._fun[_id] = fun;
 
-	    return fun.call(env, args);
-	}
+         return fun.call(env, args);
+      }
 
-	return env.error(L.l("'{0}' is an unknown function.", _name));
-    }
+      return env.error(L.l("'{0}' is an unknown function.", _name));
+   }
 
-    public String toString() {
-	return "UndefinedFunction[" + _name + "]";
-    }
+   public String toString() {
+      return "UndefinedFunction[" + _name + "]";
+   }
 }

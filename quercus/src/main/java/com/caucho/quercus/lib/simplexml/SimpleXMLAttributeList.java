@@ -66,142 +66,142 @@ import java.util.logging.*;
  */
 public class SimpleXMLAttributeList extends SimpleXMLElement {
 
-    protected SimpleXMLAttributeList(Env env,
-	    QuercusClass cls,
-	    SimpleXMLElement parent,
-	    String name) {
-	super(env, cls, parent, name);
-    }
+   protected SimpleXMLAttributeList(Env env,
+           QuercusClass cls,
+           SimpleXMLElement parent,
+           String name) {
+      super(env, cls, parent, name);
+   }
 
-    protected SimpleXMLAttributeList(Env env,
-	    QuercusClass cls,
-	    SimpleXMLElement parent,
-	    String name,
-	    String namespace,
-	    StringValue text) {
-	super(env, cls, parent, name, namespace);
+   protected SimpleXMLAttributeList(Env env,
+           QuercusClass cls,
+           SimpleXMLElement parent,
+           String name,
+           String namespace,
+           StringValue text) {
+      super(env, cls, parent, name, namespace);
 
-	_text = text;
-    }
+      _text = text;
+   }
 
-    /**
-     * Returns the name of the node.
-     *
-     * @return name of the node
-     */
-    @Name("getName")
-    public String simplexml_getName() {
-	if (_attributes == null) {
-	    return "";
-	} else {
-	    return _attributes.get(0).getName();
-	}
-    }
+   /**
+    * Returns the name of the node.
+    *
+    * @return name of the node
+    */
+   @Name("getName")
+   public String simplexml_getName() {
+      if (_attributes == null) {
+         return "";
+      } else {
+         return _attributes.get(0).getName();
+      }
+   }
 
-    @Override
-    protected void addNamespace(String prefix, String namespace) {
-	if (_parent != null) {
-	    _parent.addNamespace(prefix, namespace);
-	}
-    }
+   @Override
+   protected void addNamespace(String prefix, String namespace) {
+      if (_parent != null) {
+         _parent.addNamespace(prefix, namespace);
+      }
+   }
 
-    /**
-     * Adds a namespace attribute to this node.
-     */
-    @Override
-    protected void addNamespaceAttribute(Env env, String name,
-	    String namespace) {
-	if (_parent != null) {
-	    _parent.addNamespaceAttribute(env, name, namespace);
-	}
-    }
+   /**
+    * Adds a namespace attribute to this node.
+    */
+   @Override
+   protected void addNamespaceAttribute(Env env, String name,
+           String namespace) {
+      if (_parent != null) {
+         _parent.addNamespaceAttribute(env, name, namespace);
+      }
+   }
 
-    /**
-     * Required for 'foreach'. When only values are specified in
-     * the loop <code>foreach($a as $b)</code>, this method
-     * should return an iterator that contains Java objects
-     * that will be wrapped in a Value.
-     *
-     * When a 'foreach' loop with name/value pairs
-     * i.e. <code>foreach($a as $b=>$c)</code>
-     * invokes this method, it expects an iterator that
-     * contains objects that implement Map.Entry.
-     */
-    public Iterator iterator() {
-	if (_attributes != null) {
-	    return _attributes.iterator();
-	} else {
-	    return null;
-	}
-    }
+   /**
+    * Required for 'foreach'. When only values are specified in
+    * the loop <code>foreach($a as $b)</code>, this method
+    * should return an iterator that contains Java objects
+    * that will be wrapped in a Value.
+    *
+    * When a 'foreach' loop with name/value pairs
+    * i.e. <code>foreach($a as $b=>$c)</code>
+    * invokes this method, it expects an iterator that
+    * contains objects that implement Map.Entry.
+    */
+   public Iterator iterator() {
+      if (_attributes != null) {
+         return _attributes.iterator();
+      } else {
+         return null;
+      }
+   }
 
-    /**
-     * Converts node tree to a valid xml string.
-     *
-     * @return xml string
-     */
-    @Override
-    public StringValue asXML(Env env) {
-	StringValue sb = env.createStringBuilder();
+   /**
+    * Converts node tree to a valid xml string.
+    *
+    * @return xml string
+    */
+   @Override
+   public StringValue asXML(Env env) {
+      StringValue sb = env.createStringBuilder();
 
-	if (_attributes != null) {
-	    for (SimpleXMLElement attr : _attributes) {
-		if (attr._name.equals("xmlns")) {
-		    continue;
-		}
+      if (_attributes != null) {
+         for (SimpleXMLElement attr : _attributes) {
+            if (attr._name.equals("xmlns")) {
+               continue;
+            }
 
-		attr.toXMLImpl(sb);
-		break;
-	    }
+            attr.toXMLImpl(sb);
+            break;
+         }
 
-	    return sb;
-	} else {
-	    return null;
-	}
-    }
+         return sb;
+      } else {
+         return null;
+      }
+   }
 
-    @Override
-    protected void toXMLImpl(StringValue sb) {
-	sb.append(" ");
+   @Override
+   protected void toXMLImpl(StringValue sb) {
+      sb.append(" ");
 
-	if (_prefix != null && !"".equals(_prefix)) {
-	    sb.append(_prefix);
-	    sb.append(":");
-	}
+      if (_prefix != null && !"".equals(_prefix)) {
+         sb.append(_prefix);
+         sb.append(":");
+      }
 
-	sb.append(_name);
-	sb.append("=\"");
-	if (_text != null) {
-	    sb.append(_text);
-	}
-	sb.append("\"");
-    }
+      sb.append(_name);
+      sb.append("=\"");
+      if (_text != null) {
+         sb.append(_text);
+      }
+      sb.append("\"");
+   }
 
-    /**
-     * Implementation for getting the indices of this class.
-     * i.e. <code>$a->foo[0]</code>
-     */
-    public Value __get(Env env, Value indexV) {
-	if (indexV.isString()) {
-	    String name = indexV.toString();
+   /**
+    * Implementation for getting the indices of this class.
+    * i.e. <code>$a->foo[0]</code>
+    */
+   public Value __get(Env env, Value indexV) {
+      if (indexV.isString()) {
+         String name = indexV.toString();
 
-	    SimpleXMLElement attr = getAttribute(name);
+         SimpleXMLElement attr = getAttribute(name);
 
-	    if (attr != null) {
-		return wrapJava(env, _cls, attr);
-	    } else {
-		return NullValue.NULL;
-	    }
-	} else if (indexV.isLongConvertible()) {
-	    int i = indexV.toInt();
+         if (attr != null) {
+            return wrapJava(env, _cls, attr);
+         } else {
+            return NullValue.NULL;
+         }
+      } else if (indexV.isLongConvertible()) {
+         int i = indexV.toInt();
 
-	    if (i < _attributes.size()) {
-		return wrapJava(env, _cls, _attributes.get(i));
-	    }
+         if (i < _attributes.size()) {
+            return wrapJava(env, _cls, _attributes.get(i));
+         }
 
-	    return NullValue.NULL;
-	} else {
-	    return NullValue.NULL;
-	}
-    }
+         return NullValue.NULL;
+      } else {
+         return NullValue.NULL;
+      }
+   }
 }

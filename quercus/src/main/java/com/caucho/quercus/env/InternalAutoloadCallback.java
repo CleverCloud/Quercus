@@ -38,34 +38,34 @@ import java.net.URL;
  */
 public class InternalAutoloadCallback {
 
-    private final String _prefix;
+   private final String _prefix;
 
-    public InternalAutoloadCallback(String prefix) {
-	if (!prefix.endsWith("/")) {
-	    prefix = prefix + "/";
-	}
+   public InternalAutoloadCallback(String prefix) {
+      if (!prefix.endsWith("/")) {
+         prefix = prefix + "/";
+      }
 
-	_prefix = prefix;
-    }
+      _prefix = prefix;
+   }
 
-    /**
-     * Evaluates the callback with 1 arguments.
-     *
-     * @param env the calling environment
-     */
-    public QuercusClass loadClass(Env env, String name) {
-	ClassLoader loader = Thread.currentThread().getContextClassLoader();
+   /**
+    * Evaluates the callback with 1 arguments.
+    *
+    * @param env the calling environment
+    */
+   public QuercusClass loadClass(Env env, String name) {
+      ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-	URL url = loader.getResource(_prefix + name + ".php");
+      URL url = loader.getResource(_prefix + name + ".php");
 
-	if (url == null) {
-	    return null;
-	}
+      if (url == null) {
+         return null;
+      }
 
-	Path path = env.getPwd().lookup(url.toString());
+      Path path = env.getPwd().lookup(url.toString());
 
-	env.executePage(path);
+      env.executePage(path);
 
-	return env.findClass(name, false, false);
-    }
+      return env.findClass(name, false, false);
+   }
 }

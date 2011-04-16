@@ -35,36 +35,36 @@ import com.caucho.quercus.statement.StatementHandle;
  */
 public class ExprHandle {
 
-    public static final ExprHandle NULL = new ExprHandle();
-    private final StatementHandle _statement;
-    private Expr _expr;
+   public static final ExprHandle NULL = new ExprHandle();
+   private final StatementHandle _statement;
+   private Expr _expr;
 
-    public ExprHandle(StatementHandle statement) {
-	_statement = statement;
-    }
+   public ExprHandle(StatementHandle statement) {
+      _statement = statement;
+   }
 
-    private ExprHandle() {
-	_statement = StatementHandle.NULL;
-    }
+   private ExprHandle() {
+      _statement = StatementHandle.NULL;
+   }
 
-    /**
-     * Sets the expression
-     */
-    public void setExpr(Expr expr) {
-	_expr = expr;
-    }
+   /**
+    * Sets the expression
+    */
+   public void setExpr(Expr expr) {
+      _expr = expr;
+   }
 
-    /**
-     * Gets the expression
-     */
-    public Expr getExpr() {
-	return _expr;
-    }
+   /**
+    * Gets the expression
+    */
+   public Expr getExpr() {
+      return _expr;
+   }
 
-    /**
-     * Returns the owning statement handle.
-     */
-    public StatementHandle getStatement() {
-	return _statement;
-    }
+   /**
+    * Returns the owning statement handle.
+    */
+   public StatementHandle getStatement() {
+      return _statement;
+   }
 }

@@ -37,22 +37,22 @@ import java.io.IOException;
  */
 public class PhpBinaryOutput extends AbstractBinaryOutput {
 
-    private Env _env;
+   private Env _env;
 
-    public PhpBinaryOutput(Env env) {
-	_env = env;
-    }
+   public PhpBinaryOutput(Env env) {
+      _env = env;
+   }
 
-    /**
-     * Writes a buffer.
-     */
-    public void write(byte[] buffer, int offset, int length)
-	    throws IOException {
-	_env.getOut().write(buffer, offset, length);
-    }
+   /**
+    * Writes a buffer.
+    */
+   public void write(byte[] buffer, int offset, int length)
+           throws IOException {
+      _env.getOut().write(buffer, offset, length);
+   }
 
-    public void write(int b)
-	    throws IOException {
-	_env.getOut().write(b);
-    }
+   public void write(int b)
+           throws IOException {
+      _env.getOut().write(b);
+   }
 }

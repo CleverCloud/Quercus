@@ -36,23 +36,23 @@ import java.io.IOException;
  * PHP parse exception
  */
 public class QuercusParseException
-	extends RuntimeException
-	implements LineCompileException {
+        extends RuntimeException
+        implements LineCompileException {
 
-    public QuercusParseException() {
-    }
+   public QuercusParseException() {
+   }
 
-    public QuercusParseException(String msg) {
-	super(msg);
-    }
+   public QuercusParseException(String msg) {
+      super(msg);
+   }
 
-    public QuercusParseException(Throwable cause) {
-	initCause(cause);
-    }
+   public QuercusParseException(Throwable cause) {
+      initCause(cause);
+   }
 
-    public QuercusParseException(String msg, Throwable cause) {
-	super(msg);
+   public QuercusParseException(String msg, Throwable cause) {
+      super(msg);
 
-	initCause(cause);
-    }
+      initCause(cause);
+   }
 }

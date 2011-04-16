@@ -45,70 +45,70 @@ import java.util.ArrayList;
  */
 public class ClassConstructorExpr extends Expr {
 
-    private static final L10N L = new L10N(ClassConstructorExpr.class);
-    protected final String _className;
-    protected final StringValue _name;
-    protected final Expr[] _args;
+   private static final L10N L = new L10N(ClassConstructorExpr.class);
+   protected final String _className;
+   protected final StringValue _name;
+   protected final Expr[] _args;
 
-    public ClassConstructorExpr(Location location,
-	    String className,
-	    String name,
-	    ArrayList<Expr> args) {
-	super(location);
+   public ClassConstructorExpr(Location location,
+           String className,
+           String name,
+           ArrayList<Expr> args) {
+      super(location);
 
-	_className = className.intern();
+      _className = className.intern();
 
-	_name = MethodIntern.intern(name);
+      _name = MethodIntern.intern(name);
 
-	_args = new Expr[args.size()];
-	args.toArray(_args);
-    }
+      _args = new Expr[args.size()];
+      args.toArray(_args);
+   }
 
-    public ClassConstructorExpr(Location location,
-	    String className,
-	    String name,
-	    Expr[] args) {
-	super(location);
+   public ClassConstructorExpr(Location location,
+           String className,
+           String name,
+           Expr[] args) {
+      super(location);
 
-	_className = className.intern();
+      _className = className.intern();
 
-	_name = MethodIntern.intern(name);
+      _name = MethodIntern.intern(name);
 
-	_args = args;
-    }
+      _args = args;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	QuercusClass cl = env.findClass(_className);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      QuercusClass cl = env.findClass(_className);
 
-	if (cl == null) {
-	    throw env.createErrorException(L.l("{0} is an unknown class",
-		    _className));
-	}
+      if (cl == null) {
+         throw env.createErrorException(L.l("{0} is an unknown class",
+                 _className));
+      }
 
-	AbstractFunction fun = cl.getFunction(_name);
+      AbstractFunction fun = cl.getFunction(_name);
 
-	Value[] values = evalArgs(env, _args);
+      Value[] values = evalArgs(env, _args);
 
-	Value qThis = env.getThis();
-	env.pushCall(this, qThis, values);
+      Value qThis = env.getThis();
+      env.pushCall(this, qThis, values);
 
-	try {
-	    env.checkTimeout();
+      try {
+         env.checkTimeout();
 
-	    return cl.callMethod(env, qThis, _name, _name.hashCode(), values);
-	} finally {
-	    env.popCall();
-	}
-    }
+         return cl.callMethod(env, qThis, _name, _name.hashCode(), values);
+      } finally {
+         env.popCall();
+      }
+   }
 
-    public String toString() {
-	return _className + "::" + _name + "()";
-    }
+   public String toString() {
+      return _className + "::" + _name + "()";
+   }
 }

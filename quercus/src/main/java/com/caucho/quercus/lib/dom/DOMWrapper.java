@@ -32,27 +32,27 @@ import com.caucho.quercus.env.Env;
 
 public class DOMWrapper<T> {
 
-    private final DOMImplementation _impl;
-    final T _delegate;
+   private final DOMImplementation _impl;
+   final T _delegate;
 
-    protected static DOMImplementation getImpl(Env env) {
-	return DOMImplementation.get(env);
-    }
+   protected static DOMImplementation getImpl(Env env) {
+      return DOMImplementation.get(env);
+   }
 
-    public DOMWrapper(DOMImplementation impl, T delegate) {
-	_impl = impl;
-	_delegate = delegate;
-    }
+   public DOMWrapper(DOMImplementation impl, T delegate) {
+      _impl = impl;
+      _delegate = delegate;
+   }
 
-    protected DOMImplementation getImpl() {
-	return _impl;
-    }
+   protected DOMImplementation getImpl() {
+      return _impl;
+   }
 
-    protected <T> T wrap(Object obj) {
-	return (T) _impl.getWrapper(obj);
-    }
+   protected <T> T wrap(Object obj) {
+      return (T) _impl.getWrapper(obj);
+   }
 
-    protected DOMException wrap(org.w3c.dom.DOMException ex) {
-	return (DOMException) _impl.getWrapper(ex);
-    }
+   protected DOMException wrap(org.w3c.dom.DOMException ex) {
+      return (DOMException) _impl.getWrapper(ex);
+   }
 }

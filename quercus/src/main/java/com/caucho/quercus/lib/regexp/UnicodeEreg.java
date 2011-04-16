@@ -32,12 +32,12 @@ import com.caucho.quercus.env.StringValue;
 
 public class UnicodeEreg extends Ereg {
 
-    public UnicodeEreg(StringValue rawRegexp)
-	    throws IllegalRegexpException {
-	super(rawRegexp);
-    }
+   public UnicodeEreg(StringValue rawRegexp)
+           throws IllegalRegexpException {
+      super(rawRegexp);
+   }
 
-    public String toString() {
-	return "UnicodeEreg[" + _pattern + "]";
-    }
+   public String toString() {
+      return "UnicodeEreg[" + _pattern + "]";
+   }
 }

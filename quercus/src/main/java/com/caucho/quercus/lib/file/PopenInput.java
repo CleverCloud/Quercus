@@ -40,69 +40,69 @@ import java.util.logging.Logger;
  * Represents an input stream for a popen'ed process.
  */
 public class PopenInput extends ReadStreamInput
-	implements EnvCleanup {
+        implements EnvCleanup {
 
-    private static final Logger log = Logger.getLogger(FileInput.class.getName());
-    private Env _env;
-    private Process _process;
+   private static final Logger log = Logger.getLogger(FileInput.class.getName());
+   private Env _env;
+   private Process _process;
 
-    public PopenInput(Env env, Process process)
-	    throws IOException {
-	super(env);
+   public PopenInput(Env env, Process process)
+           throws IOException {
+      super(env);
 
-	_env = env;
+      _env = env;
 
-	_env.addCleanup(this);
+      _env.addCleanup(this);
 
-	_process = process;
+      _process = process;
 
-	init(new ReadStream(new VfsStream(_process.getInputStream(), null)));
+      init(new ReadStream(new VfsStream(_process.getInputStream(), null)));
 
-	_process.getOutputStream().close();
-    }
+      _process.getOutputStream().close();
+   }
 
-    /**
-     * Opens a copy.
-     */
-    public BinaryInput openCopy()
-	    throws IOException {
-	return new PopenInput(_env, _process);
-    }
+   /**
+    * Opens a copy.
+    */
+   public BinaryInput openCopy()
+           throws IOException {
+      return new PopenInput(_env, _process);
+   }
 
-    /**
-     * Returns the number of bytes available to be read, 0 if no known.
-     */
-    public long getLength() {
-	return 0;
-    }
+   /**
+    * Returns the number of bytes available to be read, 0 if no known.
+    */
+   public long getLength() {
+      return 0;
+   }
 
-    /**
-     * Converts to a string.
-     */
-    public String toString() {
-	return "PopenInput[" + _process + "]";
-    }
+   /**
+    * Converts to a string.
+    */
+   public String toString() {
+      return "PopenInput[" + _process + "]";
+   }
 
-    public int pclose() {
-	super.close();
+   public int pclose() {
+      super.close();
 
-	try {
-	    return _process.waitFor();
-	} catch (Exception e) {
-	    return -1;
-	} finally {
-	    _env.removeCleanup(this);
-	}
-    }
+      try {
+         return _process.waitFor();
+      } catch (Exception e) {
+         return -1;
+      } finally {
+         _env.removeCleanup(this);
+      }
+   }
 
-    public void close() {
-	pclose();
-    }
+   public void close() {
+      pclose();
+   }
 
-    /**
-     * Implements the EnvCleanup interface.
-     */
-    public void cleanup() {
-	pclose();
-    }
+   /**
+    * Implements the EnvCleanup interface.
+    */
+   public void cleanup() {
+      pclose();
+   }
 }

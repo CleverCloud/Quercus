@@ -39,52 +39,52 @@ import com.caucho.util.L10N;
  */
 public class BinaryAssignListEachExpr extends Expr {
 
-    private static final L10N L = new L10N(BinaryAssignListEachExpr.class);
-    protected final ListHeadExpr _listHead;
-    protected final Expr _value;
+   private static final L10N L = new L10N(BinaryAssignListEachExpr.class);
+   protected final ListHeadExpr _listHead;
+   protected final Expr _value;
 
-    public BinaryAssignListEachExpr(ListHeadExpr listHead, Expr value) {
-	_listHead = listHead;
-	_value = value;
-    }
+   public BinaryAssignListEachExpr(ListHeadExpr listHead, Expr value) {
+      _listHead = listHead;
+      _value = value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value eval(Env env) {
-	if (!_value.isVar()) {
-	    env.error(L.l("each() argument must be a variable at '{0}'", _value));
-	    return NullValue.NULL;
-	}
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value eval(Env env) {
+      if (!_value.isVar()) {
+         env.error(L.l("each() argument must be a variable at '{0}'", _value));
+         return NullValue.NULL;
+      }
 
-	Value value = _value.eval(env);
+      Value value = _value.eval(env);
 
-	_listHead.evalAssignEachValue(env, value);
+      _listHead.evalAssignEachValue(env, value);
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public boolean evalBoolean(Env env) {
-	if (!_value.isVar()) {
-	    env.error(L.l("each() argument must be a variable at '{0}'", _value));
-	    return false;
-	}
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public boolean evalBoolean(Env env) {
+      if (!_value.isVar()) {
+         env.error(L.l("each() argument must be a variable at '{0}'", _value));
+         return false;
+      }
 
-	Value value = _value.eval(env);
+      Value value = _value.eval(env);
 
-	return _listHead.evalEachBoolean(env, value);
-    }
+      return _listHead.evalEachBoolean(env, value);
+   }
 }

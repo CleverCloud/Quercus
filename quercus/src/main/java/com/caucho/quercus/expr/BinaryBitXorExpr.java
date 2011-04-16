@@ -38,36 +38,36 @@ import com.caucho.quercus.env.Value;
  */
 public class BinaryBitXorExpr extends AbstractBinaryExpr {
 
-    public BinaryBitXorExpr(Location location, Expr left, Expr right) {
-	super(location, left, right);
-    }
+   public BinaryBitXorExpr(Location location, Expr left, Expr right) {
+      super(location, left, right);
+   }
 
-    public BinaryBitXorExpr(Expr left, Expr right) {
-	super(left, right);
-    }
+   public BinaryBitXorExpr(Expr left, Expr right) {
+      super(left, right);
+   }
 
-    /**
-     * Returns true for a long.
-     */
-    public boolean isLong() {
-	return true;
-    }
+   /**
+    * Returns true for a long.
+    */
+   public boolean isLong() {
+      return true;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value lValue = _left.eval(env);
-	Value rValue = _right.eval(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value lValue = _left.eval(env);
+      Value rValue = _right.eval(env);
 
-	return lValue.bitXor(rValue);
-    }
+      return lValue.bitXor(rValue);
+   }
 
-    public String toString() {
-	return "(" + _left + " ^ " + _right + ")";
-    }
+   public String toString() {
+      return "(" + _left + " ^ " + _right + ")";
+   }
 }

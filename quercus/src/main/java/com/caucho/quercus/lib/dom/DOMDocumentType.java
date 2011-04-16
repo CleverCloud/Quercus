@@ -31,33 +31,33 @@ package com.caucho.quercus.lib.dom;
 import org.w3c.dom.DocumentType;
 
 public class DOMDocumentType
-	extends DOMNode<DocumentType> {
+        extends DOMNode<DocumentType> {
 
-    DOMDocumentType(DOMImplementation impl, DocumentType delegate) {
-	super(impl, delegate);
-    }
+   DOMDocumentType(DOMImplementation impl, DocumentType delegate) {
+      super(impl, delegate);
+   }
 
-    public DOMNamedNodeMap getEntities() {
-	return wrap(_delegate.getEntities());
-    }
+   public DOMNamedNodeMap getEntities() {
+      return wrap(_delegate.getEntities());
+   }
 
-    public String getInternalSubset() {
-	return _delegate.getInternalSubset();
-    }
+   public String getInternalSubset() {
+      return _delegate.getInternalSubset();
+   }
 
-    public String getName() {
-	return _delegate.getName();
-    }
+   public String getName() {
+      return _delegate.getName();
+   }
 
-    public DOMNamedNodeMap getNotations() {
-	return wrap(_delegate.getNotations());
-    }
+   public DOMNamedNodeMap getNotations() {
+      return wrap(_delegate.getNotations());
+   }
 
-    public String getPublicId() {
-	return _delegate.getPublicId();
-    }
+   public String getPublicId() {
+      return _delegate.getPublicId();
+   }
 
-    public String getSystemId() {
-	return _delegate.getSystemId();
-    }
+   public String getSystemId() {
+      return _delegate.getSystemId();
+   }
 }

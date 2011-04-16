@@ -40,40 +40,40 @@ import java.io.IOException;
  */
 public class FunExitExpr extends Expr {
 
-    protected final Expr _value;
+   protected final Expr _value;
 
-    public FunExitExpr(Location location, Expr value) {
-	super(location);
-	_value = value;
-    }
+   public FunExitExpr(Location location, Expr value) {
+      super(location);
+      _value = value;
+   }
 
-    public FunExitExpr(Location location) {
-	super(location);
-	_value = null;
-    }
+   public FunExitExpr(Location location) {
+      super(location);
+      _value = null;
+   }
 
-    public FunExitExpr(Expr value) {
-	_value = value;
-    }
+   public FunExitExpr(Expr value) {
+      _value = value;
+   }
 
-    public FunExitExpr() {
-	_value = null;
-    }
+   public FunExitExpr() {
+      _value = null;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	if (_value != null) {
-	    Value msg = _value.eval(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      if (_value != null) {
+         Value msg = _value.eval(env);
 
-	    return env.exit(msg);
-	} else {
-	    return env.exit();
-	}
-    }
+         return env.exit(msg);
+      } else {
+         return env.exit();
+      }
+   }
 }

@@ -37,51 +37,51 @@ import com.caucho.quercus.env.Value;
  */
 public class UnaryPostIncrementExpr extends AbstractUnaryExpr {
 
-    protected final int _incr;
+   protected final int _incr;
 
-    public UnaryPostIncrementExpr(Location location, Expr expr, int incr) {
-	// super(expr.createRef());
-	super(location, expr);
+   public UnaryPostIncrementExpr(Location location, Expr expr, int incr) {
+      // super(expr.createRef());
+      super(location, expr);
 
-	_incr = incr;
-    }
+      _incr = incr;
+   }
 
-    public UnaryPostIncrementExpr(Expr expr, int incr) {
-	super(expr);
+   public UnaryPostIncrementExpr(Expr expr, int incr) {
+      super(expr);
 
-	_incr = incr;
-    }
+      _incr = incr;
+   }
 
-    public Value eval(Env env) {
-	return _expr.evalPostIncrement(env, _incr);
-    }
+   public Value eval(Env env) {
+      return _expr.evalPostIncrement(env, _incr);
+   }
 
-    /**
-     * Return true for a double value
-     */
-    public boolean isDouble() {
-	return _expr.isDouble();
-    }
+   /**
+    * Return true for a double value
+    */
+   public boolean isDouble() {
+      return _expr.isDouble();
+   }
 
-    /**
-     * Return true for a long value
-     */
-    public boolean isLong() {
-	return _expr.isLong();
-    }
+   /**
+    * Return true for a long value
+    */
+   public boolean isLong() {
+      return _expr.isLong();
+   }
 
-    /**
-     * Return true for a number
-     */
-    public boolean isNumber() {
-	return true;
-    }
+   /**
+    * Return true for a number
+    */
+   public boolean isNumber() {
+      return true;
+   }
 
-    public String toString() {
-	if (_incr > 0) {
-	    return _expr + "++";
-	} else {
-	    return _expr + "--";
-	}
-    }
+   public String toString() {
+      if (_incr > 0) {
+         return _expr + "++";
+      } else {
+         return _expr + "--";
+      }
+   }
 }

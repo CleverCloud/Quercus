@@ -35,21 +35,21 @@ import com.caucho.quercus.Location;
  */
 abstract public class AbstractUnaryExpr extends Expr {
 
-    protected final Expr _expr;
+   protected final Expr _expr;
 
-    protected AbstractUnaryExpr(Location location, Expr expr) {
-	super(location);
-	_expr = expr;
-    }
+   protected AbstractUnaryExpr(Location location, Expr expr) {
+      super(location);
+      _expr = expr;
+   }
 
-    protected AbstractUnaryExpr(Expr expr) {
-	_expr = expr;
-    }
+   protected AbstractUnaryExpr(Expr expr) {
+      _expr = expr;
+   }
 
-    /**
-     * Returns the child expression.
-     */
-    public final Expr getExpr() {
-	return _expr;
-    }
+   /**
+    * Returns the child expression.
+    */
+   public final Expr getExpr() {
+      return _expr;
+   }
 }

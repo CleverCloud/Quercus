@@ -40,36 +40,36 @@ import java.util.logging.Logger;
  */
 public class GoogleQuercusServlet extends QuercusServlet {
 
-    private static final L10N L = new L10N(GoogleQuercusServlet.class);
-    private static final Logger log = Logger.getLogger(GoogleQuercusServlet.class.getName());
+   private static final L10N L = new L10N(GoogleQuercusServlet.class);
+   private static final Logger log = Logger.getLogger(GoogleQuercusServlet.class.getName());
 
-    @Override
-    protected QuercusServletImpl getQuercusServlet(boolean isResin) {
-	QuercusServletImpl impl = null;
+   @Override
+   protected QuercusServletImpl getQuercusServlet(boolean isResin) {
+      QuercusServletImpl impl = null;
 
-	try {
-	    Class cl = Class.forName(
-		    "com.caucho.quercus.servlet.ProGoogleQuercusServlet");
+      try {
+         Class cl = Class.forName(
+                 "com.caucho.quercus.servlet.ProGoogleQuercusServlet");
 
-	    Constructor cons = cl.getConstructor(java.io.File.class);
+         Constructor cons = cl.getConstructor(java.io.File.class);
 
-	    impl = (QuercusServletImpl) cons.newInstance(_licenseDirectory);
+         impl = (QuercusServletImpl) cons.newInstance(_licenseDirectory);
 
-	    //impl = (QuercusServletImpl) cl.newInstance();
-	} catch (ConfigException e) {
-	    log.log(Level.FINEST, e.toString(), e);
-	    log.info(
-		    "Quercus compiled mode requires valid Quercus professional licenses");
-	    log.info(e.getMessage());
+         //impl = (QuercusServletImpl) cl.newInstance();
+      } catch (ConfigException e) {
+         log.log(Level.FINEST, e.toString(), e);
+         log.info(
+                 "Quercus compiled mode requires valid Quercus professional licenses");
+         log.info(e.getMessage());
 
-	} catch (Exception e) {
-	    log.log(Level.FINEST, e.toString(), e);
-	}
+      } catch (Exception e) {
+         log.log(Level.FINEST, e.toString(), e);
+      }
 
-	if (impl == null) {
-	    impl = new GoogleQuercusServletImpl();
-	}
+      if (impl == null) {
+         impl = new GoogleQuercusServletImpl();
+      }
 
-	return impl;
-    }
+      return impl;
+   }
 }

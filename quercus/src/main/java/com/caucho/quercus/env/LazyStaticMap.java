@@ -37,57 +37,57 @@ import java.util.*;
  */
 public class LazyStaticMap extends AbstractMap<StringValue, Var> {
 
-    private final IntMap _intMap;
-    private final Value[] _values;
-    private HashMap<StringValue, Var> _extMap = new HashMap<StringValue, Var>();
+   private final IntMap _intMap;
+   private final Value[] _values;
+   private HashMap<StringValue, Var> _extMap = new HashMap<StringValue, Var>();
 
-    public LazyStaticMap(IntMap intMap, Value[] values) {
-	_intMap = intMap;
-	_values = values;
-    }
+   public LazyStaticMap(IntMap intMap, Value[] values) {
+      _intMap = intMap;
+      _values = values;
+   }
 
-    /**
-     * Returns the matching value, or null.
-     */
-    public Var get(Object key) {
-	return (Var) get((StringValue) key);
-    }
+   /**
+    * Returns the matching value, or null.
+    */
+   public Var get(Object key) {
+      return (Var) get((StringValue) key);
+   }
 
-    /**
-     * Returns the matching value, or null.
-     */
-    public Var get(StringValue key) {
-	Var var = _extMap.get(key);
+   /**
+    * Returns the matching value, or null.
+    */
+   public Var get(StringValue key) {
+      Var var = _extMap.get(key);
 
-	if (var == null) {
-	    int id = _intMap.get(key);
+      if (var == null) {
+         int id = _intMap.get(key);
 
-	    if (id >= 0 && _values[id] != null) {
-		var = new Var();
-		// var.setGlobal();
+         if (id >= 0 && _values[id] != null) {
+            var = new Var();
+            // var.setGlobal();
 
-		_extMap.put(key, var);
+            _extMap.put(key, var);
 
-		Env env = Env.getCurrent();
+            Env env = Env.getCurrent();
 
-		Value value = _values[id].copy(env);
+            Value value = _values[id].copy(env);
 
-		var.set(value);
-	    }
-	}
+            var.set(value);
+         }
+      }
 
-	return var;
-    }
+      return var;
+   }
 
-    /**
-     * Returns the matching value, or null.
-     */
-    @Override
-    public Var put(StringValue key, Var newVar) {
-	return _extMap.put(key, newVar);
-    }
+   /**
+    * Returns the matching value, or null.
+    */
+   @Override
+   public Var put(StringValue key, Var newVar) {
+      return _extMap.put(key, newVar);
+   }
 
-    public Set<Map.Entry<StringValue, Var>> entrySet() {
-	return _extMap.entrySet();
-    }
+   public Set<Map.Entry<StringValue, Var>> entrySet() {
+      return _extMap.entrySet();
+   }
 }

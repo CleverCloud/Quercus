@@ -62,46 +62,46 @@ import java.util.logging.Logger;
  */
 public class JavaArrayClassDef extends JavaClassDef {
 
-    public JavaArrayClassDef(ModuleContext moduleContext,
-	    String name,
-	    Class type) {
-	super(moduleContext, name, type);
-    }
+   public JavaArrayClassDef(ModuleContext moduleContext,
+           String name,
+           Class type) {
+      super(moduleContext, name, type);
+   }
 
-    public JavaArrayClassDef(ModuleContext moduleContext,
-	    String name,
-	    Class type,
-	    String extension) {
-	super(moduleContext, name, type, extension);
-    }
+   public JavaArrayClassDef(ModuleContext moduleContext,
+           String name,
+           Class type,
+           String extension) {
+      super(moduleContext, name, type, extension);
+   }
 
-    @Override
-    public boolean isArray() {
-	return true;
-    }
+   @Override
+   public boolean isArray() {
+      return true;
+   }
 
-    @Override
-    public Value wrap(Env env, Object obj) {
-	if (!_isInit) {
-	    init();
-	}
+   @Override
+   public Value wrap(Env env, Object obj) {
+      if (!_isInit) {
+         init();
+      }
 
-	ArrayValueImpl arrayValueImpl = new ArrayValueImpl();
+      ArrayValueImpl arrayValueImpl = new ArrayValueImpl();
 
-	// TODO: needs to go into constructor
-	Class componentClass = getType().getComponentType();
+      // TODO: needs to go into constructor
+      Class componentClass = getType().getComponentType();
 
-	MarshalFactory factory = getModuleContext().getMarshalFactory();
-	Marshal componentClassMarshal = factory.create(componentClass);
+      MarshalFactory factory = getModuleContext().getMarshalFactory();
+      Marshal componentClassMarshal = factory.create(componentClass);
 
-	int length = Array.getLength(obj);
+      int length = Array.getLength(obj);
 
-	for (int i = 0; i < length; i++) {
-	    Object component = Array.get(obj, i);
+      for (int i = 0; i < length; i++) {
+         Object component = Array.get(obj, i);
 
-	    arrayValueImpl.put(componentClassMarshal.unmarshal(env, component));
-	}
+         arrayValueImpl.put(componentClassMarshal.unmarshal(env, component));
+      }
 
-	return arrayValueImpl;
-    }
+      return arrayValueImpl;
+   }
 }

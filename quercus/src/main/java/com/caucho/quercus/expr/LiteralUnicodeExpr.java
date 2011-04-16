@@ -39,55 +39,55 @@ import com.caucho.quercus.env.Value;
  */
 public class LiteralUnicodeExpr extends Expr {
 
-    protected final StringValue _value;
+   protected final StringValue _value;
 
-    public LiteralUnicodeExpr(Location location, String value) {
-	super(location);
+   public LiteralUnicodeExpr(Location location, String value) {
+      super(location);
 
-	_value = new UnicodeBuilderValue(value);
-    }
+      _value = new UnicodeBuilderValue(value);
+   }
 
-    public LiteralUnicodeExpr(Location location, StringValue value) {
-	super(location);
-	_value = value;
-    }
+   public LiteralUnicodeExpr(Location location, StringValue value) {
+      super(location);
+      _value = value;
+   }
 
-    public LiteralUnicodeExpr(String value) {
-	this(Location.UNKNOWN, value);
-    }
+   public LiteralUnicodeExpr(String value) {
+      this(Location.UNKNOWN, value);
+   }
 
-    public LiteralUnicodeExpr(StringValue value) {
-	this(Location.UNKNOWN, value);
-    }
+   public LiteralUnicodeExpr(StringValue value) {
+      this(Location.UNKNOWN, value);
+   }
 
-    /**
-     * Returns true for a literal expression.
-     */
-    public boolean isLiteral() {
-	return true;
-    }
+   /**
+    * Returns true for a literal expression.
+    */
+   public boolean isLiteral() {
+      return true;
+   }
 
-    /**
-     * Evaluates the expression as a constant.
-     *
-     * @return the expression value.
-     */
-    public Value evalConstant() {
-	return _value;
-    }
+   /**
+    * Evaluates the expression as a constant.
+    *
+    * @return the expression value.
+    */
+   public Value evalConstant() {
+      return _value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return _value;
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return _value;
+   }
 
-    public String toString() {
-	return "\"" + _value + "\"";
-    }
+   public String toString() {
+      return "\"" + _value + "\"";
+   }
 }

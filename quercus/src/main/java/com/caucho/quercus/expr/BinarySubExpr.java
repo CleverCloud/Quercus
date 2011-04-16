@@ -37,28 +37,28 @@ import com.caucho.quercus.env.Value;
  */
 public class BinarySubExpr extends AbstractBinaryExpr {
 
-    protected BinarySubExpr(Location location, Expr left, Expr right) {
-	super(location, left, right);
-    }
+   protected BinarySubExpr(Location location, Expr left, Expr right) {
+      super(location, left, right);
+   }
 
-    protected BinarySubExpr(Expr left, Expr right) {
-	super(left, right);
-    }
+   protected BinarySubExpr(Expr left, Expr right) {
+      super(left, right);
+   }
 
-    /**
-     * Evaluates the expression returning the expression value.
-     *
-     * @param env the quercus environment
-     * @return the resulting value
-     */
-    public Value eval(Env env) {
-	Value lValue = _left.eval(env);
-	Value rValue = _right.eval(env);
+   /**
+    * Evaluates the expression returning the expression value.
+    *
+    * @param env the quercus environment
+    * @return the resulting value
+    */
+   public Value eval(Env env) {
+      Value lValue = _left.eval(env);
+      Value rValue = _right.eval(env);
 
-	return lValue.sub(rValue);
-    }
+      return lValue.sub(rValue);
+   }
 
-    public String toString() {
-	return "(" + _left + " + " + _right + ")";
-    }
+   public String toString() {
+      return "(" + _left + " + " + _right + ")";
+   }
 }

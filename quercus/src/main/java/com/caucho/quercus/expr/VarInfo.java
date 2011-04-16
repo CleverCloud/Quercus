@@ -37,30 +37,30 @@ import com.caucho.quercus.program.FunctionInfo;
  */
 public class VarInfo {
 
-    private final FunctionInfo _function;
-    private final StringValue _name;
+   private final FunctionInfo _function;
+   private final StringValue _name;
 
-    public VarInfo(StringValue name, FunctionInfo function) {
-	_name = name;
-	_function = function;
-    }
+   public VarInfo(StringValue name, FunctionInfo function) {
+      _name = name;
+      _function = function;
+   }
 
-    /**
-     * Returns the variable name.
-     */
-    public StringValue getName() {
-	return _name;
-    }
+   /**
+    * Returns the variable name.
+    */
+   public StringValue getName() {
+      return _name;
+   }
 
-    /**
-     * Returns the owning function.
-     */
-    public FunctionInfo getFunction() {
-	return _function;
-    }
+   /**
+    * Returns the owning function.
+    */
+   public FunctionInfo getFunction() {
+      return _function;
+   }
 
-    @Override
-    public String toString() {
-	return getClass().getSimpleName() + "[" + _name + "]";
-    }
+   @Override
+   public String toString() {
+      return getClass().getSimpleName() + "[" + _name + "]";
+   }
 }

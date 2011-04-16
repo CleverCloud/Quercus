@@ -37,63 +37,63 @@ import java.util.logging.Logger;
 
 public class ZlibProtocolWrapper extends ProtocolWrapper {
 
-    private static final Logger log = Logger.getLogger(ZlibProtocolWrapper.class.getName());
-    private static final L10N L = new L10N(ZlibProtocolWrapper.class);
+   private static final Logger log = Logger.getLogger(ZlibProtocolWrapper.class.getName());
+   private static final L10N L = new L10N(ZlibProtocolWrapper.class);
 
-    public ZlibProtocolWrapper() {
-    }
+   public ZlibProtocolWrapper() {
+   }
 
-    public BinaryStream fopen(Env env, StringValue path, StringValue mode,
-	    LongValue options) {
-	boolean useIncludePath =
-		(options.toLong() & StreamModule.STREAM_USE_PATH) != 0;
+   public BinaryStream fopen(Env env, StringValue path, StringValue mode,
+           LongValue options) {
+      boolean useIncludePath =
+              (options.toLong() & StreamModule.STREAM_USE_PATH) != 0;
 
-	Value pathComponent = UrlModule.parse_url(env, path, UrlModule.PHP_URL_PATH);
+      Value pathComponent = UrlModule.parse_url(env, path, UrlModule.PHP_URL_PATH);
 
-	if (!pathComponent.isset()) {
-	    log.info(L.l("no path component found in '{0}'", path.toString()));
-	    return null;
-	}
+      if (!pathComponent.isset()) {
+         log.info(L.l("no path component found in '{0}'", path.toString()));
+         return null;
+      }
 
-	return ZlibModule.gzopen(env, pathComponent.toStringValue(),
-		mode.toString(),
-		useIncludePath);
-    }
+      return ZlibModule.gzopen(env, pathComponent.toStringValue(),
+              mode.toString(),
+              useIncludePath);
+   }
 
-    public Value opendir(Env env, StringValue path, LongValue flags) {
-	env.warning(L.l("opendir not supported by protocol"));
+   public Value opendir(Env env, StringValue path, LongValue flags) {
+      env.warning(L.l("opendir not supported by protocol"));
 
-	return BooleanValue.FALSE;
-    }
+      return BooleanValue.FALSE;
+   }
 
-    public boolean unlink(Env env, StringValue path) {
-	env.warning(L.l("unlink not supported by protocol"));
+   public boolean unlink(Env env, StringValue path) {
+      env.warning(L.l("unlink not supported by protocol"));
 
-	return false;
-    }
+      return false;
+   }
 
-    public boolean rename(Env env, StringValue path_from, StringValue path_to) {
-	env.warning(L.l("rename not supported by protocol"));
+   public boolean rename(Env env, StringValue path_from, StringValue path_to) {
+      env.warning(L.l("rename not supported by protocol"));
 
-	return false;
-    }
+      return false;
+   }
 
-    public boolean mkdir(Env env,
-	    StringValue path, LongValue mode, LongValue options) {
-	env.warning(L.l("mkdir not supported by protocol"));
+   public boolean mkdir(Env env,
+           StringValue path, LongValue mode, LongValue options) {
+      env.warning(L.l("mkdir not supported by protocol"));
 
-	return false;
-    }
+      return false;
+   }
 
-    public boolean rmdir(Env env, StringValue path, LongValue options) {
-	env.warning(L.l("rmdir not supported by protocol"));
+   public boolean rmdir(Env env, StringValue path, LongValue options) {
+      env.warning(L.l("rmdir not supported by protocol"));
 
-	return false;
-    }
+      return false;
+   }
 
-    public Value url_stat(Env env, StringValue path, LongValue flags) {
-	env.warning(L.l("stat not supported by protocol"));
+   public Value url_stat(Env env, StringValue path, LongValue flags) {
+      env.warning(L.l("stat not supported by protocol"));
 
-	return BooleanValue.FALSE;
-    }
+      return BooleanValue.FALSE;
+   }
 }

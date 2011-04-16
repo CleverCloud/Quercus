@@ -36,45 +36,45 @@ import java.util.Map;
  */
 public class ChainedMap<K, V> implements VarMap<K, V> {
 
-    private final VarMap<K, V> _next;
-    private final Map<K, V> _map;
+   private final VarMap<K, V> _next;
+   private final Map<K, V> _map;
 
-    public ChainedMap(VarMap<K, V> next, Map<K, V> map) {
-	_next = next;
-	_map = map;
-    }
+   public ChainedMap(VarMap<K, V> next, Map<K, V> map) {
+      _next = next;
+      _map = map;
+   }
 
-    public ChainedMap(VarMap<K, V> next) {
-	_next = next;
-	_map = new HashMap<K, V>();
-    }
+   public ChainedMap(VarMap<K, V> next) {
+      _next = next;
+      _map = new HashMap<K, V>();
+   }
 
-    /**
-     * Sets the value
-     */
-    public void put(K key, V value) {
-	_map.put(key, value);
-    }
+   /**
+    * Sets the value
+    */
+   public void put(K key, V value) {
+      _map.put(key, value);
+   }
 
-    /**
-     * Remove the value
-     */
-    public V remove(K key) {
-	return _map.remove(key);
-    }
+   /**
+    * Remove the value
+    */
+   public V remove(K key) {
+      return _map.remove(key);
+   }
 
-    /**
-     * Gets a value.
-     */
-    public V get(K key) {
-	V value = _map.get(key);
+   /**
+    * Gets a value.
+    */
+   public V get(K key) {
+      V value = _map.get(key);
 
-	if (value != null) {
-	    return value;
-	} else if (_next != null) {
-	    return _next.get(key);
-	} else {
-	    return null;
-	}
-    }
+      if (value != null) {
+         return value;
+      } else if (_next != null) {
+         return _next.get(key);
+      } else {
+         return null;
+      }
+   }
 }

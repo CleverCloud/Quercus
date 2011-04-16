@@ -38,43 +38,43 @@ import com.caucho.quercus.env.Value;
  */
 public class ToArrayExpr extends AbstractUnaryExpr {
 
-    public ToArrayExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public ToArrayExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public ToArrayExpr(Expr expr) {
-	super(expr);
-    }
+   public ToArrayExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return _expr.eval(env).toArray();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return _expr.eval(env).toArray();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value evalCopy(Env env) {
-	Value value = _expr.eval(env).toValue();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value evalCopy(Env env) {
+      Value value = _expr.eval(env).toValue();
 
-	if (value instanceof ArrayValue) {
-	    return value.copy();
-	} else {
-	    return value.toArray();
-	}
-    }
+      if (value instanceof ArrayValue) {
+         return value.copy();
+      } else {
+         return value.toArray();
+      }
+   }
 
-    public String toString() {
-	return "((array) " + _expr + ")";
-    }
+   public String toString() {
+      return "((array) " + _expr + ")";
+   }
 }

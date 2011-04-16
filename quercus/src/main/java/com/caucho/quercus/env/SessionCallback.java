@@ -38,79 +38,79 @@ import java.util.logging.Logger;
  */
 public class SessionCallback extends Value {
 
-    private static final Logger log = Logger.getLogger(SessionCallback.class.getName());
-    private Callable _open;
-    private Callable _close;
-    private Callable _read;
-    private Callable _write;
-    private Callable _destroy;
-    private Callable _gc;
+   private static final Logger log = Logger.getLogger(SessionCallback.class.getName());
+   private Callable _open;
+   private Callable _close;
+   private Callable _read;
+   private Callable _write;
+   private Callable _destroy;
+   private Callable _gc;
 
-    public SessionCallback(Callable open,
-	    Callable close,
-	    Callable read,
-	    Callable write,
-	    Callable destroy,
-	    Callable gc) {
-	_open = open;
-	_close = close;
-	_read = read;
-	_write = write;
-	_destroy = destroy;
-	_gc = gc;
+   public SessionCallback(Callable open,
+           Callable close,
+           Callable read,
+           Callable write,
+           Callable destroy,
+           Callable gc) {
+      _open = open;
+      _close = close;
+      _read = read;
+      _write = write;
+      _destroy = destroy;
+      _gc = gc;
 
-	if (open == null) {
-	    throw new NullPointerException("open cannot be null");
-	}
-    }
+      if (open == null) {
+         throw new NullPointerException("open cannot be null");
+      }
+   }
 
-    public void open(Env env, String savePath, String sessionName) {
-	_open.call(env, env.createString(savePath), env.createString(sessionName));
-    }
+   public void open(Env env, String savePath, String sessionName) {
+      _open.call(env, env.createString(savePath), env.createString(sessionName));
+   }
 
-    public StringValue read(Env env, String id) {
-	try {
-	    Value value = _read.call(env, env.createString(id));
+   public StringValue read(Env env, String id) {
+      try {
+         Value value = _read.call(env, env.createString(id));
 
-	    if (value instanceof StringValue) {
-		return (StringValue) value;
-	    } else {
-		return null;
-	    }
-	} catch (RuntimeException e) {
-	    throw e;
-	} catch (Throwable e) {
-	    throw new QuercusRuntimeException(e);
-	}
-    }
+         if (value instanceof StringValue) {
+            return (StringValue) value;
+         } else {
+            return null;
+         }
+      } catch (RuntimeException e) {
+         throw e;
+      } catch (Throwable e) {
+         throw new QuercusRuntimeException(e);
+      }
+   }
 
-    public void write(Env env, String id, String value) {
-	try {
-	    _write.call(env, env.createString(id), env.createString(value));
-	} catch (RuntimeException e) {
-	    throw e;
-	} catch (Throwable e) {
-	    log.log(Level.FINE, e.toString(), e);
-	}
-    }
+   public void write(Env env, String id, String value) {
+      try {
+         _write.call(env, env.createString(id), env.createString(value));
+      } catch (RuntimeException e) {
+         throw e;
+      } catch (Throwable e) {
+         log.log(Level.FINE, e.toString(), e);
+      }
+   }
 
-    public void destroy(Env env, String id) {
-	try {
-	    _destroy.call(env, env.createString(id));
-	} catch (RuntimeException e) {
-	    throw e;
-	} catch (Throwable e) {
-	    log.log(Level.FINE, e.toString(), e);
-	}
-    }
+   public void destroy(Env env, String id) {
+      try {
+         _destroy.call(env, env.createString(id));
+      } catch (RuntimeException e) {
+         throw e;
+      } catch (Throwable e) {
+         log.log(Level.FINE, e.toString(), e);
+      }
+   }
 
-    public void close(Env env) {
-	try {
-	    _close.call(env);
-	} catch (RuntimeException e) {
-	    throw e;
-	} catch (Throwable e) {
-	    log.log(Level.FINE, e.toString(), e);
-	}
-    }
+   public void close(Env env) {
+      try {
+         _close.call(env);
+      } catch (RuntimeException e) {
+         throw e;
+      } catch (Throwable e) {
+         log.log(Level.FINE, e.toString(), e);
+      }
+   }
 }

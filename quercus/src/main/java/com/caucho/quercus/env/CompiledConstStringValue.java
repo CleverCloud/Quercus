@@ -33,157 +33,157 @@ package com.caucho.quercus.env;
  * For compiled code.
  */
 public final class CompiledConstStringValue
-	extends ConstStringValue {
+        extends ConstStringValue {
 
-    private final int _compiledHashCode;
+   private final int _compiledHashCode;
 
-    public CompiledConstStringValue(StringValue s) {
-	super(s);
+   public CompiledConstStringValue(StringValue s) {
+      super(s);
 
-	_longValue = s.toLongValue();
-	_doubleValue = s.toDoubleValue();
-	_string = s.toString();
+      _longValue = s.toLongValue();
+      _doubleValue = s.toDoubleValue();
+      _string = s.toString();
 
-	_valueType = s.getValueType();
-	_compiledHashCode = s.hashCode();
-	_key = s.toKey();
-    }
+      _valueType = s.getValueType();
+      _compiledHashCode = s.hashCode();
+      _key = s.toKey();
+   }
 
-    public CompiledConstStringValue(String s) {
-	super(s);
+   public CompiledConstStringValue(String s) {
+      super(s);
 
-	_longValue = super.toLongValue();
-	_doubleValue = super.toDoubleValue();
-	_string = s;
-	_valueType = super.getValueType();
-	_compiledHashCode = super.hashCode();
-	_key = super.toKey();
-    }
+      _longValue = super.toLongValue();
+      _doubleValue = super.toDoubleValue();
+      _string = s;
+      _valueType = super.getValueType();
+      _compiledHashCode = super.hashCode();
+      _key = super.toKey();
+   }
 
-    public CompiledConstStringValue(char ch,
-	    LongValue longValue,
-	    DoubleValue doubleValue,
-	    ValueType valueType,
-	    Value key,
-	    int hashCode) {
-	super(ch);
+   public CompiledConstStringValue(char ch,
+           LongValue longValue,
+           DoubleValue doubleValue,
+           ValueType valueType,
+           Value key,
+           int hashCode) {
+      super(ch);
 
-	_string = String.valueOf(ch);
-	_longValue = longValue;
-	_doubleValue = doubleValue;
+      _string = String.valueOf(ch);
+      _longValue = longValue;
+      _doubleValue = doubleValue;
 
-	_valueType = valueType;
-	_key = key;
-	_compiledHashCode = hashCode;
-    }
+      _valueType = valueType;
+      _key = key;
+      _compiledHashCode = hashCode;
+   }
 
-    public CompiledConstStringValue(char ch,
-	    LongValue longValue,
-	    DoubleValue doubleValue,
-	    ValueType valueType,
-	    int hashCode) {
-	super(ch);
+   public CompiledConstStringValue(char ch,
+           LongValue longValue,
+           DoubleValue doubleValue,
+           ValueType valueType,
+           int hashCode) {
+      super(ch);
 
-	_string = String.valueOf(ch);
-	_longValue = longValue;
-	_doubleValue = doubleValue;
+      _string = String.valueOf(ch);
+      _longValue = longValue;
+      _doubleValue = doubleValue;
 
-	_valueType = valueType;
-	_key = super.toKey();
-	_compiledHashCode = hashCode;
-    }
+      _valueType = valueType;
+      _key = super.toKey();
+      _compiledHashCode = hashCode;
+   }
 
-    public CompiledConstStringValue(String s,
-	    LongValue longValue,
-	    DoubleValue doubleValue,
-	    ValueType valueType,
-	    Value key,
-	    int hashCode) {
-	super(s);
+   public CompiledConstStringValue(String s,
+           LongValue longValue,
+           DoubleValue doubleValue,
+           ValueType valueType,
+           Value key,
+           int hashCode) {
+      super(s);
 
-	_string = s;
-	_longValue = longValue;
-	_doubleValue = doubleValue;
-	_valueType = valueType;
+      _string = s;
+      _longValue = longValue;
+      _doubleValue = doubleValue;
+      _valueType = valueType;
 
-	_key = key;
-	_compiledHashCode = hashCode;
-    }
+      _key = key;
+      _compiledHashCode = hashCode;
+   }
 
-    public CompiledConstStringValue(String s,
-	    LongValue longValue,
-	    DoubleValue doubleValue,
-	    ValueType valueType,
-	    int hashCode) {
-	super(s);
+   public CompiledConstStringValue(String s,
+           LongValue longValue,
+           DoubleValue doubleValue,
+           ValueType valueType,
+           int hashCode) {
+      super(s);
 
-	_string = s;
-	_longValue = longValue;
-	_doubleValue = doubleValue;
-	_valueType = valueType;
+      _string = s;
+      _longValue = longValue;
+      _doubleValue = doubleValue;
+      _valueType = valueType;
 
-	_key = super.toKey();
-	_compiledHashCode = hashCode;
-    }
+      _key = super.toKey();
+      _compiledHashCode = hashCode;
+   }
 
-    public boolean isStatic() {
-	return true;
-    }
+   public boolean isStatic() {
+      return true;
+   }
 
-    /**
-     * Converts to a long vaule
-     */
-    @Override
-    public LongValue toLongValue() {
-	return _longValue;
-    }
+   /**
+    * Converts to a long vaule
+    */
+   @Override
+   public LongValue toLongValue() {
+      return _longValue;
+   }
 
-    /**
-     * Converts to a double vaule
-     */
-    @Override
-    public DoubleValue toDoubleValue() {
-	return _doubleValue;
-    }
+   /**
+    * Converts to a double vaule
+    */
+   @Override
+   public DoubleValue toDoubleValue() {
+      return _doubleValue;
+   }
 
-    /**
-     * Converts to a long.
-     */
-    @Override
-    public long toLong() {
-	return toLongValue().toLong();
-    }
+   /**
+    * Converts to a long.
+    */
+   @Override
+   public long toLong() {
+      return toLongValue().toLong();
+   }
 
-    /**
-     * Converts to a double.
-     */
-    @Override
-    public double toDouble() {
-	return toDoubleValue().toDouble();
-    }
+   /**
+    * Converts to a double.
+    */
+   @Override
+   public double toDouble() {
+      return toDoubleValue().toDouble();
+   }
 
-    /**
-     * Returns the ValueType.
-     */
-    @Override
-    public ValueType getValueType() {
-	return _valueType;
-    }
+   /**
+    * Returns the ValueType.
+    */
+   @Override
+   public ValueType getValueType() {
+      return _valueType;
+   }
 
-    /**
-     * Converts to a key.
-     */
-    @Override
-    public final Value toKey() {
-	return _key;
-    }
+   /**
+    * Converts to a key.
+    */
+   @Override
+   public final Value toKey() {
+      return _key;
+   }
 
-    @Override
-    public final int hashCode() {
-	return _compiledHashCode;
-    }
+   @Override
+   public final int hashCode() {
+      return _compiledHashCode;
+   }
 
-    public final String toString() {
-	return _string;
-    }
+   public final String toString() {
+      return _string;
+   }
 }

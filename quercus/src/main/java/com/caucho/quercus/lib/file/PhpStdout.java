@@ -35,23 +35,23 @@ import java.io.IOException;
  */
 public class PhpStdout extends AbstractBinaryOutput {
 
-    public PhpStdout() {
-    }
+   public PhpStdout() {
+   }
 
-    /**
-     * Writes a buffer.
-     */
-    public void write(byte[] buffer, int offset, int length)
-	    throws IOException {
-	System.out.write(buffer, offset, length);
-    }
+   /**
+    * Writes a buffer.
+    */
+   public void write(byte[] buffer, int offset, int length)
+           throws IOException {
+      System.out.write(buffer, offset, length);
+   }
 
-    public void write(int b)
-	    throws IOException {
-	System.out.write(b);
-    }
+   public void write(int b)
+           throws IOException {
+      System.out.write(b);
+   }
 
-    public String toString() {
-	return "PhpStdout[]";
-    }
+   public String toString() {
+      return "PhpStdout[]";
+   }
 }

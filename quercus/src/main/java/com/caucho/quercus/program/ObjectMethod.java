@@ -41,45 +41,45 @@ import java.util.logging.Logger;
  */
 public class ObjectMethod extends Function {
 
-    private static final Logger log = Logger.getLogger(
-	    ObjectMethod.class.getName());
-    private static final L10N L = new L10N(ObjectMethod.class);
-    private ClassDef _quercusClass;
+   private static final Logger log = Logger.getLogger(
+           ObjectMethod.class.getName());
+   private static final L10N L = new L10N(ObjectMethod.class);
+   private ClassDef _quercusClass;
 
-    ObjectMethod(Location location,
-	    InterpretedClassDef quercusClass,
-	    String name,
-	    FunctionInfo info,
-	    Arg[] args,
-	    Statement[] statements) {
-	super(location, name, info, args, statements);
+   ObjectMethod(Location location,
+           InterpretedClassDef quercusClass,
+           String name,
+           FunctionInfo info,
+           Arg[] args,
+           Statement[] statements) {
+      super(location, name, info, args, statements);
 
-	_quercusClass = quercusClass;
-    }
+      _quercusClass = quercusClass;
+   }
 
-    public ObjectMethod(ExprFactory exprFactory,
-	    Location location,
-	    InterpretedClassDef quercusClass,
-	    String name,
-	    FunctionInfo info,
-	    Arg[] argList,
-	    Statement[] statementList) {
-	super(exprFactory, location, name, info, argList, statementList);
-	_quercusClass = quercusClass;
-    }
+   public ObjectMethod(ExprFactory exprFactory,
+           Location location,
+           InterpretedClassDef quercusClass,
+           String name,
+           FunctionInfo info,
+           Arg[] argList,
+           Statement[] statementList) {
+      super(exprFactory, location, name, info, argList, statementList);
+      _quercusClass = quercusClass;
+   }
 
-    @Override
-    public String getDeclaringClassName() {
-	return _quercusClass.getName();
-    }
+   @Override
+   public String getDeclaringClassName() {
+      return _quercusClass.getName();
+   }
 
-    @Override
-    public ClassDef getDeclaringClass() {
-	return _quercusClass;
-    }
+   @Override
+   public ClassDef getDeclaringClass() {
+      return _quercusClass;
+   }
 
-    @Override
-    public boolean isObjectMethod() {
-	return true;
-    }
+   @Override
+   public boolean isObjectMethod() {
+      return true;
+   }
 }

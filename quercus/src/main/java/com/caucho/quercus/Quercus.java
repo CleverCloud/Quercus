@@ -40,155 +40,155 @@ import com.caucho.vfs.StringPath;
 import com.caucho.vfs.WriteStream;
 
 public class Quercus
-	extends QuercusContext {
+        extends QuercusContext {
 
-    private static final Logger log = Logger.getLogger(Quercus.class.getName());
-    private String _fileName;
-    private String[] _args;
+   private static final Logger log = Logger.getLogger(Quercus.class.getName());
+   private String _fileName;
+   private String[] _args;
 
-    public Quercus() {
-	super();
+   public Quercus() {
+      super();
 
-	init();
-    }
+      init();
+   }
 
-    //
-    // command-line main
-    //
-    public static void main(String[] args)
-	    throws IOException {
-	Quercus quercus = new Quercus();
+   //
+   // command-line main
+   //
+   public static void main(String[] args)
+           throws IOException {
+      Quercus quercus = new Quercus();
 
-	if (!quercus.parseArgs(args)) {
-	    printUsage();
-	    return;
-	}
+      if (!quercus.parseArgs(args)) {
+         printUsage();
+         return;
+      }
 
-	quercus.init();
-	quercus.start();
+      quercus.init();
+      quercus.start();
 
-	if (quercus.getFileName() != null) {
-	    quercus.execute();
-	} else {
-	    throw new RuntimeException("input file not specified");
-	}
-    }
+      if (quercus.getFileName() != null) {
+         quercus.execute();
+      } else {
+         throw new RuntimeException("input file not specified");
+      }
+   }
 
-    public static void printUsage() {
-	System.out.println("usage: com.caucho.quercus.Quercus [flags] <file> [php-args]");
-	System.out.println(" -f            : Explicitly set the script filename.");
-	System.out.println(" -d name=value : Sets a php ini value.");
-    }
+   public static void printUsage() {
+      System.out.println("usage: com.caucho.quercus.Quercus [flags] <file> [php-args]");
+      System.out.println(" -f            : Explicitly set the script filename.");
+      System.out.println(" -d name=value : Sets a php ini value.");
+   }
 
-    /**
-     * Returns the SAPI (Server API) name.
-     */
-    @Override
-    public String getSapiName() {
-	return "cli";
-    }
+   /**
+    * Returns the SAPI (Server API) name.
+    */
+   @Override
+   public String getSapiName() {
+      return "cli";
+   }
 
-    public String getFileName() {
-	return _fileName;
-    }
+   public String getFileName() {
+      return _fileName;
+   }
 
-    public void setFileName(String name) {
-	_fileName = name;
-    }
+   public void setFileName(String name) {
+      _fileName = name;
+   }
 
-    protected boolean parseArgs(String[] args) {
-	ArrayList<String> phpArgList = new ArrayList<String>();
+   protected boolean parseArgs(String[] args) {
+      ArrayList<String> phpArgList = new ArrayList<String>();
 
-	int i = 0;
-	for (; i < args.length; i++) {
-	    if ("-d".equals(args[i])) {
-		int eqIndex = args[i + 1].indexOf('=');
+      int i = 0;
+      for (; i < args.length; i++) {
+         if ("-d".equals(args[i])) {
+            int eqIndex = args[i + 1].indexOf('=');
 
-		String name = "";
-		String value = "";
+            String name = "";
+            String value = "";
 
-		if (eqIndex >= 0) {
-		    name = args[i + 1].substring(0, eqIndex);
-		    value = args[i + 1].substring(eqIndex + 1);
-		} else {
-		    name = args[i + 1];
-		}
+            if (eqIndex >= 0) {
+               name = args[i + 1].substring(0, eqIndex);
+               value = args[i + 1].substring(eqIndex + 1);
+            } else {
+               name = args[i + 1];
+            }
 
-		i++;
-		setIni(name, value);
-	    } else if ("-f".equals(args[i])) {
-		_fileName = args[++i];
-	    } else if ("-q".equals(args[i])) {
-		// quiet
-	    } else if ("-n".equals(args[i])) {
-		// no php-pip
-	    } else if ("--".equals(args[i])) {
-		break;
-	    } else if ("-h".equals(args[i])) {
-		return false;
-	    } else if (args[i].startsWith("-")) {
-		System.out.println("unknown option: " + args[i]);
-		return false;
-	    } else {
-		phpArgList.add(args[i]);
-	    }
-	}
+            i++;
+            setIni(name, value);
+         } else if ("-f".equals(args[i])) {
+            _fileName = args[++i];
+         } else if ("-q".equals(args[i])) {
+            // quiet
+         } else if ("-n".equals(args[i])) {
+            // no php-pip
+         } else if ("--".equals(args[i])) {
+            break;
+         } else if ("-h".equals(args[i])) {
+            return false;
+         } else if (args[i].startsWith("-")) {
+            System.out.println("unknown option: " + args[i]);
+            return false;
+         } else {
+            phpArgList.add(args[i]);
+         }
+      }
 
-	for (; i < args.length; i++) {
-	    phpArgList.add(args[i]);
-	}
+      for (; i < args.length; i++) {
+         phpArgList.add(args[i]);
+      }
 
-	_args = phpArgList.toArray(new String[phpArgList.size()]);
+      _args = phpArgList.toArray(new String[phpArgList.size()]);
 
-	if (_fileName == null && _args.length > 0) {
-	    _fileName = _args[0];
-	}
+      if (_fileName == null && _args.length > 0) {
+         _fileName = _args[0];
+      }
 
-	return true;
-    }
+      return true;
+   }
 
-    public void execute()
-	    throws IOException {
-	Path path = getPwd().lookup(_fileName);
+   public void execute()
+           throws IOException {
+      Path path = getPwd().lookup(_fileName);
 
-	execute(path);
-    }
+      execute(path);
+   }
 
-    public void execute(String code)
-	    throws IOException {
-	Path path = new StringPath(code);
+   public void execute(String code)
+           throws IOException {
+      Path path = new StringPath(code);
 
-	execute(path);
-    }
+      execute(path);
+   }
 
-    public void execute(Path path)
-	    throws IOException {
-	QuercusPage page = parse(path);
+   public void execute(Path path)
+           throws IOException {
+      QuercusPage page = parse(path);
 
-	WriteStream os = new WriteStream(StdoutStream.create());
+      WriteStream os = new WriteStream(StdoutStream.create());
 
-	os.setNewlineString("\n");
-	os.setEncoding("iso-8859-1");
+      os.setNewlineString("\n");
+      os.setEncoding("iso-8859-1");
 
-	Env env = createEnv(page, os, null, null);
-	env.start();
+      Env env = createEnv(page, os, null, null);
+      env.start();
 
-	if (_args.length > 0) {
-	    env.setArgs(_args);
-	}
+      if (_args.length > 0) {
+         env.setArgs(_args);
+      }
 
-	try {
-	    env.execute();
-	} catch (QuercusDieException e) {
-	    log.log(Level.FINER, e.toString(), e);
-	} catch (QuercusExitException e) {
-	    log.log(Level.FINER, e.toString(), e);
-	} catch (QuercusErrorException e) {
-	    log.log(Level.FINER, e.toString(), e);
-	} finally {
-	    env.close();
+      try {
+         env.execute();
+      } catch (QuercusDieException e) {
+         log.log(Level.FINER, e.toString(), e);
+      } catch (QuercusExitException e) {
+         log.log(Level.FINER, e.toString(), e);
+      } catch (QuercusErrorException e) {
+         log.log(Level.FINER, e.toString(), e);
+      } finally {
+         env.close();
 
-	    os.flush();
-	}
-    }
+         os.flush();
+      }
+   }
 }

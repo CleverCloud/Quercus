@@ -39,48 +39,48 @@ import java.util.HashMap;
 
 public class GettextDomain {
 
-    private String _name;
-    private String _charset;
-    private Path _path;
+   private String _name;
+   private String _charset;
+   private Path _path;
 
-    public GettextDomain(Env env, String name) {
-	_name = name;
-	_path = env.getPwd();
+   public GettextDomain(Env env, String name) {
+      _name = name;
+      _path = env.getPwd();
 
-	_charset = env.getRuntimeEncoding();
-    }
+      _charset = env.getRuntimeEncoding();
+   }
 
-    public String getName() {
-	return _name;
-    }
+   public String getName() {
+      return _name;
+   }
 
-    public void setName(String name) {
-	_name = name;
-    }
+   public void setName(String name) {
+      _name = name;
+   }
 
-    public String getCharset() {
-	return _charset;
-    }
+   public String getCharset() {
+      return _charset;
+   }
 
-    public void setCharset(String charset) {
-	_charset = charset;
-    }
+   public void setCharset(String charset) {
+      _charset = charset;
+   }
 
-    public Path getPath() {
-	return _path;
-    }
+   public Path getPath() {
+      return _path;
+   }
 
-    public boolean setPath(Env env, StringValue directory) {
-	Path path = env.lookupPwd(directory);
+   public boolean setPath(Env env, StringValue directory) {
+      Path path = env.lookupPwd(directory);
 
-	if (path != null) {
-	    _path = path;
-	}
+      if (path != null) {
+         _path = path;
+      }
 
-	return path != null;
-    }
+      return path != null;
+   }
 
-    public String toString() {
-	return _name;
-    }
+   public String toString() {
+      return _name;
+   }
 }

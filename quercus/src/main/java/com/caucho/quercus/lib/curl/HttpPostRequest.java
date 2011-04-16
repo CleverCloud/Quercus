@@ -38,104 +38,104 @@ import java.net.ProtocolException;
  * Represents a POST Http request.
  */
 public class HttpPostRequest
-	extends HttpRequest {
+        extends HttpRequest {
 
-    private PostBody _body;
+   private PostBody _body;
 
-    public HttpPostRequest(CurlResource curlResource) {
-	super(curlResource);
-    }
+   public HttpPostRequest(CurlResource curlResource) {
+      super(curlResource);
+   }
 
-    /**
-     * Initializes the connection.
-     */
-    protected boolean init(Env env)
-	    throws ProtocolException {
-	if (!super.init(env)) {
-	    return false;
-	}
+   /**
+    * Initializes the connection.
+    */
+   protected boolean init(Env env)
+           throws ProtocolException {
+      if (!super.init(env)) {
+         return false;
+      }
 
-	CurlResource curl = getCurlResource();
-	_body = PostBody.create(env, curl.getPostBody());
+      CurlResource curl = getCurlResource();
+      _body = PostBody.create(env, curl.getPostBody());
 
-	if (_body == null) {
-	    return false;
-	}
+      if (_body == null) {
+         return false;
+      }
 
-	HttpConnection conn = getHttpConnection();
+      HttpConnection conn = getHttpConnection();
 
-	conn.setRequestProperty("Content-Type", _body.getContentType(curl.getContentType()));
+      conn.setRequestProperty("Content-Type", _body.getContentType(curl.getContentType()));
 
-	conn.setRequestProperty("Content-Length",
-		String.valueOf(_body.getContentLength()));
+      conn.setRequestProperty("Content-Length",
+              String.valueOf(_body.getContentLength()));
 
-	conn.setDoOutput(true);
+      conn.setDoOutput(true);
 
-	return true;
-    }
+      return true;
+   }
 
-    /**
-     * Transfer data to the server.
-     */
-    protected void transfer(Env env)
-	    throws IOException {
-	super.transfer(env);
+   /**
+    * Transfer data to the server.
+    */
+   protected void transfer(Env env)
+           throws IOException {
+      super.transfer(env);
 
-	HttpConnection conn = getHttpConnection();
-	OutputStream out = conn.getOutputStream();
+      HttpConnection conn = getHttpConnection();
+      OutputStream out = conn.getOutputStream();
 
-	//out = new TestOutputStream(out);
+      //out = new TestOutputStream(out);
 
-	_body.writeTo(env, out);
-    }
-    /*
-    static class TestOutputStream extends OutputStream
-    {
-    OutputStream _out;
-    FileOutputStream _ps;
-    
-    TestOutputStream(OutputStream out)
-    throws IOException
-    {
-    _out = out;
+      _body.writeTo(env, out);
+   }
+   /*
+   static class TestOutputStream extends OutputStream
+   {
+   OutputStream _out;
+   FileOutputStream _ps;
 
-    _ps = new FileOutputStream("c:/out.txt");
-    }
-    
-    public void close()
-    throws IOException
-    {
-    _out.close();
-    _ps.close();
-    }
-    
-    public void flush()
-    throws IOException
-    {
-    _out.flush();
-    _ps.close();
-    }
-    
-    public void write(int b)
-    throws IOException
-    {
-    _out.write(b);
-    _ps.write(b);
-    }
-    
-    public void write(byte b[])
-    throws IOException
-    {
-    _out.write(b);
-    _ps.write(b);
-    }
-    
-    public void write(byte b[], int offset, int len)
-    throws IOException
-    {
-    _out.write(b, offset, len);
-    _ps.write(b, offset, len);
-    } 
-    }
-     */
+   TestOutputStream(OutputStream out)
+   throws IOException
+   {
+   _out = out;
+
+   _ps = new FileOutputStream("c:/out.txt");
+   }
+
+   public void close()
+   throws IOException
+   {
+   _out.close();
+   _ps.close();
+   }
+
+   public void flush()
+   throws IOException
+   {
+   _out.flush();
+   _ps.close();
+   }
+
+   public void write(int b)
+   throws IOException
+   {
+   _out.write(b);
+   _ps.write(b);
+   }
+
+   public void write(byte b[])
+   throws IOException
+   {
+   _out.write(b);
+   _ps.write(b);
+   }
+
+   public void write(byte b[], int offset, int len)
+   throws IOException
+   {
+   _out.write(b, offset, len);
+   _ps.write(b, offset, len);
+   }
+   }
+    */
 }

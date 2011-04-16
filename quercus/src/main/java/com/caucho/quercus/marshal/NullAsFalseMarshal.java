@@ -35,56 +35,56 @@ import com.caucho.quercus.expr.Expr;
 
 public class NullAsFalseMarshal extends Marshal {
 
-    protected Marshal _marshal;
+   protected Marshal _marshal;
 
-    public NullAsFalseMarshal(Marshal marshal) {
-	_marshal = marshal;
-    }
+   public NullAsFalseMarshal(Marshal marshal) {
+      _marshal = marshal;
+   }
 
-    public boolean isBoolean() {
-	return _marshal.isBoolean();
-    }
+   public boolean isBoolean() {
+      return _marshal.isBoolean();
+   }
 
-    public boolean isString() {
-	return _marshal.isString();
-    }
+   public boolean isString() {
+      return _marshal.isString();
+   }
 
-    public boolean isLong() {
-	return _marshal.isLong();
-    }
+   public boolean isLong() {
+      return _marshal.isLong();
+   }
 
-    public boolean isDouble() {
-	return _marshal.isDouble();
-    }
+   public boolean isDouble() {
+      return _marshal.isDouble();
+   }
 
-    public boolean isReadOnly() {
-	return _marshal.isReadOnly();
-    }
+   public boolean isReadOnly() {
+      return _marshal.isReadOnly();
+   }
 
-    public boolean isReference() {
-	return _marshal.isReference();
-    }
+   public boolean isReference() {
+      return _marshal.isReference();
+   }
 
-    public Object marshal(Env env, Expr expr, Class argClass) {
-	return _marshal.marshal(env, expr, argClass);
-    }
+   public Object marshal(Env env, Expr expr, Class argClass) {
+      return _marshal.marshal(env, expr, argClass);
+   }
 
-    public Object marshal(Env env, Value value, Class argClass) {
-	return _marshal.marshal(env, value, argClass);
-    }
+   public Object marshal(Env env, Value value, Class argClass) {
+      return _marshal.marshal(env, value, argClass);
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	// php/1427
-	if (value == null) {
-	    return BooleanValue.FALSE;
-	}
+   public Value unmarshal(Env env, Object value) {
+      // php/1427
+      if (value == null) {
+         return BooleanValue.FALSE;
+      }
 
-	Value result = _marshal.unmarshal(env, value);
+      Value result = _marshal.unmarshal(env, value);
 
-	return (result == null || result.isNull()) ? BooleanValue.FALSE : result;
-    }
+      return (result == null || result.isNull()) ? BooleanValue.FALSE : result;
+   }
 
-    public String toString() {
-	return "NullAsFalseMarshal[" + _marshal + "]";
-    }
+   public String toString() {
+      return "NullAsFalseMarshal[" + _marshal + "]";
+   }
 }

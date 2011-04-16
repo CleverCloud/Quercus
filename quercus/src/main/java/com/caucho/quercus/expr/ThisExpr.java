@@ -38,110 +38,110 @@ import com.caucho.util.L10N;
  */
 public class ThisExpr extends AbstractVarExpr {
 
-    private static final L10N L = new L10N(ThisExpr.class);
-    protected final InterpretedClassDef _quercusClass;
+   private static final L10N L = new L10N(ThisExpr.class);
+   protected final InterpretedClassDef _quercusClass;
 
-    public ThisExpr(InterpretedClassDef quercusClass) {
-	_quercusClass = quercusClass;
-    }
+   public ThisExpr(InterpretedClassDef quercusClass) {
+      _quercusClass = quercusClass;
+   }
 
-    public InterpretedClassDef getQuercusClass() {
-	return _quercusClass;
-    }
+   public InterpretedClassDef getQuercusClass() {
+      return _quercusClass;
+   }
 
-    /**
-     * Creates a field ref
-     */
-    @Override
-    public Expr createFieldGet(ExprFactory factory,
-	    StringValue name) {
-	return factory.createThisField(this, name);
-    }
+   /**
+    * Creates a field ref
+    */
+   @Override
+   public Expr createFieldGet(ExprFactory factory,
+           StringValue name) {
+      return factory.createThisField(this, name);
+   }
 
-    /**
-     * Creates a field ref
-     */
-    @Override
-    public Expr createFieldGet(ExprFactory factory,
-	    Expr name) {
-	return factory.createThisField(this, name);
-    }
+   /**
+    * Creates a field ref
+    */
+   @Override
+   public Expr createFieldGet(ExprFactory factory,
+           Expr name) {
+      return factory.createThisField(this, name);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return env.getThis();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return env.getThis();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalArg(Env env, boolean isTop) {
-	return env.getThis();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalArg(Env env, boolean isTop) {
+      return env.getThis();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Var evalVar(Env env) {
-	return env.getThis().toVar();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Var evalVar(Env env) {
+      return env.getThis().toVar();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalAssignValue(Env env, Value value) {
-	env.error(getLocation(), "can't assign $this");
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalAssignValue(Env env, Value value) {
+      env.error(getLocation(), "can't assign $this");
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value evalAssignRef(Env env, Value value) {
-	env.error(getLocation(), "can't assign $this");
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value evalAssignRef(Env env, Value value) {
+      env.error(getLocation(), "can't assign $this");
 
-	return value;
-    }
+      return value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public void evalUnset(Env env) {
-	env.error(getLocation(), "can't unset $this");
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public void evalUnset(Env env) {
+      env.error(getLocation(), "can't unset $this");
+   }
 
-    public String toString() {
-	return "$this";
-    }
+   public String toString() {
+      return "$this";
+   }
 }

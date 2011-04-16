@@ -38,36 +38,36 @@ import com.caucho.quercus.env.Value;
  */
 public class UnaryNotExpr extends AbstractUnaryExpr {
 
-    public UnaryNotExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public UnaryNotExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public UnaryNotExpr(Expr expr) {
-	super(expr);
-    }
+   public UnaryNotExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Return true as a boolean.
-     */
-    public boolean isBoolean() {
-	return true;
-    }
+   /**
+    * Return true as a boolean.
+    */
+   public boolean isBoolean() {
+      return true;
+   }
 
-    /**
-     * Evaluates the equality as a boolean.
-     */
-    public Value eval(Env env) {
-	return _expr.evalBoolean(env) ? BooleanValue.FALSE : BooleanValue.TRUE;
-    }
+   /**
+    * Evaluates the equality as a boolean.
+    */
+   public Value eval(Env env) {
+      return _expr.evalBoolean(env) ? BooleanValue.FALSE : BooleanValue.TRUE;
+   }
 
-    /**
-     * Evaluates the equality as a boolean.
-     */
-    public boolean evalBoolean(Env env) {
-	return !_expr.evalBoolean(env);
-    }
+   /**
+    * Evaluates the equality as a boolean.
+    */
+   public boolean evalBoolean(Env env) {
+      return !_expr.evalBoolean(env);
+   }
 
-    public String toString() {
-	return "! " + _expr;
-    }
+   public String toString() {
+      return "! " + _expr;
+   }
 }

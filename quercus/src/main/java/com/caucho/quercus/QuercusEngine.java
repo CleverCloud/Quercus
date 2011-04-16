@@ -47,127 +47,127 @@ import com.caucho.vfs.WriteStream;
 
 public class QuercusEngine {
 
-    private QuercusContext _quercus;
-    private OutputStream _out;
+   private QuercusContext _quercus;
+   private OutputStream _out;
 
-    public QuercusEngine() {
-	_quercus = new QuercusContext();
-    }
+   public QuercusEngine() {
+      _quercus = new QuercusContext();
+   }
 
-    /**
-     * Returns the Quercus object.
-     */
-    public QuercusContext getQuercus() {
-	return _quercus;
-    }
+   /**
+    * Returns the Quercus object.
+    */
+   public QuercusContext getQuercus() {
+      return _quercus;
+   }
 
-    /**
-     * Sets a php-ini value.
-     */
-    public void setIni(String name, String value) {
-	_quercus.setIni(name, value);
-    }
+   /**
+    * Sets a php-ini value.
+    */
+   public void setIni(String name, String value) {
+      _quercus.setIni(name, value);
+   }
 
-    /**
-     * Sets the output stream.
-     */
-    public void setOutputStream(OutputStream out) {
-	_out = out;
-    }
+   /**
+    * Sets the output stream.
+    */
+   public void setOutputStream(OutputStream out) {
+      _out = out;
+   }
 
-    /**
-     * Executes the script
-     */
-    public Value executeFile(String filename)
-	    throws IOException {
-	Path path = _quercus.getPwd().lookup(filename);
+   /**
+    * Executes the script
+    */
+   public Value executeFile(String filename)
+           throws IOException {
+      Path path = _quercus.getPwd().lookup(filename);
 
-	return execute(path);
-    }
+      return execute(path);
+   }
 
-    /**
-     * Executes the script.
-     */
-    public Value execute(String script)
-	    throws IOException {
-	return execute(new StringPath(script));
-    }
+   /**
+    * Executes the script.
+    */
+   public Value execute(String script)
+           throws IOException {
+      return execute(new StringPath(script));
+   }
 
-    /**
-     * Executes the script.
-     */
-    public Value execute(Path path)
-	    throws IOException {
-	ReadStream reader = path.openRead();
+   /**
+    * Executes the script.
+    */
+   public Value execute(Path path)
+           throws IOException {
+      ReadStream reader = path.openRead();
 
-	QuercusProgram program = QuercusParser.parse(_quercus, null, reader);
+      QuercusProgram program = QuercusParser.parse(_quercus, null, reader);
 
-	OutputStream os = _out;
-	WriteStream out;
+      OutputStream os = _out;
+      WriteStream out;
 
-	if (os != null) {
-	    OutputStreamStream s = new OutputStreamStream(os);
-	    WriteStream ws = new WriteStream(s);
+      if (os != null) {
+         OutputStreamStream s = new OutputStreamStream(os);
+         WriteStream ws = new WriteStream(s);
 
-	    ws.setNewlineString("\n");
+         ws.setNewlineString("\n");
 
-	    try {
-		ws.setEncoding("iso-8859-1");
-	    } catch (Exception e) {
-	    }
+         try {
+            ws.setEncoding("iso-8859-1");
+         } catch (Exception e) {
+         }
 
-	    out = ws;
-	} else {
-	    out = new WriteStream(StdoutStream.create());
-	}
+         out = ws;
+      } else {
+         out = new WriteStream(StdoutStream.create());
+      }
 
-	QuercusPage page = new InterpretedPage(program);
+      QuercusPage page = new InterpretedPage(program);
 
-	Env env = new Env(_quercus, page, out, null, null);
+      Env env = new Env(_quercus, page, out, null, null);
 
-	Value value = NullValue.NULL;
+      Value value = NullValue.NULL;
 
-	try {
-	    value = program.execute(env);
-	} catch (QuercusExitException e) {
-	}
+      try {
+         value = program.execute(env);
+      } catch (QuercusExitException e) {
+      }
 
-	out.flushBuffer();
-	out.free();
+      out.flushBuffer();
+      out.free();
 
-	if (os != null) {
-	    os.flush();
-	}
+      if (os != null) {
+         os.flush();
+      }
 
-	return value;
-    }
+      return value;
+   }
 
-    class OutputStreamStream extends StreamImpl {
+   class OutputStreamStream extends StreamImpl {
 
-	OutputStream _out;
+      OutputStream _out;
 
-	OutputStreamStream(OutputStream out) {
-	    _out = out;
-	}
+      OutputStreamStream(OutputStream out) {
+         _out = out;
+      }
 
-	/**
-	 * Returns true if this is a writable stream.
-	 */
-	public boolean canWrite() {
-	    return true;
-	}
+      /**
+       * Returns true if this is a writable stream.
+       */
+      public boolean canWrite() {
+         return true;
+      }
 
-	/**
-	 * Writes a buffer to the underlying stream.
-	 *
-	 * @param buffer the byte array to write.
-	 * @param offset the offset into the byte array.
-	 * @param length the number of bytes to write.
-	 * @param isEnd true when the write is flushing a close.
-	 */
-	public void write(byte[] buffer, int offset, int length, boolean isEnd)
-		throws IOException {
-	    _out.write(buffer, offset, length);
-	}
-    }
+      /**
+       * Writes a buffer to the underlying stream.
+       *
+       * @param buffer the byte array to write.
+       * @param offset the offset into the byte array.
+       * @param length the number of bytes to write.
+       * @param isEnd true when the write is flushing a close.
+       */
+      public void write(byte[] buffer, int offset, int length, boolean isEnd)
+              throws IOException {
+         _out.write(buffer, offset, length);
+      }
+   }
 }

@@ -35,46 +35,46 @@ import com.caucho.quercus.expr.Expr;
 
 public class LongObjectMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new LongObjectMarshal();
+   public static final Marshal MARSHAL = new LongObjectMarshal();
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return new Long(expr.evalLong(env));
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return new Long(expr.evalLong(env));
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return value.toJavaLong();
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return value.toJavaLong();
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	if (value == null) {
-	    return LongValue.ZERO;
-	} else {
-	    return LongValue.create(((Number) value).longValue());
-	}
-    }
+   public Value unmarshal(Env env, Object value) {
+      if (value == null) {
+         return LongValue.ZERO;
+      } else {
+         return LongValue.create(((Number) value).longValue());
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	return argValue.toLongMarshalCost() + 1;
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      return argValue.toLongMarshalCost() + 1;
 
-	/*
-	if (argValue instanceof LongValue)
-	return Marshal.ONE;
-	else if (argValue.isLongConvertible())
-	return LONG_CONVERTIBLE_LONG_OBJECT_COST;
-	else if (argValue.isDoubleConvertible())
-	return DOUBLE_CONVERTIBLE_LONG_OBJECT_COST;
-	else
-	return Marshal.FOUR;
-	 */
-    }
+      /*
+      if (argValue instanceof LongValue)
+      return Marshal.ONE;
+      else if (argValue.isLongConvertible())
+      return LONG_CONVERTIBLE_LONG_OBJECT_COST;
+      else if (argValue.isDoubleConvertible())
+      return DOUBLE_CONVERTIBLE_LONG_OBJECT_COST;
+      else
+      return Marshal.FOUR;
+       */
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return Long.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return Long.class;
+   }
 }

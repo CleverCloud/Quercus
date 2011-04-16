@@ -41,101 +41,101 @@ import com.caucho.quercus.parser.QuercusParser;
  */
 public class LiteralStringExpr extends Expr {
 
-    protected final StringValue _value;
+   protected final StringValue _value;
 
-    public LiteralStringExpr(Location location, String value) {
-	super(location);
+   public LiteralStringExpr(Location location, String value) {
+      super(location);
 
-	_value = new ConstStringValue(value);
-    }
+      _value = new ConstStringValue(value);
+   }
 
-    public LiteralStringExpr(Location location, StringValue value) {
-	super(location);
+   public LiteralStringExpr(Location location, StringValue value) {
+      super(location);
 
-	_value = value;
-    }
+      _value = value;
+   }
 
-    public LiteralStringExpr(String value) {
-	this(Location.UNKNOWN, value);
-    }
+   public LiteralStringExpr(String value) {
+      this(Location.UNKNOWN, value);
+   }
 
-    public LiteralStringExpr(StringValue value) {
-	this(Location.UNKNOWN, value);
-    }
+   public LiteralStringExpr(StringValue value) {
+      this(Location.UNKNOWN, value);
+   }
 
-    /**
-     * Returns true for a literal expression.
-     */
-    public boolean isLiteral() {
-	return true;
-    }
+   /**
+    * Returns true for a literal expression.
+    */
+   public boolean isLiteral() {
+      return true;
+   }
 
-    /**
-     * Returns true if the expression evaluates to a string.
-     */
-    public boolean isString() {
-	return true;
-    }
+   /**
+    * Returns true if the expression evaluates to a string.
+    */
+   public boolean isString() {
+      return true;
+   }
 
-    //
-    // expression creation
-    //
-    /**
-     * Creates a class field $class::foo
-     */
-    public Expr createClassConst(QuercusParser parser, String name) {
-	ExprFactory factory = parser.getExprFactory();
+   //
+   // expression creation
+   //
+   /**
+    * Creates a class field $class::foo
+    */
+   public Expr createClassConst(QuercusParser parser, String name) {
+      ExprFactory factory = parser.getExprFactory();
 
-	String className = _value.toString();
+      String className = _value.toString();
 
-	if ("self".equals(className)) {
-	    className = parser.getSelfClassName();
+      if ("self".equals(className)) {
+         className = parser.getSelfClassName();
 
-	    return factory.createClassConst(className, name);
-	} else if ("parent".equals(className)) {
-	    className = parser.getParentClassName();
+         return factory.createClassConst(className, name);
+      } else if ("parent".equals(className)) {
+         className = parser.getParentClassName();
 
-	    return factory.createClassConst(className, name);
-	} else if ("static".equals(className)) {
-	    return factory.createClassVirtualConst(name);
-	} else {
-	    return factory.createClassConst(className, name);
-	}
-    }
+         return factory.createClassConst(className, name);
+      } else if ("static".equals(className)) {
+         return factory.createClassVirtualConst(name);
+      } else {
+         return factory.createClassConst(className, name);
+      }
+   }
 
-    /**
-     * Evaluates the expression as a constant.
-     *
-     * @return the expression value.
-     */
-    public Value evalConstant() {
-	return _value;
-    }
+   /**
+    * Evaluates the expression as a constant.
+    *
+    * @return the expression value.
+    */
+   public Value evalConstant() {
+      return _value;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return _value;
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return _value;
+   }
 
-    /**
-     * Evaluates the expression as a string value.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public StringValue evalStringValue(Env env) {
-	return _value;
-    }
+   /**
+    * Evaluates the expression as a string value.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public StringValue evalStringValue(Env env) {
+      return _value;
+   }
 
-    public String toString() {
-	return "\"" + _value + "\"";
-    }
+   public String toString() {
+      return "\"" + _value + "\"";
+   }
 }

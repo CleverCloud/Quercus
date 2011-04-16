@@ -35,97 +35,97 @@ import com.caucho.quercus.env.StringValue;
  */
 public class PluralExpr {
 
-    private PluralExprParser _parser;
-    private Expr _npluralsExpr;
-    private Expr _pluralExpr;
+   private PluralExprParser _parser;
+   private Expr _npluralsExpr;
+   private Expr _pluralExpr;
 
-    private PluralExpr(CharSequence expr) {
-	_parser = new PluralExprParser(expr);
-    }
+   private PluralExpr(CharSequence expr) {
+      _parser = new PluralExprParser(expr);
+   }
 
-    private void init() {
-	if (_parser != null) {
-	    _npluralsExpr = _parser.getNpluralsExpr();
-	    _pluralExpr = _parser.getPluralExpr();
-	    _parser = null;
-	}
-    }
+   private void init() {
+      if (_parser != null) {
+         _npluralsExpr = _parser.getNpluralsExpr();
+         _pluralExpr = _parser.getPluralExpr();
+         _parser = null;
+      }
+   }
 
-    /**
-     * Returns a PluralExpr from the metadata.
-     *
-     * @param metadata contains the plural expression
-     * @return PluralExpr
-     */
-    public static PluralExpr getPluralExpr(StringValue metaData) {
-	String pluralForms = "Plural-Forms:";
-	int i = metaData.indexOf(pluralForms);
+   /**
+    * Returns a PluralExpr from the metadata.
+    *
+    * @param metadata contains the plural expression
+    * @return PluralExpr
+    */
+   public static PluralExpr getPluralExpr(StringValue metaData) {
+      String pluralForms = "Plural-Forms:";
+      int i = metaData.indexOf(pluralForms);
 
-	if (i < 0) {
-	    return new PluralExpr("nplurals=2; plural=n!=1");
-	}
+      if (i < 0) {
+         return new PluralExpr("nplurals=2; plural=n!=1");
+      }
 
-	i += pluralForms.length();
-	int j = metaData.indexOf('\n', i);
+      i += pluralForms.length();
+      int j = metaData.indexOf('\n', i);
 
-	if (j < 0) {
-	    return new PluralExpr(metaData.substring(i));
-	} else {
-	    return new PluralExpr(metaData.substring(i, j));
-	}
-    }
+      if (j < 0) {
+         return new PluralExpr(metaData.substring(i));
+      } else {
+         return new PluralExpr(metaData.substring(i, j));
+      }
+   }
 
-    /**
-     * Returns evaluated plural expression
-     *
-     * @param expr
-     * @param quantity number of items
-     */
-    public static int eval(CharSequence expr, int quantity) {
-	return new PluralExpr(expr).eval(quantity);
-    }
+   /**
+    * Returns evaluated plural expression
+    *
+    * @param expr
+    * @param quantity number of items
+    */
+   public static int eval(CharSequence expr, int quantity) {
+      return new PluralExpr(expr).eval(quantity);
+   }
 
-    /**
-     * Evaluates this plural expression.
-     */
-    public int eval(int quantity) {
-	init();
+   /**
+    * Evaluates this plural expression.
+    */
+   public int eval(int quantity) {
+      init();
 
-	return validate(quantity);
-    }
+      return validate(quantity);
+   }
 
-    /**
-     * Returns a valid plural form index.
-     */
-    private int validate(int quantity) {
-	int pluralForm;
-	int numOfPlurals;
+   /**
+    * Returns a valid plural form index.
+    */
+   private int validate(int quantity) {
+      int pluralForm;
+      int numOfPlurals;
 
-	if (_pluralExpr == null) {
-	    pluralForm = -1;
-	} else {
-	    pluralForm = _pluralExpr.eval(quantity);
-	}
+      if (_pluralExpr == null) {
+         pluralForm = -1;
+      } else {
+         pluralForm = _pluralExpr.eval(quantity);
+      }
 
-	if (_npluralsExpr == null) {
-	    numOfPlurals = -1;
-	} else {
-	    numOfPlurals = _npluralsExpr.eval(quantity);
-	}
+      if (_npluralsExpr == null) {
+         numOfPlurals = -1;
+      } else {
+         numOfPlurals = _npluralsExpr.eval(quantity);
+      }
 
-	if (numOfPlurals < 1 || pluralForm < 0) {
-	    if (quantity == 1) {
-		return 0;
-	    } else {
-		return 1;
-	    }
-	}
+      if (numOfPlurals < 1 || pluralForm < 0) {
+         if (quantity == 1) {
+            return 0;
+         } else {
+            return 1;
+         }
+      }
 
-	// pluralForm is a 0-based index
-	if (pluralForm >= numOfPlurals) {
-	    return 0;
-	}
+      // pluralForm is a 0-based index
+      if (pluralForm >= numOfPlurals) {
+         return 0;
+      }
 
-	return pluralForm;
-    }
+      return pluralForm;
+   }
 }

@@ -36,18 +36,18 @@ import java.util.Iterator;
  */
 public interface TraversableDelegate {
 
-    /**
-     * Returns an iterator over the object's &lt;key,value> entries.
-     */
-    public Iterator<Map.Entry<Value, Value>> getIterator(Env env, ObjectValue qThis);
+   /**
+    * Returns an iterator over the object's &lt;key,value> entries.
+    */
+   public Iterator<Map.Entry<Value, Value>> getIterator(Env env, ObjectValue qThis);
 
-    /**
-     * Returns an iterator over the object's keys
-     */
-    public Iterator<Value> getKeyIterator(Env env, ObjectValue qThis);
+   /**
+    * Returns an iterator over the object's keys
+    */
+   public Iterator<Value> getKeyIterator(Env env, ObjectValue qThis);
 
-    /**
-     * Returns an iterator over the object's values.
-     */
-    public Iterator<Value> getValueIterator(Env env, ObjectValue qThis);
+   /**
+    * Returns an iterator over the object's values.
+    */
+   public Iterator<Value> getValueIterator(Env env, ObjectValue qThis);
 }

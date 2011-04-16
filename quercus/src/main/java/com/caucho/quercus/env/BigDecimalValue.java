@@ -39,63 +39,63 @@ import java.util.logging.Logger;
  */
 public class BigDecimalValue extends JavaValue {
 
-    private static final Logger log = Logger.getLogger(JavaURLValue.class.getName());
-    private final BigDecimal _val;
+   private static final Logger log = Logger.getLogger(JavaURLValue.class.getName());
+   private final BigDecimal _val;
 
-    public BigDecimalValue(Env env, BigDecimal val, JavaClassDef def) {
-	super(env, val, def);
-	_val = val;
-    }
+   public BigDecimalValue(Env env, BigDecimal val, JavaClassDef def) {
+      super(env, val, def);
+      _val = val;
+   }
 
-    /**
-     * Converts to a long.
-     */
-    @Override
-    public long toLong() {
-	return _val.longValue();
-    }
+   /**
+    * Converts to a long.
+    */
+   @Override
+   public long toLong() {
+      return _val.longValue();
+   }
 
-    /**
-     * Converts to a double.
-     */
-    @Override
-    public double toDouble() {
-	return _val.doubleValue();
-    }
+   /**
+    * Converts to a double.
+    */
+   @Override
+   public double toDouble() {
+      return _val.doubleValue();
+   }
 
-    /**
-     * Converts to a Java BigDecimal.
-     */
-    @Override
-    public BigDecimal toBigDecimal() {
-	return _val;
-    }
+   /**
+    * Converts to a Java BigDecimal.
+    */
+   @Override
+   public BigDecimal toBigDecimal() {
+      return _val;
+   }
 
-    /**
-     * Converts to a Java BigDecimal.
-     */
-    @Override
-    public BigInteger toBigInteger() {
-	return new BigInteger(toString());
-    }
+   /**
+    * Converts to a Java BigDecimal.
+    */
+   @Override
+   public BigInteger toBigInteger() {
+      return new BigInteger(toString());
+   }
 
-    /**
-     * Returns true for a double-value.
-     */
-    @Override
-    public boolean isDoubleConvertible() {
-	return true;
-    }
+   /**
+    * Returns true for a double-value.
+    */
+   @Override
+   public boolean isDoubleConvertible() {
+      return true;
+   }
 
-    /**
-     * Returns true for a long-value.
-     */
-    @Override
-    public boolean isLongConvertible() {
-	return _val.longValue() == _val.doubleValue();
-    }
+   /**
+    * Returns true for a long-value.
+    */
+   @Override
+   public boolean isLongConvertible() {
+      return _val.longValue() == _val.doubleValue();
+   }
 
-    public String toString() {
-	return "BigDecimal[" + _val.doubleValue() + "]";
-    }
+   public String toString() {
+      return "BigDecimal[" + _val.doubleValue() + "]";
+   }
 }

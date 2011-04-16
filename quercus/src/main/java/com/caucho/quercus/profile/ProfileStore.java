@@ -36,47 +36,47 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class ProfileStore {
 
-    private static final AtomicLong _idSequence = new AtomicLong();
-    private static final ArrayList<ProfileReport> _reportList = new ArrayList<ProfileReport>();
+   private static final AtomicLong _idSequence = new AtomicLong();
+   private static final ArrayList<ProfileReport> _reportList = new ArrayList<ProfileReport>();
 
-    public static long generateId() {
-	return _idSequence.incrementAndGet();
-    }
+   public static long generateId() {
+      return _idSequence.incrementAndGet();
+   }
 
-    /**
-     * Adds a new report
-     */
-    public static void addReport(ProfileReport report) {
-	synchronized (_reportList) {
-	    _reportList.add(0, report);
+   /**
+    * Adds a new report
+    */
+   public static void addReport(ProfileReport report) {
+      synchronized (_reportList) {
+         _reportList.add(0, report);
 
-	    while (_reportList.size() > 32) {
-		_reportList.remove(_reportList.size() - 1);
-	    }
-	}
-    }
+         while (_reportList.size() > 32) {
+            _reportList.remove(_reportList.size() - 1);
+         }
+      }
+   }
 
-    /**
-     * Returns the current reports
-     */
-    public static ArrayList<ProfileReport> getReports() {
-	synchronized (_reportList) {
-	    return new ArrayList<ProfileReport>(_reportList);
-	}
-    }
+   /**
+    * Returns the current reports
+    */
+   public static ArrayList<ProfileReport> getReports() {
+      synchronized (_reportList) {
+         return new ArrayList<ProfileReport>(_reportList);
+      }
+   }
 
-    /**
-     * Returns the report with the given index
-     */
-    public static ProfileReport findReport(long index) {
-	synchronized (_reportList) {
-	    for (ProfileReport report : _reportList) {
-		if (index == report.getId()) {
-		    return report;
-		}
-	    }
-	}
+   /**
+    * Returns the report with the given index
+    */
+   public static ProfileReport findReport(long index) {
+      synchronized (_reportList) {
+         for (ProfileReport report : _reportList) {
+            if (index == report.getId()) {
+               return report;
+            }
+         }
+      }
 
-	return null;
-    }
+      return null;
+   }
 }

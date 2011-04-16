@@ -33,18 +33,18 @@ package com.caucho.quercus.env;
  */
 public interface VarMap<K, V> {
 
-    /**
-     * Sets the value
-     */
-    public void put(K key, V value);
+   /**
+    * Sets the value
+    */
+   public void put(K key, V value);
 
-    /**
-     * Gets a value.
-     */
-    public V get(K key);
+   /**
+    * Gets a value.
+    */
+   public V get(K key);
 
-    /**
-     * Remove a value.
-     */
-    public V remove(K key);
+   /**
+    * Remove a value.
+    */
+   public V remove(K key);
 }

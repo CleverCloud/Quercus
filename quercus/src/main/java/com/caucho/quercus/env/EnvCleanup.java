@@ -29,17 +29,17 @@
 package com.caucho.quercus.env;
 
 public interface EnvCleanup {
-    /*
-     * This method is invoked after a Quercus request has been
-     * processed and the environment is being cleaned up.
-     * An object that implements the EnvCleanup interface
-     * will register itself with via Env.addCleanup() to
-     * ensure that resources are released when the script
-     * has finished executing. If an object's resources
-     * are explicitly cleaned up, the Env.removeCleanup()
-     * method should be invoked.
-     */
+   /*
+    * This method is invoked after a Quercus request has been
+    * processed and the environment is being cleaned up.
+    * An object that implements the EnvCleanup interface
+    * will register itself with via Env.addCleanup() to
+    * ensure that resources are released when the script
+    * has finished executing. If an object's resources
+    * are explicitly cleaned up, the Env.removeCleanup()
+    * method should be invoked.
+    */
 
-    public void cleanup()
-	    throws Exception;
+   public void cleanup()
+           throws Exception;
 }

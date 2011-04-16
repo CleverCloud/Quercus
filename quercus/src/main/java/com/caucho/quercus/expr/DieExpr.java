@@ -40,39 +40,39 @@ import java.io.IOException;
  */
 public class DieExpr extends Expr {
 
-    protected Expr _value;
+   protected Expr _value;
 
-    public DieExpr(Location location, Expr value) {
-	super(location);
-	_value = value;
-    }
+   public DieExpr(Location location, Expr value) {
+      super(location);
+      _value = value;
+   }
 
-    public DieExpr(Location location) {
-	super(location);
-	_value = null;
-    }
+   public DieExpr(Location location) {
+      super(location);
+      _value = null;
+   }
 
-    public DieExpr(Expr value) {
-	_value = value;
-    }
+   public DieExpr(Expr value) {
+      _value = value;
+   }
 
-    public DieExpr() {
-	_value = null;
-    }
+   public DieExpr() {
+      _value = null;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	if (_value != null) {
-	    String msg = _value.evalString(env);
-	    return env.die(msg);
-	} else {
-	    return env.die();
-	}
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      if (_value != null) {
+         String msg = _value.evalString(env);
+         return env.die(msg);
+      } else {
+         return env.die();
+      }
+   }
 }

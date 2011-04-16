@@ -37,35 +37,35 @@ import com.caucho.quercus.env.Value;
  */
 public class ArrayUnsetExpr extends Expr {
 
-    protected final Expr _expr;
-    protected final Expr _index;
+   protected final Expr _expr;
+   protected final Expr _index;
 
-    public ArrayUnsetExpr(Location location, Expr expr, Expr index) {
-	super(location);
-	_expr = expr;
-	_index = index;
-    }
+   public ArrayUnsetExpr(Location location, Expr expr, Expr index) {
+      super(location);
+      _expr = expr;
+      _index = index;
+   }
 
-    public ArrayUnsetExpr(Expr expr, Expr index) {
-	_expr = expr;
-	_index = index;
-    }
+   public ArrayUnsetExpr(Expr expr, Expr index) {
+      _expr = expr;
+      _index = index;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	Value array = _expr.eval(env);
-	Value index = _index.eval(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      Value array = _expr.eval(env);
+      Value index = _index.eval(env);
 
-	return array.remove(index);
-    }
+      return array.remove(index);
+   }
 
-    public String toString() {
-	return "unset(" + _expr + "[" + _index + "])";
-    }
+   public String toString() {
+      return "unset(" + _expr + "[" + _index + "])";
+   }
 }

@@ -37,20 +37,20 @@ import java.util.LinkedList;
  */
 public class StreamBucketBrigade {
 
-    private LinkedList<StreamBucket> _brigade = new LinkedList<StreamBucket>();
+   private LinkedList<StreamBucket> _brigade = new LinkedList<StreamBucket>();
 
-    public StreamBucketBrigade(Env env) {
-    }
+   public StreamBucketBrigade(Env env) {
+   }
 
-    public void prepend(StreamBucket bucket) {
-	_brigade.addFirst(bucket);
-    }
+   public void prepend(StreamBucket bucket) {
+      _brigade.addFirst(bucket);
+   }
 
-    public void append(StreamBucket bucket) {
-	_brigade.addLast(bucket);
-    }
+   public void append(StreamBucket bucket) {
+      _brigade.addLast(bucket);
+   }
 
-    public StreamBucket popTop() {
-	return _brigade.removeFirst();
-    }
+   public StreamBucket popTop() {
+      return _brigade.removeFirst();
+   }
 }

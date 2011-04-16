@@ -34,43 +34,43 @@ package com.caucho.quercus.env;
  */
 public final class EnvVarImpl extends EnvVar {
 
-    private Var _var;
+   private Var _var;
 
-    public EnvVarImpl(Var var) {
-	if (var == null) {
-	    throw new NullPointerException();
-	}
+   public EnvVarImpl(Var var) {
+      if (var == null) {
+         throw new NullPointerException();
+      }
 
-	_var = var;
-    }
+      _var = var;
+   }
 
-    /**
-     * Returns the current value.
-     */
-    public Value get() {
-	return _var.toValue();
-    }
+   /**
+    * Returns the current value.
+    */
+   public Value get() {
+      return _var.toValue();
+   }
 
-    /**
-     * Sets the current value.
-     */
-    public Value set(Value value) {
-	return _var.set(value);
-    }
+   /**
+    * Sets the current value.
+    */
+   public Value set(Value value) {
+      return _var.set(value);
+   }
 
-    /**
-     * Returns the current Var.
-     */
-    public Var getVar() {
-	return _var;
-    }
+   /**
+    * Returns the current Var.
+    */
+   public Var getVar() {
+      return _var;
+   }
 
-    /**
-     * Sets the var.
-     */
-    public Var setVar(Var var) {
-	_var = var;
+   /**
+    * Sets the var.
+    */
+   public Var setVar(Var var) {
+      _var = var;
 
-	return var;
-    }
+      return var;
+   }
 }

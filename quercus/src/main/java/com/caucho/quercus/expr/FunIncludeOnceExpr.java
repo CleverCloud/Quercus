@@ -40,67 +40,67 @@ import com.caucho.vfs.Path;
  */
 public class FunIncludeOnceExpr extends AbstractUnaryExpr {
 
-    protected Path _dir;
-    protected boolean _isRequire;
+   protected Path _dir;
+   protected boolean _isRequire;
 
-    public FunIncludeOnceExpr(Location location, Path sourceFile, Expr expr) {
-	super(location, expr);
+   public FunIncludeOnceExpr(Location location, Path sourceFile, Expr expr) {
+      super(location, expr);
 
-	// TODO: issues with eval
-	if (!sourceFile.getScheme().equals("string")) {
-	    _dir = sourceFile.getParent();
-	}
-    }
+      // TODO: issues with eval
+      if (!sourceFile.getScheme().equals("string")) {
+         _dir = sourceFile.getParent();
+      }
+   }
 
-    public FunIncludeOnceExpr(Location location,
-	    Path sourceFile,
-	    Expr expr,
-	    boolean isRequire) {
-	this(location, sourceFile, expr);
+   public FunIncludeOnceExpr(Location location,
+           Path sourceFile,
+           Expr expr,
+           boolean isRequire) {
+      this(location, sourceFile, expr);
 
-	_isRequire = isRequire;
-    }
+      _isRequire = isRequire;
+   }
 
-    public FunIncludeOnceExpr(Path sourceFile, Expr expr) {
-	this(Location.UNKNOWN, sourceFile, expr);
-    }
+   public FunIncludeOnceExpr(Path sourceFile, Expr expr) {
+      this(Location.UNKNOWN, sourceFile, expr);
+   }
 
-    public FunIncludeOnceExpr(Path sourceFile, Expr expr, boolean isRequire) {
-	this(Location.UNKNOWN, sourceFile, expr, isRequire);
-    }
+   public FunIncludeOnceExpr(Path sourceFile, Expr expr, boolean isRequire) {
+      this(Location.UNKNOWN, sourceFile, expr, isRequire);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	StringValue name = _expr.eval(env).toStringValue();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      StringValue name = _expr.eval(env).toStringValue();
 
-	// return env.include(_dir, name);
+      // return env.include(_dir, name);
 
-	env.pushCall(this, NullValue.NULL, new Value[]{name});
+      env.pushCall(this, NullValue.NULL, new Value[]{name});
 
-	try {
-	    if (_dir != null) {
-		return env.includeOnce(_dir, name, _isRequire);
-	    } else if (_isRequire) {
-		return env.requireOnce(name);
-	    } else {
-		return env.includeOnce(name);
-	    }
-	} finally {
-	    env.popCall();
-	}
-    }
+      try {
+         if (_dir != null) {
+            return env.includeOnce(_dir, name, _isRequire);
+         } else if (_isRequire) {
+            return env.requireOnce(name);
+         } else {
+            return env.includeOnce(name);
+         }
+      } finally {
+         env.popCall();
+      }
+   }
 
-    public boolean isRequire() {
-	return _isRequire;
-    }
+   public boolean isRequire() {
+      return _isRequire;
+   }
 
-    public String toString() {
-	return _expr.toString();
-    }
+   public String toString() {
+      return _expr.toString();
+   }
 }

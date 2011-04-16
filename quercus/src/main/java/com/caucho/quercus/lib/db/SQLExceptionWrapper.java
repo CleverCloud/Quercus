@@ -35,14 +35,14 @@ import java.sql.*;
  */
 public class SQLExceptionWrapper extends SQLException {
 
-    private Throwable _cause;
+   private Throwable _cause;
 
-    public SQLExceptionWrapper(Throwable cause) {
-	_cause = cause;
-    }
+   public SQLExceptionWrapper(Throwable cause) {
+      _cause = cause;
+   }
 
-    @Override
-    public Throwable getCause() {
-	return _cause;
-    }
+   @Override
+   public Throwable getCause() {
+      return _cause;
+   }
 }

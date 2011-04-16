@@ -31,10 +31,10 @@ package com.caucho.quercus.lib.dom;
 import org.w3c.dom.Notation;
 
 public class DOMNotation
-	extends DOMNode<Notation> {
+        extends DOMNode<Notation> {
 
-    DOMNotation(DOMImplementation impl, Notation delegate) {
-	super(impl, delegate);
-    }
-    // no methods
+   DOMNotation(DOMImplementation impl, Notation delegate) {
+      super(impl, delegate);
+   }
+   // no methods
 }

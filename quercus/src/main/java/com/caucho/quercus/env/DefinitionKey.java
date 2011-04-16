@@ -36,41 +36,41 @@ import java.lang.ref.WeakReference;
  * Key for caching function definitions
  */
 public final class DefinitionKey {
-    // crc of the current definition
+   // crc of the current definition
 
-    private final long _crc;
-    // the including page
-    private final WeakReference<QuercusPage> _includePageRef;
+   private final long _crc;
+   // the including page
+   private final WeakReference<QuercusPage> _includePageRef;
 
-    DefinitionKey(long crc, QuercusPage includePage) {
-	_crc = crc;
-	_includePageRef = new WeakReference<QuercusPage>(includePage);
-    }
+   DefinitionKey(long crc, QuercusPage includePage) {
+      _crc = crc;
+      _includePageRef = new WeakReference<QuercusPage>(includePage);
+   }
 
-    public int hashCode() {
-	return (int) _crc;
-    }
+   public int hashCode() {
+      return (int) _crc;
+   }
 
-    public boolean equals(Object o) {
-	if (!(o instanceof DefinitionKey)) {
-	    return false;
-	}
+   public boolean equals(Object o) {
+      if (!(o instanceof DefinitionKey)) {
+         return false;
+      }
 
-	DefinitionKey key = (DefinitionKey) o;
+      DefinitionKey key = (DefinitionKey) o;
 
-	QuercusPage page = _includePageRef.get();
-	QuercusPage keyPage = key._includePageRef.get();
+      QuercusPage page = _includePageRef.get();
+      QuercusPage keyPage = key._includePageRef.get();
 
-	if (page == null || keyPage == null) {
-	    return false;
-	}
+      if (page == null || keyPage == null) {
+         return false;
+      }
 
-	return (_crc == key._crc && page.equals(keyPage));
-    }
+      return (_crc == key._crc && page.equals(keyPage));
+   }
 
-    public String toString() {
-	QuercusPage page = _includePageRef.get();
+   public String toString() {
+      QuercusPage page = _includePageRef.get();
 
-	return "DefinitionKey[" + _crc + ", " + page + "]";
-    }
+      return "DefinitionKey[" + _crc + ", " + page + "]";
+   }
 }

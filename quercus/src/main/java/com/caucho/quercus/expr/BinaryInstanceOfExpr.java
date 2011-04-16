@@ -38,43 +38,43 @@ import com.caucho.quercus.env.Value;
  */
 public class BinaryInstanceOfExpr extends AbstractUnaryExpr {
 
-    protected final String _right;
+   protected final String _right;
 
-    public BinaryInstanceOfExpr(Location location, Expr left, String right) {
-	super(location, left);
+   public BinaryInstanceOfExpr(Location location, Expr left, String right) {
+      super(location, left);
 
-	_right = right;
-    }
+      _right = right;
+   }
 
-    public BinaryInstanceOfExpr(Expr left, String right) {
-	super(left);
+   public BinaryInstanceOfExpr(Expr left, String right) {
+      super(left);
 
-	_right = right;
-    }
+      _right = right;
+   }
 
-    /**
-     * Returns true for a boolean.
-     */
-    public boolean isBoolean() {
-	return true;
-    }
+   /**
+    * Returns true for a boolean.
+    */
+   public boolean isBoolean() {
+      return true;
+   }
 
-    /**
-     * Evaluates the equality as a boolean.
-     */
-    public Value eval(Env env) {
-	return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
-    }
+   /**
+    * Evaluates the equality as a boolean.
+    */
+   public Value eval(Env env) {
+      return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
+   }
 
-    /**
-     * Evaluates the equality as a boolean.
-     */
-    public boolean evalBoolean(Env env) {
-	// php/03p1
-	return _expr.eval(env).isA(_right);
-    }
+   /**
+    * Evaluates the equality as a boolean.
+    */
+   public boolean evalBoolean(Env env) {
+      // php/03p1
+      return _expr.eval(env).isA(_right);
+   }
 
-    public String toString() {
-	return "(" + _expr + " instanceof " + _right + ")";
-    }
+   public String toString() {
+      return "(" + _expr + " instanceof " + _right + ")";
+   }
 }

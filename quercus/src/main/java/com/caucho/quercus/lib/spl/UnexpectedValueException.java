@@ -32,5 +32,4 @@ import com.caucho.quercus.annotation.ClassImplementation;
 
 @ClassImplementation
 public class UnexpectedValueException extends RuntimeException {
-
 }

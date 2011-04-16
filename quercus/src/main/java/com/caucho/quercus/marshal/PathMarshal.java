@@ -39,39 +39,39 @@ import com.caucho.vfs.Path;
 
 public class PathMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new PathMarshal();
+   public static final Marshal MARSHAL = new PathMarshal();
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return env.lookupPwd(expr.eval(env));
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return env.lookupPwd(expr.eval(env));
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return env.lookupPwd(value);
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return env.lookupPwd(value);
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	// TODO: need test
-	return env.getQuercus().getJavaClassDefinition(value.getClass().getName()).wrap(env, value);
-    }
+   public Value unmarshal(Env env, Object value) {
+      // TODO: need test
+      return env.getQuercus().getJavaClassDefinition(value.getClass().getName()).wrap(env, value);
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	if (argValue instanceof JavaValue
-		&& Path.class.isAssignableFrom(argValue.toJavaObject().getClass())) {
-	    return Marshal.ZERO;
-	} else if (argValue.isString()) {
-	    return Marshal.THREE;
-	} else {
-	    return Marshal.FOUR;
-	}
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      if (argValue instanceof JavaValue
+              && Path.class.isAssignableFrom(argValue.toJavaObject().getClass())) {
+         return Marshal.ZERO;
+      } else if (argValue.isString()) {
+         return Marshal.THREE;
+      } else {
+         return Marshal.FOUR;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return Path.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return Path.class;
+   }
 }

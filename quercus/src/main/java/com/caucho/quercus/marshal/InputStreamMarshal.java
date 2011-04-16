@@ -38,37 +38,37 @@ import com.caucho.vfs.Path;
 
 public class InputStreamMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new InputStreamMarshal();
+   public static final Marshal MARSHAL = new InputStreamMarshal();
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return marshal(env, expr.eval(env), expectedClass);
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return marshal(env, expr.eval(env), expectedClass);
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return value.toInputStream();
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return value.toInputStream();
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	return env.wrapJava((InputStream) value);
-    }
+   public Value unmarshal(Env env, Object value) {
+      return env.wrapJava((InputStream) value);
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	if (argValue instanceof JavaValue
-		&& InputStream.class.isAssignableFrom(
-		argValue.toJavaObject().getClass())) {
-	    return Marshal.ZERO;
-	} else {
-	    return Marshal.FOUR;
-	}
-    }
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      if (argValue instanceof JavaValue
+              && InputStream.class.isAssignableFrom(
+              argValue.toJavaObject().getClass())) {
+         return Marshal.ZERO;
+      } else {
+         return Marshal.FOUR;
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return InputStream.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return InputStream.class;
+   }
 }

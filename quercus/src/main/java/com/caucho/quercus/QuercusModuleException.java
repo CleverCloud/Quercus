@@ -35,28 +35,28 @@ import java.lang.reflect.*;
  */
 public class QuercusModuleException extends QuercusException {
 
-    public QuercusModuleException() {
-    }
+   public QuercusModuleException() {
+   }
 
-    public QuercusModuleException(String msg) {
-	super(msg);
-    }
+   public QuercusModuleException(String msg) {
+      super(msg);
+   }
 
-    public QuercusModuleException(Throwable cause) {
-	super(cause);
-    }
+   public QuercusModuleException(Throwable cause) {
+      super(cause);
+   }
 
-    public QuercusModuleException(String msg, Throwable cause) {
-	super(msg, cause);
-    }
+   public QuercusModuleException(String msg, Throwable cause) {
+      super(msg, cause);
+   }
 
-    public static RuntimeException create(Throwable e) {
-	if (e instanceof RuntimeException) {
-	    return (RuntimeException) e;
-	} else if (e instanceof InvocationTargetException && e.getCause() != null) {
-	    return new QuercusModuleException(e.getCause());
-	} else {
-	    return new QuercusModuleException(e);
-	}
-    }
+   public static RuntimeException create(Throwable e) {
+      if (e instanceof RuntimeException) {
+         return (RuntimeException) e;
+      } else if (e instanceof InvocationTargetException && e.getCause() != null) {
+         return new QuercusModuleException(e.getCause());
+      } else {
+         return new QuercusModuleException(e);
+      }
+   }
 }

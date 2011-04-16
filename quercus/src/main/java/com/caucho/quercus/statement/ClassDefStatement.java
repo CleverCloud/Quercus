@@ -40,23 +40,23 @@ import com.caucho.util.L10N;
  */
 public class ClassDefStatement extends Statement {
 
-    private final static L10N L = new L10N(ClassDefStatement.class);
-    protected final InterpretedClassDef _cl;
+   private final static L10N L = new L10N(ClassDefStatement.class);
+   protected final InterpretedClassDef _cl;
 
-    public ClassDefStatement(Location location, InterpretedClassDef cl) {
-	super(location);
+   public ClassDefStatement(Location location, InterpretedClassDef cl) {
+      super(location);
 
-	_cl = cl;
-    }
+      _cl = cl;
+   }
 
-    @Override
-    public Value execute(Env env) {
-	env.addClass(_cl.getName(), _cl);
+   @Override
+   public Value execute(Env env) {
+      env.addClass(_cl.getName(), _cl);
 
-	return null;
-    }
+      return null;
+   }
 
-    public String toString() {
-	return getClass().getSimpleName() + "[" + _cl + "]";
-    }
+   public String toString() {
+      return getClass().getSimpleName() + "[" + _cl + "]";
+   }
 }

@@ -66,65 +66,65 @@ import java.util.logging.*;
  */
 public class SelectedXMLElement extends SimpleXMLElement {
 
-    private SimpleXMLElement _owner;
+   private SimpleXMLElement _owner;
 
-    protected SelectedXMLElement(Env env, QuercusClass cls,
-	    SimpleXMLElement owner) {
-	super(env, cls, owner._parent, owner._name);
+   protected SelectedXMLElement(Env env, QuercusClass cls,
+           SimpleXMLElement owner) {
+      super(env, cls, owner._parent, owner._name);
 
-	_owner = owner;
-	//_parent = owner._parent;
-	//_name = owner._name;
+      _owner = owner;
+      //_parent = owner._parent;
+      //_name = owner._name;
 
-	_text = owner._text;
-	_children = owner._children;
-	_attributes = owner._attributes;
-    }
+      _text = owner._text;
+      _children = owner._children;
+      _attributes = owner._attributes;
+   }
 
-    @Override
-    protected SimpleXMLElement getOwner() {
-	return _owner;
-    }
+   @Override
+   protected SimpleXMLElement getOwner() {
+      return _owner;
+   }
 
-    public String toString() {
-	if (_text != null) {
-	    return _text.toString();
-	} else {
-	    return "";
-	}
-    }
+   public String toString() {
+      if (_text != null) {
+         return _text.toString();
+      } else {
+         return "";
+      }
+   }
 
-    /**
-     * Required for 'foreach'. When only values are specified in
-     * the loop <code>foreach($a as $b)</code>, this method
-     * should return an iterator that contains Java objects
-     * that will be wrapped in a Value.
-     *
-     * When a 'foreach' loop with name/value pairs
-     * i.e. <code>foreach($a as $b=>$c)</code>
-     * invokes this method, it expects an iterator that
-     * contains objects that implement Map.Entry.
-     */
-    public Iterator iterator() {
-	// php/1x05
+   /**
+    * Required for 'foreach'. When only values are specified in
+    * the loop <code>foreach($a as $b)</code>, this method
+    * should return an iterator that contains Java objects
+    * that will be wrapped in a Value.
+    *
+    * When a 'foreach' loop with name/value pairs
+    * i.e. <code>foreach($a as $b=>$c)</code>
+    * invokes this method, it expects an iterator that
+    * contains objects that implement Map.Entry.
+    */
+   public Iterator iterator() {
+      // php/1x05
 
-	ArrayList<SimpleXMLElement> children = _parent._children;
+      ArrayList<SimpleXMLElement> children = _parent._children;
 
-	if (children == null) {
-	    return null;
-	}
+      if (children == null) {
+         return null;
+      }
 
-	ArrayList<SimpleXMLElement> values = new ArrayList<SimpleXMLElement>();
+      ArrayList<SimpleXMLElement> values = new ArrayList<SimpleXMLElement>();
 
-	int size = children.size();
-	for (int i = 0; i < size; i++) {
-	    SimpleXMLElement elt = children.get(i);
+      int size = children.size();
+      for (int i = 0; i < size; i++) {
+         SimpleXMLElement elt = children.get(i);
 
-	    if (getName().equals(elt.getName())) {
-		values.add(elt);
-	    }
-	}
+         if (getName().equals(elt.getName())) {
+            values.add(elt);
+         }
+      }
 
-	return values.iterator();
-    }
+      return values.iterator();
+   }
 }

@@ -42,132 +42,132 @@ import com.caucho.vfs.TempBuffer;
  */
 public class WriteStreamOutput extends OutputStream implements BinaryOutput {
 
-    private static final Logger log = Logger.getLogger(WriteStreamOutput.class.getName());
-    private OutputStream _os;
+   private static final Logger log = Logger.getLogger(WriteStreamOutput.class.getName());
+   private OutputStream _os;
 
-    public WriteStreamOutput(OutputStream os) {
-	_os = os;
-    }
+   public WriteStreamOutput(OutputStream os) {
+      _os = os;
+   }
 
-    /**
-     * Returns the input stream.
-     */
-    public OutputStream getOutputStream() {
-	return _os;
-    }
+   /**
+    * Returns the input stream.
+    */
+   public OutputStream getOutputStream() {
+      return _os;
+   }
 
-    public void close() {
-	OutputStream os = _os;
-	_os = null;
+   public void close() {
+      OutputStream os = _os;
+      _os = null;
 
-	if (os != null) {
-	    try {
-		os.close();
-	    } catch (Exception e) {
-		log.log(Level.FINE, e.toString(), e);
-	    }
-	}
-    }
+      if (os != null) {
+         try {
+            os.close();
+         } catch (Exception e) {
+            log.log(Level.FINE, e.toString(), e);
+         }
+      }
+   }
 
-    public Object toJavaObject() {
-	return this;
-    }
+   public Object toJavaObject() {
+      return this;
+   }
 
-    public String getResourceType() {
-	return "stream";
-    }
+   public String getResourceType() {
+      return "stream";
+   }
 
-    @Override
-    public void write(int ch) throws IOException {
-	_os.write(ch);
-    }
+   @Override
+   public void write(int ch) throws IOException {
+      _os.write(ch);
+   }
 
-    @Override
-    public void write(byte[] buffer, int offset, int length) throws IOException {
-	_os.write(buffer, offset, length);
-    }
+   @Override
+   public void write(byte[] buffer, int offset, int length) throws IOException {
+      _os.write(buffer, offset, length);
+   }
 
-    @Override
-    public void closeWrite() {
-	close();
-    }
+   @Override
+   public void closeWrite() {
+      close();
+   }
 
-    @Override
-    public void print(char ch) throws IOException {
-	_os.write(ch);
-    }
+   @Override
+   public void print(char ch) throws IOException {
+      _os.write(ch);
+   }
 
-    /* (non-Javadoc)
-     * @see com.caucho.quercus.lib.file.BinaryOutput#print(java.lang.String)
-     */
-    @Override
-    public void print(String s) throws IOException {
-	int len = s.length();
+   /* (non-Javadoc)
+    * @see com.caucho.quercus.lib.file.BinaryOutput#print(java.lang.String)
+    */
+   @Override
+   public void print(String s) throws IOException {
+      int len = s.length();
 
-	for (int i = 0; i < len; i++) {
-	    _os.write(s.charAt(i));
-	}
-    }
+      for (int i = 0; i < len; i++) {
+         _os.write(s.charAt(i));
+      }
+   }
 
-    @Override
-    public int write(InputStream is, int length) throws IOException {
-	TempBuffer tempBuffer = TempBuffer.allocate();
-	byte[] buffer = tempBuffer.getBuffer();
+   @Override
+   public int write(InputStream is, int length) throws IOException {
+      TempBuffer tempBuffer = TempBuffer.allocate();
+      byte[] buffer = tempBuffer.getBuffer();
 
-	int writeLength = length;
+      int writeLength = length;
 
-	while (length > 0) {
-	    int sublen = buffer.length;
+      while (length > 0) {
+         int sublen = buffer.length;
 
-	    if (length < sublen) {
-		sublen = length;
-	    }
+         if (length < sublen) {
+            sublen = length;
+         }
 
-	    sublen = is.read(buffer, 0, sublen);
+         sublen = is.read(buffer, 0, sublen);
 
-	    if (sublen <= 0) {
-		break;
-	    }
+         if (sublen <= 0) {
+            break;
+         }
 
-	    _os.write(buffer, 0, sublen);
+         _os.write(buffer, 0, sublen);
 
-	    length -= sublen;
-	}
+         length -= sublen;
+      }
 
-	TempBuffer.free(tempBuffer);
+      TempBuffer.free(tempBuffer);
 
-	return writeLength;
-    }
+      return writeLength;
+   }
 
-    @Override
-    public long getPosition() {
-	return 0;
-    }
+   @Override
+   public long getPosition() {
+      return 0;
+   }
 
-    @Override
-    public boolean isEOF() {
-	return false;
-    }
+   @Override
+   public boolean isEOF() {
+      return false;
+   }
 
-    @Override
-    public long seek(long offset, int whence) {
-	return 0;
-    }
+   @Override
+   public long seek(long offset, int whence) {
+      return 0;
+   }
 
-    @Override
-    public boolean setPosition(long offset) {
-	return false;
-    }
+   @Override
+   public boolean setPosition(long offset) {
+      return false;
+   }
 
-    @Override
-    public Value stat() {
-	return null;
-    }
+   @Override
+   public Value stat() {
+      return null;
+   }
 
-    /**
-     * Converts to a string.
-     */
-    public String toString() {
-	return "WriteStreamOutput[" + _os + "]";
-    }
+   /**
+    * Converts to a string.
+    */
+   public String toString() {
+      return "WriteStreamOutput[" + _os + "]";
+   }
 }

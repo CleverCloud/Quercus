@@ -42,68 +42,68 @@ import com.caucho.vfs.Path;
  */
 public class DirectoryValue extends ResourceValue {
 
-    private Env _env;
-    private Path _path;
-    private String[] _list;
-    private int _index;
+   private Env _env;
+   private Path _path;
+   private String[] _list;
+   private int _index;
 
-    protected DirectoryValue(Env env) {
-	_env = env;
-    }
+   protected DirectoryValue(Env env) {
+      _env = env;
+   }
 
-    public DirectoryValue(Env env, Path path)
-	    throws IOException {
-	_env = env;
-	_path = path;
+   public DirectoryValue(Env env, Path path)
+           throws IOException {
+      _env = env;
+      _path = path;
 
-	_list = path.list();
-    }
+      _list = path.list();
+   }
 
-    /**
-     * Returns the next value.
-     */
-    public Value readdir() {
-	if (_index < _list.length) {
-	    return _env.createString(_list[_index++]);
-	} else {
-	    return BooleanValue.FALSE;
-	}
-    }
+   /**
+    * Returns the next value.
+    */
+   public Value readdir() {
+      if (_index < _list.length) {
+         return _env.createString(_list[_index++]);
+      } else {
+         return BooleanValue.FALSE;
+      }
+   }
 
-    /**
-     * Rewinds the directory
-     */
-    public void rewinddir() {
-	_index = 0;
-    }
+   /**
+    * Rewinds the directory
+    */
+   public void rewinddir() {
+      _index = 0;
+   }
 
-    /**
-     * Calls the given method.
-     */
-    @Override
-    public Value callMethod(Env env, StringValue methodName, int hash) {
-	String method = methodName.toString();
+   /**
+    * Calls the given method.
+    */
+   @Override
+   public Value callMethod(Env env, StringValue methodName, int hash) {
+      String method = methodName.toString();
 
-	if ("read".equals(method)) {
-	    return readdir();
-	} else if ("rewind".equals(method)) {
-	    rewinddir();
+      if ("read".equals(method)) {
+         return readdir();
+      } else if ("rewind".equals(method)) {
+         rewinddir();
 
-	    return BooleanValue.TRUE;
-	} else if ("close".equals(method)) {
-	    close();
+         return BooleanValue.TRUE;
+      } else if ("close".equals(method)) {
+         close();
 
-	    return BooleanValue.TRUE;
-	} else {
-	    return super.callMethod(env, methodName, hash);
-	}
-    }
+         return BooleanValue.TRUE;
+      } else {
+         return super.callMethod(env, methodName, hash);
+      }
+   }
 
-    /**
-     * Converts to a string.
-     * @param env
-     */
-    public String toString() {
-	return "Directory[" + _path + "]";
-    }
+   /**
+    * Converts to a string.
+    * @param env
+    */
+   public String toString() {
+      return "Directory[" + _path + "]";
+   }
 }

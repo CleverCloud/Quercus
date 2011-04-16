@@ -29,21 +29,21 @@
 package com.caucho.quercus.lib.dom;
 
 public class DOMStringList
-	extends DOMWrapper<org.w3c.dom.DOMStringList> {
+        extends DOMWrapper<org.w3c.dom.DOMStringList> {
 
-    DOMStringList(DOMImplementation impl, org.w3c.dom.DOMStringList delegate) {
-	super(impl, delegate);
-    }
+   DOMStringList(DOMImplementation impl, org.w3c.dom.DOMStringList delegate) {
+      super(impl, delegate);
+   }
 
-    public boolean contains(String str) {
-	return _delegate.contains(str);
-    }
+   public boolean contains(String str) {
+      return _delegate.contains(str);
+   }
 
-    public int getLength() {
-	return _delegate.getLength();
-    }
+   public int getLength() {
+      return _delegate.getLength();
+   }
 
-    public String item(int index) {
-	return _delegate.item(index);
-    }
+   public String item(int index) {
+      return _delegate.item(index);
+   }
 }

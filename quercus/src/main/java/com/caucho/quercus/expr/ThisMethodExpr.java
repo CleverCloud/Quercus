@@ -38,19 +38,19 @@ import java.util.ArrayList;
  */
 public class ThisMethodExpr extends ObjectMethodExpr {
 
-    private static final L10N L = new L10N(ThisMethodExpr.class);
+   private static final L10N L = new L10N(ThisMethodExpr.class);
 
-    public ThisMethodExpr(Location location,
-	    ThisExpr qThis,
-	    String methodName,
-	    ArrayList<Expr> args) {
-	super(location, qThis, methodName, args);
-    }
+   public ThisMethodExpr(Location location,
+           ThisExpr qThis,
+           String methodName,
+           ArrayList<Expr> args) {
+      super(location, qThis, methodName, args);
+   }
 
-    //
-    // java code generation
-    //
-    public String toString() {
-	return "$this->$" + _methodName + "()";
-    }
+   //
+   // java code generation
+   //
+   public String toString() {
+      return "$this->$" + _methodName + "()";
+   }
 }

@@ -41,87 +41,87 @@ import com.caucho.vfs.WriteStream;
  * foo($a[0]), where is not known if foo is defined as foo($a) or foo(&amp;$a)
  */
 public class ArgGetValue extends ArgValue
-	implements Serializable {
+        implements Serializable {
 
-    private final Value _obj;
-    private final Value _index;
+   private final Value _obj;
+   private final Value _index;
 
-    public ArgGetValue(Value obj, Value index) {
-	_obj = obj;
-	_index = index;
-    }
+   public ArgGetValue(Value obj, Value index) {
+      _obj = obj;
+      _index = index;
+   }
 
-    public Value toRefValue() {
-	// php/0425
-	return toLocalValue();
-    }
+   public Value toRefValue() {
+      // php/0425
+      return toLocalValue();
+   }
 
-    /**
-     * Returns the arg object for a field reference, e.g.
-     * foo($a[0][1])
-     */
-    @Override
-    public Value getArg(Value index, boolean isTop) {
-	return new ArgGetValue(this, index); // php/3d1p
-    }
+   /**
+    * Returns the arg object for a field reference, e.g.
+    * foo($a[0][1])
+    */
+   @Override
+   public Value getArg(Value index, boolean isTop) {
+      return new ArgGetValue(this, index); // php/3d1p
+   }
 
-    /**
-     * Returns the arg object for a field reference, e.g.
-     * foo($a[0]->x)
-     */
-    @Override
-    public Value getFieldArg(Env env, StringValue index, boolean isTop) {
-	return new ArgGetFieldValue(env, this, index); // php/3d2p
-    }
+   /**
+    * Returns the arg object for a field reference, e.g.
+    * foo($a[0]->x)
+    */
+   @Override
+   public Value getFieldArg(Env env, StringValue index, boolean isTop) {
+      return new ArgGetFieldValue(env, this, index); // php/3d2p
+   }
 
-    /**
-     * Converts to a reference variable.
-     */
-    @Override
-    public Var toLocalVarDeclAsRef() {
-	// php/3d55, php/3d49, php/3921
+   /**
+    * Converts to a reference variable.
+    */
+   @Override
+   public Var toLocalVarDeclAsRef() {
+      // php/3d55, php/3d49, php/3921
 
-	return _obj.toAutoArray().getVar(_index).toLocalVarDeclAsRef();
-    }
+      return _obj.toAutoArray().getVar(_index).toLocalVarDeclAsRef();
+   }
 
-    @Override
-    public Value toAutoArray() {
-	return _obj.toAutoArray().getVar(_index).toAutoArray();
-    }
+   @Override
+   public Value toAutoArray() {
+      return _obj.toAutoArray().getVar(_index).toAutoArray();
+   }
 
-    @Override
-    public Value toAutoObject(Env env) {
-	return _obj.toAutoArray().getVar(_index).toAutoObject(env);
-    }
+   @Override
+   public Value toAutoObject(Env env) {
+      return _obj.toAutoArray().getVar(_index).toAutoObject(env);
+   }
 
-    /**
-     * Converts to a read-only value.
-     */
-    @Override
-    public Value toLocalValueReadOnly() {
-	return _obj.get(_index);
-    }
+   /**
+    * Converts to a read-only value.
+    */
+   @Override
+   public Value toLocalValueReadOnly() {
+      return _obj.get(_index);
+   }
 
-    /**
-     * Converts to a value.
-     */
-    @Override
-    public Value toLocalValue() {
-	return _obj.get(_index);
-    }
+   /**
+    * Converts to a value.
+    */
+   @Override
+   public Value toLocalValue() {
+      return _obj.get(_index);
+   }
 
-    /**
-     * Converts to a value.
-     */
-    @Override
-    public Value toLocalRef() {
-	return _obj.get(_index);
-    }
+   /**
+    * Converts to a value.
+    */
+   @Override
+   public Value toLocalRef() {
+      return _obj.get(_index);
+   }
 
-    //
-    // Java Serialization
-    //
-    public Object writeReplace() {
-	return toValue();
-    }
+   //
+   // Java Serialization
+   //
+   public Object writeReplace() {
+      return toValue();
+   }
 }

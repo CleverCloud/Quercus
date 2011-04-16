@@ -35,60 +35,60 @@ import java.util.IdentityHashMap;
  */
 public class CopyRoot implements EnvCleanup {
 
-    private final UnserializeCacheEntry _entry;
-    private Value _root;
-    private boolean _isModified;
-    private IdentityHashMap<Value, Value> _copyMap = new IdentityHashMap<Value, Value>();
+   private final UnserializeCacheEntry _entry;
+   private Value _root;
+   private boolean _isModified;
+   private IdentityHashMap<Value, Value> _copyMap = new IdentityHashMap<Value, Value>();
 
-    public CopyRoot(UnserializeCacheEntry entry) {
-	_entry = entry;
-    }
+   public CopyRoot(UnserializeCacheEntry entry) {
+      _entry = entry;
+   }
 
-    /**
-     * Indicate that the contents are modified
-     */
-    public void setModified() {
-	_isModified = true;
-    }
+   /**
+    * Indicate that the contents are modified
+    */
+   public void setModified() {
+      _isModified = true;
+   }
 
-    /**
-     * True if it's modified
-     */
-    public boolean isModified() {
-	return _isModified;
-    }
+   /**
+    * True if it's modified
+    */
+   public boolean isModified() {
+      return _isModified;
+   }
 
-    /**
-     * Returns the root
-     */
-    public Value getRoot() {
-	return _root;
-    }
+   /**
+    * Returns the root
+    */
+   public Value getRoot() {
+      return _root;
+   }
 
-    public void setRoot(Value root) {
-	_root = root;
+   public void setRoot(Value root) {
+      _root = root;
 
-	// clear when setting root since the unserialization process itself
-	// sets the modify flag
-	_isModified = false;
-    }
+      // clear when setting root since the unserialization process itself
+      // sets the modify flag
+      _isModified = false;
+   }
 
-    public void putCopy(Value value, Value copy) {
-	_copyMap.put(value, copy);
-    }
+   public void putCopy(Value value, Value copy) {
+      _copyMap.put(value, copy);
+   }
 
-    public Value getCopy(Value value) {
-	return _copyMap.get(value);
-    }
+   public Value getCopy(Value value) {
+      return _copyMap.get(value);
+   }
 
-    public void allocate(Env env) {
-	env.addCleanup(this);
-    }
+   public void allocate(Env env) {
+      env.addCleanup(this);
+   }
 
-    public void cleanup()
-	    throws Exception {
-	if (!_isModified) {
-	    _entry.free(this);
-	}
-    }
+   public void cleanup()
+           throws Exception {
+      if (!_isModified) {
+         _entry.free(this);
+      }
+   }
 }

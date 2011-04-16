@@ -88,41 +88,41 @@ import java.util.logging.Logger;
  */
 public class GoogleEnv extends Env {
 
-    private int _timeoutCount;
+   private int _timeoutCount;
 
-    public GoogleEnv(QuercusContext quercus,
-	    QuercusPage page,
-	    WriteStream out,
-	    HttpServletRequest request,
-	    HttpServletResponse response) {
-	super(quercus, page, out, request, response);
-    }
+   public GoogleEnv(QuercusContext quercus,
+           QuercusPage page,
+           WriteStream out,
+           HttpServletRequest request,
+           HttpServletResponse response) {
+      super(quercus, page, out, request, response);
+   }
 
-    public GoogleEnv(QuercusContext quercus) {
-	super(quercus);
-    }
+   public GoogleEnv(QuercusContext quercus) {
+      super(quercus);
+   }
 
-    /**
-     * Checks for the program timeout.
-     */
-    @Override
-    public void checkTimeout() {
-	// since GoogleAppEngine doesn't allow Threads, the normal Alarm
-	// optimization doesn't work.  Instead use a timeout count to limit
-	// the calls
-	if (_timeoutCount-- > 0) {
-	    return;
-	}
+   /**
+    * Checks for the program timeout.
+    */
+   @Override
+   public void checkTimeout() {
+      // since GoogleAppEngine doesn't allow Threads, the normal Alarm
+      // optimization doesn't work.  Instead use a timeout count to limit
+      // the calls
+      if (_timeoutCount-- > 0) {
+         return;
+      }
 
-	_timeoutCount = 8192;
+      _timeoutCount = 8192;
 
-	super.checkTimeout();
-    }
+      super.checkTimeout();
+   }
 
-    @Override
-    public void resetTimeout() {
-	super.resetTimeout();
+   @Override
+   public void resetTimeout() {
+      super.resetTimeout();
 
-	_timeoutCount = 8192;
-    }
+      _timeoutCount = 8192;
+   }
 }

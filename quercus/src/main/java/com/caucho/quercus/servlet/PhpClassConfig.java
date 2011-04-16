@@ -38,54 +38,54 @@ import javax.annotation.PostConstruct;
  */
 public class PhpClassConfig {
 
-    private static final L10N L = new L10N(PhpClassConfig.class);
-    private Class _type;
-    private String _name;
+   private static final L10N L = new L10N(PhpClassConfig.class);
+   private Class _type;
+   private String _name;
 
-    /**
-     * Sets the class to add.
-     */
-    public void setType(Class cl) {
-	_type = cl;
-    }
+   /**
+    * Sets the class to add.
+    */
+   public void setType(Class cl) {
+      _type = cl;
+   }
 
-    /**
-     * Returns the name of the type to add.
-     */
-    public Class getType() {
-	return _type;
-    }
+   /**
+    * Returns the name of the type to add.
+    */
+   public Class getType() {
+      return _type;
+   }
 
-    /**
-     * Sets the PHP name for the class
-     */
-    public void setName(String name) {
-	_name = name;
-    }
+   /**
+    * Sets the PHP name for the class
+    */
+   public void setName(String name) {
+      _name = name;
+   }
 
-    /**
-     * Sets the PHP name for the class
-     */
-    public String getName() {
-	return _name;
-    }
+   /**
+    * Sets the PHP name for the class
+    */
+   public String getName() {
+      return _name;
+   }
 
-    /**
-     * Initialize the class.
-     */
-    @PostConstruct
-    public void init()
-	    throws ConfigException {
-	if (_type == null) {
-	    throw new ConfigException(L.l("<class> requires a type."));
-	}
+   /**
+    * Initialize the class.
+    */
+   @PostConstruct
+   public void init()
+           throws ConfigException {
+      if (_type == null) {
+         throw new ConfigException(L.l("<class> requires a type."));
+      }
 
-	if (_name == null) {
-	    String name = _type.getName();
+      if (_name == null) {
+         String name = _type.getName();
 
-	    int p = name.lastIndexOf('.');
+         int p = name.lastIndexOf('.');
 
-	    _name = name.substring(p + 1);
-	}
-    }
+         _name = name.substring(p + 1);
+      }
+   }
 }

@@ -45,171 +45,171 @@ import com.caucho.quercus.env.ArrayValue.ValueIterator;
 @Module
 public class GlobalArrayValue extends ArrayValueImpl {
 
-    private final Env _env;
+   private final Env _env;
 
-    public GlobalArrayValue(Env env) {
-	_env = env;
-    }
+   public GlobalArrayValue(Env env) {
+      _env = env;
+   }
 
-    /**
-     * Converts to an object.
-     */
-    public Object toObject() {
-	return null;
-    }
+   /**
+    * Converts to an object.
+    */
+   public Object toObject() {
+      return null;
+   }
 
-    @Override
-    public boolean toBoolean() {
-	return true;
-    }
+   @Override
+   public boolean toBoolean() {
+      return true;
+   }
 
-    /**
-     * Adds a new value.
-     */
-    public ArrayValue append(Value key, Value value) {
-	_env.setGlobalValue(key.toStringValue(), value);
+   /**
+    * Adds a new value.
+    */
+   public ArrayValue append(Value key, Value value) {
+      _env.setGlobalValue(key.toStringValue(), value);
 
-	return this;
-    }
+      return this;
+   }
 
-    /**
-     * Gets a new value.
-     */
-    public Value get(Value key) {
-	return _env.getGlobalValue(key.toStringValue());
-    }
+   /**
+    * Gets a new value.
+    */
+   public Value get(Value key) {
+      return _env.getGlobalValue(key.toStringValue());
+   }
 
-    /**
-     * Returns the array ref.
-     */
-    @Override
-    public Var getVar(Value key) {
-	// return _env.getGlobalRef(key.toStringValue());
+   /**
+    * Returns the array ref.
+    */
+   @Override
+   public Var getVar(Value key) {
+      // return _env.getGlobalRef(key.toStringValue());
 
-	return _env.getGlobalVar(key.toStringValue());
-    }
+      return _env.getGlobalVar(key.toStringValue());
+   }
 
-    /**
-     * Returns the value as an argument which may be a reference.
-     */
-    @Override
-    public Value getArg(Value index, boolean isTop) {
-	return getVar(index);
-    }
+   /**
+    * Returns the value as an argument which may be a reference.
+    */
+   @Override
+   public Value getArg(Value index, boolean isTop) {
+      return getVar(index);
+   }
 
-    /**
-     * Returns the value as an array.
-     */
-    public Value getArray(Value index) {
-	Value array = getVar(index).toAutoArray();
+   /**
+    * Returns the value as an array.
+    */
+   public Value getArray(Value index) {
+      Value array = getVar(index).toAutoArray();
 
-	return array;
-    }
+      return array;
+   }
 
-    /**
-     * Unsets a value.
-     */
-    @Override
-    public Value remove(Value key) {
-	return _env.unsetGlobalVar(key.toStringValue());
-    }
+   /**
+    * Unsets a value.
+    */
+   @Override
+   public Value remove(Value key) {
+      return _env.unsetGlobalVar(key.toStringValue());
+   }
 
-    @Override
-    public void clear() {
-    }
+   @Override
+   public void clear() {
+   }
 
-    /**
-     * Copy for assignment.
-     */
-    public Value copy() {
-	return this;
-    }
+   /**
+    * Copy for assignment.
+    */
+   public Value copy() {
+      return this;
+   }
 
-    /*
-     * Returns the size.
-     */
-    public int getSize() {
-	return _env.getGlobalEnv().size();
-    }
+   /*
+    * Returns the size.
+    */
+   public int getSize() {
+      return _env.getGlobalEnv().size();
+   }
 
-    /**
-     * Gets a new value.
-     */
-    public Value containsKey(Value key) {
-	EnvVar var = _env.getGlobalEnv().get(key.toStringValue());
+   /**
+    * Gets a new value.
+    */
+   public Value containsKey(Value key) {
+      EnvVar var = _env.getGlobalEnv().get(key.toStringValue());
 
-	if (var != null) {
-	    return var.get();
-	} else {
-	    return null;
-	}
-    }
+      if (var != null) {
+         return var.get();
+      } else {
+         return null;
+      }
+   }
 
-    /**
-     * Returns true if the index isset().
-     */
-    @Override
-    public boolean isset(Value key) {
-	return get(key).isset();
-    }
+   /**
+    * Returns true if the index isset().
+    */
+   @Override
+   public boolean isset(Value key) {
+      return get(key).isset();
+   }
 
-    /**
-     * Returns true if the key exists in the array.
-     */
-    public boolean keyExists(Value key) {
-	EnvVar var = _env.getGlobalEnv().get(key.toStringValue());
+   /**
+    * Returns true if the key exists in the array.
+    */
+   public boolean keyExists(Value key) {
+      EnvVar var = _env.getGlobalEnv().get(key.toStringValue());
 
-	return var != null;
-    }
+      return var != null;
+   }
 
-    /**
-     * Prints the value.
-     * @param env
-     */
-    public void print(Env env) {
-	env.print("Array");
-    }
+   /**
+    * Prints the value.
+    * @param env
+    */
+   public void print(Env env) {
+      env.print("Array");
+   }
 
-    /**
-     * Returns the array keys.
-     */
-    @Override
-    public Value getKeys() {
-	return createAndFillArray().getKeys();
-    }
+   /**
+    * Returns the array keys.
+    */
+   @Override
+   public Value getKeys() {
+      return createAndFillArray().getKeys();
+   }
 
-    /**
-     * Returns an iterator of the entries.
-     */
-    public Set<Map.Entry<Value, Value>> entrySet() {
-	return createAndFillArray().entrySet();
-    }
+   /**
+    * Returns an iterator of the entries.
+    */
+   public Set<Map.Entry<Value, Value>> entrySet() {
+      return createAndFillArray().entrySet();
+   }
 
-    @Override
-    public Iterator<Map.Entry<Value, Value>> getIterator(Env env) {
-	return createAndFillArray().getIterator(env);
-    }
+   @Override
+   public Iterator<Map.Entry<Value, Value>> getIterator(Env env) {
+      return createAndFillArray().getIterator(env);
+   }
 
-    @Override
-    public Iterator<Value> getKeyIterator(Env env) {
-	return createAndFillArray().getKeyIterator(env);
-    }
+   @Override
+   public Iterator<Value> getKeyIterator(Env env) {
+      return createAndFillArray().getKeyIterator(env);
+   }
 
-    @Override
-    public Iterator<Value> getValueIterator(Env env) {
-	return createAndFillArray().getValueIterator(env);
-    }
+   @Override
+   public Iterator<Value> getValueIterator(Env env) {
+      return createAndFillArray().getValueIterator(env);
+   }
 
-    private ArrayValue createAndFillArray() {
-	ArrayValue array = new ArrayValueImpl();
+   private ArrayValue createAndFillArray() {
+      ArrayValue array = new ArrayValueImpl();
 
-	for (Map.Entry<StringValue, EnvVar> entry : _env.getGlobalEnv().entrySet()) {
-	    Value key = entry.getKey();
-	    Value val = entry.getValue().get();
+      for (Map.Entry<StringValue, EnvVar> entry : _env.getGlobalEnv().entrySet()) {
+         Value key = entry.getKey();
+         Value val = entry.getValue().get();
 
-	    array.put(key, val);
-	}
+         array.put(key, val);
+      }
 
-	return array;
-    }
+      return array;
+   }
 }

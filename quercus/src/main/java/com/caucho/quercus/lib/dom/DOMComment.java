@@ -34,20 +34,20 @@ import com.caucho.quercus.env.Env;
 import org.w3c.dom.Comment;
 
 public class DOMComment
-	extends DOMCharacterData<Comment> {
+        extends DOMCharacterData<Comment> {
 
-    public static DOMComment __construct(Env env, @Optional String value) {
-	DOMComment comment = getImpl(env).createComment();
+   public static DOMComment __construct(Env env, @Optional String value) {
+      DOMComment comment = getImpl(env).createComment();
 
-	if (value != null && value.length() > 0) {
-	    comment.setNodeValue(value);
-	}
+      if (value != null && value.length() > 0) {
+         comment.setNodeValue(value);
+      }
 
-	return comment;
-    }
+      return comment;
+   }
 
-    DOMComment(DOMImplementation impl, Comment delegate) {
-	super(impl, delegate);
-    }
-    // no methods
+   DOMComment(DOMImplementation impl, Comment delegate) {
+      super(impl, delegate);
+   }
+   // no methods
 }

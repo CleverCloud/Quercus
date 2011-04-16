@@ -41,91 +41,91 @@ import java.util.ArrayList;
  */
 public class FunArrayExpr extends Expr {
 
-    protected final Expr[] _keys;
-    protected final Expr[] _values;
+   protected final Expr[] _keys;
+   protected final Expr[] _values;
 
-    public FunArrayExpr(Location location,
-	    ArrayList<Expr> keyList,
-	    ArrayList<Expr> valueList) {
-	super(location);
+   public FunArrayExpr(Location location,
+           ArrayList<Expr> keyList,
+           ArrayList<Expr> valueList) {
+      super(location);
 
-	_keys = new Expr[keyList.size()];
-	keyList.toArray(_keys);
+      _keys = new Expr[keyList.size()];
+      keyList.toArray(_keys);
 
-	_values = new Expr[valueList.size()];
-	valueList.toArray(_values);
-    }
+      _values = new Expr[valueList.size()];
+      valueList.toArray(_values);
+   }
 
-    public FunArrayExpr(Location location, Expr[] keys, Expr[] values) {
-	super(location);
-	_keys = keys;
-	_values = values;
-    }
+   public FunArrayExpr(Location location, Expr[] keys, Expr[] values) {
+      super(location);
+      _keys = keys;
+      _values = values;
+   }
 
-    public FunArrayExpr(ArrayList<Expr> keyList, ArrayList<Expr> valueList) {
-	this(Location.UNKNOWN, keyList, valueList);
-    }
+   public FunArrayExpr(ArrayList<Expr> keyList, ArrayList<Expr> valueList) {
+      this(Location.UNKNOWN, keyList, valueList);
+   }
 
-    public FunArrayExpr(Expr[] keys, Expr[] values) {
-	this(Location.UNKNOWN, keys, values);
-    }
+   public FunArrayExpr(Expr[] keys, Expr[] values) {
+      this(Location.UNKNOWN, keys, values);
+   }
 
-    /**
-     * Returns true if the expression evaluates to an array.
-     */
-    public boolean isArray() {
-	return true;
-    }
+   /**
+    * Returns true if the expression evaluates to an array.
+    */
+   public boolean isArray() {
+      return true;
+   }
 
-    /**
-     * Returns true for a constant array.
-     */
-    public boolean isConstant() {
-	for (int i = 0; i < _keys.length; i++) {
-	    if (_keys[i] != null && !_keys[i].isConstant()) {
-		return false;
-	    }
-	}
+   /**
+    * Returns true for a constant array.
+    */
+   public boolean isConstant() {
+      for (int i = 0; i < _keys.length; i++) {
+         if (_keys[i] != null && !_keys[i].isConstant()) {
+            return false;
+         }
+      }
 
-	for (int i = 0; i < _values.length; i++) {
-	    if (_values[i] != null && !_values[i].isConstant()) {
-		return false;
-	    }
-	}
+      for (int i = 0; i < _values.length; i++) {
+         if (_values[i] != null && !_values[i].isConstant()) {
+            return false;
+         }
+      }
 
-	return true;
-    }
+      return true;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	ArrayValue array = new ArrayValueImpl();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      ArrayValue array = new ArrayValueImpl();
 
-	for (int i = 0; i < _values.length; i++) {
-	    Expr keyExpr = _keys[i];
+      for (int i = 0; i < _values.length; i++) {
+         Expr keyExpr = _keys[i];
 
-	    Value value = _values[i].evalArg(env, true);
-	    // php/0471
-	    value = value.toRefValue();
+         Value value = _values[i].evalArg(env, true);
+         // php/0471
+         value = value.toRefValue();
 
-	    if (keyExpr != null) {
-		Value key = keyExpr.evalArg(env, true).toLocalValue();
+         if (keyExpr != null) {
+            Value key = keyExpr.evalArg(env, true).toLocalValue();
 
-		array.put(key, value);
-	    } else {
-		array.put(value);
-	    }
-	}
+            array.put(key, value);
+         } else {
+            array.put(value);
+         }
+      }
 
-	return array;
-    }
+      return array;
+   }
 
-    public String toString() {
-	return "array()";
-    }
+   public String toString() {
+      return "array()";
+   }
 }

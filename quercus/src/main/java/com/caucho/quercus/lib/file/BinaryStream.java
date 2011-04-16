@@ -37,42 +37,42 @@ import com.caucho.quercus.env.Value;
 @ResourceType("stream")
 public interface BinaryStream {
 
-    public static final int SEEK_SET = 0;
-    public static final int SEEK_CUR = 1;
-    public static final int SEEK_END = 2;
+   public static final int SEEK_SET = 0;
+   public static final int SEEK_CUR = 1;
+   public static final int SEEK_END = 2;
 
-    /**
-     * All streams can be closed.
-     */
-    public void close();
+   /**
+    * All streams can be closed.
+    */
+   public void close();
 
-    /**
-     * Tells the position in the stream.
-     * The valid range for a stream position is 0 to Long.MAX_VALUE,
-     * so a negative number can't be a valid stream position.
-     */
-    public long getPosition();
+   /**
+    * Tells the position in the stream.
+    * The valid range for a stream position is 0 to Long.MAX_VALUE,
+    * so a negative number can't be a valid stream position.
+    */
+   public long getPosition();
 
-    /**
-     * Sets the current position in the stream.
-     * Returns true on success, false otherwise.
-     */
-    public boolean setPosition(long offset);
+   /**
+    * Sets the current position in the stream.
+    * Returns true on success, false otherwise.
+    */
+   public boolean setPosition(long offset);
 
-    /**
-     * Seek according to offset and whence.
-     * For fseek() compatibility in wrapped streams.
-     */
-    public long seek(long offset, int whence);
+   /**
+    * Seek according to offset and whence.
+    * For fseek() compatibility in wrapped streams.
+    */
+   public long seek(long offset, int whence);
 
-    /**
-     * Returns true if end-of-file has been reached
-     */
-    public boolean isEOF();
+   /**
+    * Returns true if end-of-file has been reached
+    */
+   public boolean isEOF();
 
-    /**
-     * Returns an array filled with stat information.  Mainly for wrapped
-     * stream functionality.
-     */
-    public Value stat();
+   /**
+    * Returns an array filled with stat information.  Mainly for wrapped
+    * stream functionality.
+    */
+   public Value stat();
 }

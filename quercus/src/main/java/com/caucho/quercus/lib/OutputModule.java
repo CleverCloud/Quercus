@@ -50,520 +50,520 @@ import java.util.zip.GZIPOutputStream;
  * PHP output routines.
  */
 public class OutputModule extends AbstractQuercusModule
-	implements ModuleStartupListener {
+        implements ModuleStartupListener {
 
-    private static final L10N L = new L10N(OutputModule.class);
-    private static final Logger log = Logger.getLogger(
-	    OutputModule.class.getName());
-    private static final StringValue HTTP_ACCEPT_ENCODING = new ConstStringValue("HTTP_ACCEPT_ENCODING");
-    private static final IniDefinitions _iniDefinitions = new IniDefinitions();
+   private static final L10N L = new L10N(OutputModule.class);
+   private static final Logger log = Logger.getLogger(
+           OutputModule.class.getName());
+   private static final StringValue HTTP_ACCEPT_ENCODING = new ConstStringValue("HTTP_ACCEPT_ENCODING");
+   private static final IniDefinitions _iniDefinitions = new IniDefinitions();
 
-    // ob_gzhandler related variables/types
-    private enum Encoding {
+   // ob_gzhandler related variables/types
+   private enum Encoding {
 
-	NONE, GZIP, DEFLATE
-    };
+      NONE, GZIP, DEFLATE
+   };
 
-    private static class GZOutputPair {
+   private static class GZOutputPair {
 
-	public StringBuilderOutputStream _tempStream;
-	public OutputStream _outputStream;
-    }
-    private static HashMap<Env, GZOutputPair> _gzOutputPairs = new HashMap<Env, GZOutputPair>();
-    public static final int PHP_OUTPUT_HANDLER_START = 1;
-    public static final int PHP_OUTPUT_HANDLER_CONT = 2;
-    public static final int PHP_OUTPUT_HANDLER_END = 4;
+      public StringBuilderOutputStream _tempStream;
+      public OutputStream _outputStream;
+   }
+   private static HashMap<Env, GZOutputPair> _gzOutputPairs = new HashMap<Env, GZOutputPair>();
+   public static final int PHP_OUTPUT_HANDLER_START = 1;
+   public static final int PHP_OUTPUT_HANDLER_CONT = 2;
+   public static final int PHP_OUTPUT_HANDLER_END = 4;
 
-    /**
-     * Returns the default php.ini values.
-     */
-    public IniDefinitions getIniDefinitions() {
-	return _iniDefinitions;
-    }
+   /**
+    * Returns the default php.ini values.
+    */
+   public IniDefinitions getIniDefinitions() {
+      return _iniDefinitions;
+   }
 
-    public void startup(Env env) {
-	boolean isOutputBuffering = INI_OUTPUT_BUFFERING.getAsBoolean(env);
-	String handlerName = INI_OUTPUT_HANDLER.getAsString(env);
+   public void startup(Env env) {
+      boolean isOutputBuffering = INI_OUTPUT_BUFFERING.getAsBoolean(env);
+      String handlerName = INI_OUTPUT_HANDLER.getAsString(env);
 
-	if (handlerName != null
-		&& !"".equals(handlerName)
-		&& env.getFunction(handlerName) != null) {
-	    Callable callback = env.createString(handlerName).toCallable(env);
+      if (handlerName != null
+              && !"".equals(handlerName)
+              && env.getFunction(handlerName) != null) {
+         Callable callback = env.createString(handlerName).toCallable(env);
 
-	    ob_start(env, callback, 0, true);
-	} else if (isOutputBuffering) {
-	    ob_start(env, null, 0, true);
-	}
+         ob_start(env, callback, 0, true);
+      } else if (isOutputBuffering) {
+         ob_start(env, null, 0, true);
+      }
 
-	ob_implicit_flush(env, isOutputBuffering);
-    }
+      ob_implicit_flush(env, isOutputBuffering);
+   }
 
-    /**
-     * Flushes the original output buffer.
-     */
-    public Value flush(Env env) {
-	try {
-	    // TODO: conflicts with dragonflycms install
-	    env.getOriginalOut().flush();
-	} catch (IOException e) {
-	}
+   /**
+    * Flushes the original output buffer.
+    */
+   public Value flush(Env env) {
+      try {
+         // TODO: conflicts with dragonflycms install
+         env.getOriginalOut().flush();
+      } catch (IOException e) {
+      }
 
-	return NullValue.NULL;
-    }
+      return NullValue.NULL;
+   }
 
-    /**
-     * Clears the output buffer.
-     */
-    public static Value ob_clean(Env env) {
-	OutputBuffer ob = env.getOutputBuffer();
+   /**
+    * Clears the output buffer.
+    */
+   public static Value ob_clean(Env env) {
+      OutputBuffer ob = env.getOutputBuffer();
 
-	if (ob != null) {
-	    ob.clean();
+      if (ob != null) {
+         ob.clean();
 
-	    return BooleanValue.TRUE;
-	} else {
-	    return BooleanValue.FALSE;
-	}
-    }
+         return BooleanValue.TRUE;
+      } else {
+         return BooleanValue.FALSE;
+      }
+   }
 
-    /**
-     * Pops the output buffer, discarding the contents.
-     */
-    public static boolean ob_end_clean(Env env) {
-	OutputBuffer ob = env.getOutputBuffer();
+   /**
+    * Pops the output buffer, discarding the contents.
+    */
+   public static boolean ob_end_clean(Env env) {
+      OutputBuffer ob = env.getOutputBuffer();
 
-	if (ob != null) {
-	    ob.clean();
+      if (ob != null) {
+         ob.clean();
 
-	    Callable callback = ob.getCallback();
+         Callable callback = ob.getCallback();
 
-	    if (callback != null) {
-		ob.setCallback(null);
-	    }
-	}
+         if (callback != null) {
+            ob.setCallback(null);
+         }
+      }
 
-	return env.popOutputBuffer();
-    }
+      return env.popOutputBuffer();
+   }
 
-    /**
-     * Pops the output buffer.
-     */
-    public static boolean ob_end_flush(Env env) {
-	return env.popOutputBuffer();
-    }
+   /**
+    * Pops the output buffer.
+    */
+   public static boolean ob_end_flush(Env env) {
+      return env.popOutputBuffer();
+   }
 
-    /**
-     * Returns the contents of the output buffer, emptying it afterwards.
-     */
-    public static Value ob_get_clean(Env env) {
-	OutputBuffer ob = env.getOutputBuffer();
+   /**
+    * Returns the contents of the output buffer, emptying it afterwards.
+    */
+   public static Value ob_get_clean(Env env) {
+      OutputBuffer ob = env.getOutputBuffer();
 
-	if (ob != null) {
-	    Value result = ob.getContents();
+      if (ob != null) {
+         Value result = ob.getContents();
 
-	    ob_end_clean(env);
+         ob_end_clean(env);
 
-	    return result;
-	} else {
-	    return BooleanValue.FALSE;
-	}
-    }
+         return result;
+      } else {
+         return BooleanValue.FALSE;
+      }
+   }
 
-    /**
-     * Returns the contents of the current output buffer.
-     */
-    public static Value ob_get_contents(Env env) {
-	OutputBuffer ob = env.getOutputBuffer();
+   /**
+    * Returns the contents of the current output buffer.
+    */
+   public static Value ob_get_contents(Env env) {
+      OutputBuffer ob = env.getOutputBuffer();
 
-	if (ob != null) {
-	    return ob.getContents();
-	} else {
-	    return BooleanValue.FALSE;
-	}
-    }
+      if (ob != null) {
+         return ob.getContents();
+      } else {
+         return BooleanValue.FALSE;
+      }
+   }
 
-    /**
-     * Pops the output buffer and returns the contents.
-     */
-    public static Value ob_get_flush(Env env) {
-	OutputBuffer ob = env.getOutputBuffer();
+   /**
+    * Pops the output buffer and returns the contents.
+    */
+   public static Value ob_get_flush(Env env) {
+      OutputBuffer ob = env.getOutputBuffer();
 
-	Value result = BooleanValue.FALSE;
-	if (ob != null) {
-	    result = ob.getContents();
-	}
+      Value result = BooleanValue.FALSE;
+      if (ob != null) {
+         result = ob.getContents();
+      }
 
-	env.popOutputBuffer();
+      env.popOutputBuffer();
 
-	return result;
-    }
+      return result;
+   }
 
-    /**
-     * Flushes this output buffer into the next one on the stack or
-     * to the default "output buffer" if no next output buffer exists.
-     * The callback associated with this buffer is also called with
-     * appropriate parameters.
-     */
-    public static Value ob_flush(Env env) {
-	OutputBuffer ob = env.getOutputBuffer();
+   /**
+    * Flushes this output buffer into the next one on the stack or
+    * to the default "output buffer" if no next output buffer exists.
+    * The callback associated with this buffer is also called with
+    * appropriate parameters.
+    */
+   public static Value ob_flush(Env env) {
+      OutputBuffer ob = env.getOutputBuffer();
 
-	if (ob != null) {
-	    ob.flush();
+      if (ob != null) {
+         ob.flush();
 
-	    return BooleanValue.TRUE;
-	} else {
-	    return BooleanValue.FALSE;
-	}
-    }
+         return BooleanValue.TRUE;
+      } else {
+         return BooleanValue.FALSE;
+      }
+   }
 
-    /**
-     * Pushes the output buffer
-     */
-    public static Value ob_get_length(Env env) {
-	OutputBuffer ob = env.getOutputBuffer();
+   /**
+    * Pushes the output buffer
+    */
+   public static Value ob_get_length(Env env) {
+      OutputBuffer ob = env.getOutputBuffer();
 
-	if (ob != null) {
-	    return LongValue.create(ob.getLength());
-	} else {
-	    return BooleanValue.FALSE;
-	}
-    }
+      if (ob != null) {
+         return LongValue.create(ob.getLength());
+      } else {
+         return BooleanValue.FALSE;
+      }
+   }
 
-    /**
-     * Gets the nesting level of the current output buffer
-     */
-    public static Value ob_get_level(Env env) {
-	OutputBuffer ob = env.getOutputBuffer();
+   /**
+    * Gets the nesting level of the current output buffer
+    */
+   public static Value ob_get_level(Env env) {
+      OutputBuffer ob = env.getOutputBuffer();
 
-	if (ob != null) {
-	    return LongValue.create(ob.getLevel());
-	} else {
-	    return LongValue.ZERO;
-	}
-    }
+      if (ob != null) {
+         return LongValue.create(ob.getLevel());
+      } else {
+         return LongValue.ZERO;
+      }
+   }
 
-    /**
-     * Helper recursive function that ensures the handlers are listed
-     * in the correct order in the array.
-     */
-    private static void listHandlers(Env env,
-	    OutputBuffer ob,
-	    ArrayValue handlers) {
-	if (ob == null) {
-	    return;
-	}
+   /**
+    * Helper recursive function that ensures the handlers are listed
+    * in the correct order in the array.
+    */
+   private static void listHandlers(Env env,
+           OutputBuffer ob,
+           ArrayValue handlers) {
+      if (ob == null) {
+         return;
+      }
 
-	listHandlers(env, ob.getNext(), handlers);
+      listHandlers(env, ob.getNext(), handlers);
 
-	Callable callback = ob.getCallback();
+      Callable callback = ob.getCallback();
 
-	if (callback != null) {
-	    handlers.put(env.createString(callback.getCallbackName()));
-	} else {
-	    handlers.put(env.createString("default output handler"));
-	}
-    }
+      if (callback != null) {
+         handlers.put(env.createString(callback.getCallbackName()));
+      } else {
+         handlers.put(env.createString("default output handler"));
+      }
+   }
 
-    /**
-     * Returns a list of all the output handlers in use.
-     */
-    public static Value ob_list_handlers(Env env) {
-	OutputBuffer ob = env.getOutputBuffer();
-	ArrayValue handlers = new ArrayValueImpl();
+   /**
+    * Returns a list of all the output handlers in use.
+    */
+   public static Value ob_list_handlers(Env env) {
+      OutputBuffer ob = env.getOutputBuffer();
+      ArrayValue handlers = new ArrayValueImpl();
 
-	listHandlers(env, ob, handlers);
+      listHandlers(env, ob, handlers);
 
-	return handlers;
-    }
+      return handlers;
+   }
 
-    /**
-     * Inserts the common values for ob_get_status into an array.  Used
-     * by getFullStatus() and ob_get_status().
-     */
-    private static void putCommonStatus(ArrayValue element, OutputBuffer ob,
-	    Env env, boolean fullStatus) {
-	LongValue type = LongValue.ONE;
-	Callable callback = ob.getCallback();
+   /**
+    * Inserts the common values for ob_get_status into an array.  Used
+    * by getFullStatus() and ob_get_status().
+    */
+   private static void putCommonStatus(ArrayValue element, OutputBuffer ob,
+           Env env, boolean fullStatus) {
+      LongValue type = LongValue.ONE;
+      Callable callback = ob.getCallback();
 
-	// TODO: need to replace logic because isInternal appears to be
-	// specific to ob_, not general to Callback
+      // TODO: need to replace logic because isInternal appears to be
+      // specific to ob_, not general to Callback
     /*
-	if (callback != null && callback.isInternal())
-	type = LongValue.ZERO;
-	 */
+      if (callback != null && callback.isInternal())
+      type = LongValue.ZERO;
+       */
 
-	String name;
+      String name;
 
-	if (callback != null) {
-	    name = callback.getCallbackName();
-	} else {
-	    name = "default output handler".intern();
-	}
+      if (callback != null) {
+         name = callback.getCallbackName();
+      } else {
+         name = "default output handler".intern();
+      }
 
-	// TODO: there appears to be only one "internal" callback
-	if (name.equals("URL-Rewriter")) {
-	    type = LongValue.ZERO;
-	}
+      // TODO: there appears to be only one "internal" callback
+      if (name.equals("URL-Rewriter")) {
+         type = LongValue.ZERO;
+      }
 
-	element.put(env.createString("type"), type);
+      element.put(env.createString("type"), type);
 
-	// the rewriter is a special case where it includes a field
-	// "buffer_size" right in the middle of the common elements,
-	// but only when called with full status.  It appears always
-	// to be 0 and there is no interface to change this buffer_size
-	// and no indication of its meaning.
-	if (fullStatus && callback != null
-		&& callback == UrlRewriterCallback.getInstance(env)) {
-	    element.put(env.createString("buffer_size"), LongValue.ZERO);
-	}
+      // the rewriter is a special case where it includes a field
+      // "buffer_size" right in the middle of the common elements,
+      // but only when called with full status.  It appears always
+      // to be 0 and there is no interface to change this buffer_size
+      // and no indication of its meaning.
+      if (fullStatus && callback != null
+              && callback == UrlRewriterCallback.getInstance(env)) {
+         element.put(env.createString("buffer_size"), LongValue.ZERO);
+      }
 
-	// Technically, there are supposed to be three possible values
-	// for status:
-	//   0 if the stream has never been flushed (PHP_OUTPUT_HANDLER_START)
-	//   1 if the stream has been flushed (PHP_OUTPUT_HANDLER_CONT)
-	//   2 if the stream was flushed at the end (PHP_OUTPUT_HANDLER_END)
-	// However, there is no way to access the buffer after it has ended,
-	// so the final case doesn't seem to be an issue!  (Even calling
-	// ob_get_status() in the handler on a ob_end_flush() does not
-	// invoke this state.)
-	LongValue status = ob.haveFlushed() ? LongValue.ONE : LongValue.ZERO;
-	element.put(env.createString("status"), status);
+      // Technically, there are supposed to be three possible values
+      // for status:
+      //   0 if the stream has never been flushed (PHP_OUTPUT_HANDLER_START)
+      //   1 if the stream has been flushed (PHP_OUTPUT_HANDLER_CONT)
+      //   2 if the stream was flushed at the end (PHP_OUTPUT_HANDLER_END)
+      // However, there is no way to access the buffer after it has ended,
+      // so the final case doesn't seem to be an issue!  (Even calling
+      // ob_get_status() in the handler on a ob_end_flush() does not
+      // invoke this state.)
+      LongValue status = ob.haveFlushed() ? LongValue.ONE : LongValue.ZERO;
+      element.put(env.createString("status"), status);
 
-	StringValue nameV = env.createString(name);
+      StringValue nameV = env.createString(name);
 
-	element.put(env.createString("name".intern()), nameV);
+      element.put(env.createString("name".intern()), nameV);
 
-	Value del = ob.getEraseFlag() ? BooleanValue.TRUE
-		: BooleanValue.FALSE;
+      Value del = ob.getEraseFlag() ? BooleanValue.TRUE
+              : BooleanValue.FALSE;
 
-	element.put(env.createString("del"), del);
-    }
+      element.put(env.createString("del"), del);
+   }
 
-    /**
-     * Gets the status for all the output buffers on the stack.
-     * Recursion ensures the results are ordered correctly in the array.
-     */
-    private static void getFullStatus(OutputBuffer ob, Env env, ArrayValue result) {
-	if (ob == null) {
-	    return;
-	}
+   /**
+    * Gets the status for all the output buffers on the stack.
+    * Recursion ensures the results are ordered correctly in the array.
+    */
+   private static void getFullStatus(OutputBuffer ob, Env env, ArrayValue result) {
+      if (ob == null) {
+         return;
+      }
 
-	getFullStatus(ob.getNext(), env, result);
+      getFullStatus(ob.getNext(), env, result);
 
-	ArrayValue element = new ArrayValueImpl();
+      ArrayValue element = new ArrayValueImpl();
 
-	element.put(env.createString("chunk_size"),
-		LongValue.create(ob.getChunkSize()));
+      element.put(env.createString("chunk_size"),
+              LongValue.create(ob.getChunkSize()));
 
-	// TODO: Not sure why we even need to list a size -- PHP doesn't
-	// even seem to respect it.  -1 => infinity?
-	// (Note: "size" == "capacity")
-	element.put(env.createString("size"), LongValue.create(-1));
-	element.put(env.createString("block_size"), LongValue.create(-1));
+      // TODO: Not sure why we even need to list a size -- PHP doesn't
+      // even seem to respect it.  -1 => infinity?
+      // (Note: "size" == "capacity")
+      element.put(env.createString("size"), LongValue.create(-1));
+      element.put(env.createString("block_size"), LongValue.create(-1));
 
-	putCommonStatus(element, ob, env, true);
+      putCommonStatus(element, ob, env, true);
 
-	result.put(element);
-    }
+      result.put(element);
+   }
 
-    /**
-     * Gets the status of the current output buffer(s)
-     */
-    public static Value ob_get_status(Env env, @Optional boolean full_status) {
-	if (full_status) {
-	    OutputBuffer ob = env.getOutputBuffer();
-	    ArrayValue result = new ArrayValueImpl();
+   /**
+    * Gets the status of the current output buffer(s)
+    */
+   public static Value ob_get_status(Env env, @Optional boolean full_status) {
+      if (full_status) {
+         OutputBuffer ob = env.getOutputBuffer();
+         ArrayValue result = new ArrayValueImpl();
 
-	    getFullStatus(ob, env, result);
+         getFullStatus(ob, env, result);
 
-	    return result;
-	}
+         return result;
+      }
 
-	OutputBuffer ob = env.getOutputBuffer();
-	ArrayValue result = new ArrayValueImpl();
+      OutputBuffer ob = env.getOutputBuffer();
+      ArrayValue result = new ArrayValueImpl();
 
-	if (ob != null) {
-	    result.put(env.createString("level"),
-		    LongValue.create(ob.getLevel()));
+      if (ob != null) {
+         result.put(env.createString("level"),
+                 LongValue.create(ob.getLevel()));
 
-	    putCommonStatus(result, ob, env, false);
-	}
+         putCommonStatus(result, ob, env, false);
+      }
 
-	// returns an empty array when no output buffer exists
-	return result;
-    }
+      // returns an empty array when no output buffer exists
+      return result;
+   }
 
-    /**
-     * Makes the original "output buffer" flush on every write.
-     */
-    public static Value ob_implicit_flush(Env env, @Optional("true") boolean flag) {
-	if (env.getOriginalOut() != null) {
-	    env.getOriginalOut().setImplicitFlush(flag);
-	}
+   /**
+    * Makes the original "output buffer" flush on every write.
+    */
+   public static Value ob_implicit_flush(Env env, @Optional("true") boolean flag) {
+      if (env.getOriginalOut() != null) {
+         env.getOriginalOut().setImplicitFlush(flag);
+      }
 
-	return NullValue.NULL;
-    }
+      return NullValue.NULL;
+   }
 
-    /**
-     * Pushes the output buffer
-     */
-    public static boolean ob_start(Env env,
-	    @Optional Callable callback,
-	    @Optional int chunkSize,
-	    @Optional("true") boolean erase) {
-	if (callback != null
-		&& callback.getCallbackName().equals("ob_gzhandler")) {
-	    OutputBuffer ob = env.getOutputBuffer();
+   /**
+    * Pushes the output buffer
+    */
+   public static boolean ob_start(Env env,
+           @Optional Callable callback,
+           @Optional int chunkSize,
+           @Optional("true") boolean erase) {
+      if (callback != null
+              && callback.getCallbackName().equals("ob_gzhandler")) {
+         OutputBuffer ob = env.getOutputBuffer();
 
-	    for (; ob != null; ob = ob.getNext()) {
-		Callable cb = ob.getCallback();
+         for (; ob != null; ob = ob.getNext()) {
+            Callable cb = ob.getCallback();
 
-		if (cb.getCallbackName().equals("ob_gzhandler")) {
-		    env.warning(
-			    L.l("output handler 'ob_gzhandler' cannot be used twice"));
-		    return false;
-		}
-	    }
-	}
+            if (cb.getCallbackName().equals("ob_gzhandler")) {
+               env.warning(
+                       L.l("output handler 'ob_gzhandler' cannot be used twice"));
+               return false;
+            }
+         }
+      }
 
-	env.pushOutputBuffer(callback, chunkSize, erase);
+      env.pushOutputBuffer(callback, chunkSize, erase);
 
-	return true;
-    }
+      return true;
+   }
 
-    /**
-     * Pushes a new UrlRewriter callback onto the output buffer stack
-     * if one does not already exist.
-     */
-    public static UrlRewriterCallback pushUrlRewriter(Env env) {
-	UrlRewriterCallback rewriter = UrlRewriterCallback.getInstance(env);
+   /**
+    * Pushes a new UrlRewriter callback onto the output buffer stack
+    * if one does not already exist.
+    */
+   public static UrlRewriterCallback pushUrlRewriter(Env env) {
+      UrlRewriterCallback rewriter = UrlRewriterCallback.getInstance(env);
 
-	if (rewriter == null) {
-	    OutputBuffer ob = env.getOutputBuffer();
-	    rewriter = new UrlRewriterCallback(env);
+      if (rewriter == null) {
+         OutputBuffer ob = env.getOutputBuffer();
+         rewriter = new UrlRewriterCallback(env);
 
-	    // PHP installs the URL rewriter into the top output buffer if
-	    // its callback is null
-	    if (ob != null && ob.getCallback() == null) {
-		ob.setCallback(rewriter);
-	    } else {
-		ob_start(env, rewriter, 0, true);
-	    }
-	}
+         // PHP installs the URL rewriter into the top output buffer if
+         // its callback is null
+         if (ob != null && ob.getCallback() == null) {
+            ob.setCallback(rewriter);
+         } else {
+            ob_start(env, rewriter, 0, true);
+         }
+      }
 
-	return rewriter;
-    }
+      return rewriter;
+   }
 
-    /**
-     * Adds a variable to the list for rewritten URLs.
-     */
-    public static boolean output_add_rewrite_var(Env env,
-	    String name, String value) {
-	UrlRewriterCallback rewriter = pushUrlRewriter(env);
+   /**
+    * Adds a variable to the list for rewritten URLs.
+    */
+   public static boolean output_add_rewrite_var(Env env,
+           String name, String value) {
+      UrlRewriterCallback rewriter = pushUrlRewriter(env);
 
-	rewriter.addRewriterVar(name, value);
+      rewriter.addRewriterVar(name, value);
 
-	return true;
-    }
+      return true;
+   }
 
-    /**
-     * Clears the list of variables for rewritten URLs.
-     */
-    public static boolean output_reset_rewrite_vars(Env env) {
-	UrlRewriterCallback rewriter = UrlRewriterCallback.getInstance(env);
+   /**
+    * Clears the list of variables for rewritten URLs.
+    */
+   public static boolean output_reset_rewrite_vars(Env env) {
+      UrlRewriterCallback rewriter = UrlRewriterCallback.getInstance(env);
 
-	rewriter.resetRewriterVars();
+      rewriter.resetRewriterVars();
 
-	return true;
-    }
+      return true;
+   }
 
-    /**
-     * Output buffering compatible callback that automatically compresses
-     * the output.  The output of this function depends on the value of
-     * state.  Specifically, if the PHP_OUTPUT_HANDLER_START bit is on
-     * in the state field, the function supplies a header with the output
-     * and initializes a gzip/deflate stream which will be used for
-     * subsequent calls.
-     */
-    public static Value ob_gzhandler(Env env, StringValue buffer, int state) {
-	Encoding encoding = Encoding.NONE;
-	Value _SERVER = env.getGlobalVar("_SERVER");
+   /**
+    * Output buffering compatible callback that automatically compresses
+    * the output.  The output of this function depends on the value of
+    * state.  Specifically, if the PHP_OUTPUT_HANDLER_START bit is on
+    * in the state field, the function supplies a header with the output
+    * and initializes a gzip/deflate stream which will be used for
+    * subsequent calls.
+    */
+   public static Value ob_gzhandler(Env env, StringValue buffer, int state) {
+      Encoding encoding = Encoding.NONE;
+      Value _SERVER = env.getGlobalVar("_SERVER");
 
-	String[] acceptedList = _SERVER.get(HTTP_ACCEPT_ENCODING).toString().split(",");
+      String[] acceptedList = _SERVER.get(HTTP_ACCEPT_ENCODING).toString().split(",");
 
-	for (String accepted : acceptedList) {
-	    accepted = accepted.trim();
+      for (String accepted : acceptedList) {
+         accepted = accepted.trim();
 
-	    if (accepted.equalsIgnoreCase("gzip")) {
-		encoding = Encoding.GZIP;
-		break;
-	    } else if (accepted.equalsIgnoreCase("deflate")) {
-		encoding = Encoding.DEFLATE;
-		break;
-	    }
-	}
+         if (accepted.equalsIgnoreCase("gzip")) {
+            encoding = Encoding.GZIP;
+            break;
+         } else if (accepted.equalsIgnoreCase("deflate")) {
+            encoding = Encoding.DEFLATE;
+            break;
+         }
+      }
 
-	if (encoding == Encoding.NONE) {
-	    return BooleanValue.FALSE;
-	}
+      if (encoding == Encoding.NONE) {
+         return BooleanValue.FALSE;
+      }
 
-	GZOutputPair pair = null;
+      GZOutputPair pair = null;
 
-	StringValue result = env.createBinaryBuilder();
+      StringValue result = env.createBinaryBuilder();
 
-	if ((state & (PHP_OUTPUT_HANDLER_START)) != 0) {
-	    HttpModule.header(
-		    env, env.createString("Vary: Accept-Encoding"), true, 0);
+      if ((state & (PHP_OUTPUT_HANDLER_START)) != 0) {
+         HttpModule.header(
+                 env, env.createString("Vary: Accept-Encoding"), true, 0);
 
-	    int encodingFlag = 0;
+         int encodingFlag = 0;
 
-	    pair = new GZOutputPair();
-	    pair._tempStream = new StringBuilderOutputStream(result);
-	    pair._tempStream.setStringBuilder(result);
+         pair = new GZOutputPair();
+         pair._tempStream = new StringBuilderOutputStream(result);
+         pair._tempStream.setStringBuilder(result);
 
-	    try {
-		if (encoding == Encoding.GZIP) {
-		    HttpModule.header(
-			    env, env.createString("Content-Encoding: gzip"), true, 0);
+         try {
+            if (encoding == Encoding.GZIP) {
+               HttpModule.header(
+                       env, env.createString("Content-Encoding: gzip"), true, 0);
 
-		    pair._outputStream = new GZIPOutputStream(pair._tempStream);
-		} else if (encoding == Encoding.DEFLATE) {
-		    HttpModule.header(
-			    env, env.createString("Content-Encoding: deflate"), true, 0);
+               pair._outputStream = new GZIPOutputStream(pair._tempStream);
+            } else if (encoding == Encoding.DEFLATE) {
+               HttpModule.header(
+                       env, env.createString("Content-Encoding: deflate"), true, 0);
 
-		    pair._outputStream = new DeflaterOutputStream(pair._tempStream);
-		}
-	    } catch (IOException e) {
-		return BooleanValue.FALSE;
-	    }
+               pair._outputStream = new DeflaterOutputStream(pair._tempStream);
+            }
+         } catch (IOException e) {
+            return BooleanValue.FALSE;
+         }
 
-	    env.setGzStream(pair);
-	} else {
-	    pair = (GZOutputPair) env.getGzStream();
+         env.setGzStream(pair);
+      } else {
+         pair = (GZOutputPair) env.getGzStream();
 
-	    if (pair == null) {
-		return BooleanValue.FALSE;
-	    }
+         if (pair == null) {
+            return BooleanValue.FALSE;
+         }
 
-	    pair._tempStream.setStringBuilder(result);
-	}
+         pair._tempStream.setStringBuilder(result);
+      }
 
-	try {
-	    buffer.writeTo(pair._outputStream);
-	    pair._outputStream.flush();
+      try {
+         buffer.writeTo(pair._outputStream);
+         pair._outputStream.flush();
 
-	    if ((state & (PHP_OUTPUT_HANDLER_END)) != 0) {
-		pair._outputStream.close();
-	    }
-	} catch (IOException e) {
-	    return BooleanValue.FALSE;
-	}
+         if ((state & (PHP_OUTPUT_HANDLER_END)) != 0) {
+            pair._outputStream.close();
+         }
+      } catch (IOException e) {
+         return BooleanValue.FALSE;
+      }
 
-	pair._tempStream.setStringBuilder(null);
+      pair._tempStream.setStringBuilder(null);
 
-	return result;
-    }
-    static final IniDefinition INI_OUTPUT_BUFFERING = _iniDefinitions.add("output_buffering", false, PHP_INI_PERDIR);
-    static final IniDefinition INI_OUTPUT_HANDLER = _iniDefinitions.add("output_handler", "", PHP_INI_PERDIR);
-    static final IniDefinition INI_IMPLICIT_FLUSH = _iniDefinitions.add("implicit_flush", false, PHP_INI_ALL);
+      return result;
+   }
+   static final IniDefinition INI_OUTPUT_BUFFERING = _iniDefinitions.add("output_buffering", false, PHP_INI_PERDIR);
+   static final IniDefinition INI_OUTPUT_HANDLER = _iniDefinitions.add("output_handler", "", PHP_INI_PERDIR);
+   static final IniDefinition INI_IMPLICIT_FLUSH = _iniDefinitions.add("implicit_flush", false, PHP_INI_ALL);
 }

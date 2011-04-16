@@ -35,46 +35,46 @@ import com.caucho.quercus.expr.Expr;
 
 public class DoubleObjectMarshal extends Marshal {
 
-    public static final Marshal MARSHAL = new DoubleObjectMarshal();
+   public static final Marshal MARSHAL = new DoubleObjectMarshal();
 
-    public boolean isReadOnly() {
-	return true;
-    }
+   public boolean isReadOnly() {
+      return true;
+   }
 
-    public Object marshal(Env env, Expr expr, Class expectedClass) {
-	return new Double(expr.evalDouble(env));
-    }
+   public Object marshal(Env env, Expr expr, Class expectedClass) {
+      return new Double(expr.evalDouble(env));
+   }
 
-    public Object marshal(Env env, Value value, Class expectedClass) {
-	return value.toJavaDouble();
-    }
+   public Object marshal(Env env, Value value, Class expectedClass) {
+      return value.toJavaDouble();
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	if (value == null) {
-	    return DoubleValue.ZERO;
-	} else {
-	    return new DoubleValue(((Number) value).doubleValue());
-	}
-    }
+   public Value unmarshal(Env env, Object value) {
+      if (value == null) {
+         return DoubleValue.ZERO;
+      } else {
+         return new DoubleValue(((Number) value).doubleValue());
+      }
+   }
 
-    @Override
-    protected int getMarshalingCostImpl(Value argValue) {
-	return argValue.toDoubleMarshalCost() + 1;
+   @Override
+   protected int getMarshalingCostImpl(Value argValue) {
+      return argValue.toDoubleMarshalCost() + 1;
 
-	/*
-	if (argValue instanceof DoubleValue)
-	return COST_EQUAL;
-	else if (argValue.isLongConvertible())
-	return COST_LOSSY_NUMERIC;
-	else if (argValue.isDoubleConvertible())
-	return COST_LOSSLESS_NUMERIC;
-	else
-	return Marshal.FOUR;
-	 */
-    }
+      /*
+      if (argValue instanceof DoubleValue)
+      return COST_EQUAL;
+      else if (argValue.isLongConvertible())
+      return COST_LOSSY_NUMERIC;
+      else if (argValue.isDoubleConvertible())
+      return COST_LOSSLESS_NUMERIC;
+      else
+      return Marshal.FOUR;
+       */
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return Double.class;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return Double.class;
+   }
 }

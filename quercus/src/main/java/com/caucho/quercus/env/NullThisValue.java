@@ -38,17 +38,17 @@ import com.caucho.quercus.program.ClassDef;
  * Represents a PHP null value, used for 
  */
 public class NullThisValue extends NullValue
-	implements Serializable {
+        implements Serializable {
 
-    public static final NullThisValue NULL = new NullThisValue();
+   public static final NullThisValue NULL = new NullThisValue();
 
-    private NullThisValue() {
-    }
+   private NullThisValue() {
+   }
 
-    //
-    // Java Serialization
-    //
-    private Object readResolve() {
-	return NULL;
-    }
+   //
+   // Java Serialization
+   //
+   private Object readResolve() {
+      return NULL;
+   }
 }

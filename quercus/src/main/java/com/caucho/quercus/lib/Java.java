@@ -39,13 +39,13 @@ import com.caucho.util.L10N;
  */
 public class Java {
 
-    private static final L10N L = new L10N(Java.class);
+   private static final L10N L = new L10N(Java.class);
 
-    /**
-     * Create a new Java API object.
-     */
-    public static Object __construct(Env env,
-	    String className, Value[] args) {
-	return JavaModule.java(env, className, args);
-    }
+   /**
+    * Create a new Java API object.
+    */
+   public static Object __construct(Env env,
+           String className, Value[] args) {
+      return JavaModule.java(env, className, args);
+   }
 }

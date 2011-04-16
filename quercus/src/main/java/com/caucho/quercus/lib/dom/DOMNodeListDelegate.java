@@ -38,117 +38,117 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class DOMNodeListDelegate
-	implements TraversableDelegate {
+        implements TraversableDelegate {
 
-    public DOMNodeListDelegate() {
-    }
+   public DOMNodeListDelegate() {
+   }
 
-    public Iterator<Value> getKeyIterator(Env env, ObjectValue obj) {
-	return new DOMNodeListKeyIterator((DOMNodeList) obj.toJavaObject());
-    }
+   public Iterator<Value> getKeyIterator(Env env, ObjectValue obj) {
+      return new DOMNodeListKeyIterator((DOMNodeList) obj.toJavaObject());
+   }
 
-    public Iterator<Value> getValueIterator(Env env, ObjectValue obj) {
-	return new DOMNodeListValueIterator(env, (DOMNodeList) obj.toJavaObject());
-    }
+   public Iterator<Value> getValueIterator(Env env, ObjectValue obj) {
+      return new DOMNodeListValueIterator(env, (DOMNodeList) obj.toJavaObject());
+   }
 
-    public Iterator<Map.Entry<Value, Value>> getIterator(Env env, ObjectValue obj) {
-	return new DOMNodeListIterator(env, (DOMNodeList) obj.toJavaObject());
-    }
+   public Iterator<Map.Entry<Value, Value>> getIterator(Env env, ObjectValue obj) {
+      return new DOMNodeListIterator(env, (DOMNodeList) obj.toJavaObject());
+   }
 
-    public class DOMNodeListKeyIterator
-	    implements Iterator<Value> {
+   public class DOMNodeListKeyIterator
+           implements Iterator<Value> {
 
-	private DOMNodeList _list;
-	private int _index;
+      private DOMNodeList _list;
+      private int _index;
 
-	public DOMNodeListKeyIterator(DOMNodeList list) {
-	    _list = list;
-	}
+      public DOMNodeListKeyIterator(DOMNodeList list) {
+         _list = list;
+      }
 
-	public boolean hasNext() {
-	    return _index < _list.getLength();
-	}
+      public boolean hasNext() {
+         return _index < _list.getLength();
+      }
 
-	public Value next() {
-	    return LongValue.create(_index++);
-	}
+      public Value next() {
+         return LongValue.create(_index++);
+      }
 
-	public void remove() {
-	    throw new UnsupportedOperationException();
-	}
-    }
+      public void remove() {
+         throw new UnsupportedOperationException();
+      }
+   }
 
-    public class DOMNodeListValueIterator
-	    implements Iterator<Value> {
+   public class DOMNodeListValueIterator
+           implements Iterator<Value> {
 
-	private Env _env;
-	private DOMNodeList _list;
-	private int _index;
+      private Env _env;
+      private DOMNodeList _list;
+      private int _index;
 
-	public DOMNodeListValueIterator(Env env, DOMNodeList list) {
-	    _env = env;
-	    _list = list;
-	}
+      public DOMNodeListValueIterator(Env env, DOMNodeList list) {
+         _env = env;
+         _list = list;
+      }
 
-	public boolean hasNext() {
-	    return _index < _list.getLength();
-	}
+      public boolean hasNext() {
+         return _index < _list.getLength();
+      }
 
-	public Value next() {
-	    return _env.wrapJava(_list.item(_index++));
-	}
+      public Value next() {
+         return _env.wrapJava(_list.item(_index++));
+      }
 
-	public void remove() {
-	    throw new UnsupportedOperationException();
-	}
-    }
+      public void remove() {
+         throw new UnsupportedOperationException();
+      }
+   }
 
-    public class DOMNodeListIterator
-	    implements Iterator<Map.Entry<Value, Value>> {
+   public class DOMNodeListIterator
+           implements Iterator<Map.Entry<Value, Value>> {
 
-	private Env _env;
-	private DOMNodeList _list;
-	private int _index;
+      private Env _env;
+      private DOMNodeList _list;
+      private int _index;
 
-	public DOMNodeListIterator(Env env, DOMNodeList list) {
-	    _env = env;
-	    _list = list;
-	}
+      public DOMNodeListIterator(Env env, DOMNodeList list) {
+         _env = env;
+         _list = list;
+      }
 
-	public boolean hasNext() {
-	    return _index < _list.getLength();
-	}
+      public boolean hasNext() {
+         return _index < _list.getLength();
+      }
 
-	public Map.Entry<Value, Value> next() {
-	    return new DOMNodeListEntry(_index, _env.wrapJava(_list.item(_index++)));
-	}
+      public Map.Entry<Value, Value> next() {
+         return new DOMNodeListEntry(_index, _env.wrapJava(_list.item(_index++)));
+      }
 
-	public void remove() {
-	    throw new UnsupportedOperationException();
-	}
-    }
+      public void remove() {
+         throw new UnsupportedOperationException();
+      }
+   }
 
-    public class DOMNodeListEntry
-	    implements Map.Entry<Value, Value> {
+   public class DOMNodeListEntry
+           implements Map.Entry<Value, Value> {
 
-	private int _key;
-	private Value _value;
+      private int _key;
+      private Value _value;
 
-	public DOMNodeListEntry(int index, Value value) {
-	    _key = index;
-	    _value = value;
-	}
+      public DOMNodeListEntry(int index, Value value) {
+         _key = index;
+         _value = value;
+      }
 
-	public Value getKey() {
-	    return LongValue.create(_key);
-	}
+      public Value getKey() {
+         return LongValue.create(_key);
+      }
 
-	public Value getValue() {
-	    return _value;
-	}
+      public Value getValue() {
+         return _value;
+      }
 
-	public Value setValue(Value value) {
-	    throw new UnsupportedOperationException();
-	}
-    }
+      public Value setValue(Value value) {
+         throw new UnsupportedOperationException();
+      }
+   }
 }

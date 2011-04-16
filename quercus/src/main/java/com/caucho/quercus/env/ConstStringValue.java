@@ -36,228 +36,228 @@ import java.io.PrintWriter;
  * For compiled code.
  */
 public class ConstStringValue
-	extends StringBuilderValue {
+        extends StringBuilderValue {
 
-    public static final ConstStringValue EMPTY = new ConstStringValue();
-    protected LongValue _longValue;
-    protected DoubleValue _doubleValue;
-    protected String _string;
-    protected Value _key;
-    protected ValueType _valueType;
-    protected char[] _serializeValue;
+   public static final ConstStringValue EMPTY = new ConstStringValue();
+   protected LongValue _longValue;
+   protected DoubleValue _doubleValue;
+   protected String _string;
+   protected Value _key;
+   protected ValueType _valueType;
+   protected char[] _serializeValue;
 
-    public ConstStringValue() {
-	super();
-    }
+   public ConstStringValue() {
+      super();
+   }
 
-    public ConstStringValue(StringBuilderValue sb) {
-	super(sb.getBuffer(), 0, sb.getOffset());
-    }
+   public ConstStringValue(StringBuilderValue sb) {
+      super(sb.getBuffer(), 0, sb.getOffset());
+   }
 
-    public ConstStringValue(byte[] buffer, int offset, int length) {
-	super(buffer, offset, length);
-    }
+   public ConstStringValue(byte[] buffer, int offset, int length) {
+      super(buffer, offset, length);
+   }
 
-    public ConstStringValue(char[] buffer, int offset, int length) {
-	super(buffer, offset, length);
-    }
+   public ConstStringValue(char[] buffer, int offset, int length) {
+      super(buffer, offset, length);
+   }
 
-    /**
-     * Creates a new StringBuilderValue with the buffer without copying.
-     */
-    public ConstStringValue(char[] buffer, int length) {
-	super(buffer, length);
-    }
+   /**
+    * Creates a new StringBuilderValue with the buffer without copying.
+    */
+   public ConstStringValue(char[] buffer, int length) {
+      super(buffer, length);
+   }
 
-    public ConstStringValue(byte[] buffer) {
-	super(buffer);
-    }
+   public ConstStringValue(byte[] buffer) {
+      super(buffer);
+   }
 
-    public ConstStringValue(char ch) {
-	super(ch);
-    }
+   public ConstStringValue(char ch) {
+      super(ch);
+   }
 
-    public ConstStringValue(String s) {
-	super(s);
+   public ConstStringValue(String s) {
+      super(s);
 
-	_string = s;
-    }
+      _string = s;
+   }
 
-    public ConstStringValue(char[] s) {
-	super(s);
-    }
+   public ConstStringValue(char[] s) {
+      super(s);
+   }
 
-    public ConstStringValue(char[] s, Value v1) {
-	super(s, v1);
-    }
+   public ConstStringValue(char[] s, Value v1) {
+      super(s, v1);
+   }
 
-    public ConstStringValue(byte[] s, Value v1) {
-	super(s, v1);
-    }
+   public ConstStringValue(byte[] s, Value v1) {
+      super(s, v1);
+   }
 
-    public ConstStringValue(Value v1) {
-	super(v1);
-    }
+   public ConstStringValue(Value v1) {
+      super(v1);
+   }
 
-    public ConstStringValue(Value v1, Value v2) {
-	super(v1, v2);
-    }
+   public ConstStringValue(Value v1, Value v2) {
+      super(v1, v2);
+   }
 
-    public ConstStringValue(Value v1, Value v2, Value v3) {
-	super(v1, v2, v3);
-    }
+   public ConstStringValue(Value v1, Value v2, Value v3) {
+      super(v1, v2, v3);
+   }
 
-    public boolean isStatic() {
-	return true;
-    }
+   public boolean isStatic() {
+      return true;
+   }
 
-    /**
-     * Converts to a long vaule
-     */
-    @Override
-    public LongValue toLongValue() {
-	if (_longValue == null) {
-	    _longValue = LongValue.create(super.toLong());
-	}
+   /**
+    * Converts to a long vaule
+    */
+   @Override
+   public LongValue toLongValue() {
+      if (_longValue == null) {
+         _longValue = LongValue.create(super.toLong());
+      }
 
-	return _longValue;
-    }
+      return _longValue;
+   }
 
-    /**
-     * Converts to a double vaule
-     */
-    @Override
-    public DoubleValue toDoubleValue() {
-	if (_doubleValue == null) {
-	    _doubleValue = new DoubleValue(super.toDouble());
-	}
+   /**
+    * Converts to a double vaule
+    */
+   @Override
+   public DoubleValue toDoubleValue() {
+      if (_doubleValue == null) {
+         _doubleValue = new DoubleValue(super.toDouble());
+      }
 
-	return _doubleValue;
-    }
+      return _doubleValue;
+   }
 
-    /**
-     * Converts to a long.
-     */
-    @Override
-    public long toLong() {
-	return toLongValue().toLong();
-    }
+   /**
+    * Converts to a long.
+    */
+   @Override
+   public long toLong() {
+      return toLongValue().toLong();
+   }
 
-    /**
-     * Converts to a double.
-     */
-    @Override
-    public double toDouble() {
-	return toDoubleValue().toDouble();
-    }
+   /**
+    * Converts to a double.
+    */
+   @Override
+   public double toDouble() {
+      return toDoubleValue().toDouble();
+   }
 
-    /**
-     * Returns the ValueType.
-     */
-    @Override
-    public ValueType getValueType() {
-	if (_valueType == null) {
-	    _valueType = super.getValueType();
-	}
+   /**
+    * Returns the ValueType.
+    */
+   @Override
+   public ValueType getValueType() {
+      if (_valueType == null) {
+         _valueType = super.getValueType();
+      }
 
-	return _valueType;
-    }
+      return _valueType;
+   }
 
-    /**
-     * Converts to a key.
-     */
-    @Override
-    public Value toKey() {
-	if (_key == null) {
-	    _key = super.toKey();
-	}
+   /**
+    * Converts to a key.
+    */
+   @Override
+   public Value toKey() {
+      if (_key == null) {
+         _key = super.toKey();
+      }
 
-	return _key;
-    }
+      return _key;
+   }
 
-    /**
-     * Serializes the value.
-     */
-    @Override
-    public void serialize(Env env, StringBuilder sb) {
-	if (_serializeValue == null) {
-	    StringBuilder s = new StringBuilder();
+   /**
+    * Serializes the value.
+    */
+   @Override
+   public void serialize(Env env, StringBuilder sb) {
+      if (_serializeValue == null) {
+         StringBuilder s = new StringBuilder();
 
-	    super.serialize(env, s);
+         super.serialize(env, s);
 
-	    int len = s.length();
+         int len = s.length();
 
-	    _serializeValue = new char[len];
-	    s.getChars(0, len, _serializeValue, 0);
-	}
+         _serializeValue = new char[len];
+         s.getChars(0, len, _serializeValue, 0);
+      }
 
-	sb.append(_serializeValue, 0, _serializeValue.length);
-    }
+      sb.append(_serializeValue, 0, _serializeValue.length);
+   }
 
-    /**
-     * Generates code to recreate the expression.
-     *
-     * @param out the writer to the Java source code.
-     */
-    @Override
-    public void generate(PrintWriter out)
-	    throws IOException {
-	// max JVM constant string length
-	int maxSublen = 0xFFFE;
+   /**
+    * Generates code to recreate the expression.
+    *
+    * @param out the writer to the Java source code.
+    */
+   @Override
+   public void generate(PrintWriter out)
+           throws IOException {
+      // max JVM constant string length
+      int maxSublen = 0xFFFE;
 
-	int len = length();
+      int len = length();
 
-	if (len == 1) {
-	    out.print("(ConstStringValue.create((char) '");
-	    printJavaChar(out, charAt(0));
-	    out.print("'))");
-	} /*
-	else if (len < maxSublen) {
-	out.print("(new ConstStringValue(\"");
-	printJavaString(out, this);
-	out.print("\"))");
-	}
-	 */ else if (len < maxSublen) {
-	    out.print("(new CompiledConstStringValue (\"");
-	    printJavaString(out, this);
-	    out.print("\", ");
-	    toLongValue().generate(out);
-	    out.print(", ");
-	    toDoubleValue().generate(out);
-	    out.print(", ");
-	    out.print(getValueType());
-	    out.print(", ");
+      if (len == 1) {
+         out.print("(ConstStringValue.create((char) '");
+         printJavaChar(out, charAt(0));
+         out.print("'))");
+      } /*
+      else if (len < maxSublen) {
+      out.print("(new ConstStringValue(\"");
+      printJavaString(out, this);
+      out.print("\"))");
+      }
+       */ else if (len < maxSublen) {
+         out.print("(new CompiledConstStringValue (\"");
+         printJavaString(out, this);
+         out.print("\", ");
+         toLongValue().generate(out);
+         out.print(", ");
+         toDoubleValue().generate(out);
+         out.print(", ");
+         out.print(getValueType());
+         out.print(", ");
 
-	    Value key = toKey();
+         Value key = toKey();
 
-	    if (key instanceof LongValue) {
-		key.generate(out);
-		out.print(", ");
-	    }
+         if (key instanceof LongValue) {
+            key.generate(out);
+            out.print(", ");
+         }
 
-	    out.print(hashCode());
-	    out.print("))");
-	} else {
-	    out.print("(new ConstStringValue(new StringBuilderValue (\"");
+         out.print(hashCode());
+         out.print("))");
+      } else {
+         out.print("(new ConstStringValue(new StringBuilderValue (\"");
 
-	    // php/313u
-	    for (int i = 0; i < len; i += maxSublen) {
-		if (i != 0) {
-		    out.print("\").append(\"");
-		}
+         // php/313u
+         for (int i = 0; i < len; i += maxSublen) {
+            if (i != 0) {
+               out.print("\").append(\"");
+            }
 
-		printJavaString(out, substring(i, Math.min(i + maxSublen, len)));
-	    }
+            printJavaString(out, substring(i, Math.min(i + maxSublen, len)));
+         }
 
-	    out.print("\")))");
-	}
-    }
+         out.print("\")))");
+      }
+   }
 
-    public String toString() {
-	if (_string == null) {
-	    _string = super.toString();
-	}
+   public String toString() {
+      if (_string == null) {
+         _string = super.toString();
+      }
 
-	return _string;
-    }
+      return _string;
+   }
 }

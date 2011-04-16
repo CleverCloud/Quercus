@@ -33,14 +33,14 @@ import com.caucho.quercus.env.Env;
 import org.w3c.dom.EntityReference;
 
 public class DOMEntityReference
-	extends DOMNode<EntityReference> {
+        extends DOMNode<EntityReference> {
 
-    public static DOMEntityReference __construct(Env env, String name) {
-	return getImpl(env).createEntityReference(name);
-    }
+   public static DOMEntityReference __construct(Env env, String name) {
+      return getImpl(env).createEntityReference(name);
+   }
 
-    DOMEntityReference(DOMImplementation impl, EntityReference delegate) {
-	super(impl, delegate);
-    }
-    // no methods
+   DOMEntityReference(DOMImplementation impl, EntityReference delegate) {
+      super(impl, delegate);
+   }
+   // no methods
 }

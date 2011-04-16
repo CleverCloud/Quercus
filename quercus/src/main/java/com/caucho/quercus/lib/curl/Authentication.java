@@ -38,245 +38,245 @@ import java.security.NoSuchAlgorithmException;
 
 public class Authentication {
 
-    /**
-     * Returns an authorization response string.
-     * Supports digest and basic only.
-     */
-    public static String getAuthorization(String user,
-	    String pass,
-	    String requestMethod,
-	    String uri,
-	    String header) {
-	if (header.startsWith("Digest")) {
-	    return digest(user, pass, requestMethod, uri, header);
-	} else {
-	    return basic(user, pass);
-	}
-    }
+   /**
+    * Returns an authorization response string.
+    * Supports digest and basic only.
+    */
+   public static String getAuthorization(String user,
+           String pass,
+           String requestMethod,
+           String uri,
+           String header) {
+      if (header.startsWith("Digest")) {
+         return digest(user, pass, requestMethod, uri, header);
+      } else {
+         return basic(user, pass);
+      }
+   }
 
-    /**
-     * Returns a basic encoded response string.
-     */
-    public static String basic(String user, String pass) {
-	StringBuilder sb = new StringBuilder();
+   /**
+    * Returns a basic encoded response string.
+    */
+   public static String basic(String user, String pass) {
+      StringBuilder sb = new StringBuilder();
 
-	sb.append(user);
-	sb.append(':');
-	sb.append(pass);
+      sb.append(user);
+      sb.append(':');
+      sb.append(pass);
 
-	return basic(sb.toString());
-    }
+      return basic(sb.toString());
+   }
 
-    public static String basic(String usernamePassword) {
-	StringBuilder sb = new StringBuilder();
+   public static String basic(String usernamePassword) {
+      StringBuilder sb = new StringBuilder();
 
-	sb.append("Basic ");
-	sb.append(Base64.encode(usernamePassword));
+      sb.append("Basic ");
+      sb.append(Base64.encode(usernamePassword));
 
-	return sb.toString();
-    }
+      return sb.toString();
+   }
 
-    /**
-     * Returns a digest encoded response string.
-     */
-    public static String digest(String user,
-	    String pass,
-	    String requestMethod,
-	    String uri,
-	    String header) {
-	StringBuilder sb = new StringBuilder();
+   /**
+    * Returns a digest encoded response string.
+    */
+   public static String digest(String user,
+           String pass,
+           String requestMethod,
+           String uri,
+           String header) {
+      StringBuilder sb = new StringBuilder();
 
-	sb.append("Digest ");
-	sb.append("username=\"");
-	sb.append(user);
+      sb.append("Digest ");
+      sb.append("username=\"");
+      sb.append(user);
 
-	Scanner scanner = new Scanner(header);
+      Scanner scanner = new Scanner(header);
 
-	String realm = "";
-	String nonce = "";
-	String qop = "";
-	String opaque = null;
-	String algorithm = null;
+      String realm = "";
+      String nonce = "";
+      String qop = "";
+      String opaque = null;
+      String algorithm = null;
 
-	String key;
-	while ((key = scanner.readKey()) != null) {
-	    String value = scanner.readValue();
+      String key;
+      while ((key = scanner.readKey()) != null) {
+         String value = scanner.readValue();
 
-	    if (key.equals("realm")) {
-		realm = value;
-	    } else if (key.equals("nonce")) {
-		nonce = value;
-	    } else if (key.equals("qop")) {
-		qop = value;
-	    } else if (key.equals("opaque")) {
-		opaque = value;
-	    } else if (key.equals("algorithm")) {
-		algorithm = value;
-	    }
-	}
+         if (key.equals("realm")) {
+            realm = value;
+         } else if (key.equals("nonce")) {
+            nonce = value;
+         } else if (key.equals("qop")) {
+            qop = value;
+         } else if (key.equals("opaque")) {
+            opaque = value;
+         } else if (key.equals("algorithm")) {
+            algorithm = value;
+         }
+      }
 
-	scanner.close();
+      scanner.close();
 
-	sb.append("\", realm=\"");
-	sb.append(realm);
+      sb.append("\", realm=\"");
+      sb.append(realm);
 
-	sb.append("\", nonce=\"");
-	sb.append(nonce);
+      sb.append("\", nonce=\"");
+      sb.append(nonce);
 
-	sb.append("\", uri=\"");
-	sb.append(uri);
+      sb.append("\", uri=\"");
+      sb.append(uri);
 
-	sb.append("\", qop=\"");
-	sb.append("auth");
+      sb.append("\", qop=\"");
+      sb.append("auth");
 
-	String cnonce = Base64.encode(String.valueOf(RandomUtil.getRandomLong()));
-	sb.append("\", cnonce=\"");
-	sb.append(cnonce);
+      String cnonce = Base64.encode(String.valueOf(RandomUtil.getRandomLong()));
+      sb.append("\", cnonce=\"");
+      sb.append(cnonce);
 
-	String nc = "00000001";
-	sb.append("\", nc=\"");
-	sb.append(nc);
+      String nc = "00000001";
+      sb.append("\", nc=\"");
+      sb.append(nc);
 
-	if (opaque != null) {
-	    sb.append("\", opaque=\"");
-	    sb.append(opaque);
-	}
+      if (opaque != null) {
+         sb.append("\", opaque=\"");
+         sb.append(opaque);
+      }
 
-	if (algorithm != null) {
-	    sb.append("\", algorithm=\"");
-	    sb.append(algorithm);
-	} else {
-	    algorithm = "MD5";
-	}
+      if (algorithm != null) {
+         sb.append("\", algorithm=\"");
+         sb.append(algorithm);
+      } else {
+         algorithm = "MD5";
+      }
 
-	sb.append("\", response=\"");
-	appendResponse(sb,
-		user,
-		realm,
-		pass,
-		requestMethod,
-		uri,
-		nonce,
-		nc,
-		cnonce,
-		qop,
-		algorithm);
+      sb.append("\", response=\"");
+      appendResponse(sb,
+              user,
+              realm,
+              pass,
+              requestMethod,
+              uri,
+              nonce,
+              nc,
+              cnonce,
+              qop,
+              algorithm);
 
-	sb.append('"');
-	return sb.toString();
-    }
+      sb.append('"');
+      return sb.toString();
+   }
 
-    /**
-     * Appends the authorization string to the StringBuilder.
-     */
-    private static void appendResponse(StringBuilder sb,
-	    String user,
-	    String realm,
-	    String pass,
-	    String requestMethod,
-	    String uri,
-	    String nonce,
-	    String nc,
-	    String cnonce,
-	    String qop,
-	    String algorithm) {
-	MessageDigest resultDigest = null;
-	MessageDigest scratchDigest = null;
+   /**
+    * Appends the authorization string to the StringBuilder.
+    */
+   private static void appendResponse(StringBuilder sb,
+           String user,
+           String realm,
+           String pass,
+           String requestMethod,
+           String uri,
+           String nonce,
+           String nc,
+           String cnonce,
+           String qop,
+           String algorithm) {
+      MessageDigest resultDigest = null;
+      MessageDigest scratchDigest = null;
 
-	try {
-	    resultDigest = MessageDigest.getInstance(algorithm);
-	    scratchDigest = MessageDigest.getInstance(algorithm);
-	} catch (NoSuchAlgorithmException e) {
-	    throw new QuercusModuleException(e);
-	}
+      try {
+         resultDigest = MessageDigest.getInstance(algorithm);
+         scratchDigest = MessageDigest.getInstance(algorithm);
+      } catch (NoSuchAlgorithmException e) {
+         throw new QuercusModuleException(e);
+      }
 
-	{
-	    md5(scratchDigest, user);
-	    scratchDigest.update((byte) ':');
+      {
+         md5(scratchDigest, user);
+         scratchDigest.update((byte) ':');
 
-	    md5(scratchDigest, realm);
-	    scratchDigest.update((byte) ':');
+         md5(scratchDigest, realm);
+         scratchDigest.update((byte) ':');
 
-	    md5(scratchDigest, pass);
+         md5(scratchDigest, pass);
 
-	    update(resultDigest, scratchDigest.digest());
-	    resultDigest.update((byte) ':');
-	}
+         update(resultDigest, scratchDigest.digest());
+         resultDigest.update((byte) ':');
+      }
 
-	md5(resultDigest, nonce);
-	resultDigest.update((byte) ':');
+      md5(resultDigest, nonce);
+      resultDigest.update((byte) ':');
 
-	md5(resultDigest, nc);
-	resultDigest.update((byte) ':');
+      md5(resultDigest, nc);
+      resultDigest.update((byte) ':');
 
-	md5(resultDigest, cnonce);
-	resultDigest.update((byte) ':');
+      md5(resultDigest, cnonce);
+      resultDigest.update((byte) ':');
 
-	md5(resultDigest, qop);
-	resultDigest.update((byte) ':');
+      md5(resultDigest, qop);
+      resultDigest.update((byte) ':');
 
-	{
-	    scratchDigest.reset();
+      {
+         scratchDigest.reset();
 
-	    md5(scratchDigest, requestMethod);
-	    scratchDigest.update((byte) ':');
+         md5(scratchDigest, requestMethod);
+         scratchDigest.update((byte) ':');
 
-	    md5(scratchDigest, uri);
+         md5(scratchDigest, uri);
 
-	    update(resultDigest, scratchDigest.digest());
-	}
+         update(resultDigest, scratchDigest.digest());
+      }
 
-	appendHex(sb, resultDigest.digest());
-    }
+      appendHex(sb, resultDigest.digest());
+   }
 
-    /**
-     * Updates MD5 hash.
-     */
-    private static void md5(MessageDigest md,
-	    String string) {
-	int length = string.length();
-	for (int i = 0; i < length; i++) {
-	    md.update((byte) string.charAt(i));
-	}
-    }
+   /**
+    * Updates MD5 hash.
+    */
+   private static void md5(MessageDigest md,
+           String string) {
+      int length = string.length();
+      for (int i = 0; i < length; i++) {
+         md.update((byte) string.charAt(i));
+      }
+   }
 
-    /**
-     * Updates MD5 hash result.
-     */
-    private static void update(MessageDigest resultDigest,
-	    byte[] digest) {
-	for (int i = 0; i < digest.length; i++) {
-	    int d1 = (digest[i] >> 4) & 0xf;
-	    int d2 = (digest[i] & 0xf);
+   /**
+    * Updates MD5 hash result.
+    */
+   private static void update(MessageDigest resultDigest,
+           byte[] digest) {
+      for (int i = 0; i < digest.length; i++) {
+         int d1 = (digest[i] >> 4) & 0xf;
+         int d2 = (digest[i] & 0xf);
 
-	    resultDigest.update((byte) toHexChar(d1));
-	    resultDigest.update((byte) toHexChar(d2));
-	}
-    }
+         resultDigest.update((byte) toHexChar(d1));
+         resultDigest.update((byte) toHexChar(d2));
+      }
+   }
 
-    /**
-     * Appends hex characters to StringBuilder.
-     */
-    private static void appendHex(StringBuilder sb,
-	    byte[] digest) {
-	for (int i = 0; i < digest.length; i++) {
-	    int d1 = (digest[i] >> 4) & 0xf;
-	    int d2 = (digest[i] & 0xf);
+   /**
+    * Appends hex characters to StringBuilder.
+    */
+   private static void appendHex(StringBuilder sb,
+           byte[] digest) {
+      for (int i = 0; i < digest.length; i++) {
+         int d1 = (digest[i] >> 4) & 0xf;
+         int d2 = (digest[i] & 0xf);
 
-	    sb.append(toHexChar(d1));
-	    sb.append(toHexChar(d2));
-	}
-    }
+         sb.append(toHexChar(d1));
+         sb.append(toHexChar(d2));
+      }
+   }
 
-    private static char toHexChar(int d) {
-	d &= 0xf;
+   private static char toHexChar(int d) {
+      d &= 0xf;
 
-	if (d < 10) {
-	    return (char) (d + '0');
-	} else {
-	    return (char) (d - 10 + 'a');
-	}
-    }
+      if (d < 10) {
+         return (char) (d + '0');
+      } else {
+         return (char) (d - 10 + 'a');
+      }
+   }
 }
 
 /**
@@ -284,80 +284,80 @@ public class Authentication {
  */
 class Scanner {
 
-    String _header;
-    int _position;
-    int _length;
-    CharBuffer _cb;
+   String _header;
+   int _position;
+   int _length;
+   CharBuffer _cb;
 
-    Scanner(String header) {
-	_header = header;
-	_position = header.indexOf("Digest") + "Digest".length();
-	_length = header.length();
+   Scanner(String header) {
+      _header = header;
+      _position = header.indexOf("Digest") + "Digest".length();
+      _length = header.length();
 
-	_cb = CharBuffer.allocate();
-    }
+      _cb = CharBuffer.allocate();
+   }
 
-    String readKey() {
-	int ch = skipWhitespace();
+   String readKey() {
+      int ch = skipWhitespace();
 
-	if (ch < 0) {
-	    return null;
-	}
+      if (ch < 0) {
+         return null;
+      }
 
-	if (ch == ',') {
-	    ch = skipWhitespace();
-	}
+      if (ch == ',') {
+         ch = skipWhitespace();
+      }
 
-	do {
-	    _cb.append((char) ch);
-	} while ((ch = read()) != '=');
+      do {
+         _cb.append((char) ch);
+      } while ((ch = read()) != '=');
 
-	// discard quote
-	read();
+      // discard quote
+      read();
 
-	String key = _cb.toString();
-	_cb.clear();
+      String key = _cb.toString();
+      _cb.clear();
 
-	return key;
-    }
+      return key;
+   }
 
-    String readValue() {
-	int ch;
-	while ((ch = read()) != '"') {
-	    _cb.append((char) ch);
-	}
+   String readValue() {
+      int ch;
+      while ((ch = read()) != '"') {
+         _cb.append((char) ch);
+      }
 
-	String value = _cb.toString();
-	_cb.clear();
+      String value = _cb.toString();
+      _cb.clear();
 
-	return value;
-    }
+      return value;
+   }
 
-    int skipWhitespace() {
-	int ch;
+   int skipWhitespace() {
+      int ch;
 
-	while ((ch = read()) >= 0) {
-	    if (ch != ' '
-		    && ch != '\t'
-		    && ch != '\r'
-		    && ch != '\n'
-		    && ch != '\f') {
-		break;
-	    }
-	}
+      while ((ch = read()) >= 0) {
+         if (ch != ' '
+                 && ch != '\t'
+                 && ch != '\r'
+                 && ch != '\n'
+                 && ch != '\f') {
+            break;
+         }
+      }
 
-	return ch;
-    }
+      return ch;
+   }
 
-    int read() {
-	if (_position >= _length) {
-	    return -1;
-	} else {
-	    return _header.charAt(_position++);
-	}
-    }
+   int read() {
+      if (_position >= _length) {
+         return -1;
+      } else {
+         return _header.charAt(_position++);
+      }
+   }
 
-    void close() {
-	_cb.free();
-    }
+   void close() {
+      _cb.free();
+   }
 }

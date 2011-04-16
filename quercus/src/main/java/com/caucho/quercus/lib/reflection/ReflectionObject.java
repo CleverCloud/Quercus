@@ -36,30 +36,30 @@ import com.caucho.quercus.env.Value;
 
 public class ReflectionObject extends ReflectionClass {
 
-    final private void __clone() {
-    }
+   final private void __clone() {
+   }
 
-    protected ReflectionObject(QuercusClass cls) {
-	super(cls);
-    }
+   protected ReflectionObject(QuercusClass cls) {
+      super(cls);
+   }
 
-    public static ReflectionObject __construct(Env env, Value val) {
-	if (!val.isObject()) {
-	    throw new ReflectionException("parameter must be an object");
-	}
+   public static ReflectionObject __construct(Env env, Value val) {
+      if (!val.isObject()) {
+         throw new ReflectionException("parameter must be an object");
+      }
 
-	ObjectValue obj = (ObjectValue) val.toObject(env);
+      ObjectValue obj = (ObjectValue) val.toObject(env);
 
-	return new ReflectionObject(obj.getQuercusClass());
-    }
+      return new ReflectionObject(obj.getQuercusClass());
+   }
 
-    public static String export(Env env,
-	    Value object,
-	    @Optional boolean isReturn) {
-	return null;
-    }
+   public static String export(Env env,
+           Value object,
+           @Optional boolean isReturn) {
+      return null;
+   }
 
-    public String toString() {
-	return "ReflectionObject[" + getName() + "]";
-    }
+   public String toString() {
+      return "ReflectionObject[" + getName() + "]";
+   }
 }

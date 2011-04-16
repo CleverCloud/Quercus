@@ -45,63 +45,63 @@ import java.util.logging.Logger;
  */
 public class GoogleQuercus extends QuercusContext {
 
-    private static L10N L = new L10N(GoogleQuercus.class);
-    private static final Logger log = Logger.getLogger(GoogleQuercus.class.getName());
-    private ModuleContext _localModuleContext;
-    private long _dependencyCheckInterval = 2000L;
+   private static L10N L = new L10N(GoogleQuercus.class);
+   private static final Logger log = Logger.getLogger(GoogleQuercus.class.getName());
+   private ModuleContext _localModuleContext;
+   private long _dependencyCheckInterval = 2000L;
 
-    /**
-     * Constructor.
-     */
-    public GoogleQuercus() {
-	super();
+   /**
+    * Constructor.
+    */
+   public GoogleQuercus() {
+      super();
 
-	setPwd(Vfs.lookup());
-	// setWorkDir(WorkDir.getLocalWorkDir());
-    }
+      setPwd(Vfs.lookup());
+      // setWorkDir(WorkDir.getLocalWorkDir());
+   }
 
-    /*
-    @Override
-    public ModuleContext getLocalContext(ClassLoader loader)
-    {
-    Thread thread = Thread.currentThread();
-    ClassLoader currentLoader = thread.getContextClassLoader();
-    
-    synchronized (this) {
-    if (_localModuleContext == null) {
-    _localModuleContext = createModuleContext(null, currentLoader);
+   /*
+   @Override
+   public ModuleContext getLocalContext(ClassLoader loader)
+   {
+   Thread thread = Thread.currentThread();
+   ClassLoader currentLoader = thread.getContextClassLoader();
 
-    _localModuleContext.init();
-    }
-    }
+   synchronized (this) {
+   if (_localModuleContext == null) {
+   _localModuleContext = createModuleContext(null, currentLoader);
 
-    return _localModuleContext;
-    }
-     */
-    @Override
-    protected ModuleContext createModuleContext(ModuleContext parent,
-	    ClassLoader loader) {
-	return new ModuleContext(parent, loader);
-    }
+   _localModuleContext.init();
+   }
+   }
 
-    public Env createEnv(QuercusPage page,
-	    WriteStream out,
-	    HttpServletRequest request,
-	    HttpServletResponse response) {
-	return new GoogleEnv(this, page, out, request, response);
-    }
+   return _localModuleContext;
+   }
+    */
+   @Override
+   protected ModuleContext createModuleContext(ModuleContext parent,
+           ClassLoader loader) {
+      return new ModuleContext(parent, loader);
+   }
 
-    /*
-    @Override
-    public String getVersion()
-    {
-    return com.caucho.Version.VERSION;
-    }
+   public Env createEnv(QuercusPage page,
+           WriteStream out,
+           HttpServletRequest request,
+           HttpServletResponse response) {
+      return new GoogleEnv(this, page, out, request, response);
+   }
 
-    @Override
-    public String getVersionDate()
-    {
-    return com.caucho.Version.VERSION_DATE;
-    }
-     */
+   /*
+   @Override
+   public String getVersion()
+   {
+   return com.caucho.Version.VERSION;
+   }
+
+   @Override
+   public String getVersionDate()
+   {
+   return com.caucho.Version.VERSION_DATE;
+   }
+    */
 }

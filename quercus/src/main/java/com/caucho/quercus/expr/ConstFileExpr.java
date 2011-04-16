@@ -38,29 +38,29 @@ import com.caucho.quercus.env.Value;
  */
 public class ConstFileExpr extends Expr {
 
-    protected final String _fileName;
+   protected final String _fileName;
 
-    public ConstFileExpr(Location location, String fileName) {
-	super(location);
-	_fileName = fileName;
-    }
+   public ConstFileExpr(Location location, String fileName) {
+      super(location);
+      _fileName = fileName;
+   }
 
-    public ConstFileExpr(String fileName) {
-	this(Location.UNKNOWN, fileName);
-    }
+   public ConstFileExpr(String fileName) {
+      this(Location.UNKNOWN, fileName);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return env.createString(_fileName);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return env.createString(_fileName);
+   }
 
-    public String toString() {
-	return _fileName;
-    }
+   public String toString() {
+      return _fileName;
+   }
 }

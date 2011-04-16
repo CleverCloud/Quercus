@@ -42,97 +42,97 @@ import java.util.ArrayList;
  */
 public class ListHeadExpr extends Expr {
 
-    private static final L10N L = new L10N(ListHeadExpr.class);
-    protected final Expr[] _varList;
-    protected final Value[] _keyList;
-    private String _varName;
+   private static final L10N L = new L10N(ListHeadExpr.class);
+   protected final Expr[] _varList;
+   protected final Value[] _keyList;
+   private String _varName;
 
-    public ListHeadExpr(ArrayList<Expr> varList) {
-	_varList = new Expr[varList.size()];
-	varList.toArray(_varList);
+   public ListHeadExpr(ArrayList<Expr> varList) {
+      _varList = new Expr[varList.size()];
+      varList.toArray(_varList);
 
-	_keyList = new Value[varList.size()];
+      _keyList = new Value[varList.size()];
 
-	for (int i = 0; i < varList.size(); i++) {
-	    _keyList[i] = LongValue.create(i);
-	}
-    }
+      for (int i = 0; i < varList.size(); i++) {
+         _keyList[i] = LongValue.create(i);
+      }
+   }
 
-    public Expr[] getVarList() {
-	return _varList;
-    }
+   public Expr[] getVarList() {
+      return _varList;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	throw new UnsupportedOperationException();
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      throw new UnsupportedOperationException();
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value evalAssignValue(Env env, Value value) {
-	int len = _varList.length;
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value evalAssignValue(Env env, Value value) {
+      int len = _varList.length;
 
-	for (int i = 0; i < len; i++) {
-	    if (_varList[i] != null) {
-		_varList[i].evalAssignValue(env, value.get(_keyList[i]).copy());
-	    }
-	}
+      for (int i = 0; i < len; i++) {
+         if (_varList[i] != null) {
+            _varList[i].evalAssignValue(env, value.get(_keyList[i]).copy());
+         }
+      }
 
-	return value;
-    }
+      return value;
+   }
 
-    public Value evalAssignEachValue(Env env, Value value) {
-	if (!(value instanceof ArrayValue)) {
-	    env.error(L.l("variable passed to each must reference an array"));
-	    return NullValue.NULL;
-	}
+   public Value evalAssignEachValue(Env env, Value value) {
+      if (!(value instanceof ArrayValue)) {
+         env.error(L.l("variable passed to each must reference an array"));
+         return NullValue.NULL;
+      }
 
-	ArrayValue array = (ArrayValue) value;
+      ArrayValue array = (ArrayValue) value;
 
-	if (_varList.length > 0 && _varList[0] != null) {
-	    _varList[0].evalAssignValue(env, array.key());
-	}
+      if (_varList.length > 0 && _varList[0] != null) {
+         _varList[0].evalAssignValue(env, array.key());
+      }
 
-	if (_varList.length > 1 && _varList[1] != null) {
-	    _varList[1].evalAssignValue(env, array.current().copy());
-	}
+      if (_varList.length > 1 && _varList[1] != null) {
+         _varList[1].evalAssignValue(env, array.current().copy());
+      }
 
-	return array.each();
-    }
+      return array.each();
+   }
 
-    public boolean evalEachBoolean(Env env, Value value) {
-	if (!(value instanceof ArrayValue)) {
-	    env.error(L.l("variable passed to each must reference an array"));
-	    return false;
-	}
+   public boolean evalEachBoolean(Env env, Value value) {
+      if (!(value instanceof ArrayValue)) {
+         env.error(L.l("variable passed to each must reference an array"));
+         return false;
+      }
 
-	ArrayValue array = (ArrayValue) value;
+      ArrayValue array = (ArrayValue) value;
 
-	if (!array.hasCurrent()) {
-	    return false;
-	}
+      if (!array.hasCurrent()) {
+         return false;
+      }
 
-	if (_varList.length > 0 && _varList[0] != null) {
-	    _varList[0].evalAssignValue(env, array.key());
-	}
+      if (_varList.length > 0 && _varList[0] != null) {
+         _varList[0].evalAssignValue(env, array.key());
+      }
 
-	if (_varList.length > 1 && _varList[1] != null) {
-	    _varList[1].evalAssignValue(env, array.current().copy());
-	}
+      if (_varList.length > 1 && _varList[1] != null) {
+         _varList[1].evalAssignValue(env, array.current().copy());
+      }
 
-	array.next();
+      array.next();
 
-	return true;
-    }
+      return true;
+   }
 }

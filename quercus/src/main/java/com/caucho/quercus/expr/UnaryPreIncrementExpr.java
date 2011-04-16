@@ -37,52 +37,52 @@ import com.caucho.quercus.env.Value;
  */
 public class UnaryPreIncrementExpr extends AbstractUnaryExpr {
 
-    protected final int _incr;
+   protected final int _incr;
 
-    public UnaryPreIncrementExpr(Location location, Expr expr, int incr) {
-	// super(expr.createRef());
-	super(location, expr);
+   public UnaryPreIncrementExpr(Location location, Expr expr, int incr) {
+      // super(expr.createRef());
+      super(location, expr);
 
-	_incr = incr;
-    }
+      _incr = incr;
+   }
 
-    public UnaryPreIncrementExpr(Expr expr, int incr) {
-	// super(expr.createRef());
-	super(expr);
+   public UnaryPreIncrementExpr(Expr expr, int incr) {
+      // super(expr.createRef());
+      super(expr);
 
-	_incr = incr;
-    }
+      _incr = incr;
+   }
 
-    public Value eval(Env env) {
-	return _expr.evalPreIncrement(env, _incr);
-    }
+   public Value eval(Env env) {
+      return _expr.evalPreIncrement(env, _incr);
+   }
 
-    /**
-     * Return true for a double value
-     */
-    public boolean isDouble() {
-	return _expr.isDouble();
-    }
+   /**
+    * Return true for a double value
+    */
+   public boolean isDouble() {
+      return _expr.isDouble();
+   }
 
-    /**
-     * Return true for a long value
-     */
-    public boolean isLong() {
-	return _expr.isLong();
-    }
+   /**
+    * Return true for a long value
+    */
+   public boolean isLong() {
+      return _expr.isLong();
+   }
 
-    /**
-     * Return true for a number
-     */
-    public boolean isNumber() {
-	return true;
-    }
+   /**
+    * Return true for a number
+    */
+   public boolean isNumber() {
+      return true;
+   }
 
-    public String toString() {
-	if (_incr > 0) {
-	    return "++" + _expr;
-	} else {
-	    return "--" + _expr;
-	}
-    }
+   public String toString() {
+      if (_incr > 0) {
+         return "++" + _expr;
+      } else {
+         return "--" + _expr;
+      }
+   }
 }

@@ -40,15 +40,15 @@ import java.util.List;
  */
 public class JavaListClassDef extends JavaClassDef {
 
-    JavaListClassDef(ModuleContext moduleContext, String name, Class type) {
-	super(moduleContext, name, type);
-    }
+   JavaListClassDef(ModuleContext moduleContext, String name, Class type) {
+      super(moduleContext, name, type);
+   }
 
-    public Value wrap(Env env, Object obj) {
-	if (!_isInit) {
-	    init();
-	}
+   public Value wrap(Env env, Object obj) {
+      if (!_isInit) {
+         init();
+      }
 
-	return new JavaListAdapter((List) obj, this);
-    }
+      return new JavaListAdapter((List) obj, this);
+   }
 }

@@ -32,25 +32,25 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class StringBuilderOutputStream
-	extends OutputStream {
+        extends OutputStream {
 
-    private StringValue _sb;
+   private StringValue _sb;
 
-    public StringBuilderOutputStream(StringValue sb) {
-	_sb = sb;
-    }
+   public StringBuilderOutputStream(StringValue sb) {
+      _sb = sb;
+   }
 
-    public void write(byte[] buffer, int offset, int length)
-	    throws IOException {
-	_sb.append(buffer, offset, length);
-    }
+   public void write(byte[] buffer, int offset, int length)
+           throws IOException {
+      _sb.append(buffer, offset, length);
+   }
 
-    public void write(int ch)
-	    throws IOException {
-	_sb.appendByte(ch);
-    }
+   public void write(int ch)
+           throws IOException {
+      _sb.appendByte(ch);
+   }
 
-    public void setStringBuilder(StringValue sb) {
-	_sb = sb;
-    }
+   public void setStringBuilder(StringValue sb) {
+      _sb = sb;
+   }
 }

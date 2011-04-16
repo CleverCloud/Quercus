@@ -42,34 +42,34 @@ import com.caucho.util.L10N;
  */
 public class EnumMarshal extends Marshal {
 
-    private Class _enumClass;
+   private Class _enumClass;
 
-    public EnumMarshal(Class enumClass) {
-	_enumClass = enumClass;
-    }
+   public EnumMarshal(Class enumClass) {
+      _enumClass = enumClass;
+   }
 
-    public Object marshal(Env env, Expr expr, Class argClass) {
-	String name = expr.evalString(env);
+   public Object marshal(Env env, Expr expr, Class argClass) {
+      String name = expr.evalString(env);
 
-	return Enum.valueOf(_enumClass, name);
-    }
+      return Enum.valueOf(_enumClass, name);
+   }
 
-    public Object marshal(Env env, Value value, Class argClass) {
-	String name = value.toString();
+   public Object marshal(Env env, Value value, Class argClass) {
+      String name = value.toString();
 
-	return Enum.valueOf(_enumClass, name);
-    }
+      return Enum.valueOf(_enumClass, name);
+   }
 
-    public Value unmarshal(Env env, Object value) {
-	if (value == null) {
-	    return NullValue.NULL;
-	} else {
-	    return env.createString(value.toString());
-	}
-    }
+   public Value unmarshal(Env env, Object value) {
+      if (value == null) {
+         return NullValue.NULL;
+      } else {
+         return env.createString(value.toString());
+      }
+   }
 
-    @Override
-    public Class getExpectedClass() {
-	return _enumClass;
-    }
+   @Override
+   public Class getExpectedClass() {
+      return _enumClass;
+   }
 }

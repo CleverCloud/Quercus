@@ -41,57 +41,57 @@ import com.caucho.quercus.expr.VarExpr;
  * Represents a static statement in a PHP program.
  */
 public class ClassStaticStatement
-	extends Statement {
+        extends Statement {
 
-    protected final String _className;
-    protected final VarExpr _var;
-    protected final Expr _initValue;
-    protected StringValue _staticName;
+   protected final String _className;
+   protected final VarExpr _var;
+   protected final Expr _initValue;
+   protected StringValue _staticName;
 
-    /**
-     * Creates the echo statement.
-     */
-    public ClassStaticStatement(Location location,
-	    String className,
-	    VarExpr var,
-	    Expr initValue) {
-	super(location);
+   /**
+    * Creates the echo statement.
+    */
+   public ClassStaticStatement(Location location,
+           String className,
+           VarExpr var,
+           Expr initValue) {
+      super(location);
 
-	_className = className;
-	_var = var;
-	_initValue = initValue;
-    }
+      _className = className;
+      _var = var;
+      _initValue = initValue;
+   }
 
-    public Value execute(Env env) {
-	try {
-	    // TODO: this isn't reliable, needs to be Quercus-based
-	    if (_staticName == null) {
-		_staticName = env.createStaticName();
-	    }
+   public Value execute(Env env) {
+      try {
+         // TODO: this isn't reliable, needs to be Quercus-based
+         if (_staticName == null) {
+            _staticName = env.createStaticName();
+         }
 
-	    // String className = _className;
-	    StringValue staticName = _staticName;
+         // String className = _className;
+         StringValue staticName = _staticName;
 
-	    Value qThis = env.getThis();
+         Value qThis = env.getThis();
 
-	    QuercusClass qClass = qThis.getQuercusClass();
-	    String className = qClass.getName();
+         QuercusClass qClass = qThis.getQuercusClass();
+         String className = qClass.getName();
 
-	    // Var var = qClass.getStaticFieldVar(env, env.createString(staticName));
-	    // Var var = qClass.getStaticFieldVar(env, staticName);
-	    Var var = env.getStaticVar(env.createString(className
-		    + "::" + staticName));
+         // Var var = qClass.getStaticFieldVar(env, env.createString(staticName));
+         // Var var = qClass.getStaticFieldVar(env, staticName);
+         Var var = env.getStaticVar(env.createString(className
+                 + "::" + staticName));
 
-	    env.setVar(_var.getName(), var);
+         env.setVar(_var.getName(), var);
 
-	    if (!var.isset() && _initValue != null) {
-		var.set(_initValue.eval(env));
-	    }
+         if (!var.isset() && _initValue != null) {
+            var.set(_initValue.eval(env));
+         }
 
-	} catch (RuntimeException e) {
-	    rethrow(e, RuntimeException.class);
-	}
+      } catch (RuntimeException e) {
+         rethrow(e, RuntimeException.class);
+      }
 
-	return null;
-    }
+      return null;
+   }
 }

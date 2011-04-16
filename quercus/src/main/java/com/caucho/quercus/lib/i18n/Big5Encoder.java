@@ -38,63 +38,63 @@ import com.caucho.quercus.env.StringValue;
 import com.caucho.util.L10N;
 
 public class Big5Encoder
-	extends GenericEncoder {
+        extends GenericEncoder {
 
-    private static final Logger log = Logger.getLogger(GenericEncoder.class.getName());
-    private static final L10N L = new L10N(Big5Encoder.class);
+   private static final Logger log = Logger.getLogger(GenericEncoder.class.getName());
+   private static final L10N L = new L10N(Big5Encoder.class);
 
-    public Big5Encoder(String charsetName) {
-	super(charsetName);
-    }
+   public Big5Encoder(String charsetName) {
+      super(charsetName);
+   }
 
-    @Override
-    public boolean isEncodable(Env env, StringValue str) {
-	int len = str.length();
+   @Override
+   public boolean isEncodable(Env env, StringValue str) {
+      int len = str.length();
 
-	for (int i = 0; i < len; i++) {
-	    char ch = str.charAt(i);
+      for (int i = 0; i < len; i++) {
+         char ch = str.charAt(i);
 
-	    if (ch == '\u20AC') // euro
-	    {
-		continue;
-	    } else if (!_encoder.canEncode(str.charAt(i))) {
-		return false;
-	    }
-	}
+         if (ch == '\u20AC') // euro
+         {
+            continue;
+         } else if (!_encoder.canEncode(str.charAt(i))) {
+            return false;
+         }
+      }
 
-	return false;
-    }
+      return false;
+   }
 
-    @Override
-    protected boolean fill(StringValue sb, CharBuffer in,
-	    ByteBuffer out, CoderResult coder) {
-	int len = out.position();
+   @Override
+   protected boolean fill(StringValue sb, CharBuffer in,
+           ByteBuffer out, CoderResult coder) {
+      int len = out.position();
 
-	if (len > 0) {
-	    int offset = out.arrayOffset();
+      if (len > 0) {
+         int offset = out.arrayOffset();
 
-	    sb.appendBytes(out.array(), offset, offset + len);
-	}
+         sb.appendBytes(out.array(), offset, offset + len);
+      }
 
-	if (coder.isMalformed() || coder.isUnmappable()) {
-	    int errorIndex = in.position();
+      if (coder.isMalformed() || coder.isUnmappable()) {
+         int errorIndex = in.position();
 
-	    in.position(errorIndex + 1);
+         in.position(errorIndex + 1);
 
-	    if (in.get(errorIndex) == '\u20AC') {
-		// euro
-		sb.append('\u00a3');
-		sb.append('\u00e1');
-	    } else if (_isIgnore) {
-	    } else if (_replacement != null) {
-		sb.append(_replacement);
-	    } else if (_isReplaceUnicode) {
-		sb.append("U+" + Integer.toHexString(in.get(errorIndex)));
-	    } else {
-		return false;
-	    }
-	}
+         if (in.get(errorIndex) == '\u20AC') {
+            // euro
+            sb.append('\u00a3');
+            sb.append('\u00e1');
+         } else if (_isIgnore) {
+         } else if (_replacement != null) {
+            sb.append(_replacement);
+         } else if (_isReplaceUnicode) {
+            sb.append("U+" + Integer.toHexString(in.get(errorIndex)));
+         } else {
+            return false;
+         }
+      }
 
-	return true;
-    }
+      return true;
+   }
 }

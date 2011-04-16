@@ -30,181 +30,181 @@ package com.caucho.quercus.env;
 
 abstract public class ValueType {
 
-    public boolean isBoolean() {
-	return false;
-    }
+   public boolean isBoolean() {
+      return false;
+   }
 
-    public boolean isLong() {
-	return false;
-    }
+   public boolean isLong() {
+      return false;
+   }
 
-    public boolean isLongCmp() {
-	return false;
-    }
+   public boolean isLongCmp() {
+      return false;
+   }
 
-    public boolean isLongAdd() {
-	return false;
-    }
+   public boolean isLongAdd() {
+      return false;
+   }
 
-    public boolean isDouble() {
-	return false;
-    }
+   public boolean isDouble() {
+      return false;
+   }
 
-    public boolean isNumber() {
-	return false;
-    }
+   public boolean isNumber() {
+      return false;
+   }
 
-    public boolean isNumberCmp() {
-	return false;
-    }
+   public boolean isNumberCmp() {
+      return false;
+   }
 
-    public boolean isNumberAdd() {
-	return false;
-    }
+   public boolean isNumberAdd() {
+      return false;
+   }
 
-    public final boolean isDoubleCmp() {
-	return isNumberCmp() && !isLongCmp();
-    }
-    public static final ValueType NULL = new ValueType() {
+   public final boolean isDoubleCmp() {
+      return isNumberCmp() && !isLongCmp();
+   }
+   public static final ValueType NULL = new ValueType() {
 
-	public String toString() {
-	    return "ValueType.NULL";
-	}
-    };
-    public static final ValueType BOOLEAN = new ValueType() {
+      public String toString() {
+         return "ValueType.NULL";
+      }
+   };
+   public static final ValueType BOOLEAN = new ValueType() {
 
-	public boolean isBoolean() {
-	    return true;
-	}
+      public boolean isBoolean() {
+         return true;
+      }
 
-	public String toString() {
-	    return "ValueType.BOOLEAN";
-	}
-    };
-    public static final ValueType LONG = new ValueType() {
+      public String toString() {
+         return "ValueType.BOOLEAN";
+      }
+   };
+   public static final ValueType LONG = new ValueType() {
 
-	public boolean isLong() {
-	    return true;
-	}
+      public boolean isLong() {
+         return true;
+      }
 
-	public boolean isLongCmp() {
-	    return true;
-	}
+      public boolean isLongCmp() {
+         return true;
+      }
 
-	public boolean isLongAdd() {
-	    return true;
-	}
+      public boolean isLongAdd() {
+         return true;
+      }
 
-	public boolean isNumber() {
-	    return true;
-	}
+      public boolean isNumber() {
+         return true;
+      }
 
-	public boolean isNumberCmp() {
-	    return true;
-	}
+      public boolean isNumberCmp() {
+         return true;
+      }
 
-	public boolean isNumberAdd() {
-	    return true;
-	}
+      public boolean isNumberAdd() {
+         return true;
+      }
 
-	public String toString() {
-	    return "ValueType.LONG";
-	}
-    };
-    public static final ValueType LONG_EQ = new ValueType() {
+      public String toString() {
+         return "ValueType.LONG";
+      }
+   };
+   public static final ValueType LONG_EQ = new ValueType() {
 
-	public boolean isLongCmp() {
-	    return true;
-	}
+      public boolean isLongCmp() {
+         return true;
+      }
 
-	public boolean isLongAdd() {
-	    return true;
-	}
+      public boolean isLongAdd() {
+         return true;
+      }
 
-	public boolean isNumberCmp() {
-	    return true;
-	}
+      public boolean isNumberCmp() {
+         return true;
+      }
 
-	public boolean isNumberAdd() {
-	    return true;
-	}
+      public boolean isNumberAdd() {
+         return true;
+      }
 
-	public String toString() {
-	    return "ValueType.LONG_EQ";
-	}
-    };
-    public static final ValueType LONG_ADD = new ValueType() {
+      public String toString() {
+         return "ValueType.LONG_EQ";
+      }
+   };
+   public static final ValueType LONG_ADD = new ValueType() {
 
-	public boolean isLongAdd() {
-	    return true;
-	}
+      public boolean isLongAdd() {
+         return true;
+      }
 
-	public boolean isNumberAdd() {
-	    return true;
-	}
+      public boolean isNumberAdd() {
+         return true;
+      }
 
-	public String toString() {
-	    return "ValueType.LONG_ADD";
-	}
-    };
-    public static final ValueType DOUBLE = new ValueType() {
+      public String toString() {
+         return "ValueType.LONG_ADD";
+      }
+   };
+   public static final ValueType DOUBLE = new ValueType() {
 
-	public boolean isDouble() {
-	    return true;
-	}
+      public boolean isDouble() {
+         return true;
+      }
 
-	public boolean isNumber() {
-	    return true;
-	}
+      public boolean isNumber() {
+         return true;
+      }
 
-	public boolean isNumberCmp() {
-	    return true;
-	}
+      public boolean isNumberCmp() {
+         return true;
+      }
 
-	public boolean isNumberAdd() {
-	    return true;
-	}
+      public boolean isNumberAdd() {
+         return true;
+      }
 
-	public String toString() {
-	    return "ValueType.DOUBLE";
-	}
-    };
-    public static final ValueType DOUBLE_CMP = new ValueType() {
+      public String toString() {
+         return "ValueType.DOUBLE";
+      }
+   };
+   public static final ValueType DOUBLE_CMP = new ValueType() {
 
-	public boolean isNumberCmp() {
-	    return true;
-	}
+      public boolean isNumberCmp() {
+         return true;
+      }
 
-	public boolean isNumberAdd() {
-	    return true;
-	}
+      public boolean isNumberAdd() {
+         return true;
+      }
 
-	public String toString() {
-	    return "ValueType.DOUBLE_CMP";
-	}
-    };
-    public static final ValueType STRING = new ValueType() {
+      public String toString() {
+         return "ValueType.DOUBLE_CMP";
+      }
+   };
+   public static final ValueType STRING = new ValueType() {
 
-	public String toString() {
-	    return "ValueType.STRING";
-	}
-    };
-    public static final ValueType ARRAY = new ValueType() {
+      public String toString() {
+         return "ValueType.STRING";
+      }
+   };
+   public static final ValueType ARRAY = new ValueType() {
 
-	public String toString() {
-	    return "ValueType.ARRAY";
-	}
-    };
-    public static final ValueType OBJECT = new ValueType() {
+      public String toString() {
+         return "ValueType.ARRAY";
+      }
+   };
+   public static final ValueType OBJECT = new ValueType() {
 
-	public String toString() {
-	    return "ValueType.OBJECT";
-	}
-    };
-    public static final ValueType VALUE = new ValueType() {
+      public String toString() {
+         return "ValueType.OBJECT";
+      }
+   };
+   public static final ValueType VALUE = new ValueType() {
 
-	public String toString() {
-	    return "ValueType.VALUE";
-	}
-    };
+      public String toString() {
+         return "ValueType.VALUE";
+      }
+   };
 }

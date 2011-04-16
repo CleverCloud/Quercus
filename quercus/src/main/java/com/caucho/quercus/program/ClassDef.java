@@ -43,300 +43,300 @@ import java.util.Set;
  */
 abstract public class ClassDef {
 
-    private final static L10N L = new L10N(ClassDef.class);
-    private final Location _location;
-    private final String _name;
-    private final String _parentName;
-    private String[] _ifaceList;
+   private final static L10N L = new L10N(ClassDef.class);
+   private final Location _location;
+   private final String _name;
+   private final String _parentName;
+   private String[] _ifaceList;
 
-    protected ClassDef(Location location,
-	    String name,
-	    String parentName,
-	    String[] ifaceList) {
-	_location = location;
-	_name = name;
-	_parentName = parentName;
-	_ifaceList = ifaceList;
-    }
+   protected ClassDef(Location location,
+           String name,
+           String parentName,
+           String[] ifaceList) {
+      _location = location;
+      _name = name;
+      _parentName = parentName;
+      _ifaceList = ifaceList;
+   }
 
-    /**
-     * Returns the location for where the
-     * class was defined, null if it is unknown.
-     */
-    public Location getLocation() {
-	return _location;
-    }
+   /**
+    * Returns the location for where the
+    * class was defined, null if it is unknown.
+    */
+   public Location getLocation() {
+      return _location;
+   }
 
-    /**
-     * Returns the name.
-     */
-    public String getName() {
-	return _name;
-    }
+   /**
+    * Returns the name.
+    */
+   public String getName() {
+      return _name;
+   }
 
-    /**
-     * Returns the parent name.
-     */
-    public String getParentName() {
-	return _parentName;
-    }
+   /**
+    * Returns the parent name.
+    */
+   public String getParentName() {
+      return _parentName;
+   }
 
-    /*
-     * Returns the name of the extension that this class is part of.
-     */
-    public String getExtension() {
-	return null;
-    }
+   /*
+    * Returns the name of the extension that this class is part of.
+    */
+   public String getExtension() {
+      return null;
+   }
 
-    protected void addInterface(String iface) {
-	for (int i = 0; i < _ifaceList.length; i++) {
-	    if (_ifaceList[i].equals(iface)) {
-		return;
-	    }
-	}
+   protected void addInterface(String iface) {
+      for (int i = 0; i < _ifaceList.length; i++) {
+         if (_ifaceList[i].equals(iface)) {
+            return;
+         }
+      }
 
-	String[] ifaceList = new String[_ifaceList.length + 1];
+      String[] ifaceList = new String[_ifaceList.length + 1];
 
-	System.arraycopy(_ifaceList, 0, ifaceList, 0, _ifaceList.length);
-	ifaceList[ifaceList.length - 1] = iface;
+      System.arraycopy(_ifaceList, 0, ifaceList, 0, _ifaceList.length);
+      ifaceList[ifaceList.length - 1] = iface;
 
-	_ifaceList = ifaceList;
-    }
+      _ifaceList = ifaceList;
+   }
 
-    /**
-     * forces a load of any lazy ClassDef
-     */
-    public ClassDef loadClassDef() {
-	return this;
-    }
+   /**
+    * forces a load of any lazy ClassDef
+    */
+   public ClassDef loadClassDef() {
+      return this;
+   }
 
-    public AbstractFunction getCall() {
-	return null;
-    }
+   public AbstractFunction getCall() {
+      return null;
+   }
 
-    public void init() {
-    }
+   public void init() {
+   }
 
-    public void init(QuercusClass cl) {
-    }
+   public void init(QuercusClass cl) {
+   }
 
-    /**
-     * Returns the interfaces.
-     */
-    public String[] getInterfaces() {
-	return _ifaceList;
-    }
+   /**
+    * Returns the interfaces.
+    */
+   public String[] getInterfaces() {
+      return _ifaceList;
+   }
 
-    /**
-     * Adds the interfaces to the set
-     */
-    public void addInterfaces(HashSet<String> interfaceSet) {
-	interfaceSet.add(getName().toLowerCase());
+   /**
+    * Adds the interfaces to the set
+    */
+   public void addInterfaces(HashSet<String> interfaceSet) {
+      interfaceSet.add(getName().toLowerCase());
 
-	for (String name : getInterfaces()) {
-	    interfaceSet.add(name.toLowerCase());
-	}
-    }
+      for (String name : getInterfaces()) {
+         interfaceSet.add(name.toLowerCase());
+      }
+   }
 
-    /**
-     * Return true for an abstract class.
-     */
-    public boolean isAbstract() {
-	return false;
-    }
+   /**
+    * Return true for an abstract class.
+    */
+   public boolean isAbstract() {
+      return false;
+   }
 
-    /**
-     * Return true for an interface class.
-     */
-    public boolean isInterface() {
-	return false;
-    }
+   /**
+    * Return true for an interface class.
+    */
+   public boolean isInterface() {
+      return false;
+   }
 
-    /*
-     * Returns true for a final class.
-     */
-    public boolean isFinal() {
-	return false;
-    }
+   /*
+    * Returns true for a final class.
+    */
+   public boolean isFinal() {
+      return false;
+   }
 
-    /*
-     * Returns true if the class has private/protected methods.
-     */
-    public boolean hasNonPublicMethods() {
-	return false;
-    }
+   /*
+    * Returns true if the class has private/protected methods.
+    */
+   public boolean hasNonPublicMethods() {
+      return false;
+   }
 
-    /**
-     * Initialize the quercus class.
-     */
-    public void initClass(QuercusClass cl) {
-    }
+   /**
+    * Initialize the quercus class.
+    */
+   public void initClass(QuercusClass cl) {
+   }
 
-    /**
-     * Creates a new instance.
-     */
-    public ObjectValue newInstance(Env env, QuercusClass qcl) {
-	if (isAbstract()) {
-	    throw env.createErrorException(
-		    L.l("abstract class '{0}' cannot be instantiated.", getName()));
-	} else if (isInterface()) {
-	    throw env.createErrorException(
-		    L.l("interface '{0}' cannot be instantiated.", getName()));
-	}
+   /**
+    * Creates a new instance.
+    */
+   public ObjectValue newInstance(Env env, QuercusClass qcl) {
+      if (isAbstract()) {
+         throw env.createErrorException(
+                 L.l("abstract class '{0}' cannot be instantiated.", getName()));
+      } else if (isInterface()) {
+         throw env.createErrorException(
+                 L.l("interface '{0}' cannot be instantiated.", getName()));
+      }
 
-	return new ObjectExtValue(qcl);
-    }
+      return new ObjectExtValue(qcl);
+   }
 
-    /*
-     * Creates a new object.
-     */
-    public ObjectValue createObject(Env env, QuercusClass cls) {
-	if (isAbstract()) {
-	    throw env.createErrorException(
-		    L.l("abstract class '{0}' cannot be instantiated.", getName()));
-	} else if (isInterface()) {
-	    throw env.createErrorException(
-		    L.l("interface '{0}' cannot be instantiated.", getName()));
-	}
+   /*
+    * Creates a new object.
+    */
+   public ObjectValue createObject(Env env, QuercusClass cls) {
+      if (isAbstract()) {
+         throw env.createErrorException(
+                 L.l("abstract class '{0}' cannot be instantiated.", getName()));
+      } else if (isInterface()) {
+         throw env.createErrorException(
+                 L.l("interface '{0}' cannot be instantiated.", getName()));
+      }
 
-	return new ObjectExtValue(cls);
-    }
+      return new ObjectExtValue(cls);
+   }
 
-    /**
-     * Creates a new instance.
-     */
-    public Value callNew(Env env, Expr[] args) {
-	return null;
-    }
+   /**
+    * Creates a new instance.
+    */
+   public Value callNew(Env env, Expr[] args) {
+      return null;
+   }
 
-    /**
-     * Creates a new instance.
-     */
-    public Value callNew(Env env, Value[] args) {
-	return null;
-    }
+   /**
+    * Creates a new instance.
+    */
+   public Value callNew(Env env, Value[] args) {
+      return null;
+   }
 
-    /**
-     * Returns value for instanceof.
-     */
-    public boolean isA(String name) {
-	if (_name.equalsIgnoreCase(name)) {
-	    return true;
-	}
+   /**
+    * Returns value for instanceof.
+    */
+   public boolean isA(String name) {
+      if (_name.equalsIgnoreCase(name)) {
+         return true;
+      }
 
-	for (int i = 0; i < _ifaceList.length; i++) {
-	    if (_ifaceList[i].equalsIgnoreCase(name)) {
-		return true;
-	    }
-	}
+      for (int i = 0; i < _ifaceList.length; i++) {
+         if (_ifaceList[i].equalsIgnoreCase(name)) {
+            return true;
+         }
+      }
 
-	return false;
-    }
+      return false;
+   }
 
-    /**
-     * Returns the constructor
-     */
-    abstract public AbstractFunction findConstructor();
+   /**
+    * Returns the constructor
+    */
+   abstract public AbstractFunction findConstructor();
 
-    /**
-     * Finds the matching constant
-     */
-    public Expr findConstant(String name) {
-	return null;
-    }
+   /**
+    * Finds the matching constant
+    */
+   public Expr findConstant(String name) {
+      return null;
+   }
 
-    /**
-     * Returns the documentation for this class.
-     */
-    public String getComment() {
-	return null;
-    }
+   /**
+    * Returns the documentation for this class.
+    */
+   public String getComment() {
+      return null;
+   }
 
-    /**
-     * Returns the comment for the specified field.
-     */
-    public String getFieldComment(StringValue name) {
-	return null;
-    }
+   /**
+    * Returns the comment for the specified field.
+    */
+   public String getFieldComment(StringValue name) {
+      return null;
+   }
 
-    /**
-     * Returns the comment for the specified static field.
-     */
-    public String getStaticFieldComment(String name) {
-	return null;
-    }
+   /**
+    * Returns the comment for the specified static field.
+    */
+   public String getStaticFieldComment(String name) {
+      return null;
+   }
 
-    public String toString() {
-	return getClass().getSimpleName()
-		+ "@"
-		+ System.identityHashCode(this)
-		+ "[" + _name + "]";
-    }
+   public String toString() {
+      return getClass().getSimpleName()
+              + "@"
+              + System.identityHashCode(this)
+              + "[" + _name + "]";
+   }
 
-    public Set<Map.Entry<StringValue, FieldEntry>> fieldSet() {
-	return null;
-    }
+   public Set<Map.Entry<StringValue, FieldEntry>> fieldSet() {
+      return null;
+   }
 
-    public Set<Map.Entry<String, StaticFieldEntry>> staticFieldSet() {
-	return null;
-    }
+   public Set<Map.Entry<String, StaticFieldEntry>> staticFieldSet() {
+      return null;
+   }
 
-    public Set<Map.Entry<String, AbstractFunction>> functionSet() {
-	return null;
-    }
+   public Set<Map.Entry<String, AbstractFunction>> functionSet() {
+      return null;
+   }
 
-    public static class FieldEntry {
+   public static class FieldEntry {
 
-	private final Expr _value;
-	private final FieldVisibility _visibility;
-	private final String _comment;
+      private final Expr _value;
+      private final FieldVisibility _visibility;
+      private final String _comment;
 
-	public FieldEntry(Expr value, FieldVisibility visibility) {
-	    _value = value;
-	    _visibility = visibility;
-	    _comment = null;
-	}
+      public FieldEntry(Expr value, FieldVisibility visibility) {
+         _value = value;
+         _visibility = visibility;
+         _comment = null;
+      }
 
-	public FieldEntry(Expr value, FieldVisibility visibility, String comment) {
-	    _value = value;
-	    _visibility = visibility;
-	    _comment = comment;
-	}
+      public FieldEntry(Expr value, FieldVisibility visibility, String comment) {
+         _value = value;
+         _visibility = visibility;
+         _comment = comment;
+      }
 
-	public Expr getValue() {
-	    return _value;
-	}
+      public Expr getValue() {
+         return _value;
+      }
 
-	public FieldVisibility getVisibility() {
-	    return _visibility;
-	}
+      public FieldVisibility getVisibility() {
+         return _visibility;
+      }
 
-	public String getComment() {
-	    return _comment;
-	}
-    }
+      public String getComment() {
+         return _comment;
+      }
+   }
 
-    public static class StaticFieldEntry {
+   public static class StaticFieldEntry {
 
-	private final Expr _value;
-	private final String _comment;
+      private final Expr _value;
+      private final String _comment;
 
-	public StaticFieldEntry(Expr value) {
-	    _value = value;
-	    _comment = null;
-	}
+      public StaticFieldEntry(Expr value) {
+         _value = value;
+         _comment = null;
+      }
 
-	public StaticFieldEntry(Expr value, String comment) {
-	    _value = value;
-	    _comment = comment;
-	}
+      public StaticFieldEntry(Expr value, String comment) {
+         _value = value;
+         _comment = comment;
+      }
 
-	public Expr getValue() {
-	    return _value;
-	}
+      public Expr getValue() {
+         return _value;
+      }
 
-	public String getComment() {
-	    return _comment;
-	}
-    }
+      public String getComment() {
+         return _comment;
+      }
+   }
 }

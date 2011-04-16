@@ -32,7 +32,7 @@ import com.caucho.quercus.env.IteratorClass;
 import com.caucho.quercus.env.Value;
 
 public interface OuterIterator
-	extends IteratorClass {
+        extends IteratorClass {
 
-    public Value getInnerIterator();
+   public Value getInnerIterator();
 }

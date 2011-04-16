@@ -38,31 +38,31 @@ import com.caucho.quercus.env.Value;
  */
 public class UnaryUnsetExpr extends Expr {
 
-    private final AbstractVarExpr _var;
+   private final AbstractVarExpr _var;
 
-    public UnaryUnsetExpr(Location location, AbstractVarExpr var) {
-	super(location);
-	_var = var;
-    }
+   public UnaryUnsetExpr(Location location, AbstractVarExpr var) {
+      super(location);
+      _var = var;
+   }
 
-    public UnaryUnsetExpr(AbstractVarExpr var) {
-	_var = var;
-    }
+   public UnaryUnsetExpr(AbstractVarExpr var) {
+      _var = var;
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	_var.evalUnset(env);
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      _var.evalUnset(env);
 
-	return NullValue.NULL;
-    }
+      return NullValue.NULL;
+   }
 
-    public String toString() {
-	return "unset(" + _var + ")";
-    }
+   public String toString() {
+      return "unset(" + _var + ")";
+   }
 }

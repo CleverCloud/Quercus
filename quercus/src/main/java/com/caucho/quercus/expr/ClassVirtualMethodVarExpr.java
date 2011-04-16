@@ -47,97 +47,97 @@ import java.util.ArrayList;
  */
 public class ClassVirtualMethodVarExpr extends Expr {
 
-    private static final L10N L = new L10N(ClassVirtualMethodVarExpr.class);
-    protected final Expr _methodName;
-    protected final Expr[] _args;
-    protected Expr[] _fullArgs;
-    protected AbstractFunction _fun;
-    protected boolean _isMethod;
+   private static final L10N L = new L10N(ClassVirtualMethodVarExpr.class);
+   protected final Expr _methodName;
+   protected final Expr[] _args;
+   protected Expr[] _fullArgs;
+   protected AbstractFunction _fun;
+   protected boolean _isMethod;
 
-    public ClassVirtualMethodVarExpr(Location location,
-	    Expr methodName,
-	    ArrayList<Expr> args) {
-	super(location);
+   public ClassVirtualMethodVarExpr(Location location,
+           Expr methodName,
+           ArrayList<Expr> args) {
+      super(location);
 
-	_methodName = methodName;
+      _methodName = methodName;
 
-	_args = new Expr[args.size()];
-	args.toArray(_args);
-    }
+      _args = new Expr[args.size()];
+      args.toArray(_args);
+   }
 
-    public ClassVirtualMethodVarExpr(Location location,
-	    Expr methodName,
-	    Expr[] args) {
-	super(location);
+   public ClassVirtualMethodVarExpr(Location location,
+           Expr methodName,
+           Expr[] args) {
+      super(location);
 
-	_methodName = methodName;
+      _methodName = methodName;
 
-	_args = args;
-    }
+      _args = args;
+   }
 
-    public ClassVirtualMethodVarExpr(Expr nameExpr,
-	    ArrayList<Expr> args) {
-	this(Location.UNKNOWN, nameExpr, args);
-    }
+   public ClassVirtualMethodVarExpr(Expr nameExpr,
+           ArrayList<Expr> args) {
+      this(Location.UNKNOWN, nameExpr, args);
+   }
 
-    public ClassVirtualMethodVarExpr(Expr nameExpr, Expr[] args) {
-	this(Location.UNKNOWN, nameExpr, args);
-    }
+   public ClassVirtualMethodVarExpr(Expr nameExpr, Expr[] args) {
+      this(Location.UNKNOWN, nameExpr, args);
+   }
 
-    /**
-     * Returns the reference of the value.
-     * @param location
-     */
-    @Override
-    public Expr createRef(QuercusParser parser) {
-	return parser.getFactory().createRef(this);
-    }
+   /**
+    * Returns the reference of the value.
+    * @param location
+    */
+   @Override
+   public Expr createRef(QuercusParser parser) {
+      return parser.getFactory().createRef(this);
+   }
 
-    /**
-     * Returns the copy of the value.
-     * @param location
-     */
-    @Override
-    public Expr createCopy(ExprFactory factory) {
-	return factory.createCopy(this);
-    }
+   /**
+    * Returns the copy of the value.
+    * @param location
+    */
+   @Override
+   public Expr createCopy(ExprFactory factory) {
+      return factory.createCopy(this);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    @Override
-    public Value eval(Env env) {
-	Value qThis = env.getThis();
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   @Override
+   public Value eval(Env env) {
+      Value qThis = env.getThis();
 
-	QuercusClass cls = qThis.getQuercusClass();
+      QuercusClass cls = qThis.getQuercusClass();
 
-	if (cls == null) {
-	    env.error(getLocation(), L.l("no calling class found"));
+      if (cls == null) {
+         env.error(getLocation(), L.l("no calling class found"));
 
-	    return NullValue.NULL;
-	}
+         return NullValue.NULL;
+      }
 
-	StringValue methodName = _methodName.evalStringValue(env);
-	int hash = methodName.hashCodeCaseInsensitive();
+      StringValue methodName = _methodName.evalStringValue(env);
+      int hash = methodName.hashCodeCaseInsensitive();
 
-	Value[] values = evalArgs(env, _args);
+      Value[] values = evalArgs(env, _args);
 
-	env.pushCall(this, cls, values);
+      env.pushCall(this, cls, values);
 
-	try {
-	    env.checkTimeout();
+      try {
+         env.checkTimeout();
 
-	    return cls.callMethod(env, qThis, methodName, hash, values);
-	} finally {
-	    env.popCall();
-	}
-    }
+         return cls.callMethod(env, qThis, methodName, hash, values);
+      } finally {
+         env.popCall();
+      }
+   }
 
-    public String toString() {
-	return _methodName + "()";
-    }
+   public String toString() {
+      return _methodName + "()";
+   }
 }

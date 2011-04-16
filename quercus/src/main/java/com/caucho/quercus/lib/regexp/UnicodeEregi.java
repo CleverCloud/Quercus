@@ -32,19 +32,19 @@ import com.caucho.quercus.env.StringValue;
 
 public class UnicodeEregi extends UnicodeEreg {
 
-    public UnicodeEregi(StringValue rawRegexp)
-	    throws IllegalRegexpException {
-	super(rawRegexp);
-    }
+   public UnicodeEregi(StringValue rawRegexp)
+           throws IllegalRegexpException {
+      super(rawRegexp);
+   }
 
-    @Override
-    protected void init() {
-	super.init();
+   @Override
+   protected void init() {
+      super.init();
 
-	_flags |= Regcomp.IGNORE_CASE;
-    }
+      _flags |= Regcomp.IGNORE_CASE;
+   }
 
-    public String toString() {
-	return "UnicodeEregi[" + _pattern + "]";
-    }
+   public String toString() {
+      return "UnicodeEregi[" + _pattern + "]";
+   }
 }

@@ -35,36 +35,36 @@ import java.util.IdentityHashMap;
  */
 public final class SerializeMap {
 
-    private IdentityHashMap<Value, Integer> _varMap = new IdentityHashMap<Value, Integer>();
-    private int _index = 1;
+   private IdentityHashMap<Value, Integer> _varMap = new IdentityHashMap<Value, Integer>();
+   private int _index = 1;
 
-    public SerializeMap() {
-    }
+   public SerializeMap() {
+   }
 
-    /*
-     * Increments the index of values.
-     */
-    public void incrementIndex() {
-	_index++;
-    }
+   /*
+    * Increments the index of values.
+    */
+   public void incrementIndex() {
+      _index++;
+   }
 
-    /*
-     * Stores the position of this value in the serialization process.
-     */
-    public void put(Value value) {
-	_varMap.put(value, Integer.valueOf(_index));
-    }
+   /*
+    * Stores the position of this value in the serialization process.
+    */
+   public void put(Value value) {
+      _varMap.put(value, Integer.valueOf(_index));
+   }
 
-    /*
-     * Retrieves the position of this value in the serialization.
-     */
-    public Integer get(Value value) {
-	Integer index = _varMap.get(value);
+   /*
+    * Retrieves the position of this value in the serialization.
+    */
+   public Integer get(Value value) {
+      Integer index = _varMap.get(value);
 
-	if (index == null && value instanceof Var) {
-	    return _varMap.get(value.toValue());
-	}
+      if (index == null && value instanceof Var) {
+         return _varMap.get(value.toValue());
+      }
 
-	return index;
-    }
+      return index;
+   }
 }

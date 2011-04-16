@@ -33,5 +33,5 @@ import com.caucho.quercus.annotation.Delegates;
 @Delegates(CountableDelegate.class)
 public interface Countable {
 
-    public int count();
+   public int count();
 }

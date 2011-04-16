@@ -42,123 +42,123 @@ import java.util.logging.Logger;
  * Represents read/write stream
  */
 public class UdpInputOutput
-	extends AbstractBinaryInputOutput
-	implements SocketInputOutput {
+        extends AbstractBinaryInputOutput
+        implements SocketInputOutput {
 
-    private static final Logger log = Logger.getLogger(UdpInputOutput.class.getName());
-    private DatagramSocket _socket;
-    private Domain _domain;
-    private DatagramStream _stream;
-    private int _error;
-    private byte _unread;
+   private static final Logger log = Logger.getLogger(UdpInputOutput.class.getName());
+   private DatagramSocket _socket;
+   private Domain _domain;
+   private DatagramStream _stream;
+   private int _error;
+   private byte _unread;
 
-    public UdpInputOutput(Env env, String host, int port, Domain domain)
-	    throws IOException {
-	super(env);
+   public UdpInputOutput(Env env, String host, int port, Domain domain)
+           throws IOException {
+      super(env);
 
-	_socket = new DatagramSocket();
-	_socket.connect(InetAddress.getByName(host), port);
+      _socket = new DatagramSocket();
+      _socket.connect(InetAddress.getByName(host), port);
 
-	_domain = domain;
-    }
+      _domain = domain;
+   }
 
-    public UdpInputOutput(Env env, DatagramSocket socket, Domain domain) {
-	super(env);
+   public UdpInputOutput(Env env, DatagramSocket socket, Domain domain) {
+      super(env);
 
-	_socket = socket;
-	_domain = domain;
-    }
+      _socket = socket;
+      _domain = domain;
+   }
 
-    public void bind(SocketAddress address)
-	    throws IOException {
-	_socket.bind(address);
-    }
+   public void bind(SocketAddress address)
+           throws IOException {
+      _socket.bind(address);
+   }
 
-    public void connect(SocketAddress address)
-	    throws IOException {
-	_socket.connect(address);
+   public void connect(SocketAddress address)
+           throws IOException {
+      _socket.connect(address);
 
-	init();
-    }
+      init();
+   }
 
-    public void init() {
-	DatagramStream sock = new DatagramStream(_socket);
-	sock.setThrowReadInterrupts(true);
+   public void init() {
+      DatagramStream sock = new DatagramStream(_socket);
+      sock.setThrowReadInterrupts(true);
 
-	init(sock.getInputStream(), sock.getOutputStream());
-    }
+      init(sock.getInputStream(), sock.getOutputStream());
+   }
 
-    public void setTimeout(long timeout) {
-	try {
-	    if (_socket != null) {
-		_socket.setSoTimeout((int) timeout);
-	    }
-	} catch (Exception e) {
-	    log.log(Level.FINER, e.toString(), e);
-	}
-    }
+   public void setTimeout(long timeout) {
+      try {
+         if (_socket != null) {
+            _socket.setSoTimeout((int) timeout);
+         }
+      } catch (Exception e) {
+         log.log(Level.FINER, e.toString(), e);
+      }
+   }
 
-    public void setError(int error) {
-	_error = error;
-    }
+   public void setError(int error) {
+      _error = error;
+   }
 
-    /**
-     * Returns the current location in the file.
-     */
-    public long getPosition() {
-	if (_stream != null) {
-	    return _stream.getPosition();
-	} else {
-	    return -1;
-	}
-    }
+   /**
+    * Returns the current location in the file.
+    */
+   public long getPosition() {
+      if (_stream != null) {
+         return _stream.getPosition();
+      } else {
+         return -1;
+      }
+   }
 
-    /**
-     * Sets the current location in the file.
-     */
-    public boolean setPosition(long offset) {
-	if (_stream == null) {
-	    return false;
-	}
+   /**
+    * Sets the current location in the file.
+    */
+   public boolean setPosition(long offset) {
+      if (_stream == null) {
+         return false;
+      }
 
-	boolean result = _stream.setPosition(offset);
+      boolean result = _stream.setPosition(offset);
 
-	if (result) {
-	    _isEOF = false;
-	}
+      if (result) {
+         _isEOF = false;
+      }
 
-	return result;
-    }
+      return result;
+   }
 
-    /**
-     * Unread the last byte.
-     */
-    public void unread()
-	    throws IOException {
-	if (_stream != null) {
-	    _stream.unread();
-	    _isEOF = false;
-	}
-    }
+   /**
+    * Unread the last byte.
+    */
+   public void unread()
+           throws IOException {
+      if (_stream != null) {
+         _stream.unread();
+         _isEOF = false;
+      }
+   }
 
-    /**
-     * Implements the EnvCleanup interface.
-     */
-    public void cleanup() {
-	DatagramSocket s = _socket;
-	_socket = null;
+   /**
+    * Implements the EnvCleanup interface.
+    */
+   public void cleanup() {
+      DatagramSocket s = _socket;
+      _socket = null;
 
-	if (s != null) {
-	    s.close();
-	}
-    }
+      if (s != null) {
+         s.close();
+      }
+   }
 
-    public String toString() {
-	if (_socket != null) {
-	    return "UdpInputOutput["
-		    + _socket.getInetAddress() + "," + _socket.getPort() + "]";
-	} else {
-	    return "UdpInputOutput[closed]";
-	}
-    }
+   public String toString() {
+      if (_socket != null) {
+         return "UdpInputOutput["
+                 + _socket.getInetAddress() + "," + _socket.getPort() + "]";
+      } else {
+         return "UdpInputOutput[closed]";
+      }
+   }
 }

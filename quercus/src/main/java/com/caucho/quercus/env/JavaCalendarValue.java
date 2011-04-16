@@ -38,31 +38,31 @@ import java.util.logging.Logger;
  */
 public class JavaCalendarValue extends JavaValue {
 
-    private static final Logger log = Logger.getLogger(JavaCalendarValue.class.getName());
-    private final Calendar _calendar;
+   private static final Logger log = Logger.getLogger(JavaCalendarValue.class.getName());
+   private final Calendar _calendar;
 
-    public JavaCalendarValue(Env env, Calendar calendar, JavaClassDef def) {
-	super(env, calendar, def);
-	_calendar = calendar;
-    }
+   public JavaCalendarValue(Env env, Calendar calendar, JavaClassDef def) {
+      super(env, calendar, def);
+      _calendar = calendar;
+   }
 
-    /**
-     * Converts to a long.
-     */
-    @Override
-    public long toLong() {
-	return _calendar.getTimeInMillis();
-    }
+   /**
+    * Converts to a long.
+    */
+   @Override
+   public long toLong() {
+      return _calendar.getTimeInMillis();
+   }
 
-    /**
-     * Converts to a Java Calendar.
-     */
-    @Override
-    public Calendar toJavaCalendar() {
-	return _calendar;
-    }
+   /**
+    * Converts to a Java Calendar.
+    */
+   @Override
+   public Calendar toJavaCalendar() {
+      return _calendar;
+   }
 
-    public String toString() {
-	return _calendar.getTime().toString();
-    }
+   public String toString() {
+      return _calendar.getTime().toString();
+   }
 }

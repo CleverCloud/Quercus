@@ -32,17 +32,17 @@ import com.caucho.quercus.env.StringValue;
 
 public class Ereg extends Regexp {
 
-    public Ereg(StringValue rawRegexp)
-	    throws IllegalRegexpException {
-	super(rawRegexp);
-    }
+   public Ereg(StringValue rawRegexp)
+           throws IllegalRegexpException {
+      super(rawRegexp);
+   }
 
-    @Override
-    protected void init() {
-	_flags |= Regcomp.SINGLE_LINE;
-    }
+   @Override
+   protected void init() {
+      _flags |= Regcomp.SINGLE_LINE;
+   }
 
-    public String toString() {
-	return "Ereg[" + _pattern + "]";
-    }
+   public String toString() {
+      return "Ereg[" + _pattern + "]";
+   }
 }

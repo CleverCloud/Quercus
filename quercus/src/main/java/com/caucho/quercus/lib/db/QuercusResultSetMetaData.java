@@ -43,19 +43,19 @@ import javax.sql.*;
  */
 public interface QuercusResultSetMetaData extends ResultSetMetaData {
 
-    public boolean isPrimaryKey(int column);
+   public boolean isPrimaryKey(int column);
 
-    public boolean isUniqueKey(int column);
+   public boolean isUniqueKey(int column);
 
-    public boolean isUnsigned(int column);
+   public boolean isUnsigned(int column);
 
-    public boolean isZeroFill(int column);
+   public boolean isZeroFill(int column);
 
-    public boolean isMultipleKey(int column);
+   public boolean isMultipleKey(int column);
 
-    public boolean isBlob(int column);
+   public boolean isBlob(int column);
 
-    public boolean isNotNull(int column);
+   public boolean isNotNull(int column);
 
-    public int getLength(int column);
+   public int getLength(int column);
 }

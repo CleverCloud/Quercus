@@ -40,15 +40,15 @@ import java.util.Map;
  */
 public class JavaMapClassDef extends JavaClassDef {
 
-    JavaMapClassDef(ModuleContext moduleContext, String name, Class type) {
-	super(moduleContext, name, type);
-    }
+   JavaMapClassDef(ModuleContext moduleContext, String name, Class type) {
+      super(moduleContext, name, type);
+   }
 
-    public Value wrap(Env env, Object obj) {
-	if (!_isInit) {
-	    init();
-	}
+   public Value wrap(Env env, Object obj) {
+      if (!_isInit) {
+         init();
+      }
 
-	return new JavaMapAdapter((Map) obj, this);
-    }
+      return new JavaMapAdapter((Map) obj, this);
+   }
 }

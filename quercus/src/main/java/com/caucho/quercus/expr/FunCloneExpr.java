@@ -37,26 +37,26 @@ import com.caucho.quercus.env.Value;
  */
 public class FunCloneExpr extends AbstractUnaryExpr {
 
-    public FunCloneExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public FunCloneExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public FunCloneExpr(Expr expr) {
-	super(expr);
-    }
+   public FunCloneExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return _expr.eval(env).clone(env);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return _expr.eval(env).clone(env);
+   }
 
-    public String toString() {
-	return "clone " + _expr.toString();
-    }
+   public String toString() {
+      return "clone " + _expr.toString();
+   }
 }

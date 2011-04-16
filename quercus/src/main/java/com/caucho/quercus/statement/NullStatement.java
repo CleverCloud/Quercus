@@ -37,16 +37,16 @@ import com.caucho.quercus.env.Value;
  */
 public class NullStatement extends Statement {
 
-    public static final NullStatement NULL = new NullStatement();
+   public static final NullStatement NULL = new NullStatement();
 
-    protected NullStatement() {
-	super(Location.UNKNOWN);
-    }
+   protected NullStatement() {
+      super(Location.UNKNOWN);
+   }
 
-    /**
-     * The null statement does nothing.
-     */
-    public Value execute(Env env) {
-	return null;
-    }
+   /**
+    * The null statement does nothing.
+    */
+   public Value execute(Env env) {
+      return null;
+   }
 }

@@ -38,39 +38,39 @@ import com.caucho.quercus.env.Value;
  */
 public class BinaryLtExpr extends AbstractBinaryExpr {
 
-    public BinaryLtExpr(Location location, Expr left, Expr right) {
-	super(location, left, right);
-    }
+   public BinaryLtExpr(Location location, Expr left, Expr right) {
+      super(location, left, right);
+   }
 
-    public BinaryLtExpr(Expr left, Expr right) {
-	super(left, right);
-    }
+   public BinaryLtExpr(Expr left, Expr right) {
+      super(left, right);
+   }
 
-    /**
-     * Returns true for a boolean.
-     */
-    public boolean isBoolean() {
-	return true;
-    }
+   /**
+    * Returns true for a boolean.
+    */
+   public boolean isBoolean() {
+      return true;
+   }
 
-    /**
-     * Evaluates the equality as a boolean.
-     */
-    public Value eval(Env env) {
-	return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
-    }
+   /**
+    * Evaluates the equality as a boolean.
+    */
+   public Value eval(Env env) {
+      return evalBoolean(env) ? BooleanValue.TRUE : BooleanValue.FALSE;
+   }
 
-    /**
-     * Evaluates the equality as a boolean.
-     */
-    public boolean evalBoolean(Env env) {
-	Value lValue = _left.eval(env);
-	Value rValue = _right.eval(env);
+   /**
+    * Evaluates the equality as a boolean.
+    */
+   public boolean evalBoolean(Env env) {
+      Value lValue = _left.eval(env);
+      Value rValue = _right.eval(env);
 
-	return lValue.lt(rValue);
-    }
+      return lValue.lt(rValue);
+   }
 
-    public String toString() {
-	return "(" + _left + " < " + _right + ")";
-    }
+   public String toString() {
+      return "(" + _left + " < " + _right + ")";
+   }
 }

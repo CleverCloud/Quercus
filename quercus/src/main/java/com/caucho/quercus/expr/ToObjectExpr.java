@@ -37,26 +37,26 @@ import com.caucho.quercus.env.Value;
  */
 public class ToObjectExpr extends AbstractUnaryExpr {
 
-    public ToObjectExpr(Location location, Expr expr) {
-	super(location, expr);
-    }
+   public ToObjectExpr(Location location, Expr expr) {
+      super(location, expr);
+   }
 
-    public ToObjectExpr(Expr expr) {
-	super(expr);
-    }
+   public ToObjectExpr(Expr expr) {
+      super(expr);
+   }
 
-    /**
-     * Evaluates the expression.
-     *
-     * @param env the calling environment.
-     *
-     * @return the expression value.
-     */
-    public Value eval(Env env) {
-	return _expr.eval(env).toObject(env);
-    }
+   /**
+    * Evaluates the expression.
+    *
+    * @param env the calling environment.
+    *
+    * @return the expression value.
+    */
+   public Value eval(Env env) {
+      return _expr.eval(env).toObject(env);
+   }
 
-    public String toString() {
-	return "((object) " + _expr + ")";
-    }
+   public String toString() {
+      return "((object) " + _expr + ")";
+   }
 }

@@ -41,123 +41,123 @@ import com.caucho.util.L10N;
 import com.caucho.vfs.TempCharBuffer;
 
 public class GenericDecoder
-	extends Decoder {
+        extends Decoder {
 
-    private static final Logger log = Logger.getLogger(GenericDecoder.class.getName());
-    private static final L10N L = new L10N(GenericDecoder.class);
-    private Charset _charset;
-    protected CharsetDecoder _decoder;
+   private static final Logger log = Logger.getLogger(GenericDecoder.class.getName());
+   private static final L10N L = new L10N(GenericDecoder.class);
+   private Charset _charset;
+   protected CharsetDecoder _decoder;
 
-    public GenericDecoder(String charsetName) {
-	super(charsetName);
+   public GenericDecoder(String charsetName) {
+      super(charsetName);
 
-	_charset = Charset.forName(charsetName);
+      _charset = Charset.forName(charsetName);
 
-	_decoder = _charset.newDecoder();
-    }
+      _decoder = _charset.newDecoder();
+   }
 
-    @Override
-    public void reset() {
-	_decoder.reset();
+   @Override
+   public void reset() {
+      _decoder.reset();
 
-	super.reset();
-    }
+      super.reset();
+   }
 
-    @Override
-    public boolean isDecodable(Env env, StringValue str) {
-	if (str.isUnicode()) {
-	    return true;
-	}
+   @Override
+   public boolean isDecodable(Env env, StringValue str) {
+      if (str.isUnicode()) {
+         return true;
+      }
 
-	ByteBuffer in = ByteBuffer.wrap(str.toBytes());
-	CharBuffer out = CharBuffer.allocate(512);
+      ByteBuffer in = ByteBuffer.wrap(str.toBytes());
+      CharBuffer out = CharBuffer.allocate(512);
 
-	while (in.hasRemaining()) {
-	    CoderResult coder = _decoder.decode(in, out, false);
-	    if (coder.isMalformed()) {
-		return false;
-	    }
+      while (in.hasRemaining()) {
+         CoderResult coder = _decoder.decode(in, out, false);
+         if (coder.isMalformed()) {
+            return false;
+         }
 
-	    out.clear();
-	}
+         out.clear();
+      }
 
-	CoderResult coder = _decoder.decode(in, out, true);
-	if (coder.isMalformed()) {
-	    return false;
-	}
+      CoderResult coder = _decoder.decode(in, out, true);
+      if (coder.isMalformed()) {
+         return false;
+      }
 
-	out.clear();
+      out.clear();
 
-	coder = _decoder.flush(out);
-	if (coder.isMalformed()) {
-	    return false;
-	}
+      coder = _decoder.flush(out);
+      if (coder.isMalformed()) {
+         return false;
+      }
 
-	return true;
-    }
+      return true;
+   }
 
-    @Override
-    protected StringBuilder decodeImpl(Env env, StringValue str) {
-	ByteBuffer in = ByteBuffer.wrap(str.toBytes());
+   @Override
+   protected StringBuilder decodeImpl(Env env, StringValue str) {
+      ByteBuffer in = ByteBuffer.wrap(str.toBytes());
 
-	TempCharBuffer tempBuf = TempCharBuffer.allocate();
+      TempCharBuffer tempBuf = TempCharBuffer.allocate();
 
-	try {
-	    CharBuffer out = CharBuffer.wrap(tempBuf.getBuffer());
+      try {
+         CharBuffer out = CharBuffer.wrap(tempBuf.getBuffer());
 
-	    StringBuilder sb = new StringBuilder();
+         StringBuilder sb = new StringBuilder();
 
-	    while (in.hasRemaining()) {
-		CoderResult coder = _decoder.decode(in, out, false);
-		if (!fill(sb, in, out, coder)) {
-		    return sb;
-		}
+         while (in.hasRemaining()) {
+            CoderResult coder = _decoder.decode(in, out, false);
+            if (!fill(sb, in, out, coder)) {
+               return sb;
+            }
 
-		out.clear();
-	    }
+            out.clear();
+         }
 
-	    CoderResult coder = _decoder.decode(in, out, true);
-	    if (!fill(sb, in, out, coder)) {
-		return sb;
-	    }
+         CoderResult coder = _decoder.decode(in, out, true);
+         if (!fill(sb, in, out, coder)) {
+            return sb;
+         }
 
-	    out.clear();
+         out.clear();
 
-	    coder = _decoder.flush(out);
-	    fill(sb, in, out, coder);
+         coder = _decoder.flush(out);
+         fill(sb, in, out, coder);
 
-	    return sb;
-	} finally {
-	    TempCharBuffer.free(tempBuf);
-	}
-    }
+         return sb;
+      } finally {
+         TempCharBuffer.free(tempBuf);
+      }
+   }
 
-    protected boolean fill(StringBuilder sb, ByteBuffer in,
-	    CharBuffer out, CoderResult coder) {
-	int len = out.position();
+   protected boolean fill(StringBuilder sb, ByteBuffer in,
+           CharBuffer out, CoderResult coder) {
+      int len = out.position();
 
-	if (len > 0) {
-	    int offset = out.arrayOffset();
-	    sb.append(out.array(), offset, len);
-	}
+      if (len > 0) {
+         int offset = out.arrayOffset();
+         sb.append(out.array(), offset, len);
+      }
 
-	if (coder.isMalformed() || coder.isUnmappable()) {
-	    _hasError = true;
+      if (coder.isMalformed() || coder.isUnmappable()) {
+         _hasError = true;
 
-	    int errorPosition = in.position();
+         int errorPosition = in.position();
 
-	    in.position(errorPosition + 1);
+         in.position(errorPosition + 1);
 
-	    if (_isIgnoreErrors) {
-	    } else if (_replacement != null) {
-		sb.append(_replacement);
-	    } else if (_isAllowMalformedOut) {
-		sb.append((char) in.get(errorPosition));
-	    } else {
-		return false;
-	    }
-	}
+         if (_isIgnoreErrors) {
+         } else if (_replacement != null) {
+            sb.append(_replacement);
+         } else if (_isAllowMalformedOut) {
+            sb.append((char) in.get(errorPosition));
+         } else {
+            return false;
+         }
+      }
 
-	return true;
-    }
+      return true;
+   }
 }

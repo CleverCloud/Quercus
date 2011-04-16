@@ -32,73 +32,73 @@ import java.util.Locale;
 
 public class LocaleInfo {
 
-    private QuercusLocale _collate;
-    private QuercusLocale _ctype;
-    private QuercusLocale _monetary;
-    private QuercusLocale _numeric;
-    private QuercusLocale _time;
-    private QuercusLocale _messages;
+   private QuercusLocale _collate;
+   private QuercusLocale _ctype;
+   private QuercusLocale _monetary;
+   private QuercusLocale _numeric;
+   private QuercusLocale _time;
+   private QuercusLocale _messages;
 
-    LocaleInfo() {
-	Locale locale = Locale.getDefault();
+   LocaleInfo() {
+      Locale locale = Locale.getDefault();
 
-	setAll(new QuercusLocale(locale, null));
-    }
+      setAll(new QuercusLocale(locale, null));
+   }
 
-    public void setAll(QuercusLocale locale) {
-	setCollate(locale);
-	setCtype(locale);
-	setMonetary(locale);
-	setNumeric(locale);
-	setTime(locale);
-	setMessages(locale);
-    }
+   public void setAll(QuercusLocale locale) {
+      setCollate(locale);
+      setCtype(locale);
+      setMonetary(locale);
+      setNumeric(locale);
+      setTime(locale);
+      setMessages(locale);
+   }
 
-    public QuercusLocale getCollate() {
-	return _collate;
-    }
+   public QuercusLocale getCollate() {
+      return _collate;
+   }
 
-    public void setCollate(QuercusLocale locale) {
-	_collate = locale;
-    }
+   public void setCollate(QuercusLocale locale) {
+      _collate = locale;
+   }
 
-    public QuercusLocale getCtype() {
-	return _ctype;
-    }
+   public QuercusLocale getCtype() {
+      return _ctype;
+   }
 
-    public void setCtype(QuercusLocale locale) {
-	_ctype = locale;
-    }
+   public void setCtype(QuercusLocale locale) {
+      _ctype = locale;
+   }
 
-    public QuercusLocale getMonetary() {
-	return _monetary;
-    }
+   public QuercusLocale getMonetary() {
+      return _monetary;
+   }
 
-    public void setMonetary(QuercusLocale locale) {
-	_monetary = locale;
-    }
+   public void setMonetary(QuercusLocale locale) {
+      _monetary = locale;
+   }
 
-    public QuercusLocale getTime() {
-	return _time;
-    }
+   public QuercusLocale getTime() {
+      return _time;
+   }
 
-    public void setTime(QuercusLocale locale) {
-	_time = locale;
-    }
+   public void setTime(QuercusLocale locale) {
+      _time = locale;
+   }
 
-    public QuercusLocale getNumeric() {
-	return _numeric;
-    }
+   public QuercusLocale getNumeric() {
+      return _numeric;
+   }
 
-    public void setNumeric(QuercusLocale locale) {
-	_numeric = locale;
-    }
+   public void setNumeric(QuercusLocale locale) {
+      _numeric = locale;
+   }
 
-    public QuercusLocale getMessages() {
-	return _messages;
-    }
+   public QuercusLocale getMessages() {
+      return _messages;
+   }
 
-    public void setMessages(QuercusLocale locale) {
-	_messages = locale;
-    }
+   public void setMessages(QuercusLocale locale) {
+      _messages = locale;
+   }
 }

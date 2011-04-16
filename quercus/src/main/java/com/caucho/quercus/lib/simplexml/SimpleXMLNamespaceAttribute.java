@@ -36,24 +36,24 @@ import com.caucho.quercus.env.*;
  */
 public class SimpleXMLNamespaceAttribute extends SimpleXMLAttribute {
 
-    protected SimpleXMLNamespaceAttribute(Env env,
-	    QuercusClass cls,
-	    SimpleXMLElement parent,
-	    String name) {
-	super(env, cls, parent, name);
-    }
+   protected SimpleXMLNamespaceAttribute(Env env,
+           QuercusClass cls,
+           SimpleXMLElement parent,
+           String name) {
+      super(env, cls, parent, name);
+   }
 
-    protected SimpleXMLNamespaceAttribute(Env env,
-	    QuercusClass cls,
-	    SimpleXMLElement parent,
-	    String name,
-	    String namespace,
-	    StringValue text) {
-	super(env, cls, parent, name, namespace, text);
-    }
+   protected SimpleXMLNamespaceAttribute(Env env,
+           QuercusClass cls,
+           SimpleXMLElement parent,
+           String name,
+           String namespace,
+           StringValue text) {
+      super(env, cls, parent, name, namespace, text);
+   }
 
-    @Override
-    protected boolean isNamespaceAttribute() {
-	return true;
-    }
+   @Override
+   protected boolean isNamespaceAttribute() {
+      return true;
+   }
 }

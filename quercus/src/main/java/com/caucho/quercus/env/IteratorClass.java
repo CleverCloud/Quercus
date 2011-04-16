@@ -34,30 +34,30 @@ import com.caucho.quercus.annotation.Delegates;
 
 @Delegates(IteratorDelegate.class)
 public interface IteratorClass
-	extends Traversable {
+        extends Traversable {
 
-    /**
-     * Returns the current value.
-     */
-    public Value current(Env env);
+   /**
+    * Returns the current value.
+    */
+   public Value current(Env env);
 
-    /**
-     * Returns the current key.
-     */
-    public Value key(Env env);
+   /**
+    * Returns the current key.
+    */
+   public Value key(Env env);
 
-    /**
-     * Advances to the next row.
-     */
-    public void next(Env env);
+   /**
+    * Advances to the next row.
+    */
+   public void next(Env env);
 
-    /**
-     * Rewinds the iterator so it is at the first row.
-     */
-    public void rewind();
+   /**
+    * Rewinds the iterator so it is at the first row.
+    */
+   public void rewind();
 
-    /**
-     * Returns true if the iterator currently points to a valid row.
-     */
-    public boolean valid();
+   /**
+    * Returns true if the iterator currently points to a valid row.
+    */
+   public boolean valid();
 }

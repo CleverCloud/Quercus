@@ -38,55 +38,55 @@ import java.util.IdentityHashMap;
  * Represents a PHP resource
  */
 public class ResourceValue extends Value
-	implements EnvCleanup {
+        implements EnvCleanup {
 
-    /**
-     * Implements the EnvCleanup interface.
-     */
-    public void cleanup() {
-    }
+   /**
+    * Implements the EnvCleanup interface.
+    */
+   public void cleanup() {
+   }
 
-    /**
-     * By default close() will call cleanup().
-     * If implementation specific logic is
-     * needed to clean up resources it should
-     * be defined in an overloaded cleanup().
-     */
-    public void close() {
-	cleanup();
-    }
+   /**
+    * By default close() will call cleanup().
+    * If implementation specific logic is
+    * needed to clean up resources it should
+    * be defined in an overloaded cleanup().
+    */
+   public void close() {
+      cleanup();
+   }
 
-    /**
-     * Converts to a key.
-     */
-    @Override
-    public Value toKey() {
-	return new LongValue(System.identityHashCode(this));
-    }
+   /**
+    * Converts to a key.
+    */
+   @Override
+   public Value toKey() {
+      return new LongValue(System.identityHashCode(this));
+   }
 
-    /**
-     * Converts to a string.
-     */
-    @Override
-    public String toString() {
-	return "ResourceValue[]";
-    }
+   /**
+    * Converts to a string.
+    */
+   @Override
+   public String toString() {
+      return "ResourceValue[]";
+   }
 
-    @Override
-    protected void varDumpImpl(Env env,
-	    WriteStream out,
-	    int depth,
-	    IdentityHashMap<Value, String> valueSet)
-	    throws IOException {
-	out.print("resource(" + toString(env) + ")");
-    }
+   @Override
+   protected void varDumpImpl(Env env,
+           WriteStream out,
+           int depth,
+           IdentityHashMap<Value, String> valueSet)
+           throws IOException {
+      out.print("resource(" + toString(env) + ")");
+   }
 
-    @Override
-    protected void printRImpl(Env env,
-	    WriteStream out,
-	    int depth,
-	    IdentityHashMap<Value, String> valueSet)
-	    throws IOException {
-	out.print("resource(" + toString(env) + ")");
-    }
+   @Override
+   protected void printRImpl(Env env,
+           WriteStream out,
+           int depth,
+           IdentityHashMap<Value, String> valueSet)
+           throws IOException {
+      out.print("resource(" + toString(env) + ")");
+   }
 }

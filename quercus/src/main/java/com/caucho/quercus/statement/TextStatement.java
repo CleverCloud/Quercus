@@ -40,30 +40,30 @@ import java.io.IOException;
  */
 public class TextStatement extends Statement {
 
-    private String _value;
+   private String _value;
 
-    /**
-     * Creates the text statement with its string.
-     */
-    public TextStatement(Location location, String value) {
-	super(location);
+   /**
+    * Creates the text statement with its string.
+    */
+   public TextStatement(Location location, String value) {
+      super(location);
 
-	_value = value;
-    }
+      _value = value;
+   }
 
-    protected String getValue() {
-	return _value;
-    }
+   protected String getValue() {
+      return _value;
+   }
 
-    public Value execute(Env env) {
-	try {
-	    env.getOut().print(_value);
-	} catch (RuntimeException e) {
-	    throw e;
-	} catch (IOException e) {
-	    throw new QuercusException(e);
-	}
+   public Value execute(Env env) {
+      try {
+         env.getOut().print(_value);
+      } catch (RuntimeException e) {
+         throw e;
+      } catch (IOException e) {
+         throw new QuercusException(e);
+      }
 
-	return null;
-    }
+      return null;
+   }
 }

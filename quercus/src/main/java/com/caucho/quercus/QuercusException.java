@@ -36,67 +36,67 @@ import java.lang.reflect.*;
  */
 public class QuercusException extends RuntimeException {
 
-    private ArrayList<String> _quercusStackTrace;
+   private ArrayList<String> _quercusStackTrace;
 
-    public QuercusException() {
-    }
+   public QuercusException() {
+   }
 
-    public QuercusException(String msg) {
-	super(msg);
-    }
+   public QuercusException(String msg) {
+      super(msg);
+   }
 
-    public QuercusException(Throwable cause) {
-	super(cause);
-    }
+   public QuercusException(Throwable cause) {
+      super(cause);
+   }
 
-    public QuercusException(String msg, Throwable cause) {
-	super(msg, cause);
-    }
+   public QuercusException(String msg, Throwable cause) {
+      super(msg, cause);
+   }
 
-    public static QuercusException create(Throwable e,
-	    ArrayList<String> stackTrace) {
-	QuercusException qExn;
+   public static QuercusException create(Throwable e,
+           ArrayList<String> stackTrace) {
+      QuercusException qExn;
 
-	if (e instanceof QuercusException) {
-	    qExn = (QuercusException) e;
-	} else {
-	    if (e instanceof InvocationTargetException && e.getCause() != null) {
-		e = e.getCause();
-	    }
+      if (e instanceof QuercusException) {
+         qExn = (QuercusException) e;
+      } else {
+         if (e instanceof InvocationTargetException && e.getCause() != null) {
+            e = e.getCause();
+         }
 
-	    qExn = new QuercusException(e);
-	}
+         qExn = new QuercusException(e);
+      }
 
-	if (qExn.getQuercusStackTrace() == null) {
-	    qExn.setQuercusStackTrace(stackTrace);
-	}
+      if (qExn.getQuercusStackTrace() == null) {
+         qExn.setQuercusStackTrace(stackTrace);
+      }
 
-	return qExn;
-    }
+      return qExn;
+   }
 
-    public String getMessage() {
-	String msg = super.getMessage();
+   public String getMessage() {
+      String msg = super.getMessage();
 
-	if (_quercusStackTrace != null) {
-	    StringBuilder sb = new StringBuilder();
-	    sb.append(msg);
-	    sb.append("\n");
+      if (_quercusStackTrace != null) {
+         StringBuilder sb = new StringBuilder();
+         sb.append(msg);
+         sb.append("\n");
 
-	    for (int i = 0; i < _quercusStackTrace.size(); i++) {
-		sb.append("   " + _quercusStackTrace.get(i) + "\n");
-	    }
+         for (int i = 0; i < _quercusStackTrace.size(); i++) {
+            sb.append("   " + _quercusStackTrace.get(i) + "\n");
+         }
 
-	    return sb.toString();
-	} else {
-	    return msg;
-	}
-    }
+         return sb.toString();
+      } else {
+         return msg;
+      }
+   }
 
-    public ArrayList<String> getQuercusStackTrace() {
-	return _quercusStackTrace;
-    }
+   public ArrayList<String> getQuercusStackTrace() {
+      return _quercusStackTrace;
+   }
 
-    public void setQuercusStackTrace(ArrayList<String> stackTrace) {
-	_quercusStackTrace = stackTrace;
-    }
+   public void setQuercusStackTrace(ArrayList<String> stackTrace) {
+      _quercusStackTrace = stackTrace;
+   }
 }
