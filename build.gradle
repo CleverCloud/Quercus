@@ -19,6 +19,10 @@ project(':resin') {
 }
 
 project(':quercus') {
+    configurations {
+	runtime.extendsFrom compile
+    }
+
     dependencies {
 	compile project(':resin')
 	compile "org.bouncycastle:bcprov-jdk16:1.46", "org.bouncycastle:bcpg-jdk16:1.46", "org.bouncycastle:bcmail-jdk16:1.46", "org.bouncycastle:bctsp-jdk16:1.46"
@@ -37,6 +41,13 @@ project(':quercus') {
     jar.dependsOn cleanJava
 
     metaInf << file('src/main/java/META-INF/')
+
+    task libs(type: Copy) {
+	from configurations.runtime
+    	into "$buildDir/libs"
+	exclude("javaee-api*.jar")
+    }
+    jar.dependsOn libs
 }
 
 project(':app') {
