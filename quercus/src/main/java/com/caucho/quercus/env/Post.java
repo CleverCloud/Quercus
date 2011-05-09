@@ -213,7 +213,7 @@ public class Post {
          if (bracketIndex >= 0 && bracketIndex < name.length() - 1) {
             // php/085c
          } else if (filename == null) {
-            StringValue value = env.createStringBuilder();
+            StringValue value = env.createBinaryBuilder();
 
             value.appendReadAll(is, Integer.MAX_VALUE);
 
