@@ -220,7 +220,7 @@ public class PostgresModule extends AbstractQuercusModule {
     @ReturnNullAsFalse
     public static Postgres pg_connect(Env env,
             String connectionString,
-            @Optional int connectionType) {        
+            @Optional int connectionType) {
         try {
             String host = "localhost";
             int port = 5432;
